@@ -1,8 +1,8 @@
-require("dotenv").config({ path: "../.env" });
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const axios = require("axios");
 const OpenAI = require("openai");
 const fs = require("fs");
-const path = require("path");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TEAM_ID = 121; // New York Mets
