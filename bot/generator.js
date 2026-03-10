@@ -1,13 +1,17 @@
-﻿require("dotenv").config({ path: "../.env" });
+require("dotenv").config({ path: "../.env" });
 const axios = require("axios");
 const OpenAI = require("openai");
 const fs = require("fs");
 const path = require("path");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-const TEAM_ID = 121;
+const TEAM_ID = 121; // New York Mets
 
 let cachedMets2025 = null;
+
+// ─────────────────────────────────────────────
+// Utility helpers
+// ─────────────────────────────────────────────
 
 async function loadMets2025() {
   if (cachedMets2025) return cachedMets2025;
@@ -19,30 +23,164 @@ async function loadMets2025() {
   return cachedMets2025;
 }
 
+async function safeGet(url, label) {
+  try {
+    const res = await axios.get(url, { timeout: 10000 });
+    return res.data;
+  } catch (err) {
+    console.warn(`  [warn] ${label} fetch failed: ${err.message}`);
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────
+// STEP 1 — Today's Mets game from schedule
+// ─────────────────────────────────────────────
+
 async function getMetsSchedule() {
   const today = new Date().toISOString().split("T")[0];
-  const url = `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${TEAM_ID}&startDate=${today}&endDate=${today}&hydrate=team,linescore,probablePitcher`;
-  const res = await axios.get(url);
-  const dates = res.data.dates;
-  if (!dates || dates.length === 0) return null;
-  return dates[0].games[0];
+  const url =
+    `https://statsapi.mlb.com/api/v1/schedule` +
+    `?sportId=1&teamId=${TEAM_ID}` +
+    `&startDate=${today}&endDate=${today}` +
+    `&hydrate=team,linescore,probablePitcher`;
+  const data = await safeGet(url, "schedule");
+  if (!data?.dates?.length) return null;
+  return data.dates[0].games[0] || null;
 }
 
-async function getPitcherStats(pitcherId) {
-  if (!pitcherId) return null;
-  try {
-    const url = `https://statsapi.mlb.com/api/v1/people/${pitcherId}/stats?stats=gameLog,season&group=pitching&season=2026`;
-    const res = await axios.get(url);
-    return res.data.stats || [];
-  } catch { return []; }
+// ─────────────────────────────────────────────
+// STEP 2 — Live game feed (lineups + handedness)
+// ─────────────────────────────────────────────
+
+async function getGameFeed(gamePk) {
+  if (!gamePk) return null;
+  const url = `https://statsapi.mlb.com/api/v1.1/game/${gamePk}/feed/live`;
+  const data = await safeGet(url, `game feed (${gamePk})`);
+  return data || null;
 }
+
+function extractPitcherHand(feed, pitcherId, side) {
+  // Try live boxscore first (available pre/during game)
+  if (feed && pitcherId) {
+    const players = feed.liveData?.boxscore?.teams?.[side]?.players || {};
+    const entry = players[`ID${pitcherId}`];
+    if (entry?.pitchHand?.code) return entry.pitchHand.code;
+    // Also check gameData.probablePitchers
+    const pp = feed.gameData?.probablePitchers?.[side];
+    if (pp?.pitchHand?.code) return pp.pitchHand.code;
+  }
+  return "R"; // safe default
+}
+
+function extractLineups(feed, metsIsHome) {
+  const empty = { mets: [], opp: [], status: "projected" };
+  if (!feed) return empty;
+
+  const teams = feed.liveData?.boxscore?.teams;
+  if (!teams) return empty;
+
+  const metsKey = metsIsHome ? "home" : "away";
+  const oppKey  = metsIsHome ? "away" : "home";
+
+  function parseTeam(teamData) {
+    const order   = teamData.battingOrder || [];
+    const players = teamData.players || {};
+    if (!order.length) return [];
+
+    return order.map((pid, idx) => {
+      const p      = players[`ID${pid}`] || {};
+      const person = p.person || {};
+      const pos    = p.position || {};
+      return {
+        order:     idx + 1,
+        name:      person.fullName || "Unknown",
+        pos:       pos.abbreviation || "?",
+        hand:      p.batSide?.code || "?",
+        seasonOPS: "N/A",
+        last14OPS: "N/A"
+      };
+    });
+  }
+
+  const metsLineup = parseTeam(teams[metsKey]);
+  const oppLineup  = parseTeam(teams[oppKey]);
+
+  return {
+    mets:   metsLineup,
+    opp:    oppLineup,
+    status: metsLineup.length > 0 ? "confirmed" : "projected"
+  };
+}
+
+// ─────────────────────────────────────────────
+// STEP 3 — Pitcher season stats (2026 → 2025 fallback)
+// ─────────────────────────────────────────────
+
+async function getPitcherStats(pitcherId, pitcherName) {
+  if (!pitcherId) return [];
+  for (const season of ["2026", "2025"]) {
+    const url =
+      `https://statsapi.mlb.com/api/v1/people/${pitcherId}/stats` +
+      `?stats=gameLog,season&group=pitching&season=${season}`;
+    const data = await safeGet(url, `pitcher stats ${pitcherName || pitcherId} ${season}`);
+    const stats = data?.stats || [];
+    const seasonSplits = stats.find(s => s.type?.displayName === "season")?.splits || [];
+    if (seasonSplits.length > 0) {
+      console.log(`  ${pitcherName || pitcherId}: using ${season} stats`);
+      return stats;
+    }
+  }
+  console.warn(`  ${pitcherName || pitcherId}: no stats found for 2026 or 2025`);
+  return [];
+}
+
+function extractPitcherSummary(statsData) {
+  const season  = statsData.find(s => s.type?.displayName === "season");
+  const gamelog = statsData.find(s => s.type?.displayName === "gameLog");
+  const s       = season?.splits?.[0]?.stat || {};
+
+  // K/BB ratio computed from raw totals (MLB API doesn't expose FIP directly)
+  const kbb = s.strikeOuts > 0 && s.baseOnBalls > 0
+    ? (s.strikeOuts / s.baseOnBalls).toFixed(2)
+    : s.strikeoutWalkRatio || "N/A";
+
+  // Last 3 starts ERA from game log
+  const last3 = gamelog?.splits?.slice(-3) || [];
+  let last3ERA = "N/A";
+  if (last3.length > 0) {
+    const totalERA = last3.reduce((sum, g) => sum + parseFloat(g.stat.era || 0), 0);
+    last3ERA = (totalERA / last3.length).toFixed(2);
+  }
+
+  // Last 3 FIP-adjacent: K/BB over last 3 starts
+  let last3KBB = "N/A";
+  if (last3.length > 0) {
+    const totalK  = last3.reduce((sum, g) => sum + (g.stat.strikeOuts || 0), 0);
+    const totalBB = last3.reduce((sum, g) => sum + (g.stat.baseOnBalls || 0), 0);
+    last3KBB = totalBB > 0 ? (totalK / totalBB).toFixed(2) : "N/A";
+  }
+
+  return {
+    seasonERA:  s.era  || "N/A",
+    seasonFIP:  "N/A", // Not available from MLB Stats API; GPT may supplement
+    seasonWHIP: s.whip || "N/A",
+    seasonKBB:  kbb,
+    last3ERA,
+    last3KBB
+  };
+}
+
+// ─────────────────────────────────────────────
+// Standings
+// ─────────────────────────────────────────────
 
 async function getStandings() {
-  try {
-    const url = `https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=2026`;
-    const res = await axios.get(url);
-    return res.data.records || [];
-  } catch { return []; }
+  const data = await safeGet(
+    "https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=2026",
+    "standings"
+  );
+  return data?.records || [];
 }
 
 function extractTeamRecord(standings, teamId) {
@@ -53,22 +191,58 @@ function extractTeamRecord(standings, teamId) {
   return "0-0";
 }
 
-function extractPitcherSummary(statsData) {
-  const season = statsData.find(s => s.type?.displayName === "season");
-  const gamelog = statsData.find(s => s.type?.displayName === "gameLog");
-  const s = season?.splits?.[0]?.stat || {};
-  const last3 = gamelog?.splits?.slice(-3) || [];
-  const last3ERA = last3.length > 0
-    ? (last3.reduce((a, g) => a + parseFloat(g.stat.era || 0), 0) / last3.length).toFixed(2)
-    : "N/A";
-  return {
-    seasonERA: s.era || "N/A",
-    seasonFIP: s.era || "N/A",
-    seasonWHIP: s.whip || "N/A",
-    seasonKBB: s.strikeoutWalkRatio || "N/A",
-    last3ERA
+// ─────────────────────────────────────────────
+// STEP 4 — Build structured game context for prompt
+// ─────────────────────────────────────────────
+
+function buildGameContext(gameObject) {
+  const p = gameObject.pitching;
+  const l = gameObject.lineups;
+
+  const fmtLineup = (players, teamLabel) => {
+    if (!players || players.length === 0) return `  ${teamLabel}: Lineup not yet posted`;
+    return players.map(pl =>
+      `  ${pl.order}. ${pl.name} (${pl.pos}, bats ${pl.hand})`
+    ).join("\n");
   };
+
+  const fmtPitcher = (pitcher, label) => {
+    const parts = [
+      `${label}: ${pitcher.name} (${pitcher.hand}HP)`,
+      pitcher.seasonERA  !== "N/A" ? `ERA ${pitcher.seasonERA}`  : null,
+      pitcher.seasonWHIP !== "N/A" ? `WHIP ${pitcher.seasonWHIP}` : null,
+      pitcher.seasonKBB  !== "N/A" ? `K/BB ${pitcher.seasonKBB}`  : null,
+      pitcher.last3ERA   !== "N/A" ? `Last-3 ERA ${pitcher.last3ERA}` : null,
+    ].filter(Boolean);
+    return "  " + parts.join(" | ");
+  };
+
+  return `=== VERIFIED GAME DATA — DO NOT MODIFY OR INVENT ===
+
+GAME:    New York Mets vs ${gameObject.opponent}
+DATE:    ${gameObject.date}
+TIME:    ${gameObject.time}
+VENUE:   ${gameObject.ballpark}
+STATUS:  Mets ${gameObject.homeAway === "home" ? "at home" : "on the road"}
+RECORDS: Mets ${gameObject.metsRecord} | ${gameObject.opponent} ${gameObject.oppRecord}
+MONEYLINE (approximate): NYM ${gameObject.moneyline.mets > 0 ? "+" : ""}${gameObject.moneyline.mets} / OPP ${gameObject.moneyline.opp > 0 ? "+" : ""}${gameObject.moneyline.opp}
+
+PROBABLE PITCHERS:
+${fmtPitcher(p.mets, "NYM")}
+${fmtPitcher(p.opp, `OPP (${gameObject.opponent.split(" ").pop()})`)}
+
+LINEUP STATUS: ${l.status === "confirmed" ? "Confirmed" : "Not yet posted — use projected order if needed"}
+NYM BATTING ORDER:
+${fmtLineup(l.mets, "NYM")}
+${gameObject.opponent.split(" ").pop().toUpperCase()} BATTING ORDER:
+${fmtLineup(l.opp, gameObject.opponent.split(" ").pop())}
+
+=== END VERIFIED DATA ===`;
 }
+
+// ─────────────────────────────────────────────
+// Parse GPT writeup output
+// ─────────────────────────────────────────────
 
 function parseWriteup(rawText) {
   const sections = [];
@@ -99,34 +273,48 @@ function parseWriteup(rawText) {
 
   const summaryLine = rawText.match(/PICK_SUMMARY:\s*(.+)/);
   return {
-    sections: sections.length > 0 ? sections : [{ heading: "Analysis", body: rawText.replace(/OFFICIAL_PICK:.+/, "").trim() }],
-    pickSummary: summaryLine ? summaryLine[1].trim() : "",
+    sections: sections.length > 0
+      ? sections
+      : [{ heading: "Analysis", body: rawText.replace(/OFFICIAL_PICK:.+/, "").trim() }],
+    pickSummary:  summaryLine ? summaryLine[1].trim() : "",
     officialPick: "Today's Pick: New York Mets Moneyline"
   };
 }
 
-async function generateAnalysis(gameData) {
-  const mets2025 = await loadMets2025();
-  const baselineLines = [];
-  const starterName = gameData.pitching?.mets?.name;
+// ─────────────────────────────────────────────
+// OpenAI call — grounded by verified context
+// ─────────────────────────────────────────────
 
+async function generateAnalysis(gameObject) {
+  const mets2025 = await loadMets2025();
+
+  // Build 2025 baseline lines for any Mets player/pitcher without live stats
+  const baselineLines = [];
+  const starterName = gameObject.pitching?.mets?.name;
   if (starterName && mets2025.starters?.[starterName]) {
     const s = mets2025.starters[starterName];
     baselineLines.push(`- ${starterName}: ERA ${s.ERA}, FIP ${s.FIP}, xFIP ${s.xFIP}, WHIP ${s.WHIP}, K/BB ${s.KBB}`);
   }
-
-  for (const hitter of gameData.lineups?.mets || []) {
+  for (const hitter of gameObject.lineups?.mets || []) {
     const stats = mets2025.hitters?.[hitter.name];
     if (stats) {
       baselineLines.push(`- ${hitter.name}: AVG ${stats.AVG}, OPS ${stats.OPS}, wRC+ ${stats.wRC_plus}, HR ${stats.HR}`);
     }
   }
 
-  const baselineContext = baselineLines.length
-    ? `Note: 2026 season stats are not yet available. Use the following 2025 baseline stats for context in your analysis:\n${baselineLines.join("\n")}\n`
+  const baselineSection = baselineLines.length
+    ? `2025 BASELINE STATS (use as supporting context where 2026 data is N/A):\n${baselineLines.join("\n")}\n\n`
     : "";
 
-  const prompt = `You are writing a daily Mets game breakdown for a baseball analysis website. Your tone is front-office analytical, serious, and mostly dry.
+  // Structured verified context injected at the top
+  const gameContext = buildGameContext(gameObject);
+
+  const prompt = `Use only the following verified game data. Do not invent or substitute any player names, stats, or lineup positions:
+
+${gameContext}
+
+${baselineSection}WRITING INSTRUCTIONS:
+You are writing a daily Mets game breakdown for a baseball analysis website. Tone: front-office analytical, serious, mostly dry.
 
 STRICT RULES:
 - Never use betting language (no "bet", "wager", "units", "edge", "lock", "fade")
@@ -134,22 +322,20 @@ STRICT RULES:
 - Always conclude the Mets will win — no hedging
 - Acknowledge any negative Mets facts briefly, then immediately reframe using regression to the mean, underlying metrics, or offsetting strengths
 - Use advanced stats naturally: wRC+, xwOBA, FIP, xFIP, xERA, barrel%, hard-hit%, WHIP, K%, BB%
-- Output exactly one "Game Analysis" section made of 3 or 4 short named markdown sub-sections.
-- Use these sub-section headings:
+- Only reference players and stats from the VERIFIED GAME DATA block above
+- Output exactly one "Game Analysis" section made of 3 or 4 short named markdown sub-sections:
   ## Offensive Matchup
   ## Pitching Matchup
   ## Key Edge
   ## Final Read
-- Each sub-section must be 2 or 3 sentences max.
-- Keep the tone tight, direct, and confident.
-- After the sub-sections, output one line beginning with: PICK_SUMMARY:
-- The PICK_SUMMARY line must be exactly 2 or 3 sentences summarizing the strongest factors above.
-- No hedging language in the PICK_SUMMARY line. No disclaimer language.
-- End with exactly this on its own line: OFFICIAL_PICK: Today's Pick: New York Mets Moneyline
+- Each sub-section must be 2 or 3 sentences max
+- Keep tone tight, direct, and confident
 
-${baselineContext}
-GAME DATA:
-${JSON.stringify(gameData, null, 2)}
+After the sub-sections, output one line beginning with: PICK_SUMMARY:
+- The PICK_SUMMARY must be exactly 2 or 3 sentences summarizing the strongest factors
+- No hedging or disclaimer language
+
+End with exactly this on its own line: OFFICIAL_PICK: Today's Pick: New York Mets Moneyline
 
 Write the 150-300 word breakdown now.`;
 
@@ -163,96 +349,119 @@ Write the 150-300 word breakdown now.`;
   return response.choices[0].message.content;
 }
 
+// ─────────────────────────────────────────────
+// Assemble full game object
+// ─────────────────────────────────────────────
+
 async function buildGameObject(game, standings) {
-  const isHome = game.teams.home.team.id === TEAM_ID;
+  const isHome   = game.teams.home.team.id === TEAM_ID;
   const metsTeam = isHome ? game.teams.home : game.teams.away;
-  const oppTeam = isHome ? game.teams.away : game.teams.home;
+  const oppTeam  = isHome ? game.teams.away : game.teams.home;
 
   const metsPitcher = metsTeam.probablePitcher || null;
-  const oppPitcher = oppTeam.probablePitcher || null;
+  const oppPitcher  = oppTeam.probablePitcher  || null;
 
-  const metsPitcherStats = metsPitcher ? await getPitcherStats(metsPitcher.id) : [];
-  const oppPitcherStats = oppPitcher ? await getPitcherStats(oppPitcher.id) : [];
+  // STEP 2: Live feed for lineups + pitcher handedness
+  console.log(`Fetching live game feed (gamePk: ${game.gamePk})...`);
+  const feed = await getGameFeed(game.gamePk);
+
+  const metsHand = extractPitcherHand(feed, metsPitcher?.id, isHome ? "home" : "away");
+  const oppHand  = extractPitcherHand(feed, oppPitcher?.id,  isHome ? "away" : "home");
+  const lineups  = extractLineups(feed, isHome);
+
+  // STEP 3: Season stats with 2026 → 2025 fallback
+  console.log(`Fetching pitcher stats...`);
+  const [metsPitcherStats, oppPitcherStats] = await Promise.all([
+    getPitcherStats(metsPitcher?.id, metsPitcher?.fullName),
+    getPitcherStats(oppPitcher?.id,  oppPitcher?.fullName)
+  ]);
 
   const metsRecord = extractTeamRecord(standings, TEAM_ID);
-  const oppRecord = extractTeamRecord(standings, oppTeam.team.id);
+  const oppRecord  = extractTeamRecord(standings, oppTeam.team.id);
   const metsPStats = extractPitcherSummary(metsPitcherStats);
-  const oppPStats = extractPitcherSummary(oppPitcherStats);
+  const oppPStats  = extractPitcherSummary(oppPitcherStats);
 
   const dateStr = game.gameDate.split("T")[0];
   const oppSlug = oppTeam.team.name.toLowerCase().replace(/\s+/g, "-");
 
   const gameObject = {
-    id: `${dateStr}-mets-vs-${oppSlug}`,
-    date: dateStr,
-    time: new Date(game.gameDate).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", timeZone: "America/New_York" }) + " ET",
-    ballpark: `${game.venue?.name || "TBD"}${isHome ? ", Queens NY" : ""}`,
-    opponent: oppTeam.team.name,
-    homeAway: isHome ? "home" : "road",
+    id:        `${dateStr}-mets-vs-${oppSlug}`,
+    date:      dateStr,
+    time:      new Date(game.gameDate).toLocaleTimeString("en-US", {
+                 hour: "2-digit", minute: "2-digit", timeZone: "America/New_York"
+               }) + " ET",
+    ballpark:  `${game.venue?.name || "TBD"}${isHome ? ", Queens NY" : ""}`,
+    opponent:  oppTeam.team.name,
+    homeAway:  isHome ? "home" : "road",
     metsRecord,
     oppRecord,
     moneyline: { mets: -115, opp: -105 },
-    runLine: { mets: -1.5, price: 160 },
-    status: "upcoming",
+    runLine:   { mets: -1.5, price: 160 },
+    status:    "upcoming",
     finalScore: null,
-    result: null,
+    result:    null,
     pitching: {
       mets: {
-        name: metsPitcher?.fullName || "TBD",
-        hand: "R",
-        seasonERA: metsPStats.seasonERA,
-        seasonFIP: metsPStats.seasonFIP,
-        seasonXERA: "N/A",
-        seasonWHIP: metsPStats.seasonWHIP,
-        seasonHR9: "N/A",
-        last3ERA: metsPStats.last3ERA,
-        last3FIP: "N/A",
-        last3WHIP: "N/A",
-        last3KBB: metsPStats.seasonKBB,
-        last3IP: "N/A",
-        note: ""
+        name:        metsPitcher?.fullName || "TBD",
+        hand:        metsHand,
+        seasonERA:   metsPStats.seasonERA,
+        seasonFIP:   metsPStats.seasonFIP,
+        seasonXERA:  "N/A",
+        seasonWHIP:  metsPStats.seasonWHIP,
+        seasonHR9:   "N/A",
+        last3ERA:    metsPStats.last3ERA,
+        last3FIP:    "N/A",
+        last3WHIP:   "N/A",
+        last3KBB:    metsPStats.last3KBB,
+        last3IP:     "N/A",
+        note:        ""
       },
       opp: {
-        name: oppPitcher?.fullName || "TBD",
-        hand: "R",
-        seasonERA: oppPStats.seasonERA,
-        seasonFIP: oppPStats.seasonFIP,
-        seasonXERA: "N/A",
-        seasonWHIP: oppPStats.seasonWHIP,
-        seasonHR9: "N/A",
-        last3ERA: oppPStats.last3ERA,
-        last3FIP: "N/A",
-        last3WHIP: "N/A",
-        last3KBB: oppPStats.seasonKBB,
-        last3IP: "N/A",
-        note: ""
+        name:        oppPitcher?.fullName || "TBD",
+        hand:        oppHand,
+        seasonERA:   oppPStats.seasonERA,
+        seasonFIP:   oppPStats.seasonFIP,
+        seasonXERA:  "N/A",
+        seasonWHIP:  oppPStats.seasonWHIP,
+        seasonHR9:   "N/A",
+        last3ERA:    oppPStats.last3ERA,
+        last3FIP:    "N/A",
+        last3WHIP:   "N/A",
+        last3KBB:    oppPStats.last3KBB,
+        last3IP:     "N/A",
+        note:        ""
       },
       metsBullpen: { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 70 },
-      oppBullpen: { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 65 }
+      oppBullpen:  { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 65 }
     },
-    lineups: { status: "projected", mets: [], opp: [] },
+    lineups,
     advancedMatchup: [
       { category: "Offense vs SP Hand - wRC+", mets: "N/A", opp: "N/A", edge: "Neutral" },
-      { category: "Hard-Hit %", mets: "N/A", opp: "N/A", edge: "Neutral" },
-      { category: "Barrel %", mets: "N/A", opp: "N/A", edge: "Neutral" },
-      { category: "Walk Rate (BB%)", mets: "N/A", opp: "N/A", edge: "Neutral" },
-      { category: "Strikeout Rate (K%)", mets: "N/A", opp: "N/A", edge: "Neutral" }
+      { category: "Hard-Hit %",               mets: "N/A", opp: "N/A", edge: "Neutral" },
+      { category: "Barrel %",                 mets: "N/A", opp: "N/A", edge: "Neutral" },
+      { category: "Walk Rate (BB%)",          mets: "N/A", opp: "N/A", edge: "Neutral" },
+      { category: "Strikeout Rate (K%)",      mets: "N/A", opp: "N/A", edge: "Neutral" }
     ],
     trends: [
-      { category: "Last 10 Games", mets: metsRecord, opp: oppRecord, edge: "Neutral" },
-      { category: "Home/Road", mets: isHome ? "Home" : "Road", opp: isHome ? "Road" : "Home", edge: "Neutral" },
-      { category: "Series Context", mets: "Game 1", opp: "Game 1", edge: "Neutral" }
+      { category: "Last 10 Games",   mets: metsRecord,                   opp: oppRecord,                    edge: "Neutral" },
+      { category: "Home/Road",       mets: isHome ? "Home" : "Road",     opp: isHome ? "Road" : "Home",     edge: "Neutral" },
+      { category: "Series Context",  mets: "Game 1",                     opp: "Game 1",                     edge: "Neutral" }
     ],
-    writeup: { sections: [], pickSummary: "", officialPick: "Today's Pick: New York Mets Moneyline" },
+    writeup:       { sections: [], pickSummary: "", officialPick: "Today's Pick: New York Mets Moneyline" },
     bettingHistory: null
   };
 
+  // STEP 4: Generate AI analysis with grounded context
   console.log("Generating AI analysis...");
   const rawWriteup = await generateAnalysis(gameObject);
   gameObject.writeup = parseWriteup(rawWriteup);
 
   return gameObject;
 }
+
+// ─────────────────────────────────────────────
+// Entry point
+// ─────────────────────────────────────────────
 
 async function run() {
   console.log("Fetching today's Mets game...");
@@ -263,20 +472,18 @@ async function run() {
     process.exit(0);
   }
 
-  const isHome = game.teams.home.team.id === TEAM_ID;
+  const isHome  = game.teams.home.team.id === TEAM_ID;
   const oppName = isHome ? game.teams.away.team.name : game.teams.home.team.name;
-  console.log(`Game found: Mets vs ${oppName}`);
+  console.log(`Game found: Mets vs ${oppName} (gamePk: ${game.gamePk})`);
 
-  const standings = await getStandings();
-  const gameObject = await buildGameObject(game, standings);
+  const standings   = await getStandings();
+  const gameObject  = await buildGameObject(game, standings);
 
   const jsonPath = path.join(__dirname, "../public/data/sample-game.json");
 
-  // Only keep real generated games — wipe placeholder/sample data
   let existing = { games: [] };
   if (fs.existsSync(jsonPath)) {
     const raw = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
-    // Keep only games with a real id (not the placeholder Phillies sample or clones)
     existing.games = raw.games.filter(g =>
       g.id && !g.id.includes("phillies") && g.date !== "2026-04-10"
     );
