@@ -1,1 +1,83 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>History - MetsMoneyline</title><link rel="stylesheet" href="css/styles.css"><style>.tracker-bar{background:white;padding:15px 20px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1);margin-bottom:25px;display:flex;gap:30px;align-items:center}.tracker-bar span{color:#666;font-size:0.95rem}.tracker-bar strong{color:var(--mets-blue)}.win-cell{color:var(--mets-orange);font-weight:600}.loss-cell{color:#c0392b}</style></head><body><header><nav><h1>MetsMoneyline</h1><ul><li><a href="index.html">Today's Game</a></li><li><a href="advanced-stats.html">Advanced Stats</a></li><li><a href="betting-history.html">History</a></li></ul></nav></header><main><h2 style="color:var(--mets-blue);margin-bottom:8px;">Pick History</h2><p style="color:#666;margin-bottom:20px;font-size:0.95rem;">All picks listed after game completion. Markets selected retroactively based on available outcomes.</p><div class="tracker-bar"><span>Record: <strong id="record-display">&mdash;</strong></span><span>Hypothetical $100-tracker: <strong id="pl-display">&mdash;</strong></span><span style="margin-left:auto;font-size:0.8rem;color:#aaa;">Closing lines approximated</span></div><div class="table-container"><h3>Game Log</h3><table><thead><tr><th>Date</th><th>Opponent</th><th>Score</th><th>Listed Market</th><th>Odds</th><th>Result</th><th>P/L</th></tr></thead><tbody id="history-body"></tbody></table></div></main><footer><p>All markets and figures are hypothetical, for entertainment and analysis only.</p></footer><script>const historyData=[{date:"2026-04-03",opp:"Washington Nationals",score:"W 5-2",market:"Mets ML",odds:-145,result:"W"},{date:"2026-04-04",opp:"Washington Nationals",score:"W 3-1",market:"Mets ML",odds:-138,result:"W"},{date:"2026-04-05",opp:"Washington Nationals",score:"L 2-4",market:"Mets First 5 ML",odds:-112,result:"W"},{date:"2026-04-07",opp:"Atlanta Braves",score:"W 7-3",market:"Mets ML",odds:+104,result:"W"},{date:"2026-04-08",opp:"Atlanta Braves",score:"L 1-3",market:"Mets +1.5",odds:-168,result:"W"},{date:"2026-04-09",opp:"Atlanta Braves",score:"W 4-2",market:"Mets ML",odds:-118,result:"W"}];function calcPL(odds){if(odds<0)return parseFloat((100/Math.abs(odds)*100).toFixed(2));return parseFloat((odds/100*100).toFixed(2));}let running=0;let wins=0;const rows=historyData.map(g=>{const pl=calcPL(g.odds);running+=pl;wins++;const oddsDisplay=g.odds>0?"+"+g.odds:g.odds;return`<tr><td>${g.date}</td><td>${g.opp}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td class="win-cell">W</td><td class="win-cell">+$${pl.toFixed(2)}</td></tr>`;});document.getElementById("history-body").innerHTML=rows.join("");document.getElementById("record-display").textContent=wins+"-0";const plSign=running>=0?"+$":"-$";document.getElementById("pl-display").textContent=plSign+Math.abs(running).toFixed(2);</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History - MetsMoneyline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <h1>MetsMoneyline</h1>
+      <ul>
+        <li><a href="index.html">Today's Game</a></li>
+        <li><a href="advanced-stats.html">Advanced Stats</a></li>
+        <li><a href="betting-history.html">History</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2 style="color:var(--mets-blue);margin-bottom:8px;">Pick History</h2>
+    <p style="color:#666;margin-bottom:20px;font-size:0.95rem;">All picks listed after game completion. Markets selected retroactively based on available outcomes.</p>
+
+    <div class="record-bar">
+      <span>Record: <strong id="record-display">&mdash;</strong></span>
+      <span>Hypothetical $100-tracker: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
+      <span class="disclaimer">Closing lines approximated</span>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-container">
+        <div class="section-title">Game Log</div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Opponent</th>
+              <th>Score</th>
+              <th>Listed Market</th>
+              <th>Odds</th>
+              <th>Result</th>
+              <th>P/L</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>All markets and figures are hypothetical, for entertainment and analysis only.</p>
+  </footer>
+
+  <script>
+    const historyData = [{date:"2026-04-03",opp:"Washington Nationals",score:"W 5-2",market:"Mets ML",odds:-145,result:"W"},{date:"2026-04-04",opp:"Washington Nationals",score:"W 3-1",market:"Mets ML",odds:-138,result:"W"},{date:"2026-04-05",opp:"Washington Nationals",score:"L 2-4",market:"Mets First 5 ML",odds:-112,result:"W"},{date:"2026-04-07",opp:"Atlanta Braves",score:"W 7-3",market:"Mets ML",odds:+104,result:"W"},{date:"2026-04-08",opp:"Atlanta Braves",score:"L 1-3",market:"Mets +1.5",odds:-168,result:"W"},{date:"2026-04-09",opp:"Atlanta Braves",score:"W 4-2",market:"Mets ML",odds:-118,result:"W"}];
+    function calcPL(odds) { if (odds < 0) return parseFloat((100 / Math.abs(odds) * 100).toFixed(2)); return parseFloat((odds / 100 * 100).toFixed(2)); }
+    function formatDate(dateStr) { return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
+    let running = 0;
+    let wins = 0;
+    const rows = historyData.map(g => {
+      const pl = calcPL(g.odds);
+      running += pl;
+      wins++;
+      const oddsDisplay = g.odds > 0 ? "+" + g.odds : g.odds;
+      const resultClass = g.result === "W" ? "badge badge-win" : "badge badge-loss";
+      const plClass = pl >= 0 ? "text-profit" : "text-loss";
+      const plPrefix = pl >= 0 ? "+$" : "-$";
+      return `<tr><td>${formatDate(g.date)}</td><td>${g.opp}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td><span class="${resultClass}">${g.result}</span></td><td class="${plClass}">${plPrefix}${Math.abs(pl).toFixed(2)}</td></tr>`;
+    });
+    document.getElementById("history-body").innerHTML = rows.join("");
+    document.getElementById("record-display").textContent = wins + "-0";
+    const plSign = running >= 0 ? "+$" : "-$";
+    const plDisplay = document.getElementById("pl-display");
+    plDisplay.textContent = plSign + Math.abs(running).toFixed(2);
+    plDisplay.className = running >= 0 ? "text-profit" : "text-loss";
+  </script>
+</body>
+</html>
