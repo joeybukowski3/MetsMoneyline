@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetsMoneyline - Daily NY Mets Game Analysis</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>MetsMoneyline</h1>
+            <ul>
+                <li><a href="index.html">Today's Game</a></li>
+                <li><a href="advanced-stats.html">Advanced Stats</a></li>
+                <li><a href="betting-history.html">History</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <h2>The most thorough and accurate game analysis for the 2026 New York Mets.</h2>
+            <p>Get the full Mets matchup tables and writeup in your inbox before first pitch.<br>One email on every Mets game day. No spam, no picks for other teams.</p>
+            <form class="signup-form" action="YOUR_BUTTONDOWN_URL" method="post" target="_blank">
+                <input type="email" name="email" placeholder="Enter your email address" required>
+                <button type="submit">Get today's breakdown</button>
+            </form>
+        </section>
+
+        <div id="today-game-container">
+            <p style="text-align:center; color:#666;">Loading today's breakdown...</p>
+        </div>
+
+        <h3 style="margin-top:40px; color:var(--mets-blue);">Recent Breakdowns</h3>
+        <div class="recent-games" id="recent-games-container"></div>
+    </main>
+
+    <footer>
+        <p>This is informational analysis of Mets games; not financial or wagering advice.</p>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
