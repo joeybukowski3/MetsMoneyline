@@ -572,6 +572,25 @@ main, .page-content {
 }
 
 /* =====================
+   PLAYER HEADSHOTS
+   ===================== */
+.player-headshot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+  background: #e4e8f0;
+  flex-shrink: 0;
+}
+
+.player-name-cell {
+  display: flex;
+  align-items: center;
+}
+
+/* =====================
    ROW 3 GRID (lineups + advanced metrics)
    ===================== */
 .row-3-grid {

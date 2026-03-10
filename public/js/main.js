@@ -22,15 +22,15 @@ const ESPN_LOGO = {
 };
 
 const DEFAULT_METS_LINEUP = [
-  { order: 1, name: "Brandon Nimmo",      pos: "CF", hand: "L" },
-  { order: 2, name: "Francisco Lindor",   pos: "SS", hand: "S" },
-  { order: 3, name: "Juan Soto",          pos: "LF", hand: "L" },
-  { order: 4, name: "Pete Alonso",        pos: "1B", hand: "R" },
-  { order: 5, name: "Mark Vientos",       pos: "3B", hand: "R" },
-  { order: 6, name: "Francisco Alvarez",  pos: "C",  hand: "R" },
-  { order: 7, name: "Starling Marte",     pos: "RF", hand: "R" },
-  { order: 8, name: "Jeff McNeil",        pos: "2B", hand: "L" },
-  { order: 9, name: "pitcher slot",       pos: "P",  hand: "-" }
+  { order: 1, name: "Brandon Nimmo",      pos: "CF", hand: "L", playerId: 607043 },
+  { order: 2, name: "Francisco Lindor",   pos: "SS", hand: "S", playerId: 596019 },
+  { order: 3, name: "Juan Soto",          pos: "LF", hand: "L", playerId: 665742 },
+  { order: 4, name: "Pete Alonso",        pos: "1B", hand: "R", playerId: 624413 },
+  { order: 5, name: "Mark Vientos",       pos: "3B", hand: "R", playerId: 668978 },
+  { order: 6, name: "Francisco Alvarez",  pos: "C",  hand: "R", playerId: 682628 },
+  { order: 7, name: "Starling Marte",     pos: "RF", hand: "R", playerId: 516782 },
+  { order: 8, name: "Jeff McNeil",        pos: "2B", hand: "L", playerId: 643446 },
+  { order: 9, name: "pitcher slot",       pos: "P",  hand: "-", playerId: null   }
 ];
 
 function getTeamLogoUrl(teamName) {
@@ -62,6 +62,61 @@ function getMetsHitterAVG(player) {
   return isMissingStat(player.seasonAVG)
     ? get2025PlayerStat(player.name, "hitters", "AVG")
     : player.seasonAVG;
+}
+
+function stat2025(val) {
+  return `${val} <span class="stat-year">(2025)</span>`;
+}
+
+function fallback(liveVal, fallbackVal) {
+  return isMissingStat(liveVal) ? stat2025(fallbackVal) : liveVal;
+}
+
+/* FIX 2 — bullpen 2025 fallbacks */
+function resolveBullpen(bullpenObj, isNYM, oppName) {
+  const bp = bullpenObj || {};
+  if (isNYM) {
+    return {
+      era:    fallback(bp.seasonERA,  METS_2025.bullpenERA),
+      xfip:   fallback(bp.seasonXFIP, METS_2025.bullpenxFIP),
+      last14: fallback(bp.last14ERA,  METS_2025.bullpenERA),
+      rating: bp.rating ?? 70
+    };
+  }
+  const oppData = METS_2025.opponents2025?.[oppName];
+  return {
+    era:    isMissingStat(bp.seasonERA)  ? (oppData?.bullpenERA  ? stat2025(oppData.bullpenERA)  : "N/A") : bp.seasonERA,
+    xfip:   bp.seasonXFIP  ?? "N/A",
+    last14: bp.last14ERA   ?? "N/A",
+    rating: bp.rating ?? 65
+  };
+}
+
+/* FIX 3 — advanced metrics 2025 fallbacks */
+function resolveAdvancedMatchup(game) {
+  const oppData = METS_2025.opponents2025?.[game.opponent];
+  const live    = game.advancedMatchup || [];
+
+  const get = (i, key) => live[i]?.[key];
+
+  const metsWRC = METS_2025.teamWRC_plus;
+  const oppWRC  = oppData?.teamWRC_plus;
+  const wrcEdge = (metsWRC && oppWRC && (metsWRC - oppWRC) >= 5) ? "Mets" : "Neutral";
+
+  const resolveRow = (i, metsFallback, oppFallback, edgeFallback) => ({
+    category: get(i, "category") || live[i]?.category,
+    mets: !isMissingStat(get(i, "mets")) ? get(i, "mets") : stat2025(metsFallback),
+    opp:  !isMissingStat(get(i, "opp"))  ? get(i, "opp")  : (oppFallback != null ? stat2025(oppFallback) : "N/A"),
+    edge: (get(i, "edge") && get(i, "edge") !== "Neutral") ? get(i, "edge") : edgeFallback
+  });
+
+  return [
+    resolveRow(0, metsWRC, oppWRC, wrcEdge),
+    resolveRow(1, METS_2025.hardHitPct, null, "N/A"),
+    resolveRow(2, METS_2025.barrelPct,  null, "N/A"),
+    resolveRow(3, METS_2025.bbPct,      null, "N/A"),
+    resolveRow(4, METS_2025.kPct,       null, "N/A")
+  ];
 }
 
 /* ── ROW 1: Matchup Strip ── */
@@ -109,15 +164,17 @@ function buildPitchingCard(game) {
   const oKBB  = isMissingStat(p.opp.last3KBB)   ? "N/A" : p.opp.last3KBB;
   const oL3   = isMissingStat(p.opp.last3ERA)   ? "N/A" : p.opp.last3ERA;
 
-  // Bullpen
-  const bpMetsERA    = p.metsBullpen?.seasonERA   ?? "N/A";
-  const bpMetsXFIP   = p.metsBullpen?.seasonXFIP  ?? "N/A";
-  const bpMets14ERA  = p.metsBullpen?.last14ERA   ?? "N/A";
-  const bpMetsRating = p.metsBullpen?.rating      ?? "—";
-  const bpOppERA     = p.oppBullpen?.seasonERA    ?? "N/A";
-  const bpOppXFIP    = p.oppBullpen?.seasonXFIP   ?? "N/A";
-  const bpOpp14ERA   = p.oppBullpen?.last14ERA    ?? "N/A";
-  const bpOppRating  = p.oppBullpen?.rating       ?? "—";
+  // Bullpen — FIX 2: apply 2025 fallbacks
+  const metsBP = resolveBullpen(p.metsBullpen, true,  game.opponent);
+  const oppBP  = resolveBullpen(p.oppBullpen,  false, game.opponent);
+  const bpMetsERA    = metsBP.era;
+  const bpMetsXFIP   = metsBP.xfip;
+  const bpMets14ERA  = metsBP.last14;
+  const bpMetsRating = metsBP.rating;
+  const bpOppERA     = oppBP.era;
+  const bpOppXFIP    = oppBP.xfip;
+  const bpOpp14ERA   = oppBP.last14;
+  const bpOppRating  = oppBP.rating;
 
   const row = (left, mid, right) => `
     <div class="pitching-col-left pg-val">${left}</div>
@@ -171,10 +228,16 @@ function buildRow3(game) {
   const oppLineup  = Array.isArray(l.opp)  ? l.opp : [];
   const statusLabel = l.status === "confirmed" ? "Confirmed" : "Projected";
 
+  // FIX 1: headshot helper — uses playerId if present, falls back to 0 (generic MLB silhouette via Cloudinary d_ param)
+  const headshotImg = (p) => {
+    const pid = p.playerId || 0;
+    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
+  };
+
   const metsRows = metsLineup.map(p => `
     <tr>
       <td>${p.order}</td>
-      <td style="font-weight:600">${p.name}</td>
+      <td><div class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></div></td>
       <td>${p.pos}</td>
       <td>${getMetsHitterAVG(p)}</td>
       <td>${getMetsHitterSeasonOps(p)}</td>
@@ -184,18 +247,19 @@ function buildRow3(game) {
     ? oppLineup.map(p => `
     <tr>
       <td>${p.order}</td>
-      <td style="font-weight:600">${p.name}</td>
+      <td><div class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></div></td>
       <td>${p.pos}</td>
       <td>${p.seasonAVG ?? "N/A"}</td>
       <td>${p.seasonOPS ?? "N/A"}</td>
     </tr>`).join("")
     : `<tr><td colspan="5" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
-  // Advanced metrics (col 3)
-  const advRows = game.advancedMatchup.map(r => {
+  // Advanced metrics (col 3) — FIX 3: apply 2025 fallbacks
+  const resolvedMetrics = resolveAdvancedMatchup(game);
+  const advRows = resolvedMetrics.map(r => {
     const edgeColor = r.edge === "Mets"
       ? "color:var(--orange);font-weight:700"
-      : r.edge === "Neutral"
+      : (r.edge === "Neutral" || r.edge === "N/A" || r.edge === "—")
         ? "color:#9099b0"
         : "color:#c0392b;font-weight:700";
     return `<tr>
@@ -206,7 +270,7 @@ function buildRow3(game) {
     </tr>`;
   }).join("");
 
-  const topEdge = game.advancedMatchup.find(r => r.edge === "Mets");
+  const topEdge = resolvedMetrics.find(r => r.edge === "Mets");
   const edgeCallout = topEdge
     ? `<div class="edge-callout">Key Edge: ${topEdge.category} — NYM ${topEdge.mets} vs OPP ${topEdge.opp}</div>`
     : `<div class="edge-callout neutral">No clear statistical edge identified</div>`;
