@@ -76,7 +76,7 @@ function parseWriteup(rawText) {
       if (current) sections.push(current);
       const heading = trimmed.replace(/^#+\s*/, "").replace(/\*\*/g, "").replace(/:$/, "").trim();
       current = { heading, body: "" };
-    } else if (trimmed.startsWith("OFFICIAL_PICK:")) {
+    } else if (trimmed.startsWith("PICK_SUMMARY:") || trimmed.startsWith("OFFICIAL_PICK:")) {
       if (current) sections.push(current);
       current = null;
     } else if (current) {
@@ -85,10 +85,11 @@ function parseWriteup(rawText) {
   }
   if (current && current.body) sections.push(current);
 
-  const pickLine = rawText.match(/OFFICIAL_PICK:\s*(.+)/);
+  const summaryLine = rawText.match(/PICK_SUMMARY:\s*(.+)/);
   return {
     sections: sections.length > 0 ? sections : [{ heading: "Analysis", body: rawText.replace(/OFFICIAL_PICK:.+/, "").trim() }],
-    officialPick: pickLine ? pickLine[1].trim() : "We're taking the Mets."
+    pickSummary: summaryLine ? summaryLine[1].trim() : "",
+    officialPick: "Today's Pick: New York Mets Moneyline"
   };
 }
 
@@ -101,12 +102,18 @@ STRICT RULES:
 - Always conclude the Mets will win — no hedging
 - Acknowledge any negative Mets facts briefly, then immediately reframe using regression to the mean, underlying metrics, or offsetting strengths
 - Use advanced stats naturally: wRC+, xwOBA, FIP, xFIP, xERA, barrel%, hard-hit%, WHIP, K%, BB%
-- Write exactly 4 sections with these exact markdown headings:
+- Output exactly one "Game Analysis" section made of 3 or 4 short named markdown sub-sections.
+- Use these sub-section headings:
   ## Offensive Matchup
-  ## Pitching and Bullpens
-  ## Schedule and Trends
-  ## Putting It Together
-- End with exactly this on its own line: OFFICIAL_PICK: We're taking the Mets.
+  ## Pitching Matchup
+  ## Key Edge
+  ## Final Read
+- Each sub-section must be 2 or 3 sentences max.
+- Keep the tone tight, direct, and confident.
+- After the sub-sections, output one line beginning with: PICK_SUMMARY:
+- The PICK_SUMMARY line must be exactly 2 or 3 sentences summarizing the strongest factors above.
+- No hedging language in the PICK_SUMMARY line. No disclaimer language.
+- End with exactly this on its own line: OFFICIAL_PICK: Today's Pick: New York Mets Moneyline
 
 GAME DATA:
 ${JSON.stringify(gameData, null, 2)}
@@ -203,7 +210,7 @@ async function buildGameObject(game, standings) {
       { category: "Home/Road", mets: isHome ? "Home" : "Road", opp: isHome ? "Road" : "Home", edge: "Neutral" },
       { category: "Series Context", mets: "Game 1", opp: "Game 1", edge: "Neutral" }
     ],
-    writeup: { sections: [], officialPick: "We're taking the Mets." },
+    writeup: { sections: [], pickSummary: "", officialPick: "Today's Pick: New York Mets Moneyline" },
     bettingHistory: null
   };
 

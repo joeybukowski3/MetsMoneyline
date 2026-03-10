@@ -332,6 +332,71 @@ tbody td:first-child { font-weight: 500; }
   color: var(--mets-blue);
 }
 
+.pick-summary {
+  font-size: 0.92rem;
+  color: #3d4461;
+  margin-bottom: 0.6rem;
+  line-height: 1.65;
+}
+
+.pick-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0d2461;
+}
+
+.matchup-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e4e8f0;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  margin-bottom: 1.5rem;
+}
+
+.team-logo-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.team-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.team-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #0d2461;
+  text-align: center;
+}
+
+.vs-block {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #cdd2de;
+}
+
+.opponent-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.history-team-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 /* =====================
    RECENT GAMES
    ===================== */
@@ -455,4 +520,22 @@ footer {
   .tracker-bar span:last-child { margin-left: 0; }
 
   .glossary dl { grid-template-columns: 1fr; }
+
+  .matchup-bar {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .team-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .team-name {
+    font-size: 0.82rem;
+  }
+
+  .vs-block {
+    font-size: 1.1rem;
+  }
 }

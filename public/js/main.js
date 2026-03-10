@@ -4,8 +4,51 @@ async function loadGameData() {
   return data.games;
 }
 
+const ESPN_LOGO = {
+  "St. Louis Cardinals": "stl",
+  "Atlanta Braves": "atl",
+  "Washington Nationals": "wsh",
+  "Philadelphia Phillies": "phi",
+  "Miami Marlins": "mia",
+  "Chicago Cubs": "chc",
+  "Milwaukee Brewers": "mil",
+  "Cincinnati Reds": "cin",
+  "Pittsburgh Pirates": "pit",
+  "San Francisco Giants": "sf",
+  "Los Angeles Dodgers": "lad",
+  "San Diego Padres": "sd"
+};
+
+function getTeamLogoUrl(teamName) {
+  const slug = ESPN_LOGO[teamName];
+  return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
+}
+
+function getTeamLogoAlt(teamName) {
+  const slug = ESPN_LOGO[teamName];
+  return slug ? slug.toUpperCase() : teamName;
+}
+
+function buildMatchupBar(game) {
+  const oppLogo = getTeamLogoUrl(game.opponent);
+  const oppAlt = getTeamLogoAlt(game.opponent);
+  return `
+    <div class="matchup-bar">
+      <div class="team-logo-block">
+        <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" class="team-logo" alt="NYM">
+        <span class="team-name">New York Mets</span>
+      </div>
+      <div class="vs-block">VS</div>
+      <div class="team-logo-block">
+        <img src="${oppLogo}" class="team-logo" alt="${oppAlt}">
+        <span class="team-name">${game.opponent}</span>
+      </div>
+    </div>`;
+}
+
 function buildMatchupTable(game) {
   return `
+    ${buildMatchupBar(game)}
     <div class="table-wrap">
       <div class="table-container">
         <div class="section-title">Matchup Overview</div>
@@ -136,13 +179,17 @@ function buildWriteup(game) {
   const sections = game.writeup.sections.map(s => `
     <h3>${s.heading}</h3>
     <p>${s.body}</p>`).join("");
+  const pickSummary = game.writeup.pickSummary || game.writeup.officialPick || "";
   return `
     <div class="analysis-writeup">
       <div class="section-title">Game Analysis</div>
       <div class="analysis-body">
         ${sections}
       </div>
-      <div class="pick-banner">${game.writeup.officialPick}</div>
+      <div class="pick-banner">
+        <p class="pick-summary">${pickSummary}</p>
+        <p class="pick-label">Today's Pick: <strong>New York Mets Moneyline</strong></p>
+      </div>
     </div>`;
 }
 
