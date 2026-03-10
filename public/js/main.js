@@ -21,6 +21,18 @@ const ESPN_LOGO = {
   "San Diego Padres": "sd"
 };
 
+const DEFAULT_METS_LINEUP = [
+  { order: 1, name: "Brandon Nimmo", pos: "CF", hand: "L" },
+  { order: 2, name: "Francisco Lindor", pos: "SS", hand: "S" },
+  { order: 3, name: "Juan Soto", pos: "LF", hand: "L" },
+  { order: 4, name: "Pete Alonso", pos: "1B", hand: "R" },
+  { order: 5, name: "Mark Vientos", pos: "3B", hand: "R" },
+  { order: 6, name: "Francisco Alvarez", pos: "C", hand: "R" },
+  { order: 7, name: "Starling Marte", pos: "RF", hand: "R" },
+  { order: 8, name: "Jeff McNeil", pos: "2B", hand: "L" },
+  { order: 9, name: "pitcher slot", pos: "P", hand: "-" }
+];
+
 function getTeamLogoUrl(teamName) {
   const slug = ESPN_LOGO[teamName];
   return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
@@ -51,6 +63,10 @@ function getMetsPitchingStat(liveValue, playerName, stat) {
 
 function getMetsHitterSeasonOps(player) {
   return isMissingStat(player.seasonOPS) ? get2025PlayerStat(player.name, "hitters", "OPS") : player.seasonOPS;
+}
+
+function getLineupLast14Ops(player) {
+  return isMissingStat(player.last14OPS) ? "N/A" : player.last14OPS;
 }
 
 function shouldShowPreseasonBanner(game) {
@@ -155,10 +171,14 @@ function buildPitchingTable(game) {
 }
 
 function buildLineupsTable(game) {
-  const l = game.lineups;
+  const l = game.lineups || {};
+  const metsLineup = Array.isArray(l.mets) && l.mets.length > 0 ? l.mets : DEFAULT_METS_LINEUP;
+  const oppLineup = Array.isArray(l.opp) ? l.opp : [];
   const statusLabel = l.status === "confirmed" ? "Confirmed Lineups" : "Projected Lineups";
-  const metsRows = l.mets.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${getMetsHitterSeasonOps(p)}</td><td>${p.last14OPS}</td></tr>`).join("");
-  const oppRows = l.opp.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${p.seasonOPS}</td><td>${p.last14OPS}</td></tr>`).join("");
+  const metsRows = metsLineup.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${getMetsHitterSeasonOps(p)}</td><td>${Array.isArray(l.mets) && l.mets.length > 0 ? getLineupLast14Ops(p) : "N/A"}</td></tr>`).join("");
+  const oppRows = oppLineup.length > 0
+    ? oppLineup.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${p.seasonOPS}</td><td>${p.last14OPS}</td></tr>`).join("")
+    : `<tr><td colspan="6">Lineup TBD</td></tr>`;
   return `
     <div class="table-wrap">
       <div class="table-container">
