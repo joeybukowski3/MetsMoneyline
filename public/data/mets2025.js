@@ -34,6 +34,47 @@ const METS_2025 = {
   teamOAA: 8,
   sbAllowed: 94,
 
+  leagueAvg2025: {
+    teamOPS: 0.737,
+    teamWRC_plus: 100,
+    teamAVG: 0.244,
+    kPct: 22.8,
+    bbPct: 8.3,
+    hardHitPct: 38.1,
+    barrelPct: 8.4,
+    rotationERA: 4.21,
+    rotationFIP: 4.18,
+    rotationWHIP: 1.29,
+    rotationKper9: 8.7,
+    bullpenERA: 4.09,
+    bullpenxFIP: 4.01,
+    teamDRS: 0,
+    teamOAA: 0
+  },
+
+  opponents2025: {
+    "St. Louis Cardinals": {
+      teamOPS: 0.718, teamWRC_plus: 96, teamAVG: 0.239, rotationERA: 4.44,
+      bullpenERA: 4.31, teamDRS: -4, teamOAA: -3
+    },
+    "Atlanta Braves": {
+      teamOPS: 0.761, teamWRC_plus: 108, teamAVG: 0.253, rotationERA: 3.98,
+      bullpenERA: 3.87, teamDRS: 9, teamOAA: 6
+    },
+    "Washington Nationals": {
+      teamOPS: 0.694, teamWRC_plus: 89, teamAVG: 0.231, rotationERA: 4.71,
+      bullpenERA: 4.58, teamDRS: -8, teamOAA: -6
+    },
+    "Philadelphia Phillies": {
+      teamOPS: 0.769, teamWRC_plus: 112, teamAVG: 0.258, rotationERA: 3.84,
+      bullpenERA: 3.76, teamDRS: 6, teamOAA: 5
+    },
+    "Miami Marlins": {
+      teamOPS: 0.681, teamWRC_plus: 85, teamAVG: 0.228, rotationERA: 4.89,
+      bullpenERA: 4.72, teamDRS: -11, teamOAA: -9
+    }
+  },
+
   // Key starters (2025 final)
   starters: {
     "David Peterson": { ERA: 3.47, FIP: 3.61, xFIP: 3.55, WHIP: 1.19, KBB: 3.8 },
