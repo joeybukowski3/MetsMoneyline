@@ -119,14 +119,25 @@ nav {
    HERO BANNER
    ===================== */
 .hero-banner {
-  /* dark overlay over a navy gradient; swap in a real photo via url() */
-  background: linear-gradient(135deg, rgba(0, 20, 60, 0.92) 0%, rgba(0, 45, 114, 0.88) 50%, rgba(20, 20, 20, 0.95) 100%),
-              linear-gradient(160deg, #001a4d 0%, #0a0a1a 100%);
+  position: relative;
+  background-image: url('../hero.png');
+  background-size: cover;
+  background-position: center top;
   padding: 4.5rem 1.5rem 4rem;
   text-align: center;
 }
 
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 20, 60, 0.72);
+  z-index: 0;
+}
+
 .hero-content {
+  position: relative;
+  z-index: 1;
   max-width: 680px;
   margin: 0 auto;
 }
