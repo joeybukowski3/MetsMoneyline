@@ -101,8 +101,6 @@ function buildMatchupBar(game) {
 
 function buildMatchupTable(game) {
   return `
-    ${buildPreseasonBanner(game)}
-    ${buildMatchupBar(game)}
     <div class="table-wrap">
       <div class="table-container">
         <div class="section-title">Matchup Overview</div>
@@ -126,7 +124,7 @@ function buildPitchingTable(game) {
   const p = game.pitching;
   const metsStarterName = p.mets.name;
   return `
-    <div class="table-wrap">
+    <div class="table-wrap tile-wide">
       <div class="table-container">
         <div class="section-title">Starting Pitching &amp; Bullpens</div>
         <table>
@@ -180,7 +178,7 @@ function buildLineupsTable(game) {
     ? oppLineup.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${p.seasonOPS}</td><td>${p.last14OPS}</td></tr>`).join("")
     : `<tr><td colspan="6">Lineup TBD</td></tr>`;
   return `
-    <div class="table-wrap">
+    <div class="table-wrap tile-wide">
       <div class="table-container">
         <div class="section-title">${statusLabel}</div>
         <table>
@@ -243,15 +241,20 @@ function buildWriteup(game) {
     <p>${s.body}</p>`).join("");
   const pickSummary = game.writeup.pickSummary || game.writeup.officialPick || "";
   return `
-    <div class="analysis-writeup">
+    <div class="analysis-writeup tile-wide">
       <div class="section-title">Game Analysis</div>
       <div class="analysis-body">
         ${sections}
       </div>
-      <div class="pick-banner">
-        <p class="pick-summary">${pickSummary}</p>
-        <p class="pick-label">Today's Pick: <strong>New York Mets Moneyline</strong></p>
-      </div>
+    </div>`;
+}
+
+function buildPickBanner(game) {
+  const pickSummary = game.writeup.pickSummary || game.writeup.officialPick || "";
+  return `
+    <div class="pick-banner tile-full">
+      <p class="pick-summary">${pickSummary}</p>
+      <p class="pick-label">Today's Pick: <strong>New York Mets Moneyline</strong></p>
     </div>`;
 }
 
@@ -278,12 +281,17 @@ async function init() {
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
+    buildPreseasonBanner(todayGame) +
+    buildMatchupBar(todayGame) +
+    '<div class="tile-grid">' +
     buildMatchupTable(todayGame) +
     buildPitchingTable(todayGame) +
     buildLineupsTable(todayGame) +
     buildAdvancedTable(todayGame) +
     buildTrendsTable(todayGame) +
-    buildWriteup(todayGame);
+    buildWriteup(todayGame) +
+    buildPickBanner(todayGame) +
+    "</div>";
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games);
 }
