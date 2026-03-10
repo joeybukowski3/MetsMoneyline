@@ -74,6 +74,7 @@
     const historyData = [{date:"2026-04-03",opp:"Washington Nationals",score:"W 5-2",market:"Mets ML",odds:-145,result:"W"},{date:"2026-04-04",opp:"Washington Nationals",score:"W 3-1",market:"Mets ML",odds:-138,result:"W"},{date:"2026-04-05",opp:"Washington Nationals",score:"L 2-4",market:"Mets First 5 ML",odds:-112,result:"W"},{date:"2026-04-07",opp:"Atlanta Braves",score:"W 7-3",market:"Mets ML",odds:+104,result:"W"},{date:"2026-04-08",opp:"Atlanta Braves",score:"L 1-3",market:"Mets +1.5",odds:-168,result:"W"},{date:"2026-04-09",opp:"Atlanta Braves",score:"W 4-2",market:"Mets ML",odds:-118,result:"W"}];
     function calcPL(odds) { if (odds < 0) return parseFloat((100 / Math.abs(odds) * 100).toFixed(2)); return parseFloat((odds / 100 * 100).toFixed(2)); }
     function formatDate(dateStr) { return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); }
+    function isSpringTrainingDate(dateStr) { return new Date(dateStr + "T00:00:00") < new Date("2026-04-02T00:00:00"); }
     function getTeamLogoUrl(teamName) {
       const slug = ESPN_LOGO[teamName];
       return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
@@ -89,8 +90,9 @@
       const plClass = pl >= 0 ? "text-profit" : "text-loss";
       const plPrefix = pl >= 0 ? "+$" : "-$";
       const logoUrl = getTeamLogoUrl(g.opp);
+      const springBadge = isSpringTrainingDate(g.date) ? ` <span class="badge badge-spring">ST</span>` : "";
       const opponentCell = logoUrl
-        ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${g.opp}"><span>${g.opp}</span></div>`
+        ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${g.opp}"><span>${g.opp}${springBadge}</span></div>`
         : g.opp;
       return `<tr><td>${formatDate(g.date)}</td><td>${opponentCell}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td><span class="${resultClass}">${g.result}</span></td><td class="${plClass}">${plPrefix}${Math.abs(pl).toFixed(2)}</td></tr>`;
     });

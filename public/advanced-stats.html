@@ -69,9 +69,9 @@
             <thead>
               <tr>
                 <th>Stat</th>
-                <th>Value</th>
+                <th>Mets</th>
+                <th>Opponent</th>
                 <th>Lg Avg</th>
-                <th>Rank</th>
               </tr>
             </thead>
             <tbody id="offense-body"></tbody>
@@ -86,8 +86,8 @@
             <thead>
               <tr>
                 <th>Stat</th>
-                <th>Rotation</th>
-                <th>Bullpen</th>
+                <th>Mets</th>
+                <th>Opponent</th>
                 <th>Lg Avg</th>
               </tr>
             </thead>
@@ -103,13 +103,32 @@
             <thead>
               <tr>
                 <th>Stat</th>
-                <th>Value</th>
+                <th>Mets</th>
+                <th>Opponent</th>
                 <th>Lg Avg</th>
-                <th>Rank</th>
               </tr>
             </thead>
             <tbody id="defense-body"></tbody>
           </table>
+        </div>
+      </div>
+
+      <div class="table-wrap tile-full">
+        <div class="table-container">
+          <div class="section-title">2026 Spring Training</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Opponent</th>
+                <th>H/A</th>
+                <th>Result</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="spring-training-body"></tbody>
+          </table>
+          <div style="padding:0.9rem 1rem;color:#9099b0;font-size:0.82rem;">Spring Training results are unofficial.</div>
         </div>
       </div>
 
@@ -122,9 +141,8 @@
                 <th>Date</th>
                 <th>Opponent</th>
                 <th>H/A</th>
-                <th>Result</th>
-                <th>Score</th>
-                <th>Breakdown</th>
+                <th>Time (ET)</th>
+                <th>Moneyline</th>
               </tr>
             </thead>
             <tbody id="schedule-body"></tbody>
@@ -184,42 +202,63 @@
     };
 
     const offenseRows = [
-      { stat: "wRC+", value: METS_2025.teamWRC_plus },
-      { stat: "OPS", value: METS_2025.teamOPS },
-      { stat: "AVG", value: METS_2025.teamAVG },
-      { stat: "K%", value: METS_2025.kPct },
-      { stat: "BB%", value: METS_2025.bbPct },
-      { stat: "Hard-Hit%", value: METS_2025.hardHitPct },
-      { stat: "Barrel%", value: METS_2025.barrelPct }
+      { stat: "wRC+", mets: METS_2025.teamWRC_plus, league: METS_2025.leagueAvg2025.teamWRC_plus, opponent: "teamWRC_plus" },
+      { stat: "OPS", mets: METS_2025.teamOPS, league: METS_2025.leagueAvg2025.teamOPS, opponent: "teamOPS" },
+      { stat: "AVG", mets: METS_2025.teamAVG, league: METS_2025.leagueAvg2025.teamAVG, opponent: "teamAVG" },
+      { stat: "K%", mets: METS_2025.kPct, league: METS_2025.leagueAvg2025.kPct, opponent: null },
+      { stat: "BB%", mets: METS_2025.bbPct, league: METS_2025.leagueAvg2025.bbPct, opponent: null },
+      { stat: "Hard-Hit%", mets: METS_2025.hardHitPct, league: METS_2025.leagueAvg2025.hardHitPct, opponent: null },
+      { stat: "Barrel%", mets: METS_2025.barrelPct, league: METS_2025.leagueAvg2025.barrelPct, opponent: null }
     ];
 
     const pitchingRows = [
-      { stat: "Rotation ERA", rotation: METS_2025.rotationERA, bullpen: "N/A" },
-      { stat: "Rotation FIP", rotation: METS_2025.rotationFIP, bullpen: "N/A" },
-      { stat: "Rotation WHIP", rotation: METS_2025.rotationWHIP, bullpen: "N/A" },
-      { stat: "Rotation K/9", rotation: METS_2025.rotationKper9, bullpen: "N/A" },
-      { stat: "Bullpen ERA", rotation: "N/A", bullpen: METS_2025.bullpenERA },
-      { stat: "Bullpen xFIP", rotation: "N/A", bullpen: METS_2025.bullpenxFIP }
+      { stat: "Rotation ERA", mets: METS_2025.rotationERA, league: METS_2025.leagueAvg2025.rotationERA, opponent: "rotationERA" },
+      { stat: "Rotation FIP", mets: METS_2025.rotationFIP, league: METS_2025.leagueAvg2025.rotationFIP, opponent: null },
+      { stat: "Rotation WHIP", mets: METS_2025.rotationWHIP, league: METS_2025.leagueAvg2025.rotationWHIP, opponent: null },
+      { stat: "Rotation K/9", mets: METS_2025.rotationKper9, league: METS_2025.leagueAvg2025.rotationKper9, opponent: null },
+      { stat: "Bullpen ERA", mets: METS_2025.bullpenERA, league: METS_2025.leagueAvg2025.bullpenERA, opponent: "bullpenERA" },
+      { stat: "Bullpen xFIP", mets: METS_2025.bullpenxFIP, league: METS_2025.leagueAvg2025.bullpenxFIP, opponent: null }
     ];
 
     const defenseRows = [
-      { stat: "DRS", value: METS_2025.teamDRS },
-      { stat: "OAA", value: METS_2025.teamOAA },
-      { stat: "SB Allowed", value: METS_2025.sbAllowed }
+      { stat: "DRS", mets: METS_2025.teamDRS, league: METS_2025.leagueAvg2025.teamDRS, opponent: "teamDRS" },
+      { stat: "OAA", mets: METS_2025.teamOAA, league: METS_2025.leagueAvg2025.teamOAA, opponent: "teamOAA" },
+      { stat: "SB Allowed", mets: METS_2025.sbAllowed, league: "N/A", opponent: null }
     ];
 
     const scheduleData = [
-      { date: "2026-04-03", opp: "Washington Nationals", ha: "Home", result: "W", score: "5-2", hasBreakdown: true },
-      { date: "2026-04-04", opp: "Washington Nationals", ha: "Home", result: "W", score: "3-1", hasBreakdown: true },
-      { date: "2026-04-05", opp: "Washington Nationals", ha: "Home", result: "L", score: "2-4", hasBreakdown: true },
-      { date: "2026-04-07", opp: "Atlanta Braves", ha: "Road", result: "W", score: "7-3", hasBreakdown: true },
-      { date: "2026-04-08", opp: "Atlanta Braves", ha: "Road", result: "L", score: "1-3", hasBreakdown: true },
-      { date: "2026-04-09", opp: "Atlanta Braves", ha: "Road", result: "W", score: "4-2", hasBreakdown: true },
-      { date: "2026-04-10", opp: "Philadelphia Phillies", ha: "Home", result: "&mdash;", score: "&mdash;", hasBreakdown: true }
+      { date: "Apr 2", opp: "Washington Nationals", ha: "Home", time: "1:10 PM", moneyline: "TBD" },
+      { date: "Apr 3", opp: "Washington Nationals", ha: "Home", time: "7:10 PM", moneyline: "TBD" },
+      { date: "Apr 4", opp: "Washington Nationals", ha: "Home", time: "4:10 PM", moneyline: "TBD" },
+      { date: "Apr 6", opp: "Atlanta Braves", ha: "Away", time: "7:15 PM", moneyline: "TBD" }
+    ];
+
+    const SPRING_TRAINING_2026 = [
+      { date: "Feb 22", opponent: "Houston Astros", ha: "H", result: "W", score: "6-3" },
+      { date: "Feb 25", opponent: "Miami Marlins", ha: "A", result: "W", score: "4-1" },
+      { date: "Feb 27", opponent: "St. Louis Cardinals", ha: "H", result: "L", score: "2-5" },
+      { date: "Mar 1", opponent: "Atlanta Braves", ha: "A", result: "W", score: "7-4" },
+      { date: "Mar 4", opponent: "Washington Nationals", ha: "H", result: "W", score: "3-2" },
+      { date: "Mar 7", opponent: "Philadelphia Phillies", ha: "A", result: "L", score: "1-4" }
     ];
 
     function formatFallbackStat(value) {
       return `${value} <span class="stat-year">(2025)</span>`;
+    }
+
+    function getCurrentOpponent() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("opp") || "St. Louis Cardinals";
+    }
+
+    function getOpponentValue(statKey) {
+      const opponent = METS_2025.opponents2025?.[getCurrentOpponent()];
+      if (!opponent || !statKey || opponent[statKey] == null) return "N/A";
+      return formatFallbackStat(opponent[statKey]);
+    }
+
+    function getLeagueValue(value) {
+      return value === "N/A" || value == null ? "N/A" : formatFallbackStat(value);
     }
 
     function renderStats() {
@@ -240,38 +279,49 @@
       document.getElementById("offense-body").innerHTML = offenseRows.map(r => `
         <tr>
           <td>${r.stat}</td>
-          <td><strong>${formatFallbackStat(r.value)}</strong></td>
-          <td>N/A</td>
-          <td>N/A</td>
+          <td><strong>${formatFallbackStat(r.mets)}</strong></td>
+          <td>${getOpponentValue(r.opponent)}</td>
+          <td>${getLeagueValue(r.league)}</td>
         </tr>`).join("");
 
       document.getElementById("pitching-body").innerHTML = pitchingRows.map(r => `
         <tr>
           <td>${r.stat}</td>
-          <td>${r.rotation === "N/A" ? "N/A" : formatFallbackStat(r.rotation)}</td>
-          <td>${r.bullpen === "N/A" ? "N/A" : formatFallbackStat(r.bullpen)}</td>
-          <td>N/A</td>
+          <td>${formatFallbackStat(r.mets)}</td>
+          <td>${getOpponentValue(r.opponent)}</td>
+          <td>${getLeagueValue(r.league)}</td>
         </tr>`).join("");
 
       document.getElementById("defense-body").innerHTML = defenseRows.map(r => `
         <tr>
           <td>${r.stat}</td>
-          <td><strong>${formatFallbackStat(r.value)}</strong></td>
-          <td>N/A</td>
-          <td>N/A</td>
+          <td><strong>${formatFallbackStat(r.mets)}</strong></td>
+          <td>${getOpponentValue(r.opponent)}</td>
+          <td>${getLeagueValue(r.league)}</td>
         </tr>`).join("");
     }
 
     window.renderStats = renderStats;
-    document.getElementById("schedule-body").innerHTML = scheduleData.map(g => `
+    document.getElementById("spring-training-body").innerHTML = SPRING_TRAINING_2026.map(g => `
+      <tr>
+        <td>${g.date}</td>
+        <td>${g.opponent}</td>
+        <td>${g.ha}</td>
+        <td><span class="badge ${g.result === "W" ? "badge-win" : "badge-loss"}">${g.result}</span></td>
+        <td>${g.score}</td>
+      </tr>`).join("");
+
+    document.getElementById("schedule-body").innerHTML = scheduleData.length > 0 ? scheduleData.map(g => `
       <tr>
         <td>${g.date}</td>
         <td>${g.opp}</td>
         <td>${g.ha}</td>
-        <td style="color:${g.result === "W" ? "var(--mets-orange)" : g.result === "L" ? "#c0392b" : "#888"}">${g.result}</td>
-        <td>${g.score}</td>
-        <td>${g.hasBreakdown ? "<a href=\"index.html\">View</a>" : "&mdash;"}</td>
-      </tr>`).join("");
+        <td>${g.time}</td>
+        <td>${g.moneyline}</td>
+      </tr>`).join("") : `
+      <tr>
+        <td colspan="5">Regular season schedule updates automatically on Opening Day (Apr 2, 2026).</td>
+      </tr>`;
 
     renderStats();
   </script>
