@@ -1,3 +1,5 @@
+import METS_2025 from "../data/mets2025.js";
+
 async function loadGameData() {
   const res = await fetch("data/sample-game.json");
   const data = await res.json();
@@ -29,6 +31,41 @@ function getTeamLogoAlt(teamName) {
   return slug ? slug.toUpperCase() : teamName;
 }
 
+function isMissingStat(value) {
+  return value == null || value === "" || value === "N/A";
+}
+
+function formatFallbackStat(value) {
+  return `${value} <span class="stat-year">(2025)</span>`;
+}
+
+function get2025PlayerStat(name, group, stat) {
+  const entry = METS_2025[group]?.[name];
+  if (!entry || entry[stat] == null) return "N/A";
+  return `${entry[stat]} <span class="stat-year">(2025)</span>`;
+}
+
+function getMetsPitchingStat(liveValue, playerName, stat) {
+  return isMissingStat(liveValue) ? get2025PlayerStat(playerName, "starters", stat) : liveValue;
+}
+
+function getMetsHitterSeasonOps(player) {
+  return isMissingStat(player.seasonOPS) ? get2025PlayerStat(player.name, "hitters", "OPS") : player.seasonOPS;
+}
+
+function shouldShowPreseasonBanner(game) {
+  return isMissingStat(game.pitching?.mets?.seasonERA) ||
+    game.lineups?.mets?.some(player => isMissingStat(player.seasonOPS) && METS_2025.hitters?.[player.name]);
+}
+
+function buildPreseasonBanner(game) {
+  if (!shouldShowPreseasonBanner(game)) return "";
+  return `
+    <div class="preseason-banner">
+      2026 season stats are not yet fully available. Matched Mets player and team values may use 2025 baselines for context.
+    </div>`;
+}
+
 function buildMatchupBar(game) {
   const oppLogo = getTeamLogoUrl(game.opponent);
   const oppAlt = getTeamLogoAlt(game.opponent);
@@ -48,6 +85,7 @@ function buildMatchupBar(game) {
 
 function buildMatchupTable(game) {
   return `
+    ${buildPreseasonBanner(game)}
     ${buildMatchupBar(game)}
     <div class="table-wrap">
       <div class="table-container">
@@ -70,18 +108,22 @@ function buildMatchupTable(game) {
 
 function buildPitchingTable(game) {
   const p = game.pitching;
+  const metsStarterName = p.mets.name;
   return `
     <div class="table-wrap">
       <div class="table-container">
         <div class="section-title">Starting Pitching &amp; Bullpens</div>
         <table>
-          <thead><tr><th></th><th>Starter</th><th>Hand</th><th>Season ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>Last 3 ERA</th><th>Last 3 FIP</th><th>K/BB</th></tr></thead>
+          <thead><tr><th></th><th>Starter</th><th>Hand</th><th>Season ERA</th><th>FIP</th><th>xFIP</th><th>WHIP</th><th>Last 3 ERA</th><th>Last 3 FIP</th><th>K/BB</th></tr></thead>
           <tbody>
             <tr>
               <td><strong>Mets</strong></td>
               <td>${p.mets.name}</td><td>${p.mets.hand}</td>
-              <td>${p.mets.seasonERA}</td><td>${p.mets.seasonFIP}</td><td>${p.mets.seasonXERA}</td><td>${p.mets.seasonWHIP}</td>
-              <td>${p.mets.last3ERA}</td><td>${p.mets.last3FIP}</td><td>${p.mets.last3KBB}</td>
+              <td>${getMetsPitchingStat(p.mets.seasonERA, metsStarterName, "ERA")}</td>
+              <td>${getMetsPitchingStat(p.mets.seasonFIP, metsStarterName, "FIP")}</td>
+              <td>${getMetsPitchingStat(p.mets.seasonXERA, metsStarterName, "xFIP")}</td>
+              <td>${getMetsPitchingStat(p.mets.seasonWHIP, metsStarterName, "WHIP")}</td>
+              <td>${p.mets.last3ERA}</td><td>${p.mets.last3FIP}</td><td>${getMetsPitchingStat(p.mets.last3KBB, metsStarterName, "KBB")}</td>
             </tr>
             <tr>
               <td><strong>Opp</strong></td>
@@ -115,7 +157,7 @@ function buildPitchingTable(game) {
 function buildLineupsTable(game) {
   const l = game.lineups;
   const statusLabel = l.status === "confirmed" ? "Confirmed Lineups" : "Projected Lineups";
-  const metsRows = l.mets.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${p.seasonOPS}</td><td>${p.last14OPS}</td></tr>`).join("");
+  const metsRows = l.mets.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${getMetsHitterSeasonOps(p)}</td><td>${p.last14OPS}</td></tr>`).join("");
   const oppRows = l.opp.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${p.seasonOPS}</td><td>${p.last14OPS}</td></tr>`).join("");
   return `
     <div class="table-wrap">

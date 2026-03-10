@@ -7,6 +7,18 @@ const path = require("path");
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TEAM_ID = 121;
 
+let cachedMets2025 = null;
+
+async function loadMets2025() {
+  if (cachedMets2025) return cachedMets2025;
+  const dataPath = path.join(__dirname, "../public/data/mets2025.js");
+  const source = fs.readFileSync(dataPath, "utf8");
+  const match = source.match(/const METS_2025 = ([\s\S]*);\s*export default METS_2025;/);
+  if (!match) throw new Error("Unable to parse METS_2025 fallback data.");
+  cachedMets2025 = Function(`return (${match[1]});`)();
+  return cachedMets2025;
+}
+
 async function getMetsSchedule() {
   const today = new Date().toISOString().split("T")[0];
   const url = `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${TEAM_ID}&startDate=${today}&endDate=${today}&hydrate=team,linescore,probablePitcher`;
@@ -94,6 +106,26 @@ function parseWriteup(rawText) {
 }
 
 async function generateAnalysis(gameData) {
+  const mets2025 = await loadMets2025();
+  const baselineLines = [];
+  const starterName = gameData.pitching?.mets?.name;
+
+  if (starterName && mets2025.starters?.[starterName]) {
+    const s = mets2025.starters[starterName];
+    baselineLines.push(`- ${starterName}: ERA ${s.ERA}, FIP ${s.FIP}, xFIP ${s.xFIP}, WHIP ${s.WHIP}, K/BB ${s.KBB}`);
+  }
+
+  for (const hitter of gameData.lineups?.mets || []) {
+    const stats = mets2025.hitters?.[hitter.name];
+    if (stats) {
+      baselineLines.push(`- ${hitter.name}: AVG ${stats.AVG}, OPS ${stats.OPS}, wRC+ ${stats.wRC_plus}, HR ${stats.HR}`);
+    }
+  }
+
+  const baselineContext = baselineLines.length
+    ? `Note: 2026 season stats are not yet available. Use the following 2025 baseline stats for context in your analysis:\n${baselineLines.join("\n")}\n`
+    : "";
+
   const prompt = `You are writing a daily Mets game breakdown for a baseball analysis website. Your tone is front-office analytical, serious, and mostly dry.
 
 STRICT RULES:
@@ -115,6 +147,7 @@ STRICT RULES:
 - No hedging language in the PICK_SUMMARY line. No disclaimer language.
 - End with exactly this on its own line: OFFICIAL_PICK: Today's Pick: New York Mets Moneyline
 
+${baselineContext}
 GAME DATA:
 ${JSON.stringify(gameData, null, 2)}
 

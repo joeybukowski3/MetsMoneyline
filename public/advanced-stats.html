@@ -27,6 +27,10 @@
       <p>Team snapshots, rolling splits, and schedule context for the current season.</p>
     </div>
 
+    <div class="preseason-banner">
+      2026 season stats are not yet fully available. Mets values fall back to verified 2025 baselines where needed; opponent fields stay N/A until live data is available.
+    </div>
+
     <div class="filter-bar">
       <label for="timeFilter">View:</label>
       <select id="timeFilter" onchange="renderStats()">
@@ -162,8 +166,66 @@
     <p>This is informational analysis of Mets games; not financial or wagering advice.</p>
   </footer>
 
-  <script>
-    const statsData={season:{overview:[{record:"4-3",runDiff:"+11",division:"NL East",gb:"-0.5",home:"3-1",road:"1-2",last10:"7-3"}],offense:[{stat:"wRC+",value:112,lgAvg:100,rank:"5th"},{stat:"xwOBA",value:0.338,lgAvg:0.315,rank:"4th"},{stat:"Hard-Hit %",value:"42.1%",lgAvg:"38.0%",rank:"6th"},{stat:"Barrel %",value:"9.2%",lgAvg:"8.1%",rank:"7th"},{stat:"BB%",value:"9.1%",lgAvg:"8.5%",rank:"8th"},{stat:"K%",value:"21.3%",lgAvg:"22.8%",rank:"9th"},{stat:"Team OPS",value:0.821,lgAvg:0.738,rank:"3rd"}],pitching:[{stat:"ERA",rotation:3.21,bullpen:3.45,lgAvg:4.10},{stat:"FIP",rotation:2.98,bullpen:3.38,lgAvg:4.05},{stat:"xERA",rotation:3.05,bullpen:3.41,lgAvg:4.08},{stat:"WHIP",rotation:1.09,bullpen:1.22,lgAvg:1.31},{stat:"K%",rotation:"26.4%",bullpen:"24.1%",lgAvg:"22.8%"},{stat:"BB%",rotation:"7.1%",bullpen:"8.3%",lgAvg:"8.5%"}],defense:[{stat:"DRS",value:"+12",lgAvg:"0",rank:"4th"},{stat:"OAA",value:"+8",lgAvg:"0",rank:"5th"},{stat:"BsR",value:"+3.2",lgAvg:"0",rank:"6th"},{stat:"UZR/150",value:"+4.1",lgAvg:"0",rank:"7th"}]},"30":{overview:[{record:"17-13",runDiff:"+18",division:"NL East",gb:"-1.0",home:"10-5",road:"7-8",last10:"7-3"}],offense:[{stat:"wRC+",value:118,lgAvg:100,rank:"3rd"},{stat:"xwOBA",value:0.344,lgAvg:0.315,rank:"3rd"},{stat:"Hard-Hit %",value:"43.8%",lgAvg:"38.0%",rank:"4th"},{stat:"Barrel %",value:"9.8%",lgAvg:"8.1%",rank:"5th"},{stat:"BB%",value:"9.4%",lgAvg:"8.5%",rank:"6th"},{stat:"K%",value:"20.8%",lgAvg:"22.8%",rank:"7th"},{stat:"Team OPS",value:0.844,lgAvg:0.738,rank:"2nd"}],pitching:[{stat:"ERA",rotation:3.01,bullpen:3.12,lgAvg:4.10},{stat:"FIP",rotation:2.88,bullpen:3.21,lgAvg:4.05},{stat:"xERA",rotation:2.94,bullpen:3.28,lgAvg:4.08},{stat:"WHIP",rotation:1.04,bullpen:1.18,lgAvg:1.31},{stat:"K%",rotation:"27.1%",bullpen:"25.3%",lgAvg:"22.8%"},{stat:"BB%",rotation:"6.8%",bullpen:"7.9%",lgAvg:"8.5%"}],defense:[{stat:"DRS",value:"+7",lgAvg:"0",rank:"3rd"},{stat:"OAA",value:"+5",lgAvg:"0",rank:"4th"},{stat:"BsR",value:"+1.8",lgAvg:"0",rank:"5th"},{stat:"UZR/150",value:"+3.8",lgAvg:"0",rank:"6th"}]},"14":{overview:[{record:"8-6",runDiff:"+9",division:"NL East",gb:"-0.5",home:"5-2",road:"3-4",last10:"7-3"}],offense:[{stat:"wRC+",value:121,lgAvg:100,rank:"2nd"},{stat:"xwOBA",value:0.351,lgAvg:0.315,rank:"2nd"},{stat:"Hard-Hit %",value:"44.2%",lgAvg:"38.0%",rank:"3rd"},{stat:"Barrel %",value:"10.1%",lgAvg:"8.1%",rank:"3rd"},{stat:"BB%",value:"9.8%",lgAvg:"8.5%",rank:"4th"},{stat:"K%",value:"20.1%",lgAvg:"22.8%",rank:"5th"},{stat:"Team OPS",value:0.861,lgAvg:0.738,rank:"1st"}],pitching:[{stat:"ERA",rotation:2.88,bullpen:2.94,lgAvg:4.10},{stat:"FIP",rotation:2.71,bullpen:3.01,lgAvg:4.05},{stat:"xERA",rotation:2.81,bullpen:3.11,lgAvg:4.08},{stat:"WHIP",rotation:1.01,bullpen:1.12,lgAvg:1.31},{stat:"K%",rotation:"28.0%",bullpen:"26.1%",lgAvg:"22.8%"},{stat:"BB%",rotation:"6.4%",bullpen:"7.4%",lgAvg:"8.5%"}],defense:[{stat:"DRS",value:"+4",lgAvg:"0",rank:"3rd"},{stat:"OAA",value:"+3",lgAvg:"0",rank:"4th"},{stat:"BsR",value:"+1.1",lgAvg:"0",rank:"5th"},{stat:"UZR/150",value:"+3.2",lgAvg:"0",rank:"6th"}]}};const scheduleData=[{date:"2026-04-03",opp:"Washington Nationals",ha:"Home",result:"W",score:"5-2",hasBreakdown:true},{date:"2026-04-04",opp:"Washington Nationals",ha:"Home",result:"W",score:"3-1",hasBreakdown:true},{date:"2026-04-05",opp:"Washington Nationals",ha:"Home",result:"L",score:"2-4",hasBreakdown:true},{date:"2026-04-07",opp:"Atlanta Braves",ha:"Road",result:"W",score:"7-3",hasBreakdown:true},{date:"2026-04-08",opp:"Atlanta Braves",ha:"Road",result:"L",score:"1-3",hasBreakdown:true},{date:"2026-04-09",opp:"Atlanta Braves",ha:"Road",result:"W",score:"4-2",hasBreakdown:true},{date:"2026-04-10",opp:"Philadelphia Phillies",ha:"Home",result:"&mdash;",score:"&mdash;",hasBreakdown:true}];function renderStats(){const f=document.getElementById("timeFilter").value;const d=statsData[f];document.getElementById("overview-body").innerHTML=d.overview.map(r=>`<tr><td>${r.record}</td><td>${r.runDiff}</td><td>${r.division}</td><td>${r.gb}</td><td>${r.home}</td><td>${r.road}</td><td>${r.last10}</td></tr>`).join("");document.getElementById("offense-body").innerHTML=d.offense.map(r=>`<tr><td>${r.stat}</td><td><strong>${r.value}</strong></td><td>${r.lgAvg}</td><td>${r.rank}</td></tr>`).join("");document.getElementById("pitching-body").innerHTML=d.pitching.map(r=>`<tr><td>${r.stat}</td><td>${r.rotation}</td><td>${r.bullpen}</td><td>${r.lgAvg}</td></tr>`).join("");document.getElementById("defense-body").innerHTML=d.defense.map(r=>`<tr><td>${r.stat}</td><td><strong>${r.value}</strong></td><td>${r.lgAvg}</td><td>${r.rank}</td></tr>`).join("");}
+  <script type="module">
+    import METS_2025 from "./data/mets2025.js";
+
+    const statsData={season:{overview:[{record:"4-3",runDiff:"+11",division:"NL East",gb:"-0.5",home:"3-1",road:"1-2",last10:"7-3"}],offense:[{stat:"wRC+",value:112,lgAvg:100,rank:"5th"},{stat:"xwOBA",value:0.338,lgAvg:0.315,rank:"4th"},{stat:"Hard-Hit %",value:"42.1%",lgAvg:"38.0%",rank:"6th"},{stat:"Barrel %",value:"9.2%",lgAvg:"8.1%",rank:"7th"},{stat:"BB%",value:"9.1%",lgAvg:"8.5%",rank:"8th"},{stat:"K%",value:"21.3%",lgAvg:"22.8%",rank:"9th"},{stat:"Team OPS",value:0.821,lgAvg:0.738,rank:"3rd"}],pitching:[{stat:"ERA",rotation:3.21,bullpen:3.45,lgAvg:4.10},{stat:"FIP",rotation:2.98,bullpen:3.38,lgAvg:4.05},{stat:"xERA",rotation:3.05,bullpen:3.41,lgAvg:4.08},{stat:"WHIP",rotation:1.09,bullpen:1.22,lgAvg:1.31},{stat:"K%",rotation:"26.4%",bullpen:"24.1%",lgAvg:"22.8%"},{stat:"BB%",rotation:"7.1%",bullpen:"8.3%",lgAvg:"8.5%"}],defense:[{stat:"DRS",value:"+12",lgAvg:"0",rank:"4th"},{stat:"OAA",value:"+8",lgAvg:"0",rank:"5th"},{stat:"BsR",value:"+3.2",lgAvg:"0",rank:"6th"},{stat:"UZR/150",value:"+4.1",lgAvg:"0",rank:"7th"}]},"30":{overview:[{record:"17-13",runDiff:"+18",division:"NL East",gb:"-1.0",home:"10-5",road:"7-8",last10:"7-3"}],offense:[{stat:"wRC+",value:118,lgAvg:100,rank:"3rd"},{stat:"xwOBA",value:0.344,lgAvg:0.315,rank:"3rd"},{stat:"Hard-Hit %",value:"43.8%",lgAvg:"38.0%",rank:"4th"},{stat:"Barrel %",value:"9.8%",lgAvg:"8.1%",rank:"5th"},{stat:"BB%",value:"9.4%",lgAvg:"8.5%",rank:"6th"},{stat:"K%",value:"20.8%",lgAvg:"22.8%",rank:"7th"},{stat:"Team OPS",value:0.844,lgAvg:0.738,rank:"2nd"}],pitching:[{stat:"ERA",rotation:3.01,bullpen:3.12,lgAvg:4.10},{stat:"FIP",rotation:2.88,bullpen:3.21,lgAvg:4.05},{stat:"xERA",rotation:2.94,bullpen:3.28,lgAvg:4.08},{stat:"WHIP",rotation:1.04,bullpen:1.18,lgAvg:1.31},{stat:"K%",rotation:"27.1%",bullpen:"25.3%",lgAvg:"22.8%"},{stat:"BB%",rotation:"6.8%",bullpen:"7.9%",lgAvg:"8.5%"}],defense:[{stat:"DRS",value:"+7",lgAvg:"0",rank:"3rd"},{stat:"OAA",value:"+5",lgAvg:"0",rank:"4th"},{stat:"BsR",value:"+1.8",lgAvg:"0",rank:"5th"},{stat:"UZR/150",value:"+3.8",lgAvg:"0",rank:"6th"}]},"14":{overview:[{record:"8-6",runDiff:"+9",division:"NL East",gb:"-0.5",home:"5-2",road:"3-4",last10:"7-3"}],offense:[{stat:"wRC+",value:121,lgAvg:100,rank:"2nd"},{stat:"xwOBA",value:0.351,lgAvg:0.315,rank:"2nd"},{stat:"Hard-Hit %",value:"44.2%",lgAvg:"38.0%",rank:"3rd"},{stat:"Barrel %",value:"10.1%",lgAvg:"8.1%",rank:"3rd"},{stat:"BB%",value:"9.8%",lgAvg:"8.5%",rank:"4th"},{stat:"K%",value:"20.1%",lgAvg:"22.8%",rank:"5th"},{stat:"Team OPS",value:0.861,lgAvg:0.738,rank:"1st"}],pitching:[{stat:"ERA",rotation:2.88,bullpen:2.94,lgAvg:4.10},{stat:"FIP",rotation:2.71,bullpen:3.01,lgAvg:4.05},{stat:"xERA",rotation:2.81,bullpen:3.11,lgAvg:4.08},{stat:"WHIP",rotation:1.01,bullpen:1.12,lgAvg:1.31},{stat:"K%",rotation:"28.0%",bullpen:"26.1%",lgAvg:"22.8%"},{stat:"BB%",rotation:"6.4%",bullpen:"7.4%",lgAvg:"8.5%"}],defense:[{stat:"DRS",value:"+4",lgAvg:"0",rank:"3rd"},{stat:"OAA",value:"+3",lgAvg:"0",rank:"4th"},{stat:"BsR",value:"+1.1",lgAvg:"0",rank:"5th"},{stat:"UZR/150",value:"+3.2",lgAvg:"0",rank:"6th"}]}};const scheduleData=[{date:"2026-04-03",opp:"Washington Nationals",ha:"Home",result:"W",score:"5-2",hasBreakdown:true},{date:"2026-04-04",opp:"Washington Nationals",ha:"Home",result:"W",score:"3-1",hasBreakdown:true},{date:"2026-04-05",opp:"Washington Nationals",ha:"Home",result:"L",score:"2-4",hasBreakdown:true},{date:"2026-04-07",opp:"Atlanta Braves",ha:"Road",result:"W",score:"7-3",hasBreakdown:true},{date:"2026-04-08",opp:"Atlanta Braves",ha:"Road",result:"L",score:"1-3",hasBreakdown:true},{date:"2026-04-09",opp:"Atlanta Braves",ha:"Road",result:"W",score:"4-2",hasBreakdown:true},{date:"2026-04-10",opp:"Philadelphia Phillies",ha:"Home",result:"&mdash;",score:"&mdash;",hasBreakdown:true}];
+    const OFFENSE_FALLBACKS = {
+      "wRC+": "teamWRC_plus",
+      "Hard-Hit %": "hardHitPct",
+      "Barrel %": "barrelPct",
+      "BB%": "bbPct",
+      "K%": "kPct",
+      "Team OPS": "teamOPS"
+    };
+
+    const PITCHING_FALLBACKS = {
+      ERA: { rotation: "rotationERA", bullpen: "bullpenERA" },
+      FIP: { rotation: "rotationFIP", bullpen: null },
+      xERA: { rotation: "rotationxFIP", bullpen: "bullpenxFIP" },
+      WHIP: { rotation: "rotationWHIP", bullpen: null },
+      "K%": { rotation: null, bullpen: null },
+      "BB%": { rotation: null, bullpen: null }
+    };
+
+    const DEFENSE_FALLBACKS = {
+      DRS: "teamDRS",
+      OAA: "teamOAA"
+    };
+
+    function isMissingStat(value) {
+      return value == null || value === "" || value === "N/A";
+    }
+
+    function formatFallbackStat(value) {
+      return `${value} <span class="stat-year">(2025)</span>`;
+    }
+
+    function getTeamFallback(statKey) {
+      const value = METS_2025[statKey];
+      return value == null ? "N/A" : formatFallbackStat(value);
+    }
+
+    function getOffenseValue(row) {
+      if (!isMissingStat(row.value)) return row.value;
+      const fallbackKey = OFFENSE_FALLBACKS[row.stat];
+      return fallbackKey ? getTeamFallback(fallbackKey) : row.value;
+    }
+
+    function getPitchingValue(row, side) {
+      if (!isMissingStat(row[side])) return row[side];
+      const fallbackKey = PITCHING_FALLBACKS[row.stat]?.[side];
+      return fallbackKey ? getTeamFallback(fallbackKey) : row[side];
+    }
+
+    function getDefenseValue(row) {
+      if (!isMissingStat(row.value)) return row.value;
+      const fallbackKey = DEFENSE_FALLBACKS[row.stat];
+      return fallbackKey ? getTeamFallback(fallbackKey) : row.value;
+    }
+
+    function renderStats(){const f=document.getElementById("timeFilter").value;const d=statsData[f];document.getElementById("overview-body").innerHTML=d.overview.map(r=>`<tr><td>${r.record}</td><td>${r.runDiff}</td><td>${r.division}</td><td>${r.gb}</td><td>${r.home}</td><td>${r.road}</td><td>${r.last10}</td></tr>`).join("");document.getElementById("offense-body").innerHTML=d.offense.map(r=>`<tr><td>${r.stat}</td><td><strong>${getOffenseValue(r)}</strong></td><td>${r.lgAvg}</td><td>${r.rank}</td></tr>`).join("");document.getElementById("pitching-body").innerHTML=d.pitching.map(r=>`<tr><td>${r.stat}</td><td>${getPitchingValue(r,"rotation")}</td><td>${getPitchingValue(r,"bullpen")}</td><td>${r.lgAvg}</td></tr>`).join("");document.getElementById("defense-body").innerHTML=d.defense.map(r=>`<tr><td>${r.stat}</td><td><strong>${getDefenseValue(r)}</strong></td><td>${r.lgAvg}</td><td>${r.rank}</td></tr>`).join("");}
+    window.renderStats = renderStats;
     document.getElementById("schedule-body").innerHTML=scheduleData.map(g=>`<tr><td>${g.date}</td><td>${g.opp}</td><td>${g.ha}</td><td style="color:${g.result==="W"?"var(--mets-orange)":g.result==="L"?"#c0392b":"#888"}">${g.result}</td><td>${g.score}</td><td>${g.hasBreakdown?"<a href="index.html">View</a>":"&mdash;"}</td></tr>`).join("");
     renderStats();
   </script>
