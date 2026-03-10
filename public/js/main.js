@@ -188,13 +188,19 @@ function buildPitchingCard(game) {
 
         <!-- Pitcher name header row -->
         <div class="pitching-col-left">
-          <div class="pg-name">${p.mets.name}</div>
-          <div class="pg-label">NYM &middot; ${p.mets.hand}HP</div>
+          <div class="pitcher-header-block">
+            ${p.mets.mlbId ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/${p.mets.mlbId}/headshot/67/current" class="pitcher-headshot" alt="${p.mets.name}" onerror="this.style.display='none'">` : ""}
+            <div class="pg-name">${p.mets.name}</div>
+            <div class="pg-label">NYM &middot; ${p.mets.hand}HP</div>
+          </div>
         </div>
         <div class="pitching-col-mid"></div>
         <div class="pitching-col-right">
-          <div class="pg-name">${p.opp.name}</div>
-          <div class="pg-label">OPP &middot; ${p.opp.hand}HP</div>
+          <div class="pitcher-header-block">
+            ${p.opp.mlbId ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/${p.opp.mlbId}/headshot/67/current" class="pitcher-headshot" alt="${p.opp.name}" onerror="this.style.display='none'">` : ""}
+            <div class="pg-name">${p.opp.name}</div>
+            <div class="pg-label">OPP &middot; ${p.opp.hand}HP</div>
+          </div>
         </div>
 
         ${row(mERA,  "ERA",        oERA)}
@@ -216,6 +222,24 @@ function buildPitchingCard(game) {
         ${row(bpMetsXFIP,  "xFIP",      bpOppXFIP)}
         ${row(bpMets14ERA, "Last 14d",  bpOpp14ERA)}
         ${row(`${bpMetsRating}/100`, "Rating", `${bpOppRating}/100`)}
+
+        ${(p.mets.savant || p.opp.savant) ? `
+        <!-- Statcast divider -->
+        <div class="pitching-section-divider">Statcast (2025)</div>
+
+        <!-- Statcast team labels -->
+        <div class="pitching-col-left" style="color:#9099b0;font-size:0.78rem;font-weight:600;">NYM</div>
+        <div class="pitching-col-mid"></div>
+        <div class="pitching-col-right" style="color:#9099b0;font-size:0.78rem;font-weight:600;">OPP</div>
+
+        ${row(p.mets.savant?.xERA      ?? "N/A", "xERA",     p.opp.savant?.xERA      ?? "N/A")}
+        ${row(p.mets.savant?.barrelPct ?? "N/A", "Barrel%",  p.opp.savant?.barrelPct ?? "N/A")}
+        ${row(p.mets.savant?.hardHitPct ?? "N/A", "Hard-Hit%", p.opp.savant?.hardHitPct ?? "N/A")}
+        ${row(p.mets.savant?.whiffPct  ?? "N/A", "Whiff%",   p.opp.savant?.whiffPct  ?? "N/A")}
+        ${row(p.mets.savant?.chasePct  ?? "N/A", "Chase%",   p.opp.savant?.chasePct  ?? "N/A")}
+        ${row(p.mets.savant?.kPct      ?? "N/A", "K%",       p.opp.savant?.kPct      ?? "N/A")}
+        ${row(p.mets.savant?.bbPct     ?? "N/A", "BB%",      p.opp.savant?.bbPct     ?? "N/A")}
+        ` : ""}
 
       </div>
     </div>`;

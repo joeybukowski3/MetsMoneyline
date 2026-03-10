@@ -3,6 +3,7 @@ require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const axios = require("axios");
 const OpenAI = require("openai");
 const fs = require("fs");
+const { parse } = require("csv-parse/sync");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TEAM_ID = 121; // New York Mets
@@ -169,6 +170,58 @@ function extractPitcherSummary(statsData) {
     last3ERA,
     last3KBB
   };
+}
+
+// ─────────────────────────────────────────────
+// STEP 3b — Baseball Savant stats via CSV
+// ─────────────────────────────────────────────
+
+async function getSavantStats(mlbId, name) {
+  if (!mlbId) return null;
+  const url =
+    `https://baseballsavant.mlb.com/statcast_search/csv` +
+    `?player_type=pitcher&player_id=${mlbId}&season=2025&type=details&group_by=name`;
+  try {
+    const res = await axios.get(url, { timeout: 15000, responseType: "text" });
+    const text = res.data;
+    if (!text || text.trim().length < 20) return null;
+
+    const rows = parse(text, { columns: true, skip_empty_lines: true, relax_quotes: true });
+    if (!rows || rows.length === 0) return null;
+
+    // Aggregate numeric columns across all rows for this pitcher
+    const toNum = (v) => { const n = parseFloat(v); return isNaN(n) ? null : n; };
+    const avg = (col) => {
+      const vals = rows.map(r => toNum(r[col])).filter(v => v !== null);
+      if (!vals.length) return null;
+      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    };
+
+    // Attempt known Savant column names
+    const xERA      = avg("estimated_era_using_speedangle") ?? avg("xera") ?? avg("x_era");
+    const barrelPct = avg("barrel_batted_rate") ?? avg("barrel_per_pa") ?? avg("barrel");
+    const hardHit   = avg("hard_hit_percent") ?? avg("launch_speed_90th") ?? null;
+    const whiffPct  = avg("whiff_percent") ?? avg("swinging_strike_percent") ?? null;
+    const chasePct  = avg("out_zone_swing_percent") ?? avg("o_swing_percent") ?? null;
+    const kPct      = avg("k_percent") ?? avg("strikeout_percent") ?? null;
+    const bbPct     = avg("bb_percent") ?? avg("walk_percent") ?? null;
+
+    const fmt = (v, decimals = 1) => v !== null ? v.toFixed(decimals) : "N/A";
+
+    console.log(`  Savant stats fetched for ${name || mlbId}`);
+    return {
+      xERA:      fmt(xERA, 2),
+      barrelPct: fmt(barrelPct),
+      hardHitPct: fmt(hardHit),
+      whiffPct:  fmt(whiffPct),
+      chasePct:  fmt(chasePct),
+      kPct:      fmt(kPct),
+      bbPct:     fmt(bbPct)
+    };
+  } catch (err) {
+    console.warn(`  [warn] Savant stats for ${name || mlbId} failed: ${err.message}`);
+    return null;
+  }
 }
 
 // ─────────────────────────────────────────────
@@ -376,6 +429,13 @@ async function buildGameObject(game, standings) {
     getPitcherStats(oppPitcher?.id,  oppPitcher?.fullName)
   ]);
 
+  // STEP 3b: Savant stats
+  console.log(`Fetching Savant stats...`);
+  const [metsSavant, oppSavant] = await Promise.all([
+    getSavantStats(metsPitcher?.id, metsPitcher?.fullName),
+    getSavantStats(oppPitcher?.id,  oppPitcher?.fullName)
+  ]);
+
   const metsRecord = extractTeamRecord(standings, TEAM_ID);
   const oppRecord  = extractTeamRecord(standings, oppTeam.team.id);
   const metsPStats = extractPitcherSummary(metsPitcherStats);
@@ -403,6 +463,7 @@ async function buildGameObject(game, standings) {
     pitching: {
       mets: {
         name:        metsPitcher?.fullName || "TBD",
+        mlbId:       metsPitcher?.id || null,
         hand:        metsHand,
         seasonERA:   metsPStats.seasonERA,
         seasonFIP:   metsPStats.seasonFIP,
@@ -414,10 +475,12 @@ async function buildGameObject(game, standings) {
         last3WHIP:   "N/A",
         last3KBB:    metsPStats.last3KBB,
         last3IP:     "N/A",
-        note:        ""
+        note:        "",
+        savant:      metsSavant
       },
       opp: {
         name:        oppPitcher?.fullName || "TBD",
+        mlbId:       oppPitcher?.id || null,
         hand:        oppHand,
         seasonERA:   oppPStats.seasonERA,
         seasonFIP:   oppPStats.seasonFIP,
@@ -429,7 +492,8 @@ async function buildGameObject(game, standings) {
         last3WHIP:   "N/A",
         last3KBB:    oppPStats.last3KBB,
         last3IP:     "N/A",
-        note:        ""
+        note:        "",
+        savant:      oppSavant
       },
       metsBullpen: { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 70 },
       oppBullpen:  { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 65 }

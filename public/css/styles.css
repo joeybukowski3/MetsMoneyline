@@ -590,6 +590,25 @@ main, .page-content {
   align-items: center;
 }
 
+.pitcher-headshot {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e4e8f0;
+  margin-bottom: 0.5rem;
+  border: 2px solid var(--border);
+}
+
+.pitcher-header-block {
+  display: flex;
+  flex-direction: column;
+  align-items: inherit; /* inherits left/right alignment from parent column */
+}
+
+.pitching-col-left .pitcher-header-block { align-items: flex-end; }
+.pitching-col-right .pitcher-header-block { align-items: flex-start; }
+
 /* =====================
    ROW 3 GRID (lineups + advanced metrics)
    ===================== */
