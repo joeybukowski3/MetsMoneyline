@@ -22,15 +22,15 @@ const ESPN_LOGO = {
 };
 
 const DEFAULT_METS_LINEUP = [
-  { order: 1, name: "Brandon Nimmo", pos: "CF", hand: "L" },
-  { order: 2, name: "Francisco Lindor", pos: "SS", hand: "S" },
-  { order: 3, name: "Juan Soto", pos: "LF", hand: "L" },
-  { order: 4, name: "Pete Alonso", pos: "1B", hand: "R" },
-  { order: 5, name: "Mark Vientos", pos: "3B", hand: "R" },
-  { order: 6, name: "Francisco Alvarez", pos: "C", hand: "R" },
-  { order: 7, name: "Starling Marte", pos: "RF", hand: "R" },
-  { order: 8, name: "Jeff McNeil", pos: "2B", hand: "L" },
-  { order: 9, name: "pitcher slot", pos: "P", hand: "-" }
+  { order: 1, name: "Brandon Nimmo",      pos: "CF", hand: "L" },
+  { order: 2, name: "Francisco Lindor",   pos: "SS", hand: "S" },
+  { order: 3, name: "Juan Soto",          pos: "LF", hand: "L" },
+  { order: 4, name: "Pete Alonso",        pos: "1B", hand: "R" },
+  { order: 5, name: "Mark Vientos",       pos: "3B", hand: "R" },
+  { order: 6, name: "Francisco Alvarez",  pos: "C",  hand: "R" },
+  { order: 7, name: "Starling Marte",     pos: "RF", hand: "R" },
+  { order: 8, name: "Jeff McNeil",        pos: "2B", hand: "L" },
+  { order: 9, name: "pitcher slot",       pos: "P",  hand: "-" }
 ];
 
 function getTeamLogoUrl(teamName) {
@@ -38,17 +38,8 @@ function getTeamLogoUrl(teamName) {
   return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
 }
 
-function getTeamLogoAlt(teamName) {
-  const slug = ESPN_LOGO[teamName];
-  return slug ? slug.toUpperCase() : teamName;
-}
-
 function isMissingStat(value) {
   return value == null || value === "" || value === "N/A";
-}
-
-function formatFallbackStat(value) {
-  return `${value} <span class="stat-year">(2025)</span>`;
 }
 
 function get2025PlayerStat(name, group, stat) {
@@ -62,151 +53,289 @@ function getMetsPitchingStat(liveValue, playerName, stat) {
 }
 
 function getMetsHitterSeasonOps(player) {
-  return isMissingStat(player.seasonOPS) ? get2025PlayerStat(player.name, "hitters", "OPS") : player.seasonOPS;
+  return isMissingStat(player.seasonOPS)
+    ? get2025PlayerStat(player.name, "hitters", "OPS")
+    : player.seasonOPS;
 }
 
-function getLineupLast14Ops(player) {
-  return isMissingStat(player.last14OPS) ? "N/A" : player.last14OPS;
-}
-
-function shouldShowPreseasonBanner(game) {
-  return isMissingStat(game.pitching?.mets?.seasonERA) ||
-    game.lineups?.mets?.some(player => isMissingStat(player.seasonOPS) && METS_2025.hitters?.[player.name]);
-}
-
-function buildPreseasonBanner(game) {
-  if (!shouldShowPreseasonBanner(game)) return "";
-  return `
-    <div class="preseason-banner">
-      2026 season stats are not yet fully available. Matched Mets player and team values may use 2025 baselines for context.
-    </div>`;
-}
-
-function buildMatchupBar(game) {
+/* ── Matchup Strip ── */
+function buildMatchupStrip(game) {
   const oppLogo = getTeamLogoUrl(game.opponent);
-  const oppAlt = getTeamLogoAlt(game.opponent);
+  const metsML  = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
+  const oppML   = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
   return `
-    <div class="matchup-bar">
-      <div class="team-logo-block">
+    <div class="matchup-strip">
+      <div class="team-block home">
         <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" class="team-logo" alt="NYM">
-        <span class="team-name">New York Mets</span>
+        <div class="team-name">New York Mets</div>
+        <div class="team-record">${game.metsRecord} &nbsp;|&nbsp; ML ${metsML}</div>
       </div>
-      <div class="vs-block">VS</div>
-      <div class="team-logo-block">
-        <img src="${oppLogo}" class="team-logo" alt="${oppAlt}">
-        <span class="team-name">${game.opponent}</span>
+      <div class="matchup-vs-block">
+        <span class="matchup-vs-label">vs</span>
+        <span class="matchup-vs-time">${game.time}</span>
+        <span class="matchup-vs-venue">${game.ballpark}</span>
+      </div>
+      <div class="team-block away">
+        ${oppLogo ? `<img src="${oppLogo}" class="team-logo" alt="${game.opponent}">` : ""}
+        <div class="team-name">${game.opponent}</div>
+        <div class="team-record">${game.oppRecord} &nbsp;|&nbsp; ML ${oppML}</div>
       </div>
     </div>`;
 }
 
-function buildMatchupTable(game) {
+/* ── Matchup Overview Card ── */
+function buildMatchupCard(game) {
+  const metsML = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
+  const oppML  = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
+  const ou     = game.overUnder ? game.overUnder : (game.runLine ? `Run Line: ${game.runLine.mets} (${game.runLine.price > 0 ? "+" : ""}${game.runLine.price})` : "N/A");
   return `
-    <div class="table-wrap">
-      <div class="table-container">
-        <div class="section-title">Matchup Overview</div>
-        <table>
-          <thead><tr><th>Date</th><th>Time</th><th>Ballpark</th><th>Opponent</th><th>Mets</th><th>Opponent</th><th>Moneyline (NYM / OPP)</th></tr></thead>
-          <tbody><tr>
-            <td>${game.date}</td>
-            <td>${game.time}</td>
-            <td>${game.ballpark}</td>
-            <td>${game.opponent}</td>
-            <td>${game.metsRecord}</td>
-            <td>${game.oppRecord}</td>
-            <td>${game.moneyline.mets > 0 ? "+" : ""}${game.moneyline.mets} / ${game.moneyline.opp > 0 ? "+" : ""}${game.moneyline.opp}</td>
-          </tr></tbody>
-        </table>
-      </div>
+    <div class="card">
+      <div class="card-header">Matchup Overview</div>
+      <ul class="info-list">
+        <li>
+          <span class="info-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </span>
+          <span>
+            <span class="info-label">Date &amp; Time</span>
+            <span class="info-value">${game.date} &nbsp;&bull;&nbsp; <span style="color:var(--orange)">${game.time}</span></span>
+          </span>
+        </li>
+        <li>
+          <span class="info-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </span>
+          <span>
+            <span class="info-label">Location</span>
+            <span class="info-value">${game.ballpark}</span>
+          </span>
+        </li>
+        <li>
+          <span class="info-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </span>
+          <span>
+            <span class="info-label">Moneyline</span>
+            <span class="info-value">NYM <span class="highlight">${metsML}</span> &nbsp;/&nbsp; OPP ${oppML}</span>
+          </span>
+        </li>
+        <li>
+          <span class="info-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </span>
+          <span>
+            <span class="info-label">Run Line / O&amp;U</span>
+            <span class="info-value">${ou}</span>
+          </span>
+        </li>
+        <li>
+          <span class="info-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </span>
+          <span>
+            <span class="info-label">Home / Away</span>
+            <span class="info-value">${game.homeAway === "home" ? "Mets at Home" : "Mets on the Road"}</span>
+          </span>
+        </li>
+      </ul>
     </div>`;
 }
 
-function buildPitchingTable(game) {
-  const p = game.pitching;
-  const metsStarterName = p.mets.name;
+/* ── Starting Pitching Card ── */
+function buildPitchingCard(game) {
+  const p    = game.pitching;
+  const mn   = p.mets.name;
+  const mERA  = getMetsPitchingStat(p.mets.seasonERA,  mn, "ERA");
+  const mFIP  = getMetsPitchingStat(p.mets.seasonFIP,  mn, "FIP");
+  const mWHIP = getMetsPitchingStat(p.mets.seasonWHIP, mn, "WHIP");
+  const mKBB  = getMetsPitchingStat(p.mets.last3KBB,   mn, "KBB");
+  const mL3   = p.mets.last3ERA;
+
+  const bpMetsERA  = p.metsBullpen?.seasonERA  ?? "N/A";
+  const bpMetsXFIP = p.metsBullpen?.seasonXFIP ?? "N/A";
+  const bpOppERA   = p.oppBullpen?.seasonERA   ?? "N/A";
+  const bpOppXFIP  = p.oppBullpen?.seasonXFIP  ?? "N/A";
+  const bpMetsRating = p.metsBullpen?.rating ?? "—";
+  const bpOppRating  = p.oppBullpen?.rating  ?? "—";
+
   return `
-    <div class="table-wrap tile-wide">
-      <div class="table-container">
-        <div class="section-title">Starting Pitching &amp; Bullpens</div>
-        <table>
-          <thead><tr><th></th><th>Starter</th><th>Hand</th><th>Season ERA</th><th>FIP</th><th>xFIP</th><th>WHIP</th><th>Last 3 ERA</th><th>Last 3 FIP</th><th>K/BB</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>Mets</strong></td>
-              <td>${p.mets.name}</td><td>${p.mets.hand}</td>
-              <td>${getMetsPitchingStat(p.mets.seasonERA, metsStarterName, "ERA")}</td>
-              <td>${getMetsPitchingStat(p.mets.seasonFIP, metsStarterName, "FIP")}</td>
-              <td>${getMetsPitchingStat(p.mets.seasonXERA, metsStarterName, "xFIP")}</td>
-              <td>${getMetsPitchingStat(p.mets.seasonWHIP, metsStarterName, "WHIP")}</td>
-              <td>${p.mets.last3ERA}</td><td>${p.mets.last3FIP}</td><td>${getMetsPitchingStat(p.mets.last3KBB, metsStarterName, "KBB")}</td>
-            </tr>
-            <tr>
-              <td><strong>Opp</strong></td>
-              <td>${p.opp.name}</td><td>${p.opp.hand}</td>
-              <td>${p.opp.seasonERA}</td><td>${p.opp.seasonFIP}</td><td>${p.opp.seasonXERA}</td><td>${p.opp.seasonWHIP}</td>
-              <td>${p.opp.last3ERA}</td><td>${p.opp.last3FIP}</td><td>${p.opp.last3KBB}</td>
-            </tr>
-          </tbody>
-        </table>
-        <table style="margin-top:1px;">
-          <thead><tr><th></th><th>Bullpen Season ERA</th><th>Season xFIP</th><th>Last 14d ERA</th><th>Last 3d IP</th><th>Rating</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>Mets</strong></td>
-              <td>${p.metsBullpen.seasonERA}</td><td>${p.metsBullpen.seasonXFIP}</td>
-              <td>${p.metsBullpen.last14ERA}</td><td>${p.metsBullpen.last3DaysIP}</td>
-              <td>${p.metsBullpen.rating}/100</td>
-            </tr>
-            <tr>
-              <td><strong>Opp</strong></td>
-              <td>${p.oppBullpen.seasonERA}</td><td>${p.oppBullpen.seasonXFIP}</td>
-              <td>${p.oppBullpen.last14ERA}</td><td>${p.oppBullpen.last3DaysIP}</td>
-              <td>${p.oppBullpen.rating}/100</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="card">
+      <div class="card-header">Starting Pitching</div>
+      <div class="pitcher-comparison">
+        <div class="pitcher-col">
+          <div class="pitcher-team-label mets-label">NYM</div>
+          <div class="pitcher-name mets-name">${p.mets.name}</div>
+          <div class="pitcher-hand">${p.mets.hand}HP</div>
+          <div class="pitcher-stats">
+            <div class="pitcher-stat-row"><span class="stat-label">Season ERA</span><span class="stat-val">${mERA}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">FIP</span><span class="stat-val">${mFIP}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">WHIP</span><span class="stat-val">${mWHIP}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">K/BB</span><span class="stat-val">${mKBB}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">Last 3 ERA</span><span class="stat-val">${mL3}</span></div>
+          </div>
+        </div>
+        <div class="pitcher-col">
+          <div class="pitcher-team-label opp-label">OPP</div>
+          <div class="pitcher-name opp-name">${p.opp.name}</div>
+          <div class="pitcher-hand">${p.opp.hand}HP</div>
+          <div class="pitcher-stats">
+            <div class="pitcher-stat-row"><span class="stat-label">Season ERA</span><span class="stat-val">${p.opp.seasonERA}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">FIP</span><span class="stat-val">${p.opp.seasonFIP}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">WHIP</span><span class="stat-val">${p.opp.seasonWHIP}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">K/BB</span><span class="stat-val">${p.opp.last3KBB}</span></div>
+            <div class="pitcher-stat-row"><span class="stat-label">Last 3 ERA</span><span class="stat-val">${p.opp.last3ERA}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="bullpen-row">
+        <div class="bp-label">Bullpen</div>
+        <div class="bp-mets">
+          <div style="font-weight:700;font-size:0.8rem;">NYM</div>
+          <div class="bp-stat-mini">ERA ${bpMetsERA} &nbsp;&bull;&nbsp; xFIP ${bpMetsXFIP} &nbsp;&bull;&nbsp; Rating ${bpMetsRating}/100</div>
+        </div>
+        <div class="bp-opp">
+          <div style="font-weight:700;font-size:0.8rem;">OPP</div>
+          <div class="bp-stat-mini">ERA ${bpOppERA} &nbsp;&bull;&nbsp; xFIP ${bpOppXFIP} &nbsp;&bull;&nbsp; Rating ${bpOppRating}/100</div>
+        </div>
       </div>
     </div>`;
 }
 
-function buildLineupsTable(game) {
+/* ── Advanced Metrics Card ── */
+function buildAdvancedCard(game) {
+  const rows = game.advancedMatchup.map(r => {
+    const edgeColor = r.edge === "Mets"
+      ? "color:var(--orange);font-weight:700"
+      : r.edge === "Neutral"
+        ? "color:#9099b0"
+        : "color:#c0392b;font-weight:700";
+    return `<tr>
+      <td>${r.category}</td>
+      <td>${r.mets}</td>
+      <td>${r.opp}</td>
+      <td style="${edgeColor}">${r.edge}</td>
+    </tr>`;
+  }).join("");
+
+  // Find the top Mets edge for the callout
+  const topEdge = game.advancedMatchup.find(r => r.edge === "Mets");
+  const edgeCallout = topEdge
+    ? `<div class="edge-callout">Key Edge: ${topEdge.category} — NYM ${topEdge.mets} vs OPP ${topEdge.opp}</div>`
+    : `<div class="edge-callout neutral">No clear statistical edge identified</div>`;
+
+  return `
+    <div class="card">
+      <div class="card-header">Advanced Metrics</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Metric</th><th>NYM</th><th>OPP</th><th>Edge</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      ${edgeCallout}
+    </div>`;
+}
+
+/* ── Lineup Grid (Mets + Opp + Game Analysis) ── */
+function buildLineupGrid(game) {
   const l = game.lineups || {};
   const metsLineup = Array.isArray(l.mets) && l.mets.length > 0 ? l.mets : DEFAULT_METS_LINEUP;
-  const oppLineup = Array.isArray(l.opp) ? l.opp : [];
-  const statusLabel = l.status === "confirmed" ? "Confirmed Lineups" : "Projected Lineups";
-  const metsRows = metsLineup.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${getMetsHitterSeasonOps(p)}</td><td>${Array.isArray(l.mets) && l.mets.length > 0 ? getLineupLast14Ops(p) : "N/A"}</td></tr>`).join("");
+  const oppLineup  = Array.isArray(l.opp)  ? l.opp : [];
+  const statusLabel = l.status === "confirmed" ? "Confirmed" : "Projected";
+
+  const metsRows = metsLineup.map(p => `
+    <tr>
+      <td>${p.order}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td>${p.pos}</td>
+      <td>${p.hand}</td>
+      <td>${getMetsHitterSeasonOps(p)}</td>
+    </tr>`).join("");
+
   const oppRows = oppLineup.length > 0
-    ? oppLineup.map(p => `<tr><td>${p.order}</td><td>${p.name}</td><td>${p.pos}</td><td>${p.hand}</td><td>${p.seasonOPS}</td><td>${p.last14OPS}</td></tr>`).join("")
-    : `<tr><td colspan="6">Lineup TBD</td></tr>`;
+    ? oppLineup.map(p => `
+    <tr>
+      <td>${p.order}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td>${p.pos}</td>
+      <td>${p.hand}</td>
+      <td>${p.seasonOPS ?? "N/A"}</td>
+    </tr>`).join("")
+    : `<tr><td colspan="5" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
+
+  // Game Analysis — use first 3 writeup sections mapped to labels
+  const sectionLabels = ["Offensive Matchup", "Pitching Matchup", "Key Edge"];
+  const sections = game.writeup?.sections ?? [];
+  const analysisSections = [0, 1, 2].map(i => {
+    const s = sections[i];
+    if (!s) return "";
+    const label = sectionLabels[i] || s.heading;
+    return `
+      <div class="analysis-section">
+        <div class="analysis-section-label">${label}</div>
+        <p>${s.body}</p>
+      </div>`;
+  }).join("");
+
   return `
-    <div class="table-wrap tile-wide">
-      <div class="table-container">
-        <div class="section-title">${statusLabel}</div>
-        <table>
-          <thead><tr><th colspan="6" class="text-mets">New York Mets</th></tr>
-          <tr><th>#</th><th>Player</th><th>Pos</th><th>Hand</th><th>Season OPS</th><th>Last 14d OPS</th></tr></thead>
-          <tbody>${metsRows}</tbody>
-        </table>
-        <table style="margin-top:1px;">
-          <thead><tr><th colspan="6" class="text-opp">${game.opponent}</th></tr>
-          <tr><th>#</th><th>Player</th><th>Pos</th><th>Hand</th><th>Season OPS</th><th>Last 14d OPS</th></tr></thead>
-          <tbody>${oppRows}</tbody>
-        </table>
+    <div class="lineup-grid">
+      <div class="card">
+        <div class="card-header">${statusLabel} Lineup — Mets</div>
+        <div class="lineup-team-header mets-header">New York Mets</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>Hand</th><th>OPS</th></tr></thead>
+            <tbody>${metsRows}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">${statusLabel} Lineup — ${game.opponent}</div>
+        <div class="lineup-team-header opp-header">${game.opponent}</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>Hand</th><th>OPS</th></tr></thead>
+            <tbody>${oppRows}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">Game Analysis</div>
+        ${analysisSections}
       </div>
     </div>`;
 }
 
-function buildAdvancedTable(game) {
-  const rows = game.advancedMatchup.map(r => `
-    <tr>
+/* ── Trends Card (full-width) ── */
+function buildTrendsCard(game) {
+  if (!game.trends || game.trends.length === 0) return "";
+  const rows = game.trends.map(r => {
+    const edgeColor = r.edge === "Mets"
+      ? "color:var(--orange);font-weight:700"
+      : r.edge === "Neutral"
+        ? "color:#9099b0"
+        : "color:#c0392b;font-weight:700";
+    return `<tr>
       <td>${r.category}</td>
       <td>${r.mets}</td>
       <td>${r.opp}</td>
-      <td style="color:${r.edge === "Mets" ? "var(--mets-orange)" : r.edge === "Neutral" ? "#888" : "#c0392b"}">${r.edge}</td>
-    </tr>`).join("");
+      <td style="${edgeColor}">${r.edge}</td>
+    </tr>`;
+  }).join("");
   return `
-    <div class="table-wrap">
-      <div class="table-container">
-        <div class="section-title">Advanced Matchup Metrics</div>
+    <div class="card full-card">
+      <div class="card-header">Schedule &amp; Trend Notes</div>
+      <div class="table-wrap">
         <table>
           <thead><tr><th>Category</th><th>Mets</th><th>Opponent</th><th>Edge</th></tr></thead>
           <tbody>${rows}</tbody>
@@ -215,63 +344,50 @@ function buildAdvancedTable(game) {
     </div>`;
 }
 
-function buildTrendsTable(game) {
-  const rows = game.trends.map(r => `
-    <tr>
-      <td>${r.category}</td>
-      <td>${r.mets}</td>
-      <td>${r.opp}</td>
-      <td style="color:${r.edge === "Mets" ? "var(--mets-orange)" : r.edge === "Neutral" ? "#888" : "#c0392b"}">${r.edge}</td>
-    </tr>`).join("");
+/* ── Pick Section ── */
+function buildPickSection(game) {
+  const sections  = game.writeup?.sections ?? [];
+  // "Putting It Together" is typically the last section
+  const putTogether = sections.find(s => /putting|together|bottom line/i.test(s.heading));
+  const summary = putTogether?.body || game.writeup?.pickSummary || game.matchupSummary || "";
+
+  const officialPick = game.writeup?.officialPick || "NYM Moneyline";
+  const metsML = game.moneyline?.mets;
+  const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
+
   return `
-    <div class="table-wrap">
-      <div class="table-container">
-        <div class="section-title">Schedule &amp; Trend Notes</div>
-        <table>
-          <thead><tr><th>Category</th><th>Mets</th><th>Opponent</th><th>Edge</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+    <div class="pick-section">
+      <div class="pick-left">
+        <div class="pick-fire-row">
+          <span>&#x1F525;</span>
+          <span class="pick-tag">Today's Pick</span>
+        </div>
+        <p class="pick-summary">${summary}</p>
+      </div>
+      <div class="pick-right">
+        <div class="pick-badge">
+          NYM Moneyline <span class="pick-odds">${oddsStr}</span>
+        </div>
       </div>
     </div>`;
 }
 
-function buildWriteup(game) {
-  const sections = game.writeup.sections.map(s => `
-    <h3>${s.heading}</h3>
-    <p>${s.body}</p>`).join("");
-  const pickSummary = game.writeup.pickSummary || game.writeup.officialPick || "";
-  return `
-    <div class="analysis-writeup tile-wide">
-      <div class="section-title">Game Analysis</div>
-      <div class="analysis-body">
-        ${sections}
-      </div>
-    </div>`;
-}
-
-function buildPickBanner(game) {
-  const pickSummary = game.writeup.pickSummary || game.writeup.officialPick || "";
-  return `
-    <div class="pick-banner tile-full">
-      <p class="pick-summary">${pickSummary}</p>
-      <p class="pick-label">Today's Pick: <strong>New York Mets Moneyline</strong></p>
-    </div>`;
-}
-
+/* ── Recent Game Tiles ── */
 function buildRecentTiles(games) {
   const past = games.filter(g => g.status === "final").slice(-5).reverse();
-  if (!past.length) return "<p style='color:#666;'>No completed games yet.</p>";
+  if (!past.length) return "<p style='color:#9099b0;padding:1rem;'>No completed games yet.</p>";
   return past.map(g => `
-    <div class="game-tile ${g.result === 'W' ? 'win' : ''}">
-      <div style="font-size:0.8rem; color:#666;">${g.date}</div>
-      <div style="font-weight:bold;">${g.opponent}</div>
-      <div>${g.finalScore || "—"}</div>
-      <div style="font-size:0.85rem; color:${g.result === 'W' ? 'var(--mets-orange)' : '#888'}">
-        ${g.result === 'W' ? 'Mets Win' : 'See the breakdown'}
+    <div class="game-tile ${g.result === "W" ? "win" : ""}">
+      <div style="font-size:0.78rem;color:#9099b0;margin-bottom:0.2rem">${g.date}</div>
+      <div style="font-weight:700;color:var(--navy);margin-bottom:0.2rem">${g.opponent}</div>
+      <div style="font-size:0.9rem">${g.finalScore || "—"}</div>
+      <div style="font-size:0.82rem;color:${g.result === "W" ? "var(--orange)" : "#9099b0"};margin-top:0.2rem">
+        ${g.result === "W" ? "Mets Win" : "See the breakdown"}
       </div>
     </div>`).join("");
 }
 
+/* ── Init ── */
 async function init() {
   const games = await loadGameData();
   const today = new Date().toISOString().split("T")[0];
@@ -279,19 +395,22 @@ async function init() {
     || games.find(g => g.status === "upcoming")
     || games[0];
 
+  // Update hero headline
+  const shortOpp = todayGame.opponent.split(" ").pop(); // e.g. "Phillies"
+  const heroEl = document.getElementById("hero-headline");
+  if (heroEl) heroEl.textContent = `Today's Edge: NYM vs ${shortOpp}`;
+
   const container = document.getElementById("today-game-container");
   container.innerHTML =
-    buildPreseasonBanner(todayGame) +
-    buildMatchupBar(todayGame) +
-    '<div class="tile-grid">' +
-    buildMatchupTable(todayGame) +
-    buildPitchingTable(todayGame) +
-    buildLineupsTable(todayGame) +
-    buildAdvancedTable(todayGame) +
-    buildTrendsTable(todayGame) +
-    buildWriteup(todayGame) +
-    buildPickBanner(todayGame) +
-    "</div>";
+    buildMatchupStrip(todayGame) +
+    '<div class="three-col-grid">' +
+      buildMatchupCard(todayGame) +
+      buildPitchingCard(todayGame) +
+      buildAdvancedCard(todayGame) +
+    "</div>" +
+    buildLineupGrid(todayGame) +
+    buildTrendsCard(todayGame) +
+    buildPickSection(todayGame);
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games);
 }
