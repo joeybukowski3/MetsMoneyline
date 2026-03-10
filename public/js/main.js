@@ -58,7 +58,13 @@ function getMetsHitterSeasonOps(player) {
     : player.seasonOPS;
 }
 
-/* ── Matchup Strip ── */
+function getMetsHitterAVG(player) {
+  return isMissingStat(player.seasonAVG)
+    ? get2025PlayerStat(player.name, "hitters", "AVG")
+    : player.seasonAVG;
+}
+
+/* ── ROW 1: Matchup Strip ── */
 function buildMatchupStrip(game) {
   const oppLogo = getTeamLogoUrl(game.opponent);
   const metsML  = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
@@ -83,137 +89,110 @@ function buildMatchupStrip(game) {
     </div>`;
 }
 
-/* ── Matchup Overview Card ── */
-function buildMatchupCard(game) {
-  const metsML = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
-  const oppML  = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
-  const ou     = game.overUnder ? game.overUnder : (game.runLine ? `Run Line: ${game.runLine.mets} (${game.runLine.price > 0 ? "+" : ""}${game.runLine.price})` : "N/A");
-  return `
-    <div class="card">
-      <div class="card-header">Matchup Overview</div>
-      <ul class="info-list">
-        <li>
-          <span class="info-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-          </span>
-          <span>
-            <span class="info-label">Date &amp; Time</span>
-            <span class="info-value">${game.date} &nbsp;&bull;&nbsp; <span style="color:var(--orange)">${game.time}</span></span>
-          </span>
-        </li>
-        <li>
-          <span class="info-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-            </svg>
-          </span>
-          <span>
-            <span class="info-label">Location</span>
-            <span class="info-value">${game.ballpark}</span>
-          </span>
-        </li>
-        <li>
-          <span class="info-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
-          </span>
-          <span>
-            <span class="info-label">Moneyline</span>
-            <span class="info-value">NYM <span class="highlight">${metsML}</span> &nbsp;/&nbsp; OPP ${oppML}</span>
-          </span>
-        </li>
-        <li>
-          <span class="info-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
-            </svg>
-          </span>
-          <span>
-            <span class="info-label">Run Line / O&amp;U</span>
-            <span class="info-value">${ou}</span>
-          </span>
-        </li>
-        <li>
-          <span class="info-icon">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </span>
-          <span>
-            <span class="info-label">Home / Away</span>
-            <span class="info-value">${game.homeAway === "home" ? "Mets at Home" : "Mets on the Road"}</span>
-          </span>
-        </li>
-      </ul>
-    </div>`;
-}
-
-/* ── Starting Pitching Card ── */
+/* ── ROW 2: Starting Pitching — full-width 3-column comparison grid ── */
 function buildPitchingCard(game) {
-  const p    = game.pitching;
-  const mn   = p.mets.name;
+  const p  = game.pitching;
+  const mn = p.mets.name;
+
+  // Starter stats with 2025 fallback for Mets pitcher
   const mERA  = getMetsPitchingStat(p.mets.seasonERA,  mn, "ERA");
   const mFIP  = getMetsPitchingStat(p.mets.seasonFIP,  mn, "FIP");
+  const mXERA = getMetsPitchingStat(p.mets.seasonXERA, mn, "xFIP");
   const mWHIP = getMetsPitchingStat(p.mets.seasonWHIP, mn, "WHIP");
   const mKBB  = getMetsPitchingStat(p.mets.last3KBB,   mn, "KBB");
-  const mL3   = p.mets.last3ERA;
+  const mL3   = isMissingStat(p.mets.last3ERA) ? "N/A" : p.mets.last3ERA;
 
-  const bpMetsERA  = p.metsBullpen?.seasonERA  ?? "N/A";
-  const bpMetsXFIP = p.metsBullpen?.seasonXFIP ?? "N/A";
-  const bpOppERA   = p.oppBullpen?.seasonERA   ?? "N/A";
-  const bpOppXFIP  = p.oppBullpen?.seasonXFIP  ?? "N/A";
-  const bpMetsRating = p.metsBullpen?.rating ?? "—";
-  const bpOppRating  = p.oppBullpen?.rating  ?? "—";
+  const oERA  = isMissingStat(p.opp.seasonERA)  ? "N/A" : p.opp.seasonERA;
+  const oFIP  = isMissingStat(p.opp.seasonFIP)  ? "N/A" : p.opp.seasonFIP;
+  const oXERA = isMissingStat(p.opp.seasonXERA) ? "N/A" : p.opp.seasonXERA;
+  const oWHIP = isMissingStat(p.opp.seasonWHIP) ? "N/A" : p.opp.seasonWHIP;
+  const oKBB  = isMissingStat(p.opp.last3KBB)   ? "N/A" : p.opp.last3KBB;
+  const oL3   = isMissingStat(p.opp.last3ERA)   ? "N/A" : p.opp.last3ERA;
+
+  // Bullpen
+  const bpMetsERA    = p.metsBullpen?.seasonERA   ?? "N/A";
+  const bpMetsXFIP   = p.metsBullpen?.seasonXFIP  ?? "N/A";
+  const bpMets14ERA  = p.metsBullpen?.last14ERA   ?? "N/A";
+  const bpMetsRating = p.metsBullpen?.rating      ?? "—";
+  const bpOppERA     = p.oppBullpen?.seasonERA    ?? "N/A";
+  const bpOppXFIP    = p.oppBullpen?.seasonXFIP   ?? "N/A";
+  const bpOpp14ERA   = p.oppBullpen?.last14ERA    ?? "N/A";
+  const bpOppRating  = p.oppBullpen?.rating       ?? "—";
+
+  const row = (left, mid, right) => `
+    <div class="pitching-col-left pg-val">${left}</div>
+    <div class="pitching-col-mid">${mid}</div>
+    <div class="pitching-col-right pg-val">${right}</div>`;
 
   return `
-    <div class="card">
+    <div class="card full-card">
       <div class="card-header">Starting Pitching</div>
-      <div class="pitcher-comparison">
-        <div class="pitcher-col">
-          <div class="pitcher-team-label mets-label">NYM</div>
-          <div class="pitcher-name mets-name">${p.mets.name}</div>
-          <div class="pitcher-hand">${p.mets.hand}HP</div>
-          <div class="pitcher-stats">
-            <div class="pitcher-stat-row"><span class="stat-label">Season ERA</span><span class="stat-val">${mERA}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">FIP</span><span class="stat-val">${mFIP}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">WHIP</span><span class="stat-val">${mWHIP}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">K/BB</span><span class="stat-val">${mKBB}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">Last 3 ERA</span><span class="stat-val">${mL3}</span></div>
-          </div>
+      <div class="pitching-grid">
+
+        <!-- Pitcher name header row -->
+        <div class="pitching-col-left">
+          <div class="pg-name">${p.mets.name}</div>
+          <div class="pg-label">NYM &middot; ${p.mets.hand}HP</div>
         </div>
-        <div class="pitcher-col">
-          <div class="pitcher-team-label opp-label">OPP</div>
-          <div class="pitcher-name opp-name">${p.opp.name}</div>
-          <div class="pitcher-hand">${p.opp.hand}HP</div>
-          <div class="pitcher-stats">
-            <div class="pitcher-stat-row"><span class="stat-label">Season ERA</span><span class="stat-val">${p.opp.seasonERA}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">FIP</span><span class="stat-val">${p.opp.seasonFIP}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">WHIP</span><span class="stat-val">${p.opp.seasonWHIP}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">K/BB</span><span class="stat-val">${p.opp.last3KBB}</span></div>
-            <div class="pitcher-stat-row"><span class="stat-label">Last 3 ERA</span><span class="stat-val">${p.opp.last3ERA}</span></div>
-          </div>
+        <div class="pitching-col-mid"></div>
+        <div class="pitching-col-right">
+          <div class="pg-name">${p.opp.name}</div>
+          <div class="pg-label">OPP &middot; ${p.opp.hand}HP</div>
         </div>
-      </div>
-      <div class="bullpen-row">
-        <div class="bp-label">Bullpen</div>
-        <div class="bp-mets">
-          <div style="font-weight:700;font-size:0.8rem;">NYM</div>
-          <div class="bp-stat-mini">ERA ${bpMetsERA} &nbsp;&bull;&nbsp; xFIP ${bpMetsXFIP} &nbsp;&bull;&nbsp; Rating ${bpMetsRating}/100</div>
-        </div>
-        <div class="bp-opp">
-          <div style="font-weight:700;font-size:0.8rem;">OPP</div>
-          <div class="bp-stat-mini">ERA ${bpOppERA} &nbsp;&bull;&nbsp; xFIP ${bpOppXFIP} &nbsp;&bull;&nbsp; Rating ${bpOppRating}/100</div>
-        </div>
+
+        ${row(mERA,  "ERA",        oERA)}
+        ${row(mFIP,  "FIP",        oFIP)}
+        ${row(mXERA, "xERA",       oXERA)}
+        ${row(mWHIP, "WHIP",       oWHIP)}
+        ${row(mKBB,  "K/BB",       oKBB)}
+        ${row(mL3,   "Last 3 ERA", oL3)}
+
+        <!-- Bullpen divider -->
+        <div class="pitching-section-divider">Bullpen</div>
+
+        <!-- Bullpen team labels -->
+        <div class="pitching-col-left" style="color:#9099b0;font-size:0.78rem;font-weight:600;">NYM</div>
+        <div class="pitching-col-mid"></div>
+        <div class="pitching-col-right" style="color:#9099b0;font-size:0.78rem;font-weight:600;">OPP</div>
+
+        ${row(bpMetsERA,   "ERA",       bpOppERA)}
+        ${row(bpMetsXFIP,  "xFIP",      bpOppXFIP)}
+        ${row(bpMets14ERA, "Last 14d",  bpOpp14ERA)}
+        ${row(`${bpMetsRating}/100`, "Rating", `${bpOppRating}/100`)}
+
       </div>
     </div>`;
 }
 
-/* ── Advanced Metrics Card ── */
-function buildAdvancedCard(game) {
-  const rows = game.advancedMatchup.map(r => {
+/* ── ROW 3: Lineups + Advanced Metrics ── */
+function buildRow3(game) {
+  const l = game.lineups || {};
+  const metsLineup = Array.isArray(l.mets) && l.mets.length > 0 ? l.mets : DEFAULT_METS_LINEUP;
+  const oppLineup  = Array.isArray(l.opp)  ? l.opp : [];
+  const statusLabel = l.status === "confirmed" ? "Confirmed" : "Projected";
+
+  const metsRows = metsLineup.map(p => `
+    <tr>
+      <td>${p.order}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td>${p.pos}</td>
+      <td>${getMetsHitterAVG(p)}</td>
+      <td>${getMetsHitterSeasonOps(p)}</td>
+    </tr>`).join("");
+
+  const oppRows = oppLineup.length > 0
+    ? oppLineup.map(p => `
+    <tr>
+      <td>${p.order}</td>
+      <td style="font-weight:600">${p.name}</td>
+      <td>${p.pos}</td>
+      <td>${p.seasonAVG ?? "N/A"}</td>
+      <td>${p.seasonOPS ?? "N/A"}</td>
+    </tr>`).join("")
+    : `<tr><td colspan="5" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
+
+  // Advanced metrics (col 3)
+  const advRows = game.advancedMatchup.map(r => {
     const edgeColor = r.edge === "Mets"
       ? "color:var(--orange);font-weight:700"
       : r.edge === "Neutral"
@@ -227,96 +206,95 @@ function buildAdvancedCard(game) {
     </tr>`;
   }).join("");
 
-  // Find the top Mets edge for the callout
   const topEdge = game.advancedMatchup.find(r => r.edge === "Mets");
   const edgeCallout = topEdge
     ? `<div class="edge-callout">Key Edge: ${topEdge.category} — NYM ${topEdge.mets} vs OPP ${topEdge.opp}</div>`
     : `<div class="edge-callout neutral">No clear statistical edge identified</div>`;
 
   return `
-    <div class="card">
-      <div class="card-header">Advanced Metrics</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Metric</th><th>NYM</th><th>OPP</th><th>Edge</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-      ${edgeCallout}
-    </div>`;
-}
-
-/* ── Lineup Grid (Mets + Opp + Game Analysis) ── */
-function buildLineupGrid(game) {
-  const l = game.lineups || {};
-  const metsLineup = Array.isArray(l.mets) && l.mets.length > 0 ? l.mets : DEFAULT_METS_LINEUP;
-  const oppLineup  = Array.isArray(l.opp)  ? l.opp : [];
-  const statusLabel = l.status === "confirmed" ? "Confirmed" : "Projected";
-
-  const metsRows = metsLineup.map(p => `
-    <tr>
-      <td>${p.order}</td>
-      <td style="font-weight:600">${p.name}</td>
-      <td>${p.pos}</td>
-      <td>${p.hand}</td>
-      <td>${getMetsHitterSeasonOps(p)}</td>
-    </tr>`).join("");
-
-  const oppRows = oppLineup.length > 0
-    ? oppLineup.map(p => `
-    <tr>
-      <td>${p.order}</td>
-      <td style="font-weight:600">${p.name}</td>
-      <td>${p.pos}</td>
-      <td>${p.hand}</td>
-      <td>${p.seasonOPS ?? "N/A"}</td>
-    </tr>`).join("")
-    : `<tr><td colspan="5" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
-
-  // Game Analysis — use first 3 writeup sections mapped to labels
-  const sectionLabels = ["Offensive Matchup", "Pitching Matchup", "Key Edge"];
-  const sections = game.writeup?.sections ?? [];
-  const analysisSections = [0, 1, 2].map(i => {
-    const s = sections[i];
-    if (!s) return "";
-    const label = sectionLabels[i] || s.heading;
-    return `
-      <div class="analysis-section">
-        <div class="analysis-section-label">${label}</div>
-        <p>${s.body}</p>
-      </div>`;
-  }).join("");
-
-  return `
-    <div class="lineup-grid">
+    <div class="row-3-grid">
       <div class="card">
         <div class="card-header">${statusLabel} Lineup — Mets</div>
         <div class="lineup-team-header mets-header">New York Mets</div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>Hand</th><th>OPS</th></tr></thead>
+            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th></tr></thead>
             <tbody>${metsRows}</tbody>
           </table>
         </div>
       </div>
+
       <div class="card">
         <div class="card-header">${statusLabel} Lineup — ${game.opponent}</div>
         <div class="lineup-team-header opp-header">${game.opponent}</div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>Hand</th><th>OPS</th></tr></thead>
+            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th></tr></thead>
             <tbody>${oppRows}</tbody>
           </table>
         </div>
       </div>
-      <div class="card">
-        <div class="card-header">Game Analysis</div>
-        ${analysisSections}
+
+      <div class="card advanced-metrics">
+        <div class="card-header">Advanced Metrics</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Metric</th><th>NYM</th><th>OPP</th><th>Edge</th></tr></thead>
+            <tbody>${advRows}</tbody>
+          </table>
+        </div>
+        ${edgeCallout}
       </div>
     </div>`;
 }
 
-/* ── Trends Card (full-width) ── */
+/* ── ROW 4: Analysis tiles (3 side-by-side) ── */
+function buildAnalysisRow(game) {
+  const sections = game.writeup?.sections ?? [];
+
+  // Map the first 3 sections to tiles; use section heading as the title
+  const tiles = [0, 1, 2].map(i => {
+    const s = sections[i];
+    if (!s) return "";
+    return `
+      <div class="section-card">
+        <div class="section-title">${s.heading}</div>
+        <p style="padding:1rem 1.1rem;font-size:0.875rem;color:#374151;line-height:1.7;">${s.body}</p>
+      </div>`;
+  }).join("");
+
+  return `<div class="tile-grid" style="margin-bottom:1.5rem;">${tiles}</div>`;
+}
+
+/* ── ROW 5: Pick Banner ── */
+function buildPickSection(game) {
+  const sections = game.writeup?.sections ?? [];
+  // Use the last section (Final Read / Putting It Together) for the summary
+  const finalSection = sections[3]
+    || sections.find(s => /putting|together|final|bottom line/i.test(s.heading));
+  const summary = finalSection?.body || game.writeup?.pickSummary || game.matchupSummary || "";
+
+  const metsML  = game.moneyline?.mets;
+  const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
+
+  return `
+    <div class="pick-section">
+      <div class="pick-left">
+        <div class="pick-fire-row">
+          <span>&#x1F525;</span>
+          <span class="pick-tag">Today's Pick</span>
+        </div>
+        <p class="pick-summary">${summary}</p>
+      </div>
+      <div class="pick-right">
+        <div class="pick-badge">
+          NYM Moneyline <span class="pick-odds">${oddsStr}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Trends Card (full-width, below pick if present) ── */
 function buildTrendsCard(game) {
   if (!game.trends || game.trends.length === 0) return "";
   const rows = game.trends.map(r => {
@@ -344,34 +322,6 @@ function buildTrendsCard(game) {
     </div>`;
 }
 
-/* ── Pick Section ── */
-function buildPickSection(game) {
-  const sections  = game.writeup?.sections ?? [];
-  // "Putting It Together" is typically the last section
-  const putTogether = sections.find(s => /putting|together|bottom line/i.test(s.heading));
-  const summary = putTogether?.body || game.writeup?.pickSummary || game.matchupSummary || "";
-
-  const officialPick = game.writeup?.officialPick || "NYM Moneyline";
-  const metsML = game.moneyline?.mets;
-  const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
-
-  return `
-    <div class="pick-section">
-      <div class="pick-left">
-        <div class="pick-fire-row">
-          <span>&#x1F525;</span>
-          <span class="pick-tag">Today's Pick</span>
-        </div>
-        <p class="pick-summary">${summary}</p>
-      </div>
-      <div class="pick-right">
-        <div class="pick-badge">
-          NYM Moneyline <span class="pick-odds">${oddsStr}</span>
-        </div>
-      </div>
-    </div>`;
-}
-
 /* ── Recent Game Tiles ── */
 function buildRecentTiles(games) {
   const past = games.filter(g => g.status === "final").slice(-5).reverse();
@@ -395,22 +345,19 @@ async function init() {
     || games.find(g => g.status === "upcoming")
     || games[0];
 
-  // Update hero headline
-  const shortOpp = todayGame.opponent.split(" ").pop(); // e.g. "Phillies"
+  // Update hero headline dynamically
+  const shortOpp = todayGame.opponent.split(" ").pop();
   const heroEl = document.getElementById("hero-headline");
   if (heroEl) heroEl.textContent = `Today's Edge: NYM vs ${shortOpp}`;
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
-    buildMatchupStrip(todayGame) +
-    '<div class="three-col-grid">' +
-      buildMatchupCard(todayGame) +
-      buildPitchingCard(todayGame) +
-      buildAdvancedCard(todayGame) +
-    "</div>" +
-    buildLineupGrid(todayGame) +
-    buildTrendsCard(todayGame) +
-    buildPickSection(todayGame);
+    buildMatchupStrip(todayGame) +          // Row 1 — matchup header
+    buildPitchingCard(todayGame) +          // Row 2 — full-width pitching comparison
+    buildRow3(todayGame) +                  // Row 3 — lineups + advanced metrics
+    buildAnalysisRow(todayGame) +           // Row 4 — 3 analysis tiles
+    buildPickSection(todayGame) +           // Row 5 — pick banner
+    buildTrendsCard(todayGame);             // supplemental trends
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games);
 }
