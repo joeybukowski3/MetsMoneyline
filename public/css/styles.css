@@ -320,6 +320,13 @@ main, .page-content {
   text-align: center;
 }
 
+.game-date-label {
+  font-size: 0.8rem;
+  color: #9099b0;
+  text-align: center;
+  margin-top: 0.25rem;
+}
+
 /* legacy matchup-bar kept for any inline usage */
 .matchup-bar {
   display: flex;
@@ -608,6 +615,58 @@ main, .page-content {
 
 .pitching-col-left .pitcher-header-block { align-items: flex-end; }
 .pitching-col-right .pitcher-header-block { align-items: flex-start; }
+
+/* Featured pitcher header (new pitching card layout) */
+.pitcher-feature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e4e8f0;
+}
+
+.pitcher-feature-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  text-align: center;
+}
+
+.pitcher-headshot-lg {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e4e8f0;
+}
+
+.pitcher-feature-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0d2461;
+}
+
+.pitcher-feature-label {
+  font-size: 0.8rem;
+  color: #9099b0;
+}
+
+.pitcher-vs {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #cdd2de;
+}
+
+.pitching-table-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9099b0;
+  padding: 0.75rem 1rem 0.25rem;
+  border-top: 1px solid #e4e8f0;
+}
 
 /* =====================
    ROW 3 GRID (lineups + advanced metrics)

@@ -124,6 +124,14 @@ function buildMatchupStrip(game) {
   const oppLogo = getTeamLogoUrl(game.opponent);
   const metsML  = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
   const oppML   = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
+
+  const gameDate = game.date || "";
+  const REGULAR_SEASON_START = "2026-04-02";
+  const seasonLabel = gameDate >= REGULAR_SEASON_START ? "Regular Season" : "Spring Training";
+  const dateDisplay = gameDate
+    ? new Date(gameDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+    : "";
+
   return `
     <div class="matchup-strip">
       <div class="team-block home">
@@ -135,6 +143,7 @@ function buildMatchupStrip(game) {
         <span class="matchup-vs-label">vs</span>
         <span class="matchup-vs-time">${game.time}</span>
         <span class="matchup-vs-venue">${game.ballpark}</span>
+        ${dateDisplay ? `<div class="game-date-label">${dateDisplay} &middot; ${seasonLabel}</div>` : ""}
       </div>
       <div class="team-block away">
         ${oppLogo ? `<img src="${oppLogo}" class="team-logo" alt="${game.opponent}">` : ""}
@@ -144,7 +153,7 @@ function buildMatchupStrip(game) {
     </div>`;
 }
 
-/* ── ROW 2: Starting Pitching — full-width 3-column comparison grid ── */
+/* ── ROW 2: Starting Pitching ── */
 function buildPitchingCard(game) {
   const p  = game.pitching;
   const mn = p.mets.name;
@@ -176,72 +185,95 @@ function buildPitchingCard(game) {
   const bpOpp14ERA   = oppBP.last14;
   const bpOppRating  = oppBP.rating;
 
-  const row = (left, mid, right) => `
-    <div class="pitching-col-left pg-val">${left}</div>
-    <div class="pitching-col-mid">${mid}</div>
-    <div class="pitching-col-right pg-val">${right}</div>`;
+  const headshot = (mlbId, name, size) =>
+    `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_${size},q_auto:best/v1/people/${mlbId || 0}/headshot/67/current" class="pitcher-headshot-lg" alt="${name}" onerror="this.style.display='none'">`;
 
   return `
     <div class="card full-card">
       <div class="card-header">Starting Pitching</div>
-      <div class="pitching-grid">
 
-        <!-- Pitcher name header row -->
-        <div class="pitching-col-left">
-          <div class="pitcher-header-block">
-            ${p.mets.mlbId ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/${p.mets.mlbId}/headshot/67/current" class="pitcher-headshot" alt="${p.mets.name}" onerror="this.style.display='none'">` : ""}
-            <div class="pg-name">${p.mets.name}</div>
-            <div class="pg-label">NYM &middot; ${p.mets.hand}HP</div>
-          </div>
+      <!-- Section A: Featured pitcher header -->
+      <div class="pitcher-feature-row">
+        <div class="pitcher-feature-block">
+          ${headshot(p.mets.mlbId, p.mets.name, 200)}
+          <div class="pitcher-feature-name">${p.mets.name}</div>
+          <div class="pitcher-feature-label">NYM &middot; ${p.mets.hand}HP</div>
         </div>
-        <div class="pitching-col-mid"></div>
-        <div class="pitching-col-right">
-          <div class="pitcher-header-block">
-            ${p.opp.mlbId ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/${p.opp.mlbId}/headshot/67/current" class="pitcher-headshot" alt="${p.opp.name}" onerror="this.style.display='none'">` : ""}
-            <div class="pg-name">${p.opp.name}</div>
-            <div class="pg-label">OPP &middot; ${p.opp.hand}HP</div>
-          </div>
+        <div class="pitcher-vs">VS</div>
+        <div class="pitcher-feature-block">
+          ${headshot(p.opp.mlbId, p.opp.name, 200)}
+          <div class="pitcher-feature-name">${p.opp.name}</div>
+          <div class="pitcher-feature-label">OPP &middot; ${p.opp.hand}HP</div>
         </div>
-
-        ${row(mERA,  "ERA",        oERA)}
-        ${row(mFIP,  "FIP",        oFIP)}
-        ${row(mXERA, "xERA",       oXERA)}
-        ${row(mWHIP, "WHIP",       oWHIP)}
-        ${row(mKBB,  "K/BB",       oKBB)}
-        ${row(mL3,   "Last 3 ERA", oL3)}
-
-        <!-- Bullpen divider -->
-        <div class="pitching-section-divider">Bullpen</div>
-
-        <!-- Bullpen team labels -->
-        <div class="pitching-col-left" style="color:#9099b0;font-size:0.78rem;font-weight:600;">NYM</div>
-        <div class="pitching-col-mid"></div>
-        <div class="pitching-col-right" style="color:#9099b0;font-size:0.78rem;font-weight:600;">OPP</div>
-
-        ${row(bpMetsERA,   "ERA",       bpOppERA)}
-        ${row(bpMetsXFIP,  "xFIP",      bpOppXFIP)}
-        ${row(bpMets14ERA, "Last 14d",  bpOpp14ERA)}
-        ${row(`${bpMetsRating}/100`, "Rating", `${bpOppRating}/100`)}
-
-        ${(p.mets.savant || p.opp.savant) ? `
-        <!-- Statcast divider -->
-        <div class="pitching-section-divider">Statcast (2025)</div>
-
-        <!-- Statcast team labels -->
-        <div class="pitching-col-left" style="color:#9099b0;font-size:0.78rem;font-weight:600;">NYM</div>
-        <div class="pitching-col-mid"></div>
-        <div class="pitching-col-right" style="color:#9099b0;font-size:0.78rem;font-weight:600;">OPP</div>
-
-        ${row(p.mets.savant?.xERA      ?? "N/A", "xERA",     p.opp.savant?.xERA      ?? "N/A")}
-        ${row(p.mets.savant?.barrelPct ?? "N/A", "Barrel%",  p.opp.savant?.barrelPct ?? "N/A")}
-        ${row(p.mets.savant?.hardHitPct ?? "N/A", "Hard-Hit%", p.opp.savant?.hardHitPct ?? "N/A")}
-        ${row(p.mets.savant?.whiffPct  ?? "N/A", "Whiff%",   p.opp.savant?.whiffPct  ?? "N/A")}
-        ${row(p.mets.savant?.chasePct  ?? "N/A", "Chase%",   p.opp.savant?.chasePct  ?? "N/A")}
-        ${row(p.mets.savant?.kPct      ?? "N/A", "K%",       p.opp.savant?.kPct      ?? "N/A")}
-        ${row(p.mets.savant?.bbPct     ?? "N/A", "BB%",      p.opp.savant?.bbPct     ?? "N/A")}
-        ` : ""}
-
       </div>
+
+      <!-- Section B: Starters stat table -->
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pitcher</th><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>Last 3 ERA</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:var(--navy)">${p.mets.name}</td>
+              <td>${mERA}</td><td>${mFIP}</td><td>${mXERA}</td><td>${mWHIP}</td><td>${mKBB}</td><td>${mL3}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#374151">${p.opp.name}</td>
+              <td>${oERA}</td><td>${oFIP}</td><td>${oXERA}</td><td>${oWHIP}</td><td>${oKBB}</td><td>${oL3}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Bullpen -->
+      <div class="pitching-table-label">Bullpen</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Team</th><th>ERA</th><th>xFIP</th><th>Last 14d ERA</th><th>Rating</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:var(--orange)">NYM</td>
+              <td>${bpMetsERA}</td><td>${bpMetsXFIP}</td><td>${bpMets14ERA}</td><td>${bpMetsRating}/100</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#9099b0">OPP</td>
+              <td>${bpOppERA}</td><td>${bpOppXFIP}</td><td>${bpOpp14ERA}</td><td>${bpOppRating}/100</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      ${(p.mets.savant || p.opp.savant) ? `
+      <!-- Statcast -->
+      <div class="pitching-table-label">Statcast (2025)</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Pitcher</th><th>xERA</th><th>Barrel%</th><th>Hard-Hit%</th><th>Whiff%</th><th>Chase%</th><th>K%</th><th>BB%</th></tr></thead>
+          <tbody>
+            <tr>
+              <td style="font-weight:600;color:var(--navy)">${p.mets.name}</td>
+              <td>${p.mets.savant?.xERA      ?? "N/A"}</td>
+              <td>${p.mets.savant?.barrelPct ?? "N/A"}</td>
+              <td>${p.mets.savant?.hardHitPct ?? "N/A"}</td>
+              <td>${p.mets.savant?.whiffPct  ?? "N/A"}</td>
+              <td>${p.mets.savant?.chasePct  ?? "N/A"}</td>
+              <td>${p.mets.savant?.kPct      ?? "N/A"}</td>
+              <td>${p.mets.savant?.bbPct     ?? "N/A"}</td>
+            </tr>
+            <tr>
+              <td style="font-weight:600;color:#374151">${p.opp.name}</td>
+              <td>${p.opp.savant?.xERA      ?? "N/A"}</td>
+              <td>${p.opp.savant?.barrelPct ?? "N/A"}</td>
+              <td>${p.opp.savant?.hardHitPct ?? "N/A"}</td>
+              <td>${p.opp.savant?.whiffPct  ?? "N/A"}</td>
+              <td>${p.opp.savant?.chasePct  ?? "N/A"}</td>
+              <td>${p.opp.savant?.kPct      ?? "N/A"}</td>
+              <td>${p.opp.savant?.bbPct     ?? "N/A"}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      ` : ""}
+
     </div>`;
 }
 

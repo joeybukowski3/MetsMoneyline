@@ -35,19 +35,33 @@ async function safeGet(url, label) {
 }
 
 // ─────────────────────────────────────────────
-// STEP 1 — Today's Mets game from schedule
+// STEP 1 — Find next Mets game (today + up to 7 days)
 // ─────────────────────────────────────────────
 
-async function getMetsSchedule() {
-  const today = new Date().toISOString().split("T")[0];
-  const url =
-    `https://statsapi.mlb.com/api/v1/schedule` +
-    `?sportId=1&teamId=${TEAM_ID}` +
-    `&startDate=${today}&endDate=${today}` +
-    `&hydrate=team,linescore,probablePitcher`;
-  const data = await safeGet(url, "schedule");
-  if (!data?.dates?.length) return null;
-  return data.dates[0].games[0] || null;
+async function findNextGame(startDate) {
+  for (let i = 0; i < 7; i++) {
+    const checkDate = new Date(startDate);
+    checkDate.setDate(checkDate.getDate() + i);
+    const dateStr = checkDate.toISOString().split("T")[0];
+    const url =
+      `https://statsapi.mlb.com/api/v1/schedule` +
+      `?sportId=1&teamId=${TEAM_ID}&date=${dateStr}` +
+      `&hydrate=team,linescore,probablePitcher`;
+    const data = await safeGet(url, `schedule ${dateStr}`);
+    const games = data?.dates?.[0]?.games;
+    if (games && games.length > 0) {
+      const g = games[0];
+      const isHome = g.teams.home.team.id === TEAM_ID;
+      const oppName = isHome ? g.teams.away.team.name : g.teams.home.team.name;
+      if (i === 0) {
+        console.log(`Game found today (${dateStr}): Mets vs ${oppName}`);
+      } else {
+        console.log(`No game today. Next game found: ${dateStr} vs ${oppName}`);
+      }
+      return { game: g, date: dateStr };
+    }
+  }
+  return null;
 }
 
 // ─────────────────────────────────────────────
@@ -529,17 +543,16 @@ async function buildGameObject(game, standings) {
 // ─────────────────────────────────────────────
 
 async function run() {
-  console.log("Fetching today's Mets game...");
-  const game = await getMetsSchedule();
+  console.log("Searching for next Mets game...");
+  const today = new Date().toISOString().split("T")[0];
+  const result = await findNextGame(today);
 
-  if (!game) {
-    console.log("No Mets game today. Exiting.");
+  if (!result) {
+    console.log("No Mets game found in the next 7 days. Exiting.");
     process.exit(0);
   }
 
-  const isHome  = game.teams.home.team.id === TEAM_ID;
-  const oppName = isHome ? game.teams.away.team.name : game.teams.home.team.name;
-  console.log(`Game found: Mets vs ${oppName} (gamePk: ${game.gamePk})`);
+  const { game } = result;
 
   const standings   = await getStandings();
   const gameObject  = await buildGameObject(game, standings);
