@@ -254,14 +254,14 @@ function buildRow3(game) {
 
   // FIX 1: headshot helper — uses playerId if present, falls back to 0 (generic MLB silhouette via Cloudinary d_ param)
   const headshotImg = (p) => {
-    const pid = p.playerId || 0;
+    const pid = p.playerId || p.id || 0;
     return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
   };
 
   const metsRows = metsLineup.map(p => `
     <tr>
       <td>${p.order}</td>
-      <td><div class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></div></td>
+      <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
       <td>${p.pos}</td>
       <td>${getMetsHitterAVG(p)}</td>
       <td>${getMetsHitterSeasonOps(p)}</td>
@@ -271,7 +271,7 @@ function buildRow3(game) {
     ? oppLineup.map(p => `
     <tr>
       <td>${p.order}</td>
-      <td><div class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></div></td>
+      <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
       <td>${p.pos}</td>
       <td>${p.seasonAVG ?? "N/A"}</td>
       <td>${p.seasonOPS ?? "N/A"}</td>

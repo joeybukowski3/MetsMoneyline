@@ -95,6 +95,7 @@ function extractLineups(feed, metsIsHome) {
       const pos    = p.position || {};
       return {
         order:     idx + 1,
+        playerId:  person.id || null,
         name:      person.fullName || "Unknown",
         pos:       pos.abbreviation || "?",
         hand:      p.batSide?.code || "?",
