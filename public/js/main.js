@@ -300,37 +300,43 @@ function buildPitchingCard(game) {
     return "xwoba-neutral";
   };
 
-  // vs. Current Roster table
-  const vsRosterTable = vsRoster => {
+  // vs. Current Roster — colored stat tile grid
+  const vsRosterGrid = vsRoster => {
     if (!vsRoster) {
-      return `<table class="matchup-table">
-        <caption>vs. Current Roster</caption>
-        <tbody><tr><td colspan="10" style="color:#9099b0;font-size:0.85rem;text-align:center;padding:0.75rem 0">No prior matchup data available</td></tr></tbody>
-      </table>`;
+      return `<div style="color:#9099b0;font-size:0.85rem;text-align:center;padding:1.25rem 0">No prior matchup data available</div>`;
     }
-    const fmt    = v  => v  != null ? v  : "—";
-    const fmtPct = v  => v  != null ? `${(v * 100).toFixed(1)}%` : "—";
-    const xwClass = xwobaClass(vsRoster.xwOBA);
-    return `<table class="matchup-table">
-      <caption>vs. Current Roster</caption>
-      <thead>
-        <tr><th>PA</th><th>K%</th><th>BB%</th><th>AVG</th><th>wOBA</th><th>Exit Velo</th><th>Launch&nbsp;°</th><th>xBA</th><th>xSLG</th><th>xwOBA</th></tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>${fmt(vsRoster.PA)}</td>
-          <td>${fmtPct(vsRoster.kPct)}</td>
-          <td>${fmtPct(vsRoster.bbPct)}</td>
-          <td>${fmt(vsRoster.AVG)}</td>
-          <td>${fmt(vsRoster.wOBA)}</td>
-          <td>${vsRoster.exitVelo   != null ? vsRoster.exitVelo + " mph" : "—"}</td>
-          <td>${vsRoster.launchAngle != null ? vsRoster.launchAngle + "°" : "—"}</td>
-          <td>${fmt(vsRoster.xBA)}</td>
-          <td>${fmt(vsRoster.xSLG)}</td>
-          <td class="${xwClass}">${fmt(vsRoster.xwOBA)}</td>
-        </tr>
-      </tbody>
-    </table>`;
+    // For pitcher-allowed stats: lower offensive value = better for pitcher = higher pct = red
+    const inv = (v, lo, hi) => clamp(Math.round(100 - ((v - lo) / (hi - lo)) * 90), 5, 99);
+    const tiles = [
+      { label: "PA",        val: vsRoster.PA,          fmt: v => v,                           pct: () => 50 },
+      { label: "K%",        val: vsRoster.kPct,        fmt: v => `${(v*100).toFixed(1)}%`,    pct: v => PCTL.KPct(v*100) },
+      { label: "BB%",       val: vsRoster.bbPct,       fmt: v => `${(v*100).toFixed(1)}%`,    pct: v => PCTL.BBPct(v*100) },
+      { label: "AVG",       val: vsRoster.AVG,         fmt: v => v,                           pct: v => inv(v, 0.160, 0.340) },
+      { label: "wOBA",      val: vsRoster.wOBA,        fmt: v => v,                           pct: v => inv(v, 0.240, 0.400) },
+      { label: "xwOBA",     val: vsRoster.xwOBA,       fmt: v => v,                           pct: v => inv(v, 0.240, 0.400) },
+      { label: "Exit Velo", val: vsRoster.exitVelo,    fmt: v => `${v} mph`,                  pct: v => inv(v, 82, 95) },
+      { label: "Launch °",  val: vsRoster.launchAngle, fmt: v => `${v}°`,                     pct: () => 50 },
+      { label: "xBA",       val: vsRoster.xBA,         fmt: v => v,                           pct: v => inv(v, 0.170, 0.330) },
+      { label: "xSLG",      val: vsRoster.xSLG,        fmt: v => v,                           pct: v => inv(v, 0.280, 0.560) },
+    ];
+    const tilesHtml = tiles.map(t => {
+      if (t.val == null) {
+        return `<div class="vsr-tile" style="background:#f0f2f8">
+          <div class="vsr-label" style="color:#9099b0">${t.label}</div>
+          <div class="vsr-val" style="color:#9099b0">—</div>
+        </div>`;
+      }
+      const pct  = t.pct(t.val);
+      const bg   = pct === 50 ? "#e8ecf2" : pctlColor(pct);
+      const isColored = pct !== 50;
+      const labelColor = isColored ? "rgba(255,255,255,0.72)" : "#9099b0";
+      const valColor   = isColored ? "#fff" : "#1a1a2e";
+      return `<div class="vsr-tile" style="background:${bg}">
+        <div class="vsr-label" style="color:${labelColor}">${t.label}</div>
+        <div class="vsr-val" style="color:${valColor}">${t.fmt(t.val)}</div>
+      </div>`;
+    }).join("");
+    return `<div class="vsr-grid">${tilesHtml}</div>`;
   };
 
   // Build one pitcher card
@@ -371,9 +377,12 @@ function buildPitchingCard(game) {
         ${photoHtml}
       </div>
       <div class="pitcher-stats-panel">
-        <div class="pitcher-name-lg">${pitcher.name}</div>
+        <div class="pitcher-name-row">
+          <span class="pitcher-name-lg">${pitcher.name}</span>
+          ${pitcher.seasonRecord ? `<span class="pitcher-record-tag">Record ${pitcher.seasonRecord}</span>` : ""}
+        </div>
         <div class="pitcher-meta-line">
-          <span class="pitcher-team-tag">${sideLabel}</span>${pitcher.seasonRecord ? ` — ${pitcher.seasonRecord}` : ""}
+          <span class="pitcher-team-tag">${sideLabel}</span>
         </div>
         <div class="sbar-section-label">Traditional</div>
         ${statBar("ERA",  raw(era),  PCTL.ERA,  era)}
@@ -400,18 +409,15 @@ function buildPitchingCard(game) {
   );
 
   const vsRosterSection = `
-    <div class="card full-card">
-      <div class="card-header">Career Matchup — vs. Current Roster</div>
-      <div class="vs-roster-row">
-        <div class="vs-roster-half">
-          <div class="vs-roster-pitcher-label">${p.mets.name} vs ${getTeamAbbr(game.opponent)} Roster</div>
-          ${vsRosterTable(p.mets.vsRoster)}
-        </div>
-        <div class="vs-roster-divider"></div>
-        <div class="vs-roster-half">
-          <div class="vs-roster-pitcher-label">${p.opp.name} vs NYM Roster</div>
-          ${vsRosterTable(p.opp.vsRoster)}
-        </div>
+    <div class="section-floating-label">Career Matchup — vs. Current Roster</div>
+    <div class="pitcher-two-col">
+      <div class="card full-card">
+        <div class="card-header">${p.mets.name} vs ${getTeamAbbr(game.opponent)} Roster</div>
+        ${vsRosterGrid(p.mets.vsRoster)}
+      </div>
+      <div class="card full-card">
+        <div class="card-header">${p.opp.name} vs NYM Roster</div>
+        ${vsRosterGrid(p.opp.vsRoster)}
       </div>
     </div>`;
 
@@ -695,20 +701,17 @@ async function init() {
     || games.find(g => g.status === "upcoming")
     || games[0];
 
-  // Update hero headline dynamically
-  const shortOpp = todayGame.opponent.split(" ").pop();
-  const isToday  = todayGame.date === today;
-  const gameLabel = isToday ? "Today's Game" : "Next Game";
-  const vsAt = todayGame.homeAway === "away" ? "@" : "vs";
-  const heroEl = document.getElementById("hero-headline");
-  if (heroEl) {
-    const dateStr = todayGame.date
-      ? new Date(todayGame.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })
-      : "";
-    heroEl.textContent = isToday
-      ? `${gameLabel}: New York Mets ${vsAt} ${todayGame.opponent}`
-      : `${gameLabel}: ${dateStr} — New York Mets ${vsAt} ${todayGame.opponent}`;
-  }
+  // Update hero headline — three separate lines
+  const isToday = todayGame.date === today;
+  const vsAt    = todayGame.homeAway === "away" ? "@" : "vs";
+  const labelEl   = document.getElementById("hero-game-label");
+  const dateEl    = document.getElementById("hero-game-date");
+  const matchupEl = document.getElementById("hero-game-matchup");
+  if (labelEl)   labelEl.textContent   = isToday ? "Today's Game" : "Next Game";
+  if (dateEl && todayGame.date)
+    dateEl.textContent = new Date(todayGame.date + "T12:00:00")
+      .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+  if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${todayGame.opponent}`;
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =

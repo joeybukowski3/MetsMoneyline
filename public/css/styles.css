@@ -1468,6 +1468,98 @@ footer {
 .footer-copy       { font-size: 0.78rem; color: rgba(255,255,255,0.35); }
 
 /* =====================
+   HERO HEADLINE BLOCK (three-line)
+   ===================== */
+.hero-headline-block {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.hero-top-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 0.4rem;
+}
+
+.hero-date-line {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.80);
+  line-height: 1.15;
+  margin-bottom: 0.3rem;
+}
+
+.hero-matchup-line {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+
+/* =====================
+   PITCHER NAME ROW (name + record tag)
+   ===================== */
+.pitcher-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.1rem;
+}
+
+.pitcher-record-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--navy);
+  border-radius: 999px;
+  padding: 0.15rem 0.55rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* =====================
+   VS ROSTER TILE GRID
+   ===================== */
+.vsr-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.vsr-tile {
+  border-radius: 8px;
+  padding: 0.55rem 0.4rem;
+  text-align: center;
+  background: #f0f2f8;
+}
+
+.vsr-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 0.25rem;
+}
+
+.vsr-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .vsr-grid { grid-template-columns: repeat(5, 1fr); }
+  .hero-matchup-line { font-size: 1.7rem; }
+  .hero-date-line    { font-size: 1.25rem; }
+}
+
+/* =====================
    MOBILE RESPONSIVE
    ===================== */
 @media (max-width: 900px) {
@@ -1476,6 +1568,8 @@ footer {
   .row-3-grid .advanced-metrics { grid-column: span 2; }
   .lineup-grid       { grid-template-columns: 1fr 1fr; }
   .hero-headline     { font-size: 2rem; }
+  .hero-matchup-line { font-size: 1.9rem; }
+  .hero-date-line    { font-size: 1.3rem; }
 }
 
 @media (max-width: 640px) {
