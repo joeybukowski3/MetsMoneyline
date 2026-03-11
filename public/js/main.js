@@ -223,13 +223,13 @@ const PCTL = {
 
 function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
 
-/* Color the bar: red (poor) → gray (avg) → blue (good), like Savant */
+/* Color the bar: blue (poor) → gray (avg) → red (elite) */
 function pctlColor(pct) {
-  if (pct >= 80) return "#1a6bb5";   // elite blue
-  if (pct >= 60) return "#5a9fd4";   // good blue
+  if (pct >= 80) return "#c0392b";   // elite red
+  if (pct >= 60) return "#e08060";   // good orange-red
   if (pct >= 45) return "#aab8c8";   // avg gray
-  if (pct >= 25) return "#e08060";   // below avg orange
-  return "#c0392b";                  // poor red
+  if (pct >= 25) return "#5a9fd4";   // below avg blue
+  return "#1a6bb5";                  // poor blue
 }
 
 /* Build a single stat row with percentile bar */
@@ -386,21 +386,34 @@ function buildPitchingCard(game) {
         ${statBar("K/BB",      raw(kbb),  PCTL.KBB,     kbb)}
         ${statBar("Hard-Hit%", hhPct ? raw(hhPct).replace("%","") : null, PCTL.HardHit, hhPct)}
         ${statBar("GB%",       gbPct ? raw(gbPct).replace("%","") : null, PCTL.GB,      gbPct)}
-        ${vsRosterTable(vsRoster)}
       </div>
     </div>`;
   };
 
   const metsCard = pitcherCard(
     "NYM", p.mets,
-    { era: mERA, fip: mFIP, xera: mXERA, whip: mWHIP, kbb: mKBB, kpct: mKPct, bbpct: mBBPct },
-    p.mets.vsRoster
+    { era: mERA, fip: mFIP, xera: mXERA, whip: mWHIP, kbb: mKBB, kpct: mKPct, bbpct: mBBPct }
   );
   const oppCard = pitcherCard(
     game.opponent, p.opp,
-    { era: oERA, fip: oFIP, xera: oXERA, whip: oWHIP, kbb: oKBB, kpct: oKPct, bbpct: oBBPct },
-    p.opp.vsRoster
+    { era: oERA, fip: oFIP, xera: oXERA, whip: oWHIP, kbb: oKBB, kpct: oKPct, bbpct: oBBPct }
   );
+
+  const vsRosterSection = `
+    <div class="card full-card">
+      <div class="card-header">Career Matchup — vs. Current Roster</div>
+      <div class="vs-roster-row">
+        <div class="vs-roster-half">
+          <div class="vs-roster-pitcher-label">${p.mets.name} vs ${getTeamAbbr(game.opponent)} Roster</div>
+          ${vsRosterTable(p.mets.vsRoster)}
+        </div>
+        <div class="vs-roster-divider"></div>
+        <div class="vs-roster-half">
+          <div class="vs-roster-pitcher-label">${p.opp.name} vs NYM Roster</div>
+          ${vsRosterTable(p.opp.vsRoster)}
+        </div>
+      </div>
+    </div>`;
 
   const statcastSection = (p.mets.savant || p.opp.savant) ? `
     <div class="pitching-table-label">Statcast (2025)</div>
@@ -438,6 +451,7 @@ function buildPitchingCard(game) {
       ${metsCard}
       ${oppCard}
     </div>
+    ${vsRosterSection}
 
     <div class="section-floating-label">Bullpen</div>
     <div class="pitcher-two-col">

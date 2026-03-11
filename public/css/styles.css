@@ -438,7 +438,7 @@ main, .page-content {
   margin-bottom: 1.25rem;
 }
 
-/* Each pitcher card: image panel left, stats right */
+/* Each pitcher card: photo on top, stats below */
 .pitcher-card-v2 {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -446,17 +446,16 @@ main, .page-content {
   box-shadow: var(--shadow);
   overflow: hidden;
   display: flex;
-  flex-direction: row;
-  min-height: 380px;
+  flex-direction: column;
 }
 
-/* Left image panel */
+/* Top image panel — horizontal landscape strip */
 .pitcher-img-panel {
-  width: 120px;
+  width: 100%;
+  height: 180px;
   flex-shrink: 0;
   background: #edf0f7;
   overflow: hidden;
-  display: block;
   position: relative;
 }
 
@@ -466,8 +465,6 @@ main, .page-content {
   object-fit: cover;
   object-position: top center;
   display: block;
-  position: absolute;
-  top: 0; left: 0;
 }
 
 .pitcher-img-panel .pitcher-photo-placeholder {
@@ -480,7 +477,7 @@ main, .page-content {
   color: #c0c8d8;
 }
 
-/* Right stats panel */
+/* Stats panel below photo */
 .pitcher-stats-panel {
   flex: 1;
   min-width: 0;
@@ -488,6 +485,29 @@ main, .page-content {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* VS Roster full-width section */
+.vs-roster-row {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+}
+.vs-roster-half {
+  padding: 1rem 1.25rem;
+  min-width: 0;
+  overflow-x: auto;
+}
+.vs-roster-divider {
+  background: #e4e8f0;
+  align-self: stretch;
+}
+.vs-roster-pitcher-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9099b0;
+  margin-bottom: 0.5rem;
 }
 
 .pitcher-name-lg {
@@ -511,9 +531,14 @@ main, .page-content {
 
 @media (max-width: 900px) { .pitcher-two-col { grid-template-columns: 1fr; } }
 
+@media (max-width: 640px) {
+  .vs-roster-row       { grid-template-columns: 1fr; }
+  .vs-roster-divider   { display: none; }
+  .pitcher-img-panel   { height: 140px; }
+}
+
 @media (max-width: 500px) {
-  .pitcher-img-panel { width: 90px; }
-  .pitcher-name-lg   { font-size: 0.95rem; }
+  .pitcher-name-lg { font-size: 0.95rem; }
 }
 
 /* =====================
