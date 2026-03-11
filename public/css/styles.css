@@ -446,113 +446,142 @@ main, .page-content {
   box-shadow: var(--shadow);
   overflow: hidden;
   display: flex;
+  flex-direction: row;
+  min-height: 380px;
 }
 
-/* Left image panel — muted background, image sits at bottom */
+/* Left image panel */
 .pitcher-img-panel {
-  width: 130px;
+  width: 120px;
   flex-shrink: 0;
-  background: #f0f2f8;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  background: #edf0f7;
   overflow: hidden;
+  display: block;
+  position: relative;
 }
 
 .pitcher-img-panel .pitcher-photo-sm {
-  width: 130px;
-  height: 170px;
-  object-fit: contain;
-  object-position: bottom center;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  position: absolute;
+  top: 0; left: 0;
 }
 
 .pitcher-img-panel .pitcher-photo-placeholder {
-  width: 130px;
-  height: 170px;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: #c0c8d8;
-  background: none;
-  border-radius: 0;
 }
 
 /* Right stats panel */
 .pitcher-stats-panel {
   flex: 1;
-  padding: 1rem 1.1rem;
   min-width: 0;
+  padding: 1rem 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .pitcher-name-lg {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: var(--navy);
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.1rem;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .pitcher-meta-line {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.65rem;
 }
 
 .pitcher-team-tag { color: var(--orange); font-weight: 700; }
 
-.pitcher-stats-cols {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 1.25rem;
-}
+@media (max-width: 900px) { .pitcher-two-col { grid-template-columns: 1fr; } }
 
-.pitcher-col { display: flex; flex-direction: column; gap: 0.22rem; }
-
-.pcol-header {
-  font-size: 0.66rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: var(--orange);
-  margin-bottom: 0.35rem;
-  padding-bottom: 0.25rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.pcol-header.advanced { color: var(--orange); }
-
-.pstat-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.82rem;
-  padding: 0.12rem 0;
-}
-
-.pstat-label { color: var(--text-muted); font-weight: 500; }
-.pstat-val   { font-weight: 700; color: var(--text-main); font-variant-numeric: tabular-nums; }
-
-.pitching-table-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: #9099b0;
-  padding: 0.75rem 1.25rem 0.25rem;
-  border-top: 1px solid var(--border);
-}
-
-@media (max-width: 700px) {
-  .pitcher-two-col  { grid-template-columns: 1fr; }
-  .pitcher-img-panel { width: 100px; }
-  .pitcher-img-panel .pitcher-photo-sm,
-  .pitcher-img-panel .pitcher-photo-placeholder { width: 100px; height: 130px; }
-  .pitcher-name-lg  { font-size: 1rem; }
+@media (max-width: 500px) {
+  .pitcher-img-panel { width: 90px; }
+  .pitcher-name-lg   { font-size: 0.95rem; }
 }
 
 /* =====================
-   LINEUPS — two-col grid
+   STAT BARS (percentile visualization)
+   ===================== */
+.sbar-section-label {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--orange);
+  margin-bottom: 0.3rem;
+  margin-top: 0.1rem;
+}
+
+.sbar-row {
+  display: grid;
+  grid-template-columns: 58px 1fr 44px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 0.3rem;
+}
+
+.sbar-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sbar-track {
+  height: 14px;
+  background: #e9ecf3;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.sbar-fill {
+  height: 100%;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 3px;
+  min-width: 20px;
+  transition: width 0.5s ease;
+}
+
+.sbar-pct {
+  font-size: 0.6rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.sbar-val {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+
    ===================== */
 .lineup-two-col {
   display: grid;
