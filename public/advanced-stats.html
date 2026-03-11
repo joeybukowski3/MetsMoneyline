@@ -251,6 +251,7 @@
     </div>
     <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
     <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+    <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
   </footer>
 
   <script type="module">
@@ -479,6 +480,15 @@
     }
 
     renderStandings();
+
+    fetch("data/sample-game.json").then(r => r.json()).then(d => {
+      if (!d.generatedAt) return;
+      const el = document.getElementById("data-timestamp");
+      if (el) el.textContent = "Last updated: " + new Date(d.generatedAt).toLocaleString("en-US", {
+        timeZone: "America/New_York", month: "short", day: "numeric",
+        hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
+      });
+    }).catch(() => {});
 
     window.toggleFullStandings = function() {
       const el  = document.getElementById("full-nl-standings");

@@ -118,36 +118,52 @@ function resolveAdvancedMatchup(game) {
   ];
 }
 
-/* ── ROW 1: Matchup Strip ── */
+/* ── ROW 1: Matchup Bar ── */
 function buildMatchupStrip(game) {
   const oppLogo = getTeamLogoUrl(game.opponent);
   const metsML  = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
   const oppML   = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
 
   const gameDate = game.date || "";
-  const REGULAR_SEASON_START = "2026-04-02";
-  const seasonLabel = gameDate >= REGULAR_SEASON_START ? "Regular Season" : "Spring Training";
   const dateDisplay = gameDate
-    ? new Date(gameDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+    ? new Date(gameDate + "T12:00:00").toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
     : "";
 
+  const total = game.total ?? game.overUnder ?? null;
+  const ouItem = total != null
+    ? `<span class="mb-meta-item"><span>&#x2197;</span> O/U ${total}</span>`
+    : "";
+
+  const oppLogoHtml = oppLogo
+    ? `<img src="${oppLogo}" alt="${game.opponent}">`
+    : `<span style="width:36px;height:36px;display:inline-block;"></span>`;
+
   return `
-    <div class="matchup-strip">
-      <div class="team-block home">
-        <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" class="team-logo" alt="NYM">
-        <div class="team-name">New York Mets</div>
-        <div class="team-record">${game.metsRecord} &nbsp;|&nbsp; ML ${metsML}</div>
+    <div class="matchup-bar-compact">
+      <div class="mb-team">
+        <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" alt="NYM">
+        <div>
+          <div class="mb-team-name">New York Mets</div>
+          <span class="mb-record">${game.metsRecord}</span>
+        </div>
       </div>
-      <div class="matchup-vs-block">
-        <span class="matchup-vs-label">vs</span>
-        <span class="matchup-vs-time">${game.time}</span>
-        <span class="matchup-vs-venue">${game.ballpark}</span>
-        ${dateDisplay ? `<div class="game-date-label">${dateDisplay} &middot; ${seasonLabel}</div>` : ""}
+      <div class="mb-vs">
+        <span class="mb-vs-label">VS</span>
+        <span class="mb-vs-time">${game.time}</span>
       </div>
-      <div class="team-block away">
-        ${oppLogo ? `<img src="${oppLogo}" class="team-logo" alt="${game.opponent}">` : ""}
-        <div class="team-name">${game.opponent}</div>
-        <div class="team-record">${game.oppRecord} &nbsp;|&nbsp; ML ${oppML}</div>
+      <div class="mb-team">
+        ${oppLogoHtml}
+        <div>
+          <div class="mb-team-name">${game.opponent}</div>
+          <span class="mb-record">${game.oppRecord}</span>
+        </div>
+      </div>
+      <div class="mb-divider"></div>
+      <div class="mb-meta">
+        ${dateDisplay ? `<span class="mb-meta-item">&#x1F550; ${dateDisplay}</span>` : ""}
+        <span class="mb-meta-item">&#x1F4CD; ${game.ballpark}</span>
+        <span class="mb-meta-item">$ <span class="mb-ml-nym">NYM ${metsML}</span> / OPP ${oppML}</span>
+        ${ouItem}
       </div>
     </div>`;
 }
@@ -244,27 +260,59 @@ function buildPitchingCard(game) {
 
   // Build one pitcher card
   const pitcherCard = (sideLabel, pitcher, seasonStats, vsRoster) => {
+    const prow = (label, val) =>
+      `<div class="pstat-row"><span class="pstat-label">${label}</span><span class="pstat-val">${val}</span></div>`;
+
     if (pitcher.announced === false) {
       return `<div class="pitcher-card">
-        <div class="pitcher-photo-placeholder">&#9918;</div>
-        <div style="font-weight:700;font-size:1.1rem;margin-bottom:0.25rem">TBD</div>
-        <div style="font-size:0.82rem;color:#9099b0;margin-bottom:0.75rem">${sideLabel} &middot; Not yet announced</div>
+        <div class="pitcher-card-inner">
+          <div class="pitcher-photo-placeholder" style="width:80px;height:100px;">&#9918;</div>
+          <div class="pitcher-info">
+            <div class="pitcher-name-lg">TBD</div>
+            <div class="pitcher-meta-line">${sideLabel} &middot; Not yet announced</div>
+          </div>
+        </div>
+        ${vsRosterTable(vsRoster)}
       </div>`;
     }
+
     const { era, fip, xera, whip, kbb, kpct, bbpct } = seasonStats;
+    const hhPct = pitcher.savant?.hardHitPct ?? "N/A";
+    const gbPct = pitcher.savant?.gbPct      ?? "N/A";
+
+    const id = pitcher.mlbId || METS_PITCHER_IDS[pitcher.name] || 0;
+    const photoHtml = id
+      ? `<img class="pitcher-photo-sm"
+           src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current"
+           alt="${pitcher.name}"
+           onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot; style=&quot;width:80px;height:100px&quot;>&#9918;</div>'">`
+      : `<div class="pitcher-photo-placeholder" style="width:80px;height:100px;">&#9918;</div>`;
+
     return `<div class="pitcher-card">
-      ${pitcherPhoto(pitcher.mlbId, pitcher.name)}
-      <div style="font-weight:700;font-size:1.1rem;margin-bottom:0.25rem">${pitcher.name}</div>
-      <div style="font-size:0.82rem;color:#9099b0;margin-bottom:0.75rem">${sideLabel} &middot; ${pitcher.hand}HP</div>
-      <table class="matchup-table">
-        <caption>Season Stats (2025)</caption>
-        <thead>
-          <tr><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>K%</th><th>BB%</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>${era}</td><td>${fip}</td><td>${xera}</td><td>${whip}</td><td>${kbb}</td><td>${kpct}</td><td>${bbpct}</td></tr>
-        </tbody>
-      </table>
+      <div class="pitcher-card-inner">
+        ${photoHtml}
+        <div class="pitcher-info">
+          <div class="pitcher-name-lg">${pitcher.name}</div>
+          <div class="pitcher-meta-line">${sideLabel} &middot; ${era} ERA</div>
+          <div class="pitcher-stats-cols">
+            <div class="pitcher-col">
+              <div class="pcol-header">TRADITIONAL</div>
+              ${prow("ERA",  era)}
+              ${prow("WHIP", whip)}
+              ${prow("K%",   kpct)}
+              ${prow("BB%",  bbpct)}
+            </div>
+            <div class="pitcher-col">
+              <div class="pcol-header advanced">ADVANCED</div>
+              ${prow("FIP",       fip)}
+              ${prow("xERA",      xera)}
+              ${prow("K/BB",      kbb)}
+              ${prow("Hard-Hit%", hhPct)}
+              ${prow("GB%",       gbPct)}
+            </div>
+          </div>
+        </div>
+      </div>
       ${vsRosterTable(vsRoster)}
     </div>`;
   };
@@ -315,7 +363,7 @@ function buildPitchingCard(game) {
       <div class="card-header">Starting Pitching</div>
       <div class="pitcher-cards-grid">
         ${metsCard}
-        <div class="pitcher-card-divider"></div>
+        <div class="pitcher-divider"></div>
         ${oppCard}
       </div>
     </div>

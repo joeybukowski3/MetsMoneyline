@@ -327,6 +327,34 @@ main, .page-content {
   margin-top: 0.25rem;
 }
 
+/* =====================
+   MATCHUP BAR COMPACT
+   ===================== */
+.matchup-bar-compact {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid #e4e8f0;
+  border-top: 1px solid #e4e8f0;
+  flex-wrap: wrap;
+  font-size: 0.88rem;
+  max-width: 100%;
+  margin: 1rem 0;
+}
+.mb-team { display: flex; align-items: center; gap: 0.5rem; }
+.mb-team img { width: 36px; height: 36px; border-radius: 50%; object-fit: contain; }
+.mb-team-name { font-weight: 700; font-size: 0.95rem; color: #0d2461; }
+.mb-record { font-size: 0.75rem; color: #9099b0; margin-left: 0.2rem; }
+.mb-vs { text-align: center; min-width: 70px; }
+.mb-vs-label { font-size: 0.72rem; color: #9099b0; display: block; }
+.mb-vs-time { color: #ff5910; font-weight: 700; font-size: 0.9rem; display: block; }
+.mb-divider { width: 1px; height: 32px; background: #e4e8f0; margin: 0 0.5rem; }
+.mb-meta { display: flex; align-items: center; gap: 1rem; color: #5a6072; font-size: 0.83rem; flex-wrap: wrap; }
+.mb-meta-item { display: flex; align-items: center; gap: 0.3rem; }
+.mb-ml-nym { color: #ff5910; font-weight: 700; }
+
 /* legacy matchup-bar kept for any inline usage */
 .matchup-bar {
   display: flex;
@@ -744,6 +772,33 @@ main, .page-content {
   color: #1a1a2e;
 }
 
+/* =====================
+   PITCHER CARD INNER LAYOUT
+   ===================== */
+.pitcher-card-inner {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.25rem;
+  gap: 1rem;
+}
+.pitcher-photo-sm {
+  width: 110px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.pitcher-info { flex: 1; min-width: 0; }
+.pitcher-name-lg { font-size: 1rem; font-weight: 700; color: #0d2461; margin-bottom: 0.15rem; }
+.pitcher-meta-line { font-size: 0.78rem; color: #ff5910; margin-bottom: 0.75rem; }
+.pitcher-stats-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.5rem; }
+.pitcher-col { display: flex; flex-direction: column; gap: 0.25rem; }
+.pcol-header { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #9099b0; margin-bottom: 0.35rem; }
+.pcol-header.advanced { color: #ff5910; }
+.pstat-row { display: flex; justify-content: space-between; font-size: 0.82rem; }
+.pstat-label { color: #9099b0; }
+.pstat-val { font-weight: 600; color: #1a1a2e; }
+.pitcher-divider { width: 1px; background: #e4e8f0; align-self: stretch; }
+
 .xwoba-good    { background: #dcfce7; color: #15803d; font-weight: 700; }
 .xwoba-neutral { background: #f3f4f6; color: #374151; }
 .xwoba-bad     { background: #fee2e2; color: #dc2626; font-weight: 700; }
@@ -752,9 +807,12 @@ main, .page-content {
   .pitcher-cards-grid {
     grid-template-columns: 1fr;
   }
-  .pitcher-card-divider {
+  .pitcher-card-divider,
+  .pitcher-divider {
     display: none;
   }
+  .mb-divider { display: none; }
+  .matchup-bar-compact { gap: 0.6rem; padding: 0.75rem 1rem; }
 }
 
 /* =====================

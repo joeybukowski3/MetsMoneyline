@@ -95,6 +95,7 @@
     </div>
     <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
     <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+    <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
   </footer>
 
   <script>
@@ -138,6 +139,14 @@
       return `<tr><td>${formatDate(g.date)}</td><td>${opponentCell}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td><span class="${resultClass}">${g.result}</span></td><td class="${plClass}">${plPrefix}${Math.abs(pl).toFixed(2)}</td></tr>`;
     });
     document.getElementById("history-body").innerHTML = rows.join("");
+    fetch("data/sample-game.json").then(r => r.json()).then(d => {
+      if (!d.generatedAt) return;
+      const el = document.getElementById("data-timestamp");
+      if (el) el.textContent = "Last updated: " + new Date(d.generatedAt).toLocaleString("en-US", {
+        timeZone: "America/New_York", month: "short", day: "numeric",
+        hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
+      });
+    }).catch(() => {});
     document.getElementById("record-display").textContent = wins + "-0";
     const plSign = running >= 0 ? "+$" : "-$";
     const plDisplay = document.getElementById("pl-display");
