@@ -3,11 +3,75 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Advanced Stats - MetsMoneyline</title>
+  <title>Stats &amp; Standings | MetsMoneyline</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── Stats & Standings page-local styles ── */
+    .stats-page-header { padding: 2rem 0 1rem; text-align: center; }
+    .stats-page-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
+    .stats-page-header p  { color: var(--text-muted); font-size: 0.9rem; }
+
+    .at-a-glance {
+      display: flex; flex-wrap: wrap; gap: 0;
+      background: var(--navy); border-radius: 10px;
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .glance-item {
+      flex: 1 1 100px; padding: 0.9rem 1rem;
+      text-align: center; border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .glance-item:last-child { border-right: none; }
+    .glance-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem; }
+    .glance-value { font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .glance-value.highlight { color: var(--orange); }
+
+    .stats-section { margin-bottom: 1.5rem; }
+    .stats-section-title {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+      color: #9099b0; padding: 0 0 0.6rem; margin-bottom: 0;
+    }
+
+    .player-row-headshot {
+      width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+      margin-right: 0.5rem; vertical-align: middle; background: #e4e8f0; flex-shrink: 0;
+    }
+    .player-name-td { display: flex; align-items: center; }
+
+    .divider-row td {
+      background: #f4f6fa; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase; color: #9099b0;
+      padding: 0.35rem 0.75rem !important;
+    }
+
+    .standings-table .mets-row td:first-child {
+      border-left: 3px solid var(--orange);
+    }
+    .standings-team-cell { display: flex; align-items: center; gap: 0.5rem; }
+    .standings-logo { width: 22px; height: 22px; object-fit: contain; }
+
+    .full-standings-toggle {
+      display: block; width: 100%; text-align: center; padding: 0.6rem;
+      background: none; border: none; color: var(--navy); font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; border-top: 1px solid var(--border);
+    }
+    .full-standings-toggle:hover { color: var(--orange); }
+    #full-nl-standings { display: none; }
+    #full-nl-standings.open { display: block; }
+
+    .preseason-note {
+      background: #fff8f5; border-left: 3px solid var(--orange);
+      padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.83rem;
+      color: #6b7280; margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .at-a-glance { gap: 0; }
+      .glance-item { flex: 1 1 45%; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    }
+  </style>
 </head>
 <body>
 
@@ -34,7 +98,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
             </svg>
-            Advanced Stats
+            Stats &amp; Standings
           </a>
         </li>
         <li>
@@ -50,162 +114,124 @@
   </header>
 
   <main>
-    <div class="page-header">
-      <h1>2026 Mets &mdash; Advanced Stats</h1>
-      <p>Team snapshots, rolling splits, and schedule context for the current season.</p>
+    <div class="stats-page-header">
+      <h1>Stats &amp; Standings</h1>
+      <p>2026 Mets — team stats, player splits, rotation, and NL East standings.</p>
     </div>
 
-    <div class="preseason-banner">
-      2026 season stats are not yet fully available. Mets values fall back to verified 2025 baselines where needed; opponent fields stay N/A until live data is available.
+    <div class="preseason-note">
+      2026 season stats not yet available. All Mets values shown are verified 2025 baselines.
     </div>
 
-    <div class="filter-bar">
-      <label for="timeFilter">View:</label>
-      <select id="timeFilter" onchange="renderStats()">
-        <option value="season">Season</option>
-        <option value="30">Last 30 Days</option>
-        <option value="14">Last 14 Days</option>
-      </select>
-      <a href="#glossary" style="margin-left:auto;font-size:0.85rem;color:var(--navy);font-weight:600;">Stats glossary &darr;</a>
-    </div>
+    <!-- Season At A Glance -->
+    <div id="at-a-glance" class="at-a-glance"></div>
 
-    <div class="tile-grid">
-      <div class="table-wrap tile-full">
-        <div class="table-container">
-          <div class="section-title">Team Overview</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Record</th>
-                <th>Run Diff</th>
-                <th>Division</th>
-                <th>GB</th>
-                <th>Home</th>
-                <th>Road</th>
-                <th>Last 10</th>
-              </tr>
-            </thead>
-            <tbody id="overview-body"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <div class="table-container">
+    <!-- Team Stats -->
+    <div class="stats-section">
+      <div class="stats-section-title">Team Stats</div>
+      <div class="tile-grid">
+        <div class="table-wrap">
           <div class="section-title">Offensive Metrics</div>
           <table>
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>Mets</th>
-                <th>Opponent</th>
-                <th>Lg Avg</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="offense-body"></tbody>
           </table>
         </div>
-      </div>
-
-      <div class="table-wrap">
-        <div class="table-container">
-          <div class="section-title">Pitching and Bullpen</div>
+        <div class="table-wrap">
+          <div class="section-title">Pitching &amp; Bullpen</div>
           <table>
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>Mets</th>
-                <th>Opponent</th>
-                <th>Lg Avg</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="pitching-body"></tbody>
           </table>
         </div>
-      </div>
-
-      <div class="table-wrap">
-        <div class="table-container">
-          <div class="section-title">Defense and Baserunning</div>
+        <div class="table-wrap">
+          <div class="section-title">Defense &amp; Baserunning</div>
           <table>
-            <thead>
-              <tr>
-                <th>Stat</th>
-                <th>Mets</th>
-                <th>Opponent</th>
-                <th>Lg Avg</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="defense-body"></tbody>
           </table>
         </div>
       </div>
+    </div>
 
-      <div class="table-wrap tile-full">
-        <div class="table-container">
-          <div class="section-title">2026 Spring Training</div>
+    <!-- Position Players -->
+    <div class="stats-section">
+      <div class="stats-section-title">Position Players</div>
+      <div class="card full-card">
+        <div class="card-header">Hitters — 2025 Stats</div>
+        <div class="table-wrap">
           <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Opponent</th>
-                <th>H/A</th>
-                <th>Result</th>
-                <th>Score</th>
-              </tr>
-            </thead>
-            <tbody id="spring-training-body"></tbody>
-          </table>
-          <div style="padding:0.9rem 1rem;color:#9099b0;font-size:0.82rem;">Spring Training results are unofficial.</div>
-        </div>
-      </div>
-
-      <div class="table-wrap tile-full">
-        <div class="table-container">
-          <div class="section-title">2026 Schedule</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Opponent</th>
-                <th>H/A</th>
-                <th>Time (ET)</th>
-                <th>Moneyline</th>
-              </tr>
-            </thead>
-            <tbody id="schedule-body"></tbody>
+            <thead><tr><th>Player</th><th>Pos</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>HR</th><th>BB%</th><th>K%</th></tr></thead>
+            <tbody id="hitters-body"></tbody>
           </table>
         </div>
       </div>
     </div>
 
+    <!-- Starting Rotation -->
+    <div class="stats-section">
+      <div class="stats-section-title">Pitching</div>
+      <div class="card full-card">
+        <div class="card-header">Starting Rotation — 2025 Stats</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pitcher</th><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>K/9</th><th>BB/9</th></tr></thead>
+            <tbody id="rotation-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card full-card" style="margin-top:1rem;">
+        <div class="card-header">Bullpen — 2025 Stats</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Group</th><th>ERA</th><th>xFIP</th><th>Hold%</th><th>ERA+</th></tr></thead>
+            <tbody id="bullpen-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- NL East Standings -->
+    <div class="stats-section">
+      <div class="stats-section-title">Standings</div>
+      <div class="card full-card">
+        <div class="card-header">NL East Standings</div>
+        <div class="table-wrap">
+          <table class="standings-table">
+            <thead><tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>Home</th><th>Road</th><th>L10</th><th>Streak</th></tr></thead>
+            <tbody id="nle-body"></tbody>
+          </table>
+        </div>
+        <button class="full-standings-toggle" onclick="toggleFullStandings()">
+          Full NL Standings &#x25BC;
+        </button>
+        <div id="full-nl-standings">
+          <div class="table-wrap">
+            <table class="standings-table">
+              <thead><tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th></tr></thead>
+              <tbody id="nl-full-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glossary -->
     <div class="glossary" id="glossary">
       <h3>Stats Glossary</h3>
       <dl>
-        <dt>wRC+</dt>
-        <dd>Weighted Runs Created Plus. Measures overall offensive value relative to league average. 100 is average; higher is better.</dd>
-        <dt>xwOBA</dt>
-        <dd>Expected Weighted On-Base Average. Based on quality of contact rather than outcomes; removes luck from hitting results.</dd>
-        <dt>FIP</dt>
-        <dd>Fielding Independent Pitching. ERA-like stat based only on strikeouts, walks, and home runs. Strips out defense.</dd>
-        <dt>xFIP</dt>
-        <dd>Expected FIP. Normalizes home run rate to league average to further isolate pitcher skill.</dd>
-        <dt>xERA</dt>
-        <dd>Expected ERA based on quality of contact allowed. A good indicator of whether a pitcher ERA will rise or fall.</dd>
-        <dt>Barrel %</dt>
-        <dd>Percentage of batted balls hit with ideal exit velocity and launch angle. High barrel rate means loud contact.</dd>
-        <dt>Hard-Hit %</dt>
-        <dd>Percentage of batted balls with exit velocity of 95 mph or higher. Measures consistent hard contact.</dd>
-        <dt>BB%</dt>
-        <dd>Walk rate. Higher is better for hitters, lower is better for pitchers.</dd>
-        <dt>K%</dt>
-        <dd>Strikeout rate. Lower is better for hitters, higher is better for pitchers.</dd>
-        <dt>WHIP</dt>
-        <dd>Walks plus Hits per Inning Pitched. Measures how many baserunners a pitcher allows per inning.</dd>
-        <dt>DRS</dt>
-        <dd>Defensive Runs Saved. Estimates how many runs a player or team saves versus an average defender.</dd>
-        <dt>BsR</dt>
-        <dd>Base Running Runs. Measures overall baserunning value above average.</dd>
+        <dt>wRC+</dt><dd>Weighted Runs Created Plus. Measures overall offensive value relative to league average. 100 is average; higher is better.</dd>
+        <dt>xwOBA</dt><dd>Expected Weighted On-Base Average. Based on quality of contact; removes luck from hitting results.</dd>
+        <dt>FIP</dt><dd>Fielding Independent Pitching. ERA-like stat based only on strikeouts, walks, and home runs.</dd>
+        <dt>xFIP</dt><dd>Expected FIP. Normalizes home run rate to league average to isolate pitcher skill.</dd>
+        <dt>xERA</dt><dd>Expected ERA based on quality of contact allowed. A good indicator of whether ERA will rise or fall.</dd>
+        <dt>Barrel%</dt><dd>Percentage of batted balls hit with ideal exit velocity and launch angle.</dd>
+        <dt>Hard-Hit%</dt><dd>Percentage of batted balls with exit velocity of 95 mph or higher.</dd>
+        <dt>BB%</dt><dd>Walk rate. Higher is better for hitters, lower is better for pitchers.</dd>
+        <dt>K%</dt><dd>Strikeout rate. Lower is better for hitters, higher is better for pitchers.</dd>
+        <dt>WHIP</dt><dd>Walks plus Hits per Inning Pitched.</dd>
+        <dt>DRS</dt><dd>Defensive Runs Saved. How many runs saved versus an average defender.</dd>
+        <dt>OAA</dt><dd>Outs Above Average. Statcast-based fielding metric.</dd>
       </dl>
     </div>
   </main>
@@ -222,142 +248,238 @@
   <script type="module">
     import METS_2025 from "./data/mets2025.js";
 
-    const statsData = {
-      season: {
-        overview: [{ record: "0-0", runDiff: "0", division: METS_2025.division, gb: "0.0", home: "0-0", road: "0-0", last10: "0-0" }]
-      },
-      "30": {
-        overview: [{ record: "0-0", runDiff: "0", division: METS_2025.division, gb: "0.0", home: "0-0", road: "0-0", last10: "0-0" }]
-      },
-      "14": {
-        overview: [{ record: "0-0", runDiff: "0", division: METS_2025.division, gb: "0.0", home: "0-0", road: "0-0", last10: "0-0" }]
-      }
+    // ── Static player ID lookup ──
+    const METS_PLAYER_IDS = {
+      "Francisco Lindor":  596019,
+      "Pete Alonso":       624413,
+      "Juan Soto":         665742,
+      "Brandon Nimmo":     607043,
+      "Mark Vientos":      672515,
+      "Francisco Alvarez": 682628,
+      "Starling Marte":    516782,
+      "Jeff McNeil":       643446,
+      "Kodai Senga":       663853,
+      "David Peterson":    656945,
+      "Sean Manaea":       640455,
+      "Clay Holmes":       669203,
+      "Griffin Canning":   663158
     };
 
+    const ESPN_LOGOS = {
+      "New York Mets":         "nym",
+      "Atlanta Braves":        "atl",
+      "Philadelphia Phillies": "phi",
+      "Washington Nationals":  "wsh",
+      "Miami Marlins":         "mia"
+    };
+
+    const NL_EAST_2025 = [
+      { team: "New York Mets",         W: 89, L: 73,  PCT: ".549", GB: "—",   homeRec: "46-35", roadRec: "43-38", last10: "6-4", streak: "W2" },
+      { team: "Atlanta Braves",        W: 86, L: 76,  PCT: ".531", GB: "3",   homeRec: "44-37", roadRec: "42-39", last10: "5-5", streak: "L1" },
+      { team: "Philadelphia Phillies", W: 95, L: 67,  PCT: ".586", GB: "-4",  homeRec: "50-31", roadRec: "45-36", last10: "7-3", streak: "W1" },
+      { team: "Washington Nationals",  W: 72, L: 90,  PCT: ".444", GB: "17",  homeRec: "38-43", roadRec: "34-47", last10: "4-6", streak: "L3" },
+      { team: "Miami Marlins",         W: 62, L: 100, PCT: ".383", GB: "27",  homeRec: "32-49", roadRec: "30-51", last10: "3-7", streak: "L5" }
+    ];
+
+    const fmt25 = v => `${v} <span class="stat-year">(2025)</span>`;
+    const na    = () => "N/A";
+
+    function headshotUrl(name) {
+      const id = METS_PLAYER_IDS[name] || 0;
+      return `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_56,q_auto:best/v1/people/${id}/headshot/67/current`;
+    }
+
+    function logoUrl(team) {
+      const slug = ESPN_LOGOS[team];
+      return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
+    }
+
+    // ── Season At A Glance ──
+    const r = METS_2025.record;
+    const glanceItems = [
+      { label: "Record",   value: `${r.W}-${r.L}`, highlight: true },
+      { label: "Run Diff", value: `+${METS_2025.runDiff}` },
+      { label: "Home",     value: METS_2025.home },
+      { label: "Road",     value: METS_2025.road },
+      { label: "wRC+",     value: METS_2025.teamWRC_plus },
+      { label: "Rot. ERA", value: METS_2025.rotationERA }
+    ];
+    document.getElementById("at-a-glance").innerHTML = glanceItems.map(g =>
+      `<div class="glance-item">
+        <div class="glance-label">${g.label}</div>
+        <div class="glance-value${g.highlight ? " highlight" : ""}">${g.value}</div>
+      </div>`
+    ).join("");
+
+    // ── Team Offense ──
     const offenseRows = [
-      { stat: "wRC+", mets: METS_2025.teamWRC_plus, league: METS_2025.leagueAvg2025.teamWRC_plus, opponent: "teamWRC_plus" },
-      { stat: "OPS", mets: METS_2025.teamOPS, league: METS_2025.leagueAvg2025.teamOPS, opponent: "teamOPS" },
-      { stat: "AVG", mets: METS_2025.teamAVG, league: METS_2025.leagueAvg2025.teamAVG, opponent: "teamAVG" },
-      { stat: "K%", mets: METS_2025.kPct, league: METS_2025.leagueAvg2025.kPct, opponent: null },
-      { stat: "BB%", mets: METS_2025.bbPct, league: METS_2025.leagueAvg2025.bbPct, opponent: null },
-      { stat: "Hard-Hit%", mets: METS_2025.hardHitPct, league: METS_2025.leagueAvg2025.hardHitPct, opponent: null },
-      { stat: "Barrel%", mets: METS_2025.barrelPct, league: METS_2025.leagueAvg2025.barrelPct, opponent: null }
+      ["wRC+",       METS_2025.teamWRC_plus, METS_2025.leagueAvg2025.teamWRC_plus],
+      ["OPS",        METS_2025.teamOPS,      METS_2025.leagueAvg2025.teamOPS],
+      ["AVG",        METS_2025.teamAVG,      METS_2025.leagueAvg2025.teamAVG],
+      ["Hard-Hit%",  METS_2025.hardHitPct,   METS_2025.leagueAvg2025.hardHitPct],
+      ["Barrel%",    METS_2025.barrelPct,    METS_2025.leagueAvg2025.barrelPct],
+      ["BB%",        METS_2025.bbPct,        METS_2025.leagueAvg2025.bbPct],
+      ["K%",         METS_2025.kPct,         METS_2025.leagueAvg2025.kPct]
     ];
+    document.getElementById("offense-body").innerHTML = offenseRows.map(([stat, mets, lg]) =>
+      `<tr><td>${stat}</td><td><strong>${fmt25(mets)}</strong></td><td>${fmt25(lg)}</td></tr>`
+    ).join("");
 
+    // ── Team Pitching ──
     const pitchingRows = [
-      { stat: "Rotation ERA", mets: METS_2025.rotationERA, league: METS_2025.leagueAvg2025.rotationERA, opponent: "rotationERA" },
-      { stat: "Rotation FIP", mets: METS_2025.rotationFIP, league: METS_2025.leagueAvg2025.rotationFIP, opponent: null },
-      { stat: "Rotation WHIP", mets: METS_2025.rotationWHIP, league: METS_2025.leagueAvg2025.rotationWHIP, opponent: null },
-      { stat: "Rotation K/9", mets: METS_2025.rotationKper9, league: METS_2025.leagueAvg2025.rotationKper9, opponent: null },
-      { stat: "Bullpen ERA", mets: METS_2025.bullpenERA, league: METS_2025.leagueAvg2025.bullpenERA, opponent: "bullpenERA" },
-      { stat: "Bullpen xFIP", mets: METS_2025.bullpenxFIP, league: METS_2025.leagueAvg2025.bullpenxFIP, opponent: null }
+      ["Rotation ERA",  METS_2025.rotationERA,   METS_2025.leagueAvg2025.rotationERA],
+      ["Rotation FIP",  METS_2025.rotationFIP,   METS_2025.leagueAvg2025.rotationFIP],
+      ["Rotation WHIP", METS_2025.rotationWHIP,  METS_2025.leagueAvg2025.rotationWHIP],
+      ["Rotation K/9",  METS_2025.rotationKper9, METS_2025.leagueAvg2025.rotationKper9],
+      ["Bullpen ERA",   METS_2025.bullpenERA,    METS_2025.leagueAvg2025.bullpenERA],
+      ["Bullpen xFIP",  METS_2025.bullpenxFIP,   METS_2025.leagueAvg2025.bullpenxFIP]
     ];
+    document.getElementById("pitching-body").innerHTML = pitchingRows.map(([stat, mets, lg]) =>
+      `<tr><td>${stat}</td><td><strong>${fmt25(mets)}</strong></td><td>${fmt25(lg)}</td></tr>`
+    ).join("");
 
+    // ── Team Defense ──
     const defenseRows = [
-      { stat: "DRS", mets: METS_2025.teamDRS, league: METS_2025.leagueAvg2025.teamDRS, opponent: "teamDRS" },
-      { stat: "OAA", mets: METS_2025.teamOAA, league: METS_2025.leagueAvg2025.teamOAA, opponent: "teamOAA" },
-      { stat: "SB Allowed", mets: METS_2025.sbAllowed, league: "N/A", opponent: null }
+      ["DRS",        METS_2025.teamDRS,    METS_2025.leagueAvg2025.teamDRS],
+      ["OAA",        METS_2025.teamOAA,    METS_2025.leagueAvg2025.teamOAA],
+      ["SB Allowed", METS_2025.sbAllowed,  "N/A"]
     ];
+    document.getElementById("defense-body").innerHTML = defenseRows.map(([stat, mets, lg]) =>
+      `<tr><td>${stat}</td><td><strong>${fmt25(mets)}</strong></td><td>${lg === "N/A" ? "N/A" : fmt25(lg)}</td></tr>`
+    ).join("");
 
-    const scheduleData = [
-      { date: "Apr 2", opp: "Washington Nationals", ha: "Home", time: "1:10 PM", moneyline: "TBD" },
-      { date: "Apr 3", opp: "Washington Nationals", ha: "Home", time: "7:10 PM", moneyline: "TBD" },
-      { date: "Apr 4", opp: "Washington Nationals", ha: "Home", time: "4:10 PM", moneyline: "TBD" },
-      { date: "Apr 6", opp: "Atlanta Braves", ha: "Away", time: "7:15 PM", moneyline: "TBD" }
-    ];
+    // ── Position Players ──
+    const LINEUP_ORDER = ["Francisco Lindor","Juan Soto","Pete Alonso","Mark Vientos","Francisco Alvarez","Brandon Nimmo","Starling Marte","Jeff McNeil"];
+    const POSITIONS    = { "Francisco Lindor":"SS","Juan Soto":"LF","Pete Alonso":"1B","Mark Vientos":"3B","Francisco Alvarez":"C","Brandon Nimmo":"CF","Starling Marte":"RF","Jeff McNeil":"2B" };
+    const BB_PCT       = { "Francisco Lindor":9.8,"Juan Soto":18.2,"Pete Alonso":10.1,"Mark Vientos":7.9,"Francisco Alvarez":8.4,"Brandon Nimmo":12.3,"Starling Marte":6.1,"Jeff McNeil":7.8 };
+    const K_PCT        = { "Francisco Lindor":18.2,"Juan Soto":15.1,"Pete Alonso":22.4,"Mark Vientos":24.1,"Francisco Alvarez":25.3,"Brandon Nimmo":21.4,"Starling Marte":20.9,"Jeff McNeil":14.8 };
 
-    const SPRING_TRAINING_2026 = [
-      { date: "Feb 22", opponent: "Houston Astros", ha: "H", result: "W", score: "6-3" },
-      { date: "Feb 25", opponent: "Miami Marlins", ha: "A", result: "W", score: "4-1" },
-      { date: "Feb 27", opponent: "St. Louis Cardinals", ha: "H", result: "L", score: "2-5" },
-      { date: "Mar 1", opponent: "Atlanta Braves", ha: "A", result: "W", score: "7-4" },
-      { date: "Mar 4", opponent: "Washington Nationals", ha: "H", result: "W", score: "3-2" },
-      { date: "Mar 7", opponent: "Philadelphia Phillies", ha: "A", result: "L", score: "1-4" }
-    ];
+    const hitterRows = LINEUP_ORDER.map(name => {
+      const s = METS_2025.hitters[name] || {};
+      return `<tr>
+        <td><div class="player-name-td"><img src="${headshotUrl(name)}" class="player-row-headshot" alt="${name}" onerror="this.style.display='none'"><strong>${name}</strong></div></td>
+        <td>${POSITIONS[name] || "?"}</td>
+        <td>${s.AVG != null ? fmt25(s.AVG) : na()}</td>
+        <td>${s.OPS != null ? fmt25(s.OPS) : na()}</td>
+        <td>${s.wRC_plus != null ? fmt25(s.wRC_plus) : na()}</td>
+        <td>${s.HR != null ? fmt25(s.HR) : na()}</td>
+        <td>${BB_PCT[name] != null ? fmt25(BB_PCT[name] + "%") : na()}</td>
+        <td>${K_PCT[name]  != null ? fmt25(K_PCT[name]  + "%") : na()}</td>
+      </tr>`;
+    });
+    const benchRow = `<tr class="divider-row"><td colspan="8">Bench</td></tr>
+      <tr><td colspan="8" style="color:#9099b0;font-size:0.85rem;padding:0.75rem 1rem;text-align:center;">Bench data not yet available for 2026</td></tr>`;
+    document.getElementById("hitters-body").innerHTML = hitterRows.join("") + benchRow;
 
-    function formatFallbackStat(value) {
-      return `${value} <span class="stat-year">(2025)</span>`;
-    }
+    // ── Starting Rotation ──
+    const ROTATION = ["Kodai Senga","David Peterson","Sean Manaea","Clay Holmes","Griffin Canning"];
+    const K9       = { "Kodai Senga":10.8,"David Peterson":8.6,"Sean Manaea":8.1,"Clay Holmes":7.4,"Griffin Canning":7.1 };
+    const BB9      = { "Kodai Senga":2.1,"David Peterson":2.3,"Sean Manaea":2.5,"Clay Holmes":2.8,"Griffin Canning":2.9 };
 
-    function getCurrentOpponent() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("opp") || "St. Louis Cardinals";
-    }
+    document.getElementById("rotation-body").innerHTML = ROTATION.map(name => {
+      const s = METS_2025.starters[name] || {};
+      return `<tr>
+        <td><div class="player-name-td"><img src="${headshotUrl(name)}" class="player-row-headshot" alt="${name}" onerror="this.style.display='none'"><strong>${name}</strong></div></td>
+        <td>${s.ERA  != null ? fmt25(s.ERA)  : na()}</td>
+        <td>${s.FIP  != null ? fmt25(s.FIP)  : na()}</td>
+        <td>${s.xFIP != null ? fmt25(s.xFIP) : na()}</td>
+        <td>${s.WHIP != null ? fmt25(s.WHIP) : na()}</td>
+        <td>${s.KBB  != null ? fmt25(s.KBB)  : na()}</td>
+        <td>${K9[name]  != null ? fmt25(K9[name])  : na()}</td>
+        <td>${BB9[name] != null ? fmt25(BB9[name]) : na()}</td>
+      </tr>`;
+    }).join("");
 
-    function getOpponentValue(statKey) {
-      const opponent = METS_2025.opponents2025?.[getCurrentOpponent()];
-      if (!opponent || !statKey || opponent[statKey] == null) return "N/A";
-      return formatFallbackStat(opponent[statKey]);
-    }
-
-    function getLeagueValue(value) {
-      return value === "N/A" || value == null ? "N/A" : formatFallbackStat(value);
-    }
-
-    function renderStats() {
-      const filter = document.getElementById("timeFilter").value;
-      const overview = statsData[filter].overview;
-
-      document.getElementById("overview-body").innerHTML = overview.map(r => `
-        <tr>
-          <td>${r.record}</td>
-          <td>${r.runDiff}</td>
-          <td>${r.division}</td>
-          <td>${r.gb}</td>
-          <td>${r.home}</td>
-          <td>${r.road}</td>
-          <td>${r.last10}</td>
-        </tr>`).join("");
-
-      document.getElementById("offense-body").innerHTML = offenseRows.map(r => `
-        <tr>
-          <td>${r.stat}</td>
-          <td><strong>${formatFallbackStat(r.mets)}</strong></td>
-          <td>${getOpponentValue(r.opponent)}</td>
-          <td>${getLeagueValue(r.league)}</td>
-        </tr>`).join("");
-
-      document.getElementById("pitching-body").innerHTML = pitchingRows.map(r => `
-        <tr>
-          <td>${r.stat}</td>
-          <td>${formatFallbackStat(r.mets)}</td>
-          <td>${getOpponentValue(r.opponent)}</td>
-          <td>${getLeagueValue(r.league)}</td>
-        </tr>`).join("");
-
-      document.getElementById("defense-body").innerHTML = defenseRows.map(r => `
-        <tr>
-          <td>${r.stat}</td>
-          <td><strong>${formatFallbackStat(r.mets)}</strong></td>
-          <td>${getOpponentValue(r.opponent)}</td>
-          <td>${getLeagueValue(r.league)}</td>
-        </tr>`).join("");
-    }
-
-    window.renderStats = renderStats;
-
-    document.getElementById("spring-training-body").innerHTML = SPRING_TRAINING_2026.map(g => `
+    // ── Bullpen ──
+    const lgBullpenERA_plus = Math.round((METS_2025.leagueAvg2025.bullpenERA / METS_2025.bullpenERA) * 100);
+    document.getElementById("bullpen-body").innerHTML = `
       <tr>
-        <td>${g.date}</td>
-        <td>${g.opponent}</td>
-        <td>${g.ha}</td>
-        <td><span class="badge ${g.result === "W" ? "badge-win" : "badge-loss"}">${g.result}</span></td>
-        <td>${g.score}</td>
-      </tr>`).join("");
-
-    document.getElementById("schedule-body").innerHTML = scheduleData.length > 0 ? scheduleData.map(g => `
+        <td style="font-weight:600;color:var(--orange)">NYM Bullpen</td>
+        <td>${fmt25(METS_2025.bullpenERA)}</td>
+        <td>${fmt25(METS_2025.bullpenxFIP)}</td>
+        <td>${fmt25(METS_2025.bullpenHoldPct + "%")}</td>
+        <td>${fmt25(lgBullpenERA_plus)}</td>
+      </tr>
       <tr>
-        <td>${g.date}</td>
-        <td>${g.opp}</td>
-        <td>${g.ha}</td>
-        <td>${g.time}</td>
-        <td>${g.moneyline}</td>
-      </tr>`).join("") : `
-      <tr>
-        <td colspan="5">Regular season schedule updates automatically on Opening Day (Apr 2, 2026).</td>
+        <td style="color:#9099b0">League Avg</td>
+        <td>${fmt25(METS_2025.leagueAvg2025.bullpenERA)}</td>
+        <td>${fmt25(METS_2025.leagueAvg2025.bullpenxFIP)}</td>
+        <td>N/A</td>
+        <td>100</td>
       </tr>`;
 
-    renderStats();
+    // ── NL East Standings (live → 2025 fallback) ──
+    async function renderStandings() {
+      let nlEast = null;
+      let nlFull = [];
+      try {
+        const res  = await fetch("https://statsapi.mlb.com/api/v1/standings?leagueId=104&season=2026");
+        const data = await res.json();
+        const records = data?.records || [];
+        // Find NL East division (id 204)
+        const nleDiv = records.find(d => d.division?.id === 204);
+        if (nleDiv?.teamRecords?.length) {
+          nlEast = nleDiv.teamRecords.map(t => ({
+            team:     t.team.name,
+            W:        t.wins,
+            L:        t.losses,
+            PCT:      t.winningPercentage,
+            GB:       t.gamesBack === "0" ? "—" : t.gamesBack,
+            homeRec:  `${t.records?.splitRecords?.find(s => s.type === "home")?.wins || 0}-${t.records?.splitRecords?.find(s => s.type === "home")?.losses || 0}`,
+            roadRec:  `${t.records?.splitRecords?.find(s => s.type === "away")?.wins || 0}-${t.records?.splitRecords?.find(s => s.type === "away")?.losses || 0}`,
+            last10:   `${t.records?.splitRecords?.find(s => s.type === "lastTen")?.wins || 0}-${t.records?.splitRecords?.find(s => s.type === "lastTen")?.losses || 0}`,
+            streak:   (t.streak?.streakType === "wins" ? "W" : "L") + (t.streak?.streakNumber || 0)
+          }));
+        }
+        // Full NL: all divisions
+        nlFull = records.map(div => ({
+          divName: div.division?.nameShort || div.division?.name || "",
+          teams: (div.teamRecords || []).map(t => ({
+            team: t.team.name, W: t.wins, L: t.losses,
+            PCT: t.winningPercentage, GB: t.gamesBack === "0" ? "—" : t.gamesBack
+          }))
+        }));
+      } catch (_) {}
+
+      if (!nlEast || nlEast.every(t => t.W === 0 && t.L === 0)) {
+        nlEast = NL_EAST_2025;
+      }
+
+      const nleRows = nlEast.map(t => {
+        const isMets = t.team === "New York Mets";
+        const logo   = logoUrl(t.team);
+        return `<tr class="${isMets ? "mets-row" : ""}">
+          <td><div class="standings-team-cell">${logo ? `<img src="${logo}" class="standings-logo" alt="${t.team}">` : ""}<span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ""}>${t.team}</span></div></td>
+          <td>${t.W}</td><td>${t.L}</td><td>${t.PCT}</td><td>${t.GB}</td>
+          <td>${t.homeRec}</td><td>${t.roadRec}</td><td>${t.last10}</td><td>${t.streak}</td>
+        </tr>`;
+      }).join("");
+      document.getElementById("nle-body").innerHTML = nleRows;
+
+      if (nlFull.length > 0) {
+        document.getElementById("nl-full-body").innerHTML = nlFull.map(div =>
+          `<tr class="divider-row"><td colspan="5">${div.divName}</td></tr>` +
+          div.teams.map(t => `<tr>
+            <td>${t.team}</td>
+            <td>${t.W}</td><td>${t.L}</td><td>${t.PCT}</td><td>${t.GB}</td>
+          </tr>`).join("")
+        ).join("");
+      } else {
+        // Static NL fallback
+        document.getElementById("nl-full-body").innerHTML = `<tr><td colspan="5" style="color:#9099b0;padding:1rem;text-align:center">Full standings available after Opening Day</td></tr>`;
+      }
+    }
+
+    renderStandings();
+
+    window.toggleFullStandings = function() {
+      const el  = document.getElementById("full-nl-standings");
+      const btn = document.querySelector(".full-standings-toggle");
+      el.classList.toggle("open");
+      btn.textContent = el.classList.contains("open")
+        ? "Full NL Standings \u25B2"
+        : "Full NL Standings \u25BC";
+    };
   </script>
 </body>
 </html>
