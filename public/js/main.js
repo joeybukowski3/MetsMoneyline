@@ -153,6 +153,19 @@ function buildMatchupStrip(game) {
     </div>`;
 }
 
+const METS_PITCHER_IDS = {
+  "Kodai Senga":       663853,
+  "David Peterson":    656945,
+  "Sean Manaea":       640455,
+  "Clay Holmes":       669203,
+  "Griffin Canning":   663158,
+  "Jose Quintana":     542432,
+  "Luis Severino":     622663,
+  "Max Scherzer":      453286,
+  "Tylor Megill":      676477,
+  "Jose Butto":        683737
+};
+
 /* ── ROW 2: Starting Pitching ── */
 function buildPitchingCard(game) {
   const p  = game.pitching;
@@ -185,8 +198,10 @@ function buildPitchingCard(game) {
   const bpOpp14ERA   = oppBP.last14;
   const bpOppRating  = oppBP.rating;
 
-  const headshot = (mlbId, name, size) =>
-    `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_${size},q_auto:best/v1/people/${mlbId || 0}/headshot/67/current" class="pitcher-headshot-lg" alt="${name}" onerror="this.style.display='none'">`;
+  const headshot = (mlbId, name, size) => {
+    const id = mlbId || METS_PITCHER_IDS[name] || 0;
+    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_${size},q_auto:best/v1/people/${id}/headshot/67/current" class="pitcher-headshot-lg" alt="${name}" onerror="this.style.display='none'">`;
+  };
 
   const metsFeatureBlock = p.mets.announced === false
     ? `<div class="pitcher-tbd"><div class="pitcher-feature-name">TBD</div><div class="pitcher-feature-label">Not yet announced</div></div>`

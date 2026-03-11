@@ -46,9 +46,9 @@ async function safeGet(url, label) {
 
 async function findNextGame(startDate) {
   for (let i = 0; i < 7; i++) {
-    const checkDate = new Date(startDate);
+    const checkDate = new Date(startDate + "T12:00:00");
     checkDate.setDate(checkDate.getDate() + i);
-    const dateStr = checkDate.toISOString().split("T")[0];
+    const dateStr = checkDate.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
     const url =
       `https://statsapi.mlb.com/api/v1/schedule` +
       `?sportId=1&teamId=${TEAM_ID}&date=${dateStr}` +
