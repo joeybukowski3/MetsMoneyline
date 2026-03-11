@@ -140,22 +140,24 @@ function buildMatchupStrip(game) {
 
   return `
     <div class="matchup-bar-compact">
-      <div class="mb-team">
-        <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" alt="NYM">
-        <div>
-          <div class="mb-team-name">New York Mets</div>
-          <span class="mb-record">${game.metsRecord}</span>
+      <div class="mb-teams">
+        <div class="mb-team">
+          <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" alt="NYM">
+          <div>
+            <div class="mb-team-name">New York Mets</div>
+            <span class="mb-record">${game.metsRecord}</span>
+          </div>
         </div>
-      </div>
-      <div class="mb-vs">
-        <span class="mb-vs-label">VS</span>
-        <span class="mb-vs-time">${game.time}</span>
-      </div>
-      <div class="mb-team">
-        ${oppLogoHtml}
-        <div>
-          <div class="mb-team-name">${game.opponent}</div>
-          <span class="mb-record">${game.oppRecord}</span>
+        <div class="mb-vs">
+          <span class="mb-vs-label">VS</span>
+          <span class="mb-vs-time">${game.time}</span>
+        </div>
+        <div class="mb-team">
+          ${oppLogoHtml}
+          <div>
+            <div class="mb-team-name">${game.opponent}</div>
+            <span class="mb-record">${game.oppRecord}</span>
+          </div>
         </div>
       </div>
       <div class="mb-divider"></div>
@@ -293,7 +295,7 @@ function buildPitchingCard(game) {
         ${photoHtml}
         <div class="pitcher-info">
           <div class="pitcher-name-lg">${pitcher.name}</div>
-          <div class="pitcher-meta-line">${sideLabel} &middot; ${era} ERA</div>
+          <div class="pitcher-meta-line">${sideLabel}${pitcher.seasonRecord ? ` — ${pitcher.seasonRecord}` : ""}, ${era} ERA</div>
           <div class="pitcher-stats-cols">
             <div class="pitcher-col">
               <div class="pcol-header">TRADITIONAL</div>
