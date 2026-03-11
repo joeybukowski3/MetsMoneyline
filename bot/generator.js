@@ -127,11 +127,12 @@ function extractLineups(feed, metsIsHome) {
 
   const metsLineup = parseTeam(teams[metsKey]);
   const oppLineup  = parseTeam(teams[oppKey]);
+  const lineupStatus = metsLineup.length > 0 ? "confirmed" : "not_released";
 
   return {
-    mets:   metsLineup,
-    opp:    oppLineup,
-    status: metsLineup.length > 0 ? "confirmed" : "projected"
+    mets:        metsLineup,
+    opp:         oppLineup,
+    lineupStatus
   };
 }
 
@@ -427,34 +428,36 @@ Write the 150-300 word breakdown now.`;
 // Assemble full game object
 // ─────────────────────────────────────────────
 
-async function buildGameObject(game, standings) {
+async function buildGameObject(game, standings, isGameDay) {
   const isHome   = game.teams.home.team.id === TEAM_ID;
   const metsTeam = isHome ? game.teams.home : game.teams.away;
   const oppTeam  = isHome ? game.teams.away : game.teams.home;
 
-  const metsPitcher = metsTeam.probablePitcher || null;
-  const oppPitcher  = oppTeam.probablePitcher  || null;
+  const metsPitcherRaw = metsTeam.probablePitcher || null;
+  const oppPitcherRaw  = oppTeam.probablePitcher  || null;
+  const metsAnnounced  = !!(metsPitcherRaw?.id);
+  const oppAnnounced   = !!(oppPitcherRaw?.id);
 
   // STEP 2: Live feed for lineups + pitcher handedness
   console.log(`Fetching live game feed (gamePk: ${game.gamePk})...`);
   const feed = await getGameFeed(game.gamePk);
 
-  const metsHand = extractPitcherHand(feed, metsPitcher?.id, isHome ? "home" : "away");
-  const oppHand  = extractPitcherHand(feed, oppPitcher?.id,  isHome ? "away" : "home");
+  const metsHand = extractPitcherHand(feed, metsPitcherRaw?.id, isHome ? "home" : "away");
+  const oppHand  = extractPitcherHand(feed, oppPitcherRaw?.id,  isHome ? "away" : "home");
   const lineups  = extractLineups(feed, isHome);
 
-  // STEP 3: Season stats with 2026 → 2025 fallback
+  // STEP 3: Season stats (only for announced pitchers)
   console.log(`Fetching pitcher stats...`);
   const [metsPitcherStats, oppPitcherStats] = await Promise.all([
-    getPitcherStats(metsPitcher?.id, metsPitcher?.fullName),
-    getPitcherStats(oppPitcher?.id,  oppPitcher?.fullName)
+    metsAnnounced ? getPitcherStats(metsPitcherRaw.id, metsPitcherRaw.fullName) : Promise.resolve([]),
+    oppAnnounced  ? getPitcherStats(oppPitcherRaw.id,  oppPitcherRaw.fullName)  : Promise.resolve([])
   ]);
 
-  // STEP 3b: Savant stats
+  // STEP 3b: Savant stats (only for announced pitchers)
   console.log(`Fetching Savant stats...`);
   const [metsSavant, oppSavant] = await Promise.all([
-    getSavantStats(metsPitcher?.id, metsPitcher?.fullName),
-    getSavantStats(oppPitcher?.id,  oppPitcher?.fullName)
+    metsAnnounced ? getSavantStats(metsPitcherRaw.id, metsPitcherRaw.fullName) : Promise.resolve(null),
+    oppAnnounced  ? getSavantStats(oppPitcherRaw.id,  oppPitcherRaw.fullName)  : Promise.resolve(null)
   ]);
 
   const metsRecord = extractTeamRecord(standings, TEAM_ID);
@@ -483,8 +486,9 @@ async function buildGameObject(game, standings) {
     result:    null,
     pitching: {
       mets: {
-        name:        metsPitcher?.fullName || "TBD",
-        mlbId:       metsPitcher?.id || null,
+        name:        metsAnnounced ? metsPitcherRaw.fullName : "TBD",
+        mlbId:       metsAnnounced ? metsPitcherRaw.id : null,
+        announced:   metsAnnounced,
         hand:        metsHand,
         seasonERA:   metsPStats.seasonERA,
         seasonFIP:   metsPStats.seasonFIP,
@@ -500,8 +504,9 @@ async function buildGameObject(game, standings) {
         savant:      metsSavant
       },
       opp: {
-        name:        oppPitcher?.fullName || "TBD",
-        mlbId:       oppPitcher?.id || null,
+        name:        oppAnnounced ? oppPitcherRaw.fullName : "TBD",
+        mlbId:       oppAnnounced ? oppPitcherRaw.id : null,
+        announced:   oppAnnounced,
         hand:        oppHand,
         seasonERA:   oppPStats.seasonERA,
         seasonFIP:   oppPStats.seasonFIP,
@@ -528,18 +533,22 @@ async function buildGameObject(game, standings) {
       { category: "Strikeout Rate (K%)",      mets: "N/A", opp: "N/A", edge: "Neutral" }
     ],
     trends: [
-      { category: "Last 10 Games",   mets: metsRecord,                   opp: oppRecord,                    edge: "Neutral" },
-      { category: "Home/Road",       mets: isHome ? "Home" : "Road",     opp: isHome ? "Road" : "Home",     edge: "Neutral" },
-      { category: "Series Context",  mets: "Game 1",                     opp: "Game 1",                     edge: "Neutral" }
+      { category: "Last 10 Games",   mets: metsRecord,               opp: oppRecord,                edge: "Neutral" },
+      { category: "Home/Road",       mets: isHome ? "Home" : "Road", opp: isHome ? "Road" : "Home", edge: "Neutral" },
+      { category: "Series Context",  mets: "Game 1",                 opp: "Game 1",                 edge: "Neutral" }
     ],
-    writeup:       { sections: [], pickSummary: "", officialPick: "Today's Pick: New York Mets Moneyline" },
+    writeup: null,
     bettingHistory: null
   };
 
-  // STEP 4: Generate AI analysis with grounded context
-  console.log("Generating AI analysis...");
-  const rawWriteup = await generateAnalysis(gameObject);
-  gameObject.writeup = parseWriteup(rawWriteup);
+  // STEP 4: Generate AI analysis only on game day
+  if (isGameDay) {
+    console.log("Generating AI analysis...");
+    const rawWriteup = await generateAnalysis(gameObject);
+    gameObject.writeup = parseWriteup(rawWriteup);
+  } else {
+    console.log("Not game day — skipping analysis generation.");
+  }
 
   return gameObject;
 }
@@ -557,10 +566,12 @@ async function run() {
     process.exit(0);
   }
 
-  const { game } = result;
+  const { game, date: gameDate } = result;
+  const isGameDay = (gameDate === getTodayET());
+  console.log(`isGameDay: ${isGameDay} (game: ${gameDate}, today: ${getTodayET()})`);
 
   const standings   = await getStandings();
-  const gameObject  = await buildGameObject(game, standings);
+  const gameObject  = await buildGameObject(game, standings, isGameDay);
 
   console.log(`\n--- Game object summary ---`);
   console.log(`  Date:     ${gameObject.date}`);

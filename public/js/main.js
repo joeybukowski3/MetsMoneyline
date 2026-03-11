@@ -188,23 +188,32 @@ function buildPitchingCard(game) {
   const headshot = (mlbId, name, size) =>
     `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_${size},q_auto:best/v1/people/${mlbId || 0}/headshot/67/current" class="pitcher-headshot-lg" alt="${name}" onerror="this.style.display='none'">`;
 
+  const metsFeatureBlock = p.mets.announced === false
+    ? `<div class="pitcher-tbd"><div class="pitcher-feature-name">TBD</div><div class="pitcher-feature-label">Not yet announced</div></div>`
+    : `<div class="pitcher-feature-block">${headshot(p.mets.mlbId, p.mets.name, 200)}<div class="pitcher-feature-name">${p.mets.name}</div><div class="pitcher-feature-label">NYM &middot; ${p.mets.hand}HP</div></div>`;
+
+  const oppFeatureBlock = p.opp.announced === false
+    ? `<div class="pitcher-tbd"><div class="pitcher-feature-name">TBD</div><div class="pitcher-feature-label">Not yet announced</div></div>`
+    : `<div class="pitcher-feature-block">${headshot(p.opp.mlbId, p.opp.name, 200)}<div class="pitcher-feature-name">${p.opp.name}</div><div class="pitcher-feature-label">OPP &middot; ${p.opp.hand}HP</div></div>`;
+
+  // Stat rows only for announced pitchers
+  const metsStatRow = p.mets.announced === false
+    ? `<td style="font-weight:600;color:var(--navy)">TBD</td><td colspan="6" style="color:#9099b0;text-align:center">Pitcher not yet announced</td>`
+    : `<td style="font-weight:600;color:var(--navy)">${p.mets.name}</td><td>${mERA}</td><td>${mFIP}</td><td>${mXERA}</td><td>${mWHIP}</td><td>${mKBB}</td><td>${mL3}</td>`;
+
+  const oppStatRow = p.opp.announced === false
+    ? `<td style="font-weight:600;color:#374151">TBD</td><td colspan="6" style="color:#9099b0;text-align:center">Pitcher not yet announced</td>`
+    : `<td style="font-weight:600;color:#374151">${p.opp.name}</td><td>${oERA}</td><td>${oFIP}</td><td>${oXERA}</td><td>${oWHIP}</td><td>${oKBB}</td><td>${oL3}</td>`;
+
   return `
     <div class="card full-card">
       <div class="card-header">Starting Pitching</div>
 
       <!-- Section A: Featured pitcher header -->
       <div class="pitcher-feature-row">
-        <div class="pitcher-feature-block">
-          ${headshot(p.mets.mlbId, p.mets.name, 200)}
-          <div class="pitcher-feature-name">${p.mets.name}</div>
-          <div class="pitcher-feature-label">NYM &middot; ${p.mets.hand}HP</div>
-        </div>
+        ${metsFeatureBlock}
         <div class="pitcher-vs">VS</div>
-        <div class="pitcher-feature-block">
-          ${headshot(p.opp.mlbId, p.opp.name, 200)}
-          <div class="pitcher-feature-name">${p.opp.name}</div>
-          <div class="pitcher-feature-label">OPP &middot; ${p.opp.hand}HP</div>
-        </div>
+        ${oppFeatureBlock}
       </div>
 
       <!-- Section B: Starters stat table -->
@@ -212,14 +221,8 @@ function buildPitchingCard(game) {
         <table>
           <thead><tr><th>Pitcher</th><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>Last 3 ERA</th></tr></thead>
           <tbody>
-            <tr>
-              <td style="font-weight:600;color:var(--navy)">${p.mets.name}</td>
-              <td>${mERA}</td><td>${mFIP}</td><td>${mXERA}</td><td>${mWHIP}</td><td>${mKBB}</td><td>${mL3}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;color:#374151">${p.opp.name}</td>
-              <td>${oERA}</td><td>${oFIP}</td><td>${oXERA}</td><td>${oWHIP}</td><td>${oKBB}</td><td>${oL3}</td>
-            </tr>
+            <tr>${metsStatRow}</tr>
+            <tr>${oppStatRow}</tr>
           </tbody>
         </table>
       </div>
@@ -280,9 +283,10 @@ function buildPitchingCard(game) {
 /* ── ROW 3: Lineups + Advanced Metrics ── */
 function buildRow3(game) {
   const l = game.lineups || {};
-  const metsLineup = Array.isArray(l.mets) && l.mets.length > 0 ? l.mets : DEFAULT_METS_LINEUP;
-  const oppLineup  = Array.isArray(l.opp)  ? l.opp : [];
-  const statusLabel = l.status === "confirmed" ? "Confirmed" : "Projected";
+  const notReleased = l.lineupStatus === "not_released";
+  const metsLineup = (!notReleased && Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : DEFAULT_METS_LINEUP;
+  const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
+  const statusLabel = l.lineupStatus === "confirmed" ? "Confirmed" : "Projected";
 
   // FIX 1: headshot helper — uses playerId if present, falls back to 0 (generic MLB silhouette via Cloudinary d_ param)
   const headshotImg = (p) => {
@@ -331,28 +335,32 @@ function buildRow3(game) {
     ? `<div class="edge-callout">Key Edge: ${topEdge.category} — NYM ${topEdge.mets} vs OPP ${topEdge.opp}</div>`
     : `<div class="edge-callout neutral">No clear statistical edge identified</div>`;
 
+  const metsBattingBlock = notReleased
+    ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
+    : `<div class="table-wrap"><table>
+         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th></tr></thead>
+         <tbody>${metsRows}</tbody>
+       </table></div>`;
+
+  const oppBattingBlock = notReleased
+    ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
+    : `<div class="table-wrap"><table>
+         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th></tr></thead>
+         <tbody>${oppRows}</tbody>
+       </table></div>`;
+
   return `
     <div class="row-3-grid">
       <div class="card">
         <div class="card-header">${statusLabel} Lineup — Mets</div>
         <div class="lineup-team-header mets-header">New York Mets</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th></tr></thead>
-            <tbody>${metsRows}</tbody>
-          </table>
-        </div>
+        ${metsBattingBlock}
       </div>
 
       <div class="card">
         <div class="card-header">${statusLabel} Lineup — ${game.opponent}</div>
         <div class="lineup-team-header opp-header">${game.opponent}</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th></tr></thead>
-            <tbody>${oppRows}</tbody>
-          </table>
-        </div>
+        ${oppBattingBlock}
       </div>
 
       <div class="card advanced-metrics">
@@ -370,7 +378,8 @@ function buildRow3(game) {
 
 /* ── ROW 4: Analysis tiles (3 side-by-side) ── */
 function buildAnalysisRow(game) {
-  const sections = game.writeup?.sections ?? [];
+  if (!game.writeup?.sections?.length) return "";
+  const sections = game.writeup.sections;
 
   // Map the first 3 sections to tiles; use section heading as the title
   const tiles = [0, 1, 2].map(i => {
@@ -388,8 +397,19 @@ function buildAnalysisRow(game) {
 
 /* ── ROW 5: Pick Banner ── */
 function buildPickSection(game) {
-  const sections = game.writeup?.sections ?? [];
-  // Use the last section (Final Read / Putting It Together) for the summary
+  // No writeup yet (pre-game day)
+  if (!game.writeup) {
+    const dateDisplay = game.date
+      ? new Date(game.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
+      : "";
+    return `
+      <div class="pick-section pick-pending">
+        <p class="pick-summary">Today's analysis and pick will be generated on game day morning.</p>
+        <p class="pick-label">📅 Next Game: ${dateDisplay} vs ${game.opponent}</p>
+      </div>`;
+  }
+
+  const sections = game.writeup.sections ?? [];
   const finalSection = sections[3]
     || sections.find(s => /putting|together|final|bottom line/i.test(s.heading));
   const summary = finalSection?.body || game.writeup?.pickSummary || game.matchupSummary || "";
@@ -460,7 +480,7 @@ function buildRecentTiles(games) {
 /* ── Init ── */
 async function init() {
   const games = await loadGameData();
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
   const todayGame = games.find(g => g.date >= today && g.status === "upcoming")
     || games.find(g => g.status === "upcoming")
     || games[0];
