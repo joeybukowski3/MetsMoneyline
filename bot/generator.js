@@ -5,6 +5,12 @@ const OpenAI = require("openai");
 const fs = require("fs");
 const { parse } = require("csv-parse/sync");
 
+function getTodayET() {
+  return new Date().toLocaleDateString("en-CA", {
+    timeZone: "America/New_York"
+  }); // returns YYYY-MM-DD in ET
+}
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TEAM_ID = 121; // New York Mets
 
@@ -544,8 +550,7 @@ async function buildGameObject(game, standings) {
 
 async function run() {
   console.log("Searching for next Mets game...");
-  const today = new Date().toISOString().split("T")[0];
-  const result = await findNextGame(today);
+  const result = await findNextGame(getTodayET());
 
   if (!result) {
     console.log("No Mets game found in the next 7 days. Exiting.");
@@ -557,27 +562,23 @@ async function run() {
   const standings   = await getStandings();
   const gameObject  = await buildGameObject(game, standings);
 
+  console.log(`\n--- Game object summary ---`);
+  console.log(`  Date:     ${gameObject.date}`);
+  console.log(`  Opponent: ${gameObject.opponent}`);
+  console.log(`  gamePk:   ${game.gamePk}`);
+  console.log(`  Mets SP:  ${gameObject.pitching.mets.name} (mlbId: ${gameObject.pitching.mets.mlbId})`);
+  console.log(`  Opp SP:   ${gameObject.pitching.opp.name}  (mlbId: ${gameObject.pitching.opp.mlbId})`);
+  console.log(`---------------------------\n`);
+
   const jsonPath = path.join(__dirname, "../public/data/sample-game.json");
 
-  let existing = { games: [] };
-  if (fs.existsSync(jsonPath)) {
-    const raw = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
-    existing.games = raw.games.filter(g =>
-      g.id && !g.id.includes("phillies") && g.date !== "2026-04-10"
-    );
-  }
+  const output = {
+    generatedAt: new Date().toISOString(),
+    games: [gameObject]
+  };
 
-  const idx = existing.games.findIndex(g => g.date === gameObject.date);
-  if (idx >= 0) {
-    existing.games[idx] = gameObject;
-    console.log("Updated existing entry for today.");
-  } else {
-    existing.games.push(gameObject);
-    console.log("Added new entry for today.");
-  }
-
-  fs.writeFileSync(jsonPath, JSON.stringify(existing, null, 2));
-  console.log("sample-game.json updated. Review before pushing.");
+  fs.writeFileSync(jsonPath, JSON.stringify(output, null, 2));
+  console.log("sample-game.json overwritten with fresh data. Review before pushing.");
 }
 
 run().catch(err => {
