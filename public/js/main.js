@@ -2,8 +2,7 @@ import METS_2025 from "../data/mets2025.js";
 
 async function loadGameData() {
   const res = await fetch("data/sample-game.json");
-  const data = await res.json();
-  return data.games;
+  return res.json();
 }
 
 const ESPN_LOGO = {
@@ -541,7 +540,7 @@ function buildRecentTiles(games) {
 
 /* ── Init ── */
 async function init() {
-  const games = await loadGameData();
+  const { games, generatedAt } = await loadGameData();
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
   const todayGame = games.find(g => g.date >= today && g.status === "upcoming")
     || games.find(g => g.status === "upcoming")
@@ -562,6 +561,17 @@ async function init() {
     buildTrendsCard(todayGame);             // supplemental trends
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games);
+
+  if (generatedAt) {
+    const el = document.getElementById("data-timestamp");
+    if (el) {
+      const d = new Date(generatedAt);
+      el.textContent = "Last updated: " + d.toLocaleString("en-US", {
+        timeZone: "America/New_York", month: "short", day: "numeric",
+        hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
+      });
+    }
+  }
 }
 
 init();
