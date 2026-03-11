@@ -9,28 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <style>
-    main {
-      max-width: 1300px;
-    }
-
-    .page-with-sidebar {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 280px;
-      gap: 1.5rem;
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    .page-main-col {
-      min-width: 0;
-    }
-
-    .news-sidebar {
-      min-width: 0;
-      padding: 1rem;
-    }
-
+    /* index-page sidebar news card styles not in global CSS */
     .news-card-sm {
       display: flex;
       gap: 0.75rem;
@@ -60,12 +39,6 @@
       color: #9099b0;
       margin-top: 0.25rem;
     }
-
-    @media (max-width: 900px) {
-      .page-with-sidebar {
-        grid-template-columns: 1fr;
-      }
-    }
   </style>
 </head>
 <body>
@@ -79,6 +52,9 @@
       <a href="index.html" class="nav-brand">
         <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
       </a>
+      <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
       <ul class="nav-links">
         <li>
           <a href="index.html" class="nav-link active">
@@ -161,6 +137,24 @@
     <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
   </footer>
 
+  <script>
+    // Hamburger menu toggle
+    const hamburger = document.querySelector('.nav-hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', open);
+    });
+    // Close menu when a link is clicked
+    navLinks.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
   <script type="module" src="js/main.js"></script>
   <script>
     const NEWS_FEEDS = [
@@ -281,4 +275,3 @@
   </script>
 </body>
 </html>
-
