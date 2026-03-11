@@ -8,6 +8,176 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .news-page-shell {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .news-page-header {
+      padding: 2rem 0 1rem;
+      text-align: center;
+    }
+
+    .news-page-header h1 {
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 0.35rem;
+    }
+
+    .news-page-header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .news-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin: 0 0 1.5rem;
+    }
+
+    .news-refresh-btn {
+      border: none;
+      border-radius: 999px;
+      background: var(--orange);
+      color: #fff;
+      padding: 0.72rem 1.2rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s, opacity 0.15s;
+    }
+
+    .news-refresh-btn:hover:not(:disabled) {
+      background: #e04a05;
+      transform: translateY(-1px);
+    }
+
+    .news-refresh-btn:disabled {
+      cursor: wait;
+      opacity: 0.75;
+    }
+
+    .news-spinner {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 45, 114, 0.18);
+      border-top-color: var(--navy);
+      opacity: 0;
+      transition: opacity 0.15s;
+      animation: news-spin 0.8s linear infinite;
+    }
+
+    .news-spinner.active {
+      opacity: 1;
+    }
+
+    .news-last-updated {
+      color: #9099b0;
+      font-size: 0.85rem;
+      min-height: 1em;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .news-card {
+      display: flex;
+      gap: 1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      min-height: 156px;
+    }
+
+    .news-thumb {
+      width: 168px;
+      object-fit: cover;
+      background: #eef2f8;
+      flex-shrink: 0;
+    }
+
+    .news-body {
+      display: flex;
+      flex: 1;
+      min-width: 0;
+      flex-direction: column;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 1rem 1rem 1rem 0;
+    }
+
+    .news-source {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--orange);
+    }
+
+    .news-title {
+      color: var(--navy);
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.4;
+      text-decoration: none;
+    }
+
+    .news-title:hover {
+      text-decoration: underline;
+    }
+
+    .news-date {
+      color: #9099b0;
+      font-size: 0.82rem;
+      font-weight: 500;
+    }
+
+    .news-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #9099b0;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    @keyframes news-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 800px) {
+      .news-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .news-card {
+        flex-direction: column;
+      }
+
+      .news-thumb {
+        width: 100%;
+        height: 200px;
+      }
+
+      .news-body {
+        padding: 0 1rem 1rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -57,30 +227,18 @@
     </nav>
   </header>
 
-  <main>
-    <div class="page-header">
+  <main class="news-page-shell">
+    <div class="news-page-header">
       <h1>Team News</h1>
-      <p>Latest Mets coverage from ESPN, MLB.com, NY Post, SNY, and Amazin' Avenue.</p>
+      <p>Latest Mets coverage from ESPN, MLB.com, NY Post, SNY, and Amazin Avenue.</p>
     </div>
 
-    <!-- Toolbar -->
     <div class="news-toolbar">
-      <button class="news-refresh-btn" id="refresh-btn" onclick="fetchAllFeeds()">&#x21BB; Refresh</button>
+      <button class="news-refresh-btn" id="refresh-btn" type="button">Refresh</button>
       <div class="news-spinner" id="spinner"></div>
       <span class="news-last-updated" id="last-updated"></span>
     </div>
 
-    <!-- Source filter tabs -->
-    <div class="news-filter-tabs" id="filter-tabs">
-      <button class="news-tab active" data-source="All" onclick="filterNews('All', this)">All</button>
-      <button class="news-tab" data-source="ESPN Mets" onclick="filterNews('ESPN Mets', this)">ESPN</button>
-      <button class="news-tab" data-source="MLB.com Mets" onclick="filterNews('MLB.com Mets', this)">MLB.com</button>
-      <button class="news-tab" data-source="NY Post Mets" onclick="filterNews('NY Post Mets', this)">NY Post</button>
-      <button class="news-tab" data-source="SNY" onclick="filterNews('SNY', this)">SNY</button>
-      <button class="news-tab" data-source="Amazin Avenue" onclick="filterNews('Amazin Avenue', this)">Amazin' Ave</button>
-    </div>
-
-    <!-- News grid -->
     <div class="news-grid" id="news-grid">
       <div class="news-empty">Loading news&hellip;</div>
     </div>
@@ -105,119 +263,132 @@
     ];
 
     const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
+    let lastUpdatedAt = null;
 
-    let allArticles = [];
-    let activeSource = "All";
-
-    function timeAgo(dateStr) {
-      if (!dateStr) return "";
-      const diff = Date.now() - new Date(dateStr).getTime();
-      const m = Math.floor(diff / 60000);
-      if (m < 1)  return "just now";
-      if (m < 60) return `${m}m ago`;
-      const h = Math.floor(m / 60);
-      if (h < 24) return `${h}h ago`;
-      const d = Math.floor(h / 24);
-      return `${d}d ago`;
+    function stripHtml(value) {
+      return String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     }
 
-    function extractThumb(item) {
-      if (item.thumbnail && item.thumbnail !== "false" && item.thumbnail.startsWith("http")) return item.thumbnail;
-      if (item.enclosure?.link && /\.(jpg|jpeg|png|webp|gif)/i.test(item.enclosure.link)) return item.enclosure.link;
-      // Try to pull first img from description
-      const match = (item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
-      if (match) return match[1];
-      return null;
+    function getRelativeTime(dateValue) {
+      const date = new Date(dateValue);
+      if (Number.isNaN(date.getTime())) return "";
+      const diffMs = date.getTime() - Date.now();
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      const minutes = Math.round(diffMs / 60000);
+      if (Math.abs(minutes) < 60) return rtf.format(minutes, "minute");
+      const hours = Math.round(diffMs / 3600000);
+      if (Math.abs(hours) < 24) return rtf.format(hours, "hour");
+      const days = Math.round(diffMs / 86400000);
+      return rtf.format(days, "day");
     }
 
-    function stripHtml(str) {
-      return (str || "").replace(/<[^>]+>/g, "").trim();
+    function getThumbnail(item) {
+      const candidates = [
+        item.enclosure && item.enclosure.link,
+        item.thumbnail,
+        item.image,
+        item["media:thumbnail"],
+        item["media:content"]
+      ];
+
+      for (const candidate of candidates) {
+        const url = typeof candidate === "string"
+          ? candidate
+          : candidate && typeof candidate.url === "string"
+            ? candidate.url
+            : candidate && typeof candidate.link === "string"
+              ? candidate.link
+              : "";
+        if (url && /^https?:\/\//i.test(url)) return url;
+      }
+
+      const match = String(item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+      return match ? match[1] : "";
     }
 
-    function isMetsRelated(item) {
-      const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
-      return text.includes("mets") || text.includes("new york");
+    function toArticle(item, feedName) {
+      return {
+        source: feedName,
+        title: stripHtml(item.title),
+        link: item.link || "#",
+        pubDate: item.pubDate || item.published || item.date || "",
+        description: stripHtml(item.description || item.content || ""),
+        thumbnail: getThumbnail(item)
+      };
+    }
+
+    function isMetsArticle(article) {
+      const text = `${article.title} ${article.description}`.toLowerCase();
+      return text.includes("mets");
     }
 
     async function fetchFeed(feed) {
-      const url = RSS_PROXY + encodeURIComponent(feed.url);
-      const res  = await fetch(url, { signal: AbortSignal.timeout(8000) });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-      if (data.status !== "ok") throw new Error("Feed error");
-      return (data.items || []).map(item => ({
-        source:  feed.name,
-        title:   stripHtml(item.title),
-        link:    item.link,
-        pubDate: item.pubDate,
-        desc:    stripHtml(item.description).slice(0, 200),
-        thumb:   extractThumb(item)
-      }));
+      const response = await fetch(RSS_PROXY + encodeURIComponent(feed.url), {
+        signal: AbortSignal.timeout(10000)
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      if (data.status !== "ok") throw new Error(data.message || "Feed error");
+      return (data.items || []).map(item => toArticle(item, feed.name));
     }
 
-    function renderGrid(articles) {
+    function renderArticles(articles) {
       const grid = document.getElementById("news-grid");
-      const filtered = activeSource === "All" ? articles : articles.filter(a => a.source === activeSource);
-
-      if (!filtered.length) {
-        grid.innerHTML = `<div class="news-empty">No articles found${activeSource !== "All" ? " for " + activeSource : ""}.</div>`;
+      if (!articles.length) {
+        grid.innerHTML = `<div class="news-empty">No recent Mets articles are available right now.</div>`;
         return;
       }
 
-      grid.innerHTML = filtered.map(a => `
+      grid.innerHTML = articles.map(article => `
         <div class="news-card">
-          ${a.thumb ? `<img class="news-thumb" src="${a.thumb}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
+          ${article.thumbnail ? `<img class="news-thumb" src="${article.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
           <div class="news-body">
-            <span class="news-source">${a.source}</span>
-            <a class="news-title" href="${a.link}" target="_blank" rel="noopener">${a.title}</a>
-            ${a.desc ? `<span style="font-size:0.8rem;color:#6b7280;line-height:1.5;">${a.desc}&hellip;</span>` : ""}
-            <span class="news-date">${timeAgo(a.pubDate)}</span>
+            <span class="news-source">${article.source}</span>
+            <a class="news-title" href="${article.link}" target="_blank" rel="noopener">${article.title}</a>
+            <span class="news-date">${getRelativeTime(article.pubDate)}</span>
           </div>
-        </div>`).join("");
+        </div>
+      `).join("");
     }
 
-    function filterNews(source, btn) {
-      activeSource = source;
-      document.querySelectorAll(".news-tab").forEach(t => t.classList.remove("active"));
-      btn.classList.add("active");
-      renderGrid(allArticles);
+    function updateLastUpdatedLabel() {
+      const label = document.getElementById("last-updated");
+      if (!lastUpdatedAt) {
+        label.textContent = "";
+        return;
+      }
+      label.textContent = `Last updated: ${getRelativeTime(lastUpdatedAt)}`;
     }
 
     async function fetchAllFeeds() {
-      const btn     = document.getElementById("refresh-btn");
+      const button = document.getElementById("refresh-btn");
       const spinner = document.getElementById("spinner");
-      const lastUpd = document.getElementById("last-updated");
+      const grid = document.getElementById("news-grid");
 
-      btn.disabled = true;
+      button.disabled = true;
       spinner.classList.add("active");
-      lastUpd.textContent = "";
-      document.getElementById("news-grid").innerHTML = `<div class="news-empty">Fetching latest news&hellip;</div>`;
+      grid.innerHTML = `<div class="news-empty">Fetching latest Mets news&hellip;</div>`;
 
-      const results = await Promise.allSettled(NEWS_FEEDS.map(f => fetchFeed(f)));
+      try {
+        const results = await Promise.allSettled(NEWS_FEEDS.map(fetchFeed));
+        const merged = results.flatMap(result => result.status === "fulfilled" ? result.value : []);
+        const articles = merged
+          .filter(isMetsArticle)
+          .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-      const merged = [];
-      results.forEach((r, i) => {
-        if (r.status === "fulfilled") {
-          merged.push(...r.value);
-        } else {
-          console.warn(`Feed failed (${NEWS_FEEDS[i].name}):`, r.reason?.message);
-        }
-      });
-
-      // Filter to Mets-related, sort by date desc
-      allArticles = merged
-        .filter(isMetsRelated)
-        .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
-
-      renderGrid(allArticles);
-
-      const now = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-      lastUpd.textContent = `Last updated: ${now}`;
-      btn.disabled = false;
-      spinner.classList.remove("active");
+        renderArticles(articles);
+        lastUpdatedAt = new Date();
+        updateLastUpdatedLabel();
+      } catch (error) {
+        grid.innerHTML = `<div class="news-empty">News feed unavailable right now. Please try refresh.</div>`;
+      } finally {
+        button.disabled = false;
+        spinner.classList.remove("active");
+      }
     }
 
-    // Auto-fetch on load
+    document.getElementById("refresh-btn").addEventListener("click", fetchAllFeeds);
+    setInterval(updateLastUpdatedLabel, 60000);
     fetchAllFeeds();
   </script>
 </body>

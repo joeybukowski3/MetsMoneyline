@@ -247,6 +247,80 @@ async function getSavantStats(mlbId, name) {
 }
 
 // ─────────────────────────────────────────────
+// STEP 3c — Pitcher vs roster matchup stats (Baseball Savant)
+// ─────────────────────────────────────────────
+
+async function getPitcherVsRoster(pitcherMlbId, opponentLineup) {
+  if (!pitcherMlbId) return null;
+  const rosterIds = opponentLineup.map(p => p.playerId).filter(Boolean);
+  if (!rosterIds.length) return null;
+
+  const batterParams = rosterIds.map(id => `batters_lookup[]=${id}`).join("&");
+  const url =
+    `https://baseballsavant.mlb.com/statcast_search/csv` +
+    `?player_type=pitcher&player_id=${pitcherMlbId}` +
+    `&${batterParams}` +
+    `&game_date_gt=2022-01-01&type=details&group_by=name` +
+    `&min_pitches=0&min_results=0&min_pas=0`;
+
+  try {
+    const res = await axios.get(url, { timeout: 20000, responseType: "text" });
+    const text = res.data;
+    if (!text || text.trim().length < 20) return null;
+
+    const rows = parse(text, { columns: true, skip_empty_lines: true, relax_quotes: true });
+    if (!rows || rows.length === 0) return null;
+
+    // --- aggregate pitch rows into matchup stats ---
+    const toNum = v => { const n = parseFloat(v); return isNaN(n) ? null : n; };
+
+    const paRows    = rows.filter(r => toNum(r.woba_denom) === 1);
+    const totalPA   = paRows.length;
+    if (totalPA === 0) return null;
+
+    const kRows     = paRows.filter(r => r.events === "strikeout");
+    const bbRows    = paRows.filter(r => r.events === "walk" || r.events === "intent_walk");
+    const hitEvents = new Set(["single", "double", "triple", "home_run"]);
+    const hitRows   = paRows.filter(r => hitEvents.has(r.events));
+    const sfRows    = paRows.filter(r => r.events === "sac_fly");
+    const hbpRows   = paRows.filter(r => r.events === "hit_by_pitch");
+    const AB        = totalPA - bbRows.length - hbpRows.length - sfRows.length;
+
+    const wobaDenomSum = paRows.reduce((s, r) => s + (toNum(r.woba_denom) || 0), 0);
+    const wobaValSum   = paRows.reduce((s, r) => s + (toNum(r.woba_value) || 0), 0);
+
+    const xwobaRows = paRows.filter(r => toNum(r.estimated_woba_using_speedangle) !== null);
+    const xwobaSum  = xwobaRows.reduce((s, r) => s + toNum(r.estimated_woba_using_speedangle), 0);
+
+    const bipRows    = rows.filter(r => (toNum(r.launch_speed) || 0) > 0);
+    const xbaSum     = bipRows.reduce((s, r) => s + (toNum(r.estimated_ba_using_speedangle) || 0), 0);
+    const xslgSum    = bipRows.reduce((s, r) => s + (toNum(r.estimated_slg_using_speedangle) || 0), 0);
+    const exitVSum   = bipRows.reduce((s, r) => s + (toNum(r.launch_speed) || 0), 0);
+    const laSum      = bipRows.reduce((s, r) => s + (toNum(r.launch_angle) || 0), 0);
+
+    const fmt3 = v => v !== null ? +v.toFixed(3) : null;
+    const fmt1 = v => v !== null ? +v.toFixed(1) : null;
+
+    console.log(`  vsRoster: pitcher ${pitcherMlbId} vs ${rosterIds.length} batters — ${totalPA} PA`);
+    return {
+      PA:          totalPA,
+      kPct:        fmt3(kRows.length  / totalPA),
+      bbPct:       fmt3(bbRows.length / totalPA),
+      AVG:         AB > 0 ? fmt3(hitRows.length / AB) : null,
+      wOBA:        wobaDenomSum > 0 ? fmt3(wobaValSum / wobaDenomSum) : null,
+      xwOBA:       xwobaRows.length > 0 ? fmt3(xwobaSum / xwobaRows.length) : null,
+      exitVelo:    bipRows.length > 0 ? fmt1(exitVSum  / bipRows.length) : null,
+      launchAngle: bipRows.length > 0 ? fmt1(laSum     / bipRows.length) : null,
+      xBA:         bipRows.length > 0 ? fmt3(xbaSum    / bipRows.length) : null,
+      xSLG:        bipRows.length > 0 ? fmt3(xslgSum   / bipRows.length) : null,
+    };
+  } catch (err) {
+    console.warn(`  [warn] vsRoster for pitcher ${pitcherMlbId} failed: ${err.message}`);
+    return null;
+  }
+}
+
+// ─────────────────────────────────────────────
 // Standings
 // ─────────────────────────────────────────────
 
@@ -460,6 +534,13 @@ async function buildGameObject(game, standings, isGameDay) {
     oppAnnounced  ? getSavantStats(oppPitcherRaw.id,  oppPitcherRaw.fullName)  : Promise.resolve(null)
   ]);
 
+  // STEP 3c: Pitcher vs opposing roster matchup stats
+  console.log(`Fetching pitcher vs roster matchup data...`);
+  const [metsVsRoster, oppVsRoster] = await Promise.all([
+    metsAnnounced ? getPitcherVsRoster(metsPitcherRaw.id, lineups.opp)  : Promise.resolve(null),
+    oppAnnounced  ? getPitcherVsRoster(oppPitcherRaw.id,  lineups.mets) : Promise.resolve(null)
+  ]);
+
   const metsRecord = extractTeamRecord(standings, TEAM_ID);
   const oppRecord  = extractTeamRecord(standings, oppTeam.team.id);
   const metsPStats = extractPitcherSummary(metsPitcherStats);
@@ -501,7 +582,8 @@ async function buildGameObject(game, standings, isGameDay) {
         last3KBB:    metsPStats.last3KBB,
         last3IP:     "N/A",
         note:        "",
-        savant:      metsSavant
+        savant:      metsSavant,
+        vsRoster:    metsVsRoster
       },
       opp: {
         name:        oppAnnounced ? oppPitcherRaw.fullName : "TBD",
@@ -519,7 +601,8 @@ async function buildGameObject(game, standings, isGameDay) {
         last3KBB:    oppPStats.last3KBB,
         last3IP:     "N/A",
         note:        "",
-        savant:      oppSavant
+        savant:      oppSavant,
+        vsRoster:    oppVsRoster
       },
       metsBullpen: { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 70 },
       oppBullpen:  { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 65 }

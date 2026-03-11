@@ -669,6 +669,95 @@ main, .page-content {
 }
 
 /* =====================
+   PITCHER CARD GRID (two-column matchup layout)
+   ===================== */
+.pitcher-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0;
+}
+
+.pitcher-card {
+  padding: 1.5rem;
+  min-width: 0;
+}
+
+.pitcher-card-divider {
+  background: #e4e8f0;
+}
+
+.pitcher-photo {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.pitcher-photo-placeholder {
+  width: 200px;
+  height: 160px;
+  background: #0d2461;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.3);
+  font-size: 2rem;
+}
+
+.matchup-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.matchup-table caption {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9099b0;
+  margin-bottom: 0.4rem;
+  caption-side: top;
+  padding-bottom: 0.3rem;
+}
+
+.matchup-table th {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9099b0;
+  text-align: center;
+  padding: 0.3rem 0.4rem;
+  border-bottom: 1px solid #e4e8f0;
+  white-space: nowrap;
+}
+
+.matchup-table td {
+  text-align: center;
+  padding: 0.35rem 0.4rem;
+  color: #1a1a2e;
+}
+
+.xwoba-good    { background: #dcfce7; color: #15803d; font-weight: 700; }
+.xwoba-neutral { background: #f3f4f6; color: #374151; }
+.xwoba-bad     { background: #fee2e2; color: #dc2626; font-weight: 700; }
+
+@media (max-width: 700px) {
+  .pitcher-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .pitcher-card-divider {
+    display: none;
+  }
+}
+
+/* =====================
    ROW 3 GRID (lineups + advanced metrics)
    ===================== */
 .row-3-grid {

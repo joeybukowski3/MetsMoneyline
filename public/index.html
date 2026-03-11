@@ -8,6 +8,65 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    main {
+      max-width: 1300px;
+    }
+
+    .page-with-sidebar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 280px;
+      gap: 1.5rem;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .page-main-col {
+      min-width: 0;
+    }
+
+    .news-sidebar {
+      min-width: 0;
+      padding: 1rem;
+    }
+
+    .news-card-sm {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #e4e8f0;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .news-card-sm img {
+      width: 56px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .news-card-sm-title {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #1a1a2e;
+      line-height: 1.4;
+    }
+
+    .news-card-sm-meta {
+      font-size: 0.75rem;
+      color: #9099b0;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 900px) {
+      .page-with-sidebar {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -84,7 +143,7 @@
         </section>
       </div>
 
-      <aside class="news-sidebar card" style="padding:1rem;">
+      <aside class="news-sidebar card">
         <div class="section-title">Latest News</div>
         <div id="sidebar-news"><span style="color:#9099b0;font-size:0.85rem;">Loading&hellip;</span></div>
         <a href="news.html" style="display:block;margin-top:0.75rem;font-size:0.8rem;font-weight:600;color:var(--navy);text-align:center;">All Mets News &rarr;</a>
@@ -103,62 +162,115 @@
 
   <script type="module" src="js/main.js"></script>
   <script>
-    // Sidebar news fetch (shared feed logic, standalone)
-    const SIDEBAR_FEEDS = [
-      "https://www.espn.com/espn/rss/mlb/news",
-      "https://www.mlb.com/feeds/news/rss.xml?teamId=121"
+    const NEWS_FEEDS = [
+      { name: "ESPN Mets",     url: "https://www.espn.com/espn/rss/mlb/news" },
+      { name: "MLB.com Mets",  url: "https://www.mlb.com/feeds/news/rss.xml?teamId=121" },
+      { name: "NY Post Mets",  url: "https://nypost.com/tag/new-york-mets/feed/" },
+      { name: "SNY",           url: "https://sny.tv/rss/mets" },
+      { name: "Amazin Avenue", url: "https://www.amazinavenue.com/rss/current" }
     ];
     const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
 
-    function sidebarTimeAgo(dateStr) {
-      if (!dateStr) return "";
-      const m = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
-      if (m < 1) return "just now";
-      if (m < 60) return `${m}m ago`;
-      const h = Math.floor(m / 60);
-      if (h < 24) return `${h}h ago`;
-      return `${Math.floor(h / 24)}d ago`;
+    function stripHtml(value) {
+      return String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
     }
 
-    function sidebarThumb(item) {
-      if (item.thumbnail && item.thumbnail !== "false" && item.thumbnail.startsWith("http")) return item.thumbnail;
-      if (item.enclosure?.link && /\.(jpg|jpeg|png|webp|gif)/i.test(item.enclosure.link)) return item.enclosure.link;
-      const m = (item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
-      return m ? m[1] : null;
+    function getRelativeTime(dateValue) {
+      const date = new Date(dateValue);
+      if (Number.isNaN(date.getTime())) return "";
+      const diffMs = date.getTime() - Date.now();
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      const minutes = Math.round(diffMs / 60000);
+      if (Math.abs(minutes) < 60) return rtf.format(minutes, "minute");
+      const hours = Math.round(diffMs / 3600000);
+      if (Math.abs(hours) < 24) return rtf.format(hours, "hour");
+      const days = Math.round(diffMs / 86400000);
+      return rtf.format(days, "day");
+    }
+
+    function getThumbnail(item) {
+      const candidates = [
+        item.enclosure && item.enclosure.link,
+        item.thumbnail,
+        item.image,
+        item["media:thumbnail"],
+        item["media:content"]
+      ];
+
+      for (const candidate of candidates) {
+        const url = typeof candidate === "string"
+          ? candidate
+          : candidate && typeof candidate.url === "string"
+            ? candidate.url
+            : candidate && typeof candidate.link === "string"
+              ? candidate.link
+              : "";
+        if (url && /^https?:\/\//i.test(url)) return url;
+      }
+
+      const match = String(item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+      return match ? match[1] : "";
+    }
+
+    function toArticle(item, feedName) {
+      return {
+        source: feedName,
+        title: stripHtml(item.title),
+        link: item.link || "#",
+        pubDate: item.pubDate || item.published || item.date || "",
+        description: stripHtml(item.description || item.content || ""),
+        thumbnail: getThumbnail(item)
+      };
+    }
+
+    function isMetsArticle(article) {
+      const text = `${article.title} ${article.description}`.toLowerCase();
+      return text.includes("mets");
+    }
+
+    function sortByNewest(first, second) {
+      const firstTime = new Date(first.pubDate).getTime() || 0;
+      const secondTime = new Date(second.pubDate).getTime() || 0;
+      return secondTime - firstTime;
     }
 
     async function loadSidebarNews() {
       const container = document.getElementById("sidebar-news");
       try {
         const results = await Promise.allSettled(
-          SIDEBAR_FEEDS.map(url =>
-            fetch(RSS_PROXY + encodeURIComponent(url), { signal: AbortSignal.timeout(6000) })
-              .then(r => r.json())
-              .then(d => d.items || [])
+          NEWS_FEEDS.map(feed =>
+            fetch(RSS_PROXY + encodeURIComponent(feed.url), { signal: AbortSignal.timeout(10000) })
+              .then(response => {
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                return response.json();
+              })
+              .then(data => {
+                if (data.status !== "ok") throw new Error(data.message || "Feed error");
+                return (data.items || []).map(item => toArticle(item, feed.name));
+              })
           )
         );
-        const items = results.flatMap(r => r.status === "fulfilled" ? r.value : []);
-        const mets = items
-          .filter(i => ((i.title || "") + (i.description || "")).toLowerCase().includes("mets"))
-          .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+
+        const articles = results
+          .flatMap(result => result.status === "fulfilled" ? result.value : [])
+          .filter(isMetsArticle)
+          .sort(sortByNewest)
           .slice(0, 5);
 
-        if (!mets.length) {
+        if (!articles.length) {
           container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">No recent news found.</span>`;
           return;
         }
 
-        container.innerHTML = mets.map(item => {
-          const thumb = sidebarThumb(item);
-          const title = (item.title || "").replace(/<[^>]+>/g, "").trim();
-          return `<a class="news-card-sm" href="${item.link}" target="_blank" rel="noopener">
-            ${thumb ? `<img src="${thumb}" alt="" onerror="this.style.display='none'">` : ""}
+        container.innerHTML = articles.map(article => `
+          <a class="news-card-sm" href="${article.link}" target="_blank" rel="noopener">
+            ${article.thumbnail ? `<img src="${article.thumbnail}" alt="" onerror="this.style.display='none'">` : ""}
             <div>
-              <div class="news-card-sm-title">${title}</div>
-              <div class="news-card-sm-meta">${sidebarTimeAgo(item.pubDate)}</div>
+              <div class="news-card-sm-title">${article.title}</div>
+              <div class="news-card-sm-meta">${article.source} &middot; ${getRelativeTime(article.pubDate)}</div>
             </div>
-          </a>`;
-        }).join("");
+          </a>
+        `).join("");
       } catch (e) {
         container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">News unavailable.</span>`;
       }
@@ -168,3 +280,4 @@
   </script>
 </body>
 </html>
+

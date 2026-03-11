@@ -166,83 +166,162 @@ const METS_PITCHER_IDS = {
   "Jose Butto":        683737
 };
 
-/* ── ROW 2: Starting Pitching ── */
+/* ── ROW 2: Starting Pitching (two-column pitcher card layout) ── */
 function buildPitchingCard(game) {
   const p  = game.pitching;
   const mn = p.mets.name;
 
-  // Starter stats with 2025 fallback for Mets pitcher
+  // Season stats with 2025 fallbacks for Mets pitcher
   const mERA  = getMetsPitchingStat(p.mets.seasonERA,  mn, "ERA");
   const mFIP  = getMetsPitchingStat(p.mets.seasonFIP,  mn, "FIP");
   const mXERA = getMetsPitchingStat(p.mets.seasonXERA, mn, "xFIP");
   const mWHIP = getMetsPitchingStat(p.mets.seasonWHIP, mn, "WHIP");
   const mKBB  = getMetsPitchingStat(p.mets.last3KBB,   mn, "KBB");
-  const mL3   = isMissingStat(p.mets.last3ERA) ? "N/A" : p.mets.last3ERA;
+  const mKPct  = p.mets.savant?.kPct  ?? "N/A";
+  const mBBPct = p.mets.savant?.bbPct ?? "N/A";
 
   const oERA  = isMissingStat(p.opp.seasonERA)  ? "N/A" : p.opp.seasonERA;
   const oFIP  = isMissingStat(p.opp.seasonFIP)  ? "N/A" : p.opp.seasonFIP;
   const oXERA = isMissingStat(p.opp.seasonXERA) ? "N/A" : p.opp.seasonXERA;
   const oWHIP = isMissingStat(p.opp.seasonWHIP) ? "N/A" : p.opp.seasonWHIP;
   const oKBB  = isMissingStat(p.opp.last3KBB)   ? "N/A" : p.opp.last3KBB;
-  const oL3   = isMissingStat(p.opp.last3ERA)   ? "N/A" : p.opp.last3ERA;
+  const oKPct  = p.opp.savant?.kPct  ?? "N/A";
+  const oBBPct = p.opp.savant?.bbPct ?? "N/A";
 
-  // Bullpen — FIX 2: apply 2025 fallbacks
+  // Bullpen — apply 2025 fallbacks
   const metsBP = resolveBullpen(p.metsBullpen, true,  game.opponent);
   const oppBP  = resolveBullpen(p.oppBullpen,  false, game.opponent);
-  const bpMetsERA    = metsBP.era;
-  const bpMetsXFIP   = metsBP.xfip;
-  const bpMets14ERA  = metsBP.last14;
-  const bpMetsRating = metsBP.rating;
-  const bpOppERA     = oppBP.era;
-  const bpOppXFIP    = oppBP.xfip;
-  const bpOpp14ERA   = oppBP.last14;
-  const bpOppRating  = oppBP.rating;
 
-  const headshot = (mlbId, name, size) => {
+  // Headshot: rectangular MLB CDN crop, placeholder on failure
+  const pitcherPhoto = (mlbId, name) => {
     const id = mlbId || METS_PITCHER_IDS[name] || 0;
-    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_${size},q_auto:best/v1/people/${id}/headshot/67/current" class="pitcher-headshot-lg" alt="${name}" onerror="this.style.display='none'">`;
+    if (!id) return `<div class="pitcher-photo-placeholder">&#9918;</div>`;
+    return `<img
+      src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current"
+      class="pitcher-photo" alt="${name}"
+      onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot;>&#9918;</div>'">`;
   };
 
-  const metsFeatureBlock = p.mets.announced === false
-    ? `<div class="pitcher-tbd"><div class="pitcher-feature-name">TBD</div><div class="pitcher-feature-label">Not yet announced</div></div>`
-    : `<div class="pitcher-feature-block">${headshot(p.mets.mlbId, p.mets.name, 200)}<div class="pitcher-feature-name">${p.mets.name}</div><div class="pitcher-feature-label">NYM &middot; ${p.mets.hand}HP</div></div>`;
+  // xwOBA color class
+  const xwobaClass = val => {
+    if (val == null) return "";
+    if (val < 0.290) return "xwoba-good";
+    if (val > 0.340) return "xwoba-bad";
+    return "xwoba-neutral";
+  };
 
-  const oppFeatureBlock = p.opp.announced === false
-    ? `<div class="pitcher-tbd"><div class="pitcher-feature-name">TBD</div><div class="pitcher-feature-label">Not yet announced</div></div>`
-    : `<div class="pitcher-feature-block">${headshot(p.opp.mlbId, p.opp.name, 200)}<div class="pitcher-feature-name">${p.opp.name}</div><div class="pitcher-feature-label">OPP &middot; ${p.opp.hand}HP</div></div>`;
+  // vs. Current Roster table
+  const vsRosterTable = vsRoster => {
+    if (!vsRoster) {
+      return `<table class="matchup-table">
+        <caption>vs. Current Roster</caption>
+        <tbody><tr><td colspan="10" style="color:#9099b0;font-size:0.85rem;text-align:center;padding:0.75rem 0">No prior matchup data available</td></tr></tbody>
+      </table>`;
+    }
+    const fmt    = v  => v  != null ? v  : "—";
+    const fmtPct = v  => v  != null ? `${(v * 100).toFixed(1)}%` : "—";
+    const xwClass = xwobaClass(vsRoster.xwOBA);
+    return `<table class="matchup-table">
+      <caption>vs. Current Roster</caption>
+      <thead>
+        <tr><th>PA</th><th>K%</th><th>BB%</th><th>AVG</th><th>wOBA</th><th>Exit Velo</th><th>Launch&nbsp;°</th><th>xBA</th><th>xSLG</th><th>xwOBA</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>${fmt(vsRoster.PA)}</td>
+          <td>${fmtPct(vsRoster.kPct)}</td>
+          <td>${fmtPct(vsRoster.bbPct)}</td>
+          <td>${fmt(vsRoster.AVG)}</td>
+          <td>${fmt(vsRoster.wOBA)}</td>
+          <td>${vsRoster.exitVelo   != null ? vsRoster.exitVelo + " mph" : "—"}</td>
+          <td>${vsRoster.launchAngle != null ? vsRoster.launchAngle + "°" : "—"}</td>
+          <td>${fmt(vsRoster.xBA)}</td>
+          <td>${fmt(vsRoster.xSLG)}</td>
+          <td class="${xwClass}">${fmt(vsRoster.xwOBA)}</td>
+        </tr>
+      </tbody>
+    </table>`;
+  };
 
-  // Stat rows only for announced pitchers
-  const metsStatRow = p.mets.announced === false
-    ? `<td style="font-weight:600;color:var(--navy)">TBD</td><td colspan="6" style="color:#9099b0;text-align:center">Pitcher not yet announced</td>`
-    : `<td style="font-weight:600;color:var(--navy)">${p.mets.name}</td><td>${mERA}</td><td>${mFIP}</td><td>${mXERA}</td><td>${mWHIP}</td><td>${mKBB}</td><td>${mL3}</td>`;
+  // Build one pitcher card
+  const pitcherCard = (sideLabel, pitcher, seasonStats, vsRoster) => {
+    if (pitcher.announced === false) {
+      return `<div class="pitcher-card">
+        <div class="pitcher-photo-placeholder">&#9918;</div>
+        <div style="font-weight:700;font-size:1.1rem;margin-bottom:0.25rem">TBD</div>
+        <div style="font-size:0.82rem;color:#9099b0;margin-bottom:0.75rem">${sideLabel} &middot; Not yet announced</div>
+      </div>`;
+    }
+    const { era, fip, xera, whip, kbb, kpct, bbpct } = seasonStats;
+    return `<div class="pitcher-card">
+      ${pitcherPhoto(pitcher.mlbId, pitcher.name)}
+      <div style="font-weight:700;font-size:1.1rem;margin-bottom:0.25rem">${pitcher.name}</div>
+      <div style="font-size:0.82rem;color:#9099b0;margin-bottom:0.75rem">${sideLabel} &middot; ${pitcher.hand}HP</div>
+      <table class="matchup-table">
+        <caption>Season Stats (2025)</caption>
+        <thead>
+          <tr><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>K%</th><th>BB%</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>${era}</td><td>${fip}</td><td>${xera}</td><td>${whip}</td><td>${kbb}</td><td>${kpct}</td><td>${bbpct}</td></tr>
+        </tbody>
+      </table>
+      ${vsRosterTable(vsRoster)}
+    </div>`;
+  };
 
-  const oppStatRow = p.opp.announced === false
-    ? `<td style="font-weight:600;color:#374151">TBD</td><td colspan="6" style="color:#9099b0;text-align:center">Pitcher not yet announced</td>`
-    : `<td style="font-weight:600;color:#374151">${p.opp.name}</td><td>${oERA}</td><td>${oFIP}</td><td>${oXERA}</td><td>${oWHIP}</td><td>${oKBB}</td><td>${oL3}</td>`;
+  const metsCard = pitcherCard(
+    "NYM", p.mets,
+    { era: mERA, fip: mFIP, xera: mXERA, whip: mWHIP, kbb: mKBB, kpct: mKPct, bbpct: mBBPct },
+    p.mets.vsRoster
+  );
+  const oppCard = pitcherCard(
+    game.opponent, p.opp,
+    { era: oERA, fip: oFIP, xera: oXERA, whip: oWHIP, kbb: oKBB, kpct: oKPct, bbpct: oBBPct },
+    p.opp.vsRoster
+  );
+
+  const statcastSection = (p.mets.savant || p.opp.savant) ? `
+    <div class="pitching-table-label">Statcast (2025)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Pitcher</th><th>xERA</th><th>Barrel%</th><th>Hard-Hit%</th><th>Whiff%</th><th>Chase%</th><th>K%</th><th>BB%</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;color:var(--navy)">${p.mets.name}</td>
+            <td>${p.mets.savant?.xERA       ?? "N/A"}</td>
+            <td>${p.mets.savant?.barrelPct  ?? "N/A"}</td>
+            <td>${p.mets.savant?.hardHitPct ?? "N/A"}</td>
+            <td>${p.mets.savant?.whiffPct   ?? "N/A"}</td>
+            <td>${p.mets.savant?.chasePct   ?? "N/A"}</td>
+            <td>${p.mets.savant?.kPct       ?? "N/A"}</td>
+            <td>${p.mets.savant?.bbPct      ?? "N/A"}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:#374151">${p.opp.name}</td>
+            <td>${p.opp.savant?.xERA       ?? "N/A"}</td>
+            <td>${p.opp.savant?.barrelPct  ?? "N/A"}</td>
+            <td>${p.opp.savant?.hardHitPct ?? "N/A"}</td>
+            <td>${p.opp.savant?.whiffPct   ?? "N/A"}</td>
+            <td>${p.opp.savant?.chasePct   ?? "N/A"}</td>
+            <td>${p.opp.savant?.kPct       ?? "N/A"}</td>
+            <td>${p.opp.savant?.bbPct      ?? "N/A"}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>` : "";
 
   return `
     <div class="card full-card">
       <div class="card-header">Starting Pitching</div>
-
-      <!-- Section A: Featured pitcher header -->
-      <div class="pitcher-feature-row">
-        ${metsFeatureBlock}
-        <div class="pitcher-vs">VS</div>
-        ${oppFeatureBlock}
+      <div class="pitcher-cards-grid">
+        ${metsCard}
+        <div class="pitcher-card-divider"></div>
+        ${oppCard}
       </div>
+    </div>
 
-      <!-- Section B: Starters stat table -->
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Pitcher</th><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>Last 3 ERA</th></tr></thead>
-          <tbody>
-            <tr>${metsStatRow}</tr>
-            <tr>${oppStatRow}</tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Bullpen -->
+    <div class="card full-card">
       <div class="pitching-table-label">Bullpen</div>
       <div class="table-wrap">
         <table>
@@ -250,48 +329,16 @@ function buildPitchingCard(game) {
           <tbody>
             <tr>
               <td style="font-weight:600;color:var(--orange)">NYM</td>
-              <td>${bpMetsERA}</td><td>${bpMetsXFIP}</td><td>${bpMets14ERA}</td><td>${bpMetsRating}/100</td>
+              <td>${metsBP.era}</td><td>${metsBP.xfip}</td><td>${metsBP.last14}</td><td>${metsBP.rating}/100</td>
             </tr>
             <tr>
               <td style="font-weight:600;color:#9099b0">OPP</td>
-              <td>${bpOppERA}</td><td>${bpOppXFIP}</td><td>${bpOpp14ERA}</td><td>${bpOppRating}/100</td>
+              <td>${oppBP.era}</td><td>${oppBP.xfip}</td><td>${oppBP.last14}</td><td>${oppBP.rating}/100</td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      ${(p.mets.savant || p.opp.savant) ? `
-      <!-- Statcast -->
-      <div class="pitching-table-label">Statcast (2025)</div>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Pitcher</th><th>xERA</th><th>Barrel%</th><th>Hard-Hit%</th><th>Whiff%</th><th>Chase%</th><th>K%</th><th>BB%</th></tr></thead>
-          <tbody>
-            <tr>
-              <td style="font-weight:600;color:var(--navy)">${p.mets.name}</td>
-              <td>${p.mets.savant?.xERA      ?? "N/A"}</td>
-              <td>${p.mets.savant?.barrelPct ?? "N/A"}</td>
-              <td>${p.mets.savant?.hardHitPct ?? "N/A"}</td>
-              <td>${p.mets.savant?.whiffPct  ?? "N/A"}</td>
-              <td>${p.mets.savant?.chasePct  ?? "N/A"}</td>
-              <td>${p.mets.savant?.kPct      ?? "N/A"}</td>
-              <td>${p.mets.savant?.bbPct     ?? "N/A"}</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;color:#374151">${p.opp.name}</td>
-              <td>${p.opp.savant?.xERA      ?? "N/A"}</td>
-              <td>${p.opp.savant?.barrelPct ?? "N/A"}</td>
-              <td>${p.opp.savant?.hardHitPct ?? "N/A"}</td>
-              <td>${p.opp.savant?.whiffPct  ?? "N/A"}</td>
-              <td>${p.opp.savant?.chasePct  ?? "N/A"}</td>
-              <td>${p.opp.savant?.kPct      ?? "N/A"}</td>
-              <td>${p.opp.savant?.bbPct     ?? "N/A"}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      ` : ""}
-
+      ${statcastSection}
     </div>`;
 }
 
