@@ -45,6 +45,14 @@
             History
           </a>
         </li>
+        <li>
+          <a href="news.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/>
+            </svg>
+            Team News
+          </a>
+        </li>
       </ul>
     </nav>
   </header>
@@ -64,14 +72,24 @@
 
   <!-- Main Content -->
   <main>
-    <div id="today-game-container">
-      <p style="text-align:center; color:#9099b0; padding: 3rem 0;">Loading today's breakdown&hellip;</p>
-    </div>
+    <div class="page-with-sidebar">
+      <div class="page-main-col">
+        <div id="today-game-container">
+          <p style="text-align:center; color:#9099b0; padding: 3rem 0;">Loading today's breakdown&hellip;</p>
+        </div>
 
-    <section class="section-card recent-section">
-      <div class="section-title">Recent Breakdowns</div>
-      <div class="recent-games" id="recent-games-container"></div>
-    </section>
+        <section class="section-card recent-section">
+          <div class="section-title">Recent Breakdowns</div>
+          <div class="recent-games" id="recent-games-container"></div>
+        </section>
+      </div>
+
+      <aside class="news-sidebar card" style="padding:1rem;">
+        <div class="section-title">Latest News</div>
+        <div id="sidebar-news"><span style="color:#9099b0;font-size:0.85rem;">Loading&hellip;</span></div>
+        <a href="news.html" style="display:block;margin-top:0.75rem;font-size:0.8rem;font-weight:600;color:var(--navy);text-align:center;">All Mets News &rarr;</a>
+      </aside>
+    </div>
   </main>
 
   <!-- Footer -->
@@ -84,5 +102,69 @@
   </footer>
 
   <script type="module" src="js/main.js"></script>
+  <script>
+    // Sidebar news fetch (shared feed logic, standalone)
+    const SIDEBAR_FEEDS = [
+      "https://www.espn.com/espn/rss/mlb/news",
+      "https://www.mlb.com/feeds/news/rss.xml?teamId=121"
+    ];
+    const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
+
+    function sidebarTimeAgo(dateStr) {
+      if (!dateStr) return "";
+      const m = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+      if (m < 1) return "just now";
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h}h ago`;
+      return `${Math.floor(h / 24)}d ago`;
+    }
+
+    function sidebarThumb(item) {
+      if (item.thumbnail && item.thumbnail !== "false" && item.thumbnail.startsWith("http")) return item.thumbnail;
+      if (item.enclosure?.link && /\.(jpg|jpeg|png|webp|gif)/i.test(item.enclosure.link)) return item.enclosure.link;
+      const m = (item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+      return m ? m[1] : null;
+    }
+
+    async function loadSidebarNews() {
+      const container = document.getElementById("sidebar-news");
+      try {
+        const results = await Promise.allSettled(
+          SIDEBAR_FEEDS.map(url =>
+            fetch(RSS_PROXY + encodeURIComponent(url), { signal: AbortSignal.timeout(6000) })
+              .then(r => r.json())
+              .then(d => d.items || [])
+          )
+        );
+        const items = results.flatMap(r => r.status === "fulfilled" ? r.value : []);
+        const mets = items
+          .filter(i => ((i.title || "") + (i.description || "")).toLowerCase().includes("mets"))
+          .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
+          .slice(0, 5);
+
+        if (!mets.length) {
+          container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">No recent news found.</span>`;
+          return;
+        }
+
+        container.innerHTML = mets.map(item => {
+          const thumb = sidebarThumb(item);
+          const title = (item.title || "").replace(/<[^>]+>/g, "").trim();
+          return `<a class="news-card-sm" href="${item.link}" target="_blank" rel="noopener">
+            ${thumb ? `<img src="${thumb}" alt="" onerror="this.style.display='none'">` : ""}
+            <div>
+              <div class="news-card-sm-title">${title}</div>
+              <div class="news-card-sm-meta">${sidebarTimeAgo(item.pubDate)}</div>
+            </div>
+          </a>`;
+        }).join("");
+      } catch (e) {
+        container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">News unavailable.</span>`;
+      }
+    }
+
+    loadSidebarNews();
+  </script>
 </body>
 </html>

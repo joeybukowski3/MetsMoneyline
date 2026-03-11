@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team News | MetsMoneyline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Alert Banner -->
+  <div class="alert-banner">Pre-Season &mdash; Stats shown are 2025 actuals as baseline</div>
+
+  <!-- Nav -->
+  <header>
+    <nav>
+      <a href="index.html" class="nav-brand">
+        <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+      </a>
+      <ul class="nav-links">
+        <li>
+          <a href="index.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Today's Game
+          </a>
+        </li>
+        <li>
+          <a href="advanced-stats.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Stats &amp; Standings
+          </a>
+        </li>
+        <li>
+          <a href="betting-history.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            History
+          </a>
+        </li>
+        <li>
+          <a href="news.html" class="nav-link active">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/>
+            </svg>
+            Team News
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <h1>Team News</h1>
+      <p>Latest Mets coverage from ESPN, MLB.com, NY Post, SNY, and Amazin' Avenue.</p>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="news-toolbar">
+      <button class="news-refresh-btn" id="refresh-btn" onclick="fetchAllFeeds()">&#x21BB; Refresh</button>
+      <div class="news-spinner" id="spinner"></div>
+      <span class="news-last-updated" id="last-updated"></span>
+    </div>
+
+    <!-- Source filter tabs -->
+    <div class="news-filter-tabs" id="filter-tabs">
+      <button class="news-tab active" data-source="All" onclick="filterNews('All', this)">All</button>
+      <button class="news-tab" data-source="ESPN Mets" onclick="filterNews('ESPN Mets', this)">ESPN</button>
+      <button class="news-tab" data-source="MLB.com Mets" onclick="filterNews('MLB.com Mets', this)">MLB.com</button>
+      <button class="news-tab" data-source="NY Post Mets" onclick="filterNews('NY Post Mets', this)">NY Post</button>
+      <button class="news-tab" data-source="SNY" onclick="filterNews('SNY', this)">SNY</button>
+      <button class="news-tab" data-source="Amazin Avenue" onclick="filterNews('Amazin Avenue', this)">Amazin' Ave</button>
+    </div>
+
+    <!-- News grid -->
+    <div class="news-grid" id="news-grid">
+      <div class="news-empty">Loading news&hellip;</div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-brand">
+      <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+    </div>
+    <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
+    <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+  </footer>
+
+  <script>
+    const NEWS_FEEDS = [
+      { name: "ESPN Mets",     url: "https://www.espn.com/espn/rss/mlb/news" },
+      { name: "MLB.com Mets",  url: "https://www.mlb.com/feeds/news/rss.xml?teamId=121" },
+      { name: "NY Post Mets",  url: "https://nypost.com/tag/new-york-mets/feed/" },
+      { name: "SNY",           url: "https://sny.tv/rss/mets" },
+      { name: "Amazin Avenue", url: "https://www.amazinavenue.com/rss/current" }
+    ];
+
+    const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
+
+    let allArticles = [];
+    let activeSource = "All";
+
+    function timeAgo(dateStr) {
+      if (!dateStr) return "";
+      const diff = Date.now() - new Date(dateStr).getTime();
+      const m = Math.floor(diff / 60000);
+      if (m < 1)  return "just now";
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24) return `${h}h ago`;
+      const d = Math.floor(h / 24);
+      return `${d}d ago`;
+    }
+
+    function extractThumb(item) {
+      if (item.thumbnail && item.thumbnail !== "false" && item.thumbnail.startsWith("http")) return item.thumbnail;
+      if (item.enclosure?.link && /\.(jpg|jpeg|png|webp|gif)/i.test(item.enclosure.link)) return item.enclosure.link;
+      // Try to pull first img from description
+      const match = (item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
+      if (match) return match[1];
+      return null;
+    }
+
+    function stripHtml(str) {
+      return (str || "").replace(/<[^>]+>/g, "").trim();
+    }
+
+    function isMetsRelated(item) {
+      const text = ((item.title || "") + " " + (item.description || "")).toLowerCase();
+      return text.includes("mets") || text.includes("new york");
+    }
+
+    async function fetchFeed(feed) {
+      const url = RSS_PROXY + encodeURIComponent(feed.url);
+      const res  = await fetch(url, { signal: AbortSignal.timeout(8000) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data.status !== "ok") throw new Error("Feed error");
+      return (data.items || []).map(item => ({
+        source:  feed.name,
+        title:   stripHtml(item.title),
+        link:    item.link,
+        pubDate: item.pubDate,
+        desc:    stripHtml(item.description).slice(0, 200),
+        thumb:   extractThumb(item)
+      }));
+    }
+
+    function renderGrid(articles) {
+      const grid = document.getElementById("news-grid");
+      const filtered = activeSource === "All" ? articles : articles.filter(a => a.source === activeSource);
+
+      if (!filtered.length) {
+        grid.innerHTML = `<div class="news-empty">No articles found${activeSource !== "All" ? " for " + activeSource : ""}.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(a => `
+        <div class="news-card">
+          ${a.thumb ? `<img class="news-thumb" src="${a.thumb}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
+          <div class="news-body">
+            <span class="news-source">${a.source}</span>
+            <a class="news-title" href="${a.link}" target="_blank" rel="noopener">${a.title}</a>
+            ${a.desc ? `<span style="font-size:0.8rem;color:#6b7280;line-height:1.5;">${a.desc}&hellip;</span>` : ""}
+            <span class="news-date">${timeAgo(a.pubDate)}</span>
+          </div>
+        </div>`).join("");
+    }
+
+    function filterNews(source, btn) {
+      activeSource = source;
+      document.querySelectorAll(".news-tab").forEach(t => t.classList.remove("active"));
+      btn.classList.add("active");
+      renderGrid(allArticles);
+    }
+
+    async function fetchAllFeeds() {
+      const btn     = document.getElementById("refresh-btn");
+      const spinner = document.getElementById("spinner");
+      const lastUpd = document.getElementById("last-updated");
+
+      btn.disabled = true;
+      spinner.classList.add("active");
+      lastUpd.textContent = "";
+      document.getElementById("news-grid").innerHTML = `<div class="news-empty">Fetching latest news&hellip;</div>`;
+
+      const results = await Promise.allSettled(NEWS_FEEDS.map(f => fetchFeed(f)));
+
+      const merged = [];
+      results.forEach((r, i) => {
+        if (r.status === "fulfilled") {
+          merged.push(...r.value);
+        } else {
+          console.warn(`Feed failed (${NEWS_FEEDS[i].name}):`, r.reason?.message);
+        }
+      });
+
+      // Filter to Mets-related, sort by date desc
+      allArticles = merged
+        .filter(isMetsRelated)
+        .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+      renderGrid(allArticles);
+
+      const now = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      lastUpd.textContent = `Last updated: ${now}`;
+      btn.disabled = false;
+      spinner.classList.remove("active");
+    }
+
+    // Auto-fetch on load
+    fetchAllFeeds();
+  </script>
+</body>
+</html>
