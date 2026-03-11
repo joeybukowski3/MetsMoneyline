@@ -64,6 +64,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   height: 60px;
+  position: relative;
 }
 
 .nav-brand {
@@ -113,6 +114,67 @@ nav {
 
 .nav-link.active:hover {
   background: #e04a05;
+}
+
+/* Hamburger button — hidden on desktop */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.nav-hamburger:hover { background: var(--bg); }
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--navy);
+  border-radius: 2px;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+/* Animated X when open */
+.nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-hamburger.open span:nth-child(2) { opacity: 0; }
+.nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile nav drawer */
+@media (max-width: 640px) {
+  .nav-hamburger { display: flex; }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-bottom: 2px solid var(--border);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    padding: 0.75rem 1rem;
+    z-index: 200;
+  }
+
+  .nav-links.open { display: flex; }
+
+  .nav-link {
+    border-radius: 8px;
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+  }
 }
 
 /* =====================
@@ -239,7 +301,7 @@ nav {
 main, .page-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.5rem 4rem;
+  padding: 2rem 1.5rem 4rem;
 }
 
 /* =====================
@@ -1387,6 +1449,10 @@ footer {
   .hero-headline        { font-size: 1.5rem; }
   .email-form,
   .signup-form          { flex-direction: column; }
+  .email-form input,
+  .signup-form input,
+  .email-form button,
+  .signup-form button   { width: 100%; }
   .pick-section         { flex-direction: column; }
   .pick-right           { width: 100%; }
   .pick-badge           { width: 100%; }
@@ -1399,19 +1465,15 @@ footer {
   .pitching-col-left    { text-align: left; }
   .pitching-col-mid     { border-left: none; border-right: none; border-top: 1px solid var(--border); text-align: left; padding-left: 1.5rem; }
   .pitching-section-divider { padding-left: 1.5rem; }
-  .glossary dl          { grid-template-columns: 1fr; }
-}
+  .glossary dl          { grid-template-columns: 1fr; }}
 
 /* =====================
    PAGE WITH SIDEBAR (index.html)
    ===================== */
 .page-with-sidebar {
   display: grid;
-  grid-template-columns: 1fr 280px;
+  grid-template-columns: minmax(0, 1fr) 280px;
   gap: 1.5rem;
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
   align-items: start;
 }
 
