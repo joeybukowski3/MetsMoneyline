@@ -273,15 +273,14 @@ function buildPitchingCard(game) {
       `<div class="pstat-row"><span class="pstat-label">${label}</span><span class="pstat-val">${val}</span></div>`;
 
     if (pitcher.announced === false) {
-      return `<div class="pitcher-card">
-        <div class="pitcher-card-inner">
-          <div class="pitcher-photo-placeholder" style="width:80px;height:100px;">&#9918;</div>
-          <div class="pitcher-info">
-            <div class="pitcher-name-lg">TBD</div>
-            <div class="pitcher-meta-line">${sideLabel} &middot; Not yet announced</div>
-          </div>
+      return `<div class="pitcher-card-v2">
+        <div class="pitcher-img-panel">
+          <div class="pitcher-photo-placeholder">&#9918;</div>
         </div>
-        ${vsRosterTable(vsRoster)}
+        <div class="pitcher-stats-panel">
+          <div class="pitcher-name-lg">TBD</div>
+          <div class="pitcher-meta-line">${sideLabel} &middot; Not yet announced</div>
+        </div>
       </div>`;
     }
 
@@ -294,36 +293,36 @@ function buildPitchingCard(game) {
       ? `<img class="pitcher-photo-sm"
            src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current"
            alt="${pitcher.name}"
-           onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot; style=&quot;width:80px;height:100px&quot;>&#9918;</div>'">`
-      : `<div class="pitcher-photo-placeholder" style="width:80px;height:100px;">&#9918;</div>`;
+           onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot;>&#9918;</div>'">`
+      : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
 
-    return `<div class="pitcher-card">
-      <div class="pitcher-card-inner">
+    return `<div class="pitcher-card-v2">
+      <div class="pitcher-img-panel">
         ${photoHtml}
-        <div class="pitcher-info">
-          <div class="pitcher-name-lg">${pitcher.name}</div>
-          <div class="pitcher-meta-line">${sideLabel}${pitcher.seasonRecord ? ` — ${pitcher.seasonRecord}` : ""}, ${era} ERA</div>
-          <div class="pitcher-stats-cols">
-            <div class="pitcher-col">
-              <div class="pcol-header">TRADITIONAL</div>
-              ${pitcher.seasonRecord ? prow("W-L", pitcher.seasonRecord) : ""}
-              ${prow("ERA",  era)}
-              ${prow("WHIP", whip)}
-              ${prow("K%",   kpct)}
-              ${prow("BB%",  bbpct)}
-            </div>
-            <div class="pitcher-col">
-              <div class="pcol-header advanced">ADVANCED</div>
-              ${prow("FIP",       fip)}
-              ${prow("xERA",      xera)}
-              ${prow("K/BB",      kbb)}
-              ${prow("Hard-Hit%", hhPct)}
-              ${prow("GB%",       gbPct)}
-            </div>
+      </div>
+      <div class="pitcher-stats-panel">
+        <div class="pitcher-name-lg">${pitcher.name}</div>
+        <div class="pitcher-meta-line"><span class="pitcher-team-tag">${sideLabel}</span>${pitcher.seasonRecord ? ` — ${pitcher.seasonRecord}` : ""}, ${era} ERA</div>
+        <div class="pitcher-stats-cols">
+          <div class="pitcher-col">
+            <div class="pcol-header">Traditional</div>
+            ${pitcher.seasonRecord ? prow("W-L", pitcher.seasonRecord) : ""}
+            ${prow("ERA",  era)}
+            ${prow("WHIP", whip)}
+            ${prow("K%",   kpct)}
+            ${prow("BB%",  bbpct)}
+          </div>
+          <div class="pitcher-col">
+            <div class="pcol-header advanced">Advanced</div>
+            ${prow("FIP",       fip)}
+            ${prow("xERA",      xera)}
+            ${prow("K/BB",      kbb)}
+            ${prow("Hard-Hit%", hhPct)}
+            ${prow("GB%",       gbPct)}
           </div>
         </div>
+        ${vsRosterTable(vsRoster)}
       </div>
-      ${vsRosterTable(vsRoster)}
     </div>`;
   };
 
@@ -369,17 +368,14 @@ function buildPitchingCard(game) {
     </div>` : "";
 
   return `
-    <div class="card full-card">
-      <div class="card-header">Starting Pitching</div>
-      <div class="pitcher-cards-grid">
-        ${metsCard}
-        <div class="pitcher-divider"></div>
-        ${oppCard}
-      </div>
+    <div class="section-floating-label">Starting Pitching (2025)</div>
+    <div class="pitcher-two-col">
+      ${metsCard}
+      ${oppCard}
     </div>
 
+    <div class="section-floating-label">Bullpen</div>
     <div class="card full-card">
-      <div class="pitching-table-label">Bullpen</div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Team</th><th>ERA</th><th>xFIP</th><th>Last 14d ERA</th><th>Rating</th></tr></thead>
@@ -447,46 +443,59 @@ function buildRow3(game) {
          <tbody>${oppRows}</tbody>
        </table></div>`;
 
-  // Advanced metrics — horizontal stat bar
+  // Advanced metrics — individual cards with progress bars (matching Lovable design)
   const resolvedMetrics = resolveAdvancedMatchup(game);
-  const advCols = resolvedMetrics.map(r => {
-    const edgeClass = r.edge === "Mets" ? "mets" : (r.edge === "Neutral" || !r.edge) ? "neutral" : "opp";
-    const edgeLabel = r.edge === "Mets" ? "Mets Edge" : r.edge === "Neutral" ? "—" : `${oppAbbr} Edge`;
+  const advCards = resolvedMetrics.map(r => {
+    // Extract raw numeric values for progress bar calculation
+    const nymRaw = parseFloat(String(r.mets).replace(/<[^>]*>/g, "").trim());
+    const oppRaw = parseFloat(String(r.opp).replace(/<[^>]*>/g, "").trim());
+    const isKPct = r.category === "K%";
+    // For K%, lower is better for NYM. Otherwise higher = better.
+    const nymWins = isKPct ? (nymRaw < oppRaw) : (nymRaw > oppRaw);
+    // Progress bar widths: scale both relative to the higher value
+    const maxVal = Math.max(nymRaw, oppRaw, 0.001);
+    const nymPct = Math.min((nymRaw / (maxVal * 1.25)) * 100, 100) || 50;
+    const oppPct = Math.min((oppRaw / (maxVal * 1.25)) * 100, 100) || 50;
     return `
-      <div class="adv-metric-col">
-        <div class="amc-stat-label">${r.category}</div>
-        <div class="amc-team-row">
-          <span class="amc-team-abbr nym">NYM</span>
-          <span class="amc-team-val">${r.mets}</span>
+      <div class="adv-metric-card">
+        <div class="amc-label">${r.category}</div>
+        <div class="amc-row">
+          <span class="amc-abbr ${nymWins ? "winner" : ""}">NYM</span>
+          <span class="amc-val ${nymWins ? "winner" : ""}">${r.mets}</span>
         </div>
-        <div class="amc-team-row">
-          <span class="amc-team-abbr">${oppAbbr}</span>
-          <span class="amc-team-val">${r.opp}</span>
+        <div class="amc-bar-track">
+          <div class="amc-bar-fill ${nymWins ? "win" : "lose"}" style="width:${nymPct.toFixed(1)}%"></div>
         </div>
-        <div class="amc-edge-badge ${edgeClass}">${edgeLabel}</div>
+        <div class="amc-row" style="margin-top:0.5rem">
+          <span class="amc-abbr ${!nymWins ? "winner" : ""}">${oppAbbr}</span>
+          <span class="amc-val ${!nymWins ? "winner" : ""}">${r.opp}</span>
+        </div>
+        <div class="amc-bar-track">
+          <div class="amc-bar-fill ${!nymWins ? "win" : "lose"}" style="width:${oppPct.toFixed(1)}%"></div>
+        </div>
       </div>`;
   }).join("");
 
   return `
-    <div class="card full-card">
-      <div class="card-header">${statusLabel} Lineups</div>
-      <div class="lineup-cards-grid">
-        <div class="lineup-card">
-          <div class="lineup-team-header mets-header">New York Mets</div>
-          ${metsBattingBlock}
-        </div>
-        <div class="lineup-divider"></div>
-        <div class="lineup-card">
-          <div class="lineup-team-header opp-header">${game.opponent}</div>
-          ${oppBattingBlock}
-        </div>
+    <div class="section-floating-label">Projected Lineups (2025)</div>
+    <div class="lineup-two-col">
+      <div class="card full-card">
+        <div class="lineup-team-header mets-header">New York Mets</div>
+        ${metsBattingBlock}
+      </div>
+      <div class="card full-card">
+        <div class="lineup-team-header opp-header">${game.opponent}</div>
+        ${oppBattingBlock}
       </div>
     </div>
 
-    <div class="card full-card">
-      <div class="card-header">Advanced Matchup — NYM vs ${game.opponent}</div>
-      <div class="adv-metrics-bar">
-        ${advCols}
+    <div class="adv-metrics-section">
+      <div class="adv-metrics-header">
+        <span class="section-floating-label" style="margin:0">Advanced Metrics (2025)</span>
+        <span class="adv-edge-tag">&#x2197; Edge: NYM</span>
+      </div>
+      <div class="adv-metric-cards-grid">
+        ${advCards}
       </div>
     </div>`;
 }
@@ -496,18 +505,26 @@ function buildAnalysisRow(game) {
   if (!game.writeup?.sections?.length) return "";
   const sections = game.writeup.sections;
 
-  // Map the first 3 sections to tiles; use section heading as the title
+  const icons = ["⚔️", "🎯", "📅"];
   const tiles = [0, 1, 2].map(i => {
     const s = sections[i];
     if (!s) return "";
+    // Try to extract two key stats from the body text for the bottom grid
+    // Fall back to showing nothing if none found
     return `
-      <div class="section-card">
-        <div class="section-title">${s.heading}</div>
-        <p style="padding:1rem 1.1rem;font-size:0.875rem;color:#374151;line-height:1.7;">${s.body}</p>
+      <div class="analysis-tile">
+        <div class="analysis-tile-title">${s.heading}</div>
+        <div class="analysis-advantage">
+          <span class="advantage-icon">${icons[i]}</span>
+          <span class="advantage-label">Advantage: NYM</span>
+        </div>
+        <p class="analysis-tile-body">${s.body}</p>
       </div>`;
   }).join("");
 
-  return `<div class="tile-grid" style="margin-bottom:1.5rem;">${tiles}</div>`;
+  return `
+    <div class="section-floating-label">Game Analysis</div>
+    <div class="analysis-three-col">${tiles}</div>`;
 }
 
 /* ── ROW 5: Pick Banner ── */
@@ -542,7 +559,7 @@ function buildPickSection(game) {
         <p class="pick-summary">${summary}</p>
       </div>
       <div class="pick-right">
-        <div class="pick-badge">
+        <div class="pick-badge-rect">
           NYM Moneyline <span class="pick-odds">${oddsStr}</span>
         </div>
       </div>
