@@ -57,9 +57,9 @@ header {
 }
 
 nav {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -183,7 +183,7 @@ nav {
 .hero-banner {
   position: relative;
   background: #001530;
-  padding: 4.5rem 1.5rem 4rem;
+  padding: 5rem 2rem 4.5rem;
   text-align: center;
   overflow: hidden;
 }
@@ -299,9 +299,9 @@ nav {
    MAIN CONTENT WRAPPER
    ===================== */
 main, .page-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 2rem 4rem;
 }
 
 /* =====================
@@ -1472,8 +1472,8 @@ footer {
    ===================== */
 .page-with-sidebar {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 2rem;
   align-items: start;
 }
 
@@ -1487,6 +1487,10 @@ footer {
 
 .news-sidebar .section-title {
   margin-bottom: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  .page-with-sidebar { grid-template-columns: minmax(0, 1fr) 280px; gap: 1.5rem; }
 }
 
 @media (max-width: 900px) {
