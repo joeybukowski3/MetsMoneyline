@@ -190,6 +190,72 @@ const METS_PITCHER_IDS = {
   "Jose Butto":        683737
 };
 
+/* ── Percentile Engine ──
+   Maps a raw stat value to an estimated 0–100 MLB percentile.
+   Lower-is-better stats (ERA, WHIP, BB%) are inverted so 100 = best.
+   Curves based on 2025 MLB starter distributions. */
+const PCTL = {
+  // ERA: elite ~2.50 (99th), avg ~4.20 (50th), poor ~5.50 (10th)
+  ERA:  v => clamp(Math.round(100 - ((parseFloat(v) - 2.50) / (5.80 - 2.50)) * 90), 5, 99),
+  // FIP: elite ~2.80, avg ~4.10, poor ~5.20
+  FIP:  v => clamp(Math.round(100 - ((parseFloat(v) - 2.80) / (5.40 - 2.80)) * 90), 5, 99),
+  // xERA: similar to FIP
+  xERA: v => clamp(Math.round(100 - ((parseFloat(v) - 2.70) / (5.30 - 2.70)) * 90), 5, 99),
+  // WHIP: elite ~0.90, avg ~1.28, poor ~1.65
+  WHIP: v => clamp(Math.round(100 - ((parseFloat(v) - 0.90) / (1.70 - 0.90)) * 90), 5, 99),
+  // K%: elite ~33%, avg ~22%, poor ~13%
+  KPct: v => clamp(Math.round(((parseFloat(v) - 10) / (36 - 10)) * 95), 5, 99),
+  // BB%: elite ~4%, avg ~8%, poor ~13% — lower is better
+  BBPct: v => clamp(Math.round(100 - ((parseFloat(v) - 3.5) / (13.5 - 3.5)) * 90), 5, 99),
+  // K/BB: elite ~5.0, avg ~2.8, poor ~1.5
+  KBB:  v => clamp(Math.round(((parseFloat(v) - 1.2) / (6.0 - 1.2)) * 95), 5, 99),
+  // Hard-Hit%: lower is better for pitcher; elite ~28%, avg ~37%, poor ~45%
+  HardHit: v => clamp(Math.round(100 - ((parseFloat(v) - 26) / (47 - 26)) * 90), 5, 99),
+  // GB%: higher is generally better; elite ~55%, avg ~43%, poor ~33%
+  GB:   v => clamp(Math.round(((parseFloat(v) - 30) / (58 - 30)) * 95), 5, 99),
+  // Bullpen ERA: elite ~3.00, avg ~4.00, poor ~5.20
+  BPERA: v => clamp(Math.round(100 - ((parseFloat(v) - 2.80) / (5.50 - 2.80)) * 90), 5, 99),
+  // Bullpen xFIP: elite ~3.10, avg ~4.00, poor ~5.00
+  BPxFIP: v => clamp(Math.round(100 - ((parseFloat(v) - 3.00) / (5.20 - 3.00)) * 90), 5, 99),
+  // Rating: direct 0–100
+  Rating: v => clamp(Math.round(parseFloat(v)), 0, 100),
+};
+
+function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
+
+/* Color the bar: red (poor) → gray (avg) → blue (good), like Savant */
+function pctlColor(pct) {
+  if (pct >= 80) return "#1a6bb5";   // elite blue
+  if (pct >= 60) return "#5a9fd4";   // good blue
+  if (pct >= 45) return "#aab8c8";   // avg gray
+  if (pct >= 25) return "#e08060";   // below avg orange
+  return "#c0392b";                  // poor red
+}
+
+/* Build a single stat row with percentile bar */
+function statBar(label, rawVal, pctlFn, displayVal) {
+  if (rawVal == null || rawVal === "N/A" || rawVal === "") {
+    return `<div class="sbar-row">
+      <span class="sbar-label">${label}</span>
+      <div class="sbar-track"><div class="sbar-fill" style="width:0%"></div></div>
+      <span class="sbar-val">N/A</span>
+    </div>`;
+  }
+  const numStr = String(rawVal).replace(/<[^>]*>/g, "").replace("%","").trim();
+  const pct    = pctlFn(numStr);
+  const color  = pctlColor(pct);
+  const shown  = displayVal || rawVal;
+  return `<div class="sbar-row">
+    <span class="sbar-label">${label}</span>
+    <div class="sbar-track">
+      <div class="sbar-fill" style="width:${pct}%;background:${color}">
+        <span class="sbar-pct">${pct}</span>
+      </div>
+    </div>
+    <span class="sbar-val">${shown}</span>
+  </div>`;
+}
+
 /* ── ROW 2: Starting Pitching (two-column pitcher card layout) ── */
 function buildPitchingCard(game) {
   const p  = game.pitching;
@@ -285,16 +351,20 @@ function buildPitchingCard(game) {
     }
 
     const { era, fip, xera, whip, kbb, kpct, bbpct } = seasonStats;
-    const hhPct = pitcher.savant?.hardHitPct ?? "N/A";
-    const gbPct = pitcher.savant?.gbPct      ?? "N/A";
+    const hhPct = pitcher.savant?.hardHitPct ?? null;
+    const gbPct = pitcher.savant?.gbPct      ?? null;
 
     const id = pitcher.mlbId || METS_PITCHER_IDS[pitcher.name] || 0;
+    // Action shot URL (larger crop, person standing)
     const photoHtml = id
       ? `<img class="pitcher-photo-sm"
-           src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current"
+           src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:action:hero:current.png/w_360,q_auto:best/v1/people/${id}/action/hero/current"
            alt="${pitcher.name}"
-           onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot;>&#9918;</div>'">`
+           onerror="this.src='https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current'">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
+
+    // Strip HTML tags from stat values for numeric parsing
+    const raw = s => String(s).replace(/<[^>]*>/g, "").replace("%","").trim();
 
     return `<div class="pitcher-card-v2">
       <div class="pitcher-img-panel">
@@ -302,25 +372,20 @@ function buildPitchingCard(game) {
       </div>
       <div class="pitcher-stats-panel">
         <div class="pitcher-name-lg">${pitcher.name}</div>
-        <div class="pitcher-meta-line"><span class="pitcher-team-tag">${sideLabel}</span>${pitcher.seasonRecord ? ` — ${pitcher.seasonRecord}` : ""}, ${era} ERA</div>
-        <div class="pitcher-stats-cols">
-          <div class="pitcher-col">
-            <div class="pcol-header">Traditional</div>
-            ${pitcher.seasonRecord ? prow("W-L", pitcher.seasonRecord) : ""}
-            ${prow("ERA",  era)}
-            ${prow("WHIP", whip)}
-            ${prow("K%",   kpct)}
-            ${prow("BB%",  bbpct)}
-          </div>
-          <div class="pitcher-col">
-            <div class="pcol-header advanced">Advanced</div>
-            ${prow("FIP",       fip)}
-            ${prow("xERA",      xera)}
-            ${prow("K/BB",      kbb)}
-            ${prow("Hard-Hit%", hhPct)}
-            ${prow("GB%",       gbPct)}
-          </div>
+        <div class="pitcher-meta-line">
+          <span class="pitcher-team-tag">${sideLabel}</span>${pitcher.seasonRecord ? ` — ${pitcher.seasonRecord}` : ""}
         </div>
+        <div class="sbar-section-label">Traditional</div>
+        ${statBar("ERA",  raw(era),  PCTL.ERA,  era)}
+        ${statBar("WHIP", raw(whip), PCTL.WHIP, whip)}
+        ${statBar("K%",   raw(kpct).replace("%",""), PCTL.KPct, kpct)}
+        ${statBar("BB%",  raw(bbpct).replace("%",""), PCTL.BBPct, bbpct)}
+        <div class="sbar-section-label" style="margin-top:0.6rem">Advanced</div>
+        ${statBar("FIP",       raw(fip),  PCTL.FIP,     fip)}
+        ${statBar("xERA",      raw(xera), PCTL.xERA,    xera)}
+        ${statBar("K/BB",      raw(kbb),  PCTL.KBB,     kbb)}
+        ${statBar("Hard-Hit%", hhPct ? raw(hhPct).replace("%","") : null, PCTL.HardHit, hhPct)}
+        ${statBar("GB%",       gbPct ? raw(gbPct).replace("%","") : null, PCTL.GB,      gbPct)}
         ${vsRosterTable(vsRoster)}
       </div>
     </div>`;
@@ -375,24 +440,23 @@ function buildPitchingCard(game) {
     </div>
 
     <div class="section-floating-label">Bullpen</div>
-    <div class="card full-card">
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Team</th><th>ERA</th><th>xFIP</th><th>Last 14d ERA</th><th>Rating</th></tr></thead>
-          <tbody>
-            <tr>
-              <td style="font-weight:600;color:var(--orange)">NYM</td>
-              <td>${metsBP.era}</td><td>${metsBP.xfip}</td><td>${metsBP.last14}</td><td>${metsBP.rating}/100</td>
-            </tr>
-            <tr>
-              <td style="font-weight:600;color:#9099b0">${getTeamAbbr(game.opponent)}</td>
-              <td>${oppBP.era}</td><td>${oppBP.xfip}</td><td>${oppBP.last14}</td><td>${oppBP.rating}/100</td>
-            </tr>
-          </tbody>
-        </table>
+    <div class="pitcher-two-col">
+      <div class="card full-card" style="padding:1.25rem">
+        <div class="sbar-section-label" style="margin-bottom:0.6rem">NYM Bullpen</div>
+        ${statBar("ERA",       metsBP.era?.replace ? metsBP.era.replace(/<[^>]*>/g,"").trim() : metsBP.era,   PCTL.BPERA,  metsBP.era)}
+        ${statBar("xFIP",      metsBP.xfip?.replace ? metsBP.xfip.replace(/<[^>]*>/g,"").trim() : metsBP.xfip, PCTL.BPxFIP, metsBP.xfip)}
+        ${statBar("Last 14d ERA", metsBP.last14?.replace ? metsBP.last14.replace(/<[^>]*>/g,"").trim() : metsBP.last14, PCTL.BPERA, metsBP.last14)}
+        ${statBar("Rating",    String(metsBP.rating), PCTL.Rating, `${metsBP.rating}/100`)}
       </div>
-      ${statcastSection}
-    </div>`;
+      <div class="card full-card" style="padding:1.25rem">
+        <div class="sbar-section-label" style="margin-bottom:0.6rem">${getTeamAbbr(game.opponent)} Bullpen</div>
+        ${statBar("ERA",       oppBP.era?.replace ? oppBP.era.replace(/<[^>]*>/g,"").trim() : oppBP.era,   PCTL.BPERA,  oppBP.era)}
+        ${statBar("xFIP",      oppBP.xfip?.replace ? oppBP.xfip.replace(/<[^>]*>/g,"").trim() : oppBP.xfip, PCTL.BPxFIP, oppBP.xfip)}
+        ${statBar("Last 14d ERA", oppBP.last14?.replace ? oppBP.last14.replace(/<[^>]*>/g,"").trim() : oppBP.last14, PCTL.BPERA, oppBP.last14)}
+        ${statBar("Rating",    String(oppBP.rating), PCTL.Rating, `${oppBP.rating}/100`)}
+      </div>
+    </div>
+    ${statcastSection ? `<div class="card full-card">${statcastSection}</div>` : ""}`;
 }
 
 /* ── ROW 3: Lineups + Advanced Metrics ── */
@@ -619,8 +683,18 @@ async function init() {
 
   // Update hero headline dynamically
   const shortOpp = todayGame.opponent.split(" ").pop();
+  const isToday  = todayGame.date === today;
+  const gameLabel = isToday ? "Today's Game" : "Next Game";
+  const vsAt = todayGame.homeAway === "away" ? "@" : "vs";
   const heroEl = document.getElementById("hero-headline");
-  if (heroEl) heroEl.textContent = `Today's Edge: NYM vs ${shortOpp}`;
+  if (heroEl) {
+    const dateStr = todayGame.date
+      ? new Date(todayGame.date + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })
+      : "";
+    heroEl.textContent = isToday
+      ? `${gameLabel}: New York Mets ${vsAt} ${todayGame.opponent}`
+      : `${gameLabel}: ${dateStr} — New York Mets ${vsAt} ${todayGame.opponent}`;
+  }
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
