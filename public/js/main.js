@@ -37,6 +37,13 @@ function getTeamLogoUrl(teamName) {
   return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
 }
 
+function getTeamAbbr(teamName) {
+  const slug = ESPN_LOGO[teamName];
+  if (slug) return slug.toUpperCase();
+  const words = teamName.split(" ");
+  return words[words.length - 1].substring(0, 3).toUpperCase();
+}
+
 function isMissingStat(value) {
   return value == null || value === "" || value === "N/A";
 }
@@ -299,6 +306,7 @@ function buildPitchingCard(game) {
           <div class="pitcher-stats-cols">
             <div class="pitcher-col">
               <div class="pcol-header">TRADITIONAL</div>
+              ${pitcher.seasonRecord ? prow("W-L", pitcher.seasonRecord) : ""}
               ${prow("ERA",  era)}
               ${prow("WHIP", whip)}
               ${prow("K%",   kpct)}
@@ -381,7 +389,7 @@ function buildPitchingCard(game) {
               <td>${metsBP.era}</td><td>${metsBP.xfip}</td><td>${metsBP.last14}</td><td>${metsBP.rating}/100</td>
             </tr>
             <tr>
-              <td style="font-weight:600;color:#9099b0">OPP</td>
+              <td style="font-weight:600;color:#9099b0">${getTeamAbbr(game.opponent)}</td>
               <td>${oppBP.era}</td><td>${oppBP.xfip}</td><td>${oppBP.last14}</td><td>${oppBP.rating}/100</td>
             </tr>
           </tbody>
@@ -398,8 +406,8 @@ function buildRow3(game) {
   const metsLineup = (!notReleased && Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : DEFAULT_METS_LINEUP;
   const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
   const statusLabel = l.lineupStatus === "confirmed" ? "Confirmed" : "Projected";
+  const oppAbbr = getTeamAbbr(game.opponent);
 
-  // FIX 1: headshot helper — uses playerId if present, falls back to 0 (generic MLB silhouette via Cloudinary d_ param)
   const headshotImg = (p) => {
     const pid = p.playerId || p.id || 0;
     return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
@@ -425,27 +433,6 @@ function buildRow3(game) {
     </tr>`).join("")
     : `<tr><td colspan="5" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
-  // Advanced metrics (col 3) — FIX 3: apply 2025 fallbacks
-  const resolvedMetrics = resolveAdvancedMatchup(game);
-  const advRows = resolvedMetrics.map(r => {
-    const edgeColor = r.edge === "Mets"
-      ? "color:var(--orange);font-weight:700"
-      : (r.edge === "Neutral" || r.edge === "N/A" || r.edge === "—")
-        ? "color:#9099b0"
-        : "color:#c0392b;font-weight:700";
-    return `<tr>
-      <td>${r.category}</td>
-      <td>${r.mets}</td>
-      <td>${r.opp}</td>
-      <td style="${edgeColor}">${r.edge}</td>
-    </tr>`;
-  }).join("");
-
-  const topEdge = resolvedMetrics.find(r => r.edge === "Mets");
-  const edgeCallout = topEdge
-    ? `<div class="edge-callout">Key Edge: ${topEdge.category} — NYM ${topEdge.mets} vs OPP ${topEdge.opp}</div>`
-    : `<div class="edge-callout neutral">No clear statistical edge identified</div>`;
-
   const metsBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
     : `<div class="table-wrap"><table>
@@ -460,29 +447,46 @@ function buildRow3(game) {
          <tbody>${oppRows}</tbody>
        </table></div>`;
 
-  return `
-    <div class="row-3-grid">
-      <div class="card">
-        <div class="card-header">${statusLabel} Lineup — Mets</div>
-        <div class="lineup-team-header mets-header">New York Mets</div>
-        ${metsBattingBlock}
-      </div>
-
-      <div class="card">
-        <div class="card-header">${statusLabel} Lineup — ${game.opponent}</div>
-        <div class="lineup-team-header opp-header">${game.opponent}</div>
-        ${oppBattingBlock}
-      </div>
-
-      <div class="card advanced-metrics">
-        <div class="card-header">Advanced Metrics</div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Metric</th><th>NYM</th><th>OPP</th><th>Edge</th></tr></thead>
-            <tbody>${advRows}</tbody>
-          </table>
+  // Advanced metrics — horizontal stat bar
+  const resolvedMetrics = resolveAdvancedMatchup(game);
+  const advCols = resolvedMetrics.map(r => {
+    const edgeClass = r.edge === "Mets" ? "mets" : (r.edge === "Neutral" || !r.edge) ? "neutral" : "opp";
+    const edgeLabel = r.edge === "Mets" ? "Mets Edge" : r.edge === "Neutral" ? "—" : `${oppAbbr} Edge`;
+    return `
+      <div class="adv-metric-col">
+        <div class="amc-stat-label">${r.category}</div>
+        <div class="amc-team-row">
+          <span class="amc-team-abbr nym">NYM</span>
+          <span class="amc-team-val">${r.mets}</span>
         </div>
-        ${edgeCallout}
+        <div class="amc-team-row">
+          <span class="amc-team-abbr">${oppAbbr}</span>
+          <span class="amc-team-val">${r.opp}</span>
+        </div>
+        <div class="amc-edge-badge ${edgeClass}">${edgeLabel}</div>
+      </div>`;
+  }).join("");
+
+  return `
+    <div class="card full-card">
+      <div class="card-header">${statusLabel} Lineups</div>
+      <div class="lineup-cards-grid">
+        <div class="lineup-card">
+          <div class="lineup-team-header mets-header">New York Mets</div>
+          ${metsBattingBlock}
+        </div>
+        <div class="lineup-divider"></div>
+        <div class="lineup-card">
+          <div class="lineup-team-header opp-header">${game.opponent}</div>
+          ${oppBattingBlock}
+        </div>
+      </div>
+    </div>
+
+    <div class="card full-card">
+      <div class="card-header">Advanced Matchup — NYM vs ${game.opponent}</div>
+      <div class="adv-metrics-bar">
+        ${advCols}
       </div>
     </div>`;
 }
