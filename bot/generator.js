@@ -1098,7 +1098,7 @@ function getPublishDate(gameDateStr) {
   const offsetHours = match ? parseInt(match[1], 10) : -5;
   const offsetMinutes = match?.[2] ? parseInt(match[2], 10) : 0;
   const totalOffsetMinutes = (offsetHours * 60) + (offsetHours >= 0 ? offsetMinutes : -offsetMinutes);
-  const utcMillis = Date.UTC(y, m - 1, d, 11, 0, 0) - (totalOffsetMinutes * 60 * 1000);
+  const utcMillis = Date.UTC(y, m - 1, d, 12, 15, 0) - (totalOffsetMinutes * 60 * 1000);
 
   return new Date(utcMillis).toISOString();
 }
