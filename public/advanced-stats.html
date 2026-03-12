@@ -261,155 +261,201 @@
   <script type="module">
     import METS_2025 from "./data/mets2025.js";
 
-    // ── Static player ID lookup ──
-    const METS_PLAYER_IDS = {
-      "Francisco Lindor":  596019,
-      "Pete Alonso":       624413,
-      "Juan Soto":         665742,
-      "Brandon Nimmo":     607043,
-      "Mark Vientos":      672515,
-      "Francisco Alvarez": 682628,
-      "Starling Marte":    516782,
-      "Jeff McNeil":       643446,
-      "Kodai Senga":       663853,
-      "David Peterson":    656945,
-      "Sean Manaea":       640455,
-      "Clay Holmes":       669203,
-      "Griffin Canning":   663158
+    // ── MLB team logo by ID (covers all 30 teams) ──
+    const TEAM_MLB_ID = {
+      "New York Mets":121,"Atlanta Braves":144,"Philadelphia Phillies":143,
+      "Washington Nationals":120,"Miami Marlins":146
+    };
+    function logoUrl(team) {
+      const id = TEAM_MLB_ID[team];
+      return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
+    }
+
+    // ── Helpers ──
+    // fmt: show (2026) badge for live values, (2025) badge for fallbacks
+    const fmt    = (v, year) => `${v} <span class="stat-year">(${year})</span>`;
+    const fmt25  = v => fmt(v, "2025");
+    const na     = () => "N/A";
+    // live: show value plain if it's real 2026 data, fallback to 2025 badge
+    const live   = (liveVal, fallbackVal) => {
+      if (liveVal != null && liveVal !== "" && liveVal !== "N/A") return fmt(liveVal, "2026");
+      return fallbackVal != null ? fmt25(fallbackVal) : "N/A";
     };
 
-    const ESPN_LOGOS = {
-      "New York Mets":         "nym",
-      "Atlanta Braves":        "atl",
-      "Philadelphia Phillies": "phi",
-      "Washington Nationals":  "wsh",
-      "Miami Marlins":         "mia"
-    };
+    function headshotUrl(id) {
+      return `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_56,q_auto:best/v1/people/${id || 0}/headshot/67/current`;
+    }
 
     const NL_EAST_2025 = [
-      { team: "New York Mets",         W: 89, L: 73,  PCT: ".549", GB: "—",   homeRec: "46-35", roadRec: "43-38", last10: "6-4", streak: "W2" },
-      { team: "Atlanta Braves",        W: 86, L: 76,  PCT: ".531", GB: "3",   homeRec: "44-37", roadRec: "42-39", last10: "5-5", streak: "L1" },
-      { team: "Philadelphia Phillies", W: 95, L: 67,  PCT: ".586", GB: "-4",  homeRec: "50-31", roadRec: "45-36", last10: "7-3", streak: "W1" },
-      { team: "Washington Nationals",  W: 72, L: 90,  PCT: ".444", GB: "17",  homeRec: "38-43", roadRec: "34-47", last10: "4-6", streak: "L3" },
-      { team: "Miami Marlins",         W: 62, L: 100, PCT: ".383", GB: "27",  homeRec: "32-49", roadRec: "30-51", last10: "3-7", streak: "L5" }
+      { team: "New York Mets",         W: 89, L: 73,  PCT: ".549", GB: "—",  homeRec: "46-35", roadRec: "43-38", last10: "6-4", streak: "W2" },
+      { team: "Atlanta Braves",        W: 86, L: 76,  PCT: ".531", GB: "3",  homeRec: "44-37", roadRec: "42-39", last10: "5-5", streak: "L1" },
+      { team: "Philadelphia Phillies", W: 95, L: 67,  PCT: ".586", GB: "-4", homeRec: "50-31", roadRec: "45-36", last10: "7-3", streak: "W1" },
+      { team: "Washington Nationals",  W: 72, L: 90,  PCT: ".444", GB: "17", homeRec: "38-43", roadRec: "34-47", last10: "4-6", streak: "L3" },
+      { team: "Miami Marlins",         W: 62, L: 100, PCT: ".383", GB: "27", homeRec: "32-49", roadRec: "30-51", last10: "3-7", streak: "L5" }
     ];
 
-    const fmt25 = v => `${v} <span class="stat-year">(2025)</span>`;
-    const na    = () => "N/A";
+    // ── Load live game data from generator output ──
+    let liveGame = null;
+    try {
+      const res  = await fetch("data/sample-game.json");
+      const data = await res.json();
+      // Use the first upcoming or most recent game
+      const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+      liveGame = data.games?.find(g => g.date >= today) || data.games?.[0] || null;
+    } catch (_) {}
 
-    function headshotUrl(name) {
-      const id = METS_PLAYER_IDS[name] || 0;
-      return `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_56,q_auto:best/v1/people/${id}/headshot/67/current`;
-    }
-
-    function logoUrl(team) {
-      const slug = ESPN_LOGOS[team];
-      return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
-    }
+    // Shorthand accessors into live data
+    const liveAdv  = liveGame?.teamAdvanced?.mets  || {};  // { wrcPlus, ops, xba, hardHit, kPct, rotFip }
+    const liveLineup = liveGame?.lineups?.mets || [];
+    const livePitch  = liveGame?.pitching || {};
 
     // ── Season At A Glance ──
+    // Try to pull W/L from live game's metsRecord field (format "W-L")
+    const [liveW, liveL] = (liveGame?.metsRecord || "").split("-").map(Number);
     const r = METS_2025.record;
+    const recLabel  = (liveW > 0 || liveL > 0) ? `${liveW}-${liveL}` : `${r.W}-${r.L}`;
+    const recIsLive = liveW > 0 || liveL > 0;
+
     const glanceItems = [
-      { label: "Record",   value: `${r.W}-${r.L}`, highlight: true },
-      { label: "Run Diff", value: `+${METS_2025.runDiff}` },
-      { label: "Home",     value: METS_2025.home },
-      { label: "Road",     value: METS_2025.road },
-      { label: "wRC+",     value: METS_2025.teamWRC_plus },
-      { label: "Rot. ERA", value: METS_2025.rotationERA }
+      { label: "Record",   value: recLabel, highlight: true, badge: recIsLive ? "2026" : "2025" },
+      { label: "Run Diff", value: `+${METS_2025.runDiff}`, badge: "2025" },
+      { label: "Home",     value: METS_2025.home, badge: "2025" },
+      { label: "Road",     value: METS_2025.road, badge: "2025" },
+      { label: "wRC+",     value: liveAdv.wrcPlus ?? METS_2025.teamWRC_plus, badge: liveAdv.wrcPlus ? "2026" : "2025" },
+      { label: "Rot. ERA", value: METS_2025.rotationERA, badge: "2025" }
     ];
     document.getElementById("at-a-glance").innerHTML = glanceItems.map(g =>
       `<div class="glance-item">
         <div class="glance-label">${g.label}</div>
-        <div class="glance-value${g.highlight ? " highlight" : ""}">${g.value}</div>
+        <div class="glance-value${g.highlight ? " highlight" : ""}">${g.value} <span class="stat-year">(${g.badge})</span></div>
       </div>`
     ).join("");
 
-    // ── Team Offense ──
+    // ── Team Offense — live values preferred, 2025 fallback ──
     const offenseRows = [
-      ["wRC+",       METS_2025.teamWRC_plus, METS_2025.leagueAvg2025.teamWRC_plus],
-      ["OPS",        METS_2025.teamOPS,      METS_2025.leagueAvg2025.teamOPS],
-      ["AVG",        METS_2025.teamAVG,      METS_2025.leagueAvg2025.teamAVG],
-      ["Hard-Hit%",  METS_2025.hardHitPct,   METS_2025.leagueAvg2025.hardHitPct],
-      ["Barrel%",    METS_2025.barrelPct,    METS_2025.leagueAvg2025.barrelPct],
-      ["BB%",        METS_2025.bbPct,        METS_2025.leagueAvg2025.bbPct],
-      ["K%",         METS_2025.kPct,         METS_2025.leagueAvg2025.kPct]
+      ["wRC+",      liveAdv.wrcPlus,  METS_2025.teamWRC_plus,  METS_2025.leagueAvg2025.teamWRC_plus],
+      ["OPS",       liveAdv.ops,      METS_2025.teamOPS,       METS_2025.leagueAvg2025.teamOPS],
+      ["AVG",       null,             METS_2025.teamAVG,       METS_2025.leagueAvg2025.teamAVG],
+      ["xBA",       liveAdv.xba,      null,                    null],
+      ["Hard-Hit%", liveAdv.hardHit,  METS_2025.hardHitPct,    METS_2025.leagueAvg2025.hardHitPct],
+      ["K%",        liveAdv.kPct,     METS_2025.kPct,          METS_2025.leagueAvg2025.kPct],
+      ["Barrel%",   null,             METS_2025.barrelPct,     METS_2025.leagueAvg2025.barrelPct],
+      ["BB%",       null,             METS_2025.bbPct,         METS_2025.leagueAvg2025.bbPct],
     ];
-    document.getElementById("offense-body").innerHTML = offenseRows.map(([stat, mets, lg]) =>
-      `<tr><td>${stat}</td><td><strong>${fmt25(mets)}</strong></td><td>${fmt25(lg)}</td></tr>`
+    document.getElementById("offense-body").innerHTML = offenseRows.map(([stat, lv, fb, lgFb]) =>
+      `<tr>
+        <td>${stat}</td>
+        <td><strong>${live(lv, fb)}</strong></td>
+        <td>${lgFb != null ? fmt25(lgFb) : "N/A"}</td>
+      </tr>`
     ).join("");
 
     // ── Team Pitching ──
     const pitchingRows = [
-      ["Rotation ERA",  METS_2025.rotationERA,   METS_2025.leagueAvg2025.rotationERA],
-      ["Rotation FIP",  METS_2025.rotationFIP,   METS_2025.leagueAvg2025.rotationFIP],
-      ["Rotation WHIP", METS_2025.rotationWHIP,  METS_2025.leagueAvg2025.rotationWHIP],
-      ["Rotation K/9",  METS_2025.rotationKper9, METS_2025.leagueAvg2025.rotationKper9],
-      ["Bullpen ERA",   METS_2025.bullpenERA,    METS_2025.leagueAvg2025.bullpenERA],
-      ["Bullpen xFIP",  METS_2025.bullpenxFIP,   METS_2025.leagueAvg2025.bullpenxFIP]
+      ["Rotation ERA",  null,             METS_2025.rotationERA,   METS_2025.leagueAvg2025.rotationERA],
+      ["Rotation FIP",  liveAdv.rotFip,   METS_2025.rotationFIP,   METS_2025.leagueAvg2025.rotationFIP],
+      ["Rotation WHIP", null,             METS_2025.rotationWHIP,  METS_2025.leagueAvg2025.rotationWHIP],
+      ["Rotation K/9",  null,             METS_2025.rotationKper9, METS_2025.leagueAvg2025.rotationKper9],
+      ["Bullpen ERA",   null,             METS_2025.bullpenERA,    METS_2025.leagueAvg2025.bullpenERA],
+      ["Bullpen xFIP",  null,             METS_2025.bullpenxFIP,   METS_2025.leagueAvg2025.bullpenxFIP],
     ];
-    document.getElementById("pitching-body").innerHTML = pitchingRows.map(([stat, mets, lg]) =>
-      `<tr><td>${stat}</td><td><strong>${fmt25(mets)}</strong></td><td>${fmt25(lg)}</td></tr>`
+    document.getElementById("pitching-body").innerHTML = pitchingRows.map(([stat, lv, fb, lgFb]) =>
+      `<tr>
+        <td>${stat}</td>
+        <td><strong>${live(lv, fb)}</strong></td>
+        <td>${lgFb != null ? fmt25(lgFb) : "N/A"}</td>
+      </tr>`
     ).join("");
 
-    // ── Team Defense ──
+    // ── Team Defense (no live source yet — all 2025) ──
     const defenseRows = [
-      ["DRS",        METS_2025.teamDRS,    METS_2025.leagueAvg2025.teamDRS],
-      ["OAA",        METS_2025.teamOAA,    METS_2025.leagueAvg2025.teamOAA],
-      ["SB Allowed", METS_2025.sbAllowed,  "N/A"]
+      ["DRS",        METS_2025.teamDRS,   METS_2025.leagueAvg2025.teamDRS],
+      ["OAA",        METS_2025.teamOAA,   METS_2025.leagueAvg2025.teamOAA],
+      ["SB Allowed", METS_2025.sbAllowed, "N/A"]
     ];
     document.getElementById("defense-body").innerHTML = defenseRows.map(([stat, mets, lg]) =>
       `<tr><td>${stat}</td><td><strong>${fmt25(mets)}</strong></td><td>${lg === "N/A" ? "N/A" : fmt25(lg)}</td></tr>`
     ).join("");
 
-    // ── Position Players ──
-    const LINEUP_ORDER = ["Francisco Lindor","Juan Soto","Pete Alonso","Mark Vientos","Francisco Alvarez","Brandon Nimmo","Starling Marte","Jeff McNeil"];
-    const POSITIONS    = { "Francisco Lindor":"SS","Juan Soto":"LF","Pete Alonso":"1B","Mark Vientos":"3B","Francisco Alvarez":"C","Brandon Nimmo":"CF","Starling Marte":"RF","Jeff McNeil":"2B" };
-    const BB_PCT       = { "Francisco Lindor":9.8,"Juan Soto":18.2,"Pete Alonso":10.1,"Mark Vientos":7.9,"Francisco Alvarez":8.4,"Brandon Nimmo":12.3,"Starling Marte":6.1,"Jeff McNeil":7.8 };
-    const K_PCT        = { "Francisco Lindor":18.2,"Juan Soto":15.1,"Pete Alonso":22.4,"Mark Vientos":24.1,"Francisco Alvarez":25.3,"Brandon Nimmo":21.4,"Starling Marte":20.9,"Jeff McNeil":14.8 };
+    // ── Position Players — merge live lineup with 2025 fallbacks ──
+    // Build a map of live lineup players keyed by name for fast lookup
+    const livePlayerMap = {};
+    for (const p of liveLineup) { if (p.name) livePlayerMap[p.name] = p; }
 
-    const hitterRows = LINEUP_ORDER.map(name => {
-      const s = METS_2025.hitters[name] || {};
+    // Fallback 2025 roster in batting order
+    const FALLBACK_LINEUP = [
+      { name: "Francisco Lindor",  pos: "SS", id: 596019 },
+      { name: "Juan Soto",         pos: "LF", id: 665742 },
+      { name: "Pete Alonso",       pos: "1B", id: 624413 },
+      { name: "Mark Vientos",      pos: "3B", id: 672515 },
+      { name: "Francisco Alvarez", pos: "C",  id: 682628 },
+      { name: "Brandon Nimmo",     pos: "CF", id: 607043 },
+      { name: "Starling Marte",    pos: "RF", id: 516782 },
+      { name: "Jeff McNeil",       pos: "2B", id: 643446 },
+    ];
+    const FALLBACK_BB = { "Francisco Lindor":9.8,"Juan Soto":18.2,"Pete Alonso":10.1,"Mark Vientos":7.9,"Francisco Alvarez":8.4,"Brandon Nimmo":12.3,"Starling Marte":6.1,"Jeff McNeil":7.8 };
+    const FALLBACK_K  = { "Francisco Lindor":18.2,"Juan Soto":15.1,"Pete Alonso":22.4,"Mark Vientos":24.1,"Francisco Alvarez":25.3,"Brandon Nimmo":21.4,"Starling Marte":20.9,"Jeff McNeil":14.8 };
+
+    // Use live lineup if available and has names, else use fallback
+    const displayLineup = liveLineup.filter(p => p.name && p.pos && p.pos !== "P").length >= 5
+      ? liveLineup.filter(p => p.pos !== "P")
+      : FALLBACK_LINEUP;
+
+    const hitterRows = displayLineup.map(p => {
+      const fallback2025 = METS_2025.hitters[p.name] || {};
+      const liveP = livePlayerMap[p.name] || {};
+      const pid  = p.playerId || p.id || 0;
       return `<tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(name)}" class="player-row-headshot" alt="${name}" onerror="this.style.display='none'"><strong>${name}</strong></div></td>
-        <td>${POSITIONS[name] || "?"}</td>
-        <td>${s.AVG != null ? fmt25(s.AVG) : na()}</td>
-        <td>${s.OPS != null ? fmt25(s.OPS) : na()}</td>
-        <td>${s.wRC_plus != null ? fmt25(s.wRC_plus) : na()}</td>
-        <td>${s.HR != null ? fmt25(s.HR) : na()}</td>
-        <td>${BB_PCT[name] != null ? fmt25(BB_PCT[name] + "%") : na()}</td>
-        <td>${K_PCT[name]  != null ? fmt25(K_PCT[name]  + "%") : na()}</td>
+        <td><div class="player-name-td"><img src="${headshotUrl(pid)}" class="player-row-headshot" alt="${p.name}" onerror="this.style.display='none'"><strong>${p.name}</strong></div></td>
+        <td>${p.pos || "?"}</td>
+        <td>${live(liveP.seasonAVG, fallback2025.AVG)}</td>
+        <td>${live(liveP.seasonOPS, fallback2025.OPS)}</td>
+        <td>${fallback2025.wRC_plus != null ? fmt25(fallback2025.wRC_plus) : na()}</td>
+        <td>${fallback2025.HR       != null ? fmt25(fallback2025.HR)       : na()}</td>
+        <td>${FALLBACK_BB[p.name]   != null ? fmt25(FALLBACK_BB[p.name] + "%") : na()}</td>
+        <td>${FALLBACK_K[p.name]    != null ? fmt25(FALLBACK_K[p.name]  + "%") : na()}</td>
       </tr>`;
     });
     const benchRow = `<tr class="divider-row"><td colspan="8">Bench</td></tr>
       <tr><td colspan="8" style="color:#9099b0;font-size:0.85rem;padding:0.75rem 1rem;text-align:center;">Bench data not yet available for 2026</td></tr>`;
     document.getElementById("hitters-body").innerHTML = hitterRows.join("") + benchRow;
 
-    // ── Starting Rotation ──
-    const ROTATION = ["Kodai Senga","David Peterson","Sean Manaea","Clay Holmes","Griffin Canning"];
-    const K9       = { "Kodai Senga":10.8,"David Peterson":8.6,"Sean Manaea":8.1,"Clay Holmes":7.4,"Griffin Canning":7.1 };
-    const BB9      = { "Kodai Senga":2.1,"David Peterson":2.3,"Sean Manaea":2.5,"Clay Holmes":2.8,"Griffin Canning":2.9 };
+    // ── Starting Rotation — merge live pitcher from today's game with 2025 fallbacks ──
+    const ROTATION_FALLBACK = [
+      { name: "Kodai Senga",     id: 663853, k9: 10.8, bb9: 2.1 },
+      { name: "David Peterson",  id: 656945, k9: 8.6,  bb9: 2.3 },
+      { name: "Sean Manaea",     id: 640455, k9: 8.1,  bb9: 2.5 },
+      { name: "Clay Holmes",     id: 669203, k9: 7.4,  bb9: 2.8 },
+      { name: "Griffin Canning", id: 663158, k9: 7.1,  bb9: 2.9 },
+    ];
 
-    document.getElementById("rotation-body").innerHTML = ROTATION.map(name => {
-      const s = METS_2025.starters[name] || {};
-      return `<tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(name)}" class="player-row-headshot" alt="${name}" onerror="this.style.display='none'"><strong>${name}</strong></div></td>
-        <td>${s.ERA  != null ? fmt25(s.ERA)  : na()}</td>
-        <td>${s.FIP  != null ? fmt25(s.FIP)  : na()}</td>
-        <td>${s.xFIP != null ? fmt25(s.xFIP) : na()}</td>
-        <td>${s.WHIP != null ? fmt25(s.WHIP) : na()}</td>
-        <td>${s.KBB  != null ? fmt25(s.KBB)  : na()}</td>
-        <td>${K9[name]  != null ? fmt25(K9[name])  : na()}</td>
-        <td>${BB9[name] != null ? fmt25(BB9[name]) : na()}</td>
+    // If live game has today's Mets starter, pull their live stats
+    const liveStarter = livePitch.mets || null;
+
+    document.getElementById("rotation-body").innerHTML = ROTATION_FALLBACK.map(p => {
+      const s = METS_2025.starters[p.name] || {};
+      const isToday = liveStarter?.name === p.name;
+      const lv = isToday ? liveStarter : null;
+      return `<tr${isToday ? ' style="background:#f0fdf4"' : ""}>
+        <td><div class="player-name-td"><img src="${headshotUrl(p.id)}" class="player-row-headshot" alt="${p.name}" onerror="this.style.display='none'"><strong>${p.name}</strong>${isToday ? ' <span class="stat-year" style="background:#dcfce7;color:#15803d">Today</span>' : ""}</div></td>
+        <td>${live(lv?.seasonERA,  s.ERA)}</td>
+        <td>${live(lv?.seasonFIP,  s.FIP)}</td>
+        <td>${live(lv?.seasonXERA, s.xFIP)}</td>
+        <td>${live(lv?.seasonWHIP, s.WHIP)}</td>
+        <td>${live(lv?.last3KBB,   s.KBB)}</td>
+        <td>${fmt25(p.k9)}</td>
+        <td>${fmt25(p.bb9)}</td>
       </tr>`;
     }).join("");
 
     // ── Bullpen ──
+    const liveBP = livePitch.metsBullpen || {};
     const lgBullpenERA_plus = Math.round((METS_2025.leagueAvg2025.bullpenERA / METS_2025.bullpenERA) * 100);
     document.getElementById("bullpen-body").innerHTML = `
       <tr>
         <td style="font-weight:600;color:var(--orange)">NYM Bullpen</td>
-        <td>${fmt25(METS_2025.bullpenERA)}</td>
-        <td>${fmt25(METS_2025.bullpenxFIP)}</td>
+        <td>${live(liveBP.seasonERA,  METS_2025.bullpenERA)}</td>
+        <td>${live(liveBP.seasonXFIP, METS_2025.bullpenxFIP)}</td>
         <td>${fmt25(METS_2025.bullpenHoldPct + "%")}</td>
         <td>${fmt25(lgBullpenERA_plus)}</td>
       </tr>

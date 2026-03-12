@@ -5,42 +5,35 @@ async function loadGameData() {
   return res.json();
 }
 
-const ESPN_LOGO = {
-  "St. Louis Cardinals": "stl",
-  "Atlanta Braves": "atl",
-  "Washington Nationals": "wsh",
-  "Philadelphia Phillies": "phi",
-  "Miami Marlins": "mia",
-  "Chicago Cubs": "chc",
-  "Milwaukee Brewers": "mil",
-  "Cincinnati Reds": "cin",
-  "Pittsburgh Pirates": "pit",
-  "San Francisco Giants": "sf",
-  "Los Angeles Dodgers": "lad",
-  "San Diego Padres": "sd"
+// ── MLB team ID lookup (covers all 30 teams) ──
+const TEAM_MLB_ID = {
+  "Arizona Diamondbacks":    109, "Atlanta Braves":          144,
+  "Baltimore Orioles":       110, "Boston Red Sox":          111,
+  "Chicago Cubs":            112, "Chicago White Sox":       145,
+  "Cincinnati Reds":         113, "Cleveland Guardians":     114,
+  "Colorado Rockies":        115, "Detroit Tigers":          116,
+  "Houston Astros":          117, "Kansas City Royals":      118,
+  "Los Angeles Angels":      108, "Los Angeles Dodgers":     119,
+  "Miami Marlins":           146, "Milwaukee Brewers":       158,
+  "Minnesota Twins":         142, "New York Mets":           121,
+  "New York Yankees":        147, "Oakland Athletics":       133,
+  "Philadelphia Phillies":   143, "Pittsburgh Pirates":      134,
+  "San Diego Padres":        135, "San Francisco Giants":    137,
+  "Seattle Mariners":        136, "St. Louis Cardinals":     138,
+  "Tampa Bay Rays":          139, "Texas Rangers":           140,
+  "Toronto Blue Jays":       141, "Washington Nationals":    120,
 };
 
-const DEFAULT_METS_LINEUP = [
-  { order: 1, name: "Brandon Nimmo",      pos: "CF", hand: "L", playerId: 607043 },
-  { order: 2, name: "Francisco Lindor",   pos: "SS", hand: "S", playerId: 596019 },
-  { order: 3, name: "Juan Soto",          pos: "LF", hand: "L", playerId: 665742 },
-  { order: 4, name: "Pete Alonso",        pos: "1B", hand: "R", playerId: 624413 },
-  { order: 5, name: "Mark Vientos",       pos: "3B", hand: "R", playerId: 668978 },
-  { order: 6, name: "Francisco Alvarez",  pos: "C",  hand: "R", playerId: 682628 },
-  { order: 7, name: "Starling Marte",     pos: "RF", hand: "R", playerId: 516782 },
-  { order: 8, name: "Jeff McNeil",        pos: "2B", hand: "L", playerId: 643446 },
-  { order: 9, name: "pitcher slot",       pos: "P",  hand: "-", playerId: null   }
-];
-
-function getTeamLogoUrl(teamName) {
-  const slug = ESPN_LOGO[teamName];
-  return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
+function getTeamLogoUrl(teamNameOrId) {
+  const id = typeof teamNameOrId === "number"
+    ? teamNameOrId
+    : TEAM_MLB_ID[teamNameOrId];
+  return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
 }
 
 function getTeamAbbr(teamName) {
-  const slug = ESPN_LOGO[teamName];
-  if (slug) return slug.toUpperCase();
-  const words = teamName.split(" ");
+  // Short abbreviation from last word of team name
+  const words = (teamName || "").split(" ");
   return words[words.length - 1].substring(0, 3).toUpperCase();
 }
 
@@ -127,7 +120,6 @@ function resolveAdvancedMatchup(game) {
 
 /* ── ROW 1: Matchup Bar ── */
 function buildMatchupStrip(game) {
-  const oppLogo = getTeamLogoUrl(game.opponent);
   const metsML  = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
   const oppML   = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
 
@@ -141,15 +133,19 @@ function buildMatchupStrip(game) {
     ? `<span class="mb-meta-item"><span>&#x2197;</span> O/U ${total}</span>`
     : "";
 
-  const oppLogoHtml = oppLogo
-    ? `<img src="${oppLogo}" alt="${game.opponent}">`
+  const oppLogoUrl = game.oppTeamId
+    ? getTeamLogoUrl(game.oppTeamId)
+    : getTeamLogoUrl(game.opponent);
+
+  const oppLogoHtml = oppLogoUrl
+    ? `<img src="${oppLogoUrl}" alt="${game.opponent}">`
     : `<span style="width:36px;height:36px;display:inline-block;"></span>`;
 
   return `
     <div class="matchup-bar-compact">
       <div class="mb-teams">
         <div class="mb-team">
-          <img src="https://a.espncdn.com/i/teamlogos/mlb/500/nym.png" alt="NYM">
+          <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="NYM">
           <div>
             <div class="mb-team-name">New York Mets</div>
             <span class="mb-record">${game.metsRecord}</span>
@@ -633,22 +629,26 @@ function buildAnalysisRow(game) {
   if (!game.writeup?.sections?.length) return "";
   const sections = game.writeup.sections;
 
-  const icons = ["⚔️", "🎯", "📅"];
-  const tiles = [0, 1, 2].map(i => {
-    const s = sections[i];
-    if (!s) return "";
-    // Try to extract two key stats from the body text for the bottom grid
-    // Fall back to showing nothing if none found
-    return `
-      <div class="analysis-tile">
-        <div class="analysis-tile-title">${s.heading}</div>
-        <div class="analysis-advantage">
-          <span class="advantage-icon">${icons[i]}</span>
-          <span class="advantage-label">Advantage: NYM</span>
-        </div>
-        <p class="analysis-tile-body">${s.body}</p>
-      </div>`;
-  }).join("");
+  // Find specific sections by heading keyword rather than hard index
+  const find = (patterns) => sections.find(s =>
+    patterns.some(p => p.test(s.heading))
+  );
+  const pitchingS = find([/pitching/i]);
+  const lineupS   = find([/lineup/i]);
+  const bullpenS  = find([/bullpen/i]);
+  const tiles3 = [pitchingS, lineupS, bullpenS].filter(Boolean);
+  if (!tiles3.length) return "";
+
+  const icons = ["⚔️", "🎯", "🛡️"];
+  const tiles = tiles3.map((s, i) => `
+    <div class="analysis-tile">
+      <div class="analysis-tile-title">${s.heading.replace(/^\d+\.\s*/, "")}</div>
+      <div class="analysis-advantage">
+        <span class="advantage-icon">${icons[i]}</span>
+        <span class="advantage-label">Advantage: NYM</span>
+      </div>
+      <p class="analysis-tile-body">${s.body}</p>
+    </div>`).join("");
 
   return `
     <div class="section-floating-label">Game Analysis</div>
@@ -657,7 +657,6 @@ function buildAnalysisRow(game) {
 
 /* ── ROW 5: Pick Banner ── */
 function buildPickSection(game) {
-  // No writeup yet (pre-game day)
   if (!game.writeup) {
     const dateDisplay = game.date
       ? new Date(game.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
@@ -670,9 +669,9 @@ function buildPickSection(game) {
   }
 
   const sections = game.writeup.sections ?? [];
-  const finalSection = sections[3]
-    || sections.find(s => /putting|together|final|bottom line/i.test(s.heading));
-  const summary = finalSection?.body || game.writeup?.pickSummary || game.matchupSummary || "";
+  // Find pick/today section by heading keyword
+  const pickSection = sections.find(s => /today|pick|final|bottom line/i.test(s.heading));
+  const summary = pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "";
 
   const metsML  = game.moneyline?.mets;
   const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
@@ -738,6 +737,154 @@ function buildRecentTiles(games) {
 }
 
 /* ── Init ── */
+/* ── Game Context Card (injuries, recent form, H2H) ── */
+function buildGameContextCard(game) {
+  const gc = game.gameContext;
+  if (!gc) return "";
+
+  const oppAbbr = getTeamAbbr(game.opponent);
+
+  // Recent results pills
+  const resultPills = (games, label) => {
+    if (!games?.length) return `<span style="color:#9099b0;font-size:0.82rem;">No data</span>`;
+    const streak = (() => {
+      let s = 0, last = null;
+      for (const g of games) {
+        if (!last) { last = g.result; s = 1; }
+        else if (g.result === last) s++;
+        else break;
+      }
+      const bg = last === "W" ? "#dcfce7" : "#fee2e2";
+      const co = last === "W" ? "#15803d" : "#b91c1c";
+      return `<span style="background:${bg};color:${co};font-size:0.72rem;font-weight:800;padding:1px 7px;border-radius:4px;margin-right:6px;">${last}${s}</span>`;
+    })();
+    const pills = games.slice(0, 5).map(g => {
+      const bg = g.result === "W" ? "#22c55e" : "#ef4444";
+      const tip = `${g.homeAway === "home" ? "vs" : "@"} ${g.opponent} (${g.date})`;
+      return `<span title="${tip}" style="display:inline-block;background:${bg};color:#fff;font-size:0.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:3px;cursor:default;">${g.result} ${g.score}</span>`;
+    }).join("");
+    return `<div style="margin-bottom:0.4rem"><span style="font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label}</span> ${streak}</div><div>${pills}</div>`;
+  };
+
+  // Injury chips
+  const injuryChips = (injuries, label) => {
+    if (!injuries?.length) return `<div style="color:#9099b0;font-size:0.82rem;">${label}: None reported</div>`;
+    const chips = injuries.slice(0, 5).map(i =>
+      `<span title="${i.description || ""}" style="display:inline-block;background:#fef3c7;color:#92400e;font-size:0.72rem;font-weight:600;padding:2px 8px;border-radius:4px;margin:2px 3px 2px 0;cursor:default;">${i.name} <em style="font-weight:400">${i.status}</em></span>`
+    ).join("");
+    return `<div style="margin-bottom:0.3rem;font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label} IL</div><div>${chips}</div>`;
+  };
+
+  // H2H badge
+  const h2h = gc.headToHead;
+  const h2hHtml = (h2h && (h2h.wins + h2h.losses) > 0)
+    ? `<span style="background:#dbeafe;color:#1d4ed8;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:5px;">Season Series: Mets ${h2h.wins}–${h2h.losses} vs ${oppAbbr}</span>`
+    : `<span style="background:#f1f5f9;color:#64748b;font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:5px;">No prior matchups this season</span>`;
+
+  // Pitcher recent starts mini-table
+  const pitcherLogTable = (starts, name) => {
+    if (!starts?.length) return "";
+    const rows = starts.slice(0, 4).map(s => {
+      const er = parseInt(s.er);
+      const erColor = isNaN(er) ? "" : er <= 2 ? "color:#15803d;font-weight:700" : er <= 4 ? "color:#92400e;font-weight:700" : "color:#b91c1c;font-weight:700";
+      return `<tr>
+        <td style="color:#9099b0;font-size:0.75rem">${s.date}</td>
+        <td style="font-size:0.78rem">vs ${s.opponent}</td>
+        <td style="font-size:0.78rem">${s.ip} IP</td>
+        <td style="font-size:0.78rem;${erColor}">${s.er} ER</td>
+        <td style="font-size:0.78rem">${s.k} K</td>
+        <td style="font-size:0.75rem;font-weight:700;color:${s.result==="W"?"#15803d":s.result==="L"?"#b91c1c":"#9099b0"}">${s.result}</td>
+      </tr>`;
+    }).join("");
+    return `
+      <div style="margin-bottom:0.3rem;font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${name} — Recent Starts</div>
+      <div class="table-wrap" style="margin-bottom:0.75rem">
+        <table style="font-size:0.8rem">
+          <thead><tr><th>Date</th><th>Opp</th><th>IP</th><th>ER</th><th>K</th><th>W/L</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  };
+
+  return `
+    <div class="section-floating-label">Game Context</div>
+    <div class="card full-card" style="padding:1.25rem">
+
+      <!-- Recent form row -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+        <div>
+          ${resultPills(gc.metsRecentGames, "Mets Last 5")}
+        </div>
+        <div>
+          ${resultPills(gc.oppRecentGames, `${oppAbbr} Last 5`)}
+        </div>
+      </div>
+
+      <!-- Head to head -->
+      <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+        <div style="font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.4rem">Head-to-Head</div>
+        ${h2hHtml}
+      </div>
+
+      <!-- Injury report -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+        <div>${injuryChips(gc.metsInjuries, "Mets")}</div>
+        <div>${injuryChips(gc.oppInjuries, oppAbbr)}</div>
+      </div>
+
+      <!-- Pitcher logs -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+        <div>${pitcherLogTable(gc.metsPitcherLog, game.pitching?.mets?.name || "Mets SP")}</div>
+        <div>${pitcherLogTable(gc.oppPitcherLog,  game.pitching?.opp?.name  || "Opp SP")}</div>
+      </div>
+
+    </div>`;
+}
+
+/* ── Team Advanced Stats Card ── */
+function buildTeamAdvancedCard(game) {
+  const ta = game.teamAdvanced;
+  if (!ta?.mets || !ta?.opp) return "";
+  const oppAbbr = getTeamAbbr(game.opponent);
+
+  const rows = [
+    { label: "wRC+",         mVal: ta.mets.wrcPlus,  oVal: ta.opp.wrcPlus,  higherBetter: true  },
+    { label: "xBA",          mVal: ta.mets.xba,       oVal: ta.opp.xba,      higherBetter: true  },
+    { label: "OPS",          mVal: ta.mets.ops,        oVal: ta.opp.ops,      higherBetter: true  },
+    { label: "Hard-Hit%",    mVal: ta.mets.hardHit,   oVal: ta.opp.hardHit,  higherBetter: true  },
+    { label: "K%",           mVal: ta.mets.kPct,      oVal: ta.opp.kPct,     higherBetter: false },
+    { label: "Rotation FIP", mVal: ta.mets.rotFip,    oVal: ta.opp.rotFip,   higherBetter: false },
+  ].map(r => {
+    const fmt = v => (v == null || v === "") ? "—" : String(v);
+    const mNum = parseFloat(String(r.mVal ?? ""));
+    const oNum = parseFloat(String(r.oVal ?? ""));
+    const hasComparison = !isNaN(mNum) && !isNaN(oNum);
+    const metsLeads = hasComparison && (r.higherBetter ? mNum > oNum : mNum < oNum);
+    const oppLeads  = hasComparison && !metsLeads && mNum !== oNum;
+    const mStyle = metsLeads ? "font-weight:700;color:#15803d" : "";
+    const oStyle = oppLeads  ? "font-weight:700;color:#b91c1c" : "";
+    return `<tr>
+      <td>${r.label}</td>
+      <td style="${mStyle}">${fmt(r.mVal)}</td>
+      <td style="${oStyle}">${fmt(r.oVal)}</td>
+      <td>${metsLeads ? "✅ Mets" : oppLeads ? `❌ ${oppAbbr}` : "—"}</td>
+    </tr>`;
+  }).join("");
+
+  return `
+    <div class="section-floating-label">Team Advanced Stats</div>
+    <div class="card full-card">
+      <div class="card-header">2026 Team Metrics</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Stat</th><th>NYM</th><th>${oppAbbr}</th><th>Edge</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: Baseball Savant · MLB Stats API · mets2025.js</p>
+    </div>`;
+}
+
 async function init() {
   const { games, generatedAt } = await loadGameData();
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
@@ -759,12 +906,14 @@ async function init() {
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
-    buildMatchupStrip(todayGame) +          // Row 1 — matchup header
-    buildPitchingCard(todayGame) +          // Row 2 — full-width pitching comparison
-    buildRow3(todayGame) +                  // Row 3 — lineups + advanced metrics
-    buildAnalysisRow(todayGame) +           // Row 4 — 3 analysis tiles
-    buildPickSection(todayGame) +           // Row 5 — pick banner
-    buildTrendsCard(todayGame);             // supplemental trends
+    buildMatchupStrip(todayGame) +            // Row 1 — matchup header
+    buildGameContextCard(todayGame) +         // Row 2 — recent form, injuries, H2H, pitcher logs
+    buildPitchingCard(todayGame) +            // Row 3 — starting pitching comparison
+    buildRow3(todayGame) +                    // Row 4 — lineups + advanced metrics
+    buildTeamAdvancedCard(todayGame) +        // Row 5 — team advanced stats table
+    buildAnalysisRow(todayGame) +             // Row 6 — 3 analysis tiles
+    buildPickSection(todayGame) +             // Row 7 — pick banner
+    buildTrendsCard(todayGame);               // supplemental trends
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games);
 
