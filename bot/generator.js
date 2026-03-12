@@ -762,7 +762,11 @@ function parseWriteup(rawText) {
       if (current) sections.push(current);
       current = null;
     } else if (current) {
-      current.body += (current.body ? " " : "") + trimmed;
+      // Skip markdown pipe table rows and separator rows
+      const isPipeRow = /^\|/.test(trimmed) || /^[-\s|]+$/.test(trimmed);
+      if (!isPipeRow) {
+        current.body += (current.body ? " " : "") + trimmed;
+      }
     }
   }
   if (current && current.body) sections.push(current);
@@ -1660,7 +1664,7 @@ function buildEmailHTML(game) {
   <main>
     <div class="stats-page-header">
       <h1>Stats &amp; Standings</h1>
-      <p>2026 Mets — team stats, player splits, rotation, and NL East standings.</p>
+      <p>2026 Mets ï¿½ team stats, player splits, rotation, and NL East standings.</p>
     </div>
 
     <div class="preseason-note">
@@ -1702,7 +1706,7 @@ function buildEmailHTML(game) {
     <div class="stats-section">
       <div class="stats-section-title">Position Players</div>
       <div class="card full-card">
-        <div class="card-header">Hitters — 2025 Stats</div>
+        <div class="card-header">Hitters ï¿½ 2025 Stats</div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Player</th><th>Pos</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>HR</th><th>BB%</th><th>K%</th></tr></thead>
@@ -1716,7 +1720,7 @@ function buildEmailHTML(game) {
     <div class="stats-section">
       <div class="stats-section-title">Pitching</div>
       <div class="card full-card">
-        <div class="card-header">Starting Rotation — 2025 Stats</div>
+        <div class="card-header">Starting Rotation ï¿½ 2025 Stats</div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Pitcher</th><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>K/9</th><th>BB/9</th></tr></thead>
@@ -1725,7 +1729,7 @@ function buildEmailHTML(game) {
         </div>
       </div>
       <div class="card full-card" style="margin-top:1rem;">
-        <div class="card-header">Bullpen — 2025 Stats</div>
+        <div class="card-header">Bullpen ï¿½ 2025 Stats</div>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Group</th><th>ERA</th><th>xFIP</th><th>Hold%</th><th>ERA+</th></tr></thead>
@@ -1898,4 +1902,3 @@ run().catch(err => {
   console.error("Error:", err.message);
   process.exit(1);
 });
-
