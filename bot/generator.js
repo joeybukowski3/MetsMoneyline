@@ -1114,7 +1114,7 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
     previousPitching.opp,
     null
   );
-  const weather = await getGameWeather(gameObject.ballpark, gameDate, gameObject.time);
+  const weather = await getGameWeather(gameObject.ballpark, dateStr, gameObject.time);
   gameObject.weather = weather || null;
 
   // STEP 4: Generate AI analysis only on game day
