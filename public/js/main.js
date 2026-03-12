@@ -707,7 +707,7 @@ async function init() {
   const labelEl   = document.getElementById("hero-game-label");
   const dateEl    = document.getElementById("hero-game-date");
   const matchupEl = document.getElementById("hero-game-matchup");
-  if (labelEl)   labelEl.textContent   = isToday ? "Today's Game" : "Next Game";
+  if (labelEl)   labelEl.textContent   = isToday ? "Game Day" : "Next Game";
   if (dateEl && todayGame.date)
     dateEl.textContent = new Date(todayGame.date + "T12:00:00")
       .toLocaleDateString("en-US", { month: "long", day: "numeric" });
