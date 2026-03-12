@@ -16,6 +16,8 @@ const TEAM_ID = 121; // New York Mets
 
 let cachedMets2025 = null;
 let cachedSavantLeaderboard2025 = null;
+let cachedSavantTeamStats = null;    // Baseball Savant team expected stats
+let cachedMlbTeamStats    = null;    // MLB Stats API team batting/pitching
 const BALLPARK_COORDS = {
   "Citi Field": { lat: 40.7571, lon: -73.8458 },
   "Yankee Stadium": { lat: 40.8296, lon: -73.9262 },
@@ -100,6 +102,201 @@ async function loadSavantPitcherLeaderboard2025() {
   const rows = parse(res.data, { columns: true, skip_empty_lines: true, relax_quotes: true });
   cachedSavantLeaderboard2025 = rows;
   return rows;
+}
+
+// ── Baseball Savant team expected stats (xBA, xwOBA, Hard-Hit%, Barrel%) ──
+async function loadSavantTeamStats(season = "2026") {
+  if (cachedSavantTeamStats?.[season]) return cachedSavantTeamStats[season];
+
+  // Try current season first, fall back to 2025 if empty
+  for (const yr of [season, "2025"]) {
+    try {
+      const url =
+        "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
+        `?type=team&year=${yr}&position=&team=&min=q&csv=true`;
+      const res = await axios.get(url, { timeout: 15000, responseType: "text" });
+      const rows = parse(res.data, { columns: true, skip_empty_lines: true, relax_quotes: true });
+      if (rows && rows.length > 0) {
+        console.log(`  Savant team stats loaded (${yr}), ${rows.length} teams`);
+        if (!cachedSavantTeamStats) cachedSavantTeamStats = {};
+        cachedSavantTeamStats[season] = { rows, yr };
+        return cachedSavantTeamStats[season];
+      }
+    } catch (err) {
+      console.warn(`  [warn] Savant team stats (${yr}) failed: ${err.message}`);
+    }
+  }
+  return null;
+}
+
+// ── MLB Stats API team batting + pitching stats ──
+async function loadMlbTeamStats(teamId, season = "2026") {
+  const cacheKey = `${teamId}-${season}`;
+  if (cachedMlbTeamStats?.[cacheKey]) return cachedMlbTeamStats[cacheKey];
+
+  const [hitting, pitching] = await Promise.all([
+    safeGet(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=hitting&season=${season}`,
+      `MLB team hitting ${teamId} ${season}`
+    ),
+    safeGet(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
+      `MLB team pitching ${teamId} ${season}`
+    )
+  ]);
+
+  // Fall back to 2025 if 2026 has no splits yet
+  const hSplits = hitting?.stats?.[0]?.splits;
+  const pSplits = pitching?.stats?.[0]?.splits;
+
+  let hStat = hSplits?.[0]?.stat || null;
+  let pStat = pSplits?.[0]?.stat || null;
+
+  if (!hStat && season === "2026") {
+    const fb = await safeGet(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=hitting&season=2025`,
+      `MLB team hitting ${teamId} 2025 fallback`
+    );
+    hStat = fb?.stats?.[0]?.splits?.[0]?.stat || null;
+  }
+  if (!pStat && season === "2026") {
+    const fb = await safeGet(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=2025`,
+      `MLB team pitching ${teamId} 2025 fallback`
+    );
+    pStat = fb?.stats?.[0]?.splits?.[0]?.stat || null;
+  }
+
+  if (!hStat && !pStat) return null;
+
+  const pa   = hStat?.plateAppearances || 0;
+  const kPct = pa > 0
+    ? ((hStat.strikeOuts / pa) * 100).toFixed(1)
+    : null;
+
+  const result = {
+    ops:          hStat?.ops   ?? null,
+    avg:          hStat?.avg   ?? null,
+    obp:          hStat?.obp   ?? null,
+    slg:          hStat?.slg   ?? null,
+    kPct,
+    era:          pStat?.era   ?? null,
+    whip:         pStat?.whip  ?? null,
+  };
+
+  console.log(`  MLB team stats loaded for ${teamId}: OPS ${result.ops}, K% ${result.kPct}`);
+  if (!cachedMlbTeamStats) cachedMlbTeamStats = {};
+  cachedMlbTeamStats[cacheKey] = result;
+  return result;
+}
+
+// ── Recent team game results (last N completed games before a date) ──
+async function getTeamRecentGames(teamId, beforeDate, n = 5) {
+  // Walk back up to 20 days to collect N completed games
+  const end   = new Date(beforeDate + "T12:00:00");
+  const start = new Date(end);
+  start.setDate(start.getDate() - 20);
+  const startStr = start.toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  const endStr   = new Date(end.getTime() - 86400000).toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+
+  const url =
+    `https://statsapi.mlb.com/api/v1/schedule` +
+    `?sportId=1&teamId=${teamId}&startDate=${startStr}&endDate=${endStr}` +
+    `&hydrate=linescore,decisions&gameType=R,S`;
+  const data = await safeGet(url, `recent games team ${teamId}`);
+  if (!data?.dates) return [];
+
+  const results = [];
+  const allDates = [...data.dates].reverse(); // newest first
+  for (const dt of allDates) {
+    for (const g of dt.games) {
+      const state = g.status?.detailedState || "";
+      if (!["Final", "Completed Early", "Game Over"].includes(state)) continue;
+      const isHome = g.teams.home.team.id === teamId;
+      const myTeam  = isHome ? g.teams.home : g.teams.away;
+      const oppTeam = isHome ? g.teams.away : g.teams.home;
+      const won = (myTeam.score ?? 0) > (oppTeam.score ?? 0);
+      results.push({
+        date:     dt.date,
+        homeAway: isHome ? "home" : "road",
+        opponent: oppTeam.team.name,
+        score:    `${myTeam.score ?? "?"}–${oppTeam.score ?? "?"}`,
+        result:   won ? "W" : "L",
+        winningPitcher: g.decisions?.winner?.fullName  || null,
+        losingPitcher:  g.decisions?.loser?.fullName   || null,
+      });
+      if (results.length >= n) break;
+    }
+    if (results.length >= n) break;
+  }
+  return results;
+}
+
+// ── Team injuries from MLB Stats API ──
+async function getTeamInjuries(teamId) {
+  const url = `https://statsapi.mlb.com/api/v1/injuries?sportId=1&season=${new Date().getFullYear()}`;
+  const data = await safeGet(url, `injuries team ${teamId}`);
+  if (!data?.injuries) return [];
+  return data.injuries
+    .filter(i => i.team?.id === teamId)
+    .map(i => ({
+      name:       i.person?.fullName || "Unknown",
+      status:     i.status           || "IL",
+      description: i.notes           || null,
+    }));
+}
+
+// ── Pitcher recent game log (last N starts) ──
+async function getPitcherRecentStarts(mlbId, n = 4) {
+  if (!mlbId) return [];
+  const season = new Date().getFullYear();
+  const url =
+    `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats` +
+    `?stats=gameLog&group=pitching&season=${season}&gameType=R,S`;
+  const data = await safeGet(url, `pitcher game log ${mlbId}`);
+  const splits = data?.stats?.[0]?.splits || [];
+  // Newest first; take last N starts (GS > 0)
+  const starts = splits.filter(s => (s.stat?.gamesStarted ?? 0) > 0).slice(-n).reverse();
+  return starts.map(s => ({
+    date:     s.date,
+    opponent: s.opponent?.name || "?",
+    ip:       s.stat?.inningsPitched || "?",
+    er:       s.stat?.earnedRuns     ?? "?",
+    h:        s.stat?.hits           ?? "?",
+    bb:       s.stat?.baseOnBalls    ?? "?",
+    k:        s.stat?.strikeOuts     ?? "?",
+    era:      s.stat?.era            || null,
+    result:   s.stat?.wins > 0 ? "W" : s.stat?.losses > 0 ? "L" : "ND",
+  }));
+}
+
+// ── Head-to-head results this season between two teams ──
+async function getHeadToHead(teamId, oppTeamId, season) {
+  const url =
+    `https://statsapi.mlb.com/api/v1/schedule` +
+    `?sportId=1&teamId=${teamId}&season=${season}&gameType=R` +
+    `&hydrate=linescore`;
+  const data = await safeGet(url, `h2h schedule ${teamId}`);
+  if (!data?.dates) return { wins: 0, losses: 0, games: [] };
+
+  let wins = 0, losses = 0;
+  const games = [];
+  for (const dt of data.dates) {
+    for (const g of dt.games) {
+      const ht = g.teams.home.team.id;
+      const at = g.teams.away.team.id;
+      if (ht !== oppTeamId && at !== oppTeamId) continue;
+      const state = g.status?.detailedState || "";
+      if (!["Final", "Completed Early", "Game Over"].includes(state)) continue;
+      const isHome = g.teams.home.team.id === teamId;
+      const myScore  = isHome ? (g.teams.home.score ?? 0) : (g.teams.away.score ?? 0);
+      const oppScore = isHome ? (g.teams.away.score ?? 0) : (g.teams.home.score ?? 0);
+      const won = myScore > oppScore;
+      if (won) wins++; else losses++;
+      games.push({ date: dt.date, result: won ? "W" : "L", score: `${myScore}–${oppScore}` });
+    }
+  }
+  return { wins, losses, games: games.slice(-5) }; // last 5 matchups for context
 }
 
 async function safeGet(url, label) {
@@ -868,6 +1065,65 @@ OUTPUT FORMAT:
 You must output valid Markdown following the 6-section structure below exactly.
 Do not add sections. Do not skip sections. Do not rename sections.`;
 
+  // ── Format game context for GPT ──
+  const gc = g.gameContext || {};
+
+  function fmtRecentGames(games, teamLabel) {
+    if (!games?.length) return `${teamLabel}: No recent game data available.`;
+    const streak = (() => {
+      let s = 0, last = null;
+      for (const gm of games) {
+        if (last === null) { last = gm.result; s = 1; }
+        else if (gm.result === last) s++;
+        else break;
+      }
+      return `${last === "W" ? "W" : "L"}${s}`;
+    })();
+    const lines = games.map(gm =>
+      `  ${gm.result} ${gm.score} ${gm.homeAway === "home" ? "vs" : "@"} ${gm.opponent} (${gm.date})`
+    ).join("\n");
+    return `${teamLabel} [Current streak: ${streak}]:\n${lines}`;
+  }
+
+  function fmtInjuries(injuries, teamLabel) {
+    if (!injuries?.length) return `${teamLabel}: No active IL listings found.`;
+    return `${teamLabel}:\n` + injuries.map(i =>
+      `  ${i.name} — ${i.status}${i.description ? ` (${i.description})` : ""}`
+    ).join("\n");
+  }
+
+  function fmtPitcherLog(starts, name) {
+    if (!starts?.length) return `${name}: No recent start data available.`;
+    const lines = starts.map(s =>
+      `  ${s.date} vs ${s.opponent}: ${s.ip} IP, ${s.er} ER, ${s.h} H, ${s.bb} BB, ${s.k} K (${s.result})`
+    ).join("\n");
+    return `${name} — last ${starts.length} starts:\n${lines}`;
+  }
+
+  function fmtHeadToHead(h2h, oppName) {
+    if (!h2h || (h2h.wins + h2h.losses === 0)) return `Head-to-head vs ${oppName}: No games played yet this season.`;
+    const recent = h2h.games.map(g => `${g.result} ${g.score} (${g.date})`).join(", ");
+    return `Head-to-head vs ${oppName} this season: Mets ${h2h.wins}–${h2h.losses}\nRecent: ${recent}`;
+  }
+
+  const contextBlock = `
+RECENT RESULTS (last 5 games, newest first):
+${fmtRecentGames(gc.metsRecentGames, "New York Mets")}
+
+${fmtRecentGames(gc.oppRecentGames, oppName)}
+
+INJURY REPORT:
+${fmtInjuries(gc.metsInjuries, "New York Mets")}
+${fmtInjuries(gc.oppInjuries, oppName)}
+
+PITCHER RECENT STARTS:
+${fmtPitcherLog(gc.metsPitcherLog, mp.name || "Mets SP")}
+
+${fmtPitcherLog(gc.oppPitcherLog, op.name || "Opp SP")}
+
+${fmtHeadToHead(gc.headToHead, oppName)}
+`.trim();
+
   const userMessage = `${buildGameContext(g)}
 
 ${baselineSection}TRADITIONAL PITCHING TABLE (include this unchanged under Section 2):
@@ -891,8 +1147,7 @@ ${newSigningsContext || "[No additional offseason roster context provided.]"}
 WEATHER AT GAME TIME:
 ${g.weather ? g.weather.label : "Dome/weather unavailable"}
 
-NEWS ITEMS (integrate any that are relevant and recent — skip outdated or irrelevant items):
-[No news items provided — use only the stats and context above.]
+${contextBlock}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Write the email now using EXACTLY this structure:
@@ -902,14 +1157,23 @@ SUBJECT: MetsMoneyline — [Full date, e.g. March 27]: New York Mets vs [Full op
 # New York Mets vs ${oppName}
 [date] · [venue] · [time] ET
 
-## 1. Short Recap
-[3–4 short sentences. Cover: streaks, schedule spot (home/road stand, travel, rest), any notable recent developments from news. Specific stats only.]
+## 1. Game Preview
+[5–7 sentences total split across these areas — use only data provided above, do not invent:]
+- Schedule context: Is this a home stand opener or closer? Road trip game number? Back-to-back or well-rested? Reference the homeAway status and records.
+- Recent form: Cite actual W/L results and scores from RECENT RESULTS above. Name the current streak. If early in the season and no results yet, note it's an early-season game and pivot to offseason narrative (roster moves, expectations, lineup construction).
+- Injuries: Mention any notable IL players from the INJURY REPORT that affect today's lineup or rotation. Skip minor or irrelevant listings.
+- Head-to-head: If H2H data exists and is non-zero, cite the season series record. If no games played yet, acknowledge it's their first meeting of the season.
+- Early-season note (only if fewer than 10 games played): Briefly note one or two lineup changes, new signings, or storylines from the offseason that are relevant to today's game.
 
 ## 2. Pitching Matchup
-[2–4 short sentences covering recent form, pitch count notes, injury return, velocity trend, or relevant news for each starter. Then include both pitching tables exactly as provided.]
+[For each starter write 2–3 sentences of analytical commentary using ONLY the data above. Cover:]
+- Recent form trajectory: Is ERA trending up or down vs. FIP/xERA? Reference specific starts from PITCHER RECENT STARTS if available.
+- Key edge or vulnerability: What does the advanced profile say? High K% but elevated BB%? FIP well below ERA suggesting outperformance due soon? Hard-Hit% or Barrel% concern?
+- Matchup angle: How does this pitcher profile match up against today's opposing lineup based on K%, contact quality, or handedness?
+[Then include both pitching tables exactly as provided — do not alter them.]
 
 ## 3. Lineup Comparison
-[2–4 short sentences: notable absences, rest days, call-ups, hot/cold streaks with stats. Then include the lineup table exactly as provided.]
+[2–4 short sentences: notable absences from injury report, rest days, call-ups, hot/cold streaks with stats. Then include the lineup table exactly as provided.]
 
 ## 4. Bullpen
 [2–3 short sentences: recent workload, who is likely down or unavailable, closer status. Then include the bullpen table exactly as provided. If closer data is available add a closer row.]
@@ -1018,6 +1282,92 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
     oppAnnounced  ? getPitcherVsRoster(oppPitcherRaw.id,  lineups.mets) : Promise.resolve(null)
   ]);
 
+  // STEP 3d: Team advanced stats (Savant team leaderboard + MLB Stats API)
+  console.log(`Fetching team advanced stats...`);
+  const season = new Date().getFullYear().toString();  const [savantTeam, metsTeamMlb, oppTeamMlb] = await Promise.all([
+    loadSavantTeamStats(season),
+    loadMlbTeamStats(TEAM_ID, season),
+    loadMlbTeamStats(oppTeam.team.id, season)
+  ]);
+
+  // Helper: find a team row in Savant data by MLB team ID
+  function getSavantTeamRow(savantData, mlbTeamId) {
+    if (!savantData?.rows) return null;
+    // Savant uses team abbreviations; map MLB ID → abbrev
+    const idToAbbrev = {
+      121: "NYM", 138: "STL", 116: "DET", 117: "HOU", 118: "KC",
+      119: "LAD", 120: "WSH", 133: "OAK", 134: "PIT", 135: "SD",
+      136: "SEA", 137: "SF",  139: "TB",  140: "TEX", 141: "TOR",
+      142: "MIN", 143: "PHI", 144: "ATL", 145: "CWS", 146: "MIA",
+      147: "NYY", 108: "LAA", 109: "ARI", 110: "BAL", 111: "BOS",
+      112: "CHC", 113: "CIN", 114: "CLE", 115: "COL"
+    };
+    const abbrev = idToAbbrev[mlbTeamId];
+    if (!abbrev) return null;
+    return savantData.rows.find(r =>
+      (r.team_name || r.Team || "").toUpperCase().includes(abbrev) ||
+      (r.player_name || r.team_abbrev || "").toUpperCase() === abbrev
+    ) || null;
+  }
+
+  const metsSavantTeam = getSavantTeamRow(savantTeam, TEAM_ID);
+  const oppSavantTeam  = getSavantTeamRow(savantTeam, oppTeam.team.id);
+
+  const fmtPct = v => (v != null && !isNaN(v)) ? `${parseFloat(v).toFixed(1)}%` : null;
+  const fmtNum = v => (v != null && !isNaN(v)) ? parseFloat(v).toFixed(3) : null;
+
+  const teamAdvanced = {
+    mets: {
+      wrcPlus:    mets2025?.teamWRC_plus     ?? null,
+      ops:        metsTeamMlb?.ops           ?? mets2025?.teamOPS     ?? null,
+      xba:        fmtNum(metsSavantTeam?.xba ?? metsSavantTeam?.["xBA"]),
+      hardHit:    fmtPct(metsSavantTeam?.hard_hit_percent ?? mets2025?.hardHitPct),
+      kPct:       fmtPct(metsTeamMlb?.kPct  ?? mets2025?.kPct),
+      rotFip:     mets2025?.rotationFIP      ?? null,
+      war:        null   // not reliably fetchable; GPT may add context
+    },
+    opp: {
+      wrcPlus:    mets2025?.opponents2025?.[oppTeam.team.name]?.teamWRC_plus ?? null,
+      ops:        oppTeamMlb?.ops    ?? mets2025?.opponents2025?.[oppTeam.team.name]?.teamOPS ?? null,
+      xba:        fmtNum(oppSavantTeam?.xba  ?? oppSavantTeam?.["xBA"]),
+      hardHit:    fmtPct(oppSavantTeam?.hard_hit_percent),
+      kPct:       fmtPct(oppTeamMlb?.kPct),
+      rotFip:     mets2025?.opponents2025?.[oppTeam.team.name]?.rotationFIP ?? null,
+      war:        null
+    }
+  };
+
+  // STEP 3e: Game context — recent results, injuries, pitcher logs, H2H
+  console.log(`Fetching game context (recent games, injuries, pitcher logs, H2H)...`);
+  const gameDate = game.gameDate.split("T")[0];
+  const [
+    metsRecentGames,
+    oppRecentGames,
+    metsInjuries,
+    oppInjuries,
+    metsPitcherLog,
+    oppPitcherLog,
+    headToHead,
+  ] = await Promise.all([
+    getTeamRecentGames(TEAM_ID, gameDate, 5),
+    getTeamRecentGames(oppTeam.team.id, gameDate, 5),
+    getTeamInjuries(TEAM_ID),
+    getTeamInjuries(oppTeam.team.id),
+    metsAnnounced ? getPitcherRecentStarts(metsPitcherRaw.id, 4) : Promise.resolve([]),
+    oppAnnounced  ? getPitcherRecentStarts(oppPitcherRaw.id,  4) : Promise.resolve([]),
+    getHeadToHead(TEAM_ID, oppTeam.team.id, new Date().getFullYear()),
+  ]);
+
+  const gameContext = {
+    metsRecentGames,
+    oppRecentGames,
+    metsInjuries,
+    oppInjuries,
+    metsPitcherLog,
+    oppPitcherLog,
+    headToHead,
+  };
+
   const metsRecord = extractTeamRecord(standings, TEAM_ID);
   const oppRecord  = extractTeamRecord(standings, oppTeam.team.id);
   const metsPStats = extractPitcherSummary(metsPitcherStats);
@@ -1034,6 +1384,7 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
                }) + " ET",
     ballpark:  `${game.venue?.name || "TBD"}${isHome ? ", Queens NY" : ""}`,
     opponent:  oppTeam.team.name,
+    oppTeamId: oppTeam.team.id,
     homeAway:  isHome ? "home" : "road",
     metsRecord,
     oppRecord,
@@ -1087,6 +1438,8 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
       oppBullpen:  { seasonERA: "N/A", seasonXFIP: "N/A", last14ERA: "N/A", last3DaysIP: "N/A", rating: 65 }
     },
     lineups,
+    teamAdvanced,
+    gameContext,
     advancedMatchup: [
       { category: "Offense vs SP Hand - wRC+", mets: "N/A", opp: "N/A", edge: "Neutral" },
       { category: "Hard-Hit %",               mets: "N/A", opp: "N/A", edge: "Neutral" },
@@ -1172,6 +1525,305 @@ async function run() {
   await createButtondownEmailFromOutput(jsonPath);
 }
 
+// ─────────────────────────────────────────────
+// HTML Email Builder
+// ─────────────────────────────────────────────
+
+function buildEmailHTML(game) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stats &amp; Standings | MetsMoneyline</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* -- Stats & Standings page-local styles -- */
+    .stats-page-header { padding: 2rem 0 1rem; text-align: center; }
+    .stats-page-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
+    .stats-page-header p  { color: var(--text-muted); font-size: 0.9rem; }
+
+    .at-a-glance {
+      display: flex; flex-wrap: wrap; gap: 0;
+      background: var(--navy); border-radius: 10px;
+      overflow: hidden; margin-bottom: 1.5rem;
+    }
+    .glance-item {
+      flex: 1 1 100px; padding: 0.9rem 1rem;
+      text-align: center; border-right: 1px solid rgba(255,255,255,0.1);
+    }
+    .glance-item:last-child { border-right: none; }
+    .glance-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 0.25rem; }
+    .glance-value { font-size: 1.05rem; font-weight: 800; color: #fff; }
+    .glance-value.highlight { color: var(--orange); }
+
+    .stats-section { margin-bottom: 1.5rem; }
+    .stats-section-title {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+      color: #9099b0; padding: 0 0 0.6rem; margin-bottom: 0;
+    }
+
+    .player-row-headshot {
+      width: 28px; height: 28px; border-radius: 50%; object-fit: cover;
+      margin-right: 0.5rem; vertical-align: middle; background: #e4e8f0; flex-shrink: 0;
+    }
+    .player-name-td { display: flex; align-items: center; }
+
+    .divider-row td {
+      background: #f4f6fa; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase; color: #9099b0;
+      padding: 0.35rem 0.75rem !important;
+    }
+
+    .standings-table .mets-row td:first-child {
+      border-left: 3px solid var(--orange);
+    }
+    .standings-team-cell { display: flex; align-items: center; gap: 0.5rem; }
+    .standings-logo { width: 22px; height: 22px; object-fit: contain; }
+
+    .full-standings-toggle {
+      display: block; width: 100%; text-align: center; padding: 0.6rem;
+      background: none; border: none; color: var(--navy); font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; border-top: 1px solid var(--border);
+    }
+    .full-standings-toggle:hover { color: var(--orange); }
+    #full-nl-standings { display: none; }
+    #full-nl-standings.open { display: block; }
+
+    .preseason-note {
+      background: #fff8f5; border-left: 3px solid var(--orange);
+      padding: 0.75rem 1rem; border-radius: 6px; font-size: 0.83rem;
+      color: #6b7280; margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 640px) {
+      .at-a-glance { gap: 0; }
+      .glance-item { flex: 1 1 45%; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Alert Banner -->
+  <div class="alert-banner">Pre-Season &mdash; Stats shown are 2025 actuals as baseline</div>
+
+  <!-- Nav -->
+  <header>
+    <nav>
+      <a href="/" class="nav-brand">
+        <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+      </a>
+      <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li>
+          <a href="/" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Game Day
+          </a>
+        </li>
+        <li>
+          <a href="advanced-stats.html" class="nav-link active">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Stats &amp; Standings
+          </a>
+        </li>
+        <li>
+          <a href="betting-history.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            History
+          </a>
+        </li>
+        <li>
+          <a href="news.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M2 15h10"/><path d="M9 18l3-3-3-3"/>
+            </svg>
+            Team News
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="stats-page-header">
+      <h1>Stats &amp; Standings</h1>
+      <p>2026 Mets � team stats, player splits, rotation, and NL East standings.</p>
+    </div>
+
+    <div class="preseason-note">
+      2026 season stats not yet available. All Mets values shown are verified 2025 baselines.
+    </div>
+
+    <!-- Season At A Glance -->
+    <div id="at-a-glance" class="at-a-glance"></div>
+
+    <!-- Team Stats -->
+    <div class="stats-section">
+      <div class="stats-section-title">Team Stats</div>
+      <div class="tile-grid">
+        <div class="table-wrap">
+          <div class="section-title">Offensive Metrics</div>
+          <table>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
+            <tbody id="offense-body"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <div class="section-title">Pitching &amp; Bullpen</div>
+          <table>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
+            <tbody id="pitching-body"></tbody>
+          </table>
+        </div>
+        <div class="table-wrap">
+          <div class="section-title">Defense &amp; Baserunning</div>
+          <table>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
+            <tbody id="defense-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Position Players -->
+    <div class="stats-section">
+      <div class="stats-section-title">Position Players</div>
+      <div class="card full-card">
+        <div class="card-header">Hitters � 2025 Stats</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Player</th><th>Pos</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>HR</th><th>BB%</th><th>K%</th></tr></thead>
+            <tbody id="hitters-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Starting Rotation -->
+    <div class="stats-section">
+      <div class="stats-section-title">Pitching</div>
+      <div class="card full-card">
+        <div class="card-header">Starting Rotation � 2025 Stats</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pitcher</th><th>ERA</th><th>FIP</th><th>xERA</th><th>WHIP</th><th>K/BB</th><th>K/9</th><th>BB/9</th></tr></thead>
+            <tbody id="rotation-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card full-card" style="margin-top:1rem;">
+        <div class="card-header">Bullpen � 2025 Stats</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Group</th><th>ERA</th><th>xFIP</th><th>Hold%</th><th>ERA+</th></tr></thead>
+            <tbody id="bullpen-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- NL East Standings -->
+    <div class="stats-section">
+      <div class="stats-section-title">Standings</div>
+      <div class="card full-card">
+        <div class="card-header">NL East Standings</div>
+        <div class="table-wrap">
+          <table class="standings-table">
+            <thead><tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>Home</th><th>Road</th><th>L10</th><th>Streak</th></tr></thead>
+            <tbody id="nle-body"></tbody>
+          </table>
+        </div>
+        <button class="full-standings-toggle" onclick="toggleFullStandings()">
+          Full NL Standings &#x25BC;
+        </button>
+        <div id="full-nl-standings">
+          <div class="table-wrap">
+            <table class="standings-table">
+              <thead><tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th></tr></thead>
+              <tbody id="nl-full-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glossary -->
+    <div class="glossary" id="glossary">
+      <h3>Stats Glossary</h3>
+      <dl>
+        <dt>wRC+</dt><dd>Weighted Runs Created Plus. Measures overall offensive value relative to league average. 100 is average; higher is better.</dd>
+        <dt>xwOBA</dt><dd>Expected Weighted On-Base Average. Based on quality of contact; removes luck from hitting results.</dd>
+        <dt>FIP</dt><dd>Fielding Independent Pitching. ERA-like stat based only on strikeouts, walks, and home runs.</dd>
+        <dt>xFIP</dt><dd>Expected FIP. Normalizes home run rate to league average to isolate pitcher skill.</dd>
+        <dt>xERA</dt><dd>Expected ERA based on quality of contact allowed. A good indicator of whether ERA will rise or fall.</dd>
+        <dt>Barrel%</dt><dd>Percentage of batted balls hit with ideal exit velocity and launch angle.</dd>
+        <dt>Hard-Hit%</dt><dd>Percentage of batted balls with exit velocity of 95 mph or higher.</dd>
+        <dt>BB%</dt><dd>Walk rate. Higher is better for hitters, lower is better for pitchers.</dd>
+        <dt>K%</dt><dd>Strikeout rate. Lower is better for hitters, higher is better for pitchers.</dd>
+        <dt>WHIP</dt><dd>Walks plus Hits per Inning Pitched.</dd>
+        <dt>DRS</dt><dd>Defensive Runs Saved. How many runs saved versus an average defender.</dd>
+        <dt>OAA</dt><dd>Outs Above Average. Statcast-based fielding metric.</dd>
+      </dl>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-brand">
+      <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+    </div>
+    <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
+    <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+    <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
+  </footer>
+
+  <script type="module">
+    import METS_2025 from "./data/mets2025.js";
+
+    const TEAM_MLB_ID = {
+      "New York Mets":121,"Atlanta Braves":144,"Philadelphia Phillies":143,
+      "Washington Nationals":120,"Miami Marlins":146
+    };
+    function logoUrl(team) {
+      const id = TEAM_MLB_ID[team];
+      return id ? "https://www.mlbstatic.com/team-logos/" + id + ".svg" : "";
+    }
+  </script>
+  <script>
+    const hamburger = document.querySelector('.nav-hamburger');
+    const navLinks  = document.querySelector('.nav-links');
+    hamburger.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      hamburger.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', open);
+    });
+    navLinks.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+</body>
+</html>`;
+}
+// Buttondown email sender
+// ─────────────────────────────────────────────
+
 async function createButtondownEmailFromOutput(jsonPath) {
   const apiKey = process.env.BUTTONDOWN_API_KEY;
   if (!apiKey) {
@@ -1194,57 +1846,18 @@ async function createButtondownEmailFromOutput(jsonPath) {
           timeZone: "America/New_York"
         })
       : "TBD";
-    const rawWriteup = game.writeup?.raw || "";
-    const sections = game.writeup?.sections || [];
-    const analysis = rawWriteup.length > 100
-      ? rawWriteup
-          .replace(/^SUBJECT:.+$/m, "")
-          .replace(/^PICK_SUMMARY:.+$/m, "")
-          .replace(/^OFFICIAL_PICK:.+$/m, "")
-          .trim()
-      : sections.map(s => `### ${s.heading}\n${s.body}`).join("\n\n");
-    const pickSummary = game.writeup?.pickSummary || "Full recap available on the site.";
-    const pick = game.writeup?.officialPick || "Today's Pick: New York Mets Moneyline";
-    const nymLine = game.moneyline?.mets != null
-      ? (game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`)
-      : "N/A";
-    const oppLine = game.moneyline?.opp != null
-      ? (game.moneyline.opp > 0 ? `+${game.moneyline.opp}` : `${game.moneyline.opp}`)
-      : "N/A";
-    const timeEt = game.time || "TBD";
-    const gameLine = game.homeAway === "road"
-      ? `${game.opponent || "Opponent"} vs New York Mets`
-      : `${game.opponent || "Opponent"} at New York Mets`;
-    const publishDate = getPublishDate(game.date);
+
     const subject = `MetsMoneyline — ${gameDate}: New York Mets vs ${game.opponent}`;
-    const bodyMarkdown = `# Today's Edge: New York Mets vs ${game.opponent}
-
-**Game:** ${gameLine}  
-**Time:** ${timeEt}  
-**Weather:** ${game.weather?.label ?? "N/A"}  
-**Moneyline:** New York Mets ${nymLine} / ${game.opponent} ${oppLine}  
-
-## Quick Recap
-${pickSummary}
-
-## Game Analysis
-${analysis}
-
-## Today's Pick
-**${pick}**
-
-_This breakdown is also available on the site at metsml.vercel.app._`;
+    const bodyHtml = buildEmailHTML(game);
+    const publishDate = getPublishDate(game.date);
 
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: bodyMarkdown,
+        body: bodyHtml,
         status: "scheduled",
         publish_date: publishDate
-        // Example alternative scheduled payload:
-        // status: "scheduled",
-        // publish_date: "2026-03-12T15:00:00Z"
       },
       {
         headers: {
@@ -1285,3 +1898,4 @@ run().catch(err => {
   console.error("Error:", err.message);
   process.exit(1);
 });
+
