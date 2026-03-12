@@ -788,6 +788,96 @@ async function run() {
 
   fs.writeFileSync(jsonPath, JSON.stringify(output, null, 2));
   console.log("sample-game.json overwritten with fresh data. Review before pushing.");
+  await createButtondownEmailFromOutput(jsonPath);
+}
+
+async function createButtondownEmailFromOutput(jsonPath) {
+  const apiKey = process.env.BUTTONDOWN_API_KEY;
+  if (!apiKey) {
+    console.log("No BUTTONDOWN_API_KEY set; skipping email creation.");
+    return;
+  }
+
+  try {
+    const gameData = JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+    const game = gameData?.games?.[0];
+    if (!game) {
+      console.log("No game data found after write; skipping email creation.");
+      return;
+    }
+
+    const gameDate = game.date
+      ? new Date(`${game.date}T12:00:00`).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          timeZone: "America/New_York"
+        })
+      : "TBD";
+    const oppAbbrev = (game.opponent || "OPP")
+      .split(" ")
+      .map(word => word[0])
+      .join("")
+      .slice(0, 3)
+      .toUpperCase();
+    const matchupTitle = `Mets vs ${game.opponent || "Opponent"}`;
+    const sections = game.writeup?.sections || [];
+    const analysis = sections.length
+      ? sections.map(section => `### ${section.heading}\n${section.body}`).join("\n\n")
+      : game.matchupSummary || "Analysis not available.";
+    const pickSummary = game.writeup?.pickSummary || "Full recap available on the site.";
+    const pick = game.writeup?.officialPick || "Today's Pick: New York Mets Moneyline";
+    const nymLine = game.moneyline?.mets != null
+      ? (game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`)
+      : "N/A";
+    const oppLine = game.moneyline?.opp != null
+      ? (game.moneyline.opp > 0 ? `+${game.moneyline.opp}` : `${game.moneyline.opp}`)
+      : "N/A";
+    const timeEt = game.time || "TBD";
+    const gameLine = game.homeAway === "road"
+      ? `${game.opponent || "Opponent"} vs New York Mets`
+      : `${game.opponent || "Opponent"} at New York Mets`;
+    const subject = `MetsMoneyline — ${gameDate} vs ${oppAbbrev} (Edge: NYM ML)`;
+    const bodyMarkdown = `# Today's Edge: NYM vs ${oppAbbrev}
+
+**Game:** ${gameLine}  
+**Time:** ${timeEt}  
+**Moneyline:** NYM ${nymLine} / ${oppAbbrev} ${oppLine}  
+
+## Quick Recap
+${pickSummary}
+
+## Game Analysis
+${analysis}
+
+## Today's Pick
+**${pick}**
+
+_This breakdown is also available on the site at metsml.vercel.app._`;
+
+    const response = await axios.post(
+      "https://api.buttondown.com/v1/emails",
+      {
+        subject,
+        body: bodyMarkdown,
+        status: "draft"
+        // Example for scheduling instead of draft:
+        // status: "scheduled",
+        // publish_date: "2026-03-12T15:00:00Z"
+      },
+      {
+        headers: {
+          Authorization: `Token ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 15000
+      }
+    );
+
+    const email = response.data;
+    console.log(`Buttondown email created: ${email.id} (${email.status})`);
+  } catch (err) {
+    console.error("Failed to create Buttondown email", err.response?.data || err.message);
+  }
 }
 
 run().catch(err => {
