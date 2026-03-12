@@ -55,7 +55,7 @@ const METS_2025 = {
   opponents2025: {
     "St. Louis Cardinals": {
       teamOPS: 0.718, teamWRC_plus: 96, teamAVG: 0.239, rotationERA: 4.44,
-      bullpenERA: 4.31, teamDRS: -4, teamOAA: -3
+      bullpenERA: 4.31, bullpenxFIP: 4.25, bullpenLast14ERA: 4.40, teamDRS: -4, teamOAA: -3
     },
     "Atlanta Braves": {
       teamOPS: 0.761, teamWRC_plus: 108, teamAVG: 0.253, rotationERA: 3.98,

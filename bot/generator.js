@@ -15,6 +15,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const TEAM_ID = 121; // New York Mets
 
 let cachedMets2025 = null;
+let cachedSavantLeaderboard2025 = null;
 
 function isMissingStat(value) {
   return value == null || value === "" || value === "N/A";
@@ -51,6 +52,21 @@ async function loadMets2025() {
   if (!match) throw new Error("Unable to parse METS_2025 fallback data.");
   cachedMets2025 = Function(`return (${match[1]});`)();
   return cachedMets2025;
+}
+
+async function loadSavantPitcherLeaderboard2025() {
+  if (cachedSavantLeaderboard2025) return cachedSavantLeaderboard2025;
+  const url =
+    "https://baseballsavant.mlb.com/leaderboard/custom" +
+    "?type=pitcher" +
+    "&year=2025" +
+    "&selections=player_name,player_id,k_percent,bb_percent,whiff_percent,oz_swing_percent,barrel_batted_rate,hard_hit_percent,gb_percent,xera" +
+    "&sort=player_name&sortDir=asc&min=0&csv=true";
+
+  const res = await axios.get(url, { timeout: 15000, responseType: "text" });
+  const rows = parse(res.data, { columns: true, skip_empty_lines: true, relax_quotes: true });
+  cachedSavantLeaderboard2025 = rows;
+  return rows;
 }
 
 async function safeGet(url, label) {
@@ -265,61 +281,23 @@ function extractPitcherSummary(statsData) {
 
 async function getSavantStats(mlbId, name) {
   if (!mlbId) return null;
-  const url =
-    `https://baseballsavant.mlb.com/statcast_search/csv` +
-    `?player_type=pitcher&player_id=${mlbId}&season=2025&type=details&group_by=name`;
   try {
-    const res = await axios.get(url, { timeout: 15000, responseType: "text" });
-    const text = res.data;
-    if (!text || text.trim().length < 20) return null;
-
-    const rows = parse(text, { columns: true, skip_empty_lines: true, relax_quotes: true });
-    if (!rows || rows.length === 0) return null;
-
-    const toNum = (v) => {
-      const n = parseFloat(v);
-      return Number.isNaN(n) ? null : n;
-    };
-    const paRows = rows.filter(r => toNum(r.woba_denom) === 1);
-    const battedBallRows = rows.filter(r => toNum(r.launch_speed) !== null);
-    const swings = new Set([
-      "foul",
-      "foul_tip",
-      "hit_into_play",
-      "hit_into_play_no_out",
-      "hit_into_play_score",
-      "swinging_strike",
-      "swinging_strike_blocked"
-    ]);
-    const whiffs = new Set(["swinging_strike", "swinging_strike_blocked"]);
-
-    const swingRows = rows.filter(r => swings.has(r.description));
-    const whiffRows = rows.filter(r => whiffs.has(r.description));
-    const outOfZoneRows = rows.filter(r => {
-      const zone = toNum(r.zone);
-      return zone !== null && ![1, 2, 3, 4, 5, 6, 7, 8, 9].includes(zone);
-    });
-    const chaseRows = outOfZoneRows.filter(r => swings.has(r.description));
-
-    const strikeouts = paRows.filter(r => r.events === "strikeout");
-    const walks = paRows.filter(r => r.events === "walk" || r.events === "intent_walk");
-    const groundBalls = battedBallRows.filter(r => r.bb_type === "ground_ball");
-    const hardHitBalls = battedBallRows.filter(r => (toNum(r.launch_speed) || 0) >= 95);
-    const barrels = battedBallRows.filter(r => r.launch_speed_angle === "6");
-
-    const fmtPct = (num, den) => den > 0 ? `${((num / den) * 100).toFixed(1)}%` : "N/A";
-    const fmt = (v, decimals = 2) => v !== null ? v.toFixed(decimals) : "N/A";
+    const rows = await loadSavantPitcherLeaderboard2025();
+    const row = rows.find(r => String(r.player_id) === String(mlbId));
+    if (!row) return null;
+    const fmtPct = v => !isMissingStat(v) ? `${parseFloat(v).toFixed(1)}%` : "N/A";
+    const fmtNum = v => !isMissingStat(v) ? parseFloat(v).toFixed(2) : "N/A";
 
     console.log(`  Savant stats fetched for ${name || mlbId}`);
     return {
-      xERA: "N/A",
-      barrelPct: fmtPct(barrels.length, battedBallRows.length),
-      hardHitPct: fmtPct(hardHitBalls.length, battedBallRows.length),
-      whiffPct: fmtPct(whiffRows.length, swingRows.length),
-      chasePct: fmtPct(chaseRows.length, outOfZoneRows.length),
-      kPct: fmtPct(strikeouts.length, paRows.length),
-      bbPct: fmtPct(walks.length, paRows.length),
-      gbPct: fmtPct(groundBalls.length, battedBallRows.length)
+      xERA: fmtNum(row.xera),
+      barrelPct: fmtPct(row.barrel_batted_rate),
+      hardHitPct: fmtPct(row.hard_hit_percent),
+      whiffPct: fmtPct(row.whiff_percent),
+      chasePct: fmtPct(row.oz_swing_percent),
+      kPct: fmtPct(row.k_percent),
+      bbPct: fmtPct(row.bb_percent),
+      gbPct: fmtPct(row.gb_percent)
     };
   } catch (err) {
     console.warn(`  [warn] Savant stats for ${name || mlbId} failed: ${err.message}`);

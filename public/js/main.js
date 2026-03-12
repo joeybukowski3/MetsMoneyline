@@ -92,8 +92,8 @@ function resolveBullpen(bullpenObj, isNYM, oppName) {
   const oppData = METS_2025.opponents2025?.[oppName];
   return {
     era:    isMissingStat(bp.seasonERA)  ? (oppData?.bullpenERA  ? stat2025(oppData.bullpenERA)  : "N/A") : bp.seasonERA,
-    xfip:   bp.seasonXFIP  ?? "N/A",
-    last14: bp.last14ERA   ?? "N/A",
+    xfip:   isMissingStat(bp.seasonXFIP) ? (oppData?.bullpenxFIP ? stat2025(oppData.bullpenxFIP) : stat2025(METS_2025.leagueAvg2025.bullpenxFIP)) : bp.seasonXFIP,
+    last14: isMissingStat(bp.last14ERA) ? (oppData?.bullpenLast14ERA ? stat2025(oppData.bullpenLast14ERA) : (oppData?.bullpenERA ? stat2025(oppData.bullpenERA) : stat2025(METS_2025.leagueAvg2025.bullpenERA))) : bp.last14ERA,
     rating: bp.rating ?? 65
   };
 }
@@ -401,7 +401,7 @@ function buildPitchingCard(game) {
 
     const { era, fip, xera, whip, kbb, kpct, bbpct } = seasonStats;
     const hhPct = pitcher.savant?.hardHitPct ?? null;
-    const gbPct = pitcher.savant?.gbPct      ?? null;
+    const whiffPct = pitcher.savant?.whiffPct ?? null;
 
     const id = pitcher.mlbId || METS_PITCHER_IDS[pitcher.name] || 0;
     // Action shot URL (larger crop, person standing)
@@ -437,7 +437,7 @@ function buildPitchingCard(game) {
         ${statBar("xERA",      raw(xera), PCTL.xERA,    xera)}
         ${statBar("K/BB",      raw(kbb),  PCTL.KBB,     kbb)}
         ${statBar("Hard-Hit%", hhPct ? raw(hhPct).replace("%","") : null, PCTL.HardHit, hhPct)}
-        ${statBar("GB%",       gbPct ? raw(gbPct).replace("%","") : null, PCTL.GB,      gbPct)}
+        ${statBar("Whiff%",    whiffPct ? raw(whiffPct).replace("%","") : null, v => clamp(Math.round(((parseFloat(v) - 16) / (36 - 16)) * 95), 5, 99), whiffPct)}
       </div>
     </div>`;
   };
