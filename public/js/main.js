@@ -37,6 +37,19 @@ function getTeamAbbr(teamName) {
   return words[words.length - 1].substring(0, 3).toUpperCase();
 }
 
+// ── Default lineup fallback (2026 projected roster) ──
+const DEFAULT_METS_LINEUP = [
+  { order: 1, name: "Marcus Semien",      pos: "2B", hand: "R", playerId: 543760 },
+  { order: 2, name: "Francisco Lindor",   pos: "SS", hand: "S", playerId: 596019 },
+  { order: 3, name: "Juan Soto",          pos: "LF", hand: "L", playerId: 665742 },
+  { order: 4, name: "Pete Alonso",        pos: "1B", hand: "R", playerId: 624413 },
+  { order: 5, name: "Mark Vientos",       pos: "3B", hand: "R", playerId: 668978 },
+  { order: 6, name: "Francisco Alvarez",  pos: "C",  hand: "R", playerId: 682628 },
+  { order: 7, name: "Brandon Nimmo",      pos: "CF", hand: "L", playerId: 607043 },
+  { order: 8, name: "Tyrone Taylor",      pos: "RF", hand: "R", playerId: 621020 },
+  { order: 9, name: "pitcher slot",       pos: "P",  hand: "-", playerId: null   }
+];
+
 function isMissingStat(value) {
   return value == null || value === "" || value === "N/A";
 }
@@ -601,7 +614,7 @@ function buildRow3(game) {
   }).join("");
 
   return `
-    <div class="section-floating-label">Projected Lineups (2025)</div>
+    <div class="section-floating-label">${statusLabel} Lineups</div>
     <div class="lineup-two-col">
       <div class="card full-card">
         <div class="lineup-team-header mets-header">New York Mets</div>
@@ -622,6 +635,17 @@ function buildRow3(game) {
         ${advCards}
       </div>
     </div>`;
+}
+
+/* Strip pipe-table rows that GPT may have injected into section prose */
+function cleanSectionBody(body) {
+  if (!body) return "";
+  return body
+    .split(/(?<=\.)\s+|\n/)   // split on sentence breaks or newlines
+    .filter(line => !line.trim().startsWith("|") && !/^\s*[-|]+\s*$/.test(line))
+    .join(" ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 /* ── ROW 4: Analysis tiles (3 side-by-side) ── */
@@ -647,7 +671,7 @@ function buildAnalysisRow(game) {
         <span class="advantage-icon">${icons[i]}</span>
         <span class="advantage-label">Advantage: NYM</span>
       </div>
-      <p class="analysis-tile-body">${s.body}</p>
+      <p class="analysis-tile-body">${cleanSectionBody(s.body)}</p>
     </div>`).join("");
 
   return `
@@ -671,7 +695,7 @@ function buildPickSection(game) {
   const sections = game.writeup.sections ?? [];
   // Find pick/today section by heading keyword
   const pickSection = sections.find(s => /today|pick|final|bottom line/i.test(s.heading));
-  const summary = pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "";
+  const summary = cleanSectionBody(pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "");
 
   const metsML  = game.moneyline?.mets;
   const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
@@ -740,7 +764,7 @@ function buildRecentTiles(games) {
 /* ── Game Context Card (injuries, recent form, H2H) ── */
 function buildGameContextCard(game) {
   const gc = game.gameContext;
-  if (!gc) return "";
+  if (!gc || !Object.keys(gc).length) return "";
 
   const oppAbbr = getTeamAbbr(game.opponent);
 
