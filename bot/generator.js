@@ -529,63 +529,265 @@ function parseWriteup(rawText) {
 
 async function generateAnalysis(gameObject) {
   const mets2025 = await loadMets2025();
+  const g = gameObject;
+  const mp = g.pitching.mets;
+  const op = g.pitching.opp;
+  const oppName = g.opponent;
+  const oppShort = oppName.split(" ").pop();
 
-  // Build 2025 baseline lines for any Mets player/pitcher without live stats
+  function row(...cells) {
+    return `| ${cells.join(" | ")} |`;
+  }
+
+  function tableHeader(...cols) {
+    return [
+      row(...cols),
+      row(...cols.map(() => "---"))
+    ].join("\n");
+  }
+
+  function ps(pitcher, key, fallbackKey) {
+    const v = pitcher[key];
+    if (!isMissingStat(v)) return v;
+    const fb = mets2025?.starters?.[pitcher.name];
+    return fb?.[fallbackKey] ?? "N/A";
+  }
+
+  const pitchingTraditional =
+    tableHeader("Pitcher", "Team", "W–L", "ERA", "WHIP", "IP note", "K", "BB", "HR/9") +
+    "\n" +
+    row(
+      mp.name,
+      "New York Mets",
+      firstPresent(mp.seasonRecord, "N/A"),
+      firstPresent(mp.seasonERA, "N/A"),
+      firstPresent(mp.seasonWHIP, ps(mp, "seasonWHIP", "WHIP")),
+      mp.note || "N/A",
+      "N/A",
+      "N/A",
+      firstPresent(mp.seasonHR9, "N/A")
+    ) +
+    "\n" +
+    row(
+      op.name,
+      oppName,
+      firstPresent(op.seasonRecord, "N/A"),
+      firstPresent(op.seasonERA, "N/A"),
+      firstPresent(op.seasonWHIP, "N/A"),
+      op.note || "N/A",
+      "N/A",
+      "N/A",
+      firstPresent(op.seasonHR9, "N/A")
+    );
+
+  const mSavant = mp.savant || {};
+  const oSavant = op.savant || {};
+  const pitchingAdvanced =
+    tableHeader("Pitcher", "FIP", "xERA", "K%", "BB%", "K/BB", "Hard-Hit%", "Barrel%", "Last 3 ERA") +
+    "\n" +
+    row(
+      mp.name,
+      firstPresent(mp.seasonFIP, ps(mp, "seasonFIP", "FIP")),
+      firstPresent(mp.seasonXERA, mSavant.xERA, "N/A"),
+      firstPresent(mSavant.kPct, "N/A"),
+      firstPresent(mSavant.bbPct, "N/A"),
+      firstPresent(mp.last3KBB, mp.seasonKBB, "N/A"),
+      firstPresent(mSavant.hardHitPct, "N/A"),
+      firstPresent(mSavant.barrelPct, "N/A"),
+      firstPresent(mp.last3ERA, "N/A")
+    ) +
+    "\n" +
+    row(
+      op.name,
+      firstPresent(op.seasonFIP, "N/A"),
+      firstPresent(op.seasonXERA, oSavant.xERA, "N/A"),
+      firstPresent(oSavant.kPct, "N/A"),
+      firstPresent(oSavant.bbPct, "N/A"),
+      firstPresent(op.last3KBB, op.seasonKBB, "N/A"),
+      firstPresent(oSavant.hardHitPct, "N/A"),
+      firstPresent(oSavant.barrelPct, "N/A"),
+      firstPresent(op.last3ERA, "N/A")
+    );
+
+  const metsLineup = g.lineups.mets.slice(0, 9);
+  const oppLineup = g.lineups.opp.slice(0, 9);
+  const maxLen = Math.max(metsLineup.length, oppLineup.length, 9);
+
+  let lineupTable = tableHeader("#", "NYM Player", "Pos", "AVG", "xBA", "OPS", "HR", "", "OPP Player", "Pos", "AVG", "xBA", "OPS", "HR") + "\n";
+  for (let i = 0; i < maxLen; i++) {
+    const m = metsLineup[i];
+    const o = oppLineup[i];
+    const mFb = m ? (mets2025?.hitters?.[m.name] || {}) : {};
+    lineupTable += row(
+      i + 1,
+      m?.name ?? "—",
+      m?.pos ?? "—",
+      m ? firstPresent(m.seasonAVG, mFb.AVG, "N/A") : "—",
+      "N/A",
+      m ? firstPresent(m.seasonOPS, mFb.OPS, "N/A") : "—",
+      m ? firstPresent(m.seasonHR, mFb.HR, "N/A") : "—",
+      "|",
+      o?.name ?? "—",
+      o?.pos ?? "—",
+      o ? firstPresent(o.seasonAVG, "N/A") : "—",
+      "N/A",
+      o ? firstPresent(o.seasonOPS, "N/A") : "—",
+      o ? firstPresent(o.seasonHR, "N/A") : "—"
+    ) + "\n";
+  }
+
+  const mb = g.pitching.metsBullpen;
+  const ob = g.pitching.oppBullpen;
+  const bullpenTable =
+    tableHeader("Team", "ERA", "xFIP", "Last 14d ERA", "Last 3d IP", "Rating") +
+    "\n" +
+    row(
+      "New York Mets",
+      firstPresent(mb.seasonERA, mets2025?.bullpenERA, "N/A"),
+      firstPresent(mb.seasonXFIP, mets2025?.bullpenxFIP, "N/A"),
+      firstPresent(mb.last14ERA, "N/A"),
+      firstPresent(mb.last3DaysIP, "N/A"),
+      mb.rating ? `${mb.rating}/100` : "70/100"
+    ) +
+    "\n" +
+    row(
+      oppName,
+      firstPresent(ob.seasonERA, "N/A"),
+      firstPresent(ob.seasonXFIP, "N/A"),
+      firstPresent(ob.last14ERA, "N/A"),
+      firstPresent(ob.last3DaysIP, "N/A"),
+      ob.rating ? `${ob.rating}/100` : "65/100"
+    );
+
+  const mWRC = mets2025?.teamWRC_plus ?? "N/A";
+  const mOPS = mets2025?.teamOPS ?? "N/A";
+  const mHH = mets2025?.hardHitPct ?? "N/A";
+  const mBRL = mets2025?.barrelPct ?? "N/A";
+  const mKPct = mets2025?.kPct ?? "N/A";
+  const mBBPct = mets2025?.bbPct ?? "N/A";
+
+  const oppStats = mets2025?.opponents2025?.[oppName] || {};
+  const oWRC = oppStats.teamWRC_plus ?? "N/A";
+  const oOPS = oppStats.teamOPS ?? "N/A";
+
+  function bar(val, max, width = 10) {
+    if (val === "N/A" || isNaN(val)) return "N/A";
+    const filled = Math.round((val / max) * width);
+    return "█".repeat(Math.max(0, filled)) + "░".repeat(Math.max(0, width - filled));
+  }
+
+  const offenseBars = [
+    `wRC+:     New York Mets ${bar(mWRC, 140)} ${mWRC}   ${oppShort} ${bar(oWRC, 140)} ${oWRC}`,
+    `OPS:      New York Mets ${bar(mOPS * 1000, 900)} ${mOPS}  ${oppShort} ${bar((oOPS || 0) * 1000, 900)} ${oOPS}`,
+    `Hard-Hit: New York Mets ${bar(mHH, 50)} ${mHH}%  ${oppShort} N/A`,
+    `Barrel%:  New York Mets ${bar(mBRL, 15)} ${mBRL}%  ${oppShort} N/A`,
+    `K%:       New York Mets ${bar(mKPct, 30)} ${mKPct}%  ${oppShort} N/A`,
+    `BB%:      New York Mets ${bar(mBBPct, 15)} ${mBBPct}%  ${oppShort} N/A`,
+  ].join("\n");
+
+  const mVs = mp.vsRoster;
+  const oVs = op.vsRoster;
+  const vsRosterSection = (mVs || oVs) ? `
+PITCHER VS CURRENT ROSTER (career Statcast):
+${mp.name} vs ${oppShort} lineup: ${mVs ? `${mVs.PA} PA | AVG ${mVs.AVG ?? "N/A"} | wOBA ${mVs.wOBA ?? "N/A"} | xwOBA ${mVs.xwOBA ?? "N/A"} | Exit Velo ${mVs.exitVelo ?? "N/A"} | xBA ${mVs.xBA ?? "N/A"}` : "No prior matchup data."}
+${op.name} vs Mets lineup: ${oVs ? `${oVs.PA} PA | AVG ${oVs.AVG ?? "N/A"} | wOBA ${oVs.wOBA ?? "N/A"} | xwOBA ${oVs.xwOBA ?? "N/A"} | Exit Velo ${oVs.exitVelo ?? "N/A"} | xBA ${oVs.xBA ?? "N/A"}` : "No prior matchup data."}
+` : "";
+
   const baselineLines = [];
-  const starterName = gameObject.pitching?.mets?.name;
-  if (starterName && mets2025.starters?.[starterName]) {
-    const s = mets2025.starters[starterName];
-    baselineLines.push(`- ${starterName}: ERA ${s.ERA}, FIP ${s.FIP}, xFIP ${s.xFIP}, WHIP ${s.WHIP}, K/BB ${s.KBB}`);
+  if (mets2025?.starters?.[mp.name]) {
+    const s = mets2025.starters[mp.name];
+    baselineLines.push(`${mp.name}: ERA ${s.ERA}, FIP ${s.FIP}, xFIP ${s.xFIP}, WHIP ${s.WHIP}, K/BB ${s.KBB}`);
   }
-  for (const hitter of gameObject.lineups?.mets || []) {
-    const stats = mets2025.hitters?.[hitter.name];
-    if (stats) {
-      baselineLines.push(`- ${hitter.name}: AVG ${stats.AVG}, OPS ${stats.OPS}, wRC+ ${stats.wRC_plus}, HR ${stats.HR}`);
-    }
+  for (const hitter of g.lineups?.mets || []) {
+    const h = mets2025?.hitters?.[hitter.name];
+    if (h) baselineLines.push(`${hitter.name}: AVG ${h.AVG}, OPS ${h.OPS}, wRC+ ${h.wRC_plus}, HR ${h.HR}`);
   }
-
   const baselineSection = baselineLines.length
-    ? `2025 BASELINE STATS (use as supporting context where 2026 data is N/A):\n${baselineLines.join("\n")}\n\n`
+    ? `2025 BASELINE (use where 2026 data is unavailable; label as 2025 in your output):\n${baselineLines.join("\n")}\n\n`
     : "";
 
-  // Structured verified context injected at the top
-  const gameContext = buildGameContext(gameObject);
+  const systemMessage = `You are a daily baseball analyst who writes data-driven Mets game previews for a serious audience of fans and bettors.
 
-  const prompt = `Use only the following verified game data. Do not invent or substitute any player names, stats, or lineup positions:
+VOICE:
+- Modern beat writer with a heavy analytics bias.
+- Short sentences. 1–3 per paragraph max.
+- No hype, no clichés, no filler.
+- Factual and direct. Confident but not sycophantic.
+- Alternate between full city name and team nickname for flow (e.g. "New York" and "Mets"). Never use abbreviations like NYM or STL in prose.
 
-${gameContext}
+RULES:
+- Only use facts, names, and stats from the context you are given.
+- Never invent stats, streaks, injuries, or quotes.
+- If a stat is listed as N/A, do not use it or make one up.
+- If 2025 baseline stats are provided for a player or team, you may reference them but must label them as 2025 figures.
+- Include relevant news and context from the NEWS ITEMS block if provided.
+- Reuse all provided Markdown tables exactly as given — do not alter them.
+- Do not use betting verbs: no "bet", "wager", "fade", "hammer", "lock."
+- Always conclude New York wins. Do not hedge.
 
-${baselineSection}WRITING INSTRUCTIONS:
-You are writing a daily Mets game breakdown for a baseball analysis website. Tone: front-office analytical, serious, mostly dry.
+OUTPUT FORMAT:
+You must output valid Markdown following the 6-section structure below exactly.
+Do not add sections. Do not skip sections. Do not rename sections.`;
 
-STRICT RULES:
-- Never use betting language (no "bet", "wager", "units", "edge", "lock", "fade")
-- Never mention the site name
-- Always conclude the Mets will win — no hedging
-- Acknowledge any negative Mets facts briefly, then immediately reframe using regression to the mean, underlying metrics, or offsetting strengths
-- Use advanced stats naturally: wRC+, xwOBA, FIP, xFIP, xERA, barrel%, hard-hit%, WHIP, K%, BB%
-- Only reference players and stats from the VERIFIED GAME DATA block above
-- Output exactly one "Game Analysis" section made of 3 or 4 short named markdown sub-sections:
-  ## Offensive Matchup
-  ## Pitching Matchup
-  ## Key Edge
-  ## Final Read
-- Each sub-section must be 2 or 3 sentences max
-- Keep tone tight, direct, and confident
+  const userMessage = `${buildGameContext(g)}
 
-After the sub-sections, output one line beginning with: PICK_SUMMARY:
-- The PICK_SUMMARY must be exactly 2 or 3 sentences summarizing the strongest factors
-- No hedging or disclaimer language
+${baselineSection}TRADITIONAL PITCHING TABLE (include this unchanged under Section 2):
+${pitchingTraditional}
 
-End with exactly this on its own line: OFFICIAL_PICK: Today's Pick: New York Mets Moneyline
+ADVANCED PITCHING TABLE (include this unchanged under Section 2):
+${pitchingAdvanced}
 
-Write the 150-300 word breakdown now.`;
+${vsRosterSection}LINEUP TABLE (include this unchanged under Section 3):
+${lineupTable}
+
+BULLPEN TABLE (include this unchanged under Section 4):
+${bullpenTable}
+
+OFFENSE BARS (include these unchanged under Section 5):
+${offenseBars}
+
+NEWS ITEMS (integrate any that are relevant and recent — skip outdated or irrelevant items):
+[No news items provided — use only the stats and context above.]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Write the email now using EXACTLY this structure:
+
+SUBJECT: MetsMoneyline — [Full date, e.g. March 27]: New York Mets vs [Full opponent name]
+
+# New York Mets vs ${oppName}
+[date] · [venue] · [time] ET
+
+## 1. Short Recap
+[3–4 short sentences. Cover: streaks, schedule spot (home/road stand, travel, rest), any notable recent developments from news. Specific stats only.]
+
+## 2. Pitching Matchup
+[2–4 short sentences covering recent form, pitch count notes, injury return, velocity trend, or relevant news for each starter. Then include both pitching tables exactly as provided.]
+
+## 3. Lineup Comparison
+[2–4 short sentences: notable absences, rest days, call-ups, hot/cold streaks with stats. Then include the lineup table exactly as provided.]
+
+## 4. Bullpen
+[2–3 short sentences: recent workload, who is likely down or unavailable, closer status. Then include the bullpen table exactly as provided. If closer data is available add a closer row.]
+
+## 5. Key Edges
+[Bullet list only. 4–6 bullets. Each bullet is one analytical edge backed by a specific stat. Cover a mix of: pitching profile edge, offensive quality of contact, bullpen depth, schedule/rest, recent form, park factors, historical splits if available.]
+
+## 6. Today's Pick
+[2–3 sentences referencing the strongest edges from above.]
+
+**Today's Pick: New York Mets Moneyline**
+
+PICK_SUMMARY: [Copy the 2–3 sentence pick reasoning here as a single line]
+OFFICIAL_PICK: Today's Pick: New York Mets Moneyline`;
 
   const response = await openai.chat.completions.create({
     model: "gpt-4o",
-    messages: [{ role: "user", content: prompt }],
-    max_tokens: 700,
-    temperature: 0.7
+    messages: [
+      { role: "system", content: systemMessage },
+      { role: "user", content: userMessage }
+    ],
+    max_tokens: 1800,
+    temperature: 0.5
   });
 
   return response.choices[0].message.content;
@@ -836,6 +1038,7 @@ async function createButtondownEmailFromOutput(jsonPath) {
     const gameLine = game.homeAway === "road"
       ? `${game.opponent || "Opponent"} vs New York Mets`
       : `${game.opponent || "Opponent"} at New York Mets`;
+    const publishDate = getPublishDate(game.date);
     const subject = `MetsMoneyline — ${gameDate} vs ${oppAbbrev} (Edge: NYM ML)`;
     const bodyMarkdown = `# Today's Edge: NYM vs ${oppAbbrev}
 
@@ -859,8 +1062,9 @@ _This breakdown is also available on the site at metsml.vercel.app._`;
       {
         subject,
         body: bodyMarkdown,
-        status: "draft"
-        // Example for scheduling instead of draft:
+        status: "scheduled",
+        publish_date: publishDate
+        // Example alternative scheduled payload:
         // status: "scheduled",
         // publish_date: "2026-03-12T15:00:00Z"
       },
@@ -878,6 +1082,25 @@ _This breakdown is also available on the site at metsml.vercel.app._`;
   } catch (err) {
     console.error("Failed to create Buttondown email", err.response?.data || err.message);
   }
+}
+
+function getPublishDate(gameDateStr) {
+  if (!gameDateStr) return null;
+
+  const [y, m, d] = gameDateStr.split("-").map(Number);
+  const probe = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  const tzName = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    timeZoneName: "shortOffset"
+  }).formatToParts(probe).find(part => part.type === "timeZoneName")?.value || "GMT-5";
+
+  const match = tzName.match(/GMT([+-]\d{1,2})(?::?(\d{2}))?/);
+  const offsetHours = match ? parseInt(match[1], 10) : -5;
+  const offsetMinutes = match?.[2] ? parseInt(match[2], 10) : 0;
+  const totalOffsetMinutes = (offsetHours * 60) + (offsetHours >= 0 ? offsetMinutes : -offsetMinutes);
+  const utcMillis = Date.UTC(y, m - 1, d, 11, 0, 0) - (totalOffsetMinutes * 60 * 1000);
+
+  return new Date(utcMillis).toISOString();
 }
 
 run().catch(err => {
