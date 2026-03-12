@@ -16,6 +16,39 @@ const TEAM_ID = 121; // New York Mets
 
 let cachedMets2025 = null;
 let cachedSavantLeaderboard2025 = null;
+const BALLPARK_COORDS = {
+  "Citi Field": { lat: 40.7571, lon: -73.8458 },
+  "Yankee Stadium": { lat: 40.8296, lon: -73.9262 },
+  "Fenway Park": { lat: 42.3467, lon: -71.0972 },
+  "Wrigley Field": { lat: 41.9484, lon: -87.6553 },
+  "Busch Stadium": { lat: 38.6226, lon: -90.1928 },
+  "Great American Ball Park": { lat: 39.0979, lon: -84.5082 },
+  "Dodger Stadium": { lat: 34.0739, lon: -118.2400 },
+  "Oracle Park": { lat: 37.7786, lon: -122.3893 },
+  "T-Mobile Park": { lat: 47.5914, lon: -122.3325 },
+  "Truist Park": { lat: 33.8908, lon: -84.4678 },
+  "Citizens Bank Park": { lat: 39.9061, lon: -75.1665 },
+  "Globe Life Field": { lat: 32.7473, lon: -97.0825 },
+  "American Family Field": { lat: 43.0280, lon: -87.9712 },
+  "Chase Field": { lat: 33.4453, lon: -112.0667 },
+  "Petco Park": { lat: 32.7076, lon: -117.1570 },
+  "loanDepot park": { lat: 25.7781, lon: -80.2197 },
+  "Nationals Park": { lat: 38.8730, lon: -77.0074 },
+  "Camden Yards": { lat: 39.2838, lon: -76.6218 },
+  "PNC Park": { lat: 40.4469, lon: -80.0057 },
+  "Kauffman Stadium": { lat: 39.0517, lon: -94.4803 },
+  "Target Field": { lat: 44.9817, lon: -93.2781 },
+  "Guaranteed Rate Field": { lat: 41.8300, lon: -87.6339 },
+  "Progressive Field": { lat: 41.4962, lon: -81.6852 },
+  "Comerica Park": { lat: 42.3390, lon: -83.0485 },
+  "Rogers Centre": { lat: 43.6414, lon: -79.3894 },
+  "Tropicana Field": { lat: 27.7683, lon: -82.6534 },
+  "Oakland Coliseum": { lat: 37.7516, lon: -122.2005 },
+  "Minute Maid Park": { lat: 29.7572, lon: -95.3555 },
+  "Angel Stadium": { lat: 33.8003, lon: -117.8827 },
+  "Coors Field": { lat: 39.7559, lon: -104.9942 },
+  "Roger Dean Chevrolet Stadium": { lat: 26.8912, lon: -80.1262 }
+};
 
 function isMissingStat(value) {
   return value == null || value === "" || value === "N/A";
@@ -275,6 +308,30 @@ function extractPitcherSummary(statsData) {
   };
 }
 
+async function getHitterStats(playerId, playerName) {
+  if (!playerId) return null;
+  for (const season of ["2026", "2025"]) {
+    const url =
+      `https://statsapi.mlb.com/api/v1/people/${playerId}/stats` +
+      `?stats=season&group=hitting&season=${season}`;
+    const data = await safeGet(url, `hitter stats ${playerName} ${season}`);
+    const splits = data?.stats?.[0]?.splits || [];
+    if (splits.length > 0) {
+      const s = splits[0].stat;
+      console.log(`  ${playerName}: using ${season} hitting stats`);
+      return {
+        seasonAVG: s.avg ?? "N/A",
+        seasonOPS: s.ops ?? "N/A",
+        seasonHR: s.homeRuns ?? "N/A",
+        seasonAB: s.atBats ?? "N/A",
+        seasonH: s.hits ?? "N/A",
+        seasonSeason: season
+      };
+    }
+  }
+  return null;
+}
+
 // ─────────────────────────────────────────────
 // STEP 3b — Baseball Savant stats via CSV
 // ─────────────────────────────────────────────
@@ -515,11 +572,76 @@ function parseWriteup(rawText) {
 
   const summaryLine = rawText.match(/PICK_SUMMARY:\s*(.+)/);
   return {
+    raw: rawText,
     sections: sections.length > 0
       ? sections
       : [{ heading: "Analysis", body: rawText.replace(/OFFICIAL_PICK:.+/, "").trim() }],
     pickSummary:  summaryLine ? summaryLine[1].trim() : "",
     officialPick: "Today's Pick: New York Mets Moneyline"
+  };
+}
+
+async function getGameWeather(ballparkName, gameDate, gameTimeET) {
+  const normalizedBallpark = (ballparkName || "").replace(", Queens NY", "").trim();
+  const coords = BALLPARK_COORDS[normalizedBallpark];
+  if (!coords) {
+    console.warn(`  [warn] No coords found for ballpark: ${ballparkName}`);
+    return null;
+  }
+
+  const [hour, minutePart] = gameTimeET.replace(" ET", "").split(":");
+  const isPM = minutePart?.includes("PM");
+  const isAM = minutePart?.includes("AM");
+  const minutes = minutePart?.replace(/[APM]/g, "") || "00";
+  let gameHour = parseInt(hour, 10);
+  if (isPM && gameHour !== 12) gameHour += 12;
+  if (isAM && gameHour === 12) gameHour = 0;
+
+  const url =
+    `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${coords.lat}&longitude=${coords.lon}` +
+    `&hourly=temperature_2m,windspeed_10m,winddirection_10m,precipitation_probability` +
+    `&temperature_unit=fahrenheit&windspeed_unit=mph` +
+    `&timezone=America%2FNew_York&forecast_days=2`;
+
+  const data = await safeGet(url, `weather for ${ballparkName}`);
+  if (!data?.hourly) return null;
+
+  const targetTime = `${gameDate}T${String(gameHour).padStart(2, "0")}:${minutes.padStart(2, "0")}`;
+  const idx = data.hourly.time.findIndex(t => t === targetTime);
+  if (idx === -1) {
+    console.warn(`  [warn] Weather time ${targetTime} not found in forecast`);
+    return null;
+  }
+
+  const windDir = data.hourly.winddirection_10m[idx];
+  const windSpd = data.hourly.windspeed_10m[idx];
+  const temp = data.hourly.temperature_2m[idx];
+  const precip = data.hourly.precipitation_probability[idx];
+
+  function degToCompass(deg) {
+    const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+    return dirs[Math.round(deg / 22.5) % 16];
+  }
+
+  const compass = degToCompass(windDir);
+  const hitFriendly = ["S", "SSW", "SW", "WSW", "SSE", "SE"].includes(compass);
+  const pitchFriendly = ["N", "NNE", "NE", "ENE", "NNW", "NW"].includes(compass);
+  const windImpact = hitFriendly
+    ? "blowing out (hitter-friendly)"
+    : pitchFriendly
+      ? "blowing in (pitcher-friendly)"
+      : "blowing across (neutral)";
+
+  console.log(`  Weather: ${temp}°F, wind ${windSpd} mph ${compass} (${windImpact}), precip ${precip}%`);
+
+  return {
+    tempF: temp,
+    windMph: windSpd,
+    windDir: compass,
+    windImpact,
+    precipPct: precip,
+    label: `${temp}°F · Wind ${windSpd} mph ${compass} (${windImpact}) · Rain ${precip}%`
   };
 }
 
@@ -618,21 +740,33 @@ async function generateAnalysis(gameObject) {
     const m = metsLineup[i];
     const o = oppLineup[i];
     const mFb = m ? (mets2025?.hitters?.[m.name] || {}) : {};
+    const mAvg = m ? firstPresent(m.seasonAVG, mFb.AVG, "N/A") : "—";
+    const mOps = m ? firstPresent(m.seasonOPS, mFb.OPS, "N/A") : "—";
+    const mHr = m ? firstPresent(m.seasonHR, mFb.HR, "N/A") : "—";
+    const oAvg = o ? firstPresent(o.seasonAVG, "N/A") : "—";
+    const oOps = o ? firstPresent(o.seasonOPS, "N/A") : "—";
+    const oHr = o ? firstPresent(o.seasonHR, "N/A") : "—";
+    const mAvgLabel = m?.statsSeason === "2025" ? `${mAvg} (2025)` : mAvg;
+    const mOpsLabel = m?.statsSeason === "2025" ? `${mOps} (2025)` : mOps;
+    const mHrLabel = m?.statsSeason === "2025" ? `${mHr} (2025)` : mHr;
+    const oAvgLabel = o?.statsSeason === "2025" ? `${oAvg} (2025)` : oAvg;
+    const oOpsLabel = o?.statsSeason === "2025" ? `${oOps} (2025)` : oOps;
+    const oHrLabel = o?.statsSeason === "2025" ? `${oHr} (2025)` : oHr;
     lineupTable += row(
       i + 1,
       m?.name ?? "—",
       m?.pos ?? "—",
-      m ? firstPresent(m.seasonAVG, mFb.AVG, "N/A") : "—",
+      mAvgLabel,
       "N/A",
-      m ? firstPresent(m.seasonOPS, mFb.OPS, "N/A") : "—",
-      m ? firstPresent(m.seasonHR, mFb.HR, "N/A") : "—",
+      mOpsLabel,
+      mHrLabel,
       "|",
       o?.name ?? "—",
       o?.pos ?? "—",
-      o ? firstPresent(o.seasonAVG, "N/A") : "—",
+      oAvgLabel,
       "N/A",
-      o ? firstPresent(o.seasonOPS, "N/A") : "—",
-      o ? firstPresent(o.seasonHR, "N/A") : "—"
+      oOpsLabel,
+      oHrLabel
     ) + "\n";
   }
 
@@ -694,6 +828,7 @@ ${op.name} vs Mets lineup: ${oVs ? `${oVs.PA} PA | AVG ${oVs.AVG ?? "N/A"} | wOB
 ` : "";
 
   const baselineLines = [];
+  const newSigningsLines = [];
   if (mets2025?.starters?.[mp.name]) {
     const s = mets2025.starters[mp.name];
     baselineLines.push(`${mp.name}: ERA ${s.ERA}, FIP ${s.FIP}, xFIP ${s.xFIP}, WHIP ${s.WHIP}, K/BB ${s.KBB}`);
@@ -701,10 +836,14 @@ ${op.name} vs Mets lineup: ${oVs ? `${oVs.PA} PA | AVG ${oVs.AVG ?? "N/A"} | wOB
   for (const hitter of g.lineups?.mets || []) {
     const h = mets2025?.hitters?.[hitter.name];
     if (h) baselineLines.push(`${hitter.name}: AVG ${h.AVG}, OPS ${h.OPS}, wRC+ ${h.wRC_plus}, HR ${h.HR}`);
+    else if (!isMissingStat(hitter.seasonAVG) || !isMissingStat(hitter.seasonOPS) || !isMissingStat(hitter.seasonHR)) {
+      newSigningsLines.push(`${hitter.name}: ${hitter.statsSeason ?? "2025"} AVG ${firstPresent(hitter.seasonAVG, "N/A")}, OPS ${firstPresent(hitter.seasonOPS, "N/A")}, HR ${firstPresent(hitter.seasonHR, "N/A")}`);
+    }
   }
   const baselineSection = baselineLines.length
     ? `2025 BASELINE (use where 2026 data is unavailable; label as 2025 in your output):\n${baselineLines.join("\n")}\n\n`
     : "";
+  const newSigningsContext = newSigningsLines.length ? `${newSigningsLines.join("\n")}\n\n` : "";
 
   const systemMessage = `You are a daily baseball analyst who writes data-driven Mets game previews for a serious audience of fans and bettors.
 
@@ -746,6 +885,12 @@ ${bullpenTable}
 OFFENSE BARS (include these unchanged under Section 5):
 ${offenseBars}
 
+NEW SIGNINGS / OFFSEASON ROSTER (2025 stats from prior team — use as context for their expected production profile):
+${newSigningsContext || "[No additional offseason roster context provided.]"}
+
+WEATHER AT GAME TIME:
+${g.weather ? g.weather.label : "Dome/weather unavailable"}
+
 NEWS ITEMS (integrate any that are relevant and recent — skip outdated or irrelevant items):
 [No news items provided — use only the stats and context above.]
 
@@ -770,7 +915,7 @@ SUBJECT: MetsMoneyline — [Full date, e.g. March 27]: New York Mets vs [Full op
 [2–3 short sentences: recent workload, who is likely down or unavailable, closer status. Then include the bullpen table exactly as provided. If closer data is available add a closer row.]
 
 ## 5. Key Edges
-[Bullet list only. 4–6 bullets. Each bullet is one analytical edge backed by a specific stat. Cover a mix of: pitching profile edge, offensive quality of contact, bullpen depth, schedule/rest, recent form, park factors, historical splits if available.]
+[Bullet list only. 4–6 bullets. Each bullet is one analytical edge backed by a specific stat. Cover a mix of: pitching profile edge, offensive quality of contact, bullpen depth, schedule/rest, recent form, park factors, historical splits if available. If wind is >= 12 mph blowing out, note it as a power/HR environment. If wind is >= 12 mph blowing in, note it as a pitcher-friendly suppression factor. Always include temp and precip probability if available.]
 
 ## 6. Today's Pick
 [2–3 sentences referencing the strongest edges from above.]
@@ -814,6 +959,38 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
   const metsHand = extractPitcherHand(feed, metsPitcherRaw?.id, isHome ? "home" : "away");
   const oppHand  = extractPitcherHand(feed, oppPitcherRaw?.id,  isHome ? "away" : "home");
   const lineups  = extractLineups(feed, isHome);
+
+  await Promise.all(lineups.mets.map(async (player) => {
+    const fb = mets2025?.hitters?.[player.name];
+    if (fb) {
+      player.seasonAVG = fb.AVG ?? "N/A";
+      player.seasonOPS = fb.OPS ?? "N/A";
+      player.seasonHR = fb.HR ?? "N/A";
+      player.statsSeason = "2025";
+      return;
+    }
+    if (player.playerId) {
+      const stats = await getHitterStats(player.playerId, player.name);
+      if (stats) {
+        player.seasonAVG = stats.seasonAVG;
+        player.seasonOPS = stats.seasonOPS;
+        player.seasonHR = stats.seasonHR;
+        player.statsSeason = stats.seasonSeason;
+      }
+    }
+  }));
+
+  await Promise.all(lineups.opp.map(async (player) => {
+    if (player.playerId) {
+      const stats = await getHitterStats(player.playerId, player.name);
+      if (stats) {
+        player.seasonAVG = stats.seasonAVG;
+        player.seasonOPS = stats.seasonOPS;
+        player.seasonHR = stats.seasonHR;
+        player.statsSeason = stats.seasonSeason;
+      }
+    }
+  }));
 
   // STEP 3: Season stats (only for announced pitchers)
   console.log(`Fetching pitcher stats...`);
@@ -937,6 +1114,8 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
     previousPitching.opp,
     null
   );
+  const weather = await getGameWeather(gameObject.ballpark, gameDate, gameObject.time);
+  gameObject.weather = weather || null;
 
   // STEP 4: Generate AI analysis only on game day
   if (isGameDay) {
@@ -1015,17 +1194,15 @@ async function createButtondownEmailFromOutput(jsonPath) {
           timeZone: "America/New_York"
         })
       : "TBD";
-    const oppAbbrev = (game.opponent || "OPP")
-      .split(" ")
-      .map(word => word[0])
-      .join("")
-      .slice(0, 3)
-      .toUpperCase();
-    const matchupTitle = `Mets vs ${game.opponent || "Opponent"}`;
+    const rawWriteup = game.writeup?.raw || "";
     const sections = game.writeup?.sections || [];
-    const analysis = sections.length
-      ? sections.map(section => `### ${section.heading}\n${section.body}`).join("\n\n")
-      : game.matchupSummary || "Analysis not available.";
+    const analysis = rawWriteup.length > 100
+      ? rawWriteup
+          .replace(/^SUBJECT:.+$/m, "")
+          .replace(/^PICK_SUMMARY:.+$/m, "")
+          .replace(/^OFFICIAL_PICK:.+$/m, "")
+          .trim()
+      : sections.map(s => `### ${s.heading}\n${s.body}`).join("\n\n");
     const pickSummary = game.writeup?.pickSummary || "Full recap available on the site.";
     const pick = game.writeup?.officialPick || "Today's Pick: New York Mets Moneyline";
     const nymLine = game.moneyline?.mets != null
@@ -1039,12 +1216,13 @@ async function createButtondownEmailFromOutput(jsonPath) {
       ? `${game.opponent || "Opponent"} vs New York Mets`
       : `${game.opponent || "Opponent"} at New York Mets`;
     const publishDate = getPublishDate(game.date);
-    const subject = `MetsMoneyline — ${gameDate} vs ${oppAbbrev} (Edge: NYM ML)`;
-    const bodyMarkdown = `# Today's Edge: NYM vs ${oppAbbrev}
+    const subject = `MetsMoneyline — ${gameDate}: New York Mets vs ${game.opponent}`;
+    const bodyMarkdown = `# Today's Edge: New York Mets vs ${game.opponent}
 
 **Game:** ${gameLine}  
 **Time:** ${timeEt}  
-**Moneyline:** NYM ${nymLine} / ${oppAbbrev} ${oppLine}  
+**Weather:** ${game.weather?.label ?? "N/A"}  
+**Moneyline:** New York Mets ${nymLine} / ${game.opponent} ${oppLine}  
 
 ## Quick Recap
 ${pickSummary}
