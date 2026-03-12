@@ -232,6 +232,49 @@ function pctlColor(pct) {
   return "#1a6bb5";                  // poor blue
 }
 
+function pctlTone(pct) {
+  if (pct >= 80) return "elite";
+  if (pct >= 60) return "good";
+  if (pct >= 45) return "neutral";
+  if (pct >= 25) return "poor";
+  return "bad";
+}
+
+function formatStatcastValue(value) {
+  if (value == null || value === "") return "N/A";
+  return typeof value === "number" ? value.toFixed(1) : String(value);
+}
+
+function getStatcastMetricMeta(label) {
+  switch (label) {
+    case "xERA":
+      return { pct: v => PCTL.xERA(v) };
+    case "Barrel%":
+      return { pct: v => PCTL.HardHit(v) };
+    case "Hard-Hit%":
+      return { pct: v => PCTL.HardHit(v) };
+    case "Whiff%":
+      return { pct: v => clamp(Math.round(((parseFloat(v) - 16) / (36 - 16)) * 95), 5, 99) };
+    case "Chase%":
+      return { pct: v => clamp(Math.round(((parseFloat(v) - 18) / (38 - 18)) * 95), 5, 99) };
+    case "K%":
+      return { pct: v => PCTL.KPct(v) };
+    case "BB%":
+      return { pct: v => PCTL.BBPct(v) };
+    default:
+      return null;
+  }
+}
+
+function statcastCell(label, value) {
+  if (value == null || value === "") return `<td><span class="statcast-chip statcast-chip-neutral">N/A</span></td>`;
+  const meta = getStatcastMetricMeta(label);
+  if (!meta) return `<td>${formatStatcastValue(value)}</td>`;
+  const pct = meta.pct(parseFloat(value));
+  const tone = pctlTone(pct);
+  return `<td><span class="statcast-chip statcast-chip-${tone}">${formatStatcastValue(value)}</span></td>`;
+}
+
 /* Build a single stat row with percentile bar */
 function statBar(label, rawVal, pctlFn, displayVal) {
   if (rawVal == null || rawVal === "N/A" || rawVal === "") {
@@ -422,30 +465,31 @@ function buildPitchingCard(game) {
     </div>`;
 
   const statcastSection = (p.mets.savant || p.opp.savant) ? `
+    <div class="section-floating-label">Pitcher Statcast (2025)</div>
     <div class="pitching-table-label">Statcast (2025)</div>
-    <div class="table-wrap">
-      <table>
+    <div class="table-wrap statcast-table-wrap">
+      <table class="statcast-table">
         <thead><tr><th>Pitcher</th><th>xERA</th><th>Barrel%</th><th>Hard-Hit%</th><th>Whiff%</th><th>Chase%</th><th>K%</th><th>BB%</th></tr></thead>
         <tbody>
           <tr>
-            <td style="font-weight:600;color:var(--navy)">${p.mets.name}</td>
-            <td>${p.mets.savant?.xERA       ?? "N/A"}</td>
-            <td>${p.mets.savant?.barrelPct  ?? "N/A"}</td>
-            <td>${p.mets.savant?.hardHitPct ?? "N/A"}</td>
-            <td>${p.mets.savant?.whiffPct   ?? "N/A"}</td>
-            <td>${p.mets.savant?.chasePct   ?? "N/A"}</td>
-            <td>${p.mets.savant?.kPct       ?? "N/A"}</td>
-            <td>${p.mets.savant?.bbPct      ?? "N/A"}</td>
+            <td class="statcast-pitcher statcast-pitcher-mets">${p.mets.name}</td>
+            ${statcastCell("xERA", p.mets.savant?.xERA)}
+            ${statcastCell("Barrel%", p.mets.savant?.barrelPct)}
+            ${statcastCell("Hard-Hit%", p.mets.savant?.hardHitPct)}
+            ${statcastCell("Whiff%", p.mets.savant?.whiffPct)}
+            ${statcastCell("Chase%", p.mets.savant?.chasePct)}
+            ${statcastCell("K%", p.mets.savant?.kPct)}
+            ${statcastCell("BB%", p.mets.savant?.bbPct)}
           </tr>
           <tr>
-            <td style="font-weight:600;color:#374151">${p.opp.name}</td>
-            <td>${p.opp.savant?.xERA       ?? "N/A"}</td>
-            <td>${p.opp.savant?.barrelPct  ?? "N/A"}</td>
-            <td>${p.opp.savant?.hardHitPct ?? "N/A"}</td>
-            <td>${p.opp.savant?.whiffPct   ?? "N/A"}</td>
-            <td>${p.opp.savant?.chasePct   ?? "N/A"}</td>
-            <td>${p.opp.savant?.kPct       ?? "N/A"}</td>
-            <td>${p.opp.savant?.bbPct      ?? "N/A"}</td>
+            <td class="statcast-pitcher">${p.opp.name}</td>
+            ${statcastCell("xERA", p.opp.savant?.xERA)}
+            ${statcastCell("Barrel%", p.opp.savant?.barrelPct)}
+            ${statcastCell("Hard-Hit%", p.opp.savant?.hardHitPct)}
+            ${statcastCell("Whiff%", p.opp.savant?.whiffPct)}
+            ${statcastCell("Chase%", p.opp.savant?.chasePct)}
+            ${statcastCell("K%", p.opp.savant?.kPct)}
+            ${statcastCell("BB%", p.opp.savant?.bbPct)}
           </tr>
         </tbody>
       </table>
@@ -458,6 +502,7 @@ function buildPitchingCard(game) {
       ${oppCard}
     </div>
     ${vsRosterSection}
+    ${statcastSection ? `<div class="card full-card statcast-card">${statcastSection}</div>` : ""}
 
     <div class="section-floating-label">Bullpen</div>
     <div class="pitcher-two-col">
@@ -475,8 +520,7 @@ function buildPitchingCard(game) {
         ${statBar("Last 14d ERA", oppBP.last14?.replace ? oppBP.last14.replace(/<[^>]*>/g,"").trim() : oppBP.last14, PCTL.BPERA, oppBP.last14)}
         ${statBar("Rating",    String(oppBP.rating), PCTL.Rating, `${oppBP.rating}/100`)}
       </div>
-    </div>
-    ${statcastSection ? `<div class="card full-card">${statcastSection}</div>` : ""}`;
+    </div>`;
 }
 
 /* ── ROW 3: Lineups + Advanced Metrics ── */

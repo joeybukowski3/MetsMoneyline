@@ -1058,6 +1058,57 @@ tbody td:first-child { font-weight: 500; }
 
 .matchup-table td { text-align: center; padding: 0.35rem 0.4rem; color: var(--text-main); }
 
+.statcast-card { padding: 1.15rem 1.25rem 1.25rem; }
+.statcast-card .section-floating-label { margin-bottom: 0.85rem; }
+.statcast-table-wrap { border: 1px solid var(--border); border-radius: 18px; overflow: hidden; }
+.statcast-table { margin: 0; }
+.statcast-table thead th { text-align: center; }
+.statcast-table td { text-align: center; vertical-align: middle; }
+.statcast-pitcher {
+  font-weight: 700;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.statcast-pitcher-mets { color: var(--navy); }
+
+.statcast-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.79rem;
+  line-height: 1;
+}
+
+.statcast-chip-elite {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.statcast-chip-good {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.statcast-chip-neutral {
+  background: #eef2f7;
+  color: #556070;
+}
+
+.statcast-chip-poor {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.statcast-chip-bad {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
 /* =====================
    PLAYER HEADSHOTS
    ===================== */

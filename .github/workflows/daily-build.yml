@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "5 13 * * *"
+    - cron: "5 14 * * *"
   workflow_dispatch:
 
 permissions:
@@ -24,6 +27,32 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up Node
+        if: ${{ github.event_name != 'push' || secrets.OPENAI_API_KEY != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Require OpenAI key for scheduled generation
+        if: ${{ github.event_name != 'push' && secrets.OPENAI_API_KEY == '' }}
+        run: |
+          echo "OPENAI_API_KEY secret is required for scheduled or manual generation."
+          exit 1
+
+      - name: Install bot dependencies
+        if: ${{ secrets.OPENAI_API_KEY != '' }}
+        working-directory: ./bot
+        run: npm ci
+
+      - name: Generate fresh game data
+        if: ${{ secrets.OPENAI_API_KEY != '' }}
+        working-directory: ./bot
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: node generator.js
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
