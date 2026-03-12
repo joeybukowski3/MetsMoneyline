@@ -16,6 +16,29 @@ const TEAM_ID = 121; // New York Mets
 
 let cachedMets2025 = null;
 
+function isMissingStat(value) {
+  return value == null || value === "" || value === "N/A";
+}
+
+function firstPresent(...values) {
+  for (const value of values) {
+    if (!isMissingStat(value)) return value;
+  }
+  return "N/A";
+}
+
+function inningsToOuts(ip) {
+  if (ip == null || ip === "") return 0;
+  const [whole, frac = "0"] = String(ip).split(".");
+  return (parseInt(whole, 10) || 0) * 3 + (parseInt(frac, 10) || 0);
+}
+
+function outsToInnings(outs) {
+  const whole = Math.floor(outs / 3);
+  const frac = outs % 3;
+  return `${whole}.${frac}`;
+}
+
 // ─────────────────────────────────────────────
 // Utility helpers
 // ─────────────────────────────────────────────
@@ -36,6 +59,15 @@ async function safeGet(url, label) {
     return res.data;
   } catch (err) {
     console.warn(`  [warn] ${label} fetch failed: ${err.message}`);
+    return null;
+  }
+}
+
+function loadPreviousOutput() {
+  try {
+    const jsonPath = path.join(__dirname, "../public/data/sample-game.json");
+    return JSON.parse(fs.readFileSync(jsonPath, "utf8"));
+  } catch {
     return null;
   }
 }
@@ -91,7 +123,13 @@ function extractPitcherHand(feed, pitcherId, side) {
     const pp = feed.gameData?.probablePitchers?.[side];
     if (pp?.pitchHand?.code) return pp.pitchHand.code;
   }
-  return "R"; // safe default
+  return null;
+}
+
+async function getPitcherInfo(pitcherId) {
+  if (!pitcherId) return null;
+  const data = await safeGet(`https://statsapi.mlb.com/api/v1/people/${pitcherId}`, `pitcher info ${pitcherId}`);
+  return data?.people?.[0] || null;
 }
 
 function extractLineups(feed, metsIsHome) {
@@ -171,9 +209,19 @@ function extractPitcherSummary(statsData) {
   // Last 3 starts ERA from game log
   const last3 = gamelog?.splits?.slice(-3) || [];
   let last3ERA = "N/A";
+  let last3WHIP = "N/A";
+  let last3IP = "N/A";
   if (last3.length > 0) {
     const totalERA = last3.reduce((sum, g) => sum + parseFloat(g.stat.era || 0), 0);
     last3ERA = (totalERA / last3.length).toFixed(2);
+
+    const totalHits = last3.reduce((sum, g) => sum + (g.stat.hits || 0), 0);
+    const totalWalks = last3.reduce((sum, g) => sum + (g.stat.baseOnBalls || 0), 0);
+    const totalOuts = last3.reduce((sum, g) => sum + inningsToOuts(g.stat.inningsPitched), 0);
+    if (totalOuts > 0) {
+      last3WHIP = (((totalHits + totalWalks) * 3) / totalOuts).toFixed(2);
+      last3IP = outsToInnings(totalOuts);
+    }
   }
 
   // Last 3 FIP-adjacent: K/BB over last 3 starts
@@ -184,13 +232,30 @@ function extractPitcherSummary(statsData) {
     last3KBB = totalBB > 0 ? (totalK / totalBB).toFixed(2) : "N/A";
   }
 
+  const battersFaced = s.battersFaced || 0;
+  const strikeOuts = s.strikeOuts || 0;
+  const walks = s.baseOnBalls || 0;
+  const groundOuts = s.groundOuts || 0;
+  const airOuts = s.airOuts || 0;
+  const gamesStarted = s.gamesStarted || 0;
+
   return {
+    seasonRecord: gamesStarted > 0 ? `${s.wins || 0}-${s.losses || 0}` : "N/A",
     seasonERA:  s.era  || "N/A",
     seasonFIP:  "N/A", // Not available from MLB Stats API; GPT may supplement
     seasonWHIP: s.whip || "N/A",
+    seasonHR9:  s.homeRunsPer9 || "N/A",
     seasonKBB:  kbb,
+    seasonKPct: battersFaced > 0 ? ((strikeOuts / battersFaced) * 100).toFixed(1) + "%" : "N/A",
+    seasonBBPct: battersFaced > 0 ? ((walks / battersFaced) * 100).toFixed(1) + "%" : "N/A",
+    seasonGBPct: (groundOuts + airOuts) > 0 ? ((groundOuts / (groundOuts + airOuts)) * 100).toFixed(1) + "%" : "N/A",
     last3ERA,
-    last3KBB
+    last3WHIP,
+    last3IP,
+    last3KBB,
+    note: gamesStarted > 0
+      ? `${season?.splits?.[0]?.season || "Current"} — ${s.inningsPitched || "0.0"} IP, ${strikeOuts} K, ${walks} BB`
+      : ""
   };
 }
 
@@ -211,39 +276,89 @@ async function getSavantStats(mlbId, name) {
     const rows = parse(text, { columns: true, skip_empty_lines: true, relax_quotes: true });
     if (!rows || rows.length === 0) return null;
 
-    // Aggregate numeric columns across all rows for this pitcher
-    const toNum = (v) => { const n = parseFloat(v); return isNaN(n) ? null : n; };
-    const avg = (col) => {
-      const vals = rows.map(r => toNum(r[col])).filter(v => v !== null);
-      if (!vals.length) return null;
-      return vals.reduce((a, b) => a + b, 0) / vals.length;
+    const toNum = (v) => {
+      const n = parseFloat(v);
+      return Number.isNaN(n) ? null : n;
     };
+    const paRows = rows.filter(r => toNum(r.woba_denom) === 1);
+    const battedBallRows = rows.filter(r => toNum(r.launch_speed) !== null);
+    const swings = new Set([
+      "foul",
+      "foul_tip",
+      "hit_into_play",
+      "hit_into_play_no_out",
+      "hit_into_play_score",
+      "swinging_strike",
+      "swinging_strike_blocked"
+    ]);
+    const whiffs = new Set(["swinging_strike", "swinging_strike_blocked"]);
 
-    // Attempt known Savant column names
-    const xERA      = avg("estimated_era_using_speedangle") ?? avg("xera") ?? avg("x_era");
-    const barrelPct = avg("barrel_batted_rate") ?? avg("barrel_per_pa") ?? avg("barrel");
-    const hardHit   = avg("hard_hit_percent") ?? avg("launch_speed_90th") ?? null;
-    const whiffPct  = avg("whiff_percent") ?? avg("swinging_strike_percent") ?? null;
-    const chasePct  = avg("out_zone_swing_percent") ?? avg("o_swing_percent") ?? null;
-    const kPct      = avg("k_percent") ?? avg("strikeout_percent") ?? null;
-    const bbPct     = avg("bb_percent") ?? avg("walk_percent") ?? null;
+    const swingRows = rows.filter(r => swings.has(r.description));
+    const whiffRows = rows.filter(r => whiffs.has(r.description));
+    const outOfZoneRows = rows.filter(r => {
+      const zone = toNum(r.zone);
+      return zone !== null && ![1, 2, 3, 4, 5, 6, 7, 8, 9].includes(zone);
+    });
+    const chaseRows = outOfZoneRows.filter(r => swings.has(r.description));
 
-    const fmt = (v, decimals = 1) => v !== null ? v.toFixed(decimals) : "N/A";
+    const strikeouts = paRows.filter(r => r.events === "strikeout");
+    const walks = paRows.filter(r => r.events === "walk" || r.events === "intent_walk");
+    const groundBalls = battedBallRows.filter(r => r.bb_type === "ground_ball");
+    const hardHitBalls = battedBallRows.filter(r => (toNum(r.launch_speed) || 0) >= 95);
+    const barrels = battedBallRows.filter(r => r.launch_speed_angle === "6");
+
+    const fmtPct = (num, den) => den > 0 ? `${((num / den) * 100).toFixed(1)}%` : "N/A";
+    const fmt = (v, decimals = 2) => v !== null ? v.toFixed(decimals) : "N/A";
 
     console.log(`  Savant stats fetched for ${name || mlbId}`);
     return {
-      xERA:      fmt(xERA, 2),
-      barrelPct: fmt(barrelPct),
-      hardHitPct: fmt(hardHit),
-      whiffPct:  fmt(whiffPct),
-      chasePct:  fmt(chasePct),
-      kPct:      fmt(kPct),
-      bbPct:     fmt(bbPct)
+      xERA: "N/A",
+      barrelPct: fmtPct(barrels.length, battedBallRows.length),
+      hardHitPct: fmtPct(hardHitBalls.length, battedBallRows.length),
+      whiffPct: fmtPct(whiffRows.length, swingRows.length),
+      chasePct: fmtPct(chaseRows.length, outOfZoneRows.length),
+      kPct: fmtPct(strikeouts.length, paRows.length),
+      bbPct: fmtPct(walks.length, paRows.length),
+      gbPct: fmtPct(groundBalls.length, battedBallRows.length)
     };
   } catch (err) {
     console.warn(`  [warn] Savant stats for ${name || mlbId} failed: ${err.message}`);
     return null;
   }
+}
+
+function mergeSavantStats(current, previous, summary) {
+  return {
+    xERA: firstPresent(current?.xERA, previous?.xERA),
+    barrelPct: firstPresent(current?.barrelPct, previous?.barrelPct),
+    hardHitPct: firstPresent(current?.hardHitPct, previous?.hardHitPct),
+    whiffPct: firstPresent(current?.whiffPct, previous?.whiffPct),
+    chasePct: firstPresent(current?.chasePct, previous?.chasePct),
+    kPct: firstPresent(current?.kPct, summary?.seasonKPct, previous?.kPct),
+    bbPct: firstPresent(current?.bbPct, summary?.seasonBBPct, previous?.bbPct),
+    gbPct: firstPresent(current?.gbPct, summary?.seasonGBPct, previous?.gbPct)
+  };
+}
+
+function mergePitcherWithFallbacks(current, previous, starterFallback) {
+  const mergedSavant = mergeSavantStats(current.savant, previous?.savant, current);
+  return {
+    ...current,
+    hand: firstPresent(current.hand, previous?.hand),
+    seasonRecord: firstPresent(current.seasonRecord, previous?.seasonRecord),
+    seasonFIP: firstPresent(current.seasonFIP, previous?.seasonFIP, starterFallback?.FIP),
+    seasonXERA: firstPresent(current.seasonXERA, mergedSavant.xERA, previous?.seasonXERA, starterFallback?.xFIP),
+    seasonWHIP: firstPresent(current.seasonWHIP, previous?.seasonWHIP, starterFallback?.WHIP),
+    seasonHR9: firstPresent(current.seasonHR9, previous?.seasonHR9),
+    last3ERA: firstPresent(current.last3ERA, previous?.last3ERA),
+    last3FIP: firstPresent(current.last3FIP, previous?.last3FIP),
+    last3WHIP: firstPresent(current.last3WHIP, previous?.last3WHIP),
+    last3KBB: firstPresent(current.last3KBB, previous?.last3KBB, starterFallback?.KBB),
+    last3IP: firstPresent(current.last3IP, previous?.last3IP),
+    note: firstPresent(current.note, previous?.note),
+    savant: mergedSavant,
+    vsRoster: current.vsRoster || previous?.vsRoster || null
+  };
 }
 
 // ─────────────────────────────────────────────
@@ -502,7 +617,7 @@ Write the 150-300 word breakdown now.`;
 // Assemble full game object
 // ─────────────────────────────────────────────
 
-async function buildGameObject(game, standings, isGameDay) {
+async function buildGameObject(game, standings, isGameDay, previousGame, mets2025) {
   const isHome   = game.teams.home.team.id === TEAM_ID;
   const metsTeam = isHome ? game.teams.home : game.teams.away;
   const oppTeam  = isHome ? game.teams.away : game.teams.home;
@@ -525,6 +640,11 @@ async function buildGameObject(game, standings, isGameDay) {
   const [metsPitcherStats, oppPitcherStats] = await Promise.all([
     metsAnnounced ? getPitcherStats(metsPitcherRaw.id, metsPitcherRaw.fullName) : Promise.resolve([]),
     oppAnnounced  ? getPitcherStats(oppPitcherRaw.id,  oppPitcherRaw.fullName)  : Promise.resolve([])
+  ]);
+
+  const [metsPitcherInfo, oppPitcherInfo] = await Promise.all([
+    metsAnnounced ? getPitcherInfo(metsPitcherRaw.id) : Promise.resolve(null),
+    oppAnnounced ? getPitcherInfo(oppPitcherRaw.id) : Promise.resolve(null)
   ]);
 
   // STEP 3b: Savant stats (only for announced pitchers)
@@ -570,18 +690,19 @@ async function buildGameObject(game, standings, isGameDay) {
         name:        metsAnnounced ? metsPitcherRaw.fullName : "TBD",
         mlbId:       metsAnnounced ? metsPitcherRaw.id : null,
         announced:   metsAnnounced,
-        hand:        metsHand,
+        hand:        metsHand || metsPitcherInfo?.pitchHand?.code || null,
+        seasonRecord: metsPStats.seasonRecord,
         seasonERA:   metsPStats.seasonERA,
         seasonFIP:   metsPStats.seasonFIP,
         seasonXERA:  "N/A",
         seasonWHIP:  metsPStats.seasonWHIP,
-        seasonHR9:   "N/A",
+        seasonHR9:   metsPStats.seasonHR9,
         last3ERA:    metsPStats.last3ERA,
         last3FIP:    "N/A",
-        last3WHIP:   "N/A",
+        last3WHIP:   metsPStats.last3WHIP,
         last3KBB:    metsPStats.last3KBB,
-        last3IP:     "N/A",
-        note:        "",
+        last3IP:     metsPStats.last3IP,
+        note:        metsPStats.note,
         savant:      metsSavant,
         vsRoster:    metsVsRoster
       },
@@ -589,18 +710,19 @@ async function buildGameObject(game, standings, isGameDay) {
         name:        oppAnnounced ? oppPitcherRaw.fullName : "TBD",
         mlbId:       oppAnnounced ? oppPitcherRaw.id : null,
         announced:   oppAnnounced,
-        hand:        oppHand,
+        hand:        oppHand || oppPitcherInfo?.pitchHand?.code || null,
+        seasonRecord: oppPStats.seasonRecord,
         seasonERA:   oppPStats.seasonERA,
         seasonFIP:   oppPStats.seasonFIP,
         seasonXERA:  "N/A",
         seasonWHIP:  oppPStats.seasonWHIP,
-        seasonHR9:   "N/A",
+        seasonHR9:   oppPStats.seasonHR9,
         last3ERA:    oppPStats.last3ERA,
         last3FIP:    "N/A",
-        last3WHIP:   "N/A",
+        last3WHIP:   oppPStats.last3WHIP,
         last3KBB:    oppPStats.last3KBB,
-        last3IP:     "N/A",
-        note:        "",
+        last3IP:     oppPStats.last3IP,
+        note:        oppPStats.note,
         savant:      oppSavant,
         vsRoster:    oppVsRoster
       },
@@ -623,6 +745,18 @@ async function buildGameObject(game, standings, isGameDay) {
     writeup: null,
     bettingHistory: null
   };
+
+  const previousPitching = previousGame?.pitching || {};
+  gameObject.pitching.mets = mergePitcherWithFallbacks(
+    gameObject.pitching.mets,
+    previousPitching.mets,
+    mets2025?.starters?.[gameObject.pitching.mets.name]
+  );
+  gameObject.pitching.opp = mergePitcherWithFallbacks(
+    gameObject.pitching.opp,
+    previousPitching.opp,
+    null
+  );
 
   // STEP 4: Generate AI analysis only on game day
   if (isGameDay) {
@@ -653,8 +787,11 @@ async function run() {
   const isGameDay = (gameDate === getTodayET());
   console.log(`isGameDay: ${isGameDay} (game: ${gameDate}, today: ${getTodayET()})`);
 
+  const previousOutput = loadPreviousOutput();
+  const previousGame = previousOutput?.games?.[0] || null;
+  const mets2025 = await loadMets2025();
   const standings   = await getStandings();
-  const gameObject  = await buildGameObject(game, standings, isGameDay);
+  const gameObject  = await buildGameObject(game, standings, isGameDay, previousGame, mets2025);
 
   console.log(`\n--- Game object summary ---`);
   console.log(`  Date:     ${gameObject.date}`);

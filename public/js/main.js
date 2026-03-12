@@ -465,8 +465,8 @@ function buildPitchingCard(game) {
     </div>`;
 
   const statcastSection = (p.mets.savant || p.opp.savant) ? `
-    <div class="section-floating-label">Pitcher Statcast (2025)</div>
-    <div class="pitching-table-label">Statcast (2025)</div>
+    <div class="section-floating-label">Statcast Profile</div>
+    <div class="pitching-table-label">Command, Whiff & Contact Quality</div>
     <div class="table-wrap statcast-table-wrap">
       <table class="statcast-table">
         <thead><tr><th>Pitcher</th><th>xERA</th><th>Barrel%</th><th>Hard-Hit%</th><th>Whiff%</th><th>Chase%</th><th>K%</th><th>BB%</th></tr></thead>
