@@ -9,14 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
   <style>
+    /* ── Page shell ── */
     .news-page-shell {
-      max-width: 1400px;
+      max-width: 1300px;
       margin: 0 auto;
       padding: 0 2rem 4rem;
     }
 
     .news-page-header {
-      padding: 2rem 0 1rem;
+      padding: 2rem 0 1.5rem;
       text-align: center;
     }
 
@@ -24,21 +25,53 @@
       font-size: 1.85rem;
       font-weight: 800;
       color: var(--navy);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.3rem;
     }
 
     .news-page-header p {
       color: var(--text-muted);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
+    /* ── Tabs ── */
+    .news-tabs {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .news-tab {
+      border: none;
+      border-radius: 999px;
+      background: #e8ecf4;
+      color: var(--navy);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.5rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, transform 0.1s;
+    }
+
+    .news-tab:hover {
+      background: #d4daea;
+      transform: translateY(-1px);
+    }
+
+    .news-tab.active {
+      background: var(--navy);
+      color: #fff;
+    }
+
+    /* ── Toolbar (refresh + spinner) ── */
     .news-toolbar {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.75rem;
       flex-wrap: wrap;
-      margin: 0 0 1.5rem;
+      margin-bottom: 1.75rem;
     }
 
     .news-refresh-btn {
@@ -46,11 +79,11 @@
       border-radius: 999px;
       background: var(--orange);
       color: #fff;
-      padding: 0.72rem 1.2rem;
-      font-size: 0.9rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s, background 0.15s, opacity 0.15s;
+      transition: background 0.15s, transform 0.1s, opacity 0.15s;
     }
 
     .news-refresh-btn:hover:not(:disabled) {
@@ -58,124 +91,154 @@
       transform: translateY(-1px);
     }
 
-    .news-refresh-btn:disabled {
-      cursor: wait;
-      opacity: 0.75;
-    }
+    .news-refresh-btn:disabled { cursor: wait; opacity: 0.7; }
 
     .news-spinner {
-      width: 18px;
-      height: 18px;
+      width: 17px;
+      height: 17px;
       border-radius: 50%;
-      border: 2px solid rgba(0, 45, 114, 0.18);
+      border: 2px solid rgba(0,45,114,0.15);
       border-top-color: var(--navy);
       opacity: 0;
       transition: opacity 0.15s;
-      animation: news-spin 0.8s linear infinite;
+      animation: news-spin 0.75s linear infinite;
     }
 
-    .news-spinner.active {
-      opacity: 1;
-    }
+    .news-spinner.active { opacity: 1; }
 
     .news-last-updated {
       color: #9099b0;
-      font-size: 0.85rem;
-      min-height: 1em;
+      font-size: 0.82rem;
     }
 
+    @keyframes news-spin { to { transform: rotate(360deg); } }
+
+    /* ── Grid ── */
     .news-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 1.25rem;
     }
 
+    /* ── Card ── */
     .news-card {
       display: flex;
-      gap: 1rem;
+      flex-direction: column;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 156px;
+      text-decoration: none;
+      transition: box-shadow 0.18s, transform 0.18s;
     }
 
-    .news-thumb {
-      width: 168px;
-      object-fit: cover;
-      background: #eef2f8;
+    .news-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    /* Fixed-ratio thumbnail container */
+    .news-thumb-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #dde3ef;
       flex-shrink: 0;
+    }
+
+    .news-thumb-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Placeholder when no image */
+    .news-thumb-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #b0b8cc;
+      background: linear-gradient(135deg, #e8ecf4, #dde3ef);
     }
 
     .news-body {
       display: flex;
-      flex: 1;
-      min-width: 0;
       flex-direction: column;
-      justify-content: center;
-      gap: 0.45rem;
-      padding: 1rem 1rem 1rem 0;
+      gap: 0.4rem;
+      padding: 0.9rem 1rem 1rem;
+      flex: 1;
     }
 
     .news-source {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 800;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.09em;
       text-transform: uppercase;
       color: var(--orange);
     }
 
     .news-title {
       color: var(--navy);
-      font-size: 1rem;
+      font-size: 0.93rem;
       font-weight: 700;
-      line-height: 1.4;
-      text-decoration: none;
-    }
-
-    .news-title:hover {
-      text-decoration: underline;
+      line-height: 1.45;
+      /* Clamp to 3 lines */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     .news-date {
+      margin-top: auto;
+      padding-top: 0.3rem;
       color: #9099b0;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       font-weight: 500;
     }
 
+    /* ── Category badge ── */
+    .news-cat-badge {
+      display: inline-block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      background: #e8ecf4;
+      color: #5a6680;
+      align-self: flex-start;
+    }
+
+    .news-cat-badge.offense      { background: #fff3ec; color: #c04a00; }
+    .news-cat-badge.pitching     { background: #edf2ff; color: #1a3a80; }
+    .news-cat-badge.minor-leagues{ background: #eafaf1; color: #1a6b3c; }
+
+    /* ── Empty state ── */
     .news-empty {
       grid-column: 1 / -1;
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 2.5rem 1rem;
       color: #9099b0;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
-      box-shadow: var(--shadow);
     }
 
-    @keyframes news-spin {
-      to { transform: rotate(360deg); }
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .news-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
-    @media (max-width: 800px) {
-      .news-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .news-card {
-        flex-direction: column;
-      }
-
-      .news-thumb {
-        width: 100%;
-        height: 200px;
-      }
-
-      .news-body {
-        padding: 0 1rem 1rem;
-      }
+    @media (max-width: 560px) {
+      .news-grid  { grid-template-columns: 1fr; }
+      .news-page-shell { padding: 0 1rem 3rem; }
     }
   </style>
 </head>
@@ -196,6 +259,12 @@
       <ul class="nav-links">
         <li>
           <a href="index.html" class="nav-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            Today's Game
+          </a>
+        </li>
         <li>
           <a href="advanced-stats.html" class="nav-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -230,6 +299,15 @@
       <p>Latest Mets coverage from ESPN, MLB.com, NY Post, SNY, and Amazin Avenue.</p>
     </div>
 
+    <!-- Category tabs -->
+    <div class="news-tabs" id="news-tabs">
+      <button class="news-tab active" data-tab="all">All</button>
+      <button class="news-tab" data-tab="offense">Offense</button>
+      <button class="news-tab" data-tab="pitching">Pitching</button>
+      <button class="news-tab" data-tab="minor-leagues">Minor Leagues</button>
+    </div>
+
+    <!-- Toolbar -->
     <div class="news-toolbar">
       <button class="news-refresh-btn" id="refresh-btn" type="button">Refresh</button>
       <div class="news-spinner" id="spinner"></div>
@@ -260,7 +338,30 @@
       { name: "Amazin Avenue", url: "https://www.amazinavenue.com/rss/current" }
     ];
 
+    const CATEGORY_KEYWORDS = {
+      pitching: [
+        "pitch", "pitcher", "pitching", "starter", "bullpen", "rotation",
+        "ERA", "strikeout", "mound", "arm", "relievers", "closer", "fastball",
+        "curveball", "slider", "changeup", "no-hitter", "shutout", "WHIP",
+        "innings pitched", "starting rotation"
+      ],
+      offense: [
+        "batting", "bat", "batter", "hitter", "hitting", "lineup", "offense",
+        "home run", "homer", "RBI", "slugging", "average", "on-base",
+        "double", "triple", "single", "hit", "runs scored", "wRC", "wOBA",
+        "DH", "designated hitter", "stolen base", "walk", "strikeout"
+      ],
+      "minor-leagues": [
+        "minor", "farm", "prospect", "prospects", "AAA", "AA", "A-ball",
+        "Syracuse", "Binghamton", "Triple-A", "Double-A", "Single-A",
+        "minor league", "system", "development", "affiliate", "call up",
+        "called up", "promoted", "optioned", "drafted"
+      ]
+    };
+
     const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
+    let allArticles = [];
+    let activeTab = "all";
     let lastUpdatedAt = null;
 
     function stripHtml(value) {
@@ -304,8 +405,16 @@
       return match ? match[1] : "";
     }
 
+    function categorize(article) {
+      const text = `${article.title} ${article.description}`.toLowerCase();
+      for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
+        if (keywords.some(kw => text.includes(kw.toLowerCase()))) return cat;
+      }
+      return "general";
+    }
+
     function toArticle(item, feedName) {
-      return {
+      const article = {
         source: feedName,
         title: stripHtml(item.title),
         link: item.link || "#",
@@ -313,11 +422,64 @@
         description: stripHtml(item.description || item.content || ""),
         thumbnail: getThumbnail(item)
       };
+      article.category = categorize(article);
+      return article;
     }
 
     function isMetsArticle(article) {
       const text = `${article.title} ${article.description}`.toLowerCase();
       return text.includes("mets");
+    }
+
+    function catBadgeHtml(cat) {
+      if (cat === "general") return "";
+      const labels = { offense: "Offense", pitching: "Pitching", "minor-leagues": "Minor Leagues" };
+      return `<span class="news-cat-badge ${cat}">${labels[cat]}</span>`;
+    }
+
+    function thumbHtml(article) {
+      if (article.thumbnail) {
+        return `<div class="news-thumb-wrap">
+          <img src="${article.thumbnail}" alt="" loading="lazy"
+               onerror="this.parentElement.innerHTML='<div class=\\'news-thumb-placeholder\\'>⚾</div>'">
+        </div>`;
+      }
+      return `<div class="news-thumb-wrap"><div class="news-thumb-placeholder">⚾</div></div>`;
+    }
+
+    function renderArticles(articles) {
+      const grid = document.getElementById("news-grid");
+
+      const filtered = activeTab === "all"
+        ? articles
+        : articles.filter(a => a.category === activeTab);
+
+      if (!filtered.length) {
+        const msg = activeTab === "all"
+          ? "No recent Mets articles available right now."
+          : `No ${activeTab.replace("-", " ")} articles found right now. Try refreshing or check All.`;
+        grid.innerHTML = `<div class="news-empty">${msg}</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(article => `
+        <a class="news-card" href="${article.link}" target="_blank" rel="noopener">
+          ${thumbHtml(article)}
+          <div class="news-body">
+            <span class="news-source">${article.source}</span>
+            ${catBadgeHtml(article.category)}
+            <span class="news-title">${article.title}</span>
+            <span class="news-date">${getRelativeTime(article.pubDate)}</span>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    function updateLastUpdatedLabel() {
+      const label = document.getElementById("last-updated");
+      label.textContent = lastUpdatedAt
+        ? `Last updated: ${getRelativeTime(lastUpdatedAt)}`
+        : "";
     }
 
     async function fetchFeed(feed) {
@@ -330,38 +492,10 @@
       return (data.items || []).map(item => toArticle(item, feed.name));
     }
 
-    function renderArticles(articles) {
-      const grid = document.getElementById("news-grid");
-      if (!articles.length) {
-        grid.innerHTML = `<div class="news-empty">No recent Mets articles are available right now.</div>`;
-        return;
-      }
-
-      grid.innerHTML = articles.map(article => `
-        <div class="news-card">
-          ${article.thumbnail ? `<img class="news-thumb" src="${article.thumbnail}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
-          <div class="news-body">
-            <span class="news-source">${article.source}</span>
-            <a class="news-title" href="${article.link}" target="_blank" rel="noopener">${article.title}</a>
-            <span class="news-date">${getRelativeTime(article.pubDate)}</span>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function updateLastUpdatedLabel() {
-      const label = document.getElementById("last-updated");
-      if (!lastUpdatedAt) {
-        label.textContent = "";
-        return;
-      }
-      label.textContent = `Last updated: ${getRelativeTime(lastUpdatedAt)}`;
-    }
-
     async function fetchAllFeeds() {
-      const button = document.getElementById("refresh-btn");
+      const button  = document.getElementById("refresh-btn");
       const spinner = document.getElementById("spinner");
-      const grid = document.getElementById("news-grid");
+      const grid    = document.getElementById("news-grid");
 
       button.disabled = true;
       spinner.classList.add("active");
@@ -369,22 +503,33 @@
 
       try {
         const results = await Promise.allSettled(NEWS_FEEDS.map(fetchFeed));
-        const merged = results.flatMap(result => result.status === "fulfilled" ? result.value : []);
-        const articles = merged
+        const merged  = results.flatMap(r => r.status === "fulfilled" ? r.value : []);
+        allArticles   = merged
           .filter(isMetsArticle)
           .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
 
-        renderArticles(articles);
+        renderArticles(allArticles);
         lastUpdatedAt = new Date();
         updateLastUpdatedLabel();
-      } catch (error) {
-        grid.innerHTML = `<div class="news-empty">News feed unavailable right now. Please try refresh.</div>`;
+      } catch {
+        grid.innerHTML = `<div class="news-empty">News feed unavailable right now. Please try refreshing.</div>`;
       } finally {
         button.disabled = false;
         spinner.classList.remove("active");
       }
     }
 
+    // Tab click handler
+    document.getElementById("news-tabs").addEventListener("click", e => {
+      const btn = e.target.closest(".news-tab");
+      if (!btn) return;
+      document.querySelectorAll(".news-tab").forEach(t => t.classList.remove("active"));
+      btn.classList.add("active");
+      activeTab = btn.dataset.tab;
+      renderArticles(allArticles);
+    });
+
+    // Footer timestamp
     fetch("data/sample-game.json").then(r => r.json()).then(d => {
       if (!d.generatedAt) return;
       const el = document.getElementById("data-timestamp");
@@ -393,10 +538,12 @@
         hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
       });
     }).catch(() => {});
+
     document.getElementById("refresh-btn").addEventListener("click", fetchAllFeeds);
     setInterval(updateLastUpdatedLabel, 60000);
     fetchAllFeeds();
   </script>
+
   <script>
     const hamburger = document.querySelector('.nav-hamburger');
     const navLinks  = document.querySelector('.nav-links');
