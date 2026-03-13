@@ -912,17 +912,22 @@ function buildTeamAdvancedCard(game) {
 async function init() {
   const { games, generatedAt } = await loadGameData();
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
-  const todayGame = games.find(g => g.date >= today && g.status === "upcoming")
-    || games.find(g => g.status === "upcoming")
-    || games[0];
+  const nextUpcomingGame = games.find(g => g.date >= today && g.status === "upcoming");
+  const mostRecentGame = [...games]
+    .filter(g => g.date <= today)
+    .sort((a, b) => b.date.localeCompare(a.date))[0];
+  const todayGame = nextUpcomingGame || mostRecentGame || games[0];
 
   // Update hero headline — three separate lines
   const isToday = todayGame.date === today;
+  const isFuture = todayGame.date > today;
   const vsAt    = todayGame.homeAway === "away" ? "@" : "vs";
   const labelEl   = document.getElementById("hero-game-label");
   const dateEl    = document.getElementById("hero-game-date");
   const matchupEl = document.getElementById("hero-game-matchup");
-  if (labelEl)   labelEl.textContent   = isToday ? "Game Day" : "Next Game";
+  if (labelEl) {
+    labelEl.textContent = isToday ? "Game Day" : isFuture ? "Next Game" : "Latest Game";
+  }
   if (dateEl && todayGame.date)
     dateEl.textContent = new Date(todayGame.date + "T12:00:00")
       .toLocaleDateString("en-US", { month: "long", day: "numeric" });
