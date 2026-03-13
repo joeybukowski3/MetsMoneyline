@@ -84,16 +84,24 @@ const METS_2025 = {
     "Griffin Canning": { ERA: 4.23, FIP: 4.31, xFIP: 4.19, WHIP: 1.28, KBB: 2.7 }
   },
 
-  // Key hitters (2025 final)
+  // 2026 roster hitters — 2025 stats used as placeholders until season begins
   hitters: {
-    "Francisco Lindor": { AVG: 0.273, OPS: 0.847, wRC_plus: 131, HR: 28 },
-    "Pete Alonso": { AVG: 0.254, OPS: 0.881, wRC_plus: 138, HR: 34 },
-    "Juan Soto": { AVG: 0.288, OPS: 0.963, wRC_plus: 158, HR: 31 },
-    "Brandon Nimmo": { AVG: 0.241, OPS: 0.764, wRC_plus: 112, HR: 17 },
-    "Mark Vientos": { AVG: 0.261, OPS: 0.812, wRC_plus: 121, HR: 23 },
-    "Starling Marte": { AVG: 0.256, OPS: 0.731, wRC_plus: 105, HR: 11 },
-    "Jeff McNeil": { AVG: 0.267, OPS: 0.751, wRC_plus: 108, HR: 9 },
-    "Francisco Alvarez": { AVG: 0.238, OPS: 0.769, wRC_plus: 113, HR: 19 }
+    // Returning core
+    "Francisco Lindor":  { AVG: 0.273, OPS: 0.847, wRC_plus: 131, HR: 28 },
+    "Juan Soto":         { AVG: 0.288, OPS: 0.963, wRC_plus: 158, HR: 31 },
+    "Pete Alonso":       { AVG: 0.254, OPS: 0.881, wRC_plus: 138, HR: 34 },
+    "Mark Vientos":      { AVG: 0.261, OPS: 0.812, wRC_plus: 121, HR: 23 },
+    "Francisco Alvarez": { AVG: 0.238, OPS: 0.769, wRC_plus: 113, HR: 19 },
+    "Brandon Nimmo":     { AVG: 0.241, OPS: 0.764, wRC_plus: 112, HR: 17 },
+    // New additions
+    "Marcus Semien":     { AVG: 0.230, OPS: 0.669, wRC_plus: 100, HR: 15 },
+    "Bo Bichette":       { AVG: 0.311, OPS: 0.840, wRC_plus: 120, HR: 18 },
+    "Luis Robert Jr.":   { AVG: 0.223, OPS: 0.661, wRC_plus:  90, HR: 14 },
+    "Jorge Polanco":     { AVG: 0.265, OPS: 0.821, wRC_plus: 115, HR: 26 },
+    "Brett Baty":        { AVG: 0.254, OPS: 0.748, wRC_plus: 105, HR: 18 },
+    "Tyrone Taylor":     { AVG: 0.223, OPS: 0.598, wRC_plus:  75, HR:  2 },
+    "Mike Tauchman":     { AVG: 0.263, OPS: 0.756, wRC_plus: 110, HR:  9 },
+    "Ronny Mauricio":    { AVG: 0.226, OPS: 0.662, wRC_plus:  85, HR:  6 }
   }
 };
 

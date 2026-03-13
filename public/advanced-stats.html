@@ -382,19 +382,20 @@
     const livePlayerMap = {};
     for (const p of liveLineup) { if (p.name) livePlayerMap[p.name] = p; }
 
-    // Fallback 2025 roster in batting order
+    // Fallback 2026 projected starting 9 (2025 stats as placeholders)
     const FALLBACK_LINEUP = [
       { name: "Francisco Lindor",  pos: "SS", id: 596019 },
       { name: "Juan Soto",         pos: "LF", id: 665742 },
       { name: "Pete Alonso",       pos: "1B", id: 624413 },
-      { name: "Mark Vientos",      pos: "3B", id: 672515 },
-      { name: "Francisco Alvarez", pos: "C",  id: 682628 },
+      { name: "Marcus Semien",     pos: "2B", id: 543760 },
+      { name: "Bo Bichette",       pos: "3B", id: 666182 },
+      { name: "Francisco Alvarez", pos: "C",  id: 682626 },
+      { name: "Mark Vientos",      pos: "DH", id: 672724 },
       { name: "Brandon Nimmo",     pos: "CF", id: 607043 },
-      { name: "Starling Marte",    pos: "RF", id: 516782 },
-      { name: "Jeff McNeil",       pos: "2B", id: 643446 },
+      { name: "Luis Robert Jr.",   pos: "RF", id: 673357 },
     ];
-    const FALLBACK_BB = { "Francisco Lindor":9.8,"Juan Soto":18.2,"Pete Alonso":10.1,"Mark Vientos":7.9,"Francisco Alvarez":8.4,"Brandon Nimmo":12.3,"Starling Marte":6.1,"Jeff McNeil":7.8 };
-    const FALLBACK_K  = { "Francisco Lindor":18.2,"Juan Soto":15.1,"Pete Alonso":22.4,"Mark Vientos":24.1,"Francisco Alvarez":25.3,"Brandon Nimmo":21.4,"Starling Marte":20.9,"Jeff McNeil":14.8 };
+    const FALLBACK_BB = { "Francisco Lindor":9.8,"Juan Soto":18.2,"Pete Alonso":10.1,"Marcus Semien":7.2,"Bo Bichette":6.8,"Francisco Alvarez":8.4,"Mark Vientos":7.9,"Brandon Nimmo":12.3,"Luis Robert Jr.":5.9 };
+    const FALLBACK_K  = { "Francisco Lindor":18.2,"Juan Soto":15.1,"Pete Alonso":22.4,"Marcus Semien":18.8,"Bo Bichette":17.4,"Francisco Alvarez":25.3,"Mark Vientos":24.1,"Brandon Nimmo":21.4,"Luis Robert Jr.":22.1 };
 
     // Use live lineup if available and has names, else use fallback
     const displayLineup = liveLineup.filter(p => p.name && p.pos && p.pos !== "P").length >= 5

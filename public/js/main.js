@@ -37,17 +37,17 @@ function getTeamAbbr(teamName) {
   return words[words.length - 1].substring(0, 3).toUpperCase();
 }
 
-// ── Default lineup fallback (2026 projected roster) ──
+// ── Default lineup fallback — 2026 projected starting 9 (stats from 2025) ──
 const DEFAULT_METS_LINEUP = [
-  { order: 1, name: "Marcus Semien",      pos: "2B", hand: "R", playerId: 543760 },
-  { order: 2, name: "Francisco Lindor",   pos: "SS", hand: "S", playerId: 596019 },
-  { order: 3, name: "Juan Soto",          pos: "LF", hand: "L", playerId: 665742 },
-  { order: 4, name: "Pete Alonso",        pos: "1B", hand: "R", playerId: 624413 },
-  { order: 5, name: "Mark Vientos",       pos: "3B", hand: "R", playerId: 668978 },
-  { order: 6, name: "Francisco Alvarez",  pos: "C",  hand: "R", playerId: 682628 },
-  { order: 7, name: "Brandon Nimmo",      pos: "CF", hand: "L", playerId: 607043 },
-  { order: 8, name: "Tyrone Taylor",      pos: "RF", hand: "R", playerId: 621020 },
-  { order: 9, name: "pitcher slot",       pos: "P",  hand: "-", playerId: null   }
+  { order: 1, name: "Francisco Lindor",  pos: "SS", hand: "S", playerId: 596019 },
+  { order: 2, name: "Juan Soto",         pos: "LF", hand: "L", playerId: 665742 },
+  { order: 3, name: "Pete Alonso",       pos: "1B", hand: "R", playerId: 624413 },
+  { order: 4, name: "Marcus Semien",     pos: "2B", hand: "R", playerId: 543760 },
+  { order: 5, name: "Bo Bichette",       pos: "3B", hand: "R", playerId: 666182 },
+  { order: 6, name: "Francisco Alvarez", pos: "C",  hand: "R", playerId: 682626 },
+  { order: 7, name: "Mark Vientos",      pos: "DH", hand: "R", playerId: 672724 },
+  { order: 8, name: "Brandon Nimmo",     pos: "CF", hand: "L", playerId: 607043 },
+  { order: 9, name: "Luis Robert Jr.",   pos: "RF", hand: "R", playerId: 673357 },
 ];
 
 function isMissingStat(value) {
@@ -746,18 +746,27 @@ function buildTrendsCard(game) {
 }
 
 /* ── Recent Game Tiles ── */
-function buildRecentTiles(games) {
-  const past = games.filter(g => g.status === "final").slice(-5).reverse();
-  if (!past.length) return "<p style='color:#9099b0;padding:1rem;'>No completed games yet.</p>";
-  return past.map(g => `
+function buildRecentTiles(games, recentBreakdowns) {
+  // Prefer persisted recentBreakdowns; fall back to filtering games array
+  const items = (recentBreakdowns && recentBreakdowns.length > 0)
+    ? recentBreakdowns
+    : games.filter(g => g.status === "final").slice(-5).reverse();
+  if (!items.length) return "<p style='color:#9099b0;padding:1rem;'>No completed games yet.</p>";
+  return items.slice(0, 5).map(g => {
+    const pickLine = g.officialPick
+      ? `<div style="font-size:0.7rem;color:#9099b0;margin-top:0.15rem;font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${g.officialPick}">${g.officialPick}</div>`
+      : "";
+    return `
     <div class="game-tile ${g.result === "W" ? "win" : ""}">
       <div style="font-size:0.78rem;color:#9099b0;margin-bottom:0.2rem">${g.date}</div>
       <div style="font-weight:700;color:var(--navy);margin-bottom:0.2rem">${g.opponent}</div>
       <div style="font-size:0.9rem">${g.finalScore || "—"}</div>
+      ${pickLine}
       <div style="font-size:0.82rem;color:${g.result === "W" ? "var(--orange)" : "#9099b0"};margin-top:0.2rem">
-        ${g.result === "W" ? "Mets Win" : "See the breakdown"}
+        ${g.result === "W" ? "Mets Win" : "Loss"}
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 /* ── Init ── */
@@ -910,7 +919,7 @@ function buildTeamAdvancedCard(game) {
 }
 
 async function init() {
-  const { games, generatedAt } = await loadGameData();
+  const { games, generatedAt, recentBreakdowns } = await loadGameData();
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
   const nextUpcomingGame = games.find(g => g.date >= today && g.status === "upcoming");
   const mostRecentGame = [...games]
@@ -944,7 +953,7 @@ async function init() {
     buildPickSection(todayGame) +             // Row 7 — pick banner
     buildTrendsCard(todayGame);               // supplemental trends
 
-  document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games);
+  document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games, recentBreakdowns);
 
   if (generatedAt) {
     const el = document.getElementById("data-timestamp");

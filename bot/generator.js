@@ -378,6 +378,64 @@ async function getPitcherInfo(pitcherId) {
   return data?.people?.[0] || null;
 }
 
+// ─────────────────────────────────────────────
+// Estimated lineup from 2025 starting roster
+// ─────────────────────────────────────────────
+
+function buildEstimatedMetsLineup(mets2025) {
+  const LINEUP_ORDER = [
+    { name: "Francisco Lindor",  pos: "SS", hand: "S", playerId: 596019 },
+    { name: "Juan Soto",         pos: "LF", hand: "L", playerId: 665742 },
+    { name: "Pete Alonso",       pos: "1B", hand: "R", playerId: 624413 },
+    { name: "Marcus Semien",     pos: "2B", hand: "R", playerId: 543760 },
+    { name: "Bo Bichette",       pos: "3B", hand: "R", playerId: 666182 },
+    { name: "Francisco Alvarez", pos: "C",  hand: "R", playerId: 682626 },
+    { name: "Mark Vientos",      pos: "DH", hand: "R", playerId: 672724 },
+    { name: "Brandon Nimmo",     pos: "CF", hand: "L", playerId: 607043 },
+    { name: "Luis Robert Jr.",   pos: "RF", hand: "R", playerId: 673357 },
+  ];
+  return LINEUP_ORDER.map((p, i) => {
+    const stats = mets2025?.hitters?.[p.name] || {};
+    return {
+      order:       i + 1,
+      playerId:    p.playerId,
+      name:        p.name,
+      pos:         p.pos,
+      hand:        p.hand,
+      seasonAVG:   stats.AVG  ?? "N/A",
+      seasonOPS:   stats.OPS  ?? "N/A",
+      seasonHR:    stats.HR   ?? "N/A",
+      statsSeason: "2025",
+    };
+  });
+}
+
+// ─────────────────────────────────────────────
+// Fetch final score for a completed game
+// ─────────────────────────────────────────────
+
+async function fetchGameResult(teamId, gameDate) {
+  const url =
+    `https://statsapi.mlb.com/api/v1/schedule` +
+    `?sportId=1&teamId=${teamId}&date=${gameDate}` +
+    `&hydrate=linescore&gameType=R,S,E,A`;
+  const data = await safeGet(url, `game result ${gameDate}`);
+  const games = data?.dates?.[0]?.games || [];
+  for (const g of games) {
+    const state = g.status?.detailedState || "";
+    if (!["Final", "Completed Early", "Game Over"].includes(state)) continue;
+    const isHome  = g.teams.home.team.id === teamId;
+    const myTeam  = isHome ? g.teams.home : g.teams.away;
+    const oppTeam = isHome ? g.teams.away : g.teams.home;
+    const won = (myTeam.score ?? 0) > (oppTeam.score ?? 0);
+    return {
+      score:  `${myTeam.score ?? "?"}-${oppTeam.score ?? "?"}`,
+      result: won ? "W" : "L",
+    };
+  }
+  return null;
+}
+
 function extractLineups(feed, metsIsHome) {
   const empty = { mets: [], opp: [], status: "projected" };
   if (!feed) return empty;
@@ -1228,6 +1286,13 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
   const oppHand  = extractPitcherHand(feed, oppPitcherRaw?.id,  isHome ? "away" : "home");
   const lineups  = extractLineups(feed, isHome);
 
+  // If official lineup not posted yet, use estimated starting roster as fallback
+  if (lineups.mets.length === 0) {
+    lineups.mets = buildEstimatedMetsLineup(mets2025);
+    lineups.lineupStatus = "projected";
+    console.log("  Mets lineup not released — using estimated starting roster.");
+  }
+
   await Promise.all(lineups.mets.map(async (player) => {
     const fb = mets2025?.hitters?.[player.name];
     if (fb) {
@@ -1382,6 +1447,7 @@ async function buildGameObject(game, standings, isGameDay, previousGame, mets202
 
   const gameObject = {
     id:        `${dateStr}-mets-vs-${oppSlug}`,
+    gamePk:    game.gamePk,
     date:      dateStr,
     time:      new Date(game.gameDate).toLocaleTimeString("en-US", {
                  hour: "2-digit", minute: "2-digit", timeZone: "America/New_York"
@@ -1517,11 +1583,41 @@ async function run() {
   console.log(`  Opp SP:   ${gameObject.pitching.opp.name}  (mlbId: ${gameObject.pitching.opp.mlbId})`);
   console.log(`---------------------------\n`);
 
+  // ── Archive previous game into recentBreakdowns ──
+  let recentBreakdowns = previousOutput?.recentBreakdowns || [];
+  if (
+    previousGame &&
+    previousGame.date &&
+    previousGame.date < getTodayET() &&
+    previousGame.status !== "final" &&
+    !recentBreakdowns.some(b => b.date === previousGame.date && b.opponent === previousGame.opponent)
+  ) {
+    console.log(`Fetching final result for previous game (${previousGame.date} vs ${previousGame.opponent})...`);
+    const finalResult = await fetchGameResult(TEAM_ID, previousGame.date);
+    if (finalResult) {
+      const breakdown = {
+        date:         previousGame.date,
+        opponent:     previousGame.opponent,
+        homeAway:     previousGame.homeAway,
+        finalScore:   finalResult.score,
+        result:       finalResult.result,
+        pickSummary:  previousGame.writeup?.pickSummary  || null,
+        officialPick: previousGame.writeup?.officialPick || null,
+        status:       "final",
+      };
+      recentBreakdowns = [breakdown, ...recentBreakdowns].slice(0, 10);
+      console.log(`  Archived: ${breakdown.result} ${breakdown.finalScore} vs ${breakdown.opponent}`);
+    } else {
+      console.log(`  Final score not yet available for ${previousGame.date}.`);
+    }
+  }
+
   const jsonPath = path.join(__dirname, "../public/data/sample-game.json");
 
   const output = {
     generatedAt: new Date().toISOString(),
-    games: [gameObject]
+    games: [gameObject],
+    recentBreakdowns,
   };
 
   fs.writeFileSync(jsonPath, JSON.stringify(output, null, 2));
