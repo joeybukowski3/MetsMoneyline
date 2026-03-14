@@ -1,8 +1,147 @@
 import METS_2025 from "../data/mets2025.js";
 
+const METS_TEAM_ID = 121;
+const EASTERN_TIME_ZONE = "America/New_York";
+
+function getTodayET() {
+  return new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
+}
+
+function toEtDateString(dateLike) {
+  return new Date(dateLike).toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
+}
+
+function formatGameTimeET(dateTime) {
+  if (!dateTime) return "TBD";
+  return new Date(dateTime).toLocaleTimeString("en-US", {
+    timeZone: EASTERN_TIME_ZONE,
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function createFallbackPitching(probables = {}) {
+  return {
+    mets: {
+      name: probables.mets?.fullName || "TBD",
+      mlbId: probables.mets?.id ?? null,
+      announced: Boolean(probables.mets)
+    },
+    opp: {
+      name: probables.opp?.fullName || "TBD",
+      mlbId: probables.opp?.id ?? null,
+      announced: Boolean(probables.opp)
+    },
+    metsBullpen: {},
+    oppBullpen: {}
+  };
+}
+
+function mapScheduleGame(game) {
+  const away = game?.teams?.away?.team || {};
+  const home = game?.teams?.home?.team || {};
+  const metsAreAway = away.id === METS_TEAM_ID;
+  const opponent = metsAreAway ? home : away;
+  const metsProbable = metsAreAway ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher;
+  const oppProbable = metsAreAway ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher;
+  const metsRecord = metsAreAway ? game?.teams?.away?.leagueRecord : game?.teams?.home?.leagueRecord;
+  const oppRecord = metsAreAway ? game?.teams?.home?.leagueRecord : game?.teams?.away?.leagueRecord;
+
+  return {
+    date: game.officialDate,
+    opponent: opponent?.name || "Opponent TBD",
+    oppTeamId: opponent?.id ?? null,
+    homeAway: metsAreAway ? "away" : "home",
+    time: formatGameTimeET(game.gameDate),
+    ballpark: game?.venue?.name || "Venue TBD",
+    status: "upcoming",
+    metsRecord: metsRecord ? `${metsRecord.w}-${metsRecord.l}` : "",
+    oppRecord: oppRecord ? `${oppRecord.w}-${oppRecord.l}` : "",
+    moneyline: {},
+    total: null,
+    overUnder: null,
+    lineups: { lineupStatus: "not_released", mets: [], opp: [] },
+    pitching: createFallbackPitching({ mets: metsProbable, opp: oppProbable }),
+    advancedMatchup: [],
+    teamAdvanced: null,
+    gameContext: null,
+    trends: [],
+    weather: null,
+    writeup: null
+  };
+}
+
+async function fetchLiveMetsGame() {
+  const today = getTodayET();
+  const start = new Date();
+  start.setDate(start.getDate() - 1);
+  const end = new Date();
+  end.setDate(end.getDate() + 14);
+
+  const url = new URL("https://statsapi.mlb.com/api/v1/schedule/games/");
+  url.searchParams.set("sportId", "1");
+  url.searchParams.set("teamId", String(METS_TEAM_ID));
+  url.searchParams.set("startDate", toEtDateString(start));
+  url.searchParams.set("endDate", toEtDateString(end));
+  url.searchParams.set("hydrate", "team,venue,probablePitcher");
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`MLB schedule request failed: ${res.status}`);
+
+  const data = await res.json();
+  const games = (data?.dates || [])
+    .flatMap(d => d.games || [])
+    .sort((a, b) => new Date(a.gameDate) - new Date(b.gameDate));
+
+  const todaysGame = games.find(g => g.officialDate === today);
+  if (todaysGame) return mapScheduleGame(todaysGame);
+
+  const nextGame = games.find(g => g.officialDate > today);
+  return nextGame ? mapScheduleGame(nextGame) : null;
+}
+
+function mergeLiveGame(staticGame, liveGame) {
+  if (!liveGame) return staticGame;
+  if (!staticGame) return liveGame;
+
+  const sameMatchup =
+    staticGame.date === liveGame.date &&
+    staticGame.opponent === liveGame.opponent &&
+    staticGame.homeAway === liveGame.homeAway;
+
+  if (!sameMatchup) return liveGame;
+
+  return {
+    ...staticGame,
+    ...liveGame,
+    moneyline: staticGame.moneyline || liveGame.moneyline,
+    lineups: staticGame.lineups || liveGame.lineups,
+    pitching: staticGame.pitching || liveGame.pitching,
+    advancedMatchup: staticGame.advancedMatchup || liveGame.advancedMatchup,
+    teamAdvanced: staticGame.teamAdvanced || liveGame.teamAdvanced,
+    gameContext: staticGame.gameContext || liveGame.gameContext,
+    trends: staticGame.trends || liveGame.trends,
+    weather: staticGame.weather || liveGame.weather,
+    writeup: staticGame.writeup || liveGame.writeup
+  };
+}
+
 async function loadGameData() {
   const res = await fetch("data/sample-game.json");
-  return res.json();
+  const data = await res.json();
+
+  try {
+    const liveGame = await fetchLiveMetsGame();
+    if (data?.games?.length) {
+      data.games = [mergeLiveGame(data.games[0], liveGame)];
+    } else if (liveGame) {
+      data.games = [liveGame];
+    }
+  } catch (err) {
+    console.warn("Unable to refresh live Mets schedule.", err);
+  }
+
+  return data;
 }
 
 // ── MLB team ID lookup (covers all 30 teams) ──
@@ -133,8 +272,12 @@ function resolveAdvancedMatchup(game) {
 
 /* ── ROW 1: Matchup Bar ── */
 function buildMatchupStrip(game) {
-  const metsML  = game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`;
-  const oppML   = game.moneyline.opp  > 0 ? `+${game.moneyline.opp}`  : `${game.moneyline.opp}`;
+  const metsML = game.moneyline?.mets != null
+    ? (game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : `${game.moneyline.mets}`)
+    : null;
+  const oppML = game.moneyline?.opp != null
+    ? (game.moneyline.opp > 0 ? `+${game.moneyline.opp}` : `${game.moneyline.opp}`)
+    : null;
 
   const gameDate = game.date || "";
   const dateDisplay = gameDate
@@ -180,7 +323,7 @@ function buildMatchupStrip(game) {
       <div class="mb-meta">
         ${dateDisplay ? `<span class="mb-meta-item">&#x1F550; ${dateDisplay}</span>` : ""}
         <span class="mb-meta-item">&#x1F4CD; ${game.ballpark}</span>
-        <span class="mb-meta-item">$ <span class="mb-ml-nym">NYM ${metsML}</span> / OPP ${oppML}</span>
+        ${metsML != null && oppML != null ? `<span class="mb-meta-item">$ <span class="mb-ml-nym">NYM ${metsML}</span> / OPP ${oppML}</span>` : ""}
         ${ouItem}
       </div>
     </div>`;
@@ -310,6 +453,7 @@ function statBar(label, rawVal, pctlFn, displayVal) {
 
 /* ── ROW 2: Starting Pitching (two-column pitcher card layout) ── */
 function buildPitchingCard(game) {
+  if (!game.pitching?.mets || !game.pitching?.opp) return "";
   const p  = game.pitching;
   const mn = p.mets.name;
 
@@ -682,13 +826,14 @@ function buildAnalysisRow(game) {
 /* ── ROW 5: Pick Banner ── */
 function buildPickSection(game) {
   if (!game.writeup) {
+    const isToday = game.date === getTodayET();
     const dateDisplay = game.date
       ? new Date(game.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
       : "";
     return `
       <div class="pick-section pick-pending">
         <p class="pick-summary">Today's analysis and pick will be generated on game day morning.</p>
-        <p class="pick-label">📅 Next Game: ${dateDisplay} vs ${game.opponent}</p>
+        <p class="pick-label">📅 ${isToday ? "Today's Game" : "Next Game"}: ${dateDisplay} vs ${game.opponent}</p>
       </div>`;
   }
 
@@ -920,7 +1065,7 @@ function buildTeamAdvancedCard(game) {
 
 async function init() {
   const { games, generatedAt, recentBreakdowns } = await loadGameData();
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  const today = getTodayET();
   const nextUpcomingGame = games.find(g => g.date >= today && g.status === "upcoming");
   const mostRecentGame = [...games]
     .filter(g => g.date <= today)
@@ -935,7 +1080,7 @@ async function init() {
   const dateEl    = document.getElementById("hero-game-date");
   const matchupEl = document.getElementById("hero-game-matchup");
   if (labelEl) {
-    labelEl.textContent = isToday ? "Game Day" : isFuture ? "Next Game" : "Latest Game";
+    labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
   }
   if (dateEl && todayGame.date)
     dateEl.textContent = new Date(todayGame.date + "T12:00:00")
