@@ -27,22 +27,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: bot/package-lock.json
 
       - name: Require OpenAI key for scheduled generation
-        if: ${{ github.event_name != 'push' }}
+        if: ${{ github.event_name == 'schedule' }}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           if [ -z "$OPENAI_API_KEY" ]; then
-            echo "OPENAI_API_KEY secret is required for scheduled or manual generation."
+            echo "OPENAI_API_KEY secret is required for scheduled generation."
             exit 1
           fi
 
