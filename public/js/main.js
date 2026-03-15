@@ -163,6 +163,50 @@ const TEAM_MLB_ID = {
   "Toronto Blue Jays":       141, "Washington Nationals":    120,
 };
 
+const TEAM_ABBR = {
+  "Arizona Diamondbacks": "ARI",
+  "Atlanta Braves": "ATL",
+  "Baltimore Orioles": "BAL",
+  "Boston Red Sox": "BOS",
+  "Chicago Cubs": "CHC",
+  "Chicago White Sox": "CWS",
+  "Cincinnati Reds": "CIN",
+  "Cleveland Guardians": "CLE",
+  "Colorado Rockies": "COL",
+  "Detroit Tigers": "DET",
+  "Houston Astros": "HOU",
+  "Kansas City Royals": "KC",
+  "Los Angeles Angels": "LAA",
+  "Los Angeles Dodgers": "LAD",
+  "Miami Marlins": "MIA",
+  "Milwaukee Brewers": "MIL",
+  "Minnesota Twins": "MIN",
+  "New York Mets": "NYM",
+  "New York Yankees": "NYY",
+  "Oakland Athletics": "ATH",
+  "Philadelphia Phillies": "PHI",
+  "Pittsburgh Pirates": "PIT",
+  "San Diego Padres": "SD",
+  "San Francisco Giants": "SF",
+  "Seattle Mariners": "SEA",
+  "St. Louis Cardinals": "STL",
+  "Tampa Bay Rays": "TB",
+  "Texas Rangers": "TEX",
+  "Toronto Blue Jays": "TOR",
+  "Washington Nationals": "WSH"
+};
+
+const TEAM_STORYLINES = {
+  "New York Mets": {
+    season2025: "89-73",
+    note: "New York is coming off an 89-73 season and is looking for quick impact from Juan Soto, Marcus Semien, Bo Bichette, Jorge Polanco, and Luis Robert Jr."
+  },
+  "Toronto Blue Jays": {
+    season2025: null,
+    note: "Toronto is still trying to settle a reshaped lineup and get more consistency from its veteran core heading into this matchup."
+  }
+};
+
 function getTeamLogoUrl(teamNameOrId) {
   const id = typeof teamNameOrId === "number"
     ? teamNameOrId
@@ -171,9 +215,62 @@ function getTeamLogoUrl(teamNameOrId) {
 }
 
 function getTeamAbbr(teamName) {
-  // Short abbreviation from last word of team name
+  if (TEAM_ABBR[teamName]) return TEAM_ABBR[teamName];
   const words = (teamName || "").split(" ");
   return words[words.length - 1].substring(0, 3).toUpperCase();
+}
+
+function formatOrdinal(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return `${n}st`;
+  if (mod10 === 2 && mod100 !== 12) return `${n}nd`;
+  if (mod10 === 3 && mod100 !== 13) return `${n}rd`;
+  return `${n}th`;
+}
+
+function describeStreak(games, teamLabel) {
+  if (!games?.length) return `${teamLabel} have not established a meaningful streak yet`;
+  const latest = games[0]?.result;
+  if (!latest || !["W", "L"].includes(latest)) return `${teamLabel} are still settling into the season`;
+  let count = 0;
+  for (const game of games) {
+    if (game.result !== latest) break;
+    count += 1;
+  }
+  const streakType = latest === "W" ? "winning" : "losing";
+  return `${count}-game ${streakType} streak`;
+}
+
+function getTeamStoryline(teamName) {
+  return TEAM_STORYLINES[teamName]?.note || `${teamName} are still looking for steadier production from their current core as the season settles in.`;
+}
+
+function buildGameBreakdown(game) {
+  const gc = game.gameContext || {};
+  const metsStory = getTeamStoryline("New York Mets");
+  const oppStory = getTeamStoryline(game.opponent);
+  const metsStreak = describeStreak(gc.metsRecentGames, "The Mets");
+  const oppStreak = describeStreak(gc.oppRecentGames, game.opponent);
+  const h2hWins = gc.headToHead?.wins ?? 0;
+  const h2hLosses = gc.headToHead?.losses ?? 0;
+  const priorMeetings = h2hWins + h2hLosses;
+  const meetingText = priorMeetings === 0
+    ? "This is the 1st meeting between these teams this season."
+    : `This is their ${formatOrdinal(priorMeetings + 1)} matchup of the season, with ${h2hWins > h2hLosses ? "the Mets" : h2hLosses > h2hWins ? game.opponent : "neither side"} ${h2hWins === h2hLosses ? `even at ${h2hWins}-${h2hLosses}` : `ahead ${Math.max(h2hWins, h2hLosses)}-${Math.min(h2hWins, h2hLosses)}`}.`;
+
+  const parts = [
+    `Both teams come into this game with the Mets on a ${metsStreak} and ${getTeamAbbr(game.opponent)} on a ${oppStreak}. New York is ${game.metsRecord || "0-0"} on the year while ${game.opponent} is ${game.oppRecord || "0-0"}.`,
+    meetingText,
+    metsStory,
+    oppStory
+  ];
+
+  return `
+    <div class="section-floating-label">Game Breakdown</div>
+    <div class="card full-card" style="padding:1.25rem">
+      <p style="margin:0;color:var(--ink);line-height:1.7">${parts.join(" ")}</p>
+    </div>`;
 }
 
 // ── Default lineup fallback — 2026 projected starting 9 (stats from 2025) ──
@@ -236,7 +333,7 @@ function resolveBullpen(bullpenObj, isNYM, oppName) {
   }
   const oppData = METS_2025.opponents2025?.[oppName];
   return {
-    era:    isMissingStat(bp.seasonERA)  ? (oppData?.bullpenERA  ? stat2025(oppData.bullpenERA)  : "N/A") : bp.seasonERA,
+    era:    isMissingStat(bp.seasonERA)  ? (oppData?.bullpenERA  ? stat2025(oppData.bullpenERA)  : stat2025(METS_2025.leagueAvg2025.bullpenERA)) : bp.seasonERA,
     xfip:   isMissingStat(bp.seasonXFIP) ? (oppData?.bullpenxFIP ? stat2025(oppData.bullpenxFIP) : stat2025(METS_2025.leagueAvg2025.bullpenxFIP)) : bp.seasonXFIP,
     last14: isMissingStat(bp.last14ERA) ? (oppData?.bullpenLast14ERA ? stat2025(oppData.bullpenLast14ERA) : (oppData?.bullpenERA ? stat2025(oppData.bullpenERA) : stat2025(METS_2025.leagueAvg2025.bullpenERA))) : bp.last14ERA,
     rating: bp.rating ?? 65
@@ -247,15 +344,20 @@ function resolveBullpen(bullpenObj, isNYM, oppName) {
 function resolveAdvancedMatchup(game) {
   const oppData = METS_2025.opponents2025?.[game.opponent];
   const live    = game.advancedMatchup || [];
+  const labels  = ["wRC+", "Hard-Hit%", "Barrel%", "BB%", "K%"];
 
   const get = (i, key) => live[i]?.[key];
 
   const metsWRC = METS_2025.teamWRC_plus;
-  const oppWRC  = oppData?.teamWRC_plus;
+  const oppWRC  = oppData?.teamWRC_plus ?? METS_2025.leagueAvg2025.teamWRC_plus;
   const wrcEdge = (metsWRC && oppWRC && (metsWRC - oppWRC) >= 5) ? "Mets" : "Neutral";
+  const oppHardHit = oppData?.hardHitPct ?? METS_2025.leagueAvg2025.hardHitPct;
+  const oppBarrel = oppData?.barrelPct ?? METS_2025.leagueAvg2025.barrelPct;
+  const oppBB = oppData?.bbPct ?? METS_2025.leagueAvg2025.bbPct;
+  const oppK = oppData?.kPct ?? METS_2025.leagueAvg2025.kPct;
 
   const resolveRow = (i, metsFallback, oppFallback, edgeFallback) => ({
-    category: get(i, "category") || live[i]?.category,
+    category: get(i, "category") || labels[i],
     mets: !isMissingStat(get(i, "mets")) ? get(i, "mets") : stat2025(metsFallback),
     opp:  !isMissingStat(get(i, "opp"))  ? get(i, "opp")  : (oppFallback != null ? stat2025(oppFallback) : "N/A"),
     edge: (get(i, "edge") && get(i, "edge") !== "Neutral") ? get(i, "edge") : edgeFallback
@@ -263,10 +365,10 @@ function resolveAdvancedMatchup(game) {
 
   return [
     resolveRow(0, metsWRC, oppWRC, wrcEdge),
-    resolveRow(1, METS_2025.hardHitPct, null, "N/A"),
-    resolveRow(2, METS_2025.barrelPct,  null, "N/A"),
-    resolveRow(3, METS_2025.bbPct,      null, "N/A"),
-    resolveRow(4, METS_2025.kPct,       null, "N/A")
+    resolveRow(1, METS_2025.hardHitPct, oppHardHit, "N/A"),
+    resolveRow(2, METS_2025.barrelPct,  oppBarrel, "N/A"),
+    resolveRow(3, METS_2025.bbPct,      oppBB, "N/A"),
+    resolveRow(4, METS_2025.kPct,       oppK, "N/A")
   ];
 }
 
@@ -679,10 +781,14 @@ function buildPitchingCard(game) {
 /* ── ROW 3: Lineups + Advanced Metrics ── */
 function buildRow3(game) {
   const l = game.lineups || {};
-  const notReleased = l.lineupStatus === "not_released";
-  const metsLineup = (!notReleased && Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : DEFAULT_METS_LINEUP;
+  const metsLineup = (Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : DEFAULT_METS_LINEUP;
   const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
-  const statusLabel = l.lineupStatus === "confirmed" ? "Confirmed" : "Projected";
+  const isConfirmed = l.lineupStatus === "confirmed";
+  const statusLabel = isConfirmed ? "Confirmed Lineups" : "Projected Lineups";
+  const statusNote = isConfirmed
+    ? ""
+    : `<span style="font-size:0.72rem;color:#9099b0;font-weight:500;text-transform:none;letter-spacing:normal;">Lineup for the game will be updated once announced by both teams.</span>`;
+  const notReleased = false;
   const oppAbbr = getTeamAbbr(game.opponent);
 
   const headshotImg = (p) => {
@@ -758,7 +864,7 @@ function buildRow3(game) {
   }).join("");
 
   return `
-    <div class="section-floating-label">${statusLabel} Lineups</div>
+    <div class="section-floating-label">${statusLabel} ${statusNote}</div>
     <div class="lineup-two-col">
       <div class="card full-card">
         <div class="lineup-team-header mets-header">New York Mets</div>
@@ -830,9 +936,12 @@ function buildPickSection(game) {
     const dateDisplay = game.date
       ? new Date(game.date + "T12:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
       : "";
+    const pendingMessage = isToday
+      ? "Today's analysis and pick are scheduled for 9:05 AM ET, with a backup refresh at 10:05 AM ET."
+      : "Next game's analysis and pick are scheduled for 9:05 AM ET on game day, with a backup refresh at 10:05 AM ET.";
     return `
       <div class="pick-section pick-pending">
-        <p class="pick-summary">Today's analysis and pick will be generated on game day morning.</p>
+        <p class="pick-summary">${pendingMessage}</p>
         <p class="pick-label">📅 ${isToday ? "Today's Game" : "Next Game"}: ${dateDisplay} vs ${game.opponent}</p>
       </div>`;
   }
@@ -1090,12 +1199,13 @@ async function init() {
   const container = document.getElementById("today-game-container");
   container.innerHTML =
     buildMatchupStrip(todayGame) +            // Row 1 — matchup header
-    buildGameContextCard(todayGame) +         // Row 2 — recent form, injuries, H2H, pitcher logs
-    buildPitchingCard(todayGame) +            // Row 3 — starting pitching comparison
-    buildRow3(todayGame) +                    // Row 4 — lineups + advanced metrics
-    buildTeamAdvancedCard(todayGame) +        // Row 5 — team advanced stats table
-    buildAnalysisRow(todayGame) +             // Row 6 — 3 analysis tiles
-    buildPickSection(todayGame) +             // Row 7 — pick banner
+    buildGameBreakdown(todayGame) +           // Row 2 — top-level matchup recap
+    buildGameContextCard(todayGame) +         // Row 3 — recent form, injuries, H2H, pitcher logs
+    buildPitchingCard(todayGame) +            // Row 4 — starting pitching comparison
+    buildRow3(todayGame) +                    // Row 5 — lineups + advanced metrics
+    buildTeamAdvancedCard(todayGame) +        // Row 6 — team advanced stats table
+    buildAnalysisRow(todayGame) +             // Row 7 — 3 analysis tiles
+    buildPickSection(todayGame) +             // Row 8 — pick banner
     buildTrendsCard(todayGame);               // supplemental trends
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games, recentBreakdowns);
