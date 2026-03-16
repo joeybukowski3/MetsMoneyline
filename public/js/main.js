@@ -226,7 +226,7 @@ const TEAM_ABBR = {
 const TEAM_STORYLINES = {
   "New York Mets": {
     season2025: "89-73",
-    note: "New York is coming off an 89-73 season and is looking for quick impact from Juan Soto, Marcus Semien, Bo Bichette, Jorge Polanco, and Luis Robert Jr."
+    note: "New York is coming off an 89-73 season and is trying to turn its high-end talent into steadier early-season form."
   },
   "Toronto Blue Jays": {
     season2025: null,
@@ -256,7 +256,12 @@ function formatOrdinal(n) {
   return `${n}th`;
 }
 
-function describeStreak(games, teamLabel) {
+function getTeamLocationName(teamName) {
+  if (!teamName) return "The opponent";
+  return teamName.replace(/^(The\s+)/i, "").replace(/\s+(Mets|Nationals|Yankees|Phillies|Braves|Marlins|Brewers|Pirates|Reds|Cubs|Cardinals|Dodgers|Padres|Giants|Diamondbacks|Rockies|Angels|Astros|Rangers|Mariners|Athletics|Guardians|Tigers|Royals|Twins|White Sox|Red Sox|Blue Jays|Orioles|Rays)$/i, "").trim() || teamName;
+}
+
+function describeStreakClause(games, teamLabel) {
   if (!games?.length) return `${teamLabel} have not established a meaningful streak yet`;
   const latest = games[0]?.result;
   if (!latest || !["W", "L"].includes(latest)) return `${teamLabel} are still settling into the season`;
@@ -266,7 +271,7 @@ function describeStreak(games, teamLabel) {
     count += 1;
   }
   const streakType = latest === "W" ? "winning" : "losing";
-  return `${count}-game ${streakType} streak`;
+  return `${teamLabel} enter on a ${count}-game ${streakType} streak`;
 }
 
 function getTeamStoryline(teamName) {
@@ -277,8 +282,8 @@ function buildGameBreakdown(game) {
   const gc = game.gameContext || {};
   const metsStory = getTeamStoryline("New York Mets");
   const oppStory = getTeamStoryline(game.opponent);
-  const metsStreak = describeStreak(gc.metsRecentGames, "The Mets");
-  const oppStreak = describeStreak(gc.oppRecentGames, game.opponent);
+  const metsStreak = describeStreakClause(gc.metsRecentGames, "The Mets");
+  const oppStreak = describeStreakClause(gc.oppRecentGames, getTeamAbbr(game.opponent));
   const h2hWins = gc.headToHead?.wins ?? 0;
   const h2hLosses = gc.headToHead?.losses ?? 0;
   const priorMeetings = h2hWins + h2hLosses;
@@ -287,7 +292,7 @@ function buildGameBreakdown(game) {
     : `This is their ${formatOrdinal(priorMeetings + 1)} matchup of the season, with ${h2hWins > h2hLosses ? "the Mets" : h2hLosses > h2hWins ? game.opponent : "neither side"} ${h2hWins === h2hLosses ? `even at ${h2hWins}-${h2hLosses}` : `ahead ${Math.max(h2hWins, h2hLosses)}-${Math.min(h2hWins, h2hLosses)}`}.`;
 
   const parts = [
-    `Both teams come into this game with the Mets on a ${metsStreak} and ${getTeamAbbr(game.opponent)} on a ${oppStreak}. New York is ${getMetsRecord(game)} on the year while ${game.opponent} is ${getOppRecord(game)}.`,
+    `${metsStreak}, while ${oppStreak}. New York is ${getMetsRecord(game)} on the year, while ${getTeamLocationName(game.opponent)} is ${getOppRecord(game)}.`,
     meetingText,
     metsStory,
     oppStory
