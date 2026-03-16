@@ -3,6 +3,10 @@ import METS_2025 from "../data/mets2025.js";
 const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
 
+function getTodayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
 function getTodayET() {
   return new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
 }
@@ -37,6 +41,29 @@ function createFallbackPitching(probables = {}) {
   };
 }
 
+function isValidRecordString(value) {
+  return /^\d+-\d+$/.test(String(value || "").trim());
+}
+
+function formatLeagueRecord(record) {
+  if (record?.w == null || record?.l == null) return "";
+  return `${record.w}-${record.l}`;
+}
+
+function getMetsRecord(game) {
+  if (isValidRecordString(game?.metsRecord)) return game.metsRecord;
+  const last10 = game?.trends?.find(t => t.category === "Last 10 Games");
+  if (isValidRecordString(last10?.mets)) return last10.mets;
+  return "0-0";
+}
+
+function getOppRecord(game) {
+  if (isValidRecordString(game?.oppRecord)) return game.oppRecord;
+  const last10 = game?.trends?.find(t => t.category === "Last 10 Games");
+  if (isValidRecordString(last10?.opp)) return last10.opp;
+  return "0-0";
+}
+
 function mapScheduleGame(game) {
   const away = game?.teams?.away?.team || {};
   const home = game?.teams?.home?.team || {};
@@ -55,8 +82,8 @@ function mapScheduleGame(game) {
     time: formatGameTimeET(game.gameDate),
     ballpark: game?.venue?.name || "Venue TBD",
     status: "upcoming",
-    metsRecord: metsRecord ? `${metsRecord.w}-${metsRecord.l}` : "",
-    oppRecord: oppRecord ? `${oppRecord.w}-${oppRecord.l}` : "",
+    metsRecord: formatLeagueRecord(metsRecord),
+    oppRecord: formatLeagueRecord(oppRecord),
     moneyline: {},
     total: null,
     overUnder: null,
@@ -260,7 +287,7 @@ function buildGameBreakdown(game) {
     : `This is their ${formatOrdinal(priorMeetings + 1)} matchup of the season, with ${h2hWins > h2hLosses ? "the Mets" : h2hLosses > h2hWins ? game.opponent : "neither side"} ${h2hWins === h2hLosses ? `even at ${h2hWins}-${h2hLosses}` : `ahead ${Math.max(h2hWins, h2hLosses)}-${Math.min(h2hWins, h2hLosses)}`}.`;
 
   const parts = [
-    `Both teams come into this game with the Mets on a ${metsStreak} and ${getTeamAbbr(game.opponent)} on a ${oppStreak}. New York is ${game.metsRecord || "0-0"} on the year while ${game.opponent} is ${game.oppRecord || "0-0"}.`,
+    `Both teams come into this game with the Mets on a ${metsStreak} and ${getTeamAbbr(game.opponent)} on a ${oppStreak}. New York is ${getMetsRecord(game)} on the year while ${game.opponent} is ${getOppRecord(game)}.`,
     meetingText,
     metsStory,
     oppStory
@@ -398,6 +425,8 @@ function buildMatchupStrip(game) {
   const oppLogoHtml = oppLogoUrl
     ? `<img src="${oppLogoUrl}" alt="${game.opponent}">`
     : `<span style="width:36px;height:36px;display:inline-block;"></span>`;
+  const metsRecord = getMetsRecord(game);
+  const oppRecord = getOppRecord(game);
 
   return `
     <div class="matchup-bar-compact">
@@ -406,7 +435,7 @@ function buildMatchupStrip(game) {
           <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="NYM">
           <div>
             <div class="mb-team-name">New York Mets</div>
-            <span class="mb-record">${game.metsRecord}</span>
+            <span class="mb-record">${metsRecord}</span>
           </div>
         </div>
         <div class="mb-vs">
@@ -417,7 +446,7 @@ function buildMatchupStrip(game) {
           ${oppLogoHtml}
           <div>
             <div class="mb-team-name">${game.opponent}</div>
-            <span class="mb-record">${game.oppRecord}</span>
+            <span class="mb-record">${oppRecord}</span>
           </div>
         </div>
       </div>
@@ -1172,29 +1201,49 @@ function buildTeamAdvancedCard(game) {
     </div>`;
 }
 
+function showNoGameTodayState() {
+  const labelEl = document.getElementById("hero-game-label");
+  const dateEl = document.getElementById("hero-game-date");
+  const matchupEl = document.getElementById("hero-game-matchup");
+  const container = document.getElementById("today-game-container");
+
+  if (labelEl) labelEl.textContent = "Today's Game";
+  if (dateEl) {
+    dateEl.textContent = new Date(getTodayISO() + "T12:00:00")
+      .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+  }
+  if (matchupEl) matchupEl.textContent = "No breakdown available yet";
+  if (container) {
+    container.innerHTML = `
+      <div class="card full-card" style="padding:1.5rem;text-align:center">
+        <p style="margin:0;color:var(--ink);line-height:1.7">No breakdown available yet for today's game. Check back soon.</p>
+      </div>`;
+  }
+}
+
 async function init() {
   const { games, generatedAt, recentBreakdowns } = await loadGameData();
-  const today = getTodayET();
-  const nextUpcomingGame = games.find(g => g.date >= today && g.status === "upcoming");
-  const mostRecentGame = [...games]
-    .filter(g => g.date <= today)
-    .sort((a, b) => b.date.localeCompare(a.date))[0];
-  const todayGame = nextUpcomingGame || mostRecentGame || games[0];
+  const today = getTodayISO();
+  const todayGame = games.find(g => g.date === today);
 
   // Update hero headline — three separate lines
-  const isToday = todayGame.date === today;
-  const isFuture = todayGame.date > today;
-  const vsAt    = todayGame.homeAway === "away" ? "@" : "vs";
-  const labelEl   = document.getElementById("hero-game-label");
-  const dateEl    = document.getElementById("hero-game-date");
-  const matchupEl = document.getElementById("hero-game-matchup");
-  if (labelEl) {
-    labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
-  }
-  if (dateEl && todayGame.date)
-    dateEl.textContent = new Date(todayGame.date + "T12:00:00")
-      .toLocaleDateString("en-US", { month: "long", day: "numeric" });
-  if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${todayGame.opponent}`;
+  if (!todayGame) {
+    showNoGameTodayState();
+  } else {
+    const isToday = todayGame.date === today;
+    const isFuture = todayGame.date > today;
+    const vsAt = todayGame.homeAway === "away" ? "@" : "vs";
+    const labelEl = document.getElementById("hero-game-label");
+    const dateEl = document.getElementById("hero-game-date");
+    const matchupEl = document.getElementById("hero-game-matchup");
+    if (labelEl) {
+      labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
+    }
+    if (dateEl && todayGame.date) {
+      dateEl.textContent = new Date(todayGame.date + "T12:00:00")
+        .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    }
+    if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${todayGame.opponent}`;
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
@@ -1207,6 +1256,8 @@ async function init() {
     buildAnalysisRow(todayGame) +             // Row 7 — 3 analysis tiles
     buildPickSection(todayGame) +             // Row 8 — pick banner
     buildTrendsCard(todayGame);               // supplemental trends
+
+  }
 
   document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games, recentBreakdowns);
 
