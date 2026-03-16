@@ -201,46 +201,58 @@
       return secondTime - firstTime;
     }
 
-    async function loadSidebarNews() {
+    function renderNewsItems(items) {
       const container = document.getElementById("sidebar-news");
+
+      if (!items.length) {
+        container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">No recent news found.</span>`;
+        return;
+      }
+
+      container.innerHTML = items.map(article => `
+        <a class="news-card-sm" href="${article.link}" target="_blank" rel="noopener">
+          ${article.thumbnail ? `<img src="${article.thumbnail}" alt="" onerror="this.style.display='none'">` : ""}
+          <div>
+            <div class="news-card-sm-title">${article.title}</div>
+            <div class="news-card-sm-meta">${article.source} &middot; ${getRelativeTime(article.pubDate)}</div>
+          </div>
+        </a>
+      `).join("");
+    }
+
+    async function fetchFeedItems(feed) {
       try {
-        const results = await Promise.allSettled(
-          NEWS_FEEDS.map(feed =>
-            fetch(RSS_PROXY + encodeURIComponent(feed.url), { signal: AbortSignal.timeout(10000) })
-              .then(response => {
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return response.json();
-              })
-              .then(data => {
-                if (data.status !== "ok") throw new Error(data.message || "Feed error");
-                return (data.items || []).map(item => toArticle(item, feed.name));
-              })
-          )
-        );
+        const response = await fetch(RSS_PROXY + encodeURIComponent(feed.url), {
+          signal: AbortSignal.timeout(10000)
+        });
 
-        const articles = results
-          .flatMap(result => result.status === "fulfilled" ? result.value : [])
-          .filter(isMetsArticle)
-          .sort(sortByNewest)
-          .slice(0, 5);
-
-        if (!articles.length) {
-          container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">No recent news found.</span>`;
-          return;
+        if (!response.ok) {
+          console.warn(`Sidebar news feed failed: ${feed.url} (${response.status})`);
+          return [];
         }
 
-        container.innerHTML = articles.map(article => `
-          <a class="news-card-sm" href="${article.link}" target="_blank" rel="noopener">
-            ${article.thumbnail ? `<img src="${article.thumbnail}" alt="" onerror="this.style.display='none'">` : ""}
-            <div>
-              <div class="news-card-sm-title">${article.title}</div>
-              <div class="news-card-sm-meta">${article.source} &middot; ${getRelativeTime(article.pubDate)}</div>
-            </div>
-          </a>
-        `).join("");
-      } catch (e) {
-        container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">News unavailable.</span>`;
+        const data = await response.json();
+        if (data.status !== "ok") {
+          console.warn(`Sidebar news feed failed: ${feed.url}`);
+          return [];
+        }
+
+        return (data.items || []).map(item => toArticle(item, feed.name));
+      } catch {
+        console.warn(`Sidebar news feed failed: ${feed.url}`);
+        return [];
       }
+    }
+
+    async function loadSidebarNews() {
+      const results = await Promise.all(NEWS_FEEDS.map(fetchFeedItems));
+      const articles = results
+        .flatMap(items => items)
+        .filter(isMetsArticle)
+        .sort(sortByNewest)
+        .slice(0, 5);
+
+      renderNewsItems(articles);
     }
 
     loadSidebarNews();
