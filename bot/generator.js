@@ -1010,8 +1010,28 @@ async function run() {
   const { date, dryRun } = parseArgs(process.argv.slice(2));
   console.log(`Building Mets game package for ${date}${dryRun ? " (dry run)" : ""}...`);
 
-  const gameFacts = await buildGameFacts(date);
-  const writeup = await generateWriteupFromFacts(gameFacts);
+  let gameFacts;
+  try {
+    gameFacts = await buildGameFacts(date);
+  } catch (error) {
+    const previousOutput = loadPreviousOutput();
+    if (!dryRun && previousOutput) {
+      console.warn(`[warn] Unable to build fresh game data for ${date}: ${error.message}`);
+      console.warn("[warn] Keeping existing public/data/sample-game.json so deploy can continue.");
+      return;
+    }
+    throw error;
+  }
+
+  let writeup;
+  try {
+    writeup = await generateWriteupFromFacts(gameFacts);
+  } catch (error) {
+    console.warn(`[warn] Writeup generation failed: ${error.message}`);
+    console.warn("[warn] Falling back to deterministic writeup.");
+    writeup = buildFallbackWriteup(gameFacts);
+  }
+
   const output = buildGameJson(gameFacts, writeup);
 
   if (dryRun) {

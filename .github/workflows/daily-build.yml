@@ -36,37 +36,15 @@ jobs:
           cache: npm
           cache-dependency-path: bot/package-lock.json
 
-      - name: Require OpenAI key for scheduled generation
-        if: ${{ github.event_name == 'schedule' }}
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "OPENAI_API_KEY secret is required for scheduled generation."
-            exit 1
-          fi
-
       - name: Install bot dependencies
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         working-directory: ./bot
-        run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "OPENAI_API_KEY not set; skipping bot install on push deploy."
-            exit 0
-          fi
-          npm ci
+        run: npm ci
 
       - name: Generate fresh game data
         working-directory: ./bot
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "OPENAI_API_KEY not set; skipping data generation on push deploy."
-            exit 0
-          fi
-          node generator.js
+        run: node generator.js
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
