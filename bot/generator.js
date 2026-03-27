@@ -448,6 +448,37 @@ async function getGameForDate(targetDate) {
   return data?.dates?.[0]?.games?.[0] || null;
 }
 
+async function resolveTargetGame(targetDate) {
+  const exactGame = await getGameForDate(targetDate);
+  if (exactGame) {
+    return { requestedDate: targetDate, resolvedDate: targetDate, game: exactGame };
+  }
+
+  const startDate = targetDate;
+  const endDateObj = new Date(`${targetDate}T12:00:00Z`);
+  endDateObj.setUTCDate(endDateObj.getUTCDate() + 14);
+  const endDate = endDateObj.toISOString().slice(0, 10);
+
+  const url =
+    "https://statsapi.mlb.com/api/v1/schedule" +
+    `?sportId=1&teamId=${TEAM_ID}&startDate=${startDate}&endDate=${endDate}` +
+    "&hydrate=team,venue,linescore,probablePitcher,seriesStatus";
+  const data = await safeGetJson(url, `schedule window ${startDate} ${endDate}`);
+  const nextGame = (data?.dates || [])
+    .flatMap((dateEntry) => dateEntry.games || [])
+    .sort((a, b) => new Date(a.gameDate) - new Date(b.gameDate))[0] || null;
+
+  if (!nextGame) {
+    throw new Error(`No Mets game found on or after ${targetDate}`);
+  }
+
+  return {
+    requestedDate: targetDate,
+    resolvedDate: nextGame.officialDate || targetDate,
+    game: nextGame
+  };
+}
+
 async function getGameFeed(gamePk) {
   if (!gamePk) return null;
   return safeGetJson(`https://statsapi.mlb.com/api/v1.1/game/${gamePk}/feed/live`, `live feed ${gamePk}`);
@@ -497,7 +528,98 @@ async function buildDefaultMetsLineup() {
   });
 }
 
-async function buildLineupFacts(feed) {
+function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, fallbackStatsByName = {}) {
+  return roster
+    .map((player, index) => {
+      const liveStats = seasonStatsByPlayer[player.id] || {};
+      const fallbackStats = fallbackStatsByName[player.fullName] || {};
+      const ops = liveStats.ops ?? fallbackStats.OPS ?? null;
+      const avg = liveStats.avg ?? fallbackStats.AVG ?? null;
+      const homeRuns = liveStats.homeRuns ?? fallbackStats.HR ?? null;
+      const gamesPlayed = Number(liveStats.gamesPlayed || 0);
+
+      return {
+        order: index + 1,
+        playerId: player.id,
+        name: player.fullName,
+        pos: player.primaryPosition?.abbreviation || "?",
+        hand: player.batSide?.code || null,
+        seasonAVG: avg,
+        seasonOPS: ops,
+        seasonHR: homeRuns != null ? Number(homeRuns) : null,
+        statsSeason: gamesPlayed > 0 ? String(new Date().getFullYear()) : (avg != null || ops != null ? "2025" : null),
+        _sortOps: parseFloat(String(ops ?? "").replace(/[^\d.-]/g, "")) || -1,
+        _sortHr: Number(homeRuns || 0),
+        _sortAvg: parseFloat(String(avg ?? "").replace(/[^\d.-]/g, "")) || 0
+      };
+    })
+    .sort((a, b) => (b._sortOps - a._sortOps) || (b._sortHr - a._sortHr) || (b._sortAvg - a._sortAvg))
+    .slice(0, 9)
+    .map((player, index) => ({
+      order: index + 1,
+      playerId: player.playerId,
+      name: player.name,
+      pos: player.pos,
+      hand: player.hand,
+      seasonAVG: player.seasonAVG,
+      seasonOPS: player.seasonOPS,
+      seasonHR: player.seasonHR,
+      statsSeason: player.statsSeason
+    }));
+}
+
+async function getTeamRoster(teamId, season) {
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active&season=${season}&hydrate=person(stats(type=[season],group=[hitting],season=${season}))`,
+    `roster ${teamId} ${season}`
+  );
+  return (data?.roster || []).map((entry) => ({
+    id: entry?.person?.id,
+    fullName: entry?.person?.fullName,
+    primaryPosition: entry?.position || entry?.person?.primaryPosition || null,
+    batSide: entry?.person?.batSide || null,
+    stats: entry?.person?.stats?.[0]?.splits?.[0]?.stat || null
+  }));
+}
+
+async function getMostRecentConfirmedLineup(teamId, beforeDate) {
+  const season = beforeDate.slice(0, 4);
+  const schedule = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&sportId=1&gameType=R&startDate=${season}-03-01&endDate=${beforeDate}&hydrate=team,linescore`,
+    `recent lineup schedule ${teamId} ${beforeDate}`
+  );
+
+  const recentGame = (schedule?.dates || [])
+    .flatMap((dateEntry) => (dateEntry.games || []).map((game) => ({ ...game, _date: dateEntry.date })))
+    .filter((game) => ["Final", "Completed Early", "Game Over"].includes(game?.status?.detailedState || ""))
+    .sort((a, b) => new Date(`${b._date}T12:00:00Z`) - new Date(`${a._date}T12:00:00Z`))[0];
+
+  if (!recentGame?.gamePk) return [];
+  const feed = await getGameFeed(recentGame.gamePk);
+  const awayTeam = feed?.liveData?.boxscore?.teams?.away;
+  const homeTeam = feed?.liveData?.boxscore?.teams?.home;
+  const lineupTeam = awayTeam?.team?.id === teamId ? awayTeam : homeTeam?.team?.id === teamId ? homeTeam : null;
+  return buildLineupFromBoxscore(lineupTeam);
+}
+
+async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
+  const recentLineup = await getMostRecentConfirmedLineup(teamId, beforeDate);
+  if (recentLineup.length) return recentLineup;
+
+  const season = String(new Date().getFullYear());
+  const roster = await getTeamRoster(teamId, season);
+  const mets2025 = isMets ? await loadMets2025() : null;
+  const seasonStatsByPlayer = Object.fromEntries(
+    roster.map((player) => [player.id, player.stats || {}])
+  );
+  const fallbackStatsByName = isMets ? (mets2025?.hitters || {}) : {};
+
+  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer, fallbackStatsByName);
+  if (projected.length) return projected;
+  return isMets ? buildDefaultMetsLineup() : [];
+}
+
+async function buildLineupFacts(feed, oppTeamId, targetDate) {
   const awayTeam = feed?.liveData?.boxscore?.teams?.away;
   const homeTeam = feed?.liveData?.boxscore?.teams?.home;
   const metsTeam = awayTeam?.team?.id === TEAM_ID ? awayTeam : homeTeam;
@@ -515,8 +637,8 @@ async function buildLineupFacts(feed) {
   }
 
   return {
-    mets: await buildDefaultMetsLineup(),
-    opp: oppConfirmed,
+    mets: metsConfirmed.length ? metsConfirmed : await buildProjectedTeamLineup(TEAM_ID, true, targetDate),
+    opp: oppConfirmed.length ? oppConfirmed : await buildProjectedTeamLineup(oppTeamId, false, targetDate),
     status: "projected"
   };
 }
@@ -552,24 +674,31 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
   };
 }
 
-function deriveAdvancedCards(metsTeamRow, oppTeamRow, metsLast10, oppLast10) {
-  const parseNumber = (value) => {
-    const num = parseFloat(String(value ?? "").replace(/[^\d.-]/g, ""));
-    return Number.isFinite(num) ? num : null;
-  };
+function parseNumber(value) {
+  const num = parseFloat(String(value ?? "").replace(/[^\d.-]/g, ""));
+  return Number.isFinite(num) ? num : null;
+}
 
-  const metsHardHit = parseNumber(metsTeamRow?.hard_hit_percent || metsTeamRow?.hard_hit_pct);
-  const oppHardHit = parseNumber(oppTeamRow?.hard_hit_percent || oppTeamRow?.hard_hit_pct);
+function deriveAdvancedCards(metsTeamRow, oppTeamRow, metsLast10, oppLast10, teamAdvanced = null) {
+  const metsHardHit = parseNumber(metsTeamRow?.hard_hit_percent || metsTeamRow?.hard_hit_pct || teamAdvanced?.mets?.hardHit);
+  const oppHardHit = parseNumber(oppTeamRow?.hard_hit_percent || oppTeamRow?.hard_hit_pct || teamAdvanced?.opp?.hardHit);
   const metsBarrel = parseNumber(metsTeamRow?.barrel_batted_rate || metsTeamRow?.barrel_pct);
   const oppBarrel = parseNumber(oppTeamRow?.barrel_batted_rate || oppTeamRow?.barrel_pct);
+  const metsWalk = parseNumber(teamAdvanced?.mets?.bbPct);
+  const oppWalk = parseNumber(teamAdvanced?.opp?.bbPct);
+  const metsK = parseNumber(teamAdvanced?.mets?.kPct);
+  const oppK = parseNumber(teamAdvanced?.opp?.kPct);
+  const metsWrc = parseNumber(teamAdvanced?.mets?.wrcPlus);
+  const oppWrc = parseNumber(teamAdvanced?.opp?.wrcPlus);
   const edgeForHigher = (left, right) => left == null || right == null ? "Neutral" : left > right ? "Mets" : right > left ? "Opp" : "Neutral";
+  const edgeForLower = (left, right) => left == null || right == null ? "Neutral" : left < right ? "Mets" : right < left ? "Opp" : "Neutral";
 
   return [
     {
       category: "Offense vs SP Hand - wRC+",
-      mets: "N/A",
-      opp: "N/A",
-      edge: "Neutral"
+      mets: metsWrc == null ? "N/A" : String(metsWrc),
+      opp: oppWrc == null ? "N/A" : String(oppWrc),
+      edge: edgeForHigher(metsWrc, oppWrc)
     },
     {
       category: "Hard-Hit %",
@@ -585,17 +714,133 @@ function deriveAdvancedCards(metsTeamRow, oppTeamRow, metsLast10, oppLast10) {
     },
     {
       category: "Walk Rate (BB%)",
-      mets: "N/A",
-      opp: "N/A",
-      edge: "Neutral"
+      mets: metsWalk == null ? "N/A" : `${metsWalk.toFixed(1)}%`,
+      opp: oppWalk == null ? "N/A" : `${oppWalk.toFixed(1)}%`,
+      edge: edgeForHigher(metsWalk, oppWalk)
     },
     {
       category: "Strikeout Rate (K%)",
-      mets: sanitizeRecord(metsLast10, "N/A"),
-      opp: sanitizeRecord(oppLast10, "N/A"),
-      edge: compareRecords(metsLast10, oppLast10)
+      mets: metsK == null ? sanitizeRecord(metsLast10, "N/A") : `${metsK.toFixed(1)}%`,
+      opp: oppK == null ? sanitizeRecord(oppLast10, "N/A") : `${oppK.toFixed(1)}%`,
+      edge: metsK == null || oppK == null ? compareRecords(metsLast10, oppLast10) : edgeForLower(metsK, oppK)
     }
   ];
+}
+
+async function getTeamSeasonStats(teamId, group, season) {
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=${group}&season=${season}`,
+    `team ${group} ${teamId} ${season}`
+  );
+  return data?.stats?.[0]?.splits?.[0]?.stat || null;
+}
+
+async function buildTeamAdvancedFacts(metsTeamId, oppTeamId, savantTeams) {
+  const season = String(new Date().getFullYear());
+  const [metsHitting, oppHitting, metsPitching, oppPitching] = await Promise.all([
+    getTeamSeasonStats(metsTeamId, "hitting", season),
+    getTeamSeasonStats(oppTeamId, "hitting", season),
+    getTeamSeasonStats(metsTeamId, "pitching", season),
+    getTeamSeasonStats(oppTeamId, "pitching", season)
+  ]);
+
+  const metsSavant = getSavantTeamRow(savantTeams, metsTeamId);
+  const oppSavant = getSavantTeamRow(savantTeams, oppTeamId);
+
+  return {
+    mets: {
+      wrcPlus: parseNumber(metsSavant?.woba ? parseFloat(metsSavant.woba) * 300 : null),
+      xba: metsSavant?.est_ba || metsSavant?.xba || null,
+      ops: metsHitting?.ops || null,
+      hardHit: metsSavant?.hard_hit_percent || metsSavant?.hard_hit_pct || null,
+      bbPct: metsHitting?.plateAppearances ? ((Number(metsHitting.baseOnBalls || 0) / Number(metsHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
+      kPct: metsHitting?.plateAppearances ? ((Number(metsHitting.strikeOuts || 0) / Number(metsHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
+      rotFip: metsPitching?.fip || null
+    },
+    opp: {
+      wrcPlus: parseNumber(oppSavant?.woba ? parseFloat(oppSavant.woba) * 300 : null),
+      xba: oppSavant?.est_ba || oppSavant?.xba || null,
+      ops: oppHitting?.ops || null,
+      hardHit: oppSavant?.hard_hit_percent || oppSavant?.hard_hit_pct || null,
+      bbPct: oppHitting?.plateAppearances ? ((Number(oppHitting.baseOnBalls || 0) / Number(oppHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
+      kPct: oppHitting?.plateAppearances ? ((Number(oppHitting.strikeOuts || 0) / Number(oppHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
+      rotFip: oppPitching?.fip || null
+    }
+  };
+}
+
+async function getTeamRecentGames(teamId, beforeDate, n = 5) {
+  const season = beforeDate.slice(0, 4);
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&sportId=1&gameType=R&startDate=${season}-03-01&endDate=${beforeDate}&hydrate=linescore,team`,
+    `recent games ${teamId} ${beforeDate}`
+  );
+
+  const games = [];
+  for (const dateEntry of data?.dates || []) {
+    for (const game of dateEntry.games || []) {
+      const state = game?.status?.detailedState || "";
+      if (!["Final", "Completed Early", "Game Over"].includes(state)) continue;
+      const isHome = game?.teams?.home?.team?.id === teamId;
+      const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
+      const teamScore = isHome ? game?.teams?.home?.score : game?.teams?.away?.score;
+      const oppScore = isHome ? game?.teams?.away?.score : game?.teams?.home?.score;
+      games.push({
+        date: dateEntry.date,
+        opponent: oppTeam?.name || "Opponent TBD",
+        homeAway: isHome ? "home" : "road",
+        result: Number(teamScore) > Number(oppScore) ? "W" : "L",
+        score: `${teamScore}-${oppScore}`
+      });
+    }
+  }
+
+  return games.sort((a, b) => b.date.localeCompare(a.date)).slice(0, n);
+}
+
+async function getHeadToHead(teamId, oppTeamId, season) {
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&opponentId=${oppTeamId}&sportId=1&gameType=R&startDate=${season}-03-01&endDate=${season}-11-30&hydrate=linescore,team`,
+    `head to head ${teamId} ${oppTeamId} ${season}`
+  );
+
+  let wins = 0;
+  let losses = 0;
+  for (const dateEntry of data?.dates || []) {
+    for (const game of dateEntry.games || []) {
+      const state = game?.status?.detailedState || "";
+      if (!["Final", "Completed Early", "Game Over"].includes(state)) continue;
+      const isHome = game?.teams?.home?.team?.id === teamId;
+      const teamScore = isHome ? game?.teams?.home?.score : game?.teams?.away?.score;
+      const oppScore = isHome ? game?.teams?.away?.score : game?.teams?.home?.score;
+      if (Number(teamScore) > Number(oppScore)) wins += 1;
+      else losses += 1;
+    }
+  }
+
+  return { wins, losses };
+}
+
+async function getPitcherRecentStarts(mlbId, beforeDate, n = 4) {
+  if (!mlbId) return [];
+  const season = beforeDate.slice(0, 4);
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&group=pitching&season=${season}`,
+    `pitcher game log ${mlbId} ${season}`
+  );
+
+  return (data?.stats?.[0]?.splits || [])
+    .filter((split) => split?.date && split.date < beforeDate)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, n)
+    .map((split) => ({
+      date: split.date,
+      opponent: split?.opponent?.name || split?.team?.name || "Opponent TBD",
+      ip: split?.stat?.inningsPitched || "0.0",
+      er: split?.stat?.earnedRuns != null ? String(split.stat.earnedRuns) : "0",
+      k: split?.stat?.strikeOuts != null ? String(split.stat.strikeOuts) : "0",
+      result: split?.stat?.wins ? "W" : split?.stat?.losses ? "L" : "-"
+    }));
 }
 
 function extractPreviewFacts(content) {
@@ -630,24 +875,20 @@ function buildMoneyFactsFromPrevious(previousGame) {
 }
 
 async function buildGameFacts(targetDate) {
-  const game = await getGameForDate(targetDate);
-  if (!game) {
-    throw new Error(`No Mets game found on ${targetDate}`);
-  }
-
+  const { requestedDate, resolvedDate, game } = await resolveTargetGame(targetDate);
   const isHome = game?.teams?.home?.team?.id === TEAM_ID;
   const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
   const previousOutput = loadPreviousOutput();
   const previousGame = previousOutput?.games?.[0];
-  const samePreviousGame = previousGame?.date === targetDate && previousGame?.opponent === oppTeam?.name
+  const samePreviousGame = previousGame?.date === resolvedDate && previousGame?.opponent === oppTeam?.name
     ? previousGame
     : null;
 
   const [feed, content, metsRecords, oppRecords, metsInjuries, oppInjuries, savantTeams] = await Promise.all([
     getGameFeed(game.gamePk),
     getGameContent(game.gamePk),
-    getTeamSeasonRecordFacts(TEAM_ID, targetDate, false),
-    getTeamSeasonRecordFacts(oppTeam.id, targetDate, false),
+    getTeamSeasonRecordFacts(TEAM_ID, resolvedDate, false),
+    getTeamSeasonRecordFacts(oppTeam.id, resolvedDate, false),
     getTeamInjuries(TEAM_ID),
     getTeamInjuries(oppTeam.id),
     loadSavantTeamLeaderboard()
@@ -658,14 +899,20 @@ async function buildGameFacts(targetDate) {
     opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
   };
 
-  const [pitching, lineups, metsBullpen, oppBullpen] = await Promise.all([
+  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog] = await Promise.all([
     Promise.all([
       getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName),
       getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName)
     ]).then(([metsPitcher, oppPitcher]) => ({ mets: metsPitcher, opp: oppPitcher })),
-    buildLineupFacts(feed),
+    buildLineupFacts(feed, oppTeam.id, resolvedDate),
     buildBullpenFacts(TEAM_ID, TEAM_NAME, true),
-    buildBullpenFacts(oppTeam.id, oppTeam.name, false)
+    buildBullpenFacts(oppTeam.id, oppTeam.name, false),
+    buildTeamAdvancedFacts(TEAM_ID, oppTeam.id, savantTeams),
+    getTeamRecentGames(TEAM_ID, resolvedDate, 5),
+    getTeamRecentGames(oppTeam.id, resolvedDate, 5),
+    getHeadToHead(TEAM_ID, oppTeam.id, resolvedDate.slice(0, 4)),
+    getPitcherRecentStarts(probablePitchers.mets?.id, resolvedDate, 4),
+    getPitcherRecentStarts(probablePitchers.opp?.id, resolvedDate, 4)
   ]);
 
   const metsTeamRow = getSavantTeamRow(savantTeams, TEAM_ID);
@@ -679,7 +926,8 @@ async function buildGameFacts(targetDate) {
 
   const facts = {
     meta: {
-      date: targetDate,
+      requestedDate,
+      date: resolvedDate,
       time: formatTimeET(game?.gameDate),
       ballpark: game?.venue?.name || "Venue TBD",
       homeTeam: game?.teams?.home?.team?.name || TEAM_NAME,
@@ -709,12 +957,22 @@ async function buildGameFacts(targetDate) {
       ...metsInjuries.map((injury) => `Mets: ${injury}`),
       ...oppInjuries.map((injury) => `${oppTeam.name}: ${injury}`)
     ],
+    gameContext: {
+      metsRecentGames,
+      oppRecentGames,
+      metsInjuries: metsInjuries.map((injury) => ({ name: injury.split(" (")[0], status: injury.match(/\(([^)]+)\)/)?.[1] || "IL", description: injury })),
+      oppInjuries: oppInjuries.map((injury) => ({ name: injury.split(" (")[0], status: injury.match(/\(([^)]+)\)/)?.[1] || "IL", description: injury })),
+      headToHead,
+      metsPitcherLog,
+      oppPitcherLog
+    },
     advanced: {
-      cards: deriveAdvancedCards(metsTeamRow, oppTeamRow, metsRecords.last10, oppRecords.last10),
+      cards: deriveAdvancedCards(metsTeamRow, oppTeamRow, metsRecords.last10, oppRecords.last10, teamAdvanced),
       savantTeam: {
         mets: metsTeamRow || null,
         opp: oppTeamRow || null
-      }
+      },
+      teamAdvanced
     },
     game: {
       gamePk: game.gamePk,
@@ -889,7 +1147,7 @@ function buildGameJson(gameFacts, writeup) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
   const officialPick = writeup.officialPick || "Today's Pick: New York Mets Moneyline";
-  const sections = [...writeup.sections, { heading: officialPick, body: "" }];
+  const sections = writeup.sections;
 
   const output = {
     generatedAt: new Date().toISOString(),
@@ -900,6 +1158,7 @@ function buildGameJson(gameFacts, writeup) {
         time: gameFacts.meta.time,
         ballpark: gameFacts.meta.ballpark,
         opponent: gameFacts.game.opponent,
+        oppTeamId: gameFacts.game.oppTeamId,
         homeAway: gameFacts.meta.homeAway,
         metsRecord: sanitizeRecord(gameFacts.records.metsRecord),
         oppRecord: sanitizeRecord(gameFacts.records.oppRecord),
@@ -928,6 +1187,8 @@ function buildGameJson(gameFacts, writeup) {
           lineupStatus: gameFacts.lineups.status
         },
         advancedMatchup: gameFacts.advanced.cards,
+        teamAdvanced: gameFacts.advanced.teamAdvanced,
+        gameContext: gameFacts.gameContext,
         trends: buildTrendArray(gameFacts),
         writeup: {
           raw: writeup.raw,
