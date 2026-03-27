@@ -73,9 +73,7 @@ const openai = process.env.OPENAI_API_KEY
   ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
   : null;
 
-let cachedMets2025 = null;
 let cachedSavantPitchers = null;
-let cachedSavantTeams = null;
 
 function getTodayEasternISO() {
   return new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
@@ -217,17 +215,6 @@ function loadPreviousOutput() {
   }
 }
 
-async function loadMets2025() {
-  if (cachedMets2025) return cachedMets2025;
-
-  const source = fs.readFileSync(path.join(__dirname, "../public/data/mets2025.js"), "utf8");
-  const match = source.match(/const METS_2025 = ([\s\S]*);\s*export default METS_2025;/);
-  if (!match) throw new Error("Unable to parse public/data/mets2025.js");
-
-  cachedMets2025 = Function(`return (${match[1]});`)();
-  return cachedMets2025;
-}
-
 async function loadSavantPitcherLeaderboard() {
   if (cachedSavantPitchers) return cachedSavantPitchers;
 
@@ -250,36 +237,8 @@ async function loadSavantPitcherLeaderboard() {
   return rows;
 }
 
-async function loadSavantTeamLeaderboard() {
-  if (cachedSavantTeams) return cachedSavantTeams;
-
-  const seasons = [new Date().getFullYear(), new Date().getFullYear() - 1];
-  for (const season of seasons) {
-    const url =
-      "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
-      `?type=team&year=${season}&position=&team=&min=q&csv=true`;
-    const csv = await safeGetText(url, `Savant team leaderboard ${season}`);
-    if (!csv) continue;
-    const rows = parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true });
-    if (rows.length) {
-      cachedSavantTeams = rows;
-      return rows;
-    }
-  }
-
-  cachedSavantTeams = [];
-  return cachedSavantTeams;
-}
-
 function getSavantPitcherRow(rows, playerId) {
   return rows.find((row) => Number(row.player_id) === Number(playerId)) || null;
-}
-
-function getSavantTeamRow(rows, teamId) {
-  return rows.find((row) => {
-    const rowTeamId = Number(row.team_id || row.teamId || row.teamid);
-    return rowTeamId === Number(teamId);
-  }) || null;
 }
 
 function formatPitcherSeasonLine(stat) {
@@ -651,11 +610,11 @@ function parseNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
-function deriveAdvancedCards(metsTeamRow, oppTeamRow, metsLast10, oppLast10, teamAdvanced = null) {
-  const metsHardHit = parseNumber(metsTeamRow?.hard_hit_percent || metsTeamRow?.hard_hit_pct || teamAdvanced?.mets?.hardHit);
-  const oppHardHit = parseNumber(oppTeamRow?.hard_hit_percent || oppTeamRow?.hard_hit_pct || teamAdvanced?.opp?.hardHit);
-  const metsBarrel = parseNumber(metsTeamRow?.barrel_batted_rate || metsTeamRow?.barrel_pct);
-  const oppBarrel = parseNumber(oppTeamRow?.barrel_batted_rate || oppTeamRow?.barrel_pct);
+function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, teamAdvanced = null) {
+  const metsHardHit = parseNumber(teamAdvanced?.mets?.hardHit);
+  const oppHardHit = parseNumber(teamAdvanced?.opp?.hardHit);
+  const metsBarrel = parseNumber(teamAdvanced?.mets?.barrelPct);
+  const oppBarrel = parseNumber(teamAdvanced?.opp?.barrelPct);
   const metsWalk = parseNumber(teamAdvanced?.mets?.bbPct);
   const oppWalk = parseNumber(teamAdvanced?.opp?.bbPct);
   const metsK = parseNumber(teamAdvanced?.mets?.kPct);
@@ -707,7 +666,35 @@ async function getTeamSeasonStats(teamId, group, season) {
   return data?.stats?.[0]?.splits?.[0]?.stat || null;
 }
 
-async function buildTeamAdvancedFacts(metsTeamId, oppTeamId, savantTeams) {
+function pctFromCounts(numerator, denominator) {
+  const num = Number(numerator || 0);
+  const den = Number(denominator || 0);
+  if (!den) return null;
+  return ((num / den) * 100).toFixed(1);
+}
+
+function deriveApproxWrcPlus(hittingStat) {
+  const ops = parseFloat(String(hittingStat?.ops || ""));
+  if (!Number.isFinite(ops)) return null;
+  return Math.round(((ops / 0.720) * 100));
+}
+
+function buildSingleTeamAdvanced(hittingStat, pitchingStat) {
+  return {
+    wrcPlus: deriveApproxWrcPlus(hittingStat),
+    xba: hittingStat?.avg || null,
+    ops: hittingStat?.ops || null,
+    hardHit: null,
+    barrelPct: null,
+    bbPct: pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances),
+    kPct: pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances),
+    rotFip: pitchingStat?.fip || null,
+    rotEra: pitchingStat?.era || null,
+    rotWhip: pitchingStat?.whip || null
+  };
+}
+
+async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
   const season = String(new Date().getFullYear());
   const [metsHitting, oppHitting, metsPitching, oppPitching] = await Promise.all([
     getTeamSeasonStats(metsTeamId, "hitting", season),
@@ -716,28 +703,9 @@ async function buildTeamAdvancedFacts(metsTeamId, oppTeamId, savantTeams) {
     getTeamSeasonStats(oppTeamId, "pitching", season)
   ]);
 
-  const metsSavant = getSavantTeamRow(savantTeams, metsTeamId);
-  const oppSavant = getSavantTeamRow(savantTeams, oppTeamId);
-
   return {
-    mets: {
-      wrcPlus: parseNumber(metsSavant?.woba ? parseFloat(metsSavant.woba) * 300 : null),
-      xba: metsSavant?.est_ba || metsSavant?.xba || null,
-      ops: metsHitting?.ops || null,
-      hardHit: metsSavant?.hard_hit_percent || metsSavant?.hard_hit_pct || null,
-      bbPct: metsHitting?.plateAppearances ? ((Number(metsHitting.baseOnBalls || 0) / Number(metsHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
-      kPct: metsHitting?.plateAppearances ? ((Number(metsHitting.strikeOuts || 0) / Number(metsHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
-      rotFip: metsPitching?.fip || null
-    },
-    opp: {
-      wrcPlus: parseNumber(oppSavant?.woba ? parseFloat(oppSavant.woba) * 300 : null),
-      xba: oppSavant?.est_ba || oppSavant?.xba || null,
-      ops: oppHitting?.ops || null,
-      hardHit: oppSavant?.hard_hit_percent || oppSavant?.hard_hit_pct || null,
-      bbPct: oppHitting?.plateAppearances ? ((Number(oppHitting.baseOnBalls || 0) / Number(oppHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
-      kPct: oppHitting?.plateAppearances ? ((Number(oppHitting.strikeOuts || 0) / Number(oppHitting.plateAppearances || 1)) * 100).toFixed(1) : null,
-      rotFip: oppPitching?.fip || null
-    }
+    mets: buildSingleTeamAdvanced(metsHitting, metsPitching),
+    opp: buildSingleTeamAdvanced(oppHitting, oppPitching)
   };
 }
 
@@ -927,14 +895,13 @@ async function buildGameFacts(targetDate) {
   const previousOutput = loadPreviousOutput();
   const previousGame = previousOutput?.games?.[0];
 
-  const [feed, content, metsRecords, oppRecords, metsInjuries, oppInjuries, savantTeams] = await Promise.all([
+  const [feed, content, metsRecords, oppRecords, metsInjuries, oppInjuries] = await Promise.all([
     getGameFeed(game.gamePk),
     getGameContent(game.gamePk),
     getTeamSeasonRecordFacts(TEAM_ID, resolvedDate, false),
     getTeamSeasonRecordFacts(oppTeam.id, resolvedDate, false),
     getTeamInjuries(TEAM_ID),
-    getTeamInjuries(oppTeam.id),
-    loadSavantTeamLeaderboard()
+    getTeamInjuries(oppTeam.id)
   ]);
 
   const probablePitchers = {
@@ -950,7 +917,7 @@ async function buildGameFacts(targetDate) {
     buildLineupFacts(feed, oppTeam.id, resolvedDate),
     buildBullpenFacts(TEAM_ID, TEAM_NAME, true),
     buildBullpenFacts(oppTeam.id, oppTeam.name, false),
-    buildTeamAdvancedFacts(TEAM_ID, oppTeam.id, savantTeams),
+    buildTeamAdvancedFacts(TEAM_ID, oppTeam.id),
     getTeamRecentGames(TEAM_ID, resolvedDate, 5),
     getTeamRecentGames(oppTeam.id, resolvedDate, 5),
     getHeadToHead(TEAM_ID, oppTeam.id, resolvedDate.slice(0, 4)),
@@ -959,8 +926,8 @@ async function buildGameFacts(targetDate) {
     getOddsFacts(game)
   ]);
 
-  const metsTeamRow = getSavantTeamRow(savantTeams, TEAM_ID);
-  const oppTeamRow = getSavantTeamRow(savantTeams, oppTeam.id);
+  const metsTeamRow = null;
+  const oppTeamRow = null;
   const previewFacts = extractPreviewFacts(content);
 
   const finalState = game?.status?.detailedState || "";
