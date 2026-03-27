@@ -21,6 +21,7 @@ const TEAM_ID = 121;
 const TEAM_NAME = "New York Mets";
 const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const ODDS_API_KEY = process.env.ODDS_API_KEY || process.env.THE_ODDS_API_KEY || null;
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 
 const TEAM_IDS = {
@@ -860,18 +861,92 @@ function extractPreviewFacts(content) {
     .slice(0, 2);
 }
 
-function buildMoneyFactsFromPrevious(previousGame) {
-  return {
-    metsMoneyline: typeof previousGame?.moneyline?.mets === "number" ? previousGame.moneyline.mets : null,
-    oppMoneyline: typeof previousGame?.moneyline?.opp === "number" ? previousGame.moneyline.opp : null,
-    runLine: previousGame?.runLine && typeof previousGame.runLine.price === "number"
-      ? {
-          side: "mets",
-          spread: typeof previousGame.runLine.mets === "number" ? previousGame.runLine.mets : -1.5,
-          price: previousGame.runLine.price
-        }
-      : null
+async function getOddsFacts(game) {
+  if (!ODDS_API_KEY) {
+    console.log("No ODDS_API_KEY set; skipping live odds fetch.");
+    return {
+      metsMoneyline: null,
+      oppMoneyline: null,
+      runLine: null,
+      total: null
+    };
+  }
+
+  const commenceTime = game?.gameDate;
+  const homeTeam = game?.teams?.home?.team?.name;
+  const awayTeam = game?.teams?.away?.team?.name;
+  if (!commenceTime || !homeTeam || !awayTeam) {
+    return {
+      metsMoneyline: null,
+      oppMoneyline: null,
+      runLine: null,
+      total: null
+    };
+  }
+
+  const oddsUrl = "https://api.the-odds-api.com/v4/sports/baseball_mlb/odds";
+  const params = {
+    apiKey: ODDS_API_KEY,
+    regions: "us",
+    markets: "h2h,spreads,totals",
+    bookmakers: "draftkings,fanduel,betmgm,caesars",
+    dateFormat: "iso",
+    commenceTimeFrom: new Date(new Date(commenceTime).getTime() - 12 * 60 * 60 * 1000).toISOString(),
+    commenceTimeTo: new Date(new Date(commenceTime).getTime() + 12 * 60 * 60 * 1000).toISOString()
   };
+
+  try {
+    const response = await axios.get(oddsUrl, { params, timeout: 15000 });
+    const events = Array.isArray(response.data) ? response.data : [];
+    const event = events.find((candidate) =>
+      candidate?.home_team === homeTeam && candidate?.away_team === awayTeam
+    );
+
+    if (!event) {
+      console.warn(`[warn] No matching odds event found for ${awayTeam} at ${homeTeam}`);
+      return {
+        metsMoneyline: null,
+        oppMoneyline: null,
+        runLine: null,
+        total: null
+      };
+    }
+
+    const bookmaker = (event.bookmakers || [])[0];
+    const h2h = bookmaker?.markets?.find((market) => market.key === "h2h");
+    const spreads = bookmaker?.markets?.find((market) => market.key === "spreads");
+    const totals = bookmaker?.markets?.find((market) => market.key === "totals");
+
+    const getOutcome = (market, teamName) =>
+      market?.outcomes?.find((outcome) => outcome.name === teamName) || null;
+
+    const metsOutcome = getOutcome(h2h, TEAM_NAME);
+    const oppTeamName = homeTeam === TEAM_NAME ? awayTeam : homeTeam;
+    const oppOutcome = getOutcome(h2h, oppTeamName);
+    const metsSpreadOutcome = getOutcome(spreads, TEAM_NAME);
+    const overOutcome = totals?.outcomes?.find((outcome) => /over/i.test(outcome.name || "")) || null;
+
+    return {
+      metsMoneyline: typeof metsOutcome?.price === "number" ? metsOutcome.price : null,
+      oppMoneyline: typeof oppOutcome?.price === "number" ? oppOutcome.price : null,
+      runLine: metsSpreadOutcome && typeof metsSpreadOutcome.point === "number" && typeof metsSpreadOutcome.price === "number"
+        ? {
+            side: "mets",
+            spread: metsSpreadOutcome.point,
+            price: metsSpreadOutcome.price
+          }
+        : null,
+      total: typeof overOutcome?.point === "number" ? overOutcome.point : null
+    };
+  } catch (error) {
+    console.warn(`[warn] Odds API fetch failed: ${error.response?.data?.message || error.message}`);
+    return {
+      metsMoneyline: null,
+      oppMoneyline: null,
+      runLine: null,
+      total: null
+    };
+  }
 }
 
 async function buildGameFacts(targetDate) {
@@ -880,9 +955,6 @@ async function buildGameFacts(targetDate) {
   const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
   const previousOutput = loadPreviousOutput();
   const previousGame = previousOutput?.games?.[0];
-  const samePreviousGame = previousGame?.date === resolvedDate && previousGame?.opponent === oppTeam?.name
-    ? previousGame
-    : null;
 
   const [feed, content, metsRecords, oppRecords, metsInjuries, oppInjuries, savantTeams] = await Promise.all([
     getGameFeed(game.gamePk),
@@ -899,7 +971,7 @@ async function buildGameFacts(targetDate) {
     opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
   };
 
-  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog] = await Promise.all([
+  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money] = await Promise.all([
     Promise.all([
       getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName),
       getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName)
@@ -912,7 +984,8 @@ async function buildGameFacts(targetDate) {
     getTeamRecentGames(oppTeam.id, resolvedDate, 5),
     getHeadToHead(TEAM_ID, oppTeam.id, resolvedDate.slice(0, 4)),
     getPitcherRecentStarts(probablePitchers.mets?.id, resolvedDate, 4),
-    getPitcherRecentStarts(probablePitchers.opp?.id, resolvedDate, 4)
+    getPitcherRecentStarts(probablePitchers.opp?.id, resolvedDate, 4),
+    getOddsFacts(game)
   ]);
 
   const metsTeamRow = getSavantTeamRow(savantTeams, TEAM_ID);
@@ -944,7 +1017,7 @@ async function buildGameFacts(targetDate) {
       oppHome: oppRecords.home,
       oppRoad: oppRecords.road
     },
-    money: buildMoneyFactsFromPrevious(samePreviousGame),
+    money,
     pitching: {
       mets: pitching.mets,
       opp: pitching.opp,
@@ -1172,6 +1245,8 @@ function buildGameJson(gameFacts, writeup) {
               price: gameFacts.money.runLine.price
             }
           : null,
+        total: gameFacts.money.total,
+        overUnder: gameFacts.money.total,
         status: gameFacts.game.status,
         finalScore: gameFacts.game.finalScore,
         result: gameFacts.game.result,
