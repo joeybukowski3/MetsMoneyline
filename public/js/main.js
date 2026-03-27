@@ -1229,38 +1229,42 @@ function showNoGameTodayState() {
 async function init() {
   const { games, generatedAt, recentBreakdowns } = await loadGameData();
   const today = getTodayISO();
-  const todayGame = games.find(g => g.date === today);
+  const sortedGames = [...games].sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+  const todayGame = sortedGames.find(g => g.date === today);
+  const nextGame = sortedGames.find(g => g.date > today);
+  const latestGame = [...sortedGames].reverse().find(g => g.date < today);
+  const featuredGame = todayGame || nextGame || latestGame || null;
 
   // Update hero headline — three separate lines
-  if (!todayGame) {
+  if (!featuredGame) {
     showNoGameTodayState();
   } else {
-    const isToday = todayGame.date === today;
-    const isFuture = todayGame.date > today;
-    const vsAt = todayGame.homeAway === "away" ? "@" : "vs";
+    const isToday = featuredGame.date === today;
+    const isFuture = featuredGame.date > today;
+    const vsAt = featuredGame.homeAway === "away" ? "@" : "vs";
     const labelEl = document.getElementById("hero-game-label");
     const dateEl = document.getElementById("hero-game-date");
     const matchupEl = document.getElementById("hero-game-matchup");
     if (labelEl) {
       labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
     }
-    if (dateEl && todayGame.date) {
-      dateEl.textContent = new Date(todayGame.date + "T12:00:00")
+    if (dateEl && featuredGame.date) {
+      dateEl.textContent = new Date(featuredGame.date + "T12:00:00")
         .toLocaleDateString("en-US", { month: "long", day: "numeric" });
     }
-    if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${todayGame.opponent}`;
+    if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${featuredGame.opponent}`;
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
-    buildMatchupStrip(todayGame) +            // Row 1 — matchup header
-    buildGameBreakdown(todayGame) +           // Row 2 — top-level matchup recap
-    buildGameContextCard(todayGame) +         // Row 3 — recent form, injuries, H2H, pitcher logs
-    buildPitchingCard(todayGame) +            // Row 4 — starting pitching comparison
-    buildRow3(todayGame) +                    // Row 5 — lineups + advanced metrics
-    buildTeamAdvancedCard(todayGame) +        // Row 6 — team advanced stats table
-    buildAnalysisRow(todayGame) +             // Row 7 — 3 analysis tiles
-    buildPickSection(todayGame) +             // Row 8 — pick banner
-    buildTrendsCard(todayGame);               // supplemental trends
+    buildMatchupStrip(featuredGame) +         // Row 1 — matchup header
+    buildGameBreakdown(featuredGame) +        // Row 2 — top-level matchup recap
+    buildGameContextCard(featuredGame) +      // Row 3 — recent form, injuries, H2H, pitcher logs
+    buildPitchingCard(featuredGame) +         // Row 4 — starting pitching comparison
+    buildRow3(featuredGame) +                 // Row 5 — lineups + advanced metrics
+    buildTeamAdvancedCard(featuredGame) +     // Row 6 — team advanced stats table
+    buildAnalysisRow(featuredGame) +          // Row 7 — 3 analysis tiles
+    buildPickSection(featuredGame) +          // Row 8 — pick banner
+    buildTrendsCard(featuredGame);            // supplemental trends
 
   }
 
