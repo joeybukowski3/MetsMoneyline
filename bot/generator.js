@@ -379,20 +379,50 @@ async function getTeamSeasonRecordFacts(teamId, targetDate, includeTargetDateFin
   };
 }
 
+function transactionImpliesInjury(transaction) {
+  const haystack = `${transaction?.typeDesc || ""} ${transaction?.description || ""}`.toLowerCase();
+  return /(injured list|il-|15-day il|10-day il|7-day il|60-day il|day-to-day|out for season|bereavement|concussion)/i.test(haystack);
+}
+
+function transactionClearsInjury(transaction) {
+  const haystack = `${transaction?.typeDesc || ""} ${transaction?.description || ""}`.toLowerCase();
+  return /(reinstated|returned|activated|recalled|selected the contract|added to active roster|returned from rehab)/i.test(haystack);
+}
+
+function normalizeInjuryStatus(transaction) {
+  const haystack = `${transaction?.typeDesc || ""} ${transaction?.description || ""}`;
+  const match = haystack.match(/(60-day il|15-day il|10-day il|7-day il|day-to-day|bereavement list|paternity list|concussion il)/i);
+  return match ? match[1].toUpperCase().replace(/\bIl\b/g, "IL") : "IL";
+}
+
 async function getTeamInjuries(teamId) {
   const season = String(new Date().getFullYear());
+  const startDate = `${season}-02-15`;
+  const today = getTodayEasternISO();
   const data = await safeGetJson(
-    `https://statsapi.mlb.com/api/v1/injuries?sportId=1&season=${season}`,
-    `injuries ${teamId}`
+    `https://statsapi.mlb.com/api/v1/transactions?teamId=${teamId}&startDate=${startDate}&endDate=${today}`,
+    `transactions ${teamId}`
   );
 
-  return (data?.injuries || [])
-    .filter((injury) => injury?.team?.id === teamId)
+  const latestByPlayer = new Map();
+  for (const transaction of data?.transactions || []) {
+    const playerId = transaction?.person?.id;
+    if (!playerId) continue;
+    const effectiveDate = transaction?.effectiveDate || transaction?.date || "";
+    const previous = latestByPlayer.get(playerId);
+    if (!previous || effectiveDate >= (previous.effectiveDate || previous.date || "")) {
+      latestByPlayer.set(playerId, transaction);
+    }
+  }
+
+  return [...latestByPlayer.values()]
+    .filter((transaction) => transactionImpliesInjury(transaction) && !transactionClearsInjury(transaction))
+    .sort((a, b) => String(b.effectiveDate || b.date || "").localeCompare(String(a.effectiveDate || a.date || "")))
     .slice(0, 5)
-    .map((injury) => {
-      const name = injury?.person?.fullName || "Unknown";
-      const status = injury?.status || "IL";
-      const detail = cleanText(injury?.notes || injury?.injury?.description || "");
+    .map((transaction) => {
+      const name = transaction?.person?.fullName || "Unknown";
+      const status = normalizeInjuryStatus(transaction);
+      const detail = cleanText(transaction?.description || transaction?.typeDesc || "");
       return `${name} (${status})${detail ? ` - ${detail}` : ""}`;
     });
 }
