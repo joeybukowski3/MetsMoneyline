@@ -1,5 +1,3 @@
-import METS_2025 from "../data/mets2025.js";
-
 const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
 
@@ -225,11 +223,9 @@ const TEAM_ABBR = {
 
 const TEAM_STORYLINES = {
   "New York Mets": {
-    season2025: "89-73",
-    note: "New York is coming off an 89-73 season and is trying to turn its high-end talent into steadier early-season form."
+    note: "New York is trying to turn its high-end talent into steadier early-season form."
   },
   "Toronto Blue Jays": {
-    season2025: null,
     note: "Toronto is still trying to settle a reshaped lineup and get more consistency from its veteran core heading into this matchup."
   }
 };
@@ -305,7 +301,7 @@ function buildGameBreakdown(game) {
     </div>`;
 }
 
-// ── Default lineup fallback — 2026 projected starting 9 (stats from 2025) ──
+// Legacy lineup constants retained only as a last-resort UI placeholder; live views use generated 2026 lineups.
 const DEFAULT_METS_LINEUP = [
   { order: 1, name: "Francisco Lindor",  pos: "SS", hand: "S", playerId: 596019 },
   { order: 2, name: "Juan Soto",         pos: "LF", hand: "L", playerId: 665742 },
@@ -322,86 +318,30 @@ function isMissingStat(value) {
   return value == null || value === "" || value === "N/A";
 }
 
-function get2025PlayerStat(name, group, stat) {
-  const entry = METS_2025[group]?.[name];
-  if (!entry || entry[stat] == null) return "N/A";
-  return `${entry[stat]} <span class="stat-year">(2025)</span>`;
-}
-
-function getMetsPitchingStat(liveValue, playerName, stat) {
-  return isMissingStat(liveValue) ? get2025PlayerStat(playerName, "starters", stat) : liveValue;
+function getMetsPitchingStat(liveValue) {
+  return isMissingStat(liveValue) ? "N/A" : liveValue;
 }
 
 function getMetsHitterSeasonOps(player) {
-  return isMissingStat(player.seasonOPS)
-    ? get2025PlayerStat(player.name, "hitters", "OPS")
-    : player.seasonOPS;
+  return isMissingStat(player.seasonOPS) ? "N/A" : player.seasonOPS;
 }
 
 function getMetsHitterAVG(player) {
-  return isMissingStat(player.seasonAVG)
-    ? get2025PlayerStat(player.name, "hitters", "AVG")
-    : player.seasonAVG;
+  return isMissingStat(player.seasonAVG) ? "N/A" : player.seasonAVG;
 }
 
-function stat2025(val) {
-  return `${val} <span class="stat-year">(2025)</span>`;
-}
-
-function fallback(liveVal, fallbackVal) {
-  return isMissingStat(liveVal) ? stat2025(fallbackVal) : liveVal;
-}
-
-/* FIX 2 — bullpen 2025 fallbacks */
-function resolveBullpen(bullpenObj, isNYM, oppName) {
+function resolveBullpen(bullpenObj) {
   const bp = bullpenObj || {};
-  if (isNYM) {
-    return {
-      era:    fallback(bp.seasonERA,  METS_2025.bullpenERA),
-      xfip:   fallback(bp.seasonXFIP, METS_2025.bullpenxFIP),
-      last14: fallback(bp.last14ERA,  METS_2025.bullpenERA),
-      rating: bp.rating ?? 70
-    };
-  }
-  const oppData = METS_2025.opponents2025?.[oppName];
   return {
-    era:    isMissingStat(bp.seasonERA)  ? (oppData?.bullpenERA  ? stat2025(oppData.bullpenERA)  : stat2025(METS_2025.leagueAvg2025.bullpenERA)) : bp.seasonERA,
-    xfip:   isMissingStat(bp.seasonXFIP) ? (oppData?.bullpenxFIP ? stat2025(oppData.bullpenxFIP) : stat2025(METS_2025.leagueAvg2025.bullpenxFIP)) : bp.seasonXFIP,
-    last14: isMissingStat(bp.last14ERA) ? (oppData?.bullpenLast14ERA ? stat2025(oppData.bullpenLast14ERA) : (oppData?.bullpenERA ? stat2025(oppData.bullpenERA) : stat2025(METS_2025.leagueAvg2025.bullpenERA))) : bp.last14ERA,
+    era: isMissingStat(bp.seasonERA) ? "N/A" : bp.seasonERA,
+    xfip: isMissingStat(bp.seasonXFIP) ? "N/A" : bp.seasonXFIP,
+    last14: isMissingStat(bp.last14ERA) ? "N/A" : bp.last14ERA,
     rating: bp.rating ?? 65
   };
 }
 
-/* FIX 3 — advanced metrics 2025 fallbacks */
 function resolveAdvancedMatchup(game) {
-  const oppData = METS_2025.opponents2025?.[game.opponent];
-  const live    = game.advancedMatchup || [];
-  const labels  = ["wRC+", "Hard-Hit%", "Barrel%", "BB%", "K%"];
-
-  const get = (i, key) => live[i]?.[key];
-
-  const metsWRC = METS_2025.teamWRC_plus;
-  const oppWRC  = oppData?.teamWRC_plus ?? METS_2025.leagueAvg2025.teamWRC_plus;
-  const wrcEdge = (metsWRC && oppWRC && (metsWRC - oppWRC) >= 5) ? "Mets" : "Neutral";
-  const oppHardHit = oppData?.hardHitPct ?? METS_2025.leagueAvg2025.hardHitPct;
-  const oppBarrel = oppData?.barrelPct ?? METS_2025.leagueAvg2025.barrelPct;
-  const oppBB = oppData?.bbPct ?? METS_2025.leagueAvg2025.bbPct;
-  const oppK = oppData?.kPct ?? METS_2025.leagueAvg2025.kPct;
-
-  const resolveRow = (i, metsFallback, oppFallback, edgeFallback) => ({
-    category: get(i, "category") || labels[i],
-    mets: !isMissingStat(get(i, "mets")) ? get(i, "mets") : stat2025(metsFallback),
-    opp:  !isMissingStat(get(i, "opp"))  ? get(i, "opp")  : (oppFallback != null ? stat2025(oppFallback) : "N/A"),
-    edge: (get(i, "edge") && get(i, "edge") !== "Neutral") ? get(i, "edge") : edgeFallback
-  });
-
-  return [
-    resolveRow(0, metsWRC, oppWRC, wrcEdge),
-    resolveRow(1, METS_2025.hardHitPct, oppHardHit, "N/A"),
-    resolveRow(2, METS_2025.barrelPct,  oppBarrel, "N/A"),
-    resolveRow(3, METS_2025.bbPct,      oppBB, "N/A"),
-    resolveRow(4, METS_2025.kPct,       oppK, "N/A")
-  ];
+  return Array.isArray(game.advancedMatchup) ? game.advancedMatchup : [];
 }
 
 /* ── ROW 1: Matchup Bar ── */
@@ -481,7 +421,7 @@ const METS_PITCHER_IDS = {
 /* ── Percentile Engine ──
    Maps a raw stat value to an estimated 0–100 MLB percentile.
    Lower-is-better stats (ERA, WHIP, BB%) are inverted so 100 = best.
-   Curves based on 2025 MLB starter distributions. */
+   Curves based on approximate modern MLB starter distributions. */
 const PCTL = {
   // ERA: elite ~2.50 (99th), avg ~4.20 (50th), poor ~5.50 (10th)
   ERA:  v => clamp(Math.round(100 - ((parseFloat(v) - 2.50) / (5.80 - 2.50)) * 90), 5, 99),
@@ -593,7 +533,7 @@ function buildPitchingCard(game) {
   const p  = game.pitching;
   const mn = p.mets.name;
 
-  // Season stats with 2025 fallbacks for Mets pitcher
+  // Season stats — 2026 only
   const mERA  = getMetsPitchingStat(p.mets.seasonERA,  mn, "ERA");
   const mFIP  = getMetsPitchingStat(p.mets.seasonFIP,  mn, "FIP");
   const mXERA = getMetsPitchingStat(p.mets.seasonXERA, mn, "xFIP");
@@ -610,9 +550,9 @@ function buildPitchingCard(game) {
   const oKPct  = p.opp.savant?.kPct  ?? "N/A";
   const oBBPct = p.opp.savant?.bbPct ?? "N/A";
 
-  // Bullpen — apply 2025 fallbacks
-  const metsBP = resolveBullpen(p.metsBullpen, true,  game.opponent);
-  const oppBP  = resolveBullpen(p.oppBullpen,  false, game.opponent);
+  // Bullpen — 2026 only
+  const metsBP = resolveBullpen(p.metsBullpen);
+  const oppBP  = resolveBullpen(p.oppBullpen);
 
   // Headshot: rectangular MLB CDN crop, placeholder on failure
   const pitcherPhoto = (mlbId, name) => {
@@ -785,7 +725,7 @@ function buildPitchingCard(game) {
     </div>` : "";
 
   return `
-    <div class="section-floating-label">Starting Pitching (2025)</div>
+    <div class="section-floating-label">Starting Pitching</div>
     <div class="pitcher-two-col">
       ${metsCard}
       ${oppCard}
@@ -815,7 +755,7 @@ function buildPitchingCard(game) {
 /* ── ROW 3: Lineups + Advanced Metrics ── */
 function buildRow3(game) {
   const l = game.lineups || {};
-  const metsLineup = (Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : DEFAULT_METS_LINEUP;
+  const metsLineup = (Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : [];
   const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
   const isConfirmed = l.lineupStatus === "confirmed";
   const statusLabel = isConfirmed ? "Confirmed Lineups" : "Projected Lineups";
@@ -830,14 +770,16 @@ function buildRow3(game) {
     return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
   };
 
-  const metsRows = metsLineup.map(p => `
+  const metsRows = metsLineup.length > 0
+    ? metsLineup.map(p => `
     <tr>
       <td>${p.order}</td>
       <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
       <td>${p.pos}</td>
       <td>${getMetsHitterAVG(p)}</td>
       <td>${getMetsHitterSeasonOps(p)}</td>
-    </tr>`).join("");
+    </tr>`).join("")
+    : `<tr><td colspan="5" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
   const oppRows = oppLineup.length > 0
     ? oppLineup.map(p => `
@@ -912,7 +854,7 @@ function buildRow3(game) {
 
     <div class="adv-metrics-section">
       <div class="adv-metrics-header">
-        <span class="section-floating-label" style="margin:0">Advanced Metrics (2025)</span>
+        <span class="section-floating-label" style="margin:0">Advanced Metrics</span>
         <span class="adv-edge-tag">&#x2197; Edge: NYM</span>
       </div>
       <div class="adv-metric-cards-grid">
@@ -1202,7 +1144,7 @@ function buildTeamAdvancedCard(game) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: Baseball Savant · MLB Stats API · mets2025.js</p>
+      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: Baseball Savant · MLB Stats API</p>
     </div>`;
 }
 

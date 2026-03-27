@@ -327,15 +327,13 @@ async function getPitcherFacts(personId, fallbackName) {
   }
 
   const season = String(new Date().getFullYear());
-  const previousSeason = String(new Date().getFullYear() - 1);
-  const [person, currentStats, previousStats, savantRows] = await Promise.all([
+  const [person, currentStats, savantRows] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
-    getPlayerSeasonStats(personId, "pitching", previousSeason),
     loadSavantPitcherLeaderboard()
   ]);
 
-  const stat = currentStats || previousStats;
+  const stat = currentStats;
   const savant = getSavantPitcherRow(savantRows, personId);
 
   return {
@@ -350,7 +348,7 @@ async function getPitcherFacts(personId, fallbackName) {
     seasonXERA: savant?.xera || null,
     seasonWHIP: stat?.whip || null,
     seasonHR9: stat?.homeRunsPer9 || null,
-    note: stat?.inningsPitched ? `${previousStats ? previousSeason : season} - ${stat.inningsPitched} IP` : null,
+    note: stat?.inningsPitched ? `${season} - ${stat.inningsPitched} IP` : null,
     savant: savant ? {
       xERA: savant.xera || null,
       barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
@@ -366,11 +364,11 @@ async function getPitcherFacts(personId, fallbackName) {
 
 async function getTeamSeasonRecordFacts(teamId, targetDate, includeTargetDateFinal = false) {
   const season = targetDate.slice(0, 4);
-  const startDate = `${season}-02-15`;
+  const startDate = `${season}-03-01`;
   const url =
     "https://statsapi.mlb.com/api/v1/schedule" +
     `?sportId=1&teamId=${teamId}&startDate=${startDate}&endDate=${targetDate}` +
-    "&gameType=R,S&hydrate=linescore,team";
+    "&gameType=R&hydrate=linescore,team";
 
   const data = await safeGetJson(url, `season schedule ${teamId} ${targetDate}`);
   const completedGames = [];
@@ -511,32 +509,13 @@ function buildLineupFromBoxscore(boxscoreTeam) {
   });
 }
 
-async function buildDefaultMetsLineup() {
-  const mets2025 = await loadMets2025();
-  return DEFAULT_METS_LINEUP.map((player) => {
-    const stats = mets2025?.hitters?.[player.name] || {};
-    return {
-      order: player.order,
-      playerId: player.playerId,
-      name: player.name,
-      pos: player.pos,
-      hand: player.hand,
-      seasonAVG: stats.AVG ?? null,
-      seasonOPS: stats.OPS ?? null,
-      seasonHR: stats.HR ?? null,
-      statsSeason: "2025"
-    };
-  });
-}
-
-function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, fallbackStatsByName = {}) {
+function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}) {
   return roster
     .map((player, index) => {
       const liveStats = seasonStatsByPlayer[player.id] || {};
-      const fallbackStats = fallbackStatsByName[player.fullName] || {};
-      const ops = liveStats.ops ?? fallbackStats.OPS ?? null;
-      const avg = liveStats.avg ?? fallbackStats.AVG ?? null;
-      const homeRuns = liveStats.homeRuns ?? fallbackStats.HR ?? null;
+      const ops = liveStats.ops ?? null;
+      const avg = liveStats.avg ?? null;
+      const homeRuns = liveStats.homeRuns ?? null;
       const gamesPlayed = Number(liveStats.gamesPlayed || 0);
 
       return {
@@ -548,7 +527,7 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, fallbackSt
         seasonAVG: avg,
         seasonOPS: ops,
         seasonHR: homeRuns != null ? Number(homeRuns) : null,
-        statsSeason: gamesPlayed > 0 ? String(new Date().getFullYear()) : (avg != null || ops != null ? "2025" : null),
+        statsSeason: gamesPlayed > 0 ? String(new Date().getFullYear()) : null,
         _sortOps: parseFloat(String(ops ?? "").replace(/[^\d.-]/g, "")) || -1,
         _sortHr: Number(homeRuns || 0),
         _sortAvg: parseFloat(String(avg ?? "").replace(/[^\d.-]/g, "")) || 0
@@ -609,15 +588,12 @@ async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
 
   const season = String(new Date().getFullYear());
   const roster = await getTeamRoster(teamId, season);
-  const mets2025 = isMets ? await loadMets2025() : null;
   const seasonStatsByPlayer = Object.fromEntries(
     roster.map((player) => [player.id, player.stats || {}])
   );
-  const fallbackStatsByName = isMets ? (mets2025?.hitters || {}) : {};
 
-  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer, fallbackStatsByName);
-  if (projected.length) return projected;
-  return isMets ? buildDefaultMetsLineup() : [];
+  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer);
+  return projected;
 }
 
 async function buildLineupFacts(feed, oppTeamId, targetDate) {
@@ -650,23 +626,18 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
     `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
     `team pitching ${teamId} ${season}`
   );
-  const previous = await safeGetJson(
-    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season - 1}`,
-    `team pitching ${teamId} ${season - 1}`
-  );
 
-  const stat = current?.stats?.[0]?.splits?.[0]?.stat || previous?.stats?.[0]?.splits?.[0]?.stat || null;
-  const mets2025 = isMets ? await loadMets2025() : null;
-
-  const seasonEra = stat?.era || (isMets ? mets2025?.bullpenERA ?? null : null);
+  const stat = current?.stats?.[0]?.splits?.[0]?.stat || null;
+  const seasonEra = stat?.era || null;
   const seasonWhip = stat?.whip || null;
+  const seasonFip = stat?.fip || null;
   const rating = seasonEra
     ? Math.max(40, Math.min(85, Math.round(100 - (parseFloat(seasonEra) - 2.5) * 12)))
     : (isMets ? 70 : 65);
 
   return {
     seasonERA: seasonEra,
-    seasonXFIP: isMets ? mets2025?.bullpenxFIP ?? null : null,
+    seasonXFIP: seasonFip,
     last14ERA: null,
     last3DaysIP: null,
     seasonWHIP: seasonWhip,
