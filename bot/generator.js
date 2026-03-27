@@ -21,7 +21,7 @@ const TEAM_ID = 121;
 const TEAM_NAME = "New York Mets";
 const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
-const ODDS_API_KEY = process.env.ODDS_API_KEY || process.env.THE_ODDS_API_KEY || null;
+const ODDS_API_KEY = process.env.ODDS_API_KEY || process.env.THE_ODDS_API_KEY || process.env.ODDSAPI || null;
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 
 const TEAM_IDS = {
