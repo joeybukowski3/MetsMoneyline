@@ -731,11 +731,19 @@ async function getMostRecentConfirmedLineup(teamId, beforeDate) {
     .sort((a, b) => new Date(`${b._date}T12:00:00Z`) - new Date(`${a._date}T12:00:00Z`))[0];
 
   if (!recentGame?.gamePk) return [];
-  const feed = await getGameFeed(recentGame.gamePk);
+  const [feed, savantBatters, savantExpectedBatters] = await Promise.all([
+    getGameFeed(recentGame.gamePk),
+    loadSavantBatterLeaderboard(),
+    loadSavantExpectedBatters()
+  ]);
+  const teamName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === teamId) || null;
+  const fangraphsTeam = teamName ? await loadFangraphsTeamData(teamName) : null;
   const awayTeam = feed?.liveData?.boxscore?.teams?.away;
   const homeTeam = feed?.liveData?.boxscore?.teams?.home;
   const lineupTeam = awayTeam?.team?.id === teamId ? awayTeam : homeTeam?.team?.id === teamId ? homeTeam : null;
-  return buildLineupFromBoxscore(lineupTeam);
+  const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
+  const savantExpectedBattersByPlayer = Object.fromEntries(savantExpectedBatters.map((row) => [Number(row.player_id), row]));
+  return enrichLineupWithSavant(buildLineupFromBoxscore(lineupTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, fangraphsTeam?.battingByName || {});
 }
 
 async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
@@ -876,8 +884,40 @@ function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, t
   const oppK = parseNumber(teamAdvanced?.opp?.kPct);
   const metsWrc = parseNumber(teamAdvanced?.mets?.wrcPlus);
   const oppWrc = parseNumber(teamAdvanced?.opp?.wrcPlus);
+  const metsIso = parseNumber(teamAdvanced?.mets?.iso);
+  const oppIso = parseNumber(teamAdvanced?.opp?.iso);
+  const metsXwoba = parseNumber(teamAdvanced?.mets?.xwoba);
+  const oppXwoba = parseNumber(teamAdvanced?.opp?.xwoba);
   const edgeForHigher = (left, right) => left == null || right == null ? "Neutral" : left > right ? "Mets" : right > left ? "Opp" : "Neutral";
   const edgeForLower = (left, right) => left == null || right == null ? "Neutral" : left < right ? "Mets" : right < left ? "Opp" : "Neutral";
+
+  const qualityOfContactCard = metsHardHit != null && oppHardHit != null
+    ? {
+        category: "Hard-Hit %",
+        mets: `${metsHardHit.toFixed(1)}%`,
+        opp: `${oppHardHit.toFixed(1)}%`,
+        edge: edgeForHigher(metsHardHit, oppHardHit)
+      }
+    : {
+        category: "ISO",
+        mets: metsIso == null ? "N/A" : (metsIso < 1 ? metsIso.toFixed(3).replace(/^0/, "") : metsIso.toFixed(3)),
+        opp: oppIso == null ? "N/A" : (oppIso < 1 ? oppIso.toFixed(3).replace(/^0/, "") : oppIso.toFixed(3)),
+        edge: edgeForHigher(metsIso, oppIso)
+      };
+
+  const impactContactCard = metsBarrel != null && oppBarrel != null
+    ? {
+        category: "Barrel %",
+        mets: `${metsBarrel.toFixed(1)}%`,
+        opp: `${oppBarrel.toFixed(1)}%`,
+        edge: edgeForHigher(metsBarrel, oppBarrel)
+      }
+    : {
+        category: "xwOBA",
+        mets: metsXwoba == null ? "N/A" : (metsXwoba < 1 ? metsXwoba.toFixed(3).replace(/^0/, "") : metsXwoba.toFixed(3)),
+        opp: oppXwoba == null ? "N/A" : (oppXwoba < 1 ? oppXwoba.toFixed(3).replace(/^0/, "") : oppXwoba.toFixed(3)),
+        edge: edgeForHigher(metsXwoba, oppXwoba)
+      };
 
   return [
     {
@@ -886,18 +926,8 @@ function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, t
       opp: oppWrc == null ? "N/A" : String(oppWrc),
       edge: edgeForHigher(metsWrc, oppWrc)
     },
-    {
-      category: "Hard-Hit %",
-      mets: metsHardHit == null ? "N/A" : `${metsHardHit.toFixed(1)}%`,
-      opp: oppHardHit == null ? "N/A" : `${oppHardHit.toFixed(1)}%`,
-      edge: edgeForHigher(metsHardHit, oppHardHit)
-    },
-    {
-      category: "Barrel %",
-      mets: metsBarrel == null ? "N/A" : `${metsBarrel.toFixed(1)}%`,
-      opp: oppBarrel == null ? "N/A" : `${oppBarrel.toFixed(1)}%`,
-      edge: edgeForHigher(metsBarrel, oppBarrel)
-    },
+    qualityOfContactCard,
+    impactContactCard,
     {
       category: "Walk Rate (BB%)",
       mets: metsWalk == null ? "N/A" : `${metsWalk.toFixed(1)}%`,

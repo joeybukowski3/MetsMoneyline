@@ -335,7 +335,10 @@ function resolveBullpen(bullpenObj) {
   return {
     era: isMissingStat(bp.seasonERA) ? "N/A" : bp.seasonERA,
     xfip: isMissingStat(bp.seasonXFIP) ? "N/A" : bp.seasonXFIP,
-    last14: isMissingStat(bp.last14ERA) ? "N/A" : bp.last14ERA,
+    last14: isMissingStat(bp.last14ERA) ? (isMissingStat(bp.seasonERA) ? "N/A" : bp.seasonERA) : bp.last14ERA,
+    kPct: isMissingStat(bp.seasonKPct) ? "N/A" : bp.seasonKPct,
+    bbPct: isMissingStat(bp.seasonBBPct) ? "N/A" : bp.seasonBBPct,
+    whip: isMissingStat(bp.seasonWHIP) ? "N/A" : bp.seasonWHIP,
     rating: bp.rating ?? 65
   };
 }
@@ -739,14 +742,16 @@ function buildPitchingCard(game) {
         <div class="sbar-section-label" style="margin-bottom:0.6rem">NYM Bullpen</div>
         ${statBar("ERA",       metsBP.era?.replace ? metsBP.era.replace(/<[^>]*>/g,"").trim() : metsBP.era,   PCTL.BPERA,  metsBP.era)}
         ${statBar("xFIP",      metsBP.xfip?.replace ? metsBP.xfip.replace(/<[^>]*>/g,"").trim() : metsBP.xfip, PCTL.BPxFIP, metsBP.xfip)}
-        ${statBar("Last 14d ERA", metsBP.last14?.replace ? metsBP.last14.replace(/<[^>]*>/g,"").trim() : metsBP.last14, PCTL.BPERA, metsBP.last14)}
+        ${statBar("WHIP",      metsBP.whip?.replace ? metsBP.whip.replace(/<[^>]*>/g,"").trim() : metsBP.whip, PCTL.WHIP, metsBP.whip)}
+        ${statBar("K%",        metsBP.kPct?.replace ? metsBP.kPct.replace(/<[^>]*>/g,"").trim() : metsBP.kPct, PCTL.KPct, metsBP.kPct)}
         ${statBar("Rating",    String(metsBP.rating), PCTL.Rating, `${metsBP.rating}/100`)}
       </div>
       <div class="card full-card" style="padding:1.25rem">
         <div class="sbar-section-label" style="margin-bottom:0.6rem">${getTeamAbbr(game.opponent)} Bullpen</div>
         ${statBar("ERA",       oppBP.era?.replace ? oppBP.era.replace(/<[^>]*>/g,"").trim() : oppBP.era,   PCTL.BPERA,  oppBP.era)}
         ${statBar("xFIP",      oppBP.xfip?.replace ? oppBP.xfip.replace(/<[^>]*>/g,"").trim() : oppBP.xfip, PCTL.BPxFIP, oppBP.xfip)}
-        ${statBar("Last 14d ERA", oppBP.last14?.replace ? oppBP.last14.replace(/<[^>]*>/g,"").trim() : oppBP.last14, PCTL.BPERA, oppBP.last14)}
+        ${statBar("WHIP",      oppBP.whip?.replace ? oppBP.whip.replace(/<[^>]*>/g,"").trim() : oppBP.whip, PCTL.WHIP, oppBP.whip)}
+        ${statBar("K%",        oppBP.kPct?.replace ? oppBP.kPct.replace(/<[^>]*>/g,"").trim() : oppBP.kPct, PCTL.KPct, oppBP.kPct)}
         ${statBar("Rating",    String(oppBP.rating), PCTL.Rating, `${oppBP.rating}/100`)}
       </div>
     </div>`;
@@ -778,11 +783,11 @@ function buildRow3(game) {
       <td>${p.pos}</td>
       <td>${getMetsHitterAVG(p)}</td>
       <td>${getMetsHitterSeasonOps(p)}</td>
-      <td>${p.fangraphs?.wRCPlus ?? "N/A"}</td>
-      <td>${p.savant?.xBA ?? "N/A"}</td>
-      <td>${p.savant?.xwOBA ?? "N/A"}</td>
+      <td>${p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A"}</td>
+      <td>${p.savant?.xBA ?? p.seasonAVG ?? "N/A"}</td>
+      <td>${p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A"}</td>
     </tr>`).join("")
-    : `<tr><td colspan="7" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
+    : `<tr><td colspan="8" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
   const oppRows = oppLineup.length > 0
     ? oppLineup.map(p => `
@@ -792,11 +797,11 @@ function buildRow3(game) {
       <td>${p.pos}</td>
       <td>${p.seasonAVG ?? "N/A"}</td>
       <td>${p.seasonOPS ?? "N/A"}</td>
-      <td>${p.fangraphs?.wRCPlus ?? "N/A"}</td>
-      <td>${p.savant?.xBA ?? "N/A"}</td>
-      <td>${p.savant?.xwOBA ?? "N/A"}</td>
+      <td>${p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A"}</td>
+      <td>${p.savant?.xBA ?? p.seasonAVG ?? "N/A"}</td>
+      <td>${p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A"}</td>
     </tr>`).join("")
-    : `<tr><td colspan="7" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
+    : `<tr><td colspan="8" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
   const metsBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
@@ -1154,7 +1159,7 @@ function buildTeamAdvancedCard(game) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: Baseball Savant · MLB Stats API</p>
+      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: FanGraphs · Baseball Savant · MLB Stats API</p>
     </div>`;
 }
 
