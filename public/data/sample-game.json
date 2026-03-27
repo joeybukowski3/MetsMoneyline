@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T16:11:54.904Z",
+  "generatedAt": "2026-03-27T19:41:09.961Z",
   "games": [
     {
       "id": "2026-03-28-mets-vs-pittsburgh-pirates",
@@ -54,19 +54,23 @@
         },
         "metsBullpen": {
           "seasonERA": "7.00",
-          "seasonXFIP": null,
+          "seasonXFIP": "3.36",
           "last14ERA": null,
           "last3DaysIP": null,
           "seasonWHIP": "1.11",
+          "seasonKPct": "27.0%",
+          "seasonBBPct": "0.0%",
           "rating": 46,
           "team": "New York Mets"
         },
         "oppBullpen": {
           "seasonERA": "12.38",
-          "seasonXFIP": null,
+          "seasonXFIP": "7.96",
           "last14ERA": null,
           "last3DaysIP": null,
           "seasonWHIP": "2.50",
+          "seasonKPct": "22.2%",
+          "seasonBBPct": "20.0%",
           "rating": 40,
           "team": "Pittsburgh Pirates"
         }
@@ -279,8 +283,8 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "mets": "147",
-          "opp": "120",
+          "mets": "172",
+          "opp": "113",
           "edge": "Mets"
         },
         {
@@ -310,32 +314,42 @@
       ],
       "teamAdvanced": {
         "mets": {
-          "wrcPlus": 147,
+          "wrcPlus": "172",
+          "woba": ".452",
+          "iso": ".265",
           "xba": "0.223",
           "xslg": "0.454",
           "xwoba": "0.385",
           "ops": "1.055",
           "hardHit": null,
           "barrelPct": null,
-          "bbPct": "20.0",
-          "kPct": "22.2",
-          "rotFip": null,
+          "bbPct": "20.0%",
+          "kPct": "22.2%",
+          "rotFip": "5.74",
+          "rotXfip": "3.36",
           "rotEra": "7.00",
-          "rotWhip": "1.11"
+          "rotWhip": "1.11",
+          "pitchKPct": "27.0%",
+          "pitchBBPct": "0.0%"
         },
         "opp": {
-          "wrcPlus": 120,
+          "wrcPlus": "113",
+          "woba": ".361",
+          "iso": ".324",
           "xba": "0.21",
           "xslg": "0.333",
           "xwoba": "0.232",
           "ops": ".865",
           "hardHit": null,
           "barrelPct": null,
-          "bbPct": "0.0",
-          "kPct": "27.0",
-          "rotFip": null,
+          "bbPct": "0.0%",
+          "kPct": "27.0%",
+          "rotFip": "8.13",
+          "rotXfip": "7.96",
           "rotEra": "12.38",
-          "rotWhip": "2.50"
+          "rotWhip": "2.50",
+          "pitchKPct": "22.2%",
+          "pitchBBPct": "20.0%"
         }
       },
       "gameContext": {
@@ -403,7 +417,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"fallback\":true,\"generatedAt\":\"2026-03-27T16:11:54.904Z\"}",
+        "raw": "{\"fallback\":true,\"generatedAt\":\"2026-03-27T19:41:09.961Z\"}",
         "sections": [
           {
             "heading": "1. Short Recap",

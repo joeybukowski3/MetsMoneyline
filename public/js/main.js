@@ -778,8 +778,9 @@ function buildRow3(game) {
       <td>${p.pos}</td>
       <td>${getMetsHitterAVG(p)}</td>
       <td>${getMetsHitterSeasonOps(p)}</td>
+      <td>${p.fangraphs?.wRCPlus ?? "N/A"}</td>
       <td>${p.savant?.xBA ?? "N/A"}</td>
-      <td>${p.savant?.hardHitPct ?? "N/A"}</td>
+      <td>${p.savant?.xwOBA ?? "N/A"}</td>
     </tr>`).join("")
     : `<tr><td colspan="7" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
@@ -791,22 +792,23 @@ function buildRow3(game) {
       <td>${p.pos}</td>
       <td>${p.seasonAVG ?? "N/A"}</td>
       <td>${p.seasonOPS ?? "N/A"}</td>
+      <td>${p.fangraphs?.wRCPlus ?? "N/A"}</td>
       <td>${p.savant?.xBA ?? "N/A"}</td>
-      <td>${p.savant?.hardHitPct ?? "N/A"}</td>
+      <td>${p.savant?.xwOBA ?? "N/A"}</td>
     </tr>`).join("")
     : `<tr><td colspan="7" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
   const metsBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
     : `<div class="table-wrap"><table>
-         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th><th>xBA</th><th>HH%</th></tr></thead>
+         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>xBA</th><th>xwOBA</th></tr></thead>
          <tbody>${metsRows}</tbody>
        </table></div>`;
 
   const oppBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
     : `<div class="table-wrap"><table>
-         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th><th>xBA</th><th>HH%</th></tr></thead>
+         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>xBA</th><th>xwOBA</th></tr></thead>
          <tbody>${oppRows}</tbody>
        </table></div>`;
 
@@ -1116,14 +1118,15 @@ function buildTeamAdvancedCard(game) {
 
   const rows = [
     { label: "wRC+",         mVal: ta.mets.wrcPlus,   oVal: ta.opp.wrcPlus,   higherBetter: true  },
+    { label: "wOBA",         mVal: ta.mets.woba,      oVal: ta.opp.woba,      higherBetter: true  },
+    { label: "ISO",          mVal: ta.mets.iso,       oVal: ta.opp.iso,       higherBetter: true  },
     { label: "xBA",          mVal: ta.mets.xba,       oVal: ta.opp.xba,       higherBetter: true  },
     { label: "xSLG",         mVal: ta.mets.xslg,      oVal: ta.opp.xslg,      higherBetter: true  },
     { label: "xwOBA",        mVal: ta.mets.xwoba,     oVal: ta.opp.xwoba,     higherBetter: true  },
     { label: "OPS",          mVal: ta.mets.ops,       oVal: ta.opp.ops,       higherBetter: true  },
-    { label: "Hard-Hit%",    mVal: ta.mets.hardHit,   oVal: ta.opp.hardHit,   higherBetter: true  },
-    { label: "Barrel%",      mVal: ta.mets.barrelPct, oVal: ta.opp.barrelPct, higherBetter: true  },
+    { label: "BB%",          mVal: ta.mets.bbPct,     oVal: ta.opp.bbPct,     higherBetter: true  },
     { label: "K%",           mVal: ta.mets.kPct,      oVal: ta.opp.kPct,      higherBetter: false },
-    { label: "Rotation FIP", mVal: ta.mets.rotFip,    oVal: ta.opp.rotFip,    higherBetter: false },
+    { label: "Rotation xFIP",mVal: ta.mets.rotXfip || ta.mets.rotFip, oVal: ta.opp.rotXfip || ta.opp.rotFip, higherBetter: false },
   ].map(r => {
     const fmt = v => (v == null || v === "") ? "—" : String(v);
     const mNum = parseFloat(String(r.mVal ?? ""));

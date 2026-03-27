@@ -57,6 +57,39 @@ const TEAM_IDS = {
   "Washington Nationals": 120
 };
 
+const FANGRAPHS_TEAM_SLUGS = {
+  "Arizona Diamondbacks": "diamondbacks",
+  "Atlanta Braves": "braves",
+  "Baltimore Orioles": "orioles",
+  "Boston Red Sox": "red-sox",
+  "Chicago Cubs": "cubs",
+  "Chicago White Sox": "white-sox",
+  "Cincinnati Reds": "reds",
+  "Cleveland Guardians": "guardians",
+  "Colorado Rockies": "rockies",
+  "Detroit Tigers": "tigers",
+  "Houston Astros": "astros",
+  "Kansas City Royals": "royals",
+  "Los Angeles Angels": "angels",
+  "Los Angeles Dodgers": "dodgers",
+  "Miami Marlins": "marlins",
+  "Milwaukee Brewers": "brewers",
+  "Minnesota Twins": "twins",
+  "New York Mets": "mets",
+  "New York Yankees": "yankees",
+  "Oakland Athletics": "athletics",
+  "Philadelphia Phillies": "phillies",
+  "Pittsburgh Pirates": "pirates",
+  "San Diego Padres": "padres",
+  "San Francisco Giants": "giants",
+  "Seattle Mariners": "mariners",
+  "St. Louis Cardinals": "cardinals",
+  "Tampa Bay Rays": "rays",
+  "Texas Rangers": "rangers",
+  "Toronto Blue Jays": "blue-jays",
+  "Washington Nationals": "nationals"
+};
+
 const DEFAULT_METS_LINEUP = [
   { order: 1, playerId: 596019, name: "Francisco Lindor", pos: "SS", hand: "S" },
   { order: 2, playerId: 665742, name: "Juan Soto", pos: "LF", hand: "L" },
@@ -77,6 +110,7 @@ let cachedSavantPitchers = null;
 let cachedSavantBatters = null;
 let cachedSavantExpectedBatters = null;
 let cachedSavantExpectedPitchers = null;
+const cachedFangraphsTeams = new Map();
 
 function getTodayEasternISO() {
   return new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
@@ -269,6 +303,85 @@ async function loadSavantExpectedBatters() {
 
 function getSavantRow(rows, playerId) {
   return rows.find((row) => Number(row.player_id) === Number(playerId)) || null;
+}
+
+function decodeHtmlEntities(value) {
+  return String(value || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, " ");
+}
+
+function stripTags(value) {
+  return decodeHtmlEntities(String(value || "").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+}
+
+function normalizePersonName(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\./g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function parseFangraphsTableSection(html, headerText) {
+  const start = html.indexOf(headerText);
+  if (start === -1) return null;
+  const slice = html.slice(start);
+  const end = slice.indexOf('</table>');
+  if (end === -1) return null;
+  return slice.slice(0, end + 8);
+}
+
+function parseFangraphsHeaders(sectionHtml) {
+  return [...sectionHtml.matchAll(/<th[^>]*>([\s\S]*?)<\/th>/gi)].map((m) => stripTags(m[1]));
+}
+
+function parseFangraphsRows(sectionHtml, headers) {
+  return [...sectionHtml.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)].map((rowMatch) => {
+    const cells = [...rowMatch[1].matchAll(/<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi)].map((m) => stripTags(m[1]));
+    if (!cells.length) return null;
+    const row = Object.fromEntries(headers.map((header, index) => [header, cells[index] ?? ""]));
+    row.Name = row.Name || cells[0] || "";
+    row._isTeamTotal = /team total/i.test(cells[0] || "");
+    return row;
+  }).filter(Boolean);
+}
+
+async function loadFangraphsTeamData(teamName) {
+  const slug = FANGRAPHS_TEAM_SLUGS[teamName];
+  if (!slug) return null;
+  if (cachedFangraphsTeams.has(slug)) return cachedFangraphsTeams.get(slug);
+
+  const html = await safeGetText(`https://www.fangraphs.com/teams/${slug}`, `fangraphs team ${teamName}`);
+  if (!html) {
+    cachedFangraphsTeams.set(slug, null);
+    return null;
+  }
+
+  const battingSection = parseFangraphsTableSection(html, 'Batting Stats Leaders');
+  const pitchingSection = parseFangraphsTableSection(html, 'Pitching Stats Leaders');
+  const battingHeaders = battingSection ? parseFangraphsHeaders(battingSection) : [];
+  const pitchingHeaders = pitchingSection ? parseFangraphsHeaders(pitchingSection) : [];
+  const battingRows = battingSection ? parseFangraphsRows(battingSection, battingHeaders) : [];
+  const pitchingRows = pitchingSection ? parseFangraphsRows(pitchingSection, pitchingHeaders) : [];
+
+  const data = {
+    battingHeaders,
+    pitchingHeaders,
+    battingRows,
+    pitchingRows,
+    battingTeamTotal: battingRows.find((row) => row._isTeamTotal) || null,
+    pitchingTeamTotal: pitchingRows.find((row) => row._isTeamTotal) || null,
+    battingByName: Object.fromEntries(battingRows.filter((row) => row.Name && !row._isTeamTotal).map((row) => [normalizePersonName(row.Name), row])),
+    pitchingByName: Object.fromEntries(pitchingRows.filter((row) => row.Name && !row._isTeamTotal).map((row) => [normalizePersonName(row.Name), row]))
+  };
+
+  cachedFangraphsTeams.set(slug, data);
+  return data;
 }
 
 function formatPitcherSeasonLine(stat) {
@@ -530,13 +643,14 @@ function buildLineupFromBoxscore(boxscoreTeam) {
   });
 }
 
-function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}) {
+function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}, fangraphsBattingByName = {}) {
   return roster
     .filter((player) => player.primaryPosition?.abbreviation !== "P")
     .map((player, index) => {
       const liveStats = seasonStatsByPlayer[player.id] || {};
       const savant = savantBattersByPlayer[player.id] || {};
       const expected = savantExpectedBattersByPlayer[player.id] || {};
+      const fangraphs = fangraphsBattingByName[normalizePersonName(player.fullName)] || {};
       const ops = liveStats.ops ?? null;
       const avg = liveStats.avg ?? null;
       const homeRuns = liveStats.homeRuns ?? null;
@@ -559,9 +673,15 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBatt
           hardHitPct: savant.hard_hit_percent ? `${savant.hard_hit_percent}%` : null,
           barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
           whiffPct: savant.whiff_percent ? `${savant.whiff_percent}%` : null,
-          kPct: savant.k_percent ? `${savant.k_percent}%` : null,
-          bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
           pa: savant.pa != null ? Number(savant.pa) : Number(expected.pa || 0)
+        },
+        fangraphs: {
+          wRCPlus: fangraphs['wRC+'] || null,
+          wOBA: fangraphs['wOBA'] || null,
+          ISO: fangraphs['ISO'] || null,
+          bbPct: fangraphs['BB%'] || null,
+          kPct: fangraphs['K%'] || null,
+          war: fangraphs['WAR'] || null
         },
         _sortOps: parseFloat(String(ops ?? "").replace(/[^\d.-]/g, "")) || -1,
         _sortHr: Number(homeRuns || 0),
@@ -623,10 +743,12 @@ async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
   if (recentLineup.length) return recentLineup;
 
   const season = String(new Date().getFullYear());
-  const [roster, savantBatters, savantExpectedBatters] = await Promise.all([
+  const teamName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === teamId) || null;
+  const [roster, savantBatters, savantExpectedBatters, fangraphsTeam] = await Promise.all([
     getTeamRoster(teamId, season),
     loadSavantBatterLeaderboard(),
-    loadSavantExpectedBatters()
+    loadSavantExpectedBatters(),
+    teamName ? loadFangraphsTeamData(teamName) : null
   ]);
   const seasonStatsByPlayer = Object.fromEntries(
     roster.map((player) => [player.id, player.stats || {}])
@@ -638,14 +760,15 @@ async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
     savantExpectedBatters.map((row) => [Number(row.player_id), row])
   );
 
-  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer, savantBattersByPlayer, savantExpectedBattersByPlayer);
+  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer, savantBattersByPlayer, savantExpectedBattersByPlayer, fangraphsTeam?.battingByName || {});
   return projected;
 }
 
-function enrichLineupWithSavant(lineup = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}) {
+function enrichLineupWithSavant(lineup = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}, fangraphsBattingByName = {}) {
   return lineup.map((player) => {
     const savant = savantBattersByPlayer[player.playerId] || {};
     const expected = savantExpectedBattersByPlayer[player.playerId] || {};
+    const fangraphs = fangraphsBattingByName[normalizePersonName(player.name)] || {};
     return {
       ...player,
       savant: {
@@ -658,6 +781,14 @@ function enrichLineupWithSavant(lineup = [], savantBattersByPlayer = {}, savantE
         kPct: savant.k_percent ? `${savant.k_percent}%` : null,
         bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
         pa: savant.pa != null ? Number(savant.pa) : Number(expected.pa || 0)
+      },
+      fangraphs: {
+        wRCPlus: fangraphs['wRC+'] || null,
+        wOBA: fangraphs['wOBA'] || null,
+        ISO: fangraphs['ISO'] || null,
+        bbPct: fangraphs['BB%'] || null,
+        kPct: fangraphs['K%'] || null,
+        war: fangraphs['WAR'] || null
       }
     };
   });
@@ -669,15 +800,18 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
   const metsTeam = awayTeam?.team?.id === TEAM_ID ? awayTeam : homeTeam;
   const oppTeam = awayTeam?.team?.id === TEAM_ID ? homeTeam : awayTeam;
 
-  const [savantBatters, savantExpectedBatters] = await Promise.all([
+  const oppTeamName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === oppTeamId) || null;
+  const [savantBatters, savantExpectedBatters, metsFg, oppFg] = await Promise.all([
     loadSavantBatterLeaderboard(),
-    loadSavantExpectedBatters()
+    loadSavantExpectedBatters(),
+    loadFangraphsTeamData(TEAM_NAME),
+    oppTeamName ? loadFangraphsTeamData(oppTeamName) : null
   ]);
   const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
   const savantExpectedBattersByPlayer = Object.fromEntries(savantExpectedBatters.map((row) => [Number(row.player_id), row]));
 
-  const metsConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(metsTeam), savantBattersByPlayer, savantExpectedBattersByPlayer);
-  const oppConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(oppTeam), savantBattersByPlayer, savantExpectedBattersByPlayer);
+  const metsConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(metsTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg?.battingByName || {});
+  const oppConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(oppTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg?.battingByName || {});
 
   if (metsConfirmed.length && oppConfirmed.length) {
     return {
@@ -696,15 +830,19 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
 
 async function buildBullpenFacts(teamId, teamName, isMets) {
   const season = String(new Date().getFullYear());
-  const current = await safeGetJson(
-    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
-    `team pitching ${teamId} ${season}`
-  );
+  const [current, fangraphsTeam] = await Promise.all([
+    safeGetJson(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
+      `team pitching ${teamId} ${season}`
+    ),
+    loadFangraphsTeamData(teamName)
+  ]);
 
   const stat = current?.stats?.[0]?.splits?.[0]?.stat || null;
-  const seasonEra = stat?.era || null;
+  const pitchingTotal = fangraphsTeam?.pitchingTeamTotal || {};
+  const seasonEra = pitchingTotal['ERA'] || stat?.era || null;
   const seasonWhip = stat?.whip || null;
-  const seasonFip = stat?.fip || null;
+  const seasonFip = pitchingTotal['xFIP'] || pitchingTotal['FIP'] || stat?.fip || null;
   const rating = seasonEra
     ? Math.max(40, Math.min(85, Math.round(100 - (parseFloat(seasonEra) - 2.5) * 12)))
     : (isMets ? 70 : 65);
@@ -715,6 +853,8 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
     last14ERA: null,
     last3DaysIP: null,
     seasonWHIP: seasonWhip,
+    seasonKPct: pitchingTotal['K%'] || null,
+    seasonBBPct: pitchingTotal['BB%'] || null,
     rating,
     team: teamName
   };
@@ -813,29 +953,38 @@ function weightedAveragePct(items, getter, weightGetter) {
   return Number(avg).toFixed(1);
 }
 
-function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}) {
+function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}, fangraphsTeam = null) {
   const hitters = roster.filter((player) => player.primaryPosition?.abbreviation !== "P");
   const paFor = (player) => Number(player?.stats?.plateAppearances || savantBattersByPlayer[player.id]?.pa || savantExpectedBattersByPlayer[player.id]?.pa || (savantBattersByPlayer[player.id] || savantExpectedBattersByPlayer[player.id] ? 1 : 0));
 
+  const battingTotal = fangraphsTeam?.battingTeamTotal || {};
+  const pitchingTotal = fangraphsTeam?.pitchingTeamTotal || {};
   return {
-    wrcPlus: deriveApproxWrcPlus(hittingStat),
+    wrcPlus: battingTotal['wRC+'] || deriveApproxWrcPlus(hittingStat),
+    woba: battingTotal['wOBA'] || null,
+    iso: battingTotal['ISO'] || null,
     xba: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_ba, paFor) || hittingStat?.avg || null,
     xslg: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_slg, paFor),
     xwoba: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_woba, paFor),
-    ops: hittingStat?.ops || null,
+    ops: battingTotal['OPS'] || hittingStat?.ops || null,
     hardHit: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.hard_hit_percent, paFor),
     barrelPct: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.barrel_batted_rate, paFor),
-    bbPct: pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances),
-    kPct: pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances),
-    rotFip: pitchingStat?.fip || null,
-    rotEra: pitchingStat?.era || null,
-    rotWhip: pitchingStat?.whip || null
+    bbPct: battingTotal['BB%'] || pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances),
+    kPct: battingTotal['K%'] || pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances),
+    rotFip: pitchingTotal['FIP'] || pitchingStat?.fip || null,
+    rotXfip: pitchingTotal['xFIP'] || null,
+    rotEra: pitchingTotal['ERA'] || pitchingStat?.era || null,
+    rotWhip: pitchingStat?.whip || null,
+    pitchKPct: pitchingTotal['K%'] || null,
+    pitchBBPct: pitchingTotal['BB%'] || null
   };
 }
 
 async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
   const season = String(new Date().getFullYear());
-  const [metsHitting, oppHitting, metsPitching, oppPitching, metsRoster, oppRoster, savantBatters, savantExpectedBatters] = await Promise.all([
+  const metsName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === metsTeamId) || TEAM_NAME;
+  const oppName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === oppTeamId) || null;
+  const [metsHitting, oppHitting, metsPitching, oppPitching, metsRoster, oppRoster, savantBatters, savantExpectedBatters, metsFg, oppFg] = await Promise.all([
     getTeamSeasonStats(metsTeamId, "hitting", season),
     getTeamSeasonStats(oppTeamId, "hitting", season),
     getTeamSeasonStats(metsTeamId, "pitching", season),
@@ -843,15 +992,17 @@ async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
     getTeamRoster(metsTeamId, season),
     getTeamRoster(oppTeamId, season),
     loadSavantBatterLeaderboard(),
-    loadSavantExpectedBatters()
+    loadSavantExpectedBatters(),
+    loadFangraphsTeamData(metsName),
+    oppName ? loadFangraphsTeamData(oppName) : null
   ]);
 
   const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
   const savantExpectedBattersByPlayer = Object.fromEntries(savantExpectedBatters.map((row) => [Number(row.player_id), row]));
 
   return {
-    mets: buildSingleTeamAdvanced(metsHitting, metsPitching, metsRoster, savantBattersByPlayer, savantExpectedBattersByPlayer),
-    opp: buildSingleTeamAdvanced(oppHitting, oppPitching, oppRoster, savantBattersByPlayer, savantExpectedBattersByPlayer)
+    mets: buildSingleTeamAdvanced(metsHitting, metsPitching, metsRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg),
+    opp: buildSingleTeamAdvanced(oppHitting, oppPitching, oppRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg)
   };
 }
 
