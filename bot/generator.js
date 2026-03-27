@@ -74,6 +74,9 @@ const openai = process.env.OPENAI_API_KEY
   : null;
 
 let cachedSavantPitchers = null;
+let cachedSavantBatters = null;
+let cachedSavantExpectedBatters = null;
+let cachedSavantExpectedPitchers = null;
 
 function getTodayEasternISO() {
   return new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
@@ -218,26 +221,53 @@ function loadPreviousOutput() {
 async function loadSavantPitcherLeaderboard() {
   if (cachedSavantPitchers) return cachedSavantPitchers;
 
-  const seasons = [new Date().getFullYear(), new Date().getFullYear() - 1];
-  const rows = [];
-
-  for (const season of seasons) {
-    const url =
-      "https://baseballsavant.mlb.com/leaderboard/custom" +
-      `?type=pitcher&year=${season}` +
-      "&selections=player_name,player_id,xera,barrel_batted_rate,hard_hit_percent,whiff_percent,oz_swing_percent,k_percent,bb_percent,gb_percent" +
-      "&sort=player_name&sortDir=asc&min=0&csv=true";
-    const csv = await safeGetText(url, `Savant pitcher leaderboard ${season}`);
-    if (!csv) continue;
-    rows.push(...parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }));
-    if (rows.length > 0) break;
-  }
-
-  cachedSavantPitchers = rows;
-  return rows;
+  const season = new Date().getFullYear();
+  const url =
+    "https://baseballsavant.mlb.com/leaderboard/custom" +
+    `?type=pitcher&year=${season}` +
+    "&selections=player_name,player_id,hard_hit_percent,barrel_batted_rate,whiff_percent,oz_swing_percent,k_percent,bb_percent,gb_percent" +
+    "&sort=player_name&sortDir=asc&min=0&csv=true";
+  const csv = await safeGetText(url, `Savant pitcher leaderboard ${season}`);
+  cachedSavantPitchers = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+  return cachedSavantPitchers;
 }
 
-function getSavantPitcherRow(rows, playerId) {
+async function loadSavantExpectedPitchers() {
+  if (cachedSavantExpectedPitchers) return cachedSavantExpectedPitchers;
+  const season = new Date().getFullYear();
+  const url =
+    "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
+    `?type=pitcher&year=${season}&position=&team=&min=q&csv=true`;
+  const csv = await safeGetText(url, `Savant expected pitcher leaderboard ${season}`);
+  cachedSavantExpectedPitchers = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+  return cachedSavantExpectedPitchers;
+}
+
+async function loadSavantBatterLeaderboard() {
+  if (cachedSavantBatters) return cachedSavantBatters;
+  const season = new Date().getFullYear();
+  const url =
+    "https://baseballsavant.mlb.com/leaderboard/custom" +
+    `?type=batter&year=${season}` +
+    "&selections=player_name,player_id,pa,hard_hit_percent,barrel_batted_rate,whiff_percent,k_percent,bb_percent" +
+    "&sort=player_name&sortDir=asc&min=0&csv=true";
+  const csv = await safeGetText(url, `Savant batter leaderboard ${season}`);
+  cachedSavantBatters = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+  return cachedSavantBatters;
+}
+
+async function loadSavantExpectedBatters() {
+  if (cachedSavantExpectedBatters) return cachedSavantExpectedBatters;
+  const season = new Date().getFullYear();
+  const url =
+    "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
+    `?type=batter&year=${season}&position=&team=&min=q&csv=true`;
+  const csv = await safeGetText(url, `Savant expected batter leaderboard ${season}`);
+  cachedSavantExpectedBatters = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+  return cachedSavantExpectedBatters;
+}
+
+function getSavantRow(rows, playerId) {
   return rows.find((row) => Number(row.player_id) === Number(playerId)) || null;
 }
 
@@ -286,14 +316,16 @@ async function getPitcherFacts(personId, fallbackName) {
   }
 
   const season = String(new Date().getFullYear());
-  const [person, currentStats, savantRows] = await Promise.all([
+  const [person, currentStats, savantRows, expectedRows] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
-    loadSavantPitcherLeaderboard()
+    loadSavantPitcherLeaderboard(),
+    loadSavantExpectedPitchers()
   ]);
 
   const stat = currentStats;
-  const savant = getSavantPitcherRow(savantRows, personId);
+  const savant = getSavantRow(savantRows, personId);
+  const expected = getSavantRow(expectedRows, personId);
 
   return {
     name: person?.fullName || fallbackName || "TBD",
@@ -304,12 +336,12 @@ async function getPitcherFacts(personId, fallbackName) {
     seasonRecord: stat?.wins != null && stat?.losses != null ? `${stat.wins}-${stat.losses}` : null,
     seasonERA: stat?.era || null,
     seasonFIP: stat?.fip || null,
-    seasonXERA: savant?.xera || null,
+    seasonXERA: expected?.xera || null,
     seasonWHIP: stat?.whip || null,
     seasonHR9: stat?.homeRunsPer9 || null,
     note: stat?.inningsPitched ? `${season} - ${stat.inningsPitched} IP` : null,
     savant: savant ? {
-      xERA: savant.xera || null,
+      xERA: expected?.xera || null,
       barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
       hardHitPct: savant.hard_hit_percent ? `${savant.hard_hit_percent}%` : null,
       whiffPct: savant.whiff_percent ? `${savant.whiff_percent}%` : null,
@@ -498,10 +530,13 @@ function buildLineupFromBoxscore(boxscoreTeam) {
   });
 }
 
-function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}) {
+function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}) {
   return roster
+    .filter((player) => player.primaryPosition?.abbreviation !== "P")
     .map((player, index) => {
       const liveStats = seasonStatsByPlayer[player.id] || {};
+      const savant = savantBattersByPlayer[player.id] || {};
+      const expected = savantExpectedBattersByPlayer[player.id] || {};
       const ops = liveStats.ops ?? null;
       const avg = liveStats.avg ?? null;
       const homeRuns = liveStats.homeRuns ?? null;
@@ -517,6 +552,17 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}) {
         seasonOPS: ops,
         seasonHR: homeRuns != null ? Number(homeRuns) : null,
         statsSeason: gamesPlayed > 0 ? String(new Date().getFullYear()) : null,
+        savant: {
+          xBA: expected.est_ba || null,
+          xSLG: expected.est_slg || null,
+          xwOBA: expected.est_woba || null,
+          hardHitPct: savant.hard_hit_percent ? `${savant.hard_hit_percent}%` : null,
+          barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
+          whiffPct: savant.whiff_percent ? `${savant.whiff_percent}%` : null,
+          kPct: savant.k_percent ? `${savant.k_percent}%` : null,
+          bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
+          pa: savant.pa != null ? Number(savant.pa) : Number(expected.pa || 0)
+        },
         _sortOps: parseFloat(String(ops ?? "").replace(/[^\d.-]/g, "")) || -1,
         _sortHr: Number(homeRuns || 0),
         _sortAvg: parseFloat(String(avg ?? "").replace(/[^\d.-]/g, "")) || 0
@@ -533,7 +579,8 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}) {
       seasonAVG: player.seasonAVG,
       seasonOPS: player.seasonOPS,
       seasonHR: player.seasonHR,
-      statsSeason: player.statsSeason
+      statsSeason: player.statsSeason,
+      savant: player.savant
     }));
 }
 
@@ -576,13 +623,44 @@ async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
   if (recentLineup.length) return recentLineup;
 
   const season = String(new Date().getFullYear());
-  const roster = await getTeamRoster(teamId, season);
+  const [roster, savantBatters, savantExpectedBatters] = await Promise.all([
+    getTeamRoster(teamId, season),
+    loadSavantBatterLeaderboard(),
+    loadSavantExpectedBatters()
+  ]);
   const seasonStatsByPlayer = Object.fromEntries(
     roster.map((player) => [player.id, player.stats || {}])
   );
+  const savantBattersByPlayer = Object.fromEntries(
+    savantBatters.map((row) => [Number(row.player_id), row])
+  );
+  const savantExpectedBattersByPlayer = Object.fromEntries(
+    savantExpectedBatters.map((row) => [Number(row.player_id), row])
+  );
 
-  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer);
+  const projected = buildLineupFromRoster(roster, seasonStatsByPlayer, savantBattersByPlayer, savantExpectedBattersByPlayer);
   return projected;
+}
+
+function enrichLineupWithSavant(lineup = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}) {
+  return lineup.map((player) => {
+    const savant = savantBattersByPlayer[player.playerId] || {};
+    const expected = savantExpectedBattersByPlayer[player.playerId] || {};
+    return {
+      ...player,
+      savant: {
+        xBA: expected.est_ba || null,
+        xSLG: expected.est_slg || null,
+        xwOBA: expected.est_woba || null,
+        hardHitPct: savant.hard_hit_percent ? `${savant.hard_hit_percent}%` : null,
+        barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
+        whiffPct: savant.whiff_percent ? `${savant.whiff_percent}%` : null,
+        kPct: savant.k_percent ? `${savant.k_percent}%` : null,
+        bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
+        pa: savant.pa != null ? Number(savant.pa) : Number(expected.pa || 0)
+      }
+    };
+  });
 }
 
 async function buildLineupFacts(feed, oppTeamId, targetDate) {
@@ -591,8 +669,15 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
   const metsTeam = awayTeam?.team?.id === TEAM_ID ? awayTeam : homeTeam;
   const oppTeam = awayTeam?.team?.id === TEAM_ID ? homeTeam : awayTeam;
 
-  const metsConfirmed = buildLineupFromBoxscore(metsTeam);
-  const oppConfirmed = buildLineupFromBoxscore(oppTeam);
+  const [savantBatters, savantExpectedBatters] = await Promise.all([
+    loadSavantBatterLeaderboard(),
+    loadSavantExpectedBatters()
+  ]);
+  const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
+  const savantExpectedBattersByPlayer = Object.fromEntries(savantExpectedBatters.map((row) => [Number(row.player_id), row]));
+
+  const metsConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(metsTeam), savantBattersByPlayer, savantExpectedBattersByPlayer);
+  const oppConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(oppTeam), savantBattersByPlayer, savantExpectedBattersByPlayer);
 
   if (metsConfirmed.length && oppConfirmed.length) {
     return {
@@ -709,13 +794,37 @@ function deriveApproxWrcPlus(hittingStat) {
   return Math.round(((ops / 0.720) * 100));
 }
 
-function buildSingleTeamAdvanced(hittingStat, pitchingStat) {
+function weightedAverage(items, getter, weightGetter) {
+  let weightTotal = 0;
+  let weightedTotal = 0;
+  for (const item of items || []) {
+    const value = parseNumber(getter(item));
+    const weight = Number(weightGetter(item) || 0);
+    if (value == null || weight <= 0) continue;
+    weightedTotal += value * weight;
+    weightTotal += weight;
+  }
+  return weightTotal > 0 ? (weightedTotal / weightTotal).toFixed(3).replace(/0+$/,'').replace(/\.$/,'') : null;
+}
+
+function weightedAveragePct(items, getter, weightGetter) {
+  const avg = weightedAverage(items, getter, weightGetter);
+  if (avg == null) return null;
+  return Number(avg).toFixed(1);
+}
+
+function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}) {
+  const hitters = roster.filter((player) => player.primaryPosition?.abbreviation !== "P");
+  const paFor = (player) => Number(player?.stats?.plateAppearances || savantBattersByPlayer[player.id]?.pa || savantExpectedBattersByPlayer[player.id]?.pa || (savantBattersByPlayer[player.id] || savantExpectedBattersByPlayer[player.id] ? 1 : 0));
+
   return {
     wrcPlus: deriveApproxWrcPlus(hittingStat),
-    xba: hittingStat?.avg || null,
+    xba: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_ba, paFor) || hittingStat?.avg || null,
+    xslg: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_slg, paFor),
+    xwoba: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_woba, paFor),
     ops: hittingStat?.ops || null,
-    hardHit: null,
-    barrelPct: null,
+    hardHit: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.hard_hit_percent, paFor),
+    barrelPct: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.barrel_batted_rate, paFor),
     bbPct: pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances),
     kPct: pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances),
     rotFip: pitchingStat?.fip || null,
@@ -726,16 +835,23 @@ function buildSingleTeamAdvanced(hittingStat, pitchingStat) {
 
 async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
   const season = String(new Date().getFullYear());
-  const [metsHitting, oppHitting, metsPitching, oppPitching] = await Promise.all([
+  const [metsHitting, oppHitting, metsPitching, oppPitching, metsRoster, oppRoster, savantBatters, savantExpectedBatters] = await Promise.all([
     getTeamSeasonStats(metsTeamId, "hitting", season),
     getTeamSeasonStats(oppTeamId, "hitting", season),
     getTeamSeasonStats(metsTeamId, "pitching", season),
-    getTeamSeasonStats(oppTeamId, "pitching", season)
+    getTeamSeasonStats(oppTeamId, "pitching", season),
+    getTeamRoster(metsTeamId, season),
+    getTeamRoster(oppTeamId, season),
+    loadSavantBatterLeaderboard(),
+    loadSavantExpectedBatters()
   ]);
 
+  const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
+  const savantExpectedBattersByPlayer = Object.fromEntries(savantExpectedBatters.map((row) => [Number(row.player_id), row]));
+
   return {
-    mets: buildSingleTeamAdvanced(metsHitting, metsPitching),
-    opp: buildSingleTeamAdvanced(oppHitting, oppPitching)
+    mets: buildSingleTeamAdvanced(metsHitting, metsPitching, metsRoster, savantBattersByPlayer, savantExpectedBattersByPlayer),
+    opp: buildSingleTeamAdvanced(oppHitting, oppPitching, oppRoster, savantBattersByPlayer, savantExpectedBattersByPlayer)
   };
 }
 
