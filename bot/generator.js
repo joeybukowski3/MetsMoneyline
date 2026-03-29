@@ -1110,21 +1110,89 @@ async function getPitcherRecentStarts(mlbId, beforeDate, n = 4) {
     }));
 }
 
-function extractPreviewFacts(content) {
-  const rawPreview =
-    content?.editorial?.preview?.mlb?.body ||
-    content?.editorial?.preview?.mlb?.headline ||
-    content?.editorial?.preview?.article?.body ||
-    "";
-
-  const cleaned = cleanText(rawPreview);
-  if (!cleaned) return [];
-
-  return cleaned
+function splitIntoSentences(value, limit = 2) {
+  return cleanText(value)
+    .replace(/^[A-Z\s.-]{2,}\s+--\s+/, "")
     .split(/(?<=[.?!])\s+/)
     .map((sentence) => sentence.trim())
-    .filter(Boolean)
-    .slice(0, 2);
+    .filter((sentence) => sentence && sentence.length >= 24)
+    .slice(0, limit);
+}
+
+function buildEditorialSource(entry, defaultLabel) {
+  if (!entry) return null;
+  const headline = cleanText(entry.headline || entry.seoTitle || entry.subhead || defaultLabel || "");
+  const url = entry.url || null;
+  const source = cleanText(entry.source || "MLB.com");
+  if (!headline && !url) return null;
+  return {
+    source,
+    label: defaultLabel || "Editorial",
+    headline: headline || defaultLabel || "Editorial",
+    url
+  };
+}
+
+function extractPreviewBundle(content) {
+  const previewEntry = content?.editorial?.preview?.mlb || content?.editorial?.preview?.article || null;
+  const wrapEntry = content?.editorial?.wrap?.mlb || content?.editorial?.wrap?.article || null;
+  const sourceEntry = previewEntry || wrapEntry || null;
+  const source = buildEditorialSource(sourceEntry, sourceEntry ? "Game preview" : "Preview context");
+  const rawPreview =
+    previewEntry?.body ||
+    previewEntry?.headline ||
+    wrapEntry?.body ||
+    wrapEntry?.headline ||
+    "";
+
+  return {
+    facts: splitIntoSentences(rawPreview, 2),
+    source
+  };
+}
+
+async function getMostRecentHeadToHeadGame(teamId, oppTeamId, beforeDate) {
+  const season = beforeDate.slice(0, 4);
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&opponentId=${oppTeamId}&sportId=1&gameType=R&startDate=${season}-03-01&endDate=${beforeDate}&hydrate=linescore,team,venue`,
+    `last h2h game ${teamId} ${oppTeamId} ${beforeDate}`
+  );
+
+  const games = (data?.dates || [])
+    .flatMap((dateEntry) => dateEntry.games || [])
+    .filter((game) => {
+      const state = game?.status?.detailedState || "";
+      return ["Final", "Completed Early", "Game Over"].includes(state) && game?.officialDate < beforeDate;
+    })
+    .sort((a, b) => new Date(b.gameDate) - new Date(a.gameDate));
+
+  return games[0] || null;
+}
+
+async function buildLastMeetingSummary(teamId, oppTeamId, beforeDate) {
+  const game = await getMostRecentHeadToHeadGame(teamId, oppTeamId, beforeDate);
+  if (!game?.gamePk) return null;
+
+  const metsAreHome = game?.teams?.home?.team?.id === teamId;
+  const metsSide = metsAreHome ? game?.teams?.home : game?.teams?.away;
+  const oppSide = metsAreHome ? game?.teams?.away : game?.teams?.home;
+  const recapContent = await getGameContent(game.gamePk);
+  const recapEntry = recapContent?.editorial?.recap?.mlb || recapContent?.editorial?.recap?.article || null;
+  const recapSentences = splitIntoSentences(recapEntry?.body || recapEntry?.headline || recapEntry?.blurb || "", 2);
+  const headline = cleanText(recapEntry?.headline || recapEntry?.seoTitle || recapEntry?.blurb || "");
+
+  return {
+    gamePk: game.gamePk,
+    date: game.officialDate,
+    ballpark: game?.venue?.name || "Venue TBD",
+    metsScore: metsSide?.score ?? null,
+    oppScore: oppSide?.score ?? null,
+    result: Number(metsSide?.score) > Number(oppSide?.score) ? "win" : "loss",
+    summary: `On ${game.officialDate}, the Mets ${Number(metsSide?.score) > Number(oppSide?.score) ? "beat" : "lost to"} the ${oppSide?.team?.name || "opponent"} ${metsSide?.score ?? "?"}-${oppSide?.score ?? "?"} at ${game?.venue?.name || "the ballpark"}.`,
+    recapHeadline: headline || null,
+    recapNotes: recapSentences,
+    source: buildEditorialSource(recapEntry, "Last meeting recap")
+  };
 }
 
 async function getOddsFacts(game) {
@@ -1236,7 +1304,7 @@ async function buildGameFacts(targetDate) {
     opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
   };
 
-  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money] = await Promise.all([
+  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
     Promise.all([
       getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName),
       getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName)
@@ -1250,12 +1318,13 @@ async function buildGameFacts(targetDate) {
     getHeadToHead(TEAM_ID, oppTeam.id, resolvedDate.slice(0, 4)),
     getPitcherRecentStarts(probablePitchers.mets?.id, resolvedDate, 4),
     getPitcherRecentStarts(probablePitchers.opp?.id, resolvedDate, 4),
-    getOddsFacts(game)
+    getOddsFacts(game),
+    buildLastMeetingSummary(TEAM_ID, oppTeam.id, resolvedDate)
   ]);
 
   const metsTeamRow = null;
   const oppTeamRow = null;
-  const previewFacts = extractPreviewFacts(content);
+  const previewBundle = extractPreviewBundle(content);
 
   const finalState = game?.status?.detailedState || "";
   const isFinal = ["Final", "Completed Early", "Game Over"].includes(finalState);
@@ -1290,7 +1359,11 @@ async function buildGameFacts(targetDate) {
       oppBullpen
     },
     lineups,
-    trends: previewFacts,
+    trends: previewBundle.facts,
+    editorial: {
+      previewSource: previewBundle.source,
+      recentSources: [previewBundle.source, lastMeeting?.source].filter(Boolean)
+    },
     injuries: [
       ...metsInjuries.map((injury) => `Mets: ${injury}`),
       ...oppInjuries.map((injury) => `${oppTeam.name}: ${injury}`)
@@ -1301,6 +1374,7 @@ async function buildGameFacts(targetDate) {
       metsInjuries: metsInjuries.map((injury) => ({ name: injury.split(" (")[0], status: injury.match(/\(([^)]+)\)/)?.[1] || "IL", description: injury })),
       oppInjuries: oppInjuries.map((injury) => ({ name: injury.split(" (")[0], status: injury.match(/\(([^)]+)\)/)?.[1] || "IL", description: injury })),
       headToHead,
+      lastMeeting,
       metsPitcherLog,
       oppPitcherLog
     },
@@ -1334,39 +1408,45 @@ function buildFallbackWriteup(gameFacts) {
   const metsPitcher = gameFacts.pitching.mets.name || "TBD";
   const oppPitcher = gameFacts.pitching.opp.name || "TBD";
   const lineupStatus = gameFacts.lineups.status === "confirmed" ? "confirmed" : "projected";
+  const ballpark = gameFacts.meta.ballpark || "Venue TBD";
+  const lastMeeting = gameFacts.gameContext?.lastMeeting;
+  const previewSource = gameFacts.editorial?.previewSource;
+  const recapClause = lastMeeting?.summary
+    ? `${lastMeeting.summary} ${lastMeeting.recapHeadline ? `Recap source: ${lastMeeting.recapHeadline}. ` : ""}`
+    : "";
+  const previewClause = previewSource?.headline
+    ? `Preview source: ${previewSource.headline}. `
+    : "";
 
   return {
-    raw: JSON.stringify({
-      fallback: true,
-      generatedAt: new Date().toISOString()
-    }),
+    raw: JSON.stringify({ fallback: true, generatedAt: new Date().toISOString() }),
     sections: [
       {
         heading: "1. Short Recap",
-        body: `The Mets face the ${opponent} on ${gameFacts.meta.date} at ${gameFacts.meta.ballpark}. New York enters ${metsRecord} while ${opponent} enters ${oppRecord}.`
+        body: `Context: Mets ${metsRecord}, ${opponent} ${oppRecord}, at ${ballpark}. ${recapClause}${previewClause}Edge: the stronger full-game side is the club more likely to win the on-base battle and avoid extra traffic. Implication: the baseline number starts with run-creation quality, not surface narrative.`
       },
       {
         heading: "2. Pitching Matchup",
-        body: `${metsPitcher} is lined up for the Mets and ${oppPitcher} is listed for ${opponent}. Any missing starter details remain not yet announced rather than assumed.`
+        body: `Split: ${metsPitcher} vs ${oppPitcher}. Edge: the better starter profile is the one that gets ahead, limits hard contact, and keeps the walk count from extending innings. Implication: if the Mets starter controls the count, the game should tilt toward New York before the late innings.`
       },
       {
         heading: "3. Lineup Comparison",
-        body: `The current lineup status is ${lineupStatus}. Confirmed hitters are used when available; otherwise the script keeps the comparison factual and avoids guessing beyond projected placeholders.`
+        body: `Split: lineups are ${lineupStatus}. Edge: New York projects better when the game is decided by lineup depth, OBP pressure, and lower swing-and-miss exposure. Implication: the Mets do not need one isolated power spike to create runs.`
       },
       {
         heading: "4. Bullpen",
-        body: "Bullpen context is built from team-level pitching data with safe fallbacks when current-season reliever splits are limited."
+        body: `Split: bullpen quality matters because this is a full-game moneyline bet. Edge: the stronger late-game unit is usually the one with the cleaner WHIP and strikeout-walk shape. Implication: if this game is still live after six, relief stability becomes part of the Mets case.`
       },
       {
         heading: "5. Key Edges",
-        body: "Recent form, injuries, and available advanced metrics are folded into the matchup cards. Missing data is left as not available instead of being invented."
+        body: `Edge set: strike-zone control, expected production, and lineup depth versus the opposing starter. Implication: if New York wins those repeatable categories, the matchup leans Mets even without a dominant starting-pitching gap.`
       },
       {
         heading: "6. Today's Pick",
-        body: "Today's Pick: New York Mets Moneyline. The pick stays fixed to the Mets by design, while the supporting case only references gathered facts."
+        body: `Today's Pick: New York Mets Moneyline. Case: better offensive depth, cleaner late-inning path, lower dependence on one high-variance scoring sequence.`
       }
     ],
-    pickSummary: "The generated preview keeps the recommendation on the Mets moneyline and limits itself to verified schedule, lineup, pitching, and trend inputs.",
+    pickSummary: "The Mets moneyline remains the preferred side because the repeatable indicators point the same way: better lineup depth, cleaner on-base profile, and a more stable late-game run-prevention path.",
     officialPick: "Today's Pick: New York Mets Moneyline"
   };
 }
@@ -1384,8 +1464,15 @@ async function generateWriteupFromFacts(gameFacts) {
     "You write MetsMoneyline game previews.",
     "Return JSON only.",
     "You may only use facts present in the provided gameFacts object.",
-    "Do not invent records, standings, injuries, or lineups.",
+    "Do not invent records, standings, injuries, lineups, or recap details.",
     "If a fact is null or missing, say it is not yet announced or omit it.",
+    "When gameFacts.gameContext.lastMeeting exists, explicitly reference the most recent game these teams played and include concrete details from that game.",
+    "When gameFacts.editorial.recentSources exists, use that sourced preview/recap context as support for the analysis and mention the specific sourced detail rather than speaking generically.",
+    "Write in a technical, stat-driven, concise style.",
+    "Use a betting-note structure: split -> edge -> implication.",
+    "Prioritize matchup mechanics, underlying metrics, handedness splits, contact quality, strikeout/walk profile, and bullpen indicators.",
+    "Keep every section tight and analytical. No filler, no scene-setting, no generic newsletter language.",
+    "Avoid phrases like by design, keeps it factual, remains not yet announced, or references to scripts/templates/automation.",
     "Always pick the Mets.",
     "There must be exactly 6 sections with these headings:",
     "1. Short Recap",
@@ -1407,7 +1494,7 @@ async function generateWriteupFromFacts(gameFacts) {
           { heading: "5. Key Edges", body: "..." },
           { heading: "6. Today's Pick", body: "..." }
         ],
-        pickSummary: "one paragraph",
+        pickSummary: "one sharp, human-sounding paragraph",
         officialPick: "Today's Pick: New York Mets Moneyline"
       }
     },
@@ -1529,6 +1616,7 @@ function buildGameJson(gameFacts, writeup) {
         advancedMatchup: gameFacts.advanced.cards,
         teamAdvanced: gameFacts.advanced.teamAdvanced,
         gameContext: gameFacts.gameContext,
+        editorial: gameFacts.editorial,
         trends: buildTrendArray(gameFacts),
         writeup: {
           raw: writeup.raw,
