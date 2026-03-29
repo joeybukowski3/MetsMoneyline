@@ -367,10 +367,10 @@ function metricValueClass(label, value) {
   const lowerBetter = /k%|strikeout rate/i.test(label);
   const thresholds = /wrc\+/.test(label.toLowerCase())
     ? { good: 115, bad: 90 }
-    : /ops|xslg|iso|woba|xwoba/i.test(label)
-      ? { good: 0.34, bad: 0.3 }
-      : /xba/i.test(label)
-        ? { good: 0.26, bad: 0.235 }
+    : /avg|xba/i.test(label)
+      ? { good: 0.26, bad: 0.235 }
+      : /ops|xslg|iso|woba|xwoba/i.test(label)
+        ? { good: 0.34, bad: 0.3 }
         : /bb%|walk rate/i.test(label)
           ? { good: 9, bad: 6.5 }
           : /k%|strikeout rate/i.test(label)

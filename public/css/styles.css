@@ -1643,3 +1643,30 @@ footer {
   .email-form input, .signup-form input,
   .email-form button, .signup-form button { width: 100%; }
 }
+
+
+.metric-cell {
+  font-weight: 700;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  background-clip: padding-box;
+}
+.metric-cell.metric-positive {
+  background: rgba(220, 38, 38, 0.16) !important;
+  color: #b91c1c !important;
+  box-shadow: inset 0 0 0 9999px rgba(220, 38, 38, 0.06);
+}
+.metric-cell.metric-negative {
+  background: rgba(29, 78, 216, 0.16) !important;
+  color: #1d4ed8 !important;
+  box-shadow: inset 0 0 0 9999px rgba(29, 78, 216, 0.06);
+}
+.metric-cell.metric-neutral {
+  background: rgba(148, 163, 184, 0.14) !important;
+  color: #475569 !important;
+  box-shadow: inset 0 0 0 9999px rgba(148, 163, 184, 0.04);
+}
+.team-metric-header { display: inline-flex; align-items: center; gap: 0.4rem; }
+.team-metric-header img { width: 18px; height: 18px; object-fit: contain; }
+.team-edge-badge { display: inline-block; margin-left: 0.45rem; padding: 0.12rem 0.45rem; border-radius: 999px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+.team-edge-badge-mets { background: rgba(21, 128, 61, 0.12); color: #15803d; }
+.team-edge-badge-opp { background: rgba(185, 28, 28, 0.12); color: #b91c1c; }
