@@ -1128,22 +1128,27 @@ function buildGameContextCard(game) {
   // Pitcher recent starts mini-table
   const pitcherLogTable = (starts, name) => {
     if (!starts?.length) return "";
+    const compactOpponent = (teamName) => {
+      const abbr = getTeamAbbr(teamName);
+      return abbr && abbr !== teamName ? abbr : teamName;
+    };
     const rows = starts.slice(0, 4).map(s => {
       const er = parseInt(s.er);
-      const erColor = isNaN(er) ? "" : er <= 2 ? "color:#15803d;font-weight:700" : er <= 4 ? "color:#92400e;font-weight:700" : "color:#b91c1c;font-weight:700";
+      const erClass = isNaN(er) ? "" : er <= 2 ? " good" : er <= 4 ? " warn" : " bad";
+      const resultClass = s.result === "W" ? " good" : s.result === "L" ? " bad" : " muted";
       return `<tr>
-        <td style="color:#9099b0;font-size:0.75rem">${s.date}</td>
-        <td style="font-size:0.78rem">vs ${s.opponent}</td>
-        <td style="font-size:0.78rem">${s.ip} IP</td>
-        <td style="font-size:0.78rem;${erColor}">${s.er} ER</td>
-        <td style="font-size:0.78rem">${s.k} K</td>
-        <td style="font-size:0.75rem;font-weight:700;color:${s.result==="W"?"#15803d":s.result==="L"?"#b91c1c":"#9099b0"}">${s.result}</td>
+        <td class="compact-date">${String(s.date || "").slice(5)}</td>
+        <td class="compact-opp">${compactOpponent(s.opponent)}</td>
+        <td>${s.ip}</td>
+        <td class="compact-er${erClass}">${s.er}</td>
+        <td>${s.k}</td>
+        <td class="compact-wl${resultClass}">${s.result}</td>
       </tr>`;
     }).join("");
     return `
-      <div style="margin-bottom:0.3rem;font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${name} — Recent Starts</div>
-      <div class="table-wrap" style="margin-bottom:0.75rem">
-        <table style="font-size:0.8rem">
+      <div class="compact-log-title">${name} — Recent Starts</div>
+      <div class="table-wrap compact-log-wrap">
+        <table class="compact-log-table">
           <thead><tr><th>Date</th><th>Opp</th><th>IP</th><th>ER</th><th>K</th><th>W/L</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>

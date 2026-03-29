@@ -1109,6 +1109,80 @@ tbody td:first-child { font-weight: 500; }
   color: #1e40af;
 }
 
+.compact-log-title {
+  margin-bottom: 0.35rem;
+  font-size: 0.71rem;
+  font-weight: 700;
+  color: #9099b0;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.compact-log-wrap {
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.compact-log-table {
+  width: 100%;
+  table-layout: fixed;
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.compact-log-table thead th {
+  padding: 0.45rem 0.55rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.compact-log-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.compact-log-table tbody td {
+  padding: 0.45rem 0.55rem;
+  font-size: 0.78rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.compact-log-table .compact-date {
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+.compact-log-table .compact-opp {
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+.compact-log-table .compact-er,
+.compact-log-table .compact-wl {
+  font-weight: 700;
+}
+
+.compact-log-table .compact-er.good,
+.compact-log-table .compact-wl.good {
+  color: #15803d;
+}
+
+.compact-log-table .compact-er.warn {
+  color: #b45309;
+}
+
+.compact-log-table .compact-er.bad,
+.compact-log-table .compact-wl.bad {
+  color: #b91c1c;
+}
+
+.compact-log-table .compact-wl.muted {
+  color: #94a3b8;
+}
+
 /* =====================
    PLAYER HEADSHOTS
    ===================== */
