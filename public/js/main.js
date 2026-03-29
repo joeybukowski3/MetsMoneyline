@@ -274,6 +274,14 @@ function getTeamStoryline(teamName) {
   return TEAM_STORYLINES[teamName]?.note || `${teamName} are still looking for steadier production from their current core as the season settles in.`;
 }
 
+function summarizeLastGame(game) {
+  const lastGame = game.gameContext?.metsRecentGames?.[0];
+  if (!lastGame) return "The Mets are still building their first full run of form for 2026.";
+  const venueText = lastGame.homeAway === "home" ? "at Citi Field" : `on the road against ${lastGame.opponent}`;
+  const resultText = lastGame.result === "W" ? "won" : "lost";
+  return `In the last game, the Mets ${resultText} ${lastGame.score} ${venueText} against ${lastGame.opponent}, so this matchup picks up directly from that result rather than starting from scratch.`;
+}
+
 function buildGameBreakdown(game) {
   const gc = game.gameContext || {};
   const metsStory = getTeamStoryline("New York Mets");
@@ -288,6 +296,7 @@ function buildGameBreakdown(game) {
     : `This is their ${formatOrdinal(priorMeetings + 1)} matchup of the season, with ${h2hWins > h2hLosses ? "the Mets" : h2hLosses > h2hWins ? game.opponent : "neither side"} ${h2hWins === h2hLosses ? `even at ${h2hWins}-${h2hLosses}` : `ahead ${Math.max(h2hWins, h2hLosses)}-${Math.min(h2hWins, h2hLosses)}`}.`;
 
   const parts = [
+    summarizeLastGame(game),
     `${metsStreak}, while ${oppStreak}. New York is ${getMetsRecord(game)} on the year, while ${getTeamLocationName(game.opponent)} is ${getOppRecord(game)}.`,
     meetingText,
     metsStory,
@@ -345,6 +354,53 @@ function resolveBullpen(bullpenObj) {
 
 function resolveAdvancedMatchup(game) {
   return Array.isArray(game.advancedMatchup) ? game.advancedMatchup : [];
+}
+
+function parseMetricNumber(value) {
+  const num = parseFloat(String(value ?? "").replace(/<[^>]*>/g, "").replace(/%/g, "").trim());
+  return Number.isFinite(num) ? num : null;
+}
+
+function metricValueClass(label, value) {
+  const num = parseMetricNumber(value);
+  if (num == null) return "";
+  const lowerBetter = /k%|strikeout rate/i.test(label);
+  const thresholds = /wrc\+/.test(label.toLowerCase())
+    ? { good: 115, bad: 90 }
+    : /ops|xslg|iso|woba|xwoba/i.test(label)
+      ? { good: 0.34, bad: 0.3 }
+      : /xba/i.test(label)
+        ? { good: 0.26, bad: 0.235 }
+        : /bb%|walk rate/i.test(label)
+          ? { good: 9, bad: 6.5 }
+          : /k%|strikeout rate/i.test(label)
+            ? { good: 20, bad: 25 }
+            : null;
+  if (!thresholds) return "";
+  if (lowerBetter) {
+    if (num <= thresholds.good) return "metric-positive";
+    if (num >= thresholds.bad) return "metric-negative";
+    return "metric-neutral";
+  }
+  if (num >= thresholds.good) return "metric-positive";
+  if (num <= thresholds.bad) return "metric-negative";
+  return "metric-neutral";
+}
+
+function computeAdvancedEdgeLabel(rows, oppAbbr) {
+  let metsEdges = 0;
+  let oppEdges = 0;
+  for (const row of rows) {
+    const m = parseMetricNumber(row.mets);
+    const o = parseMetricNumber(row.opp);
+    if (m == null || o == null || m === o) continue;
+    const lowerBetter = /k%|strikeout rate/i.test(row.category);
+    const metsWins = lowerBetter ? m < o : m > o;
+    if (metsWins) metsEdges += 1;
+    else oppEdges += 1;
+  }
+  if (metsEdges === oppEdges) return "Even";
+  return metsEdges > oppEdges ? "NYM" : oppAbbr;
 }
 
 /* ── ROW 1: Matchup Bar ── */
@@ -775,17 +831,19 @@ function buildRow3(game) {
     return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
   };
 
+  const statCell = (label, value) => `<td class="metric-cell ${metricValueClass(label, value)}">${value ?? "N/A"}</td>`;
+
   const metsRows = metsLineup.length > 0
     ? metsLineup.map(p => `
     <tr>
       <td>${p.order}</td>
       <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
       <td>${p.pos}</td>
-      <td>${getMetsHitterAVG(p)}</td>
-      <td>${getMetsHitterSeasonOps(p)}</td>
-      <td>${p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A"}</td>
-      <td>${p.savant?.xBA ?? p.seasonAVG ?? "N/A"}</td>
-      <td>${p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A"}</td>
+      ${statCell("AVG", getMetsHitterAVG(p))}
+      ${statCell("OPS", getMetsHitterSeasonOps(p))}
+      ${statCell("wRC+", p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A")}
+      ${statCell("xBA", p.savant?.xBA ?? p.seasonAVG ?? "N/A")}
+      ${statCell("xwOBA", p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A")}
     </tr>`).join("")
     : `<tr><td colspan="8" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
@@ -795,11 +853,11 @@ function buildRow3(game) {
       <td>${p.order}</td>
       <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
       <td>${p.pos}</td>
-      <td>${p.seasonAVG ?? "N/A"}</td>
-      <td>${p.seasonOPS ?? "N/A"}</td>
-      <td>${p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A"}</td>
-      <td>${p.savant?.xBA ?? p.seasonAVG ?? "N/A"}</td>
-      <td>${p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A"}</td>
+      ${statCell("AVG", p.seasonAVG ?? "N/A")}
+      ${statCell("OPS", p.seasonOPS ?? "N/A")}
+      ${statCell("wRC+", p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A")}
+      ${statCell("xBA", p.savant?.xBA ?? p.seasonAVG ?? "N/A")}
+      ${statCell("xwOBA", p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A")}
     </tr>`).join("")
     : `<tr><td colspan="8" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
 
@@ -819,17 +877,16 @@ function buildRow3(game) {
 
   // Advanced metrics — individual cards with progress bars (matching Lovable design)
   const resolvedMetrics = resolveAdvancedMatchup(game);
+  const edgeLabel = computeAdvancedEdgeLabel(resolvedMetrics, oppAbbr);
   const advCards = resolvedMetrics.map(r => {
-    // Extract raw numeric values for progress bar calculation
-    const nymRaw = parseFloat(String(r.mets).replace(/<[^>]*>/g, "").trim());
-    const oppRaw = parseFloat(String(r.opp).replace(/<[^>]*>/g, "").trim());
-    const isKPct = r.category === "K%";
-    // For K%, lower is better for NYM. Otherwise higher = better.
-    const nymWins = isKPct ? (nymRaw < oppRaw) : (nymRaw > oppRaw);
-    // Progress bar widths: scale both relative to the higher value
-    const maxVal = Math.max(nymRaw, oppRaw, 0.001);
-    const nymPct = Math.min((nymRaw / (maxVal * 1.25)) * 100, 100) || 50;
-    const oppPct = Math.min((oppRaw / (maxVal * 1.25)) * 100, 100) || 50;
+    const nymRaw = parseMetricNumber(r.mets);
+    const oppRaw = parseMetricNumber(r.opp);
+    const lowerBetter = /k%|strikeout rate/i.test(r.category);
+    const comparable = nymRaw != null && oppRaw != null;
+    const nymWins = comparable ? (lowerBetter ? nymRaw < oppRaw : nymRaw > oppRaw) : false;
+    const maxVal = comparable ? Math.max(nymRaw, oppRaw, 0.001) : 1;
+    const nymPct = comparable ? (Math.min((nymRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
+    const oppPct = comparable ? (Math.min((oppRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
     return `
       <div class="adv-metric-card">
         <div class="amc-label">${r.category}</div>
@@ -841,11 +898,11 @@ function buildRow3(game) {
           <div class="amc-bar-fill ${nymWins ? "win" : "lose"}" style="width:${nymPct.toFixed(1)}%"></div>
         </div>
         <div class="amc-row" style="margin-top:0.5rem">
-          <span class="amc-abbr ${!nymWins ? "winner" : ""}">${oppAbbr}</span>
-          <span class="amc-val ${!nymWins ? "winner" : ""}">${r.opp}</span>
+          <span class="amc-abbr ${comparable && !nymWins ? "winner" : ""}">${oppAbbr}</span>
+          <span class="amc-val ${comparable && !nymWins ? "winner" : ""}">${r.opp}</span>
         </div>
         <div class="amc-bar-track">
-          <div class="amc-bar-fill ${!nymWins ? "win" : "lose"}" style="width:${oppPct.toFixed(1)}%"></div>
+          <div class="amc-bar-fill ${comparable && !nymWins ? "win" : "lose"}" style="width:${oppPct.toFixed(1)}%"></div>
         </div>
       </div>`;
   }).join("");
@@ -866,7 +923,7 @@ function buildRow3(game) {
     <div class="adv-metrics-section">
       <div class="adv-metrics-header">
         <span class="section-floating-label" style="margin:0">Advanced Metrics</span>
-        <span class="adv-edge-tag">&#x2197; Edge: NYM</span>
+        <span class="adv-edge-tag">&#x2197; Edge: ${edgeLabel}</span>
       </div>
       <div class="adv-metric-cards-grid">
         ${advCards}
@@ -1034,8 +1091,12 @@ function buildGameContextCard(game) {
     })();
     const pills = games.slice(0, 5).map(g => {
       const bg = g.result === "W" ? "#22c55e" : "#ef4444";
-      const tip = `${g.homeAway === "home" ? "vs" : "@"} ${g.opponent} (${g.date})`;
-      return `<span title="${tip}" style="display:inline-block;background:${bg};color:#fff;font-size:0.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:3px;cursor:default;">${g.result} ${g.score}</span>`;
+      const venuePrefix = g.homeAway === "home" ? "vs" : "@";
+      const oppAbbr = getTeamAbbr(g.opponent);
+      const resultWord = g.result === "W" ? "Win" : g.result === "L" ? "Loss" : g.result;
+      const display = `${venuePrefix} ${oppAbbr} (${resultWord} ${g.score})`;
+      const tip = `${display} • ${g.date}`;
+      return `<span title="${tip}" style="display:inline-block;background:${bg};color:#fff;font-size:0.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:3px;cursor:default;">${display}</span>`;
     }).join("");
     return `<div style="margin-bottom:0.4rem"><span style="font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label}</span> ${streak}</div><div>${pills}</div>`;
   };
@@ -1120,6 +1181,9 @@ function buildTeamAdvancedCard(game) {
   const ta = game.teamAdvanced;
   if (!ta?.mets || !ta?.opp) return "";
   const oppAbbr = getTeamAbbr(game.opponent);
+  const metsLogo = getTeamLogoUrl("New York Mets");
+  const oppLogo = getTeamLogoUrl(game.oppTeamId || game.opponent);
+  const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label}">` : ""}<span>${label}</span></span>`;
 
   const rows = [
     { label: "wRC+",         mVal: ta.mets.wrcPlus,   oVal: ta.opp.wrcPlus,   higherBetter: true  },
@@ -1133,19 +1197,24 @@ function buildTeamAdvancedCard(game) {
     { label: "K%",           mVal: ta.mets.kPct,      oVal: ta.opp.kPct,      higherBetter: false },
     { label: "Rotation xFIP",mVal: ta.mets.rotXfip || ta.mets.rotFip, oVal: ta.opp.rotXfip || ta.opp.rotFip, higherBetter: false },
   ].map(r => {
-    const fmt = v => (v == null || v === "") ? "—" : String(v);
-    const mNum = parseFloat(String(r.mVal ?? ""));
-    const oNum = parseFloat(String(r.oVal ?? ""));
-    const hasComparison = !isNaN(mNum) && !isNaN(oNum);
+    const fmt = v => (v == null || v === "") ? "-" : String(v);
+    const mNum = parseMetricNumber(r.mVal);
+    const oNum = parseMetricNumber(r.oVal);
+    const hasComparison = mNum != null && oNum != null;
     const metsLeads = hasComparison && (r.higherBetter ? mNum > oNum : mNum < oNum);
     const oppLeads  = hasComparison && !metsLeads && mNum !== oNum;
     const mStyle = metsLeads ? "font-weight:700;color:#15803d" : "";
     const oStyle = oppLeads  ? "font-weight:700;color:#b91c1c" : "";
+    const edgeBadge = metsLeads
+      ? `${teamHeader("Mets", metsLogo)} <span class="team-edge-badge team-edge-badge-mets">edge</span>`
+      : oppLeads
+        ? `${teamHeader(game.opponent, oppLogo)} <span class="team-edge-badge team-edge-badge-opp">edge</span>`
+        : "-";
     return `<tr>
       <td>${r.label}</td>
       <td style="${mStyle}">${fmt(r.mVal)}</td>
       <td style="${oStyle}">${fmt(r.oVal)}</td>
-      <td>${metsLeads ? "✅ Mets" : oppLeads ? `❌ ${oppAbbr}` : "—"}</td>
+      <td>${edgeBadge}</td>
     </tr>`;
   }).join("");
 
@@ -1155,11 +1224,11 @@ function buildTeamAdvancedCard(game) {
       <div class="card-header">2026 Team Metrics</div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Stat</th><th>NYM</th><th>${oppAbbr}</th><th>Edge</th></tr></thead>
+          <thead><tr><th>Stat</th><th>${teamHeader("NYM", metsLogo)}</th><th>${teamHeader(oppAbbr, oppLogo)}</th><th>Edge</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: FanGraphs · Baseball Savant · MLB Stats API</p>
+      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: FanGraphs ? Baseball Savant ? MLB Stats API</p>
     </div>`;
 }
 
