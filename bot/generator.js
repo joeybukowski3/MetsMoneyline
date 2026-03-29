@@ -429,14 +429,17 @@ async function getPitcherFacts(personId, fallbackName) {
   }
 
   const season = String(new Date().getFullYear());
-  const [person, currentStats, savantRows, expectedRows] = await Promise.all([
+  const previousSeason = String(Number(season) - 1);
+  const [person, currentStats, previousStats, savantRows, expectedRows] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
+    getPlayerSeasonStats(personId, "pitching", previousSeason),
     loadSavantPitcherLeaderboard(),
     loadSavantExpectedPitchers()
   ]);
 
-  const stat = currentStats;
+  const stat = currentStats || previousStats;
+  const statSeason = currentStats ? season : previousStats ? previousSeason : null;
   const savant = getSavantRow(savantRows, personId);
   const expected = getSavantRow(expectedRows, personId);
 
@@ -452,7 +455,7 @@ async function getPitcherFacts(personId, fallbackName) {
     seasonXERA: expected?.xera || null,
     seasonWHIP: stat?.whip || null,
     seasonHR9: stat?.homeRunsPer9 || null,
-    note: stat?.inningsPitched ? `${season} - ${stat.inningsPitched} IP` : null,
+    note: stat?.inningsPitched && statSeason ? `${statSeason} - ${stat.inningsPitched} IP` : null,
     savant: savant ? {
       xERA: expected?.xera || null,
       barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
@@ -1411,42 +1414,54 @@ function buildFallbackWriteup(gameFacts) {
   const ballpark = gameFacts.meta.ballpark || "Venue TBD";
   const lastMeeting = gameFacts.gameContext?.lastMeeting;
   const previewSource = gameFacts.editorial?.previewSource;
-  const recapClause = lastMeeting?.summary
-    ? `${lastMeeting.summary} ${lastMeeting.recapHeadline ? `Recap source: ${lastMeeting.recapHeadline}. ` : ""}`
+  const recapClause = lastMeeting?.recapHeadline
+    ? `Recap source: ${lastMeeting.recapHeadline}. `
     : "";
   const previewClause = previewSource?.headline
     ? `Preview source: ${previewSource.headline}. `
     : "";
+
+  const metsBp = gameFacts.pitching.metsBullpen || {};
+  const oppBp = gameFacts.pitching.oppBullpen || {};
+  const ta = gameFacts.advanced?.teamAdvanced || {};
+  const lastMeetingLine = lastMeeting?.summary ? `Last meeting: ${lastMeeting.summary}` : null;
+  const sourceLine = previewSource?.headline ? `Source: ${previewSource.headline}.` : null;
+  const shortRecapBody = [
+    `Mets ${metsRecord}, ${opponent} ${oppRecord}, ${ballpark}.`,
+    lastMeetingLine,
+    recapClause ? recapClause.trim() : null,
+    sourceLine
+  ].filter(Boolean).join(" ");
 
   return {
     raw: JSON.stringify({ fallback: true, generatedAt: new Date().toISOString() }),
     sections: [
       {
         heading: "1. Short Recap",
-        body: `Context: Mets ${metsRecord}, ${opponent} ${oppRecord}, at ${ballpark}. ${recapClause}${previewClause}Edge: the stronger full-game side is the club more likely to win the on-base battle and avoid extra traffic. Implication: the baseline number starts with run-creation quality, not surface narrative.`
+        body: shortRecapBody
       },
       {
         heading: "2. Pitching Matchup",
-        body: `Split: ${metsPitcher} vs ${oppPitcher}. Edge: the better starter profile is the one that gets ahead, limits hard contact, and keeps the walk count from extending innings. Implication: if the Mets starter controls the count, the game should tilt toward New York before the late innings.`
+        body: `${metsPitcher}${gameFacts.pitching.mets.seasonERA ? ` (${gameFacts.pitching.mets.seasonERA} ERA` : ""}${gameFacts.pitching.mets.seasonWHIP ? `, ${gameFacts.pitching.mets.seasonWHIP} WHIP` : ""}${gameFacts.pitching.mets.note ? `, ${gameFacts.pitching.mets.note}` : ""}${gameFacts.pitching.mets.seasonERA ? ")" : ""} vs ${oppPitcher}${gameFacts.pitching.opp.seasonERA ? ` (${gameFacts.pitching.opp.seasonERA} ERA` : ""}${gameFacts.pitching.opp.seasonWHIP ? `, ${gameFacts.pitching.opp.seasonWHIP} WHIP` : ""}${gameFacts.pitching.opp.note ? `, ${gameFacts.pitching.opp.note}` : ""}${gameFacts.pitching.opp.seasonERA ? ")" : ""}.`
       },
       {
         heading: "3. Lineup Comparison",
-        body: `Split: lineups are ${lineupStatus}. Edge: New York projects better when the game is decided by lineup depth, OBP pressure, and lower swing-and-miss exposure. Implication: the Mets do not need one isolated power spike to create runs.`
+        body: `Lineups are ${lineupStatus}. Team offense: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"}, xwOBA ${ta.mets?.xwoba || "N/A"}, K% ${ta.mets?.kPct || "N/A"}. ${opponent} wRC+ ${ta.opp?.wrcPlus || "N/A"}, xwOBA ${ta.opp?.xwoba || "N/A"}, K% ${ta.opp?.kPct || "N/A"}.`
       },
       {
         heading: "4. Bullpen",
-        body: `Split: bullpen quality matters because this is a full-game moneyline bet. Edge: the stronger late-game unit is usually the one with the cleaner WHIP and strikeout-walk shape. Implication: if this game is still live after six, relief stability becomes part of the Mets case.`
+        body: `Bullpen check: Mets ERA ${metsBp.seasonERA || "N/A"}, xFIP ${metsBp.seasonXFIP || "N/A"}, WHIP ${metsBp.seasonWHIP || "N/A"}. ${opponent} ERA ${oppBp.seasonERA || "N/A"}, xFIP ${oppBp.seasonXFIP || "N/A"}, WHIP ${oppBp.seasonWHIP || "N/A"}.`
       },
       {
         heading: "5. Key Edges",
-        body: `Edge set: strike-zone control, expected production, and lineup depth versus the opposing starter. Implication: if New York wins those repeatable categories, the matchup leans Mets even without a dominant starting-pitching gap.`
+        body: `Main numbers: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"} vs ${ta.opp?.wrcPlus || "N/A"}, NYM xwOBA ${ta.mets?.xwoba || "N/A"} vs ${ta.opp?.xwoba || "N/A"}, NYM bullpen rating ${metsBp.rating || "N/A"} vs ${oppBp.rating || "N/A"}.`
       },
       {
         heading: "6. Today's Pick",
-        body: `Today's Pick: New York Mets Moneyline. Case: better offensive depth, cleaner late-inning path, lower dependence on one high-variance scoring sequence.`
+        body: `Today's Pick: New York Mets Moneyline. Reason: better lineup quality and the stronger bullpen numbers.`
       }
     ],
-    pickSummary: "The Mets moneyline remains the preferred side because the repeatable indicators point the same way: better lineup depth, cleaner on-base profile, and a more stable late-game run-prevention path.",
+    pickSummary: `Play the Mets moneyline. The case is simple: better team offense, cleaner bullpen profile, and a favorable recent series result.`,
     officialPick: "Today's Pick: New York Mets Moneyline"
   };
 }
