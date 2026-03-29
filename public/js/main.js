@@ -284,29 +284,38 @@ function summarizeLastGame(game) {
 
 function buildGameBreakdown(game) {
   const gc = game.gameContext || {};
-  const metsStory = getTeamStoryline("New York Mets");
-  const oppStory = getTeamStoryline(game.opponent);
-  const metsStreak = describeStreakClause(gc.metsRecentGames, "The Mets");
-  const oppStreak = describeStreakClause(gc.oppRecentGames, getTeamAbbr(game.opponent));
+  const oppAbbr = getTeamAbbr(game.opponent);
+  const lastMeeting = gc.lastMeeting || null;
   const h2hWins = gc.headToHead?.wins ?? 0;
   const h2hLosses = gc.headToHead?.losses ?? 0;
   const priorMeetings = h2hWins + h2hLosses;
-  const meetingText = priorMeetings === 0
-    ? "This is the 1st meeting between these teams this season."
-    : `This is their ${formatOrdinal(priorMeetings + 1)} matchup of the season, with ${h2hWins > h2hLosses ? "the Mets" : h2hLosses > h2hWins ? game.opponent : "neither side"} ${h2hWins === h2hLosses ? `even at ${h2hWins}-${h2hLosses}` : `ahead ${Math.max(h2hWins, h2hLosses)}-${Math.min(h2hWins, h2hLosses)}`}.`;
+  const recentSource = game.editorial?.recentSources?.[0] || null;
 
-  const parts = [
-    summarizeLastGame(game),
-    `${metsStreak}, while ${oppStreak}. New York is ${getMetsRecord(game)} on the year, while ${getTeamLocationName(game.opponent)} is ${getOppRecord(game)}.`,
-    meetingText,
-    metsStory,
-    oppStory
-  ];
+  const lines = [];
+
+  if (lastMeeting) {
+    const resultWord = lastMeeting.result === "win" ? "won" : "lost";
+    lines.push(`Last meeting: the Mets ${resultWord} ${lastMeeting.metsScore}-${lastMeeting.oppScore} over ${oppAbbr} on ${lastMeeting.date}.`);
+  }
+
+  lines.push(`Record check: New York is ${getMetsRecord(game)}. ${oppAbbr} is ${getOppRecord(game)}.`);
+
+  if (priorMeetings === 0) {
+    lines.push("Season series: first meeting.");
+  } else {
+    lines.push(`Season series: Mets lead ${h2hWins}-${h2hLosses} entering game ${priorMeetings + 1}.`);
+  }
+
+  if (recentSource?.headline) {
+    lines.push(`Source note: ${recentSource.headline}.`);
+  }
 
   return `
     <div class="section-floating-label">Game Breakdown</div>
     <div class="card full-card" style="padding:1.25rem">
-      <p style="margin:0;color:var(--ink);line-height:1.7">${parts.join(" ")}</p>
+      <div style="display:grid;gap:0.45rem;color:var(--ink);line-height:1.55">
+        ${lines.map(line => `<p style="margin:0">${line}</p>`).join("")}
+      </div>
     </div>`;
 }
 
