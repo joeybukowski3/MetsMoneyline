@@ -256,24 +256,52 @@ async function loadSavantPitcherLeaderboard() {
   if (cachedSavantPitchers) return cachedSavantPitchers;
 
   const season = new Date().getFullYear();
-  const url =
-    "https://baseballsavant.mlb.com/leaderboard/custom" +
-    `?type=pitcher&year=${season}` +
-    "&selections=player_name,player_id,hard_hit_percent,barrel_batted_rate,whiff_percent,oz_swing_percent,k_percent,bb_percent,gb_percent" +
-    "&sort=player_name&sortDir=asc&min=0&csv=true";
-  const csv = await safeGetText(url, `Savant pitcher leaderboard ${season}`);
-  cachedSavantPitchers = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+  const seasonsToTry = [season, season - 1];
+  const merged = [];
+  const seen = new Set();
+
+  for (const year of seasonsToTry) {
+    const url =
+      "https://baseballsavant.mlb.com/leaderboard/custom" +
+      `?type=pitcher&year=${year}` +
+      "&selections=player_name,player_id,hard_hit_percent,barrel_batted_rate,whiff_percent,oz_swing_percent,k_percent,bb_percent,gb_percent" +
+      "&sort=player_name&sortDir=asc&min=0&csv=true";
+    const csv = await safeGetText(url, `Savant pitcher leaderboard ${year}`);
+    const rows = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+    for (const row of rows) {
+      const id = String(row.player_id || "");
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      merged.push(row);
+    }
+  }
+
+  cachedSavantPitchers = merged;
   return cachedSavantPitchers;
 }
 
 async function loadSavantExpectedPitchers() {
   if (cachedSavantExpectedPitchers) return cachedSavantExpectedPitchers;
   const season = new Date().getFullYear();
-  const url =
-    "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
-    `?type=pitcher&year=${season}&position=&team=&min=q&csv=true`;
-  const csv = await safeGetText(url, `Savant expected pitcher leaderboard ${season}`);
-  cachedSavantExpectedPitchers = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+  const seasonsToTry = [season, season - 1];
+  const merged = [];
+  const seen = new Set();
+
+  for (const year of seasonsToTry) {
+    const url =
+      "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
+      `?type=pitcher&year=${year}&position=&team=&min=q&csv=true`;
+    const csv = await safeGetText(url, `Savant expected pitcher leaderboard ${year}`);
+    const rows = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
+    for (const row of rows) {
+      const id = String(row.player_id || "");
+      if (!id || seen.has(id)) continue;
+      seen.add(id);
+      merged.push(row);
+    }
+  }
+
+  cachedSavantExpectedPitchers = merged;
   return cachedSavantExpectedPitchers;
 }
 
@@ -841,15 +869,31 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
 
 async function buildBullpenFacts(teamId, teamName, isMets) {
   const season = String(new Date().getFullYear());
-  const [current, fangraphsTeam] = await Promise.all([
+  const today = getTodayEasternISO();
+  const last14Start = new Date(`${today}T12:00:00Z`);
+  last14Start.setUTCDate(last14Start.getUTCDate() - 14);
+  const last3Start = new Date(`${today}T12:00:00Z`);
+  last3Start.setUTCDate(last3Start.getUTCDate() - 3);
+
+  const [current, fangraphsTeam, last14, last3] = await Promise.all([
     safeGetJson(
       `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
       `team pitching ${teamId} ${season}`
     ),
-    loadFangraphsTeamData(teamName)
+    loadFangraphsTeamData(teamName),
+    safeGetJson(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last14Start.toISOString().slice(0, 10)}&endDate=${today}`,
+      `team pitching last14 ${teamId} ${season}`
+    ),
+    safeGetJson(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last3Start.toISOString().slice(0, 10)}&endDate=${today}`,
+      `team pitching last3 ${teamId} ${season}`
+    )
   ]);
 
   const stat = current?.stats?.[0]?.splits?.[0]?.stat || null;
+  const last14Stat = last14?.stats?.[0]?.splits?.[0]?.stat || null;
+  const last3Stat = last3?.stats?.[0]?.splits?.[0]?.stat || null;
   const pitchingTotal = fangraphsTeam?.pitchingTeamTotal || {};
   const seasonEra = pitchingTotal['ERA'] || stat?.era || null;
   const seasonWhip = stat?.whip || null;
@@ -861,8 +905,8 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
   return {
     seasonERA: seasonEra,
     seasonXFIP: seasonFip,
-    last14ERA: null,
-    last3DaysIP: null,
+    last14ERA: last14Stat?.era || null,
+    last3DaysIP: last3Stat?.inningsPitched || null,
     seasonWHIP: seasonWhip,
     seasonKPct: pitchingTotal['K%'] || null,
     seasonBBPct: pitchingTotal['BB%'] || null,
@@ -1093,24 +1137,32 @@ async function getHeadToHead(teamId, oppTeamId, season) {
 
 async function getPitcherRecentStarts(mlbId, beforeDate, n = 4) {
   if (!mlbId) return [];
-  const season = beforeDate.slice(0, 4);
-  const data = await safeGetJson(
-    `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&group=pitching&season=${season}`,
-    `pitcher game log ${mlbId} ${season}`
-  );
+  const season = Number(beforeDate.slice(0, 4));
+  const seasonsToTry = [season, season - 1];
 
-  return (data?.stats?.[0]?.splits || [])
-    .filter((split) => split?.date && split.date < beforeDate)
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, n)
-    .map((split) => ({
-      date: split.date,
-      opponent: split?.opponent?.name || split?.team?.name || "Opponent TBD",
-      ip: split?.stat?.inningsPitched || "0.0",
-      er: split?.stat?.earnedRuns != null ? String(split.stat.earnedRuns) : "0",
-      k: split?.stat?.strikeOuts != null ? String(split.stat.strikeOuts) : "0",
-      result: split?.stat?.wins ? "W" : split?.stat?.losses ? "L" : "-"
-    }));
+  for (const year of seasonsToTry) {
+    const data = await safeGetJson(
+      `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&group=pitching&season=${year}`,
+      `pitcher game log ${mlbId} ${year}`
+    );
+
+    const starts = (data?.stats?.[0]?.splits || [])
+      .filter((split) => split?.date && (year < season || split.date < beforeDate))
+      .sort((a, b) => b.date.localeCompare(a.date))
+      .slice(0, n)
+      .map((split) => ({
+        date: split.date,
+        opponent: split?.opponent?.name || split?.team?.name || "Opponent TBD",
+        ip: split?.stat?.inningsPitched || "0.0",
+        er: split?.stat?.earnedRuns != null ? String(split.stat.earnedRuns) : "0",
+        k: split?.stat?.strikeOuts != null ? String(split.stat.strikeOuts) : "0",
+        result: split?.isWin ? "W" : split?.isLoss ? "L" : split?.stat?.wins ? "W" : split?.stat?.losses ? "L" : "-"
+      }));
+
+    if (starts.length) return starts;
+  }
+
+  return [];
 }
 
 function splitIntoSentences(value, limit = 2) {
