@@ -1583,66 +1583,120 @@ function buildTrendArray(gameFacts) {
   ];
 }
 
-function buildGameJson(gameFacts, writeup) {
+function toHistoryEntry(game) {
+  if (!game?.date || !game?.opponent || !game?.result) return null;
+  const finalScore = game.finalScore
+    ? `${game.finalScore.mets}-${game.finalScore.opp}`
+    : game.gameContext?.lastMeeting?.metsScore != null && game.gameContext?.lastMeeting?.oppScore != null
+      ? `${game.gameContext.lastMeeting.metsScore}-${game.gameContext.lastMeeting.oppScore}`
+      : null;
+  const metsWon = game.result === "win";
+  const moneyline = game.moneyline?.mets ?? game.bettingHistory?.odds ?? null;
+  return {
+    date: game.date,
+    opponent: game.opponent,
+    finalScore,
+    officialPick: game.writeup?.officialPick || "Today's Pick: New York Mets Moneyline",
+    market: "Mets Moneyline",
+    odds: moneyline,
+    result: metsWon ? "W" : "L"
+  };
+}
+
+function mergeRecentBreakdowns(previousOutput, currentGame) {
+  const prior = Array.isArray(previousOutput?.recentBreakdowns) ? previousOutput.recentBreakdowns : [];
+  const entries = [...prior];
+  const previousGame = previousOutput?.games?.[0] || null;
+  const previousEntry = toHistoryEntry(previousGame);
+
+  if (previousGame?.status === "final" && previousEntry) {
+    const index = entries.findIndex((entry) => entry.date === previousEntry.date && entry.opponent === previousEntry.opponent);
+    if (index >= 0) entries[index] = previousEntry;
+    else entries.push(previousEntry);
+  }
+
+  const currentEntry = toHistoryEntry(currentGame);
+  if (currentGame?.status === "final" && currentEntry) {
+    const index = entries.findIndex((entry) => entry.date === currentEntry.date && entry.opponent === currentEntry.opponent);
+    if (index >= 0) entries[index] = currentEntry;
+    else entries.push(currentEntry);
+  }
+
+  return entries
+    .filter((entry) => entry?.date && entry?.opponent)
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    .slice(0, 30);
+}
+
+function buildGameJson(gameFacts, writeup, previousOutput = null) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
   const officialPick = writeup.officialPick || "Today's Pick: New York Mets Moneyline";
   const sections = writeup.sections;
 
+  const currentGame = {
+    id,
+    date: gameFacts.meta.date,
+    time: gameFacts.meta.time,
+    ballpark: gameFacts.meta.ballpark,
+    opponent: gameFacts.game.opponent,
+    oppTeamId: gameFacts.game.oppTeamId,
+    homeAway: gameFacts.meta.homeAway,
+    metsRecord: sanitizeRecord(gameFacts.records.metsRecord),
+    oppRecord: sanitizeRecord(gameFacts.records.oppRecord),
+    moneyline: {
+      mets: gameFacts.money.metsMoneyline,
+      opp: gameFacts.money.oppMoneyline
+    },
+    runLine: gameFacts.money.runLine
+      ? {
+          mets: gameFacts.money.runLine.side === "mets" ? gameFacts.money.runLine.spread : null,
+          price: gameFacts.money.runLine.price
+        }
+      : null,
+    total: gameFacts.money.total,
+    overUnder: gameFacts.money.total,
+    status: gameFacts.game.status,
+    finalScore: gameFacts.game.finalScore,
+    result: gameFacts.game.result,
+    pitching: {
+      mets: gameFacts.pitching.mets,
+      opp: gameFacts.pitching.opp,
+      metsBullpen: gameFacts.pitching.metsBullpen,
+      oppBullpen: gameFacts.pitching.oppBullpen
+    },
+    lineups: {
+      mets: gameFacts.lineups.mets,
+      opp: gameFacts.lineups.opp,
+      lineupStatus: gameFacts.lineups.status
+    },
+    advancedMatchup: gameFacts.advanced.cards,
+    teamAdvanced: gameFacts.advanced.teamAdvanced,
+    gameContext: gameFacts.gameContext,
+    editorial: gameFacts.editorial,
+    trends: buildTrendArray(gameFacts),
+    writeup: {
+      raw: writeup.raw,
+      sections,
+      pickSummary: writeup.pickSummary,
+      officialPick
+    },
+    bettingHistory: null,
+    weather: null
+  };
+
+  currentGame.bettingHistory = currentGame.status === "final"
+    ? {
+        market: "Mets Moneyline",
+        odds: currentGame.moneyline?.mets ?? null,
+        result: currentGame.result === "win" ? "W" : "L"
+      }
+    : null;
+
   const output = {
     generatedAt: new Date().toISOString(),
-    games: [
-      {
-        id,
-        date: gameFacts.meta.date,
-        time: gameFacts.meta.time,
-        ballpark: gameFacts.meta.ballpark,
-        opponent: gameFacts.game.opponent,
-        oppTeamId: gameFacts.game.oppTeamId,
-        homeAway: gameFacts.meta.homeAway,
-        metsRecord: sanitizeRecord(gameFacts.records.metsRecord),
-        oppRecord: sanitizeRecord(gameFacts.records.oppRecord),
-        moneyline: {
-          mets: gameFacts.money.metsMoneyline,
-          opp: gameFacts.money.oppMoneyline
-        },
-        runLine: gameFacts.money.runLine
-          ? {
-              mets: gameFacts.money.runLine.side === "mets" ? gameFacts.money.runLine.spread : null,
-              price: gameFacts.money.runLine.price
-            }
-          : null,
-        total: gameFacts.money.total,
-        overUnder: gameFacts.money.total,
-        status: gameFacts.game.status,
-        finalScore: gameFacts.game.finalScore,
-        result: gameFacts.game.result,
-        pitching: {
-          mets: gameFacts.pitching.mets,
-          opp: gameFacts.pitching.opp,
-          metsBullpen: gameFacts.pitching.metsBullpen,
-          oppBullpen: gameFacts.pitching.oppBullpen
-        },
-        lineups: {
-          mets: gameFacts.lineups.mets,
-          opp: gameFacts.lineups.opp,
-          lineupStatus: gameFacts.lineups.status
-        },
-        advancedMatchup: gameFacts.advanced.cards,
-        teamAdvanced: gameFacts.advanced.teamAdvanced,
-        gameContext: gameFacts.gameContext,
-        editorial: gameFacts.editorial,
-        trends: buildTrendArray(gameFacts),
-        writeup: {
-          raw: writeup.raw,
-          sections,
-          pickSummary: writeup.pickSummary,
-          officialPick
-        },
-        bettingHistory: null,
-        weather: null
-      }
-    ]
+    games: [currentGame],
+    recentBreakdowns: mergeRecentBreakdowns(previousOutput, currentGame)
   };
 
   ensureNoUndefinedStrings(output);
@@ -1736,7 +1790,7 @@ async function run() {
     writeup = buildFallbackWriteup(gameFacts);
   }
 
-  const output = buildGameJson(gameFacts, writeup);
+  const output = buildGameJson(gameFacts, writeup, loadPreviousOutput());
 
   if (dryRun) {
     console.log(JSON.stringify(output, null, 2));
