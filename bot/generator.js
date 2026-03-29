@@ -290,7 +290,7 @@ async function loadSavantExpectedPitchers() {
   for (const year of seasonsToTry) {
     const url =
       "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
-      `?type=pitcher&year=${year}&position=&team=&min=q&csv=true`;
+      `?type=pitcher&year=${year}&position=&team=&min=0&csv=true`;
     const csv = await safeGetText(url, `Savant expected pitcher leaderboard ${year}`);
     const rows = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
     for (const row of rows) {
@@ -437,7 +437,7 @@ async function getPlayerSeasonStats(personId, group, season) {
   return data?.stats?.[0]?.splits?.[0]?.stat || null;
 }
 
-async function getPitcherFacts(personId, fallbackName) {
+async function getPitcherFacts(personId, fallbackName, teamName = null) {
   if (!personId) {
     return {
       name: fallbackName || "TBD",
@@ -451,6 +451,7 @@ async function getPitcherFacts(personId, fallbackName) {
       seasonXERA: null,
       seasonWHIP: null,
       seasonHR9: null,
+      last3KBB: null,
       note: null,
       savant: null
     };
@@ -458,31 +459,35 @@ async function getPitcherFacts(personId, fallbackName) {
 
   const season = String(new Date().getFullYear());
   const previousSeason = String(Number(season) - 1);
-  const [person, currentStats, previousStats, savantRows, expectedRows] = await Promise.all([
+  const [person, currentStats, previousStats, savantRows, expectedRows, fangraphsTeam] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
     getPlayerSeasonStats(personId, "pitching", previousSeason),
     loadSavantPitcherLeaderboard(),
-    loadSavantExpectedPitchers()
+    loadSavantExpectedPitchers(),
+    teamName ? loadFangraphsTeamData(teamName) : null
   ]);
 
   const stat = currentStats || previousStats;
   const statSeason = currentStats ? season : previousStats ? previousSeason : null;
   const savant = getSavantRow(savantRows, personId);
   const expected = getSavantRow(expectedRows, personId);
+  const pitcherName = person?.fullName || fallbackName || "TBD";
+  const fangraphsPitcher = fangraphsTeam?.pitchingByName?.[normalizePersonName(pitcherName)] || null;
 
   return {
-    name: person?.fullName || fallbackName || "TBD",
+    name: pitcherName,
     mlbId: personId,
     announced: true,
     hand: person?.pitchHand?.code || null,
     seasonLine: formatPitcherSeasonLine(stat),
     seasonRecord: stat?.wins != null && stat?.losses != null ? `${stat.wins}-${stat.losses}` : null,
-    seasonERA: stat?.era || null,
-    seasonFIP: stat?.fip || null,
+    seasonERA: stat?.era || fangraphsPitcher?.ERA || null,
+    seasonFIP: stat?.fip || fangraphsPitcher?.FIP || fangraphsPitcher?.xFIP || null,
     seasonXERA: expected?.xera || null,
     seasonWHIP: stat?.whip || null,
-    seasonHR9: stat?.homeRunsPer9 || null,
+    seasonHR9: stat?.homeRunsPer9 || fangraphsPitcher?.['HR/9'] || null,
+    last3KBB: stat?.strikeoutWalkRatio || null,
     note: stat?.inningsPitched && statSeason ? `${statSeason} - ${stat.inningsPitched} IP` : null,
     savant: savant ? {
       xERA: expected?.xera || null,
@@ -1361,8 +1366,8 @@ async function buildGameFacts(targetDate) {
 
   const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
     Promise.all([
-      getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName),
-      getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName)
+      getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME),
+      getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name)
     ]).then(([metsPitcher, oppPitcher]) => ({ mets: metsPitcher, opp: oppPitcher })),
     buildLineupFacts(feed, oppTeam.id, resolvedDate),
     buildBullpenFacts(TEAM_ID, TEAM_NAME, true),
