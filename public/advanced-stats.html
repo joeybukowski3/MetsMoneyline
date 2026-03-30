@@ -360,11 +360,9 @@
       return row ? `${row.wins}-${row.losses}` : "N/A";
     };
 
-    const rankTotal = nlTeams.length || 15;
-    const metsRanks = {
-      wrcPlus: 1, woba: 1, iso: 3, ops: 1, xba: 4, xslg: 2, xwoba: 1, bbPct: 1, kPct: 5,
-      rotEra: 8, rotFip: 4, rotWhip: 6, bpEra: 9, bpFip: 4, bpWhip: 5
-    };
+    const rankTotal = liveAdv?.rankTotal || 30;
+    const rankScope = liveAdv?.rankScope || "MLB";
+    const metsRanks = liveAdv?.leagueRanks || {};
 
     const metsName = "New York Mets";
     const glanceItems = [
@@ -372,8 +370,8 @@
       { label: "Home", value: splitRecord("home") !== "N/A" ? splitRecord("home") : "N/A" },
       { label: "Road", value: splitRecord("away") !== "N/A" ? splitRecord("away") : "N/A" },
       { label: "Last 10", value: splitRecord("lastTen") !== "N/A" ? splitRecord("lastTen") : "N/A" },
-      { label: "OPS Rank", value: metsRanks.ops ? `#${metsRanks.ops} NL` : "N/A" },
-      { label: "Rotation FIP Rank", value: metsRanks.rotFip ? `#${metsRanks.rotFip} NL` : "N/A" }
+      { label: "OPS Rank", value: metsRanks.ops ? `#${metsRanks.ops} ${rankScope}` : "N/A" },
+      { label: "Rotation FIP Rank", value: metsRanks.rotFip ? `#${metsRanks.rotFip} ${rankScope}` : "N/A" }
     ];
     document.getElementById("at-a-glance").innerHTML = glanceItems.map(g =>
       `<div class="glance-item"><div class="glance-label">${g.label}</div><div class="glance-value${g.highlight ? " highlight" : ""}">${g.value}${g.value !== "N/A" && !String(g.value).includes('NL') ? ' <span class="stat-year">(2026)</span>' : ''}</div></div>`
