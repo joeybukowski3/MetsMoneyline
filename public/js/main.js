@@ -110,7 +110,7 @@ function mapScheduleGame(game, standingsRecordMap = new Map()) {
     date: game.officialDate,
     opponent: opponent?.name || "Opponent TBD",
     oppTeamId: opponent?.id ?? null,
-    homeAway: metsAreAway ? "away" : "home",
+    homeAway: metsAreAway ? "road" : "home",
     time: formatGameTimeET(game.gameDate),
     ballpark: game?.venue?.name || "Venue TBD",
     status: "upcoming",
