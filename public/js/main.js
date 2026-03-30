@@ -1169,19 +1169,29 @@ function buildGameContextCard(game) {
     })();
 
     const rows = games.slice(0, 5).map(g => {
-      const venuePrefix = g.homeAway === "home" ? "vs" : "@";
-      const oppAbbr = getTeamAbbr(g.opponent);
       const resultWord = g.result === "W" ? "Win" : g.result === "L" ? "Loss" : (g.result || "-");
       const badgeBg = g.result === "W" ? "#dcfce7" : "#fee2e2";
       const badgeColor = g.result === "W" ? "#15803d" : "#b91c1c";
       const dateText = g.date
         ? new Date(`${g.date}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })
         : "--";
+      const isMetsLog = label.toLowerCase().includes("mets");
+      const teamName = isMetsLog ? "New York Mets" : game.opponent;
+      const teamLogo = getTeamLogoUrl(isMetsLog ? METS_TEAM_ID : game.oppTeamId || game.opponent);
+      const oppLogo = getTeamLogoUrl(g.opponent);
+      const [rawLeftScore, rawRightScore] = String(g.score || "-").split("-").map(part => (part || "-").trim());
+      const teamScore = isMetsLog ? rawLeftScore : rawRightScore;
+      const oppScore = isMetsLog ? rawRightScore : rawLeftScore;
       return `
-        <div style="display:grid;grid-template-columns:70px 1fr auto;gap:0.75rem;align-items:center;padding:0.45rem 0;border-bottom:1px solid #eef2f7;">
+        <div style="display:grid;grid-template-columns:70px auto 1fr;gap:0.75rem;align-items:center;padding:0.45rem 0;border-bottom:1px solid #eef2f7;">
           <div style="font-size:0.78rem;color:#64748b;font-weight:600;">${dateText}</div>
-          <div style="font-size:0.82rem;color:var(--ink);font-weight:600;">${venuePrefix} ${oppAbbr}${g.score ? ` • ${g.score}` : ""}</div>
           <div style="background:${badgeBg};color:${badgeColor};font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:999px;">${resultWord}</div>
+          <div style="display:flex;align-items:center;gap:0.55rem;min-width:0;flex-wrap:wrap;">
+            ${teamLogo ? `<img src="${teamLogo}" alt="${teamName}" style="width:18px;height:18px;object-fit:contain;">` : ""}
+            <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${teamScore}</span>
+            ${oppLogo ? `<img src="${oppLogo}" alt="${g.opponent}" style="width:18px;height:18px;object-fit:contain;">` : ""}
+            <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${oppScore}</span>
+          </div>
         </div>`;
     }).join("");
 
