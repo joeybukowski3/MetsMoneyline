@@ -638,6 +638,61 @@ function buildPitchingCard(game) {
   const p  = game.pitching;
   const mn = p.mets.name;
 
+  const toNumeric = (value) => {
+    if (value == null || value === "") return null;
+    const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ""));
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+
+  const aggregateLineupSnapshot = (lineup = []) => {
+    if (!Array.isArray(lineup) || !lineup.length) return null;
+    const hitters = lineup.filter(player => player && player.name);
+    if (!hitters.length) return null;
+
+    const pa = hitters.reduce((sum, player) => sum + (toNumeric(player?.savant?.pa) || 0), 0);
+    const weightedAverage = (getter) => {
+      let weighted = 0;
+      let weight = 0;
+      hitters.forEach(player => {
+        const value = toNumeric(getter(player));
+        const playerPa = toNumeric(player?.savant?.pa) || 0;
+        if (value == null) return;
+        const appliedWeight = playerPa > 0 ? playerPa : 1;
+        weighted += value * appliedWeight;
+        weight += appliedWeight;
+      });
+      return weight ? (weighted / weight) : null;
+    };
+
+    return {
+      PA: pa || hitters.length,
+      kPct: weightedAverage(player => player?.savant?.kPct) / 100,
+      bbPct: weightedAverage(player => player?.savant?.bbPct) / 100,
+      AVG: (() => {
+        const value = weightedAverage(player => player?.seasonAVG);
+        return value == null ? null : value.toFixed(3);
+      })(),
+      wOBA: (() => {
+        const value = weightedAverage(player => player?.fangraphs?.wOBA);
+        return value == null ? null : value.toFixed(3);
+      })(),
+      xwOBA: (() => {
+        const value = weightedAverage(player => player?.savant?.xwOBA);
+        return value == null ? null : value.toFixed(3);
+      })(),
+      exitVelo: null,
+      launchAngle: null,
+      xBA: (() => {
+        const value = weightedAverage(player => player?.savant?.xBA);
+        return value == null ? null : value.toFixed(3);
+      })(),
+      xSLG: (() => {
+        const value = weightedAverage(player => player?.savant?.xSLG);
+        return value == null ? null : value.toFixed(3);
+      })()
+    };
+  };
+
   const pitcherLogTable = (starts, name) => {
     if (!starts?.length) return "";
     const compactOpponent = (teamName) => {
@@ -817,16 +872,22 @@ function buildPitchingCard(game) {
     game.gameContext?.oppPitcherLog
   );
 
+  const metsVsRoster = p.mets.vsRoster || aggregateLineupSnapshot(game.lineups?.opp);
+  const oppVsRoster = p.opp.vsRoster || aggregateLineupSnapshot(game.lineups?.mets);
+  const vsRosterLabel = (p.mets.vsRoster || p.opp.vsRoster)
+    ? "Career Matchup - vs. Current Roster"
+    : "Current Roster Snapshot";
+
   const vsRosterSection = `
-    <div class="section-floating-label">Career Matchup - vs. Current Roster</div>
+    <div class="section-floating-label">${vsRosterLabel}</div>
     <div class="pitcher-two-col">
       <div class="card full-card">
         <div class="card-header">${p.mets.name} vs ${getTeamAbbr(game.opponent)} Roster</div>
-        ${vsRosterGrid(p.mets.vsRoster)}
+        ${vsRosterGrid(metsVsRoster)}
       </div>
       <div class="card full-card">
         <div class="card-header">${p.opp.name} vs NYM Roster</div>
-        ${vsRosterGrid(p.opp.vsRoster)}
+        ${vsRosterGrid(oppVsRoster)}
       </div>
     </div>`;
 

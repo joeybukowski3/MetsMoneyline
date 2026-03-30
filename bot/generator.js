@@ -422,6 +422,27 @@ function formatPitcherSeasonLine(stat) {
   return pieces.length ? pieces.join(", ") : null;
 }
 
+function inningsPitchedToOuts(inningsPitched) {
+  if (inningsPitched == null) return null;
+  const [whole, partial = "0"] = String(inningsPitched).split(".");
+  return (Number(whole) * 3) + Number(partial);
+}
+
+function computeApproxFip(stat, constant = 3.214) {
+  if (!stat) return null;
+  const hr = Number(stat.homeRuns ?? 0);
+  const bb = Number(stat.baseOnBalls ?? 0);
+  const hbp = Number(stat.hitByPitch ?? 0);
+  const so = Number(stat.strikeOuts ?? 0);
+  const outs = inningsPitchedToOuts(stat.inningsPitched);
+  if (!outs) return null;
+  const ip = outs / 3;
+  if (!ip) return null;
+  const fip = ((13 * hr) + (3 * (bb + hbp)) - (2 * so)) / ip + constant;
+  if (!Number.isFinite(fip)) return null;
+  return fip.toFixed(2);
+}
+
 async function getPersonInfo(personId) {
   if (!personId) return null;
   const data = await safeGetJson(`https://statsapi.mlb.com/api/v1/people/${personId}`, `person ${personId}`);
@@ -483,7 +504,7 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
     seasonLine: formatPitcherSeasonLine(stat),
     seasonRecord: stat?.wins != null && stat?.losses != null ? `${stat.wins}-${stat.losses}` : null,
     seasonERA: stat?.era || fangraphsPitcher?.ERA || null,
-    seasonFIP: stat?.fip || fangraphsPitcher?.FIP || fangraphsPitcher?.xFIP || null,
+    seasonFIP: stat?.fip || fangraphsPitcher?.FIP || computeApproxFip(stat) || fangraphsPitcher?.xFIP || null,
     seasonXERA: expected?.xera || null,
     seasonWHIP: stat?.whip || null,
     seasonHR9: stat?.homeRunsPer9 || fangraphsPitcher?.['HR/9'] || null,
