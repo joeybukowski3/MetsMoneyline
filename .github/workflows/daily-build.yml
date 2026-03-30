@@ -5,9 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "5 8 * * *"   # 3:05 AM ET — overnight reset, advance to next matchup
-    - cron: "5 13 * * *"  # 1:05 PM ET — game day analysis
-    - cron: "5 14 * * *"  # 2:05 PM ET — backup run
+    - cron: "*/15 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -48,6 +46,26 @@ jobs:
           THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
           ODDSAPI: ${{ secrets.ODDSAPI }}
         run: node generator.js
+
+      - name: Verify published data against live sources
+        id: verify
+        working-directory: ./bot
+        run: node verify-data.js
+
+      - name: Regenerate once if verification drift is detected
+        if: failure() && steps.verify.outcome == 'failure'
+        working-directory: ./bot
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
+          ODDSAPI: ${{ secrets.ODDSAPI }}
+        run: node generator.js
+
+      - name: Re-verify after regeneration
+        if: failure() && steps.verify.outcome == 'failure'
+        working-directory: ./bot
+        run: node verify-data.js
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
