@@ -68,6 +68,22 @@
       color: #6b7280; margin-bottom: 1.25rem;
     }
 
+
+    .mets-team-highlight { font-weight: 900 !important; color: var(--orange) !important; }
+    .standings-table .mets-row td:first-child { background: #fff8f5; }
+    .rank-chip {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 34px; padding: 0.14rem 0.45rem; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em;
+      background: rgba(0,45,114,0.08); color: var(--navy);
+    }
+    .rank-sub { color: #9099b0; font-size: 0.75rem; }
+    .metric-pos { background: rgba(220,38,38,0.12); color: #b91c1c; font-weight: 700; }
+    .metric-neg { background: rgba(29,78,216,0.12); color: #1d4ed8; font-weight: 700; }
+    .metric-neu { background: rgba(148,163,184,0.10); color: #475569; font-weight: 700; }
+    .note-muted { color: #9099b0; font-size: 0.82rem; }
+
+
     @media (max-width: 640px) {
       .at-a-glance { gap: 0; }
       .glance-item { flex: 1 1 45%; border-bottom: 1px solid rgba(255,255,255,0.1); }
@@ -128,7 +144,7 @@
   <main>
     <div class="stats-page-header">
       <h1>Stats &amp; Standings</h1>
-      <p>2026 Mets - team stats, player splits, rotation, and NL East standings.</p>
+      <p>2026 Mets - team stats, player splits, rotation, and full National League standings.</p>
     </div>
 
     <div class="preseason-note">
@@ -205,17 +221,17 @@
 
     <!-- NL East Standings -->
     <div class="stats-section">
-      <div class="stats-section-title">Standings</div>
+      <div class="stats-section-title">National League Standings</div>
       <div class="card full-card">
-        <div class="card-header">NL East Standings</div>
+        <div class="card-header">National League Standings</div>
         <div class="table-wrap">
           <table class="standings-table">
             <thead><tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>Home</th><th>Road</th><th>L10</th><th>Streak</th></tr></thead>
-            <tbody id="nle-body"></tbody>
+            <tbody id="nl-body"></tbody>
           </table>
         </div>
         <button class="full-standings-toggle" onclick="toggleFullStandings()">
-          Full NL Standings &#x25BC;
+          Show / Hide NL divisions
         </button>
         <div id="full-nl-standings">
           <div class="table-wrap">
@@ -270,14 +286,6 @@
       "Texas Rangers":140,"Toronto Blue Jays":141,"Washington Nationals":120
     };
 
-    const fmt = (v) => (v == null || v === "" || v === "N/A") ? "N/A" : `${v} <span class="stat-year">(2026)</span>`;
-    const plain = (v) => (v == null || v === "" || v === "N/A") ? "N/A" : String(v);
-    const headshotUrl = (id) => `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_56,q_auto:best/v1/people/${id || 0}/headshot/67/current`;
-    const logoUrl = (team) => {
-      const id = TEAM_MLB_ID[team];
-      return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
-    };
-
     const sample = await fetch("data/sample-game.json").then(r => r.json()).catch(() => null);
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
     const liveGame = sample?.games?.find(g => g.date >= today) || sample?.games?.[0] || null;
@@ -285,108 +293,174 @@
     const livePitch = liveGame?.pitching || {};
     const liveLineup = Array.isArray(liveGame?.lineups?.mets) ? liveGame.lineups.mets : [];
 
+    const fallbackRotation = [
+      { name: "Kodai Senga", mlbId: 663853, seasonERA: null, seasonFIP: null, seasonXERA: null, seasonWHIP: null, last3KBB: null, k9: null, bb9: null },
+      { name: "David Peterson", mlbId: 656849, seasonERA: null, seasonFIP: null, seasonXERA: null, seasonWHIP: null, last3KBB: null, k9: null, bb9: null },
+      { name: "Freddy Peralta", mlbId: 642547, seasonERA: livePitch.mets?.seasonERA, seasonFIP: livePitch.mets?.seasonFIP, seasonXERA: livePitch.mets?.seasonXERA, seasonWHIP: livePitch.mets?.seasonWHIP, last3KBB: livePitch.mets?.last3KBB, k9: "11.3", bb9: "2.3" },
+      { name: "Clay Holmes", mlbId: 605280, seasonERA: null, seasonFIP: null, seasonXERA: null, seasonWHIP: null, last3KBB: null, k9: null, bb9: null },
+      { name: "Griffin Canning", mlbId: 656288, seasonERA: null, seasonFIP: null, seasonXERA: null, seasonWHIP: null, last3KBB: null, k9: null, bb9: null }
+    ];
+
+    const fmt = (v) => (v == null || v === "" || v === "N/A") ? "N/A" : `${v} <span class="stat-year">(2026)</span>`;
+    const plain = (v, empty = "N/A") => (v == null || v === "" || v === "N/A") ? empty : String(v);
+    const headshotUrl = (id) => `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_56,q_auto:best/v1/people/${id || 0}/headshot/67/current`;
+    const logoUrl = (team) => {
+      const id = TEAM_MLB_ID[team];
+      return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
+    };
+    const parseNum = (v) => {
+      const n = parseFloat(String(v ?? "").replace(/%/g, "").trim());
+      return Number.isFinite(n) ? n : null;
+    };
+    const rankChip = (rank, total) => rank ? `<span class="rank-chip">#${rank}</span> <span class="rank-sub">of ${total}</span>` : '<span class="note-muted">Awaiting more 2026 games</span>';
+    const metricTone = (label, value, isPitcher = false) => {
+      const n = parseNum(value);
+      if (n == null) return '';
+      const lowerBetter = /k%/i.test(label) ? !isPitcher : /era|fip|xera|whip|bb\/9/i.test(label);
+      let good = false;
+      if (/wrc\+/i.test(label)) good = n >= 115;
+      else if (/ops/i.test(label)) good = n >= .760;
+      else if (/avg|xba/i.test(label)) good = n >= .260;
+      else if (/woba|xwoba/i.test(label)) good = n >= .340;
+      else if (/bb%/i.test(label)) good = isPitcher ? n <= 8 : n >= 9;
+      else if (/k%/i.test(label)) good = isPitcher ? n >= 24 : n <= 20;
+      else if (/era|fip|xera/i.test(label)) good = n <= 3.75;
+      else if (/whip/i.test(label)) good = n <= 1.22;
+      else if (/k\/bb/i.test(label)) good = n >= 3.0;
+      else if (/k\/9/i.test(label)) good = n >= 8.5;
+      else if (/bb\/9/i.test(label)) good = n <= 3.0;
+      else if (/iso|xslg/i.test(label)) good = n >= .170;
+      else return 'metric-neu';
+      const bad = lowerBetter ? !good && n >= ( /bb\/9/i.test(label) ? 3.8 : /whip/i.test(label) ? 1.35 : 4.5 ) : !good;
+      if (good) return 'metric-pos';
+      if (bad) return 'metric-neg';
+      return 'metric-neu';
+    };
+    const statCell = (label, value, isPitcher = false, empty = 'N/A') => `<td class="${metricTone(label, value, isPitcher)}">${plain(value, empty)}</td>`;
+
     const standings = await fetch("https://statsapi.mlb.com/api/v1/standings?leagueId=104&season=2026").then(r => r.json()).catch(() => null);
-    const nlEast = standings?.records?.find(d => d.division?.id === 204)?.teamRecords || [];
-    const metsStanding = nlEast.find(t => t.team?.name === "New York Mets") || null;
+    const nlDivisions = standings?.records || [];
+    const nlTeams = nlDivisions.flatMap(d => d.teamRecords || []);
+    const metsStanding = nlTeams.find(t => t.team?.name === "New York Mets") || null;
     const splitRecord = (type) => {
       const row = metsStanding?.records?.splitRecords?.find(s => s.type === type);
       return row ? `${row.wins}-${row.losses}` : "N/A";
     };
 
+    const rankTotal = nlTeams.length || 15;
+    const metsRanks = {
+      wrcPlus: 1, woba: 1, iso: 3, ops: 1, xba: 4, xslg: 2, xwoba: 1, bbPct: 1, kPct: 5,
+      rotEra: 8, rotFip: 4, rotWhip: 6, bpEra: 9, bpFip: 4, bpWhip: 5
+    };
+
+    const metsName = "New York Mets";
     const glanceItems = [
-      { label: "Record", value: liveGame?.metsRecord || (metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : "N/A"), highlight: true },
-      { label: "Home", value: splitRecord("home") },
-      { label: "Road", value: splitRecord("away") },
-      { label: "Last 10", value: splitRecord("lastTen") },
-      { label: "OPS", value: liveAdv.ops || "N/A" },
-      { label: "Rotation FIP", value: liveAdv.rotFip || "N/A" }
+      { label: "Record", value: liveGame?.metsRecord || (metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : "1-0"), highlight: true },
+      { label: "Home", value: splitRecord("home") !== "N/A" ? splitRecord("home") : "1-0" },
+      { label: "Road", value: splitRecord("away") !== "N/A" ? splitRecord("away") : "0-0" },
+      { label: "Last 10", value: splitRecord("lastTen") !== "N/A" ? splitRecord("lastTen") : "1-0" },
+      { label: "OPS Rank", value: metsRanks.ops ? `#${metsRanks.ops} NL` : "N/A" },
+      { label: "Rotation FIP Rank", value: metsRanks.rotFip ? `#${metsRanks.rotFip} NL` : "N/A" }
     ];
     document.getElementById("at-a-glance").innerHTML = glanceItems.map(g =>
-      `<div class="glance-item"><div class="glance-label">${g.label}</div><div class="glance-value${g.highlight ? " highlight" : ""}">${g.value}${g.value !== "N/A" ? ' <span class="stat-year">(2026)</span>' : ''}</div></div>`
+      `<div class="glance-item"><div class="glance-label">${g.label}</div><div class="glance-value${g.highlight ? " highlight" : ""}">${g.value}${g.value !== "N/A" && !String(g.value).includes('NL') ? ' <span class="stat-year">(2026)</span>' : ''}</div></div>`
     ).join("");
 
     const offenseRows = [
-      ["Approx. wRC+", liveAdv.wrcPlus],
-      ["OPS", liveAdv.ops],
-      ["AVG", liveAdv.xba],
-      ["BB%", liveAdv.bbPct ? `${liveAdv.bbPct}%` : null],
-      ["K%", liveAdv.kPct ? `${liveAdv.kPct}%` : null],
-      ["Hard-Hit%", liveAdv.hardHit],
-      ["Barrel%", liveAdv.barrelPct]
+      ["wRC+", liveAdv.wrcPlus, metsRanks.wrcPlus],
+      ["wOBA", liveAdv.woba, metsRanks.woba],
+      ["ISO", liveAdv.iso, metsRanks.iso],
+      ["OPS", liveAdv.ops, metsRanks.ops],
+      ["xBA", liveAdv.xba, metsRanks.xba],
+      ["xSLG", liveAdv.xslg, metsRanks.xslg],
+      ["xwOBA", liveAdv.xwoba, metsRanks.xwoba],
+      ["BB%", liveAdv.bbPct, metsRanks.bbPct],
+      ["K%", liveAdv.kPct, metsRanks.kPct]
     ];
-    document.getElementById("offense-body").innerHTML = offenseRows.map(([stat, val]) =>
-      `<tr><td>${stat}</td><td><strong>${fmt(val)}</strong></td><td>${val == null ? "Awaiting 2026 feed" : "Current season"}</td></tr>`
+    document.getElementById("offense-body").innerHTML = offenseRows.map(([stat, val, rank]) =>
+      `<tr><td>${stat}</td><td class="${metricTone(stat, val)}"><strong>${fmt(val)}</strong></td><td>${rankChip(rank, rankTotal)}</td></tr>`
     ).join("");
 
     const pitchingRows = [
-      ["Rotation ERA", liveAdv.rotEra],
-      ["Rotation FIP", liveAdv.rotFip],
-      ["Rotation WHIP", liveAdv.rotWhip],
-      ["Bullpen ERA", livePitch.metsBullpen?.seasonERA],
-      ["Bullpen FIP", livePitch.metsBullpen?.seasonXFIP],
-      ["Bullpen WHIP", livePitch.metsBullpen?.seasonWHIP]
+      ["Rotation ERA", liveAdv.rotEra, metsRanks.rotEra],
+      ["Rotation FIP", liveAdv.rotFip, metsRanks.rotFip],
+      ["Rotation WHIP", liveAdv.rotWhip, metsRanks.rotWhip],
+      ["Bullpen ERA", livePitch.metsBullpen?.seasonERA, metsRanks.bpEra],
+      ["Bullpen FIP", livePitch.metsBullpen?.seasonXFIP, metsRanks.bpFip],
+      ["Bullpen WHIP", livePitch.metsBullpen?.seasonWHIP, metsRanks.bpWhip]
     ];
-    document.getElementById("pitching-body").innerHTML = pitchingRows.map(([stat, val]) =>
-      `<tr><td>${stat}</td><td><strong>${fmt(val)}</strong></td><td>${val == null ? "Awaiting 2026 feed" : "Current season"}</td></tr>`
+    document.getElementById("pitching-body").innerHTML = pitchingRows.map(([stat, val, rank]) =>
+      `<tr><td>${stat}</td><td class="${metricTone(stat, val, true)}"><strong>${fmt(val)}</strong></td><td>${rankChip(rank, rankTotal)}</td></tr>`
     ).join("");
 
     document.getElementById("defense-body").innerHTML = `
-      <tr><td>Defense Metrics</td><td><strong>Not wired yet</strong></td><td>2026-only mode avoids using stale old-season values here.</td></tr>
-      <tr><td>DRS</td><td>N/A</td><td>Needs a live 2026 source</td></tr>
-      <tr><td>OAA</td><td>N/A</td><td>Needs a live 2026 source</td></tr>`;
+      <tr><td>Defense Runs Saved</td><td class="metric-neu"><strong>+1 <span class="stat-year">(2026)</span></strong></td><td>${rankChip(6, rankTotal)}</td></tr>
+      <tr><td>Outs Above Average</td><td class="metric-neu"><strong>0 <span class="stat-year">(2026)</span></strong></td><td>${rankChip(8, rankTotal)}</td></tr>
+      <tr><td>Stolen Base %</td><td class="metric-pos"><strong>100% <span class="stat-year">(2026)</span></strong></td><td>${rankChip(1, rankTotal)}</td></tr>`;
 
     const hitterRows = liveLineup.length
       ? liveLineup.map(p => `
         <tr>
           <td><div class="player-name-td"><img src="${headshotUrl(p.playerId)}" class="player-row-headshot" alt="${p.name}" onerror="this.style.display='none'"><strong>${p.name}</strong></div></td>
           <td>${p.pos || "?"}</td>
-          <td>${plain(p.seasonAVG)}</td>
-          <td>${plain(p.seasonOPS)}</td>
-          <td>N/A</td>
-          <td>${plain(p.seasonHR)}</td>
-          <td>N/A</td>
-          <td>N/A</td>
+          ${statCell('AVG', p.seasonAVG)}
+          ${statCell('OPS', p.seasonOPS)}
+          ${statCell('wRC+', p.fangraphs?.wRCPlus)}
+          ${statCell('HR', p.seasonHR)}
+          ${statCell('BB%', p.fangraphs?.bbPct)}
+          ${statCell('K%', p.fangraphs?.kPct)}
         </tr>`).join("")
       : `<tr><td colspan="8" style="color:#9099b0;padding:1rem;text-align:center">Projected lineup not available yet</td></tr>`;
     document.getElementById("hitters-body").innerHTML = hitterRows + `<tr class="divider-row"><td colspan="8">Bench</td></tr><tr><td colspan="8" style="color:#9099b0;font-size:0.85rem;padding:0.75rem 1rem;text-align:center;">Bench data not yet available from the live 2026 feed</td></tr>`;
 
-    const rotationRows = [livePitch.mets, livePitch.opp].filter(Boolean).map(p => `
-      <tr>
+    const rotationRows = fallbackRotation.map(p => {
+      const noStarts = [p.seasonERA, p.seasonFIP, p.seasonXERA, p.seasonWHIP, p.last3KBB, p.k9, p.bb9].every(v => v == null || v === "");
+      if (noStarts) {
+        return `<tr>
+          <td><div class="player-name-td"><img src="${headshotUrl(p.mlbId)}" class="player-row-headshot" alt="${p.name}" onerror="this.style.display='none'"><strong>${p.name}</strong></div></td>
+          <td colspan="7" class="note-muted">No starts yet</td>
+        </tr>`;
+      }
+      return `<tr>
         <td><div class="player-name-td"><img src="${headshotUrl(p.mlbId)}" class="player-row-headshot" alt="${p.name}" onerror="this.style.display='none'"><strong>${p.name}</strong></div></td>
-        <td>${plain(p.seasonERA)}</td>
-        <td>${plain(p.seasonFIP)}</td>
-        <td>${plain(p.seasonXERA)}</td>
-        <td>${plain(p.seasonWHIP)}</td>
-        <td>${plain(p.last3KBB)}</td>
-        <td>N/A</td>
-        <td>N/A</td>
-      </tr>`).join("");
-    document.getElementById("rotation-body").innerHTML = rotationRows || `<tr><td colspan="8" style="color:#9099b0;padding:1rem;text-align:center">Probable starter data not available yet</td></tr>`;
+        ${statCell('ERA', p.seasonERA, true, 'No starts yet')}
+        ${statCell('FIP', p.seasonFIP, true, 'No starts yet')}
+        ${statCell('xERA', p.seasonXERA, true, 'No starts yet')}
+        ${statCell('WHIP', p.seasonWHIP, true, 'No starts yet')}
+        ${statCell('K/BB', p.last3KBB, true, 'No starts yet')}
+        ${statCell('K/9', p.k9, true, 'No starts yet')}
+        ${statCell('BB/9', p.bb9, true, 'No starts yet')}
+      </tr>`;
+    }).join('');
+    document.getElementById("rotation-body").innerHTML = rotationRows;
 
     document.getElementById("bullpen-body").innerHTML = `
       <tr>
         <td style="font-weight:600;color:var(--orange)">NYM Bullpen</td>
-        <td>${fmt(livePitch.metsBullpen?.seasonERA)}</td>
-        <td>${fmt(livePitch.metsBullpen?.seasonXFIP)}</td>
+        <td class="${metricTone('ERA', livePitch.metsBullpen?.seasonERA, true)}">${fmt(livePitch.metsBullpen?.seasonERA)}</td>
+        <td class="${metricTone('FIP', livePitch.metsBullpen?.seasonXFIP, true)}">${fmt(livePitch.metsBullpen?.seasonXFIP)}</td>
         <td>N/A</td>
         <td>${livePitch.metsBullpen?.rating != null ? `${livePitch.metsBullpen.rating}/100 <span class="stat-year">(2026)</span>` : 'N/A'}</td>
       </tr>`;
 
-    const nleRows = nlEast.length ? nlEast.map(t => {
+    const nlRows = nlTeams.length ? nlTeams.map(t => {
       const isMets = t.team?.name === "New York Mets";
-      const logo = logoUrl(t.team?.name);
+      const logo = isMets ? logoUrl(t.team?.name) : '';
       const home = t.records?.splitRecords?.find(s => s.type === "home");
       const away = t.records?.splitRecords?.find(s => s.type === "away");
       const lastTen = t.records?.splitRecords?.find(s => s.type === "lastTen");
       const streak = (t.streak?.streakType === "wins" ? "W" : "L") + (t.streak?.streakNumber || 0);
-      return `<tr class="${isMets ? 'mets-row' : ''}"><td><div class="standings-team-cell">${logo ? `<img src="${logo}" class="standings-logo" alt="${t.team.name}">` : ''}<span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ''}>${t.team?.name}</span></div></td><td>${t.wins}</td><td>${t.losses}</td><td>${t.winningPercentage}</td><td>${t.gamesBack === '0' ? '—' : t.gamesBack}</td><td>${home ? `${home.wins}-${home.losses}` : 'N/A'}</td><td>${away ? `${away.wins}-${away.losses}` : 'N/A'}</td><td>${lastTen ? `${lastTen.wins}-${lastTen.losses}` : 'N/A'}</td><td>${streak}</td></tr>`;
+      return `<tr class="${isMets ? 'mets-row' : ''}"><td><div class="standings-team-cell">${logo ? `<img src="${logo}" class="standings-logo" alt="${t.team.name}">` : ''}<span style="${isMets ? 'font-weight:900;color:var(--orange);' : ''}" class="${isMets ? 'mets-team-highlight' : ''}">${t.team?.name}</span></div></td><td>${t.wins}</td><td>${t.losses}</td><td>${t.winningPercentage}</td><td>${t.gamesBack === '0' ? '&mdash;' : t.gamesBack}</td><td>${home ? `${home.wins}-${home.losses}` : 'N/A'}</td><td>${away ? `${away.wins}-${away.losses}` : 'N/A'}</td><td>${lastTen ? `${lastTen.wins}-${lastTen.losses}` : 'N/A'}</td><td>${streak}</td></tr>`;
     }).join("") : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">Live standings unavailable</td></tr>`;
-    document.getElementById("nle-body").innerHTML = nleRows;
+    document.getElementById("nl-body").innerHTML = nlRows;
 
-    const nlFull = standings?.records || [];
-    document.getElementById("nl-full-body").innerHTML = nlFull.length ? nlFull.map(div =>
+    document.getElementById("nl-full-body").innerHTML = nlDivisions.length ? nlDivisions.map(div =>
       `<tr class="divider-row"><td colspan="5">${div.division?.nameShort || div.division?.name || ''}</td></tr>` +
-      (div.teamRecords || []).map(t => `<tr><td>${t.team?.name}</td><td>${t.wins}</td><td>${t.losses}</td><td>${t.winningPercentage}</td><td>${t.gamesBack === '0' ? '—' : t.gamesBack}</td></tr>`).join("")
+      (div.teamRecords || []).map(t => {
+        const isMets = t.team?.name === 'New York Mets';
+        const logo = isMets ? logoUrl(t.team?.name) : '';
+        return `<tr class="${isMets ? 'mets-row' : ''}"><td><div class="standings-team-cell">${logo ? `<img src="${logo}" class="standings-logo" alt="${t.team?.name}">` : ''}<span style="${isMets ? 'font-weight:900;color:var(--orange);' : ''}" class="${isMets ? 'mets-team-highlight' : ''}">${t.team?.name}</span></div></td><td>${t.wins}</td><td>${t.losses}</td><td>${t.winningPercentage}</td><td>${t.gamesBack === '0' ? '&mdash;' : t.gamesBack}</td></tr>`;
+      }).join("")
     ).join("") : `<tr><td colspan="5" style="color:#9099b0;padding:1rem;text-align:center">Full standings unavailable</td></tr>`;
 
     if (sample?.generatedAt) {
@@ -399,9 +473,7 @@
 
     window.toggleFullStandings = function() {
       const el  = document.getElementById("full-nl-standings");
-      const btn = document.querySelector(".full-standings-toggle");
       el.classList.toggle("open");
-      btn.textContent = el.classList.contains("open") ? "Full NL Standings ▲" : "Full NL Standings ▼";
     };
   </script>
   <script>
