@@ -44,8 +44,38 @@ function isValidRecordString(value) {
 }
 
 function formatLeagueRecord(record) {
-  if (record?.w == null || record?.l == null) return "";
-  return `${record.w}-${record.l}`;
+  if (!record) return "";
+  const wins = record.w ?? record.wins;
+  const losses = record.l ?? record.losses;
+  if (wins == null || losses == null) return "";
+  return `${wins}-${losses}`;
+}
+
+async function fetchStandingsRecordMap(season = new Date().getFullYear()) {
+  const url = new URL("https://statsapi.mlb.com/api/v1/standings");
+  url.searchParams.set("leagueId", "103,104");
+  url.searchParams.set("season", String(season));
+  url.searchParams.set("standingsTypes", "regularSeason");
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`MLB standings request failed: ${res.status}`);
+
+  const data = await res.json();
+  const recordMap = new Map();
+  for (const division of data?.records || []) {
+    for (const teamRecord of division?.teamRecords || []) {
+      const teamId = teamRecord?.team?.id;
+      if (!teamId) continue;
+      recordMap.set(teamId, {
+        teamId,
+        wins: teamRecord.wins,
+        losses: teamRecord.losses,
+        gamesPlayed: teamRecord.gamesPlayed,
+        splitRecords: teamRecord.records?.splitRecords || []
+      });
+    }
+  }
+  return recordMap;
 }
 
 function getMetsRecord(game) {
@@ -62,15 +92,19 @@ function getOppRecord(game) {
   return "0-0";
 }
 
-function mapScheduleGame(game) {
+function mapScheduleGame(game, standingsRecordMap = new Map()) {
   const away = game?.teams?.away?.team || {};
   const home = game?.teams?.home?.team || {};
   const metsAreAway = away.id === METS_TEAM_ID;
   const opponent = metsAreAway ? home : away;
   const metsProbable = metsAreAway ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher;
   const oppProbable = metsAreAway ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher;
-  const metsRecord = metsAreAway ? game?.teams?.away?.leagueRecord : game?.teams?.home?.leagueRecord;
-  const oppRecord = metsAreAway ? game?.teams?.home?.leagueRecord : game?.teams?.away?.leagueRecord;
+  const scheduleMetsRecord = metsAreAway ? game?.teams?.away?.leagueRecord : game?.teams?.home?.leagueRecord;
+  const scheduleOppRecord = metsAreAway ? game?.teams?.home?.leagueRecord : game?.teams?.away?.leagueRecord;
+  const standingsMetsRecord = standingsRecordMap.get(METS_TEAM_ID);
+  const standingsOppRecord = standingsRecordMap.get(opponent?.id);
+  const metsRecord = formatLeagueRecord(scheduleMetsRecord) || formatLeagueRecord(standingsMetsRecord);
+  const oppRecord = formatLeagueRecord(scheduleOppRecord) || formatLeagueRecord(standingsOppRecord);
 
   return {
     date: game.officialDate,
@@ -110,19 +144,22 @@ async function fetchLiveMetsGame() {
   url.searchParams.set("endDate", toEtDateString(end));
   url.searchParams.set("hydrate", "team,venue,probablePitcher");
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`MLB schedule request failed: ${res.status}`);
+  const [scheduleRes, standingsRecordMap] = await Promise.all([
+    fetch(url.toString()),
+    fetchStandingsRecordMap().catch(() => new Map())
+  ]);
+  if (!scheduleRes.ok) throw new Error(`MLB schedule request failed: ${scheduleRes.status}`);
 
-  const data = await res.json();
+  const data = await scheduleRes.json();
   const games = (data?.dates || [])
     .flatMap(d => d.games || [])
     .sort((a, b) => new Date(a.gameDate) - new Date(b.gameDate));
 
   const todaysGame = games.find(g => g.officialDate === today);
-  if (todaysGame) return mapScheduleGame(todaysGame);
+  if (todaysGame) return mapScheduleGame(todaysGame, standingsRecordMap);
 
   const nextGame = games.find(g => g.officialDate > today);
-  return nextGame ? mapScheduleGame(nextGame) : null;
+  return nextGame ? mapScheduleGame(nextGame, standingsRecordMap) : null;
 }
 
 function mergeLiveGame(staticGame, liveGame) {

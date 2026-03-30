@@ -288,7 +288,20 @@
 
     const sample = await fetch("data/sample-game.json").then(r => r.json()).catch(() => null);
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
-    const liveGame = sample?.games?.find(g => g.date >= today) || sample?.games?.[0] || null;
+    const sampleGame = sample?.games?.find(g => g.date >= today) || sample?.games?.[0] || null;
+    const schedule = await fetch(`https://statsapi.mlb.com/api/v1/schedule/games/?sportId=1&teamId=121&startDate=${today}&endDate=${today}&hydrate=team,venue,probablePitcher`).then(r => r.json()).catch(() => null);
+    const scheduleGame = schedule?.dates?.[0]?.games?.[0] || null;
+    const liveGame = {
+      ...sampleGame,
+      metsRecord: scheduleGame?.teams?.away?.team?.id === 121
+        ? `${scheduleGame?.teams?.away?.leagueRecord?.wins ?? sampleGame?.metsRecord?.split?.('-')?.[0] ?? 0}-${scheduleGame?.teams?.away?.leagueRecord?.losses ?? sampleGame?.metsRecord?.split?.('-')?.[1] ?? 0}`
+        : `${scheduleGame?.teams?.home?.leagueRecord?.wins ?? sampleGame?.metsRecord?.split?.('-')?.[0] ?? 0}-${scheduleGame?.teams?.home?.leagueRecord?.losses ?? sampleGame?.metsRecord?.split?.('-')?.[1] ?? 0}`,
+      oppRecord: scheduleGame
+        ? (scheduleGame?.teams?.away?.team?.id === 121
+            ? `${scheduleGame?.teams?.home?.leagueRecord?.wins ?? 0}-${scheduleGame?.teams?.home?.leagueRecord?.losses ?? 0}`
+            : `${scheduleGame?.teams?.away?.leagueRecord?.wins ?? 0}-${scheduleGame?.teams?.away?.leagueRecord?.losses ?? 0}`)
+        : sampleGame?.oppRecord
+    };
     const liveAdv = liveGame?.teamAdvanced?.mets || {};
     const livePitch = liveGame?.pitching || {};
     const liveLineup = Array.isArray(liveGame?.lineups?.mets) ? liveGame.lineups.mets : [];
@@ -355,10 +368,10 @@
 
     const metsName = "New York Mets";
     const glanceItems = [
-      { label: "Record", value: liveGame?.metsRecord || (metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : "1-0"), highlight: true },
-      { label: "Home", value: splitRecord("home") !== "N/A" ? splitRecord("home") : "1-0" },
-      { label: "Road", value: splitRecord("away") !== "N/A" ? splitRecord("away") : "0-0" },
-      { label: "Last 10", value: splitRecord("lastTen") !== "N/A" ? splitRecord("lastTen") : "1-0" },
+      { label: "Record", value: metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : (liveGame?.metsRecord || "N/A"), highlight: true },
+      { label: "Home", value: splitRecord("home") !== "N/A" ? splitRecord("home") : "N/A" },
+      { label: "Road", value: splitRecord("away") !== "N/A" ? splitRecord("away") : "N/A" },
+      { label: "Last 10", value: splitRecord("lastTen") !== "N/A" ? splitRecord("lastTen") : "N/A" },
       { label: "OPS Rank", value: metsRanks.ops ? `#${metsRanks.ops} NL` : "N/A" },
       { label: "Rotation FIP Rank", value: metsRanks.rotFip ? `#${metsRanks.rotFip} NL` : "N/A" }
     ];
