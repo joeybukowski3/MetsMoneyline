@@ -524,7 +524,7 @@ const METS_PITCHER_IDS = {
 };
 
 /* ── Percentile Engine ──
-   Maps a raw stat value to an estimated 0–100 MLB percentile.
+   Maps a raw stat value to an estimated 0-100 MLB percentile.
    Lower-is-better stats (ERA, WHIP, BB%) are inverted so 100 = best.
    Curves based on approximate modern MLB starter distributions. */
 const PCTL = {
@@ -538,7 +538,7 @@ const PCTL = {
   WHIP: v => clamp(Math.round(100 - ((parseFloat(v) - 0.90) / (1.70 - 0.90)) * 90), 5, 99),
   // K%: elite ~33%, avg ~22%, poor ~13%
   KPct: v => clamp(Math.round(((parseFloat(v) - 10) / (36 - 10)) * 95), 5, 99),
-  // BB%: elite ~4%, avg ~8%, poor ~13% — lower is better
+  // BB%: elite ~4%, avg ~8%, poor ~13% - lower is better
   BBPct: v => clamp(Math.round(100 - ((parseFloat(v) - 3.5) / (13.5 - 3.5)) * 90), 5, 99),
   // K/BB: elite ~5.0, avg ~2.8, poor ~1.5
   KBB:  v => clamp(Math.round(((parseFloat(v) - 1.2) / (6.0 - 1.2)) * 95), 5, 99),
@@ -550,7 +550,7 @@ const PCTL = {
   BPERA: v => clamp(Math.round(100 - ((parseFloat(v) - 2.80) / (5.50 - 2.80)) * 90), 5, 99),
   // Bullpen xFIP: elite ~3.10, avg ~4.00, poor ~5.00
   BPxFIP: v => clamp(Math.round(100 - ((parseFloat(v) - 3.00) / (5.20 - 3.00)) * 90), 5, 99),
-  // Rating: direct 0–100
+  // Rating: direct 0-100
   Rating: v => clamp(Math.round(parseFloat(v)), 0, 100),
 };
 
@@ -638,7 +638,36 @@ function buildPitchingCard(game) {
   const p  = game.pitching;
   const mn = p.mets.name;
 
-  // Season stats — 2026 only
+  const pitcherLogTable = (starts, name) => {
+    if (!starts?.length) return "";
+    const compactOpponent = (teamName) => {
+      const abbr = getTeamAbbr(teamName);
+      return abbr && abbr !== teamName ? abbr : teamName;
+    };
+    const rows = starts.slice(0, 4).map(s => {
+      const er = parseInt(s.er);
+      const erClass = isNaN(er) ? "" : er <= 2 ? " good" : er <= 4 ? " warn" : " bad";
+      const resultClass = s.result === "W" ? " good" : s.result === "L" ? " bad" : " muted";
+      return `<tr>
+        <td class="compact-date">${String(s.date || "").slice(5)}</td>
+        <td class="compact-opp">${compactOpponent(s.opponent)}</td>
+        <td>${s.ip}</td>
+        <td class="compact-er${erClass}">${s.er}</td>
+        <td>${s.k}</td>
+        <td class="compact-wl${resultClass}">${s.result}</td>
+      </tr>`;
+    }).join("");
+    return `
+      <div class="compact-log-title" style="margin-top:1rem">${name} - Recent Starts</div>
+      <div class="table-wrap compact-log-wrap">
+        <table class="compact-log-table">
+          <thead><tr><th>Date</th><th>Opp</th><th>IP</th><th>ER</th><th>K</th><th>W/L</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  };
+
+  // Season stats - 2026 only
   const mERA  = getMetsPitchingStat(p.mets.seasonERA,  mn, "ERA");
   const mFIP  = getMetsPitchingStat(p.mets.seasonFIP,  mn, "FIP");
   const mXERA = getMetsPitchingStat(p.mets.seasonXERA, mn, "xFIP");
@@ -655,7 +684,7 @@ function buildPitchingCard(game) {
   const oKPct  = p.opp.savant?.kPct  ?? "N/A";
   const oBBPct = p.opp.savant?.bbPct ?? "N/A";
 
-  // Bullpen — 2026 only
+  // Bullpen - 2026 only
   const metsBP = resolveBullpen(p.metsBullpen);
   const oppBP  = resolveBullpen(p.oppBullpen);
 
@@ -677,7 +706,7 @@ function buildPitchingCard(game) {
     return "xwoba-neutral";
   };
 
-  // vs. Current Roster — colored stat tile grid
+  // vs. Current Roster - colored stat tile grid
   const vsRosterGrid = vsRoster => {
     if (!vsRoster) {
       return `<div style="color:#9099b0;font-size:0.85rem;text-align:center;padding:1.25rem 0">No prior matchup data available</div>`;
@@ -700,7 +729,7 @@ function buildPitchingCard(game) {
       if (t.val == null) {
         return `<div class="vsr-tile" style="background:#f0f2f8">
           <div class="vsr-label" style="color:#9099b0">${t.label}</div>
-          <div class="vsr-val" style="color:#9099b0">—</div>
+          <div class="vsr-val" style="color:#9099b0">-</div>
         </div>`;
       }
       const pct  = t.pct(t.val);
@@ -717,7 +746,7 @@ function buildPitchingCard(game) {
   };
 
   // Build one pitcher card
-  const pitcherCard = (sideLabel, pitcher, seasonStats, vsRoster) => {
+  const pitcherCard = (sideLabel, pitcher, seasonStats, recentStarts) => {
     const prow = (label, val) =>
       `<div class="pstat-row"><span class="pstat-label">${label}</span><span class="pstat-val">${val}</span></div>`;
 
@@ -772,21 +801,24 @@ function buildPitchingCard(game) {
         ${statBar("K/BB",      raw(kbb),  PCTL.KBB,     kbb)}
         ${statBar("Hard-Hit%", hhPct ? raw(hhPct).replace("%","") : null, PCTL.HardHit, hhPct)}
         ${statBar("Whiff%",    whiffPct ? raw(whiffPct).replace("%","") : null, v => clamp(Math.round(((parseFloat(v) - 16) / (36 - 16)) * 95), 5, 99), whiffPct)}
+        ${pitcherLogTable(recentStarts, pitcher.name)}
       </div>
     </div>`;
   };
 
   const metsCard = pitcherCard(
     "NYM", p.mets,
-    { era: mERA, fip: mFIP, xera: mXERA, whip: mWHIP, kbb: mKBB, kpct: mKPct, bbpct: mBBPct }
+    { era: mERA, fip: mFIP, xera: mXERA, whip: mWHIP, kbb: mKBB, kpct: mKPct, bbpct: mBBPct },
+    game.gameContext?.metsPitcherLog
   );
   const oppCard = pitcherCard(
     game.opponent, p.opp,
-    { era: oERA, fip: oFIP, xera: oXERA, whip: oWHIP, kbb: oKBB, kpct: oKPct, bbpct: oBBPct }
+    { era: oERA, fip: oFIP, xera: oXERA, whip: oWHIP, kbb: oKBB, kpct: oKPct, bbpct: oBBPct },
+    game.gameContext?.oppPitcherLog
   );
 
   const vsRosterSection = `
-    <div class="section-floating-label">Career Matchup — vs. Current Roster</div>
+    <div class="section-floating-label">Career Matchup - vs. Current Roster</div>
     <div class="pitcher-two-col">
       <div class="card full-card">
         <div class="card-header">${p.mets.name} vs ${getTeamAbbr(game.opponent)} Roster</div>
@@ -921,7 +953,7 @@ function buildRow3(game) {
          <tbody>${oppRows}</tbody>
        </table></div>`;
 
-  // Advanced metrics — individual cards with progress bars (matching Lovable design)
+  // Advanced metrics - individual cards with progress bars (matching Lovable design)
   const resolvedMetrics = resolveAdvancedMatchup(game);
   const edgeLabel = computeAdvancedEdgeLabel(resolvedMetrics, oppAbbr);
   const advCards = resolvedMetrics.map(r => {
@@ -1104,7 +1136,7 @@ function buildRecentTiles(games, recentBreakdowns) {
     <div class="game-tile ${g.result === "W" ? "win" : ""}">
       <div style="font-size:0.78rem;color:#9099b0;margin-bottom:0.2rem">${g.date}</div>
       <div style="font-weight:700;color:var(--navy);margin-bottom:0.2rem">${g.opponent}</div>
-      <div style="font-size:0.9rem">${g.finalScore || "—"}</div>
+      <div style="font-size:0.9rem">${g.finalScore || "-"}</div>
       ${pickLine}
       <div style="font-size:0.82rem;color:${g.result === "W" ? "var(--orange)" : "#9099b0"};margin-top:0.2rem">
         ${g.result === "W" ? "Mets Win" : "Loss"}
@@ -1159,38 +1191,8 @@ function buildGameContextCard(game) {
   // H2H badge
   const h2h = gc.headToHead;
   const h2hHtml = (h2h && (h2h.wins + h2h.losses) > 0)
-    ? `<span style="background:#dbeafe;color:#1d4ed8;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:5px;">Season Series: Mets ${h2h.wins}–${h2h.losses} vs ${oppAbbr}</span>`
+    ? `<span style="background:#dbeafe;color:#1d4ed8;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:5px;">Season Series: Mets ${h2h.wins}-${h2h.losses} vs ${oppAbbr}</span>`
     : `<span style="background:#f1f5f9;color:#64748b;font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:5px;">No prior matchups this season</span>`;
-
-  // Pitcher recent starts mini-table
-  const pitcherLogTable = (starts, name) => {
-    if (!starts?.length) return "";
-    const compactOpponent = (teamName) => {
-      const abbr = getTeamAbbr(teamName);
-      return abbr && abbr !== teamName ? abbr : teamName;
-    };
-    const rows = starts.slice(0, 4).map(s => {
-      const er = parseInt(s.er);
-      const erClass = isNaN(er) ? "" : er <= 2 ? " good" : er <= 4 ? " warn" : " bad";
-      const resultClass = s.result === "W" ? " good" : s.result === "L" ? " bad" : " muted";
-      return `<tr>
-        <td class="compact-date">${String(s.date || "").slice(5)}</td>
-        <td class="compact-opp">${compactOpponent(s.opponent)}</td>
-        <td>${s.ip}</td>
-        <td class="compact-er${erClass}">${s.er}</td>
-        <td>${s.k}</td>
-        <td class="compact-wl${resultClass}">${s.result}</td>
-      </tr>`;
-    }).join("");
-    return `
-      <div class="compact-log-title">${name} — Recent Starts</div>
-      <div class="table-wrap compact-log-wrap">
-        <table class="compact-log-table">
-          <thead><tr><th>Date</th><th>Opp</th><th>IP</th><th>ER</th><th>K</th><th>W/L</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-  };
 
   return `
     <div class="section-floating-label">Game Context</div>
@@ -1216,12 +1218,6 @@ function buildGameContextCard(game) {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
         <div>${injuryChips(gc.metsInjuries, "Mets")}</div>
         <div>${injuryChips(gc.oppInjuries, oppAbbr)}</div>
-      </div>
-
-      <!-- Pitcher logs -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
-        <div>${pitcherLogTable(gc.metsPitcherLog, game.pitching?.mets?.name || "Mets SP")}</div>
-        <div>${pitcherLogTable(gc.oppPitcherLog,  game.pitching?.opp?.name  || "Opp SP")}</div>
       </div>
 
     </div>`;
@@ -1312,7 +1308,7 @@ async function init() {
   const latestGame = [...sortedGames].reverse().find(g => g.date < today);
   const featuredGame = todayGame || nextGame || latestGame || null;
 
-  // Update hero headline — three separate lines
+  // Update hero headline - three separate lines
   if (!featuredGame) {
     showNoGameTodayState();
   } else {
@@ -1333,14 +1329,14 @@ async function init() {
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
-    buildMatchupStrip(featuredGame) +         // Row 1 — matchup header
-    buildGameBreakdown(featuredGame) +        // Row 2 — top-level matchup recap
-    buildGameContextCard(featuredGame) +      // Row 3 — recent form, injuries, H2H, pitcher logs
-    buildPitchingCard(featuredGame) +         // Row 4 — starting pitching comparison
-    buildRow3(featuredGame) +                 // Row 5 — lineups + advanced metrics
-    buildTeamAdvancedCard(featuredGame) +     // Row 6 — team advanced stats table
-    buildAnalysisRow(featuredGame) +          // Row 7 — 3 analysis tiles
-    buildPickSection(featuredGame) +          // Row 8 — pick banner
+    buildMatchupStrip(featuredGame) +         // Row 1 - matchup header
+    buildGameBreakdown(featuredGame) +        // Row 2 - top-level matchup recap
+    buildGameContextCard(featuredGame) +      // Row 3 - recent form, injuries, H2H, pitcher logs
+    buildPitchingCard(featuredGame) +         // Row 4 - starting pitching comparison
+    buildRow3(featuredGame) +                 // Row 5 - lineups + advanced metrics
+    buildTeamAdvancedCard(featuredGame) +     // Row 6 - team advanced stats table
+    buildAnalysisRow(featuredGame) +          // Row 7 - 3 analysis tiles
+    buildPickSection(featuredGame) +          // Row 8 - pick banner
     buildTrendsCard(featuredGame);            // supplemental trends
 
   }
