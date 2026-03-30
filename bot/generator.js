@@ -23,6 +23,7 @@ const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const ODDS_API_KEY = process.env.ODDS_API_KEY || process.env.THE_ODDS_API_KEY || process.env.ODDSAPI || null;
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
+const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 
 const TEAM_IDS = {
   "Arizona Diamondbacks": 109,
@@ -250,6 +251,36 @@ function loadPreviousOutput() {
   } catch {
     return null;
   }
+}
+
+function loadPickHistory() {
+  try {
+    return JSON.parse(fs.readFileSync(PICK_HISTORY_PATH, "utf8"));
+  } catch {
+    return { updatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
+  }
+}
+
+function writePickHistory(entries = []) {
+  const summary = entries.reduce((acc, entry) => {
+    if (entry?.result === "W") acc.wins += 1;
+    if (entry?.result === "L") acc.losses += 1;
+    if (typeof entry?.profit === "number") acc.profit += entry.profit;
+    return acc;
+  }, { wins: 0, losses: 0, profit: 0 });
+
+  const output = {
+    updatedAt: new Date().toISOString(),
+    record: {
+      wins: summary.wins,
+      losses: summary.losses,
+      profit: Number(summary.profit.toFixed(2))
+    },
+    entries
+  };
+
+  fs.writeFileSync(PICK_HISTORY_PATH, JSON.stringify(output, null, 2));
+  return output;
 }
 
 async function loadSavantPitcherLeaderboard() {
@@ -1691,9 +1722,9 @@ function toHistoryEntry(game, existingEntry = null) {
   };
 }
 
-function mergeRecentBreakdowns(previousOutput, currentGame) {
+function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEntries = []) {
   const prior = Array.isArray(previousOutput?.recentBreakdowns) ? previousOutput.recentBreakdowns : [];
-  const entries = [...prior];
+  const entries = [...persistentHistoryEntries, ...prior];
   const previousGame = previousOutput?.games?.[0] || null;
   const previousEntry = toHistoryEntry(previousGame);
 
@@ -1723,7 +1754,7 @@ function mergeRecentBreakdowns(previousOutput, currentGame) {
     .slice(0, 30);
 }
 
-function buildGameJson(gameFacts, writeup, previousOutput = null) {
+function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
   const officialPick = writeup.officialPick || "Today's Pick: New York Mets Moneyline";
@@ -1800,7 +1831,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null) {
   const output = {
     generatedAt: new Date().toISOString(),
     games: [currentGame],
-    recentBreakdowns: mergeRecentBreakdowns(previousOutput, currentGame)
+    recentBreakdowns: mergeRecentBreakdowns(previousOutput, currentGame, Array.isArray(pickHistory?.entries) ? pickHistory.entries : [])
   };
 
   ensureNoUndefinedStrings(output);
@@ -1894,7 +1925,9 @@ async function run() {
     writeup = buildFallbackWriteup(gameFacts);
   }
 
-  const output = buildGameJson(gameFacts, writeup, loadPreviousOutput());
+  const previousOutput = loadPreviousOutput();
+  const pickHistory = loadPickHistory();
+  const output = buildGameJson(gameFacts, writeup, previousOutput, pickHistory);
 
   if (dryRun) {
     console.log(JSON.stringify(output, null, 2));
@@ -1903,6 +1936,8 @@ async function run() {
 
   fs.writeFileSync(SAMPLE_JSON_PATH, JSON.stringify(output, null, 2));
   console.log(`Wrote ${SAMPLE_JSON_PATH}`);
+  const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
+  console.log(`Wrote ${PICK_HISTORY_PATH} with ${pickHistoryOutput.entries.length} entr${pickHistoryOutput.entries.length === 1 ? "y" : "ies"}`);
   await createButtondownDraft(output);
 }
 

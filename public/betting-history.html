@@ -150,19 +150,22 @@
         }));
     }
 
-    fetch("data/sample-game.json").then(r => r.json()).then(d => {
+    fetch("data/pick-history.json").then(r => r.json()).then(d => {
       const historyData = deriveRetroPickHistory(d);
-      let running = 0;
-      let wins = 0;
-      let losses = 0;
+      let running = typeof d?.record?.profit === "number" ? d.record.profit : 0;
+      let wins = typeof d?.record?.wins === "number" ? d.record.wins : 0;
+      let losses = typeof d?.record?.losses === "number" ? d.record.losses : 0;
 
       const rows = historyData.map(g => {
         const won = g.result === "W";
         const pl = typeof g.profit === "number"
           ? g.profit
           : (won ? calcPL(g.odds) : (typeof g.odds === "number" ? -100 : null));
-        if (typeof pl === "number") running += pl;
-        if (won) wins++; else losses++;
+        const useComputedTotals = !(typeof d?.record?.profit === "number" && typeof d?.record?.wins === "number" && typeof d?.record?.losses === "number");
+        if (useComputedTotals && typeof pl === "number") running += pl;
+        if (useComputedTotals) {
+          if (won) wins++; else losses++;
+        }
         const oddsDisplay = typeof g.odds === "number" ? (g.odds > 0 ? "+" + g.odds : g.odds) : "—";
         const resultClass = won ? "badge badge-win" : "badge badge-loss";
         const plClass = typeof pl === "number" ? (pl >= 0 ? "text-profit" : "text-loss") : "";
