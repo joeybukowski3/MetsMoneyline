@@ -1153,8 +1153,8 @@ function buildGameContextCard(game) {
 
   const oppAbbr = getTeamAbbr(game.opponent);
 
-  // Recent results pills
-  const resultPills = (games, label) => {
+  // Recent results log
+  const resultLog = (games, label) => {
     if (!games?.length) return `<span style="color:#9099b0;font-size:0.82rem;">No data</span>`;
     const streak = (() => {
       let s = 0, last = null;
@@ -1165,18 +1165,27 @@ function buildGameContextCard(game) {
       }
       const bg = last === "W" ? "#dcfce7" : "#fee2e2";
       const co = last === "W" ? "#15803d" : "#b91c1c";
-      return `<span style="background:${bg};color:${co};font-size:0.72rem;font-weight:800;padding:1px 7px;border-radius:4px;margin-right:6px;">${last}${s}</span>`;
+      return `<span style="background:${bg};color:${co};font-size:0.72rem;font-weight:800;padding:1px 7px;border-radius:4px;margin-left:6px;">${last}${s}</span>`;
     })();
-    const pills = games.slice(0, 5).map(g => {
-      const bg = g.result === "W" ? "#22c55e" : "#ef4444";
+
+    const rows = games.slice(0, 5).map(g => {
       const venuePrefix = g.homeAway === "home" ? "vs" : "@";
       const oppAbbr = getTeamAbbr(g.opponent);
-      const resultWord = g.result === "W" ? "Win" : g.result === "L" ? "Loss" : g.result;
-      const display = `${venuePrefix} ${oppAbbr} (${resultWord} ${g.score})`;
-      const tip = `${display} • ${g.date}`;
-      return `<span title="${tip}" style="display:inline-block;background:${bg};color:#fff;font-size:0.7rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-right:3px;cursor:default;">${display}</span>`;
+      const resultWord = g.result === "W" ? "Win" : g.result === "L" ? "Loss" : (g.result || "-");
+      const badgeBg = g.result === "W" ? "#dcfce7" : "#fee2e2";
+      const badgeColor = g.result === "W" ? "#15803d" : "#b91c1c";
+      const dateText = g.date
+        ? new Date(`${g.date}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+        : "--";
+      return `
+        <div style="display:grid;grid-template-columns:70px 1fr auto;gap:0.75rem;align-items:center;padding:0.45rem 0;border-bottom:1px solid #eef2f7;">
+          <div style="font-size:0.78rem;color:#64748b;font-weight:600;">${dateText}</div>
+          <div style="font-size:0.82rem;color:var(--ink);font-weight:600;">${venuePrefix} ${oppAbbr}${g.score ? ` • ${g.score}` : ""}</div>
+          <div style="background:${badgeBg};color:${badgeColor};font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:999px;">${resultWord}</div>
+        </div>`;
     }).join("");
-    return `<div style="margin-bottom:0.4rem"><span style="font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label}</span> ${streak}</div><div>${pills}</div>`;
+
+    return `<div><div style="margin-bottom:0.45rem;font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label}${streak}</div><div>${rows}</div></div>`;
   };
 
   // Injury chips
@@ -1201,10 +1210,10 @@ function buildGameContextCard(game) {
       <!-- Recent form row -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
         <div>
-          ${resultPills(gc.metsRecentGames, "Mets Last 5")}
+          ${resultLog(gc.metsRecentGames, "Mets Last 5")}
         </div>
         <div>
-          ${resultPills(gc.oppRecentGames, `${oppAbbr} Last 5`)}
+          ${resultLog(gc.oppRecentGames, `${oppAbbr} Last 5`)}
         </div>
       </div>
 
