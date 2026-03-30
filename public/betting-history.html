@@ -135,47 +135,19 @@
     }
 
     function deriveRetroPickHistory(sample) {
-      const games = Array.isArray(sample?.games) ? sample.games : [];
       const recentBreakdowns = Array.isArray(sample?.recentBreakdowns) ? sample.recentBreakdowns : [];
-      const derived = [];
-
-      for (const game of recentBreakdowns) {
-        if (!game?.date || !game?.opponent || !game?.finalScore || !game?.result) continue;
-        derived.push({
+      return recentBreakdowns
+        .filter(game => game?.date && game?.opponent && game?.finalScore && game?.result)
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+        .map(game => ({
           date: game.date,
           opp: game.opponent,
           score: `${game.result} ${game.finalScore}`,
           market: game.market || "Mets Moneyline",
           odds: typeof game.odds === "number" ? game.odds : null,
-          result: game.result === "W" ? "W" : "L"
-        });
-      }
-
-      if (!derived.length && games.length) {
-        const currentGame = games[0];
-        const recentGames = Array.isArray(currentGame?.gameContext?.metsRecentGames)
-          ? currentGame.gameContext.metsRecentGames
-          : [];
-
-        for (const recentGame of recentGames) {
-          if (!recentGame?.date || !recentGame?.opponent || !recentGame?.result || !recentGame?.score) continue;
-          derived.push({
-            date: recentGame.date,
-            opp: recentGame.opponent,
-            score: `${recentGame.result} ${recentGame.score}`,
-            market: "Mets Moneyline",
-            odds: null,
-            result: recentGame.result === "W" ? "W" : "L"
-          });
-        }
-      }
-
-      const deduped = [];
-      for (const game of derived.sort((a, b) => String(b.date).localeCompare(String(a.date)))) {
-        if (deduped.some(entry => entry.date === game.date && entry.opp === game.opp)) continue;
-        deduped.push(game);
-      }
-      return deduped;
+          result: game.result === "W" ? "W" : "L",
+          profit: typeof game.profit === "number" ? game.profit : null
+        }));
     }
 
     fetch("data/sample-game.json").then(r => r.json()).then(d => {
@@ -186,7 +158,9 @@
 
       const rows = historyData.map(g => {
         const won = g.result === "W";
-        const pl = won ? calcPL(g.odds) : (typeof g.odds === "number" ? -100 : null);
+        const pl = typeof g.profit === "number"
+          ? g.profit
+          : (won ? calcPL(g.odds) : (typeof g.odds === "number" ? -100 : null));
         if (typeof pl === "number") running += pl;
         if (won) wins++; else losses++;
         const oddsDisplay = typeof g.odds === "number" ? (g.odds > 0 ? "+" + g.odds : g.odds) : "—";

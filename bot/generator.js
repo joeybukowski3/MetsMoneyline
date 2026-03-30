@@ -1661,23 +1661,33 @@ function buildTrendArray(gameFacts) {
   ];
 }
 
-function toHistoryEntry(game) {
+function calculateMoneylineProfit(odds, stake = 100) {
+  if (typeof odds !== "number") return null;
+  if (odds < 0) return Number(((stake / Math.abs(odds)) * 100).toFixed(2));
+  return Number(((odds / 100) * stake).toFixed(2));
+}
+
+function toHistoryEntry(game, existingEntry = null) {
   if (!game?.date || !game?.opponent || !game?.result) return null;
   const finalScore = game.finalScore
     ? `${game.finalScore.mets}-${game.finalScore.opp}`
     : game.gameContext?.lastMeeting?.metsScore != null && game.gameContext?.lastMeeting?.oppScore != null
       ? `${game.gameContext.lastMeeting.metsScore}-${game.gameContext.lastMeeting.oppScore}`
-      : null;
+      : existingEntry?.finalScore || null;
   const metsWon = game.result === "win";
-  const moneyline = game.moneyline?.mets ?? game.bettingHistory?.odds ?? null;
+  const moneyline = game.moneyline?.mets ?? game.bettingHistory?.odds ?? existingEntry?.odds ?? null;
+  const profit = typeof moneyline === "number"
+    ? (metsWon ? calculateMoneylineProfit(moneyline) : -100)
+    : existingEntry?.profit ?? null;
   return {
     date: game.date,
     opponent: game.opponent,
     finalScore,
-    officialPick: game.writeup?.officialPick || "Today's Pick: New York Mets Moneyline",
-    market: "Mets Moneyline",
+    officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
+    market: existingEntry?.market || "Mets Moneyline",
     odds: moneyline,
-    result: metsWon ? "W" : "L"
+    result: metsWon ? "W" : "L",
+    profit
   };
 }
 
@@ -1687,17 +1697,24 @@ function mergeRecentBreakdowns(previousOutput, currentGame) {
   const previousGame = previousOutput?.games?.[0] || null;
   const previousEntry = toHistoryEntry(previousGame);
 
-  if (previousGame?.status === "final" && previousEntry) {
-    const index = entries.findIndex((entry) => entry.date === previousEntry.date && entry.opponent === previousEntry.opponent);
-    if (index >= 0) entries[index] = previousEntry;
-    else entries.push(previousEntry);
+  if (previousGame?.status === "final") {
+    const index = entries.findIndex((entry) => entry.date === previousGame.date && entry.opponent === previousGame.opponent);
+    const existingEntry = index >= 0 ? entries[index] : null;
+    const mergedPreviousEntry = toHistoryEntry(previousGame, existingEntry);
+    if (mergedPreviousEntry) {
+      if (index >= 0) entries[index] = mergedPreviousEntry;
+      else entries.push(mergedPreviousEntry);
+    }
   }
 
-  const currentEntry = toHistoryEntry(currentGame);
-  if (currentGame?.status === "final" && currentEntry) {
-    const index = entries.findIndex((entry) => entry.date === currentEntry.date && entry.opponent === currentEntry.opponent);
-    if (index >= 0) entries[index] = currentEntry;
-    else entries.push(currentEntry);
+  if (currentGame?.status === "final") {
+    const index = entries.findIndex((entry) => entry.date === currentGame.date && entry.opponent === currentGame.opponent);
+    const existingEntry = index >= 0 ? entries[index] : null;
+    const mergedCurrentEntry = toHistoryEntry(currentGame, existingEntry);
+    if (mergedCurrentEntry) {
+      if (index >= 0) entries[index] = mergedCurrentEntry;
+      else entries.push(mergedCurrentEntry);
+    }
   }
 
   return entries
@@ -1763,11 +1780,20 @@ function buildGameJson(gameFacts, writeup, previousOutput = null) {
     weather: null
   };
 
+  const priorSettledEntry = Array.isArray(previousOutput?.recentBreakdowns)
+    ? previousOutput.recentBreakdowns.find((entry) => entry.date === currentGame.date && entry.opponent === currentGame.opponent)
+    : null;
+
   currentGame.bettingHistory = currentGame.status === "final"
     ? {
         market: "Mets Moneyline",
-        odds: currentGame.moneyline?.mets ?? null,
-        result: currentGame.result === "win" ? "W" : "L"
+        odds: currentGame.moneyline?.mets ?? priorSettledEntry?.odds ?? null,
+        result: currentGame.result === "win" ? "W" : "L",
+        profit: typeof (currentGame.moneyline?.mets ?? priorSettledEntry?.odds) === "number"
+          ? (currentGame.result === "win"
+              ? calculateMoneylineProfit(currentGame.moneyline?.mets ?? priorSettledEntry?.odds)
+              : -100)
+          : priorSettledEntry?.profit ?? null
       }
     : null;
 
