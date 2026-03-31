@@ -327,12 +327,15 @@ function buildGameBreakdown(game) {
   const h2hLosses = gc.headToHead?.losses ?? 0;
   const priorMeetings = h2hWins + h2hLosses;
   const recentSource = game.editorial?.recentSources?.[0] || null;
+  const isToday = game.date === getTodayET();
 
   const lines = [];
 
   if (lastMeeting) {
     const resultWord = lastMeeting.result === "win" ? "won" : "lost";
     lines.push(`Last meeting: the Mets ${resultWord} ${lastMeeting.metsScore}-${lastMeeting.oppScore} over ${oppAbbr} on ${lastMeeting.date}.`);
+  } else {
+    lines.push(`Matchup set: New York ${game.homeAway === "road" ? "travels to face" : "hosts"} ${game.opponent}${game.ballpark ? ` at ${game.ballpark}` : ""}.`);
   }
 
   lines.push(`Record check: New York is ${getMetsRecord(game)}. ${oppAbbr} is ${getOppRecord(game)}.`);
@@ -343,8 +346,16 @@ function buildGameBreakdown(game) {
     lines.push(`Season series: Mets lead ${h2hWins}-${h2hLosses} entering game ${priorMeetings + 1}.`);
   }
 
+  if (game.pitching?.mets?.name || game.pitching?.opp?.name) {
+    lines.push(`Probable starters: ${game.pitching?.mets?.name || "TBD"} vs ${game.pitching?.opp?.name || "TBD"}.`);
+  }
+
   if (recentSource?.headline) {
     lines.push(`Source note: ${recentSource.headline}.`);
+  } else if (!game.writeup) {
+    lines.push(isToday
+      ? "Full written analysis is still catching up for today's matchup refresh."
+      : "Full written analysis will appear once the next-game package is generated.");
   }
 
   return `
@@ -957,6 +968,15 @@ function buildRow3(game) {
   const l = game.lineups || {};
   const metsLineup = (Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : [];
   const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
+  const hasLineups = metsLineup.length > 0 || oppLineup.length > 0;
+  const hasMetrics = Array.isArray(game.advancedMatchup) && game.advancedMatchup.length > 0;
+  if (!hasLineups && !hasMetrics) {
+    return `
+      <div class="section-floating-label">Lineups & Advanced Metrics</div>
+      <div class="card full-card" style="padding:1.25rem;text-align:center;color:#9099b0;line-height:1.6">
+        The new matchup loaded, but lineup and advanced matchup data have not been generated yet. Check back after the next data refresh.
+      </div>`;
+  }
   const isConfirmed = l.lineupStatus === "confirmed";
   const statusLabel = isConfirmed ? "Confirmed Lineups" : "Projected Lineups";
   const statusNote = isConfirmed
@@ -1046,6 +1066,27 @@ function buildRow3(game) {
       </div>`;
   }).join("");
 
+  const advancedMetricsSection = resolvedMetrics.length
+    ? `
+    <div class="adv-metrics-section">
+      <div class="adv-metrics-header">
+        <span class="section-floating-label" style="margin:0">Advanced Metrics</span>
+        <span class="adv-edge-tag">&#x2197; Edge: ${edgeLabel}</span>
+      </div>
+      <div class="adv-metric-cards-grid">
+        ${advCards}
+      </div>
+    </div>`
+    : `
+    <div class="adv-metrics-section">
+      <div class="adv-metrics-header">
+        <span class="section-floating-label" style="margin:0">Advanced Metrics</span>
+      </div>
+      <div class="card full-card" style="padding:1rem;text-align:center;color:#9099b0;line-height:1.6">
+        Advanced matchup stats are not available for this refreshed game yet.
+      </div>
+    </div>`;
+
   return `
     <div class="section-floating-label">${statusLabel} ${statusNote}</div>
     <div class="lineup-two-col">
@@ -1059,15 +1100,7 @@ function buildRow3(game) {
       </div>
     </div>
 
-    <div class="adv-metrics-section">
-      <div class="adv-metrics-header">
-        <span class="section-floating-label" style="margin:0">Advanced Metrics</span>
-        <span class="adv-edge-tag">&#x2197; Edge: ${edgeLabel}</span>
-      </div>
-      <div class="adv-metric-cards-grid">
-        ${advCards}
-      </div>
-    </div>`;
+    ${advancedMetricsSection}`;
 }
 
 /* Strip pipe-table rows that GPT may have injected into section prose */
@@ -1083,7 +1116,13 @@ function cleanSectionBody(body) {
 
 /* ── ROW 4: Analysis tiles (3 side-by-side) ── */
 function buildAnalysisRow(game) {
-  if (!game.writeup?.sections?.length) return "";
+  if (!game.writeup?.sections?.length) {
+    return `
+      <div class="section-floating-label">Game Analysis</div>
+      <div class="card full-card" style="padding:1.25rem;color:#9099b0;line-height:1.6">
+        Detailed matchup analysis will appear here after the new game's writeup is generated.
+      </div>`;
+  }
   const sections = game.writeup.sections;
 
   // Find specific sections by heading keyword rather than hard index
@@ -1306,7 +1345,13 @@ function buildGameContextCard(game) {
 /* ── Team Advanced Stats Card ── */
 function buildTeamAdvancedCard(game) {
   const ta = game.teamAdvanced;
-  if (!ta?.mets || !ta?.opp) return "";
+  if (!ta?.mets || !ta?.opp) {
+    return `
+      <div class="section-floating-label">Team Advanced Stats</div>
+      <div class="card full-card" style="padding:1.25rem;color:#9099b0;line-height:1.6">
+        Team advanced stats for this refreshed matchup are still loading and will appear after the data package updates.
+      </div>`;
+  }
   const oppAbbr = getTeamAbbr(game.opponent);
   const metsLogo = getTeamLogoUrl("New York Mets");
   const oppLogo = getTeamLogoUrl(game.oppTeamId || game.opponent);
