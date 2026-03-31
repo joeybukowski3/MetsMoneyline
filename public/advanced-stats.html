@@ -355,8 +355,9 @@
     const nlDivisions = standings?.records || [];
     const nlTeams = nlDivisions.flatMap(d => d.teamRecords || []);
     const metsStanding = nlTeams.find(t => t.team?.name === "New York Mets") || null;
+    const splitRecords = metsStanding?.records?.splitRecords || metsStanding?.splitRecords || [];
     const splitRecord = (type) => {
-      const row = metsStanding?.records?.splitRecords?.find(s => s.type === type);
+      const row = splitRecords.find(s => s.type === type);
       return row ? `${row.wins}-${row.losses}` : "N/A";
     };
 

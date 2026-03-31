@@ -194,11 +194,23 @@ async function loadGameData() {
 
   try {
     const liveGame = await fetchLiveMetsGame();
-    if (data?.games?.length) {
-      data.games = [mergeLiveGame(data.games[0], liveGame)];
-    } else if (liveGame) {
-      data.games = [liveGame];
+    const games = Array.isArray(data?.games) ? [...data.games] : [];
+
+    if (liveGame) {
+      const liveIndex = games.findIndex(game =>
+        game?.date === liveGame.date &&
+        game?.opponent === liveGame.opponent &&
+        game?.homeAway === liveGame.homeAway
+      );
+
+      if (liveIndex >= 0) {
+        games[liveIndex] = mergeLiveGame(games[liveIndex], liveGame);
+      } else {
+        games.unshift(liveGame);
+      }
     }
+
+    data.games = games;
   } catch (err) {
     console.warn("Unable to refresh live Mets schedule.", err);
   }
