@@ -287,11 +287,45 @@ function loadPreviousOutput() {
   }
 }
 
+function dedupeHistoryEntries(entries = []) {
+  const map = new Map();
+  for (const entry of entries) {
+    if (!entry?.date || !entry?.opponent) continue;
+    const key = `${entry.date}::${entry.opponent}`;
+    const previous = map.get(key) || {};
+    map.set(key, {
+      ...previous,
+      ...entry,
+      date: entry.date,
+      opponent: entry.opponent,
+      finalScore: entry.finalScore ?? previous.finalScore ?? null,
+      officialPick: entry.officialPick ?? previous.officialPick ?? "Today's Pick: New York Mets Moneyline",
+      market: entry.market ?? previous.market ?? "Mets Moneyline",
+      odds: typeof entry.odds === "number" ? entry.odds : (typeof previous.odds === "number" ? previous.odds : null),
+      result: entry.result ?? previous.result ?? null,
+      profit: typeof entry.profit === "number" ? entry.profit : (typeof previous.profit === "number" ? previous.profit : null)
+    });
+  }
+
+  return [...map.values()].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+}
+
 function loadPickHistory() {
   try {
-    return JSON.parse(fs.readFileSync(PICK_HISTORY_PATH, "utf8"));
+    const parsed = JSON.parse(fs.readFileSync(PICK_HISTORY_PATH, "utf8"));
+    const entries = Array.isArray(parsed?.entries)
+      ? parsed.entries
+      : Array.isArray(parsed?.recentBreakdowns)
+        ? parsed.recentBreakdowns
+        : [];
+    return {
+      updatedAt: parsed?.updatedAt || null,
+      generatedAt: parsed?.generatedAt || null,
+      record: parsed?.record || { wins: 0, losses: 0, profit: 0 },
+      entries: dedupeHistoryEntries(entries)
+    };
   } catch {
-    return { updatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
+    return { updatedAt: null, generatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
   }
 }
 
@@ -303,14 +337,24 @@ function writePickHistory(entries = []) {
     return acc;
   }, { wins: 0, losses: 0, profit: 0 });
 
+  const normalizedEntries = dedupeHistoryEntries(entries);
+  const normalizedSummary = normalizedEntries.reduce((acc, entry) => {
+    if (entry?.result === "W") acc.wins += 1;
+    if (entry?.result === "L") acc.losses += 1;
+    if (typeof entry?.profit === "number") acc.profit += entry.profit;
+    return acc;
+  }, { wins: 0, losses: 0, profit: 0 });
+
   const output = {
     updatedAt: new Date().toISOString(),
+    generatedAt: new Date().toISOString(),
     record: {
-      wins: summary.wins,
-      losses: summary.losses,
-      profit: Number(summary.profit.toFixed(2))
+      wins: normalizedSummary.wins,
+      losses: normalizedSummary.losses,
+      profit: Number(normalizedSummary.profit.toFixed(2))
     },
-    entries
+    entries: normalizedEntries,
+    recentBreakdowns: normalizedEntries
   };
 
   fs.writeFileSync(PICK_HISTORY_PATH, JSON.stringify(output, null, 2));
@@ -1826,35 +1870,29 @@ function toHistoryEntry(game, existingEntry = null) {
 }
 
 function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEntries = []) {
-  const prior = Array.isArray(previousOutput?.recentBreakdowns) ? previousOutput.recentBreakdowns : [];
-  const entries = [...persistentHistoryEntries, ...prior];
-  const previousGame = previousOutput?.games?.[0] || null;
-  const previousEntry = toHistoryEntry(previousGame);
+  const priorRecent = Array.isArray(previousOutput?.recentBreakdowns) ? previousOutput.recentBreakdowns : [];
+  const priorGames = Array.isArray(previousOutput?.games) ? previousOutput.games : [];
+  const entries = dedupeHistoryEntries([...persistentHistoryEntries, ...priorRecent]);
 
-  if (previousGame?.status === "final") {
-    const index = entries.findIndex((entry) => entry.date === previousGame.date && entry.opponent === previousGame.opponent);
+  const upsertHistoryEntry = (gameLike) => {
+    if (!gameLike) return;
+    const index = entries.findIndex((entry) => entry.date === gameLike.date && entry.opponent === gameLike.opponent);
     const existingEntry = index >= 0 ? entries[index] : null;
-    const mergedPreviousEntry = toHistoryEntry(previousGame, existingEntry);
-    if (mergedPreviousEntry) {
-      if (index >= 0) entries[index] = mergedPreviousEntry;
-      else entries.push(mergedPreviousEntry);
-    }
+    const mergedEntry = toHistoryEntry(gameLike, existingEntry);
+    if (!mergedEntry) return;
+    if (index >= 0) entries[index] = mergedEntry;
+    else entries.push(mergedEntry);
+  };
+
+  for (const priorGame of priorGames) {
+    if (priorGame?.status === "final") upsertHistoryEntry(priorGame);
   }
 
   if (currentGame?.status === "final") {
-    const index = entries.findIndex((entry) => entry.date === currentGame.date && entry.opponent === currentGame.opponent);
-    const existingEntry = index >= 0 ? entries[index] : null;
-    const mergedCurrentEntry = toHistoryEntry(currentGame, existingEntry);
-    if (mergedCurrentEntry) {
-      if (index >= 0) entries[index] = mergedCurrentEntry;
-      else entries.push(mergedCurrentEntry);
-    }
+    upsertHistoryEntry(currentGame);
   }
 
-  return entries
-    .filter((entry) => entry?.date && entry?.opponent)
-    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
-    .slice(0, 30);
+  return dedupeHistoryEntries(entries).slice(0, 30);
 }
 
 function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
@@ -1862,6 +1900,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
   const officialPick = writeup.officialPick || "Today's Pick: New York Mets Moneyline";
   const sections = writeup.sections;
+  const previousGames = Array.isArray(previousOutput?.games) ? previousOutput.games : [];
 
   const currentGame = {
     id,
@@ -1931,9 +1970,14 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       }
     : null;
 
+  const preservedGames = previousGames.filter((game) => game?.id !== currentGame.id && game?.date && game?.opponent);
+  const games = [currentGame, ...preservedGames]
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
+    .slice(0, 30);
+
   const output = {
     generatedAt: new Date().toISOString(),
-    games: [currentGame],
+    games,
     recentBreakdowns: mergeRecentBreakdowns(previousOutput, currentGame, Array.isArray(pickHistory?.entries) ? pickHistory.entries : [])
   };
 

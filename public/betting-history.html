@@ -135,8 +135,12 @@
     }
 
     function deriveRetroPickHistory(sample) {
-      const recentBreakdowns = Array.isArray(sample?.recentBreakdowns) ? sample.recentBreakdowns : [];
-      return recentBreakdowns
+      const sourceEntries = Array.isArray(sample?.entries)
+        ? sample.entries
+        : Array.isArray(sample?.recentBreakdowns)
+          ? sample.recentBreakdowns
+          : [];
+      return sourceEntries
         .filter(game => game?.date && game?.opponent && game?.finalScore && game?.result)
         .sort((a, b) => String(b.date).localeCompare(String(a.date)))
         .map(game => ({
