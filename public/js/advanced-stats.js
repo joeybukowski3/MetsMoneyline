@@ -1,3 +1,5 @@
+import { getMlbTeamLogoUrl } from "./team-logos.js";
+
 const TEAM_ID = 121;
 const LEAGUE_ID = 104;
 const NL_EAST_DIVISION_ID = 204;
@@ -17,10 +19,6 @@ const TEAM_NAME_BY_ID = {
 function getCurrentSeason() {
   const etDate = new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
   return Number(etDate.slice(0, 4));
-}
-
-function getTeamLogoUrl(teamId) {
-  return teamId ? `https://www.mlbstatic.com/team-logos/${teamId}.svg` : "";
 }
 
 function headshotUrl(id) {
@@ -299,7 +297,7 @@ function renderPitchers(players, season) {
 function renderStandings(standings) {
   renderRows("nle-body", standings.nlEast.map(team => {
     const isMets = team.id === TEAM_ID;
-    const logo = getTeamLogoUrl(team.id);
+    const logo = getMlbTeamLogoUrl({ id: team.id, name: team.team });
     return `
       <tr class="${isMets ? "mets-row" : ""}">
         <td><div class="standings-team-cell">${logo ? `<img src="${logo}" class="standings-logo" alt="${team.team}">` : ""}<span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ""}>${team.team}</span></div></td>

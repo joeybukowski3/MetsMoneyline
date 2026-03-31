@@ -1,5 +1,6 @@
 const { apiSportsGet, getApiSportsConfig } = require("./api-sports");
 const { fetchJsonWithRetry } = require("./http");
+const { normalizeTeamIdentity } = require("../../lib/mlb-team-identity");
 const {
   extractApiSportsGames,
   normalizeLiveGame,
@@ -139,9 +140,10 @@ async function buildRecentGamesPayload() {
   const config = getApiSportsConfig();
   const season = getCurrentSeason();
   const bundle = await getGamesBundle(config, season);
+  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" }, config.metsTeamId);
   return {
     season,
-    teamId: config.metsTeamId,
+    teamId: metsIdentity.mlbStatsTeamId || 121,
     games: normalizeRecentGames(bundle.recentGamesRaw, config.metsTeamId),
     meta: {
       provider: "api-sports",
@@ -167,15 +169,17 @@ async function buildOddsPayload() {
 async function buildOverviewPayload() {
   const config = getApiSportsConfig();
   const season = getCurrentSeason();
+  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" }, config.metsTeamId);
+  const metsMlbStatsTeamId = metsIdentity.mlbStatsTeamId || 121;
   const standings = await buildStandingsPayload();
   const [teamStats, hitters, pitchers] = await Promise.all([
-    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${config.metsTeamId}/stats?stats=season&group=hitting,pitching,fielding&season=${season}`),
-    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${config.metsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=hitting,season=${season}))`),
-    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${config.metsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=pitching,season=${season}))`)
+    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/stats?stats=season&group=hitting,pitching,fielding&season=${season}`),
+    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=hitting,season=${season}))`),
+    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=pitching,season=${season}))`)
   ]);
 
   return {
-    teamId: config.metsTeamId,
+    teamId: metsMlbStatsTeamId,
     season,
     standings,
     teamStats: teamStats?.stats || [],
@@ -196,6 +200,7 @@ async function buildOverviewPayload() {
 async function buildGameDetailsPayload(gameId) {
   const config = getApiSportsConfig();
   const season = getCurrentSeason();
+  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" }, config.metsTeamId);
   const bundle = await getGamesBundle(config, season);
   const game = bundle.games.find((entry) => String(entry.gameId) === String(gameId)) || null;
   if (!game) {
@@ -215,7 +220,9 @@ async function buildGameDetailsPayload(gameId) {
     status: game.status?.long || null,
     homeTeam: game.home || null,
     awayTeam: game.away || null,
-    isMetsHome: String(game.home?.id) === String(config.metsTeamId),
+    isMetsHome:
+      String(game.home?.id) === String(metsIdentity.mlbStatsTeamId) ||
+      String(game.home?.apiSportsTeamId) === String(metsIdentity.apiSportsTeamId),
     venue: game.venue || null,
     league: game.leagueId || config.leagueId,
     sportsbookSummary: odds?.consensus || null,

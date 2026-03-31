@@ -1,3 +1,5 @@
+import { getMlbTeamAbbr, getMlbTeamLogoUrl } from "./team-logos.js";
+
 const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
 
@@ -137,7 +139,8 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
   const opponentTeam = isHome ? endpointGame.awayTeam : endpointGame.homeTeam;
   const standingsTeams = Array.isArray(standings?.teams) ? standings.teams : [];
   const metsStanding = standingsTeams.find((team) => String(team.teamId) === String(METS_TEAM_ID)) || null;
-  const oppStanding = standingsTeams.find((team) => String(team.teamId) === String(opponentTeam?.id)) || null;
+  const opponentTeamId = opponentTeam?.mlbStatsTeamId ?? opponentTeam?.id ?? null;
+  const oppStanding = standingsTeams.find((team) => String(team.teamId) === String(opponentTeamId)) || null;
   const recent = Array.isArray(recentGames?.games) ? recentGames.games : [];
   const mapped = {
     id: String(endpointGame.gameId),
@@ -145,7 +148,8 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
     time: formatGameTimeET(endpointGame.startTime),
     ballpark: endpointGame.venue || "Venue TBD",
     opponent: opponentTeam?.name || "Opponent TBD",
-    oppTeamId: opponentTeam?.id ?? null,
+    oppTeamId: opponentTeamId,
+    oppCanonicalKey: opponentTeam?.canonicalKey || null,
     homeAway: isHome ? "home" : "road",
     metsRecord: metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : "0-0",
     oppRecord: oppStanding ? `${oppStanding.wins}-${oppStanding.losses}` : "0-0",
@@ -245,57 +249,6 @@ async function loadGameData() {
 }
 
 // ── MLB team ID lookup (covers all 30 teams) ──
-const TEAM_MLB_ID = {
-  "Arizona Diamondbacks":    109, "Atlanta Braves":          144,
-  "Baltimore Orioles":       110, "Boston Red Sox":          111,
-  "Chicago Cubs":            112, "Chicago White Sox":       145,
-  "Cincinnati Reds":         113, "Cleveland Guardians":     114,
-  "Colorado Rockies":        115, "Detroit Tigers":          116,
-  "Houston Astros":          117, "Kansas City Royals":      118,
-  "Los Angeles Angels":      108, "Los Angeles Dodgers":     119,
-  "Miami Marlins":           146, "Milwaukee Brewers":       158,
-  "Minnesota Twins":         142, "New York Mets":           121,
-  "New York Yankees":        147, "Oakland Athletics":       133,
-  "Philadelphia Phillies":   143, "Pittsburgh Pirates":      134,
-  "San Diego Padres":        135, "San Francisco Giants":    137,
-  "Seattle Mariners":        136, "St. Louis Cardinals":     138,
-  "Tampa Bay Rays":          139, "Texas Rangers":           140,
-  "Toronto Blue Jays":       141, "Washington Nationals":    120,
-};
-
-const TEAM_ABBR = {
-  "Arizona Diamondbacks": "ARI",
-  "Atlanta Braves": "ATL",
-  "Baltimore Orioles": "BAL",
-  "Boston Red Sox": "BOS",
-  "Chicago Cubs": "CHC",
-  "Chicago White Sox": "CWS",
-  "Cincinnati Reds": "CIN",
-  "Cleveland Guardians": "CLE",
-  "Colorado Rockies": "COL",
-  "Detroit Tigers": "DET",
-  "Houston Astros": "HOU",
-  "Kansas City Royals": "KC",
-  "Los Angeles Angels": "LAA",
-  "Los Angeles Dodgers": "LAD",
-  "Miami Marlins": "MIA",
-  "Milwaukee Brewers": "MIL",
-  "Minnesota Twins": "MIN",
-  "New York Mets": "NYM",
-  "New York Yankees": "NYY",
-  "Oakland Athletics": "ATH",
-  "Philadelphia Phillies": "PHI",
-  "Pittsburgh Pirates": "PIT",
-  "San Diego Padres": "SD",
-  "San Francisco Giants": "SF",
-  "Seattle Mariners": "SEA",
-  "St. Louis Cardinals": "STL",
-  "Tampa Bay Rays": "TB",
-  "Texas Rangers": "TEX",
-  "Toronto Blue Jays": "TOR",
-  "Washington Nationals": "WSH"
-};
-
 const TEAM_STORYLINES = {
   "New York Mets": {
     note: "New York is trying to turn its high-end talent into steadier early-season form."
@@ -306,16 +259,11 @@ const TEAM_STORYLINES = {
 };
 
 function getTeamLogoUrl(teamNameOrId) {
-  const id = typeof teamNameOrId === "number"
-    ? teamNameOrId
-    : TEAM_MLB_ID[teamNameOrId];
-  return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
+  return getMlbTeamLogoUrl(teamNameOrId);
 }
 
 function getTeamAbbr(teamName) {
-  if (TEAM_ABBR[teamName]) return TEAM_ABBR[teamName];
-  const words = (teamName || "").split(" ");
-  return words[words.length - 1].substring(0, 3).toUpperCase();
+  return getMlbTeamAbbr(teamName);
 }
 
 function formatOrdinal(n) {
@@ -517,9 +465,11 @@ function buildMatchupStrip(game) {
     ? `<span class="mb-meta-item"><span>&#x2197;</span> O/U ${total}</span>`
     : "";
 
-  const oppLogoUrl = game.oppTeamId
-    ? getTeamLogoUrl(game.oppTeamId)
-    : getTeamLogoUrl(game.opponent);
+  const oppLogoUrl = getTeamLogoUrl({
+    canonicalKey: game.oppCanonicalKey,
+    mlbStatsTeamId: game.oppTeamId,
+    name: game.opponent
+  });
 
   const oppLogoHtml = oppLogoUrl
     ? `<img src="${oppLogoUrl}" alt="${game.opponent}">`
@@ -531,7 +481,7 @@ function buildMatchupStrip(game) {
     <div class="matchup-bar-compact">
       <div class="mb-teams">
         <div class="mb-team">
-          <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="NYM">
+          <img src="${getTeamLogoUrl(METS_TEAM_ID)}" alt="NYM">
           <div>
             <div class="mb-team-name">New York Mets</div>
             <span class="mb-record">${metsRecord}</span>
@@ -1315,7 +1265,11 @@ function buildGameContextCard(game) {
         : "--";
       const isMetsLog = label.toLowerCase().includes("mets");
       const teamName = isMetsLog ? "New York Mets" : game.opponent;
-      const teamLogo = getTeamLogoUrl(isMetsLog ? METS_TEAM_ID : game.oppTeamId || game.opponent);
+      const teamLogo = getTeamLogoUrl(isMetsLog ? METS_TEAM_ID : {
+        canonicalKey: game.oppCanonicalKey,
+        mlbStatsTeamId: game.oppTeamId,
+        name: game.opponent
+      });
       const oppLogo = getTeamLogoUrl(g.opponent);
       const [rawLeftScore, rawRightScore] = String(g.score || "-").split("-").map(part => (part || "-").trim());
       const teamScore = isMetsLog ? rawLeftScore : rawRightScore;
@@ -1392,7 +1346,11 @@ function buildTeamAdvancedCard(game) {
   }
   const oppAbbr = getTeamAbbr(game.opponent);
   const metsLogo = getTeamLogoUrl("New York Mets");
-  const oppLogo = getTeamLogoUrl(game.oppTeamId || game.opponent);
+  const oppLogo = getTeamLogoUrl({
+    canonicalKey: game.oppCanonicalKey,
+    mlbStatsTeamId: game.oppTeamId,
+    name: game.opponent
+  });
   const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label}">` : ""}<span>${label}</span></span>`;
 
   const rows = [

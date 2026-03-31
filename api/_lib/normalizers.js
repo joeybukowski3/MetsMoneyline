@@ -1,3 +1,5 @@
+const { normalizeTeamIdentity } = require("../../lib/mlb-team-identity");
+
 function toArray(value) {
   return Array.isArray(value) ? value : [];
 }
@@ -13,10 +15,17 @@ function normalizeDateTime(value) {
 }
 
 function normalizeTeam(rawTeam = {}, fallback = {}) {
+  const apiSportsTeamId = firstDefined(rawTeam.id, rawTeam.team_id, fallback.id, null);
+  const name = firstDefined(rawTeam.name, rawTeam.team?.name, fallback.name, "Unknown Team");
+  const abbreviation = firstDefined(rawTeam.code, rawTeam.abbreviation, rawTeam.team?.code, null);
+  const identity = normalizeTeamIdentity({ name, abbreviation }, apiSportsTeamId);
   return {
-    id: firstDefined(rawTeam.id, rawTeam.team_id, fallback.id, null),
-    name: firstDefined(rawTeam.name, rawTeam.team?.name, fallback.name, "Unknown Team"),
-    abbreviation: firstDefined(rawTeam.code, rawTeam.abbreviation, rawTeam.team?.code, null),
+    id: identity.mlbStatsTeamId ?? apiSportsTeamId,
+    canonicalKey: identity.canonicalKey,
+    mlbStatsTeamId: identity.mlbStatsTeamId,
+    apiSportsTeamId: identity.apiSportsTeamId,
+    name,
+    abbreviation: identity.abbreviation || abbreviation,
     logo: firstDefined(rawTeam.logo, rawTeam.team?.logo, null),
     record: fallback.record || null
   };
@@ -82,8 +91,20 @@ function normalizeStandings(payload, metsTeamId) {
   });
 
   const teams = rows.map(({ row, division }) => ({
-    teamId: firstDefined(row?.team?.id, row?.id, null),
-    team: firstDefined(row?.team?.name, row?.name, "Unknown Team"),
+    ...(function buildIdentity() {
+      const apiSportsTeamId = firstDefined(row?.team?.id, row?.id, null);
+      const name = firstDefined(row?.team?.name, row?.name, "Unknown Team");
+      const abbreviation = firstDefined(row?.team?.code, row?.team?.abbreviation, row?.code, null);
+      const identity = normalizeTeamIdentity({ name, abbreviation }, apiSportsTeamId);
+      return {
+        teamId: identity.mlbStatsTeamId ?? apiSportsTeamId,
+        canonicalKey: identity.canonicalKey,
+        mlbStatsTeamId: identity.mlbStatsTeamId,
+        apiSportsTeamId: identity.apiSportsTeamId,
+        team: identity.name || name,
+        abbreviation: identity.abbreviation || abbreviation
+      };
+    })(),
     wins: firstDefined(row?.games?.win?.total, row?.wins, 0),
     losses: firstDefined(row?.games?.lose?.total, row?.losses, 0),
     pct: firstDefined(row?.win?.percentage, row?.pct, null),
@@ -95,7 +116,11 @@ function normalizeStandings(payload, metsTeamId) {
     division
   }));
 
-  const mets = teams.find((team) => String(team.teamId) === String(metsTeamId)) || null;
+  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: metsTeamId, name: "New York Mets", abbreviation: "NYM" }, metsTeamId);
+  const mets = teams.find((team) =>
+    String(team.teamId) === String(metsIdentity.mlbStatsTeamId) ||
+    String(team.apiSportsTeamId) === String(metsIdentity.apiSportsTeamId)
+  ) || null;
 
   return {
     division: mets?.division || "NL East",
@@ -169,6 +194,7 @@ function normalizeLiveGame(game) {
 }
 
 function normalizeNextGame(game, metsTeamId, odds = null) {
+  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: metsTeamId, name: "New York Mets", abbreviation: "NYM" }, metsTeamId);
   if (!game) {
     return {
       gameId: null,
@@ -190,7 +216,9 @@ function normalizeNextGame(game, metsTeamId, odds = null) {
     status: game.status?.long || "Scheduled",
     homeTeam: game.home,
     awayTeam: game.away,
-    isMetsHome: String(game.home?.id) === String(metsTeamId),
+    isMetsHome:
+      String(game.home?.id) === String(metsIdentity.mlbStatsTeamId) ||
+      String(game.home?.apiSportsTeamId) === String(metsIdentity.apiSportsTeamId),
     venue: game.venue,
     league: game.leagueId,
     sportsbookSummary: odds?.consensus || null,
@@ -199,8 +227,11 @@ function normalizeNextGame(game, metsTeamId, odds = null) {
 }
 
 function normalizeRecentGames(games, metsTeamId) {
+  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: metsTeamId, name: "New York Mets", abbreviation: "NYM" }, metsTeamId);
   return games.map((game) => {
-    const isMetsHome = String(game.home?.id) === String(metsTeamId);
+    const isMetsHome =
+      String(game.home?.id) === String(metsIdentity.mlbStatsTeamId) ||
+      String(game.home?.apiSportsTeamId) === String(metsIdentity.apiSportsTeamId);
     const metsScore = isMetsHome ? game.scores?.home : game.scores?.away;
     const oppScore = isMetsHome ? game.scores?.away : game.scores?.home;
     const opponent = isMetsHome ? game.away : game.home;
