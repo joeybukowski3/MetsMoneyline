@@ -1,3 +1,5 @@
+import { getTeamLogoUrl } from "./team-logo-helper.js";
+
 const TEAM_ID = 121;
 const LEAGUE_ID = 104;
 const NL_EAST_DIVISION_ID = 204;
@@ -17,10 +19,6 @@ const TEAM_NAME_BY_ID = {
 function getCurrentSeason() {
   const etDate = new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
   return Number(etDate.slice(0, 4));
-}
-
-function getTeamLogoUrl(teamId) {
-  return teamId ? `https://www.mlbstatic.com/team-logos/${teamId}.svg` : "";
 }
 
 function headshotUrl(id) {

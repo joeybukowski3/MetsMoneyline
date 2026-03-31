@@ -1,3 +1,5 @@
+import { getTeamAbbr, getTeamLogoUrl } from "./team-logo-helper.js";
+
 const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
 
@@ -246,58 +248,6 @@ async function loadGameData() {
   return data;
 }
 
-  // ── MLB team ID lookup (covers all 30 teams) ──
-  const TEAM_MLB_ID = {
-    "Arizona Diamondbacks":    109, "Atlanta Braves":          144,
-    "Baltimore Orioles":       110, "Boston Red Sox":          111,
-    "Chicago Cubs":            112, "Chicago White Sox":       145,
-    "Cincinnati Reds":         113, "Cleveland Guardians":     114,
-    "Colorado Rockies":        115, "Detroit Tigers":          116,
-    "Houston Astros":          117, "Kansas City Royals":      118,
-    "Los Angeles Angels":      108, "Los Angeles Dodgers":     119,
-    "Miami Marlins":           146, "Milwaukee Brewers":       158,
-    "Minnesota Twins":         142, "New York Mets":           121,
-    "New York Yankees":        147, "Oakland Athletics":       133,
-    "Philadelphia Phillies":   143, "Pittsburgh Pirates":      134,
-    "San Diego Padres":        135, "San Francisco Giants":    137,
-    "Seattle Mariners":        136, "St. Louis Cardinals":     138,
-    "Tampa Bay Rays":          139, "Texas Rangers":           140,
-    "Toronto Blue Jays":       141, "Washington Nationals":    120,
-  };
-
-  const TEAM_ABBR = {
-    "Arizona Diamondbacks": "ARI",
-    "Atlanta Braves": "ATL",
-    "Baltimore Orioles": "BAL",
-    "Boston Red Sox": "BOS",
-    "Chicago Cubs": "CHC",
-    "Chicago White Sox": "CWS",
-    "Cincinnati Reds": "CIN",
-    "Cleveland Guardians": "CLE",
-    "Colorado Rockies": "COL",
-    "Detroit Tigers": "DET",
-    "Houston Astros": "HOU",
-    "Kansas City Royals": "KC",
-    "Los Angeles Angels": "LAA",
-    "Los Angeles Dodgers": "LAD",
-    "Miami Marlins": "MIA",
-    "Milwaukee Brewers": "MIL",
-    "Minnesota Twins": "MIN",
-    "New York Mets": "NYM",
-    "New York Yankees": "NYY",
-    "Oakland Athletics": "ATH",
-    "Philadelphia Phillies": "PHI",
-    "Pittsburgh Pirates": "PIT",
-    "San Diego Padres": "SD",
-    "San Francisco Giants": "SF",
-    "Seattle Mariners": "SEA",
-    "St. Louis Cardinals": "STL",
-    "Tampa Bay Rays": "TB",
-    "Texas Rangers": "TEX",
-    "Toronto Blue Jays": "TOR",
-    "Washington Nationals": "WSH"
-  };
-
   const TEAM_STORYLINES = {
   "New York Mets": {
     note: "New York is trying to turn its high-end talent into steadier early-season form."
@@ -306,19 +256,6 @@ async function loadGameData() {
     note: "Toronto is still trying to settle a reshaped lineup and get more consistency from its veteran core heading into this matchup."
   }
 };
-
-  function getTeamLogoUrl(teamNameOrId) {
-    const id = typeof teamNameOrId === "number"
-      ? teamNameOrId
-      : TEAM_MLB_ID[teamNameOrId];
-    return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
-  }
-
-  function getTeamAbbr(teamName) {
-    if (TEAM_ABBR[teamName]) return TEAM_ABBR[teamName];
-    const words = (teamName || "").split(" ");
-    return words[words.length - 1].substring(0, 3).toUpperCase();
-  }
 
 function formatOrdinal(n) {
   const mod10 = n % 10;

@@ -11,6 +11,7 @@ const {
 } = require("./normalizers");
 
 const EASTERN_TIME_ZONE = "America/New_York";
+const DEFAULT_MLB_STATS_TEAM_ID = 121;
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE }).slice(0, 4));
@@ -169,22 +170,33 @@ async function buildOddsPayload() {
 async function buildOverviewPayload() {
   const config = getApiSportsConfig();
   const season = getCurrentSeason();
-  const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" }, config.metsTeamId);
-  const metsMlbStatsTeamId = metsIdentity.mlbStatsTeamId || 121;
+  const metsIdentity = normalizeTeamIdentity(
+    { mlbStatsTeamId: DEFAULT_MLB_STATS_TEAM_ID, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" },
+    config.metsTeamId
+  );
+  const metsMlbStatsTeamId = Number(metsIdentity.mlbStatsTeamId) || DEFAULT_MLB_STATS_TEAM_ID;
   const standings = await buildStandingsPayload();
-  const [teamStats, hitters, pitchers] = await Promise.all([
-    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/stats?stats=season&group=hitting,pitching,fielding&season=${season}`),
-    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=hitting,season=${season}))`),
-    fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=pitching,season=${season}))`)
-  ]);
+
+  let teamStatsPayload = null;
+  let hittersPayload = null;
+  let pitchersPayload = null;
+  try {
+    [teamStatsPayload, hittersPayload, pitchersPayload] = await Promise.all([
+      fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/stats?stats=season&group=hitting,pitching,fielding&season=${season}`),
+      fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=hitting,season=${season}))`),
+      fetchJsonWithRetry(`https://statsapi.mlb.com/api/v1/teams/${metsMlbStatsTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=pitching,season=${season}))`)
+    ]);
+  } catch (error) {
+    console.warn("MLB stats overview fetch failed:", error?.message || error);
+  }
 
   return {
     teamId: metsMlbStatsTeamId,
     season,
     standings,
-    teamStats: teamStats?.stats || [],
-    hitters: hitters?.roster || [],
-    pitchers: pitchers?.roster || [],
+    teamStats: teamStatsPayload?.stats || [],
+    hitters: hittersPayload?.roster || [],
+    pitchers: pitchersPayload?.roster || [],
     source: {
       provider: "mlb-stats-api",
       note: "Overview remains server-side MLB Stats API because API-SPORTS is the primary structured provider for game state, standings, recent results, and odds."
