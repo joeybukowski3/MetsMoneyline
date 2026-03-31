@@ -209,8 +209,10 @@ async function loadGameData() {
         games.unshift(liveGame);
       }
     }
-
     data.games = games;
+    if (liveGame) {
+      data.generatedAt = new Date().toISOString();
+    }
   } catch (err) {
     console.warn("Unable to refresh live Mets schedule.", err);
   }
@@ -1493,3 +1495,62 @@ async function init() {
 }
 
 init();
+
+async function refreshFeaturedGame() {
+  const { games, generatedAt } = await loadGameData();
+  const today = getTodayISO();
+  const featuredGame = games.find(g => g.date === today) || games.find(g => g.date > today) || games[0] || null;
+
+  if (!featuredGame) return;
+
+  const isToday = featuredGame.date === today;
+  const isFuture = featuredGame.date > today;
+  const vsAt = featuredGame.homeAway === "away" ? "@" : "vs";
+  const labelEl = document.getElementById("hero-game-label");
+  const dateEl = document.getElementById("hero-game-date");
+  const matchupEl = document.getElementById("hero-game-matchup");
+  const container = document.getElementById("today-game-container");
+
+  if (labelEl) {
+    labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
+  }
+  if (dateEl && featuredGame.date) {
+    dateEl.textContent = new Date(featuredGame.date + "T12:00:00")
+      .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+  }
+  if (matchupEl) {
+    matchupEl.textContent = `New York Mets ${vsAt} ${featuredGame.opponent}`;
+  }
+  if (container) {
+    container.innerHTML =
+      buildMatchupStrip(featuredGame) +
+      buildGameBreakdown(featuredGame) +
+      buildGameContextCard(featuredGame) +
+      buildPitchingCard(featuredGame) +
+      buildRow3(featuredGame) +
+      buildTeamAdvancedCard(featuredGame) +
+      buildAnalysisRow(featuredGame) +
+      buildPickSection(featuredGame) +
+      buildTrendsCard(featuredGame);
+  }
+
+  if (generatedAt) {
+    const el = document.getElementById("data-timestamp");
+    if (el) {
+      const d = new Date(generatedAt);
+      el.textContent = "Last updated: " + d.toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+        timeZoneName: "short"
+      });
+    }
+  }
+}
+
+refreshFeaturedGame().catch(err => {
+  console.warn("Unable to refresh featured Mets game.", err);
+});
