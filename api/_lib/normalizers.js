@@ -36,7 +36,7 @@ function normalizeGameStatus(rawStatus = {}) {
   const long = firstDefined(rawStatus.long, rawStatus.description, rawStatus.detail, rawStatus.state, "Scheduled");
   const inning = firstDefined(rawStatus.inning, rawStatus.period, null);
   const isLive = ["LIVE", "IN", "1", "2", "3", "4", "5", "6", "7", "8", "9", "ET", "P"].includes(short) || /live|progress/i.test(long);
-  const isFinal = ["FT", "FINAL", "AOT", "POST"].includes(short) || /final|completed/i.test(long);
+  const isFinal = ["FT", "FINAL", "AOT", "POST", "F"].includes(short) || /final|completed/i.test(long);
 
   return {
     short,
