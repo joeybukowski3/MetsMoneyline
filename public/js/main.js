@@ -57,6 +57,190 @@ function getSplitRecord(record, type) {
   return `${split.wins}-${split.losses}`;
 }
 
+function getCurrentSeason() {
+  return Number(getTodayET().slice(0, 4));
+}
+
+async function fetchJsonOrNull(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+function toNumeric(value) {
+  if (value == null || value === "" || value === ".---" || value === "-.--") return null;
+  const parsed = parseFloat(String(value).replace(/[^\d.-]/g, ""));
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatDecimalStat(value, digits = 3) {
+  const numeric = toNumeric(value);
+  if (numeric == null) return null;
+  return numeric.toFixed(digits);
+}
+
+function formatPctStat(value, digits = 1) {
+  const numeric = toNumeric(value);
+  if (numeric == null) return null;
+  return `${numeric.toFixed(digits)}%`;
+}
+
+function formatPctFromCounts(numerator, denominator, digits = 1) {
+  const num = toNumeric(numerator);
+  const den = toNumeric(denominator);
+  if (num == null || den == null || den <= 0) return null;
+  return `${((num / den) * 100).toFixed(digits)}%`;
+}
+
+function mapRosterPlayers(data) {
+  return (data?.roster || [])
+    .map(entry => {
+      const person = entry.person || {};
+      const stats = person.stats?.[0]?.splits?.[0]?.stat || null;
+      if (!stats) return null;
+      return {
+        order: null,
+        playerId: person.id,
+        id: person.id,
+        name: person.fullName,
+        pos: entry.position?.abbreviation || person.primaryPosition?.abbreviation || "",
+        hand: person.batSide?.code || null,
+        seasonAVG: stats.avg || null,
+        seasonOPS: stats.ops || null,
+        seasonHR: stats.homeRuns ?? null,
+        statsSeason: stats.season || String(getCurrentSeason()),
+        savant: {
+          kPct: formatPctFromCounts(stats.strikeOuts, stats.plateAppearances),
+          bbPct: formatPctFromCounts(stats.baseOnBalls, stats.plateAppearances),
+          pa: stats.plateAppearances ?? 0
+        }
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (toNumeric(b?.savant?.pa) || 0) - (toNumeric(a?.savant?.pa) || 0))
+    .slice(0, 9)
+    .map((player, index) => ({ ...player, order: index + 1 }));
+}
+
+function buildBullpenSummary(teamPitchingStats) {
+  const stat = teamPitchingStats || {};
+  return {
+    seasonERA: stat.era || null,
+    seasonXFIP: null,
+    last14ERA: stat.era || null,
+    seasonWHIP: stat.whip || null,
+    seasonKPct: formatPctFromCounts(stat.strikeOuts, stat.battersFaced),
+    seasonBBPct: formatPctFromCounts(stat.baseOnBalls, stat.battersFaced),
+    rating: (() => {
+      const era = toNumeric(stat.era);
+      if (era == null) return 65;
+      return Math.max(40, Math.min(95, Math.round(100 - ((era - 2.5) * 12))));
+    })()
+  };
+}
+
+function buildTeamAdvancedSummary(hittingStats, pitchingStats) {
+  const hitting = hittingStats || {};
+  const pitching = pitchingStats || {};
+  return {
+    ops: hitting.ops || null,
+    xba: hitting.avg || null,
+    wrcPlus: null,
+    hardHit: null,
+    kPct: formatPctFromCounts(hitting.strikeOuts, hitting.plateAppearances),
+    rotFip: pitching.era || null
+  };
+}
+
+function buildAdvancedMatchupRows(metsHitting, oppHitting) {
+  const metsBB = formatPctFromCounts(metsHitting?.baseOnBalls, metsHitting?.plateAppearances);
+  const oppBB = formatPctFromCounts(oppHitting?.baseOnBalls, oppHitting?.plateAppearances);
+  const metsK = formatPctFromCounts(metsHitting?.strikeOuts, metsHitting?.plateAppearances);
+  const oppK = formatPctFromCounts(oppHitting?.strikeOuts, oppHitting?.plateAppearances);
+
+  return [
+    { category: "AVG", mets: metsHitting?.avg || "N/A", opp: oppHitting?.avg || "N/A", edge: "Neutral" },
+    { category: "OPS", mets: metsHitting?.ops || "N/A", opp: oppHitting?.ops || "N/A", edge: "Neutral" },
+    { category: "Runs", mets: String(metsHitting?.runs ?? "N/A"), opp: String(oppHitting?.runs ?? "N/A"), edge: "Neutral" },
+    { category: "BB%", mets: metsBB || "N/A", opp: oppBB || "N/A", edge: "Neutral" },
+    { category: "K%", mets: metsK || "N/A", opp: oppK || "N/A", edge: "Neutral" }
+  ];
+}
+
+async function enrichPitcherFacts(pitcher) {
+  if (!pitcher?.mlbId) return pitcher;
+  const season = getCurrentSeason();
+  const data = await fetchJsonOrNull(`https://statsapi.mlb.com/api/v1/people/${pitcher.mlbId}/stats?stats=season&group=pitching&season=${season}`);
+  const stat = data?.stats?.[0]?.splits?.[0]?.stat;
+  if (!stat) return pitcher;
+  return {
+    ...pitcher,
+    seasonRecord: formatLeagueRecord({ wins: stat.wins, losses: stat.losses }) || pitcher.seasonRecord || null,
+    seasonERA: stat.era || pitcher.seasonERA || null,
+    seasonFIP: pitcher.seasonFIP || null,
+    seasonXERA: pitcher.seasonXERA || null,
+    seasonWHIP: stat.whip || pitcher.seasonWHIP || null,
+    last3KBB: stat.strikeoutWalkRatio || pitcher.last3KBB || null,
+    seasonHR9: stat.homeRunsPer9 || pitcher.seasonHR9 || null
+  };
+}
+
+async function enrichLiveGame(game) {
+  if (!game) return game;
+  const season = getCurrentSeason();
+  const oppTeamId = game.oppTeamId;
+  if (!oppTeamId) return game;
+
+  const [
+    metsTeamStats,
+    oppTeamStats,
+    metsRoster,
+    oppRoster,
+    metsPitcher,
+    oppPitcher
+  ] = await Promise.all([
+    fetchJsonOrNull(`https://statsapi.mlb.com/api/v1/teams/${METS_TEAM_ID}/stats?stats=season&group=hitting,pitching&season=${season}`),
+    fetchJsonOrNull(`https://statsapi.mlb.com/api/v1/teams/${oppTeamId}/stats?stats=season&group=hitting,pitching&season=${season}`),
+    fetchJsonOrNull(`https://statsapi.mlb.com/api/v1/teams/${METS_TEAM_ID}/roster?rosterType=active&hydrate=person(stats(type=season,group=hitting,season=${season}))`),
+    fetchJsonOrNull(`https://statsapi.mlb.com/api/v1/teams/${oppTeamId}/roster?rosterType=active&hydrate=person(stats(type=season,group=hitting,season=${season}))`),
+    enrichPitcherFacts(game.pitching?.mets),
+    enrichPitcherFacts(game.pitching?.opp)
+  ]);
+
+  const metsHitting = metsTeamStats?.stats?.find(entry => entry.group?.displayName === "hitting")?.splits?.[0]?.stat || null;
+  const metsPitching = metsTeamStats?.stats?.find(entry => entry.group?.displayName === "pitching")?.splits?.[0]?.stat || null;
+  const oppHitting = oppTeamStats?.stats?.find(entry => entry.group?.displayName === "hitting")?.splits?.[0]?.stat || null;
+  const oppPitching = oppTeamStats?.stats?.find(entry => entry.group?.displayName === "pitching")?.splits?.[0]?.stat || null;
+
+  const metsLineup = mapRosterPlayers(metsRoster);
+  const oppLineup = mapRosterPlayers(oppRoster);
+
+  return {
+    ...game,
+    pitching: {
+      ...game.pitching,
+      mets: metsPitcher || game.pitching?.mets,
+      opp: oppPitcher || game.pitching?.opp,
+      metsBullpen: buildBullpenSummary(metsPitching),
+      oppBullpen: buildBullpenSummary(oppPitching)
+    },
+    lineups: {
+      lineupStatus: "projected",
+      mets: Array.isArray(game.lineups?.mets) && game.lineups.mets.length ? game.lineups.mets : metsLineup,
+      opp: Array.isArray(game.lineups?.opp) && game.lineups.opp.length ? game.lineups.opp : oppLineup
+    },
+    advancedMatchup: buildAdvancedMatchupRows(metsHitting, oppHitting),
+    teamAdvanced: {
+      mets: buildTeamAdvancedSummary(metsHitting, metsPitching),
+      opp: buildTeamAdvancedSummary(oppHitting, oppPitching)
+    }
+  };
+}
+
 async function fetchStandingsRecordMap(season = new Date().getFullYear()) {
   const url = new URL("https://statsapi.mlb.com/api/v1/standings");
   url.searchParams.set("leagueId", "103,104");
@@ -220,7 +404,8 @@ async function loadGameData() {
   const data = await res.json();
 
   try {
-    const liveGame = await fetchLiveMetsGame();
+    let liveGame = await fetchLiveMetsGame();
+    liveGame = await enrichLiveGame(liveGame).catch(() => liveGame);
     const games = Array.isArray(data?.games) ? [...data.games] : [];
 
     if (liveGame) {
@@ -1496,13 +1681,12 @@ async function init() {
   const container = document.getElementById("today-game-container");
   container.innerHTML =
     buildMatchupStrip(featuredGame) +         // Row 1 - matchup header
-    buildGameBreakdown(featuredGame) +        // Row 2 - top-level matchup recap
-    buildGameContextCard(featuredGame) +      // Row 3 - recent form, injuries, H2H, pitcher logs
-    buildPitchingCard(featuredGame) +         // Row 4 - starting pitching comparison
-    buildRow3(featuredGame) +                 // Row 5 - lineups + advanced metrics
-    buildTeamAdvancedCard(featuredGame) +     // Row 6 - team advanced stats table
-    buildAnalysisRow(featuredGame) +          // Row 7 - 3 analysis tiles
-    buildPickSection(featuredGame) +          // Row 8 - pick banner
+    buildGameContextCard(featuredGame) +      // Row 2 - recent form, injuries, H2H, pitcher logs
+    buildPitchingCard(featuredGame) +         // Row 3 - starting pitching comparison
+    buildRow3(featuredGame) +                 // Row 4 - lineups + advanced metrics
+    buildTeamAdvancedCard(featuredGame) +     // Row 5 - team advanced stats table
+    buildAnalysisRow(featuredGame) +          // Row 6 - 3 analysis tiles
+    buildPickSection(featuredGame) +          // Row 7 - pick banner
     buildTrendsCard(featuredGame);            // supplemental trends
 
   }
@@ -1551,7 +1735,6 @@ async function refreshFeaturedGame() {
   if (container) {
     container.innerHTML =
       buildMatchupStrip(featuredGame) +
-      buildGameBreakdown(featuredGame) +
       buildGameContextCard(featuredGame) +
       buildPitchingCard(featuredGame) +
       buildRow3(featuredGame) +
