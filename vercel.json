@@ -2,8 +2,8 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/**/*.js": {
-      "runtime": "nodejs20.x",
-      "regions": ["iad1"]
+      "regions": ["iad1"],
+      "maxDuration": 10
     }
   }
 }
