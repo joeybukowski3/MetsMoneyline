@@ -92,42 +92,57 @@ function setText(targetId, value) {
 }
 
 async function loadStandings(season) {
-  const data = await fetchJson(`https://statsapi.mlb.com/api/v1/standings?leagueId=${LEAGUE_ID}&season=${season}`);
-  const records = data?.records || [];
-  const nlEast = records.find(entry => entry.division?.id === NL_EAST_DIVISION_ID);
-  const mets = nlEast?.teamRecords?.find(entry => entry.team?.id === TEAM_ID) || null;
-
+  const data = await fetchJson("api/mlb/mets/standings");
+  const teams = Array.isArray(data?.teams) ? data.teams : [];
+  const mets = teams.find(entry => String(entry.teamId) === String(TEAM_ID)) || null;
   return {
-    mets,
-    nlEast: (nlEast?.teamRecords || []).map(teamRecord => ({
-      id: teamRecord.team?.id,
-      team: normalizeTeamName(teamRecord.team),
-      wins: teamRecord.wins,
-      losses: teamRecord.losses,
-      pct: teamRecord.winningPercentage,
-      gamesBack: normalizeGamesBack(teamRecord.gamesBack),
-      home: splitRecord(teamRecord, "home"),
-      road: splitRecord(teamRecord, "away"),
-      last10: splitRecord(teamRecord, "lastTen"),
-      streak: teamRecord.streak?.streakCode || "-"
+    mets: mets
+      ? {
+          wins: mets.wins,
+          losses: mets.losses,
+          runDifferential: 0,
+          streak: { streakCode: mets.streak || "-" },
+          records: {
+            splitRecords: [
+              { type: "home", wins: Number(String(mets.home || "0-0").split("-")[0]), losses: Number(String(mets.home || "0-0").split("-")[1]) },
+              { type: "away", wins: Number(String(mets.road || "0-0").split("-")[0]), losses: Number(String(mets.road || "0-0").split("-")[1]) },
+              { type: "lastTen", wins: Number(String(mets.last10 || "0-0").split("-")[0]), losses: Number(String(mets.last10 || "0-0").split("-")[1]) }
+            ]
+          }
+        }
+      : null,
+    nlEast: teams.map(team => ({
+      id: team.teamId,
+      team: team.team,
+      wins: team.wins,
+      losses: team.losses,
+      pct: team.pct,
+      gamesBack: team.gamesBack,
+      home: team.home,
+      road: team.road,
+      last10: team.last10,
+      streak: team.streak
     })),
-    nlFull: records.map(division => ({
-      divisionName: division.division?.nameShort || division.division?.name || "Division",
-      teams: (division.teamRecords || []).map(teamRecord => ({
-        id: teamRecord.team?.id,
-        team: normalizeTeamName(teamRecord.team),
-        wins: teamRecord.wins,
-        losses: teamRecord.losses,
-        pct: teamRecord.winningPercentage,
-        gamesBack: normalizeGamesBack(teamRecord.gamesBack)
+    nlFull: [{
+      divisionName: data?.division || "NL East",
+      teams: teams.map(team => ({
+        id: team.teamId,
+        team: team.team,
+        wins: team.wins,
+        losses: team.losses,
+        pct: team.pct,
+        gamesBack: team.gamesBack
       }))
-    }))
+    }]
   };
 }
 
-async function loadTeamStats(season) {
-  const data = await fetchJson(`https://statsapi.mlb.com/api/v1/teams/${TEAM_ID}/stats?stats=season&group=hitting,pitching,fielding&season=${season}`);
-  const stats = data?.stats || [];
+async function loadOverview() {
+  return fetchJson("api/mlb/mets/overview");
+}
+
+function loadTeamStats(overview) {
+  const stats = overview?.teamStats || [];
   return {
     hitting: stats.find(entry => entry.group?.displayName === "hitting")?.splits?.[0]?.stat || {},
     pitching: stats.find(entry => entry.group?.displayName === "pitching")?.splits?.[0]?.stat || {},
@@ -135,12 +150,9 @@ async function loadTeamStats(season) {
   };
 }
 
-async function loadRosterStats(season, group) {
-  const data = await fetchJson(
-    `https://statsapi.mlb.com/api/v1/teams/${TEAM_ID}/roster?rosterType=active&hydrate=person(stats(type=season,group=${group},season=${season}))`
-  );
-
-  return (data?.roster || []).map(entry => {
+function loadRosterStats(overview, group) {
+  const source = group === "hitting" ? overview?.hitters : overview?.pitchers;
+  return (source || []).map(entry => {
     const person = entry.person || {};
     const stat = person.stats?.[0]?.splits?.[0]?.stat || null;
     return {
@@ -370,13 +382,14 @@ async function init() {
   setText("page-banner", "Live MLB data synced daily from the MetsMoneyline sources.");
 
   try {
-    const [standings, teamStats, hitters, pitchers, generatedAt] = await Promise.all([
+    const [standings, overview, generatedAt] = await Promise.all([
       loadStandings(season),
-      loadTeamStats(season),
-      loadRosterStats(season, "hitting"),
-      loadRosterStats(season, "pitching"),
+      loadOverview(),
       loadGeneratedTimestamp()
     ]);
+    const teamStats = loadTeamStats(overview);
+    const hitters = loadRosterStats(overview, "hitting");
+    const pitchers = loadRosterStats(overview, "pitching");
 
     renderAtAGlance(standings.mets);
     renderTeamStats(teamStats, season);

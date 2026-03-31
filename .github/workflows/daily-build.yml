@@ -38,13 +38,23 @@ jobs:
         working-directory: ./bot
         run: npm ci
 
+      - name: Build internal API cache
+        working-directory: ./bot
+        env:
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
+        run: node build-api-cache.js
+
       - name: Generate fresh game data
         working-directory: ./bot
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
-          ODDSAPI: ${{ secrets.ODDSAPI }}
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: node generator.js
 
       - name: Verify published data against live sources
@@ -57,9 +67,10 @@ jobs:
         working-directory: ./bot
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-          THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
-          ODDSAPI: ${{ secrets.ODDSAPI }}
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: node generator.js
 
       - name: Re-verify after regeneration

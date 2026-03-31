@@ -4,6 +4,7 @@
   "description": "",
   "main": "generator.js",
   "scripts": {
+    "build:api-cache": "node build-api-cache.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node generator.js",
     "verify": "node verify-data.js",

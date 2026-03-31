@@ -21,9 +21,9 @@ const TEAM_ID = 121;
 const TEAM_NAME = "New York Mets";
 const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
-const ODDS_API_KEY = process.env.ODDS_API_KEY || process.env.THE_ODDS_API_KEY || process.env.ODDSAPI || null;
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
+const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds");
 
 const TEAM_IDS = {
   "Arizona Diamondbacks": 109,
@@ -1455,69 +1455,30 @@ async function buildLastMeetingSummary(teamId, oppTeamId, beforeDate) {
 }
 
 async function getOddsFacts(game) {
-  if (!ODDS_API_KEY) {
-    console.log("No ODDS_API_KEY set; skipping live odds fetch.");
-    return {
-      metsMoneyline: null,
-      oppMoneyline: null,
-      runLine: null,
-      total: null
-    };
-  }
-
-  const commenceTime = game?.gameDate;
-  const homeTeam = game?.teams?.home?.team?.name;
-  const awayTeam = game?.teams?.away?.team?.name;
-  if (!commenceTime || !homeTeam || !awayTeam) {
-    return {
-      metsMoneyline: null,
-      oppMoneyline: null,
-      runLine: null,
-      total: null
-    };
-  }
-
-  const oddsUrl = "https://api.the-odds-api.com/v4/sports/baseball_mlb/odds";
-  const params = {
-    apiKey: ODDS_API_KEY,
-    regions: "us",
-    markets: "h2h,spreads,totals",
-    bookmakers: "draftkings,fanduel,betmgm,caesars",
-    dateFormat: "iso",
-    commenceTimeFrom: new Date(new Date(commenceTime).getTime() - 12 * 60 * 60 * 1000).toISOString(),
-    commenceTimeTo: new Date(new Date(commenceTime).getTime() + 12 * 60 * 60 * 1000).toISOString()
-  };
-
   try {
-    const response = await axios.get(oddsUrl, { params, timeout: 15000 });
-    const events = Array.isArray(response.data) ? response.data : [];
-    const event = events.find((candidate) =>
-      candidate?.home_team === homeTeam && candidate?.away_team === awayTeam
-    );
+    const cachedOdds = JSON.parse(fs.readFileSync(API_ODDS_PATH, "utf8"));
+    const market = Array.isArray(cachedOdds?.markets)
+      ? cachedOdds.markets.find((entry) => /moneyline|h2h/i.test(entry.label || entry.key || ""))
+      : null;
+    const consensusOutcomes = Array.isArray(cachedOdds?.consensus?.markets)
+      ? cachedOdds.consensus.markets
+      : [];
+    const spreadMarket = consensusOutcomes.find((entry) => /spread|run/i.test(entry.label || entry.key || ""));
+    const totalMarket = consensusOutcomes.find((entry) => /total|over\/under/i.test(entry.label || entry.key || ""));
+    const moneylineMarket = market || consensusOutcomes.find((entry) => /moneyline|h2h/i.test(entry.label || entry.key || ""));
+    const getOutcome = (entry, teamName) => Array.isArray(entry?.outcomes)
+      ? entry.outcomes.find((outcome) => String(outcome.name || "").toLowerCase().includes(String(teamName).toLowerCase()))
+      : null;
 
-    if (!event) {
-      console.warn(`[warn] No matching odds event found for ${awayTeam} at ${homeTeam}`);
-      return {
-        metsMoneyline: null,
-        oppMoneyline: null,
-        runLine: null,
-        total: null
-      };
-    }
-
-    const bookmaker = (event.bookmakers || [])[0];
-    const h2h = bookmaker?.markets?.find((market) => market.key === "h2h");
-    const spreads = bookmaker?.markets?.find((market) => market.key === "spreads");
-    const totals = bookmaker?.markets?.find((market) => market.key === "totals");
-
-    const getOutcome = (market, teamName) =>
-      market?.outcomes?.find((outcome) => outcome.name === teamName) || null;
-
-    const metsOutcome = getOutcome(h2h, TEAM_NAME);
-    const oppTeamName = homeTeam === TEAM_NAME ? awayTeam : homeTeam;
-    const oppOutcome = getOutcome(h2h, oppTeamName);
-    const metsSpreadOutcome = getOutcome(spreads, TEAM_NAME);
-    const overOutcome = totals?.outcomes?.find((outcome) => /over/i.test(outcome.name || "")) || null;
+    const homeTeam = game?.teams?.home?.team?.name || "";
+    const awayTeam = game?.teams?.away?.team?.name || "";
+    const opponentName = homeTeam === TEAM_NAME ? awayTeam : homeTeam;
+    const metsOutcome = getOutcome(moneylineMarket, TEAM_NAME);
+    const oppOutcome = getOutcome(moneylineMarket, opponentName);
+    const metsSpreadOutcome = getOutcome(spreadMarket, TEAM_NAME);
+    const overOutcome = Array.isArray(totalMarket?.outcomes)
+      ? totalMarket.outcomes.find((outcome) => /over/i.test(outcome.name || ""))
+      : null;
 
     return {
       metsMoneyline: typeof metsOutcome?.price === "number" ? metsOutcome.price : null,
@@ -1532,7 +1493,7 @@ async function getOddsFacts(game) {
       total: typeof overOutcome?.point === "number" ? overOutcome.point : null
     };
   } catch (error) {
-    console.warn(`[warn] Odds API fetch failed: ${error.response?.data?.message || error.message}`);
+    console.warn(`[warn] API-SPORTS odds cache read failed: ${error.message}`);
     return {
       metsMoneyline: null,
       oppMoneyline: null,
