@@ -51,6 +51,12 @@ function formatLeagueRecord(record) {
   return `${wins}-${losses}`;
 }
 
+function getSplitRecord(record, type) {
+  const split = record?.splitRecords?.find(entry => entry.type === type);
+  if (!split || split.wins == null || split.losses == null) return null;
+  return `${split.wins}-${split.losses}`;
+}
+
 async function fetchStandingsRecordMap(season = new Date().getFullYear()) {
   const url = new URL("https://statsapi.mlb.com/api/v1/standings");
   url.searchParams.set("leagueId", "103,104");
@@ -105,6 +111,14 @@ function mapScheduleGame(game, standingsRecordMap = new Map()) {
   const standingsOppRecord = standingsRecordMap.get(opponent?.id);
   const metsRecord = formatLeagueRecord(scheduleMetsRecord) || formatLeagueRecord(standingsMetsRecord);
   const oppRecord = formatLeagueRecord(scheduleOppRecord) || formatLeagueRecord(standingsOppRecord);
+  const metsHome = getSplitRecord(standingsMetsRecord, "home");
+  const metsRoad = getSplitRecord(standingsMetsRecord, "away");
+  const metsLast10 = getSplitRecord(standingsMetsRecord, "lastTen");
+  const oppHome = getSplitRecord(standingsOppRecord, "home");
+  const oppRoad = getSplitRecord(standingsOppRecord, "away");
+  const oppLast10 = getSplitRecord(standingsOppRecord, "lastTen");
+  const metsVenueRecord = metsAreAway ? metsRoad : metsHome;
+  const oppVenueRecord = metsAreAway ? oppHome : oppRoad;
 
   return {
     date: game.officialDate,
@@ -114,8 +128,8 @@ function mapScheduleGame(game, standingsRecordMap = new Map()) {
     time: formatGameTimeET(game.gameDate),
     ballpark: game?.venue?.name || "Venue TBD",
     status: "upcoming",
-    metsRecord: formatLeagueRecord(metsRecord),
-    oppRecord: formatLeagueRecord(oppRecord),
+    metsRecord,
+    oppRecord,
     moneyline: {},
     total: null,
     overUnder: null,
@@ -124,7 +138,20 @@ function mapScheduleGame(game, standingsRecordMap = new Map()) {
     advancedMatchup: [],
     teamAdvanced: null,
     gameContext: null,
-    trends: [],
+    trends: [
+      {
+        category: "Last 10 Games",
+        mets: metsLast10 || "0-0",
+        opp: oppLast10 || "0-0",
+        edge: "Neutral"
+      },
+      {
+        category: "Home/Road",
+        mets: `${metsAreAway ? "Road" : "Home"} ${metsVenueRecord || "0-0"}`,
+        opp: `${metsAreAway ? "Home" : "Road"} ${oppVenueRecord || "0-0"}`,
+        edge: "Neutral"
+      }
+    ],
     weather: null,
     writeup: null
   };
