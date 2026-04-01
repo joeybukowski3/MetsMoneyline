@@ -72,6 +72,40 @@ function emptyStandingsState(season, reason = "Current-season standings are unav
   };
 }
 
+function isValidRecordString(value) {
+  return /^\d+-\d+$/.test(String(value || "").trim());
+}
+
+function selectFeaturedGame(games = [], season = ADVANCED_STATS_SEASON) {
+  const targetGames = (games || []).filter((game) => String(game?.date || "").startsWith(`${season}-`));
+  if (!targetGames.length) return null;
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
+  const sorted = [...targetGames].sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+  return sorted.find((game) => game.date === today)
+    || sorted.find((game) => game.date > today)
+    || [...sorted].reverse().find((game) => game.date < today)
+    || sorted[0]
+    || null;
+}
+
+async function loadMatchupSnapshot(season) {
+  try {
+    const data = await fetchJson("data/sample-game.json");
+    const featuredGame = selectFeaturedGame(data?.games || [], season);
+    if (!featuredGame) return { generatedAt: data?.generatedAt || null, featuredGame: null };
+    return {
+      generatedAt: data?.generatedAt || null,
+      featuredGame: {
+        metsRecord: featuredGame.metsRecord,
+        homeRoad: featuredGame.trends?.find((trend) => trend.category === "Home/Road")?.mets || null,
+        last10: featuredGame.trends?.find((trend) => trend.category === "Last 10 Games")?.mets || null
+      }
+    };
+  } catch {
+    return { generatedAt: null, featuredGame: null };
+  }
+}
+
 // ── ESPN standings ───────────────────────────────────────────────────────────
 
 function buildMetsStanding(t) {
@@ -438,14 +472,18 @@ function setText(targetId, value) {
 
 // ── Render: at-a-glance ──────────────────────────────────────────────────────
 
-function renderAtAGlance(metsStanding) {
+function renderAtAGlance(metsStanding, matchupSnapshot = null) {
   if (!metsStanding) {
+    const record = isValidRecordString(matchupSnapshot?.metsRecord) ? matchupSnapshot.metsRecord : "2026 only";
+    const homeRoadText = String(matchupSnapshot?.homeRoad || "");
+    const homeRoadValue = homeRoadText.replace(/^Home\s+|^Road\s+/i, "") || "—";
+    const last10Value = isValidRecordString(matchupSnapshot?.last10) ? matchupSnapshot.last10 : "—";
     renderRows("at-a-glance", [
-      `<div class="glance-item"><div class="glance-label">Record</div><div class="glance-value highlight">2026 only</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Record</div><div class="glance-value highlight">${record}</div></div>`,
       `<div class="glance-item"><div class="glance-label">Run Diff</div><div class="glance-value">—</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Home</div><div class="glance-value">—</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Road</div><div class="glance-value">—</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Last 10</div><div class="glance-value">—</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Home</div><div class="glance-value">${/^Home\s+/i.test(homeRoadText) ? homeRoadValue : "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Road</div><div class="glance-value">${/^Road\s+/i.test(homeRoadText) ? homeRoadValue : "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Last 10</div><div class="glance-value">${last10Value}</div></div>`,
       `<div class="glance-item"><div class="glance-label">Streak</div><div class="glance-value">Unavailable</div></div>`
     ]);
     return;
@@ -683,15 +721,6 @@ function renderStandings(standings) {
 
 // ── Timestamp / error ────────────────────────────────────────────────────────
 
-async function loadGeneratedTimestamp() {
-  try {
-    const data = await fetchJson("data/sample-game.json");
-    return data.generatedAt || null;
-  } catch {
-    return null;
-  }
-}
-
 function renderTimestamp(value) {
   const el = document.getElementById("data-timestamp");
   if (!el || !value) return;
@@ -744,10 +773,10 @@ async function init() {
   setText("page-banner", `Live ${season} season mode \u2014 current-season data only.`);
 
   try {
-    const [standings, overview, generatedAt, leagueAvg] = await Promise.all([
+    const [standings, overview, matchupSnapshot, leagueAvg] = await Promise.all([
       loadStandings(season),
       loadOverview(),
-      loadGeneratedTimestamp(),
+      loadMatchupSnapshot(season),
       loadLeagueAverages(season)
     ]);
 
@@ -758,12 +787,12 @@ async function init() {
     const pitchers  = loadRosterStats(overview, "pitching");
 
     updateSeasonCopy(season, standings);
-    renderAtAGlance(standings.mets);
+    renderAtAGlance(standings.mets, matchupSnapshot?.featuredGame || null);
     renderTeamStats(teamStats, leagueAvg, season);
     renderHitters(hitters, season);
     renderPitchers(pitchers, season);
     renderStandings(standings);
-    renderTimestamp(generatedAt || new Date().toISOString());
+    renderTimestamp(matchupSnapshot?.generatedAt || new Date().toISOString());
   } catch (error) {
     showErrorState(error);
   }
