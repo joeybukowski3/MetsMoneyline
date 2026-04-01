@@ -56,6 +56,15 @@ async function fetchApiSportsStandings(config = getApiSportsConfig(), season = g
   const payload = await apiSportsGet("/standings", params);
   console.log(`[debug] Standings payload response keys: ${Object.keys(payload || {}).join(", ")}`);
   console.log(`[debug] Standings response length: ${Array.isArray(payload?.response) ? payload.response.length : 0}`);
+  if (payload?.errors) {
+    console.log(`[debug] Standings errors: ${JSON.stringify(payload.errors, null, 2)}`);
+  }
+  console.log(`[debug] Standings raw payload (truncated): ${JSON.stringify({
+    parameters: payload?.parameters,
+    response: Array.isArray(payload?.response) ? payload.response.slice(0, 2) : payload?.response
+  }, null, 2)}`);
+  console.log('[debug] Standings raw errors:', JSON.stringify(payload?.errors));
+  console.log('[debug] Standings response[0]:', JSON.stringify(payload?.response?.[0] ?? 'EMPTY'));
   return normalizeStandings(payload, config.metsTeamId);
 }
 
