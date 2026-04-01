@@ -30,6 +30,7 @@ async function fetchJson(url) {
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status} ${url}`);
   }
+  console.info(`[advanced-stats] fetched ${url} (${response.status})`);
   return response.json();
 }
 
@@ -37,8 +38,10 @@ async function fetchJsonWithFallback(primary, fallback) {
   try {
     return await fetchJson(primary);
   } catch (primaryError) {
+    console.warn(`[advanced-stats] primary source failed (${primary}): ${primaryError.message}`);
     if (!fallback) throw primaryError;
     try {
+      console.info(`[advanced-stats] falling back to ${fallback}`);
       return await fetchJson(fallback);
     } catch (fallbackError) {
       throw primaryError;
