@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { buildStandingsPayload, buildOverviewPayload } = require("../api/_lib/mlb-data");
+const { getApiSportsConfig } = require("../api/_lib/api-sports");
 
 const OUTPUT_DIR = path.join(__dirname, "../public/api/mlb/mets");
 const STANDINGS_PATH = path.join(OUTPUT_DIR, "standings.json");
@@ -13,6 +14,9 @@ async function writeJson(filePath, data) {
 
 async function main() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+
+  const config = getApiSportsConfig();
+  console.log(`[debug] API-Sports config: ${JSON.stringify(config)}`);
 
   const standings = await buildStandingsPayload();
   if (!standings || !Array.isArray(standings.teams) || standings.teams.length === 0) {

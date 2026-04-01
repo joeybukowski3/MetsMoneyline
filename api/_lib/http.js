@@ -24,6 +24,8 @@ async function fetchJsonWithRetry(url, options = {}) {
         signal: AbortSignal.timeout(timeoutMs)
       });
 
+      console.log(`[debug] HTTP ${response.status} ${url}`);
+
       if (!response.ok) {
         const body = await response.text().catch(() => "");
         const error = new Error(`Request failed: ${response.status} ${url}${body ? ` :: ${body.slice(0, 200)}` : ""}`);

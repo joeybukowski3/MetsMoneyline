@@ -47,10 +47,15 @@ async function fetchApiSportsGames(config = getApiSportsConfig(), season = getCu
 }
 
 async function fetchApiSportsStandings(config = getApiSportsConfig(), season = getCurrentSeason()) {
-  const payload = await apiSportsGet("/standings", {
+  const params = {
     league: config.leagueId,
     season
-  });
+  };
+  const url = buildUrl(`${config.baseUrl}/standings`, params);
+  console.log(`[debug] Fetching standings from ${url}`);
+  const payload = await apiSportsGet("/standings", params);
+  console.log(`[debug] Standings payload response keys: ${Object.keys(payload || {}).join(", ")}`);
+  console.log(`[debug] Standings response length: ${Array.isArray(payload?.response) ? payload.response.length : 0}`);
   return normalizeStandings(payload, config.metsTeamId);
 }
 
