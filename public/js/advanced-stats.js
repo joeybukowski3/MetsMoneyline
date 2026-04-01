@@ -436,7 +436,7 @@ function formatStrikeoutWalkRatio(stats) {
   const strikeouts = Number(stats?.strikeOuts);
   const walks = Number(stats?.baseOnBalls);
   if (!Number.isFinite(strikeouts) || !Number.isFinite(walks)) return "N/A";
-  if (walks === 0) return strikeouts > 0 ? "∞" : "0.00";
+  if (walks === 0) return `${strikeouts}:0`;
   return formatDecimal(strikeouts / walks);
 }
 
