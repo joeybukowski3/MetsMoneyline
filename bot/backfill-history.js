@@ -31,8 +31,10 @@ function normalizeEntry(entry) {
     : (odds == null ? null : (entry.result === "W" ? calculateMoneylineProfit(odds) : -100));
 
   return {
+    gameId: entry.gameId || null,
     date: entry.date,
     opponent: entry.opponent,
+    homeAway: entry.homeAway || null,
     finalScore: entry.finalScore || null,
     officialPick: entry.officialPick || "Today's Pick: New York Mets Moneyline",
     market: entry.market || "Mets Moneyline",
@@ -62,7 +64,9 @@ function main() {
   const add = (rawEntry) => {
     const entry = normalizeEntry(rawEntry);
     if (!entry) return;
-    mergedMap.set(`${entry.date}__${entry.opponent}`, entry);
+    const key = entry.gameId || `${entry.date}__${entry.opponent}__${entry.homeAway || ""}`;
+    const previous = mergedMap.get(key) || {};
+    mergedMap.set(key, { ...previous, ...entry });
   };
 
   (existingHistory.entries || []).forEach(add);

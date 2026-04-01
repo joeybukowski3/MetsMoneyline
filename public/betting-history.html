@@ -12,10 +12,8 @@
 </head>
 <body>
 
-  <!-- Alert Banner -->
   <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
 
-  <!-- Nav -->
   <header>
     <nav>
       <a href="/" class="nav-brand">
@@ -64,7 +62,7 @@
   <main>
     <div class="page-header">
       <h2>Pick History</h2>
-      <p>All picks listed after game completion. Markets selected retroactively based on available outcomes.</p>
+      <p>All settled Mets moneyline tracker results for the current season.</p>
     </div>
 
     <div class="section-card">
@@ -79,11 +77,13 @@
             <tr>
               <th>Date</th>
               <th>Opponent</th>
+              <th>Home/Away</th>
               <th>Score</th>
               <th>Listed Market</th>
               <th>Odds</th>
               <th>Result</th>
               <th>P/L</th>
+              <th>Season P/L</th>
             </tr>
           </thead>
           <tbody id="history-body"></tbody>
@@ -92,7 +92,6 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <footer>
     <div class="footer-brand">
       <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
@@ -123,12 +122,15 @@
       if (odds < 0) return parseFloat((100 / Math.abs(odds) * 100).toFixed(2));
       return parseFloat((odds / 100 * 100).toFixed(2));
     }
+
     function formatDate(dateStr) {
       return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     }
+
     function isSpringTrainingDate(dateStr) {
       return new Date(dateStr + "T00:00:00") < new Date("2026-04-02T00:00:00");
     }
+
     function getTeamLogoUrl(teamName) {
       const slug = ESPN_LOGO[teamName];
       return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
@@ -140,12 +142,15 @@
         : Array.isArray(sample?.recentBreakdowns)
           ? sample.recentBreakdowns
           : [];
+
       return sourceEntries
-        .filter(game => game?.date && game?.opponent && game?.finalScore && game?.result)
+        .filter((game) => game?.date && game?.opponent && game?.finalScore && game?.result)
         .sort((a, b) => String(b.date).localeCompare(String(a.date)))
-        .map(game => ({
+        .map((game) => ({
+          gameId: game.gameId || null,
           date: game.date,
           opp: game.opponent,
+          homeAway: game.homeAway || null,
           score: `${game.result} ${game.finalScore}`,
           market: game.market || "Mets Moneyline",
           odds: typeof game.odds === "number" ? game.odds : null,
@@ -154,44 +159,58 @@
         }));
     }
 
-    fetch("data/pick-history.json").then(r => r.json()).then(d => {
+    fetch("data/pick-history.json").then((r) => r.json()).then((d) => {
       const historyData = deriveRetroPickHistory(d);
-      let running = typeof d?.record?.profit === "number" ? d.record.profit : 0;
       let wins = typeof d?.record?.wins === "number" ? d.record.wins : 0;
       let losses = typeof d?.record?.losses === "number" ? d.record.losses : 0;
+      let running = 0;
 
-      const rows = historyData.map(g => {
+      const useComputedTotals = !(typeof d?.record?.profit === "number" && typeof d?.record?.wins === "number" && typeof d?.record?.losses === "number");
+
+      const rows = historyData.map((g) => {
         const won = g.result === "W";
         const pl = typeof g.profit === "number"
           ? g.profit
           : (won ? calcPL(g.odds) : (typeof g.odds === "number" ? -100 : null));
-        const useComputedTotals = !(typeof d?.record?.profit === "number" && typeof d?.record?.wins === "number" && typeof d?.record?.losses === "number");
-        if (useComputedTotals && typeof pl === "number") running += pl;
+
+        if (typeof pl === "number") running += pl;
         if (useComputedTotals) {
-          if (won) wins++; else losses++;
+          if (won) wins += 1;
+          else losses += 1;
         }
-        const oddsDisplay = typeof g.odds === "number" ? (g.odds > 0 ? "+" + g.odds : g.odds) : "—";
+
+        const cumulative = typeof pl === "number" ? running : null;
+        const oddsDisplay = typeof g.odds === "number" ? (g.odds > 0 ? `+${g.odds}` : `${g.odds}`) : "—";
         const resultClass = won ? "badge badge-win" : "badge badge-loss";
         const plClass = typeof pl === "number" ? (pl >= 0 ? "text-profit" : "text-loss") : "";
+        const cumulativeClass = typeof cumulative === "number" ? (cumulative >= 0 ? "text-profit" : "text-loss") : "";
         const plDisplayText = typeof pl === "number" ? `${pl >= 0 ? "+$" : "-$"}${Math.abs(pl).toFixed(2)}` : "—";
+        const cumulativeDisplayText = typeof cumulative === "number" ? `${cumulative >= 0 ? "+$" : "-$"}${Math.abs(cumulative).toFixed(2)}` : "—";
+        const homeAwayDisplay = g.homeAway === "home" ? "Home" : g.homeAway === "away" || g.homeAway === "road" ? "Away" : "—";
         const logoUrl = getTeamLogoUrl(g.opp);
         const springBadge = isSpringTrainingDate(g.date) ? ` <span class="badge badge-spring">ST</span>` : "";
         const opponentCell = logoUrl
           ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${g.opp}"><span>${g.opp}${springBadge}</span></div>`
           : g.opp;
-        return `<tr><td>${formatDate(g.date)}</td><td>${opponentCell}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td><span class="${resultClass}">${g.result}</span></td><td class="${plClass}">${plDisplayText}</td></tr>`;
+
+        return `<tr><td>${formatDate(g.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td><span class="${resultClass}">${g.result}</span></td><td class="${plClass}">${plDisplayText}</td><td class="${cumulativeClass}">${cumulativeDisplayText}</td></tr>`;
       });
 
       document.getElementById("history-body").innerHTML = rows.length
         ? rows.join("")
-        : `<tr><td colspan="7" style="color:#9099b0;padding:1rem;text-align:center">No completed game picks yet.</td></tr>`;
+        : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No completed game picks yet.</td></tr>`;
 
-      if (d.generatedAt) {
+      if (d.generatedAt || d.updatedAt) {
+        const value = d.generatedAt || d.updatedAt;
         const el = document.getElementById("data-timestamp");
-        if (el) el.textContent = "Last updated: " + new Date(d.generatedAt).toLocaleString("en-US", {
+        if (el) el.textContent = "Last updated: " + new Date(value).toLocaleString("en-US", {
           timeZone: "America/New_York", month: "short", day: "numeric",
           hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
         });
+      }
+
+      if (!useComputedTotals && typeof d?.record?.profit === "number") {
+        running = d.record.profit;
       }
 
       document.getElementById("record-display").textContent = `${wins}-${losses}`;
@@ -200,7 +219,7 @@
       plDisplay.textContent = plSign + Math.abs(running).toFixed(2);
       plDisplay.className = running >= 0 ? "text-profit" : "text-loss";
     }).catch(() => {
-      document.getElementById("history-body").innerHTML = `<tr><td colspan="7" style="color:#9099b0;padding:1rem;text-align:center">History unavailable.</td></tr>`;
+      document.getElementById("history-body").innerHTML = `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">History unavailable.</td></tr>`;
     });
   </script>
   <script>

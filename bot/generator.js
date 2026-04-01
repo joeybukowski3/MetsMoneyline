@@ -291,13 +291,15 @@ function dedupeHistoryEntries(entries = []) {
   const map = new Map();
   for (const entry of entries) {
     if (!entry?.date || !entry?.opponent) continue;
-    const key = `${entry.date}::${entry.opponent}`;
+    const key = entry.gameId || `${entry.date}::${entry.opponent}::${entry.homeAway || ""}`;
     const previous = map.get(key) || {};
     map.set(key, {
       ...previous,
       ...entry,
+      gameId: entry.gameId ?? previous.gameId ?? null,
       date: entry.date,
       opponent: entry.opponent,
+      homeAway: entry.homeAway ?? previous.homeAway ?? null,
       finalScore: entry.finalScore ?? previous.finalScore ?? null,
       officialPick: entry.officialPick ?? previous.officialPick ?? "Today's Pick: New York Mets Moneyline",
       market: entry.market ?? previous.market ?? "Mets Moneyline",
@@ -330,14 +332,11 @@ function loadPickHistory() {
 }
 
 function writePickHistory(entries = []) {
-  const summary = entries.reduce((acc, entry) => {
-    if (entry?.result === "W") acc.wins += 1;
-    if (entry?.result === "L") acc.losses += 1;
-    if (typeof entry?.profit === "number") acc.profit += entry.profit;
-    return acc;
-  }, { wins: 0, losses: 0, profit: 0 });
-
-  const normalizedEntries = dedupeHistoryEntries(entries);
+  const existingHistory = loadPickHistory();
+  const normalizedEntries = dedupeHistoryEntries([
+    ...existingHistory.entries,
+    ...entries
+  ]);
   const normalizedSummary = normalizedEntries.reduce((acc, entry) => {
     if (entry?.result === "W") acc.wins += 1;
     if (entry?.result === "L") acc.losses += 1;
@@ -1819,8 +1818,10 @@ function toHistoryEntry(game, existingEntry = null) {
     ? (metsWon ? calculateMoneylineProfit(moneyline) : -100)
     : existingEntry?.profit ?? null;
   return {
+    gameId: game.id || existingEntry?.gameId || null,
     date: game.date,
     opponent: game.opponent,
+    homeAway: game.homeAway || existingEntry?.homeAway || null,
     finalScore,
     officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
     market: existingEntry?.market || "Mets Moneyline",
