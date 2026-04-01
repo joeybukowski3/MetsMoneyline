@@ -1,10 +1,15 @@
 name: Deploy GitHub Pages
 
 on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "30 6 * * *"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -51,6 +56,15 @@ jobs:
           API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
           API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: node generator.js
+
+      - name: Build advanced-stats JSON
+        working-directory: ./bot
+        env:
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
+        run: node build-advanced-stats-json.js
 
       - name: Verify published data against live sources
         id: verify
