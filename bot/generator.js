@@ -593,6 +593,20 @@ function formatPitcherSeasonLine(stat) {
   return pieces.length ? pieces.join(", ") : null;
 }
 
+function formatPitcherKbb(stat) {
+  const ratio = stat?.strikeoutWalkRatio;
+  if (ratio != null && ratio !== "" && ratio !== "-.--" && ratio !== ".---") {
+    const parsed = Number(ratio);
+    return Number.isFinite(parsed) ? parsed.toFixed(2) : String(ratio);
+  }
+
+  const strikeouts = Number(stat?.strikeOuts);
+  const walks = Number(stat?.baseOnBalls);
+  if (!Number.isFinite(strikeouts) || !Number.isFinite(walks)) return null;
+  if (walks === 0) return strikeouts.toFixed(1);
+  return (strikeouts / walks).toFixed(2);
+}
+
 function inningsPitchedToOuts(inningsPitched) {
   if (inningsPitched == null) return null;
   const [whole, partial = "0"] = String(inningsPitched).split(".");
@@ -679,7 +693,7 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
     seasonXERA: expected?.xera || null,
     seasonWHIP: stat?.whip || null,
     seasonHR9: stat?.homeRunsPer9 || fangraphsPitcher?.['HR/9'] || null,
-    last3KBB: stat?.strikeoutWalkRatio || null,
+    last3KBB: formatPitcherKbb(stat),
     note: stat?.inningsPitched && statSeason ? `${statSeason} - ${stat.inningsPitched} IP` : null,
     savant: savant ? {
       xERA: expected?.xera || null,
