@@ -15,9 +15,15 @@ async function main() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   const standings = await buildStandingsPayload();
+  if (!standings || !Array.isArray(standings.teams) || standings.teams.length === 0) {
+    throw new Error("Standings payload is empty or missing teams");
+  }
   await writeJson(STANDINGS_PATH, standings);
 
   const overview = await buildOverviewPayload();
+  if (!overview || !Array.isArray(overview.teamStats) || overview.teamStats.length === 0) {
+    throw new Error("Overview payload is empty or missing teamStats");
+  }
   await writeJson(OVERVIEW_PATH, overview);
 }
 
