@@ -7,16 +7,6 @@ const OUTPUT_DIR = path.join(__dirname, "../public/api/mlb/mets");
 const STANDINGS_PATH = path.join(OUTPUT_DIR, "standings.json");
 const OVERVIEW_PATH = path.join(OUTPUT_DIR, "overview.json");
 
-// 2025 Mets final standings — used when the API cannot return live data (e.g. free plan, off-season)
-const METS_2025_FALLBACK = {
-  division: "NL East",
-  season: 2025,
-  wins: 89,
-  losses: 73,
-  home: "46-35",
-  road: "43-38"
-};
-
 async function writeJson(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
   console.log(`Wrote ${filePath}`);
@@ -30,27 +20,16 @@ async function main() {
 
   let standings = await buildStandingsPayload();
   if (!standings || !Array.isArray(standings.teams) || standings.teams.length === 0) {
-    console.warn("[warn] Standings unavailable — using 2025 fallback values");
-    const pct = (METS_2025_FALLBACK.wins / (METS_2025_FALLBACK.wins + METS_2025_FALLBACK.losses)).toFixed(3).replace("0.", ".");
+    console.warn("[warn] Standings unavailable for the current season; writing an empty current-season payload");
     standings = {
-      division: METS_2025_FALLBACK.division,
-      season: METS_2025_FALLBACK.season,
-      teams: [{
-        teamId: config.metsTeamId,
-        team: "New York Mets",
-        wins: METS_2025_FALLBACK.wins,
-        losses: METS_2025_FALLBACK.losses,
-        pct,
-        gamesBack: "0",
-        home: METS_2025_FALLBACK.home,
-        road: METS_2025_FALLBACK.road,
-        last10: "0-0",
-        streak: "-"
-      }],
+      division: "NL East",
+      season: new Date().getFullYear(),
+      teams: [],
       meta: {
-        provider: "fallback-2025",
+        provider: "standings-unavailable",
         generatedAt: new Date().toISOString(),
-        cacheHint: "standings: fallback"
+        cacheHint: "standings: current-season only",
+        unavailableReason: "Current-season standings were unavailable. No previous-season fallback was written."
       }
     };
   }
