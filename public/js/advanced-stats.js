@@ -93,12 +93,24 @@ async function loadMatchupSnapshot(season) {
     const data = await fetchJson("data/sample-game.json");
     const featuredGame = selectFeaturedGame(data?.games || [], season);
     if (!featuredGame) return { generatedAt: data?.generatedAt || null, featuredGame: null };
+    const recentGames = featuredGame.gameContext?.metsRecentGames || [];
+    let streak = null;
+    if (recentGames.length && ["W", "L"].includes(recentGames[0]?.result)) {
+      const result = recentGames[0].result;
+      let count = 0;
+      for (const game of recentGames) {
+        if (game?.result !== result) break;
+        count += 1;
+      }
+      streak = `${result}${count}`;
+    }
     return {
       generatedAt: data?.generatedAt || null,
       featuredGame: {
         metsRecord: featuredGame.metsRecord,
         homeRoad: featuredGame.trends?.find((trend) => trend.category === "Home/Road")?.mets || null,
-        last10: featuredGame.trends?.find((trend) => trend.category === "Last 10 Games")?.mets || null
+        last10: featuredGame.trends?.find((trend) => trend.category === "Last 10 Games")?.mets || null,
+        streak
       }
     };
   } catch {
@@ -473,28 +485,38 @@ function setText(targetId, value) {
 // ── Render: at-a-glance ──────────────────────────────────────────────────────
 
 function renderAtAGlance(metsStanding, matchupSnapshot = null) {
+  const snapshotRecord = isValidRecordString(matchupSnapshot?.metsRecord) ? matchupSnapshot.metsRecord : null;
+  const homeRoadText = String(matchupSnapshot?.homeRoad || "");
+  const snapshotHome = /^Home\s+/i.test(homeRoadText) ? homeRoadText.replace(/^Home\s+/i, "") : null;
+  const snapshotRoad = /^Road\s+/i.test(homeRoadText) ? homeRoadText.replace(/^Road\s+/i, "") : null;
+  const snapshotLast10 = isValidRecordString(matchupSnapshot?.last10) ? matchupSnapshot.last10 : null;
+  const snapshotStreak = matchupSnapshot?.streak || null;
+
   if (!metsStanding) {
-    const record = isValidRecordString(matchupSnapshot?.metsRecord) ? matchupSnapshot.metsRecord : "2026 only";
-    const homeRoadText = String(matchupSnapshot?.homeRoad || "");
-    const homeRoadValue = homeRoadText.replace(/^Home\s+|^Road\s+/i, "") || "—";
-    const last10Value = isValidRecordString(matchupSnapshot?.last10) ? matchupSnapshot.last10 : "—";
     renderRows("at-a-glance", [
-      `<div class="glance-item"><div class="glance-label">Record</div><div class="glance-value highlight">${record}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Record</div><div class="glance-value highlight">${snapshotRecord || "2026 only"}</div></div>`,
       `<div class="glance-item"><div class="glance-label">Run Diff</div><div class="glance-value">—</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Home</div><div class="glance-value">${/^Home\s+/i.test(homeRoadText) ? homeRoadValue : "—"}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Road</div><div class="glance-value">${/^Road\s+/i.test(homeRoadText) ? homeRoadValue : "—"}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Last 10</div><div class="glance-value">${last10Value}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Streak</div><div class="glance-value">Unavailable</div></div>`
+      `<div class="glance-item"><div class="glance-label">Home</div><div class="glance-value">${snapshotHome || "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Road</div><div class="glance-value">${snapshotRoad || "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Last 10</div><div class="glance-value">${snapshotLast10 || "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Streak</div><div class="glance-value">${snapshotStreak || "Unavailable"}</div></div>`
     ]);
     return;
   }
+
+  const standingRecord = `${metsStanding.wins}-${metsStanding.losses}`;
+  const homeRecord = splitRecord(metsStanding, "home");
+  const roadRecord = splitRecord(metsStanding, "away");
+  const last10Record = splitRecord(metsStanding, "lastTen");
+  const standingStreak = metsStanding.streak?.streakCode || "-";
+
   const items = [
-    { label: "Record",   value: `${metsStanding.wins}-${metsStanding.losses}`, highlight: true },
+    { label: "Record",   value: isValidRecordString(standingRecord) ? standingRecord : (snapshotRecord || "—"), highlight: true },
     { label: "Run Diff", value: metsStanding.runDifferential > 0 ? `+${metsStanding.runDifferential}` : String(metsStanding.runDifferential || 0) },
-    { label: "Home",     value: splitRecord(metsStanding, "home") },
-    { label: "Road",     value: splitRecord(metsStanding, "away") },
-    { label: "Last 10",  value: splitRecord(metsStanding, "lastTen") },
-    { label: "Streak",   value: metsStanding.streak?.streakCode || "-" }
+    { label: "Home",     value: homeRecord !== "0-0" ? homeRecord : (snapshotHome || "—") },
+    { label: "Road",     value: roadRecord !== "0-0" ? roadRecord : (snapshotRoad || "—") },
+    { label: "Last 10",  value: last10Record !== "0-0" ? last10Record : (snapshotLast10 || "—") },
+    { label: "Streak",   value: standingStreak !== "-" ? standingStreak : (snapshotStreak || "—") }
   ];
   const target = document.getElementById("at-a-glance");
   if (!target) return;
