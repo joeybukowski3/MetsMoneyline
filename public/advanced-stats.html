@@ -95,6 +95,11 @@
     #full-nl-standings { display: none; }
     #full-nl-standings.open { display: block; }
 
+    .stat-above-avg { background: rgba(200, 30, 30, 0.07); }
+    .stat-above-avg strong { color: #c0392b; }
+    .stat-below-avg { background: rgba(37, 99, 235, 0.07); }
+    .stat-below-avg strong { color: #1d4ed8; }
+
     @media (max-width: 640px) {
       .at-a-glance { gap: 0; }
       .glance-item {
@@ -167,21 +172,21 @@
         <div class="table-wrap">
           <div class="section-title">Offensive Metrics</div>
           <table>
-            <thead><tr><th>Stat</th><th>Mets</th><th>Season</th></tr></thead>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="offense-body"></tbody>
           </table>
         </div>
         <div class="table-wrap">
           <div class="section-title">Pitching &amp; Bullpen</div>
           <table>
-            <thead><tr><th>Stat</th><th>Mets</th><th>Season</th></tr></thead>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="pitching-body"></tbody>
           </table>
         </div>
         <div class="table-wrap">
           <div class="section-title">Defense &amp; Baserunning</div>
           <table>
-            <thead><tr><th>Stat</th><th>Mets</th><th>Season</th></tr></thead>
+            <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="defense-body"></tbody>
           </table>
         </div>
