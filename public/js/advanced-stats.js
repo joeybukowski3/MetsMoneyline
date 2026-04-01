@@ -33,6 +33,19 @@ async function fetchJson(url) {
   return response.json();
 }
 
+async function fetchJsonWithFallback(primary, fallback) {
+  try {
+    return await fetchJson(primary);
+  } catch (primaryError) {
+    if (!fallback) throw primaryError;
+    try {
+      return await fetchJson(fallback);
+    } catch (fallbackError) {
+      throw primaryError;
+    }
+  }
+}
+
 function splitRecord(teamRecord, type) {
   const record = teamRecord?.records?.splitRecords?.find(entry => entry.type === type);
   if (!record) return "0-0";
@@ -90,7 +103,10 @@ function setText(targetId, value) {
 }
 
 async function loadStandings(season) {
-  const data = await fetchJson("api/mlb/mets/standings");
+  const data = await fetchJsonWithFallback(
+    "api/mlb/mets/standings",
+    "api/mlb/mets/standings.json"
+  );
   const teams = Array.isArray(data?.teams) ? data.teams : [];
   const mets = teams.find(entry => String(entry.teamId) === String(TEAM_ID)) || null;
   return {
@@ -136,7 +152,10 @@ async function loadStandings(season) {
 }
 
 async function loadOverview() {
-  return fetchJson("api/mlb/mets/overview");
+  return fetchJsonWithFallback(
+    "api/mlb/mets/overview",
+    "api/mlb/mets/overview.json"
+  );
 }
 
 function loadTeamStats(overview) {
