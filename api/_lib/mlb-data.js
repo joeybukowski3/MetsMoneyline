@@ -1,5 +1,5 @@
 const { apiSportsGet, getApiSportsConfig } = require("./api-sports");
-const { fetchJsonWithRetry } = require("./http");
+const { buildUrl, fetchJsonWithRetry } = require("./http");
 const { normalizeTeamIdentity } = require("../../lib/mlb-team-identity");
 const {
   extractApiSportsGames,
