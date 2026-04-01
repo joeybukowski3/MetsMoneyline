@@ -427,6 +427,19 @@ function formatPerGame(value, games, digits = 2) {
   return (num / gp).toFixed(digits);
 }
 
+function formatStrikeoutWalkRatio(stats) {
+  const ratio = stats?.strikeoutWalkRatio;
+  if (ratio != null && ratio !== "" && ratio !== "-.--" && ratio !== ".---") {
+    return formatDecimal(ratio);
+  }
+
+  const strikeouts = Number(stats?.strikeOuts);
+  const walks = Number(stats?.baseOnBalls);
+  if (!Number.isFinite(strikeouts) || !Number.isFinite(walks)) return "N/A";
+  if (walks === 0) return strikeouts > 0 ? "∞" : "0.00";
+  return formatDecimal(strikeouts / walks);
+}
+
 function parseComparableNumber(value) {
   if (value == null || value === "" || value === "N/A" || value === "—" || value === ".---" || value === "-.--") return null;
   const numeric = parseFloat(String(value).replace("%", ""));
@@ -660,7 +673,7 @@ function renderPitchers(players, season) {
         <td>${s.inningsPitched || "0.0"}</td>
         ${buildPlayerCell(formatDecimal(s.era), s.era, starterBaselines.era, false)}
         ${buildPlayerCell(formatDecimal(s.whip), s.whip, starterBaselines.whip, false)}
-        ${buildPlayerCell(formatDecimal(s.strikeoutWalkRatio), s.strikeoutWalkRatio, starterBaselines.kbb, true)}
+        ${buildPlayerCell(formatStrikeoutWalkRatio(s), s.strikeoutWalkRatio, starterBaselines.kbb, true)}
         ${buildPlayerCell(formatDecimal(s.strikeoutsPer9Inn), s.strikeoutsPer9Inn, starterBaselines.k9, true)}
         ${buildPlayerCell(formatDecimal(s.walksPer9Inn), s.walksPer9Inn, starterBaselines.bb9, false)}
       </tr>
