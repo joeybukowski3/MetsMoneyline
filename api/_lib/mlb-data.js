@@ -68,6 +68,20 @@ async function fetchApiSportsStandings(config = getApiSportsConfig(), season = g
   return normalizeStandings(payload, config.metsTeamId);
 }
 
+async function fetchStandingsWithFallback(config = getApiSportsConfig()) {
+  const currentYear = getCurrentSeason();
+  for (const season of [currentYear, currentYear - 1]) {
+    const result = await fetchApiSportsStandings(config, season);
+    if (Array.isArray(result?.teams) && result.teams.length > 0) {
+      console.log(`[debug] Standings found for season ${season}`);
+      return result;
+    }
+    console.warn(`[warn] Standings empty for season ${season}, trying fallback...`);
+  }
+  console.warn('[warn] Standings unavailable for all tried seasons');
+  return null;
+}
+
 async function fetchApiSportsOdds(targetGameId, config = getApiSportsConfig(), season = getCurrentSeason()) {
   if (!targetGameId) {
     return {
@@ -140,9 +154,9 @@ async function buildLiveGamePayload() {
 }
 
 async function buildStandingsPayload() {
-  const standings = await fetchApiSportsStandings();
+  const standings = await fetchStandingsWithFallback();
   return {
-    ...standings,
+    ...(standings || { division: "NL East", season: null, teams: [] }),
     meta: {
       provider: "api-sports",
       generatedAt: new Date().toISOString(),
