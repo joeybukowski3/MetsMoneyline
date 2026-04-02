@@ -55,6 +55,12 @@ function getOppRecord(game) {
   return "0-0";
 }
 
+function getPitcherRecordBadge(pitcher) {
+  if (isValidRecordString(pitcher?.seasonRecord)) return pitcher.seasonRecord;
+  const linePrefix = String(pitcher?.seasonLine || "").split(",")[0].trim();
+  return isValidRecordString(linePrefix) ? linePrefix : null;
+}
+
 function mergeLiveGame(staticGame, liveGame) {
   if (!liveGame) return staticGame;
   if (!staticGame) return liveGame;
@@ -774,7 +780,7 @@ function buildPitchingCard(game) {
       if (t.val == null) {
         return `<div class="vsr-tile" style="background:#f0f2f8">
           <div class="vsr-label" style="color:#9099b0">${t.label}</div>
-          <div class="vsr-val" style="color:#9099b0">-</div>
+          <div class="vsr-val" style="color:#9099b0">N/A</div>
         </div>`;
       }
       const pct  = t.pct(t.val);
@@ -810,6 +816,7 @@ function buildPitchingCard(game) {
     const { era, fip, xera, whip, kbb, kpct, bbpct } = seasonStats;
     const hhPct = pitcher.savant?.hardHitPct ?? null;
     const whiffPct = pitcher.savant?.whiffPct ?? null;
+    const recordBadge = getPitcherRecordBadge(pitcher);
 
     const id = pitcher.mlbId || METS_PITCHER_IDS[pitcher.name] || 0;
     // Action shot URL (larger crop, person standing)
@@ -830,7 +837,7 @@ function buildPitchingCard(game) {
       <div class="pitcher-stats-panel">
         <div class="pitcher-name-row">
           <span class="pitcher-name-lg">${pitcher.name}</span>
-          ${pitcher.seasonRecord ? `<span class="pitcher-record-tag">Record ${pitcher.seasonRecord}</span>` : ""}
+          ${recordBadge ? `<span class="pitcher-record-tag">Record ${recordBadge}</span>` : ""}
         </div>
         <div class="pitcher-meta-line">
           <span class="pitcher-team-tag">${sideLabel}</span>

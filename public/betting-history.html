@@ -157,22 +157,52 @@
           : [];
 
       return sourceEntries
-        .filter((entry) => entry?.date && entry?.opponent)
-        .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+        .filter((entry) => entry?.date && entry?.opponent);
+    }
+
+    function isSettledEntry(entry) {
+      return entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
+    }
+
+    function buildDisplayEntries(entries) {
+      const chronological = [...entries].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      let runningProfit = 0;
+
+      const withCumulative = chronological.map((entry) => {
+        const settled = isSettledEntry(entry);
+        const profit = typeof entry?.profit === "number" ? entry.profit : null;
+        if (settled && profit != null) {
+          runningProfit += profit;
+        }
+        return {
+          ...entry,
+          cumulativeProfit: settled && profit != null ? runningProfit : null,
+          settled
+        };
+      });
+
+      const settledEntries = withCumulative
+        .filter((entry) => entry.settled)
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+      const pendingEntries = withCumulative
+        .filter((entry) => !entry.settled)
+        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
+
+      return {
+        displayEntries: [...settledEntries, ...pendingEntries],
+        seasonProfit: runningProfit
+      };
     }
 
     function renderHistory(data) {
       const historyData = normalizeEntries(data);
-      let runningProfit = 0;
+      const { displayEntries, seasonProfit } = buildDisplayEntries(historyData);
 
-      const rows = historyData.map((entry) => {
-        const isFinal = entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
+      const rows = displayEntries.map((entry) => {
+        const isFinal = entry.settled;
         const hasProfit = typeof entry?.profit === "number";
-        if (isFinal && hasProfit) {
-          runningProfit += entry.profit;
-        }
 
-        const cumulative = isFinal && hasProfit ? runningProfit : null;
+        const cumulative = entry.cumulativeProfit;
         const resultClass = isFinal
           ? (entry.result === "W" ? "badge badge-win" : "badge badge-loss")
           : "badge";
@@ -204,15 +234,15 @@
       const summary = data?.record || {};
       const wins = typeof summary.wins === "number"
         ? summary.wins
-        : historyData.filter((entry) => entry?.status === "final" && entry?.result === "W").length;
+        : historyData.filter((entry) => isSettledEntry(entry) && entry?.result === "W").length;
       const losses = typeof summary.losses === "number"
         ? summary.losses
-        : historyData.filter((entry) => entry?.status === "final" && entry?.result === "L").length;
+        : historyData.filter((entry) => isSettledEntry(entry) && entry?.result === "L").length;
       const totalBets = typeof summary.totalBets === "number" ? summary.totalBets : historyData.length;
       const totalWagered = typeof summary.totalWagered === "number"
         ? summary.totalWagered
-        : historyData.reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
-      const cumulativeProfit = typeof summary.profit === "number" ? summary.profit : runningProfit;
+          : historyData.reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
+      const cumulativeProfit = typeof summary.profit === "number" ? summary.profit : seasonProfit;
       const roi = typeof summary.roi === "number"
         ? summary.roi
         : (totalWagered > 0 ? Number(((cumulativeProfit / totalWagered) * 100).toFixed(2)) : 0);

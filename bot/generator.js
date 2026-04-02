@@ -292,12 +292,19 @@ function buildHistoryKey(entry = {}) {
   return entry.gameId || `${entry.date || ""}::${entry.opponent || ""}::${entry.homeAway || ""}`;
 }
 
+function isSettledHistoryEntry(entry = {}) {
+  return entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
+}
+
 function dedupeHistoryEntries(entries = []) {
   const map = new Map();
   for (const entry of entries) {
     if (!entry?.date || !entry?.opponent) continue;
     const key = buildHistoryKey(entry);
     const previous = map.get(key) || {};
+    const incomingSettled = isSettledHistoryEntry(entry);
+    const previousSettled = isSettledHistoryEntry(previous);
+    const settledSource = incomingSettled ? entry : previousSettled ? previous : null;
     map.set(key, {
       ...previous,
       ...entry,
@@ -306,14 +313,18 @@ function dedupeHistoryEntries(entries = []) {
       opponent: entry.opponent,
       homeAway: entry.homeAway ?? previous.homeAway ?? null,
       estimated: Boolean(entry.estimated ?? previous.estimated ?? false),
-      status: entry.status ?? previous.status ?? "pending",
+      status: settledSource ? "final" : (entry.status ?? previous.status ?? "pending"),
       stake: typeof entry.stake === "number" ? entry.stake : (typeof previous.stake === "number" ? previous.stake : 100),
-      finalScore: entry.finalScore ?? previous.finalScore ?? null,
+      finalScore: settledSource
+        ? (settledSource.finalScore ?? previous.finalScore ?? entry.finalScore ?? null)
+        : null,
       officialPick: entry.officialPick ?? previous.officialPick ?? "Today's Pick: New York Mets Moneyline",
       market: entry.market ?? previous.market ?? "Mets Moneyline",
       odds: typeof entry.odds === "number" ? entry.odds : (typeof previous.odds === "number" ? previous.odds : null),
-      result: entry.result ?? previous.result ?? null,
-      profit: typeof entry.profit === "number" ? entry.profit : (typeof previous.profit === "number" ? previous.profit : null)
+      result: settledSource ? settledSource.result ?? null : null,
+      profit: settledSource
+        ? (typeof settledSource.profit === "number" ? settledSource.profit : null)
+        : null
     });
   }
 
@@ -1886,6 +1897,15 @@ function calculateMoneylineProfit(odds, stake = 100) {
 function buildPendingHistoryEntry(game, existingEntry = null) {
   if (!game?.date || !game?.opponent) return null;
   const moneyline = game.moneyline?.mets ?? game.bettingHistory?.odds ?? existingEntry?.odds ?? null;
+  if (isSettledHistoryEntry(existingEntry)) {
+    return {
+      ...existingEntry,
+      gameId: game.id || existingEntry?.gameId || null,
+      officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
+      odds: moneyline,
+      stake: typeof existingEntry?.stake === "number" ? existingEntry.stake : 100
+    };
+  }
   return {
     gameId: game.id || existingEntry?.gameId || null,
     date: game.date,
@@ -1893,7 +1913,7 @@ function buildPendingHistoryEntry(game, existingEntry = null) {
     homeAway: game.homeAway || existingEntry?.homeAway || null,
     estimated: Boolean(existingEntry?.estimated ?? false),
     status: "pending",
-    finalScore: existingEntry?.finalScore || null,
+    finalScore: null,
     officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
     market: existingEntry?.market || "Mets Moneyline",
     odds: moneyline,
