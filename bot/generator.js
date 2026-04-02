@@ -23,6 +23,7 @@ const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
+const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds");
 
 const TEAM_IDS = {
@@ -287,11 +288,15 @@ function loadPreviousOutput() {
   }
 }
 
+function buildHistoryKey(entry = {}) {
+  return entry.gameId || `${entry.date || ""}::${entry.opponent || ""}::${entry.homeAway || ""}`;
+}
+
 function dedupeHistoryEntries(entries = []) {
   const map = new Map();
   for (const entry of entries) {
     if (!entry?.date || !entry?.opponent) continue;
-    const key = entry.gameId || `${entry.date}::${entry.opponent}::${entry.homeAway || ""}`;
+    const key = buildHistoryKey(entry);
     const previous = map.get(key) || {};
     map.set(key, {
       ...previous,
@@ -300,6 +305,9 @@ function dedupeHistoryEntries(entries = []) {
       date: entry.date,
       opponent: entry.opponent,
       homeAway: entry.homeAway ?? previous.homeAway ?? null,
+      estimated: Boolean(entry.estimated ?? previous.estimated ?? false),
+      status: entry.status ?? previous.status ?? "pending",
+      stake: typeof entry.stake === "number" ? entry.stake : (typeof previous.stake === "number" ? previous.stake : 100),
       finalScore: entry.finalScore ?? previous.finalScore ?? null,
       officialPick: entry.officialPick ?? previous.officialPick ?? "Today's Pick: New York Mets Moneyline",
       market: entry.market ?? previous.market ?? "Mets Moneyline",
@@ -331,18 +339,39 @@ function loadPickHistory() {
   }
 }
 
+function loadPickHistorySeed() {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(PICK_HISTORY_SEED_PATH, "utf8"));
+    const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
+    return {
+      updatedAt: parsed?.updatedAt || null,
+      generatedAt: parsed?.generatedAt || null,
+      record: parsed?.record || { wins: 0, losses: 0, profit: 0 },
+      entries: dedupeHistoryEntries(entries)
+    };
+  } catch {
+    return { updatedAt: null, generatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
+  }
+}
+
 function writePickHistory(entries = []) {
   const existingHistory = loadPickHistory();
+  const seededHistory = loadPickHistorySeed();
   const normalizedEntries = dedupeHistoryEntries([
+    ...seededHistory.entries,
     ...existingHistory.entries,
     ...entries
   ]);
   const normalizedSummary = normalizedEntries.reduce((acc, entry) => {
-    if (entry?.result === "W") acc.wins += 1;
-    if (entry?.result === "L") acc.losses += 1;
-    if (typeof entry?.profit === "number") acc.profit += entry.profit;
+    if (entry?.status === "final") {
+      if (entry?.result === "W") acc.wins += 1;
+      if (entry?.result === "L") acc.losses += 1;
+      if (typeof entry?.profit === "number") acc.profit += entry.profit;
+    }
+    if (typeof entry?.stake === "number") acc.totalWagered += entry.stake;
+    acc.totalBets += 1;
     return acc;
-  }, { wins: 0, losses: 0, profit: 0 });
+  }, { wins: 0, losses: 0, profit: 0, totalBets: 0, totalWagered: 0 });
 
   const output = {
     updatedAt: new Date().toISOString(),
@@ -350,7 +379,12 @@ function writePickHistory(entries = []) {
     record: {
       wins: normalizedSummary.wins,
       losses: normalizedSummary.losses,
-      profit: Number(normalizedSummary.profit.toFixed(2))
+      profit: Number(normalizedSummary.profit.toFixed(2)),
+      totalBets: normalizedSummary.totalBets,
+      totalWagered: Number(normalizedSummary.totalWagered.toFixed(2)),
+      roi: normalizedSummary.totalWagered > 0
+        ? Number(((normalizedSummary.profit / normalizedSummary.totalWagered) * 100).toFixed(2))
+        : 0
     },
     entries: normalizedEntries,
     recentBreakdowns: normalizedEntries
@@ -372,7 +406,7 @@ async function loadSavantPitcherLeaderboard() {
     const url =
       "https://baseballsavant.mlb.com/leaderboard/custom" +
       `?type=pitcher&year=${year}` +
-      "&selections=player_name,player_id,hard_hit_percent,barrel_batted_rate,whiff_percent,oz_swing_percent,k_percent,bb_percent,gb_percent" +
+      "&selections=player_name,player_id,hard_hit_percent,barrel_batted_rate,whiff_percent,oz_swing_percent,k_percent,bb_percent,gb_percent,avg_hit_speed,avg_hit_angle" +
       "&sort=player_name&sortDir=asc&min=0&csv=true";
     const csv = await safeGetText(url, `Savant pitcher leaderboard ${year}`);
     const rows = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
@@ -583,10 +617,11 @@ function buildLeagueRankMap(battingRows = [], pitchingRows = []) {
   return teamRanks;
 }
 
-function formatPitcherSeasonLine(stat) {
+function formatPitcherSeasonLine(stat, recordOverride = null) {
   if (!stat) return null;
   const pieces = [];
-  if (stat.wins != null && stat.losses != null) pieces.push(`${stat.wins}-${stat.losses}`);
+  if (recordOverride) pieces.push(recordOverride);
+  else if (stat.wins != null && stat.losses != null) pieces.push(`${stat.wins}-${stat.losses}`);
   if (stat.era) pieces.push(`${stat.era} ERA`);
   if (stat.whip) pieces.push(`${stat.whip} WHIP`);
   if (stat.inningsPitched) pieces.push(`${stat.inningsPitched} IP`);
@@ -643,7 +678,31 @@ async function getPlayerSeasonStats(personId, group, season) {
   return data?.stats?.[0]?.splits?.[0]?.stat || null;
 }
 
-async function getPitcherFacts(personId, fallbackName, teamName = null) {
+async function getPitcherGameLog(personId, season) {
+  if (!personId) return [];
+  const url =
+    `https://statsapi.mlb.com/api/v1/people/${personId}/stats` +
+    `?stats=gameLog&group=pitching&season=${season}`;
+  const data = await safeGetJson(url, `pitching game log ${personId} ${season}`);
+  return Array.isArray(data?.stats?.[0]?.splits) ? data.stats[0].splits : [];
+}
+
+function derivePitcherRecordFromGameLog(gameLogSplits = [], beforeDate) {
+  const completedStarts = gameLogSplits.filter((split) => split?.date && split.date < beforeDate);
+  if (!completedStarts.length) return null;
+
+  const totals = completedStarts.reduce((acc, split) => {
+    const won = split?.isWin === true || Number(split?.stat?.wins || 0) > 0;
+    const lost = split?.isLoss === true || Number(split?.stat?.losses || 0) > 0;
+    if (won) acc.wins += 1;
+    if (lost) acc.losses += 1;
+    return acc;
+  }, { wins: 0, losses: 0 });
+
+  return `${totals.wins}-${totals.losses}`;
+}
+
+async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDate = getTodayEasternISO()) {
   if (!personId) {
     return {
       name: fallbackName || "TBD",
@@ -665,10 +724,11 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
 
   const season = String(new Date().getFullYear());
   const previousSeason = String(Number(season) - 1);
-  const [person, currentStats, previousStats, savantRows, expectedRows, fangraphsTeam] = await Promise.all([
+  const [person, currentStats, previousStats, currentGameLog, savantRows, expectedRows, fangraphsTeam] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
     getPlayerSeasonStats(personId, "pitching", previousSeason),
+    getPitcherGameLog(personId, season),
     loadSavantPitcherLeaderboard(),
     loadSavantExpectedPitchers(),
     teamName ? loadFangraphsTeamData(teamName) : null
@@ -676,6 +736,8 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
 
   const stat = currentStats || previousStats;
   const statSeason = currentStats ? season : previousStats ? previousSeason : null;
+  const currentSeasonRecord = derivePitcherRecordFromGameLog(currentGameLog, beforeDate)
+    || (currentStats?.wins != null && currentStats?.losses != null ? `${currentStats.wins}-${currentStats.losses}` : null);
   const savant = getSavantRow(savantRows, personId);
   const expected = getSavantRow(expectedRows, personId);
   const pitcherName = person?.fullName || fallbackName || "TBD";
@@ -686,8 +748,8 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
     mlbId: personId,
     announced: true,
     hand: person?.pitchHand?.code || null,
-    seasonLine: formatPitcherSeasonLine(stat),
-    seasonRecord: stat?.wins != null && stat?.losses != null ? `${stat.wins}-${stat.losses}` : null,
+    seasonLine: formatPitcherSeasonLine(stat, currentSeasonRecord),
+    seasonRecord: currentSeasonRecord,
     seasonERA: stat?.era || fangraphsPitcher?.ERA || null,
     seasonFIP: stat?.fip || fangraphsPitcher?.FIP || computeApproxFip(stat) || fangraphsPitcher?.xFIP || null,
     seasonXERA: expected?.xera || null,
@@ -703,7 +765,9 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
       chasePct: savant.oz_swing_percent ? `${savant.oz_swing_percent}%` : null,
       kPct: savant.k_percent ? `${savant.k_percent}%` : null,
       bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
-      gbPct: savant.gb_percent ? `${savant.gb_percent}%` : null
+      gbPct: savant.gb_percent ? `${savant.gb_percent}%` : null,
+      exitVeloAllowed: savant.avg_hit_speed || null,
+      launchAngleAllowed: savant.avg_hit_angle || null
     } : null
   };
 }
@@ -1539,8 +1603,8 @@ async function buildGameFacts(targetDate) {
 
   const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
     Promise.all([
-      getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME),
-      getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name)
+      getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME, resolvedDate),
+      getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name, resolvedDate)
     ]).then(([metsPitcher, oppPitcher]) => ({ mets: metsPitcher, opp: oppPitcher })),
     buildLineupFacts(feed, oppTeam.id, resolvedDate),
     buildBullpenFacts(TEAM_ID, TEAM_NAME, true),
@@ -1819,8 +1883,29 @@ function calculateMoneylineProfit(odds, stake = 100) {
   return Number(((odds / 100) * stake).toFixed(2));
 }
 
+function buildPendingHistoryEntry(game, existingEntry = null) {
+  if (!game?.date || !game?.opponent) return null;
+  const moneyline = game.moneyline?.mets ?? game.bettingHistory?.odds ?? existingEntry?.odds ?? null;
+  return {
+    gameId: game.id || existingEntry?.gameId || null,
+    date: game.date,
+    opponent: game.opponent,
+    homeAway: game.homeAway || existingEntry?.homeAway || null,
+    estimated: Boolean(existingEntry?.estimated ?? false),
+    status: "pending",
+    finalScore: existingEntry?.finalScore || null,
+    officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
+    market: existingEntry?.market || "Mets Moneyline",
+    odds: moneyline,
+    stake: typeof existingEntry?.stake === "number" ? existingEntry.stake : 100,
+    result: null,
+    profit: null
+  };
+}
+
 function toHistoryEntry(game, existingEntry = null) {
-  if (!game?.date || !game?.opponent || !game?.result) return null;
+  if (!game?.date || !game?.opponent) return null;
+  if (!game?.result) return buildPendingHistoryEntry(game, existingEntry);
   const finalScore = game.finalScore
     ? `${game.finalScore.mets}-${game.finalScore.opp}`
     : game.gameContext?.lastMeeting?.metsScore != null && game.gameContext?.lastMeeting?.oppScore != null
@@ -1828,18 +1913,22 @@ function toHistoryEntry(game, existingEntry = null) {
       : existingEntry?.finalScore || null;
   const metsWon = game.result === "win";
   const moneyline = game.moneyline?.mets ?? game.bettingHistory?.odds ?? existingEntry?.odds ?? null;
+  const stake = typeof existingEntry?.stake === "number" ? existingEntry.stake : 100;
   const profit = typeof moneyline === "number"
-    ? (metsWon ? calculateMoneylineProfit(moneyline) : -100)
+    ? (metsWon ? calculateMoneylineProfit(moneyline, stake) : -stake)
     : existingEntry?.profit ?? null;
   return {
     gameId: game.id || existingEntry?.gameId || null,
     date: game.date,
     opponent: game.opponent,
     homeAway: game.homeAway || existingEntry?.homeAway || null,
+    estimated: Boolean(existingEntry?.estimated ?? false),
+    status: "final",
     finalScore,
     officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
     market: existingEntry?.market || "Mets Moneyline",
     odds: moneyline,
+    stake,
     result: metsWon ? "W" : "L",
     profit
   };
@@ -1852,7 +1941,13 @@ function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEnt
 
   const upsertHistoryEntry = (gameLike) => {
     if (!gameLike) return;
-    const index = entries.findIndex((entry) => entry.date === gameLike.date && entry.opponent === gameLike.opponent);
+    const targetKey = buildHistoryKey({
+      gameId: gameLike.id || gameLike.gameId || null,
+      date: gameLike.date,
+      opponent: gameLike.opponent,
+      homeAway: gameLike.homeAway
+    });
+    const index = entries.findIndex((entry) => buildHistoryKey(entry) === targetKey);
     const existingEntry = index >= 0 ? entries[index] : null;
     const mergedEntry = toHistoryEntry(gameLike, existingEntry);
     if (!mergedEntry) return;
@@ -1861,14 +1956,14 @@ function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEnt
   };
 
   for (const priorGame of priorGames) {
-    if (priorGame?.status === "final") upsertHistoryEntry(priorGame);
+    upsertHistoryEntry(priorGame);
   }
 
-  if (currentGame?.status === "final") {
+  if (currentGame) {
     upsertHistoryEntry(currentGame);
   }
 
-  return dedupeHistoryEntries(entries).slice(0, 30);
+  return dedupeHistoryEntries(entries).slice(0, 200);
 }
 
 function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
@@ -1929,22 +2024,38 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     weather: null
   };
 
-  const priorSettledEntry = Array.isArray(previousOutput?.recentBreakdowns)
-    ? previousOutput.recentBreakdowns.find((entry) => entry.date === currentGame.date && entry.opponent === currentGame.opponent)
-    : null;
+  const knownHistoryEntries = dedupeHistoryEntries([
+    ...(Array.isArray(previousOutput?.recentBreakdowns) ? previousOutput.recentBreakdowns : []),
+    ...(Array.isArray(pickHistory?.entries) ? pickHistory.entries : [])
+  ]);
+  const priorSettledEntry = knownHistoryEntries.find((entry) => (
+    buildHistoryKey(entry) === buildHistoryKey({
+      gameId: currentGame.id,
+      date: currentGame.date,
+      opponent: currentGame.opponent,
+      homeAway: currentGame.homeAway
+    })
+  )) || null;
 
   currentGame.bettingHistory = currentGame.status === "final"
     ? {
         market: "Mets Moneyline",
         odds: currentGame.moneyline?.mets ?? priorSettledEntry?.odds ?? null,
         result: currentGame.result === "win" ? "W" : "L",
+        stake: 100,
         profit: typeof (currentGame.moneyline?.mets ?? priorSettledEntry?.odds) === "number"
           ? (currentGame.result === "win"
               ? calculateMoneylineProfit(currentGame.moneyline?.mets ?? priorSettledEntry?.odds)
               : -100)
           : priorSettledEntry?.profit ?? null
       }
-    : null;
+    : {
+        market: "Mets Moneyline",
+        odds: currentGame.moneyline?.mets ?? priorSettledEntry?.odds ?? null,
+        result: null,
+        stake: 100,
+        profit: null
+      };
 
   const preservedGames = previousGames.filter((game) => game?.id !== currentGame.id && game?.date && game?.opponent);
   const games = [currentGame, ...preservedGames]

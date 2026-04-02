@@ -62,14 +62,18 @@
   <main>
     <div class="page-header">
       <h2>Pick History</h2>
-      <p>All settled Mets moneyline tracker results for the current season.</p>
+      <p>Season-long Mets moneyline tracker with persistent pending and final rows.</p>
     </div>
 
     <div class="section-card">
       <div class="record-bar">
-        <span>Record: <strong id="record-display">&mdash;</strong></span>
-        <span>Hypothetical $100-tracker: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
-        <span class="disclaimer">Closing lines approximated</span>
+        <span>Total Bets: <strong id="total-bets-display">&mdash;</strong></span>
+        <span>Wins: <strong id="wins-display">&mdash;</strong></span>
+        <span>Losses: <strong id="losses-display">&mdash;</strong></span>
+        <span>Total Wagered: <strong id="wagered-display">&mdash;</strong></span>
+        <span>Cumulative P/L: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
+        <span>ROI: <strong id="roi-display">&mdash;</strong></span>
+        <span class="disclaimer">Estimated rows are backfilled</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -78,12 +82,13 @@
               <th>Date</th>
               <th>Opponent</th>
               <th>Home/Away</th>
-              <th>Score</th>
-              <th>Listed Market</th>
-              <th>Odds</th>
+              <th>Mets ML</th>
+              <th>Estimated</th>
               <th>Result</th>
-              <th>P/L</th>
-              <th>Season P/L</th>
+              <th>Final Score</th>
+              <th>Stake</th>
+              <th>Game P/L</th>
+              <th>Cumulative P/L</th>
             </tr>
           </thead>
           <tbody id="history-body"></tbody>
@@ -117,14 +122,12 @@
       "San Diego Padres": "sd"
     };
 
-    function calcPL(odds) {
-      if (typeof odds !== "number") return null;
-      if (odds < 0) return parseFloat((100 / Math.abs(odds) * 100).toFixed(2));
-      return parseFloat((odds / 100 * 100).toFixed(2));
-    }
-
     function formatDate(dateStr) {
-      return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+      return new Date(dateStr + "T00:00:00").toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      });
     }
 
     function isSpringTrainingDate(dateStr) {
@@ -136,105 +139,134 @@
       return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
     }
 
-    function deriveRetroPickHistory(sample) {
-      const sourceEntries = Array.isArray(sample?.entries)
-        ? sample.entries
-        : Array.isArray(sample?.recentBreakdowns)
-          ? sample.recentBreakdowns
+    function formatCurrency(value) {
+      if (typeof value !== "number") return "&mdash;";
+      return `${value >= 0 ? "+$" : "-$"}${Math.abs(value).toFixed(2)}`;
+    }
+
+    function formatOdds(odds) {
+      if (typeof odds !== "number") return "&mdash;";
+      return odds > 0 ? `+${odds}` : `${odds}`;
+    }
+
+    function normalizeEntries(data) {
+      const sourceEntries = Array.isArray(data?.entries)
+        ? data.entries
+        : Array.isArray(data?.recentBreakdowns)
+          ? data.recentBreakdowns
           : [];
 
       return sourceEntries
-        .filter((game) => game?.date && game?.opponent && game?.finalScore && game?.result)
-        .sort((a, b) => String(b.date).localeCompare(String(a.date)))
-        .map((game) => ({
-          gameId: game.gameId || null,
-          date: game.date,
-          opp: game.opponent,
-          homeAway: game.homeAway || null,
-          score: `${game.result} ${game.finalScore}`,
-          market: game.market || "Mets Moneyline",
-          odds: typeof game.odds === "number" ? game.odds : null,
-          result: game.result === "W" ? "W" : "L",
-          profit: typeof game.profit === "number" ? game.profit : null
-        }));
+        .filter((entry) => entry?.date && entry?.opponent)
+        .sort((a, b) => String(a.date).localeCompare(String(b.date)));
     }
 
-    fetch("data/pick-history.json").then((r) => r.json()).then((d) => {
-      const historyData = deriveRetroPickHistory(d);
-      let wins = typeof d?.record?.wins === "number" ? d.record.wins : 0;
-      let losses = typeof d?.record?.losses === "number" ? d.record.losses : 0;
-      let running = 0;
+    function renderHistory(data) {
+      const historyData = normalizeEntries(data);
+      let runningProfit = 0;
 
-      const useComputedTotals = !(typeof d?.record?.profit === "number" && typeof d?.record?.wins === "number" && typeof d?.record?.losses === "number");
-
-      const rows = historyData.map((g) => {
-        const won = g.result === "W";
-        const pl = typeof g.profit === "number"
-          ? g.profit
-          : (won ? calcPL(g.odds) : (typeof g.odds === "number" ? -100 : null));
-
-        if (typeof pl === "number") running += pl;
-        if (useComputedTotals) {
-          if (won) wins += 1;
-          else losses += 1;
+      const rows = historyData.map((entry) => {
+        const isFinal = entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
+        const hasProfit = typeof entry?.profit === "number";
+        if (isFinal && hasProfit) {
+          runningProfit += entry.profit;
         }
 
-        const cumulative = typeof pl === "number" ? running : null;
-        const oddsDisplay = typeof g.odds === "number" ? (g.odds > 0 ? `+${g.odds}` : `${g.odds}`) : "—";
-        const resultClass = won ? "badge badge-win" : "badge badge-loss";
-        const plClass = typeof pl === "number" ? (pl >= 0 ? "text-profit" : "text-loss") : "";
-        const cumulativeClass = typeof cumulative === "number" ? (cumulative >= 0 ? "text-profit" : "text-loss") : "";
-        const plDisplayText = typeof pl === "number" ? `${pl >= 0 ? "+$" : "-$"}${Math.abs(pl).toFixed(2)}` : "—";
-        const cumulativeDisplayText = typeof cumulative === "number" ? `${cumulative >= 0 ? "+$" : "-$"}${Math.abs(cumulative).toFixed(2)}` : "—";
-        const homeAwayDisplay = g.homeAway === "home" ? "Home" : g.homeAway === "away" || g.homeAway === "road" ? "Away" : "—";
-        const logoUrl = getTeamLogoUrl(g.opp);
-        const springBadge = isSpringTrainingDate(g.date) ? ` <span class="badge badge-spring">ST</span>` : "";
+        const cumulative = isFinal && hasProfit ? runningProfit : null;
+        const resultClass = isFinal
+          ? (entry.result === "W" ? "badge badge-win" : "badge badge-loss")
+          : "badge";
+        const resultLabel = isFinal ? entry.result : "Pending";
+        const plClass = hasProfit ? (entry.profit >= 0 ? "text-profit" : "text-loss") : "";
+        const cumulativeClass = typeof cumulative === "number"
+          ? (cumulative >= 0 ? "text-profit" : "text-loss")
+          : "";
+        const homeAwayDisplay = entry.homeAway === "home"
+          ? "Home"
+          : entry.homeAway === "away" || entry.homeAway === "road"
+            ? "Away"
+            : "&mdash;";
+        const logoUrl = getTeamLogoUrl(entry.opponent);
+        const springBadge = isSpringTrainingDate(entry.date)
+          ? ` <span class="badge badge-spring">ST</span>`
+          : "";
         const opponentCell = logoUrl
-          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${g.opp}"><span>${g.opp}${springBadge}</span></div>`
-          : g.opp;
+          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent}"><span>${entry.opponent}${springBadge}</span></div>`
+          : `${entry.opponent}${springBadge}`;
 
-        return `<tr><td>${formatDate(g.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${g.score}</td><td>${g.market}</td><td>${oddsDisplay}</td><td><span class="${resultClass}">${g.result}</span></td><td class="${plClass}">${plDisplayText}</td><td class="${cumulativeClass}">${cumulativeDisplayText}</td></tr>`;
+        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${entry.estimated ? '<span class="badge">Backfilled</span>' : '&mdash;'}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
       });
 
       document.getElementById("history-body").innerHTML = rows.length
         ? rows.join("")
-        : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No completed game picks yet.</td></tr>`;
+        : `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
 
-      if (d.generatedAt || d.updatedAt) {
-        const value = d.generatedAt || d.updatedAt;
-        const el = document.getElementById("data-timestamp");
-        if (el) el.textContent = "Last updated: " + new Date(value).toLocaleString("en-US", {
-          timeZone: "America/New_York", month: "short", day: "numeric",
-          hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
-        });
-      }
+      const summary = data?.record || {};
+      const wins = typeof summary.wins === "number"
+        ? summary.wins
+        : historyData.filter((entry) => entry?.status === "final" && entry?.result === "W").length;
+      const losses = typeof summary.losses === "number"
+        ? summary.losses
+        : historyData.filter((entry) => entry?.status === "final" && entry?.result === "L").length;
+      const totalBets = typeof summary.totalBets === "number" ? summary.totalBets : historyData.length;
+      const totalWagered = typeof summary.totalWagered === "number"
+        ? summary.totalWagered
+        : historyData.reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
+      const cumulativeProfit = typeof summary.profit === "number" ? summary.profit : runningProfit;
+      const roi = typeof summary.roi === "number"
+        ? summary.roi
+        : (totalWagered > 0 ? Number(((cumulativeProfit / totalWagered) * 100).toFixed(2)) : 0);
 
-      if (!useComputedTotals && typeof d?.record?.profit === "number") {
-        running = d.record.profit;
-      }
+      document.getElementById("total-bets-display").textContent = String(totalBets);
+      document.getElementById("wins-display").textContent = String(wins);
+      document.getElementById("losses-display").textContent = String(losses);
+      document.getElementById("wagered-display").textContent = `$${Number(totalWagered).toFixed(2)}`;
 
-      document.getElementById("record-display").textContent = `${wins}-${losses}`;
-      const plSign = running >= 0 ? "+$" : "-$";
       const plDisplay = document.getElementById("pl-display");
-      plDisplay.textContent = plSign + Math.abs(running).toFixed(2);
-      plDisplay.className = running >= 0 ? "text-profit" : "text-loss";
-    }).catch(() => {
-      document.getElementById("history-body").innerHTML = `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">History unavailable.</td></tr>`;
-    });
+      plDisplay.textContent = `${cumulativeProfit >= 0 ? "+$" : "-$"}${Math.abs(cumulativeProfit).toFixed(2)}`;
+      plDisplay.className = cumulativeProfit >= 0 ? "text-profit" : "text-loss";
+
+      const roiDisplay = document.getElementById("roi-display");
+      roiDisplay.textContent = `${roi >= 0 ? "+" : ""}${roi.toFixed(2)}%`;
+      roiDisplay.className = roi >= 0 ? "text-profit" : "text-loss";
+
+      if (data?.generatedAt || data?.updatedAt) {
+        const timestamp = data.generatedAt || data.updatedAt;
+        const el = document.getElementById("data-timestamp");
+        if (el) {
+          el.textContent = "Last updated: " + new Date(timestamp).toLocaleString("en-US", {
+            timeZone: "America/New_York",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+            timeZoneName: "short"
+          });
+        }
+      }
+    }
+
+    fetch("data/pick-history.json")
+      .then((response) => response.json())
+      .then(renderHistory)
+      .catch(() => {
+        document.getElementById("history-body").innerHTML = `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">History unavailable.</td></tr>`;
+      });
   </script>
   <script>
-    const hamburger = document.querySelector('.nav-hamburger');
-    const navLinks  = document.querySelector('.nav-links');
-    hamburger.addEventListener('click', () => {
-      const open = navLinks.classList.toggle('open');
-      hamburger.classList.toggle('open', open);
-      hamburger.setAttribute('aria-expanded', open);
+    const hamburger = document.querySelector(".nav-hamburger");
+    const navLinks = document.querySelector(".nav-links");
+    hamburger.addEventListener("click", () => {
+      const open = navLinks.classList.toggle("open");
+      hamburger.classList.toggle("open", open);
+      hamburger.setAttribute("aria-expanded", open);
     });
-    navLinks.querySelectorAll('.nav-link').forEach(link => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        hamburger.classList.remove('open');
-        hamburger.setAttribute('aria-expanded', 'false');
+    navLinks.querySelectorAll(".nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        navLinks.classList.remove("open");
+        hamburger.classList.remove("open");
+        hamburger.setAttribute("aria-expanded", "false");
       });
     });
   </script>

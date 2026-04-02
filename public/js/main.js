@@ -634,7 +634,7 @@ function buildPitchingCard(game) {
     return Number.isFinite(parsed) ? parsed : null;
   };
 
-  const aggregateLineupSnapshot = (lineup = []) => {
+  const aggregateLineupSnapshot = (lineup = [], pitcherSavant = null) => {
     if (!Array.isArray(lineup) || !lineup.length) return null;
     const hitters = lineup.filter(player => player && player.name);
     if (!hitters.length) return null;
@@ -670,8 +670,8 @@ function buildPitchingCard(game) {
         const value = weightedAverage(player => player?.savant?.xwOBA);
         return value == null ? null : value.toFixed(3);
       })(),
-      exitVelo: null,
-      launchAngle: null,
+      exitVelo: toNumeric(pitcherSavant?.exitVeloAllowed),
+      launchAngle: toNumeric(pitcherSavant?.launchAngleAllowed),
       xBA: (() => {
         const value = weightedAverage(player => player?.savant?.xBA);
         return value == null ? null : value.toFixed(3);
@@ -765,8 +765,8 @@ function buildPitchingCard(game) {
       { label: "AVG",       val: vsRoster.AVG,         fmt: v => v,                           pct: v => inv(v, 0.160, 0.340) },
       { label: "wOBA",      val: vsRoster.wOBA,        fmt: v => v,                           pct: v => inv(v, 0.240, 0.400) },
       { label: "xwOBA",     val: vsRoster.xwOBA,       fmt: v => v,                           pct: v => inv(v, 0.240, 0.400) },
-      { label: "Exit Velo", val: vsRoster.exitVelo,    fmt: v => `${v} mph`,                  pct: v => inv(v, 82, 95) },
-      { label: "Launch °",  val: vsRoster.launchAngle, fmt: v => `${v}°`,                     pct: () => 50 },
+      { label: "Exit Velo",   val: vsRoster.exitVelo,    fmt: v => `${Number(v).toFixed(1)} mph`, pct: v => inv(v, 82, 95) },
+      { label: "Launch Angle", val: vsRoster.launchAngle, fmt: v => `${Number(v).toFixed(1)}&deg;`, pct: () => 50 },
       { label: "xBA",       val: vsRoster.xBA,         fmt: v => v,                           pct: v => inv(v, 0.170, 0.330) },
       { label: "xSLG",      val: vsRoster.xSLG,        fmt: v => v,                           pct: v => inv(v, 0.280, 0.560) },
     ];
@@ -862,8 +862,13 @@ function buildPitchingCard(game) {
     game.gameContext?.oppPitcherLog
   );
 
-  const metsVsRoster = p.mets.vsRoster || aggregateLineupSnapshot(game.lineups?.opp);
-  const oppVsRoster = p.opp.vsRoster || aggregateLineupSnapshot(game.lineups?.mets);
+  const mergeVsRoster = (fallbackSnapshot, explicitSnapshot) => {
+    if (!fallbackSnapshot && !explicitSnapshot) return null;
+    return { ...(fallbackSnapshot || {}), ...(explicitSnapshot || {}) };
+  };
+
+  const metsVsRoster = mergeVsRoster(aggregateLineupSnapshot(game.lineups?.opp, p.mets.savant), p.mets.vsRoster);
+  const oppVsRoster = mergeVsRoster(aggregateLineupSnapshot(game.lineups?.mets, p.opp.savant), p.opp.vsRoster);
   const vsRosterLabel = (p.mets.vsRoster || p.opp.vsRoster)
     ? "Career Matchup - vs. Current Roster"
     : "Current Roster Snapshot";

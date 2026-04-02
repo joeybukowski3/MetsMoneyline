@@ -5,6 +5,10 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 
+function buildHistoryKey(entry = {}) {
+  return entry.gameId || `${entry.date || ""}::${entry.opponent || ""}::${entry.homeAway || ""}`;
+}
+
 function readJson(filePath, fallback) {
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf8"));
@@ -24,34 +28,48 @@ function calculateMoneylineProfit(odds, stake = 100) {
 }
 
 function normalizeEntry(entry) {
-  if (!entry?.date || !entry?.opponent || !entry?.result) return null;
+  if (!entry?.date || !entry?.opponent) return null;
   const odds = typeof entry.odds === "number" ? entry.odds : null;
+  const stake = typeof entry.stake === "number" ? entry.stake : 100;
+  const status = entry.status || (entry.result ? "final" : "pending");
+  const normalizedResult = entry.result === "W" || entry.result === "L" ? entry.result : null;
   const profit = typeof entry.profit === "number"
     ? entry.profit
-    : (odds == null ? null : (entry.result === "W" ? calculateMoneylineProfit(odds) : -100));
+    : (status !== "final" || odds == null || !normalizedResult
+      ? null
+      : (normalizedResult === "W" ? calculateMoneylineProfit(odds, stake) : -stake));
 
   return {
     gameId: entry.gameId || null,
     date: entry.date,
     opponent: entry.opponent,
     homeAway: entry.homeAway || null,
+    estimated: Boolean(entry.estimated),
+    status,
     finalScore: entry.finalScore || null,
     officialPick: entry.officialPick || "Today's Pick: New York Mets Moneyline",
     market: entry.market || "Mets Moneyline",
     odds,
-    result: entry.result,
+    stake,
+    result: normalizedResult,
     profit
   };
 }
 
 function summarize(entries) {
-  const summary = { wins: 0, losses: 0, profit: 0 };
+  const summary = { wins: 0, losses: 0, profit: 0, totalBets: 0, totalWagered: 0, roi: 0 };
   for (const entry of entries) {
-    if (entry.result === "W") summary.wins += 1;
-    if (entry.result === "L") summary.losses += 1;
-    if (typeof entry.profit === "number") summary.profit += entry.profit;
+    summary.totalBets += 1;
+    if (typeof entry.stake === "number") summary.totalWagered += entry.stake;
+    if (entry.status === "final" && entry.result === "W") summary.wins += 1;
+    if (entry.status === "final" && entry.result === "L") summary.losses += 1;
+    if (entry.status === "final" && typeof entry.profit === "number") summary.profit += entry.profit;
   }
   summary.profit = Number(summary.profit.toFixed(2));
+  summary.totalWagered = Number(summary.totalWagered.toFixed(2));
+  summary.roi = summary.totalWagered > 0
+    ? Number(((summary.profit / summary.totalWagered) * 100).toFixed(2))
+    : 0;
   return summary;
 }
 
@@ -64,7 +82,7 @@ function main() {
   const add = (rawEntry) => {
     const entry = normalizeEntry(rawEntry);
     if (!entry) return;
-    const key = entry.gameId || `${entry.date}__${entry.opponent}__${entry.homeAway || ""}`;
+    const key = buildHistoryKey(entry);
     const previous = mergedMap.get(key) || {};
     mergedMap.set(key, { ...previous, ...entry });
   };
@@ -79,7 +97,8 @@ function main() {
   const output = {
     updatedAt: new Date().toISOString(),
     record: summarize(entries),
-    entries
+    entries,
+    recentBreakdowns: entries
   };
 
   writeJson(PICK_HISTORY_PATH, output);
