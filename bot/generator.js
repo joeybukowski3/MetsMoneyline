@@ -153,7 +153,7 @@ function getTodayEasternISO() {
 }
 
 function parseArgs(argv) {
-  const args = { date: getTodayEasternISO(), dryRun: false };
+  const args = { date: getTodayEasternISO(), dryRun: false, debugAnalysis: false };
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
@@ -162,6 +162,8 @@ function parseArgs(argv) {
       i += 1;
     } else if (token === "--dry-run") {
       args.dryRun = true;
+    } else if (token === "--debug-analysis") {
+      args.debugAnalysis = true;
     } else {
       throw new Error(`Unknown argument: ${token}`);
     }
@@ -318,7 +320,7 @@ function dedupeHistoryEntries(entries = []) {
       finalScore: settledSource
         ? (settledSource.finalScore ?? previous.finalScore ?? entry.finalScore ?? null)
         : null,
-      officialPick: entry.officialPick ?? previous.officialPick ?? "Today's Pick: New York Mets Moneyline",
+      officialPick: entry.officialPick ?? previous.officialPick ?? "Official Pick: Mets ML",
       market: entry.market ?? previous.market ?? "Mets Moneyline",
       odds: typeof entry.odds === "number" ? entry.odds : (typeof previous.odds === "number" ? previous.odds : null),
       result: settledSource ? settledSource.result ?? null : null,
@@ -767,9 +769,17 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
     seasonWHIP: stat?.whip || null,
     seasonHR9: stat?.homeRunsPer9 || fangraphsPitcher?.['HR/9'] || null,
     last3KBB: formatPitcherKbb(stat),
+    kMinusBbPct: (
+      savant?.k_percent != null && savant?.bb_percent != null
+        ? Number((Number(savant.k_percent) - Number(savant.bb_percent)).toFixed(1))
+        : null
+    ),
     note: stat?.inningsPitched && statSeason ? `${statSeason} - ${stat.inningsPitched} IP` : null,
     savant: savant ? {
       xERA: expected?.xera || null,
+      xBAAllowed: expected?.est_ba || null,
+      xSLGAllowed: expected?.est_slg || null,
+      xwOBAAllowed: expected?.est_woba || null,
       barrelPct: savant.barrel_batted_rate ? `${savant.barrel_batted_rate}%` : null,
       hardHitPct: savant.hard_hit_percent ? `${savant.hard_hit_percent}%` : null,
       whiffPct: savant.whiff_percent ? `${savant.whiff_percent}%` : null,
@@ -995,6 +1005,7 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBatt
         fangraphs: {
           wRCPlus: fangraphs['wRC+'] || null,
           wOBA: fangraphs['wOBA'] || null,
+          OBP: fangraphs['OBP'] || null,
           ISO: fangraphs['ISO'] || null,
           bbPct: fangraphs['BB%'] || null,
           kPct: fangraphs['K%'] || null,
@@ -1017,7 +1028,8 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBatt
       seasonOPS: player.seasonOPS,
       seasonHR: player.seasonHR,
       statsSeason: player.statsSeason,
-      savant: player.savant
+      savant: player.savant,
+      fangraphs: player.fangraphs
     }));
 }
 
@@ -1110,6 +1122,7 @@ function enrichLineupWithSavant(lineup = [], savantBattersByPlayer = {}, savantE
       fangraphs: {
         wRCPlus: fangraphs['wRC+'] || null,
         wOBA: fangraphs['wOBA'] || null,
+        OBP: fangraphs['OBP'] || null,
         ISO: fangraphs['ISO'] || null,
         bbPct: fangraphs['BB%'] || null,
         kPct: fangraphs['K%'] || null,
@@ -1709,6 +1722,731 @@ async function buildGameFacts(targetDate) {
   return facts;
 }
 
+function averageNumbers(values = []) {
+  const nums = values.filter((value) => Number.isFinite(value));
+  if (!nums.length) return null;
+  return nums.reduce((sum, value) => sum + value, 0) / nums.length;
+}
+
+function formatMetric(value, digits = 1) {
+  if (!Number.isFinite(value)) return "N/A";
+  return Number(value).toFixed(digits);
+}
+
+function moneylineToImpliedProbability(odds) {
+  if (!Number.isFinite(odds)) return null;
+  if (odds < 0) return Math.abs(odds) / (Math.abs(odds) + 100);
+  return 100 / (odds + 100);
+}
+
+function ipStringToNumber(value) {
+  if (value == null) return null;
+  const [whole, partial = "0"] = String(value).split(".");
+  const wholeNum = Number(whole);
+  const partialNum = Number(partial);
+  if (!Number.isFinite(wholeNum) || !Number.isFinite(partialNum)) return null;
+  return wholeNum + (partialNum / 3);
+}
+
+function normalizePctValue(value) {
+  const parsed = parseNumber(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function safeDiff(left, right, digits = 3) {
+  if (!Number.isFinite(left) || !Number.isFinite(right)) return null;
+  return Number((left - right).toFixed(digits));
+}
+
+function diffDays(dateA, dateB) {
+  if (!dateA || !dateB) return null;
+  const a = new Date(`${dateA}T12:00:00Z`);
+  const b = new Date(`${dateB}T12:00:00Z`);
+  const diff = Math.round((a - b) / 86400000);
+  return Number.isFinite(diff) ? diff : null;
+}
+
+function weightedAverageFromLineup(lineup = [], getter, digits = 3) {
+  let weighted = 0;
+  let weight = 0;
+  for (const player of lineup) {
+    const value = parseNumber(getter(player));
+    const pa = Number(player?.savant?.pa || 0);
+    const appliedWeight = pa > 0 ? pa : 1;
+    if (value == null) continue;
+    weighted += value * appliedWeight;
+    weight += appliedWeight;
+  }
+  if (!weight) return null;
+  return Number((weighted / weight).toFixed(digits));
+}
+
+function sumLineupMetric(lineup = [], getter, digits = 1) {
+  let total = 0;
+  let found = false;
+  for (const player of lineup) {
+    const value = parseNumber(getter(player));
+    if (value == null) continue;
+    total += value;
+    found = true;
+  }
+  return found ? Number(total.toFixed(digits)) : null;
+}
+
+function buildRecentStartsSummary(starts = [], gameDate) {
+  const normalized = (starts || []).slice(0, 5).map((start) => ({
+    date: start.date || null,
+    opponent: start.opponent || null,
+    ip: start.ip || null,
+    er: parseNumber(start.er),
+    k: parseNumber(start.k),
+    result: start.result || null
+  }));
+  const avgInnings = averageNumbers(normalized.map((start) => ipStringToNumber(start.ip)));
+  const avgER = averageNumbers(normalized.map((start) => start.er));
+  const avgK = averageNumbers(normalized.map((start) => start.k));
+  const lastStart = normalized[0] || null;
+  const daysSinceLastStart = diffDays(gameDate, lastStart?.date);
+  return {
+    starts: normalized,
+    avgInnings: avgInnings == null ? null : Number(avgInnings.toFixed(2)),
+    avgEarnedRuns: avgER == null ? null : Number(avgER.toFixed(2)),
+    avgStrikeouts: avgK == null ? null : Number(avgK.toFixed(2)),
+    daysSinceLastStart
+  };
+}
+
+function buildPitcherAnalysis(pitcher = {}, recentStarts = [], opponentLineup = [], gameDate = null) {
+  const kPct = normalizePctValue(pitcher?.savant?.kPct);
+  const bbPct = normalizePctValue(pitcher?.savant?.bbPct);
+  const hardHitPct = normalizePctValue(pitcher?.savant?.hardHitPct);
+  const barrelPct = normalizePctValue(pitcher?.savant?.barrelPct);
+  const xBAAllowed = parseNumber(pitcher?.savant?.xBAAllowed);
+  const xSLGAllowed = parseNumber(pitcher?.savant?.xSLGAllowed);
+  const xwOBAAllowed = parseNumber(pitcher?.savant?.xwOBAAllowed);
+  const recent = buildRecentStartsSummary(recentStarts, gameDate);
+
+  return {
+    name: pitcher?.name || "TBD",
+    handedness: pitcher?.hand || null,
+    era: parseNumber(pitcher?.seasonERA),
+    xERA: parseNumber(pitcher?.seasonXERA || pitcher?.savant?.xERA),
+    fip: parseNumber(pitcher?.seasonFIP),
+    whip: parseNumber(pitcher?.seasonWHIP),
+    kPct,
+    bbPct,
+    kMinusBbPct: pitcher?.kMinusBbPct ?? (kPct != null && bbPct != null ? Number((kPct - bbPct).toFixed(1)) : null),
+    hardHitPct,
+    barrelPct,
+    xBAAllowed,
+    xSLGAllowed,
+    xwOBAAllowed,
+    splitsVsOpponentHandedness: null,
+    recentStarts: recent,
+    workload: {
+      inningsTrend: recent.avgInnings,
+      daysSinceLastStart: recent.daysSinceLastStart
+    },
+    opponentHandednessProfile: {
+      left: opponentLineup.filter((player) => player?.hand === "L").length,
+      right: opponentLineup.filter((player) => player?.hand === "R").length,
+      switch: opponentLineup.filter((player) => player?.hand === "S").length
+    }
+  };
+}
+
+function buildLineupAggregate(lineup = []) {
+  const totalWar = sumLineupMetric(lineup, (player) => player?.fangraphs?.war);
+  const totalWrcPlus = weightedAverageFromLineup(lineup, (player) => player?.fangraphs?.wRCPlus, 1);
+  const totalOBP = weightedAverageFromLineup(lineup, (player) => player?.fangraphs?.OBP);
+  const totalISO = weightedAverageFromLineup(lineup, (player) => player?.fangraphs?.ISO);
+  const totalBBPct = weightedAverageFromLineup(lineup, (player) => player?.fangraphs?.bbPct, 1);
+  const totalKPct = weightedAverageFromLineup(lineup, (player) => player?.fangraphs?.kPct, 1);
+  const totalXBA = weightedAverageFromLineup(lineup, (player) => player?.savant?.xBA);
+  const totalXSLG = weightedAverageFromLineup(lineup, (player) => player?.savant?.xSLG);
+  const totalXWOBA = weightedAverageFromLineup(lineup, (player) => player?.savant?.xwOBA);
+  const totalWOBA = weightedAverageFromLineup(lineup, (player) => player?.fangraphs?.wOBA);
+  const totalHardHitPct = weightedAverageFromLineup(lineup, (player) => player?.savant?.hardHitPct, 1);
+  const totalBarrelPct = weightedAverageFromLineup(lineup, (player) => player?.savant?.barrelPct, 1);
+  const totalAVG = weightedAverageFromLineup(lineup, (player) => player?.seasonAVG);
+
+  return {
+    totalWAR: totalWar,
+    totalWRCPlus: totalWrcPlus,
+    totalOBP,
+    totalISO,
+    totalKPct,
+    totalBBPct,
+    totalAVG,
+    totalWOBA,
+    totalXBA,
+    totalXSLG,
+    totalXWOBA,
+    totalHardHitPct,
+    totalBarrelPct,
+    regressionSignals: {
+      baMinusXba: safeDiff(totalAVG, totalXBA),
+      wobaMinusXwoba: safeDiff(totalWOBA, totalXWOBA)
+    }
+  };
+}
+
+function buildTeamOffenseAnalysis(teamAdvanced = {}, lineup = [], pitcherHand = null, injuries = []) {
+  const lineupAggregate = buildLineupAggregate(lineup);
+  return {
+    teamWrcPlusVsHandedness: null,
+    projectedLineupWrcPlusVsHandedness: null,
+    homeAwayWrcPlus: null,
+    projectedLineupWAR: lineupAggregate.totalWAR,
+    projectedLineupWRCPlus: lineupAggregate.totalWRCPlus,
+    obp: lineupAggregate.totalOBP,
+    iso: parseNumber(teamAdvanced?.iso),
+    kPct: normalizePctValue(teamAdvanced?.kPct),
+    bbPct: normalizePctValue(teamAdvanced?.bbPct),
+    xBA: parseNumber(teamAdvanced?.xba),
+    xSLG: parseNumber(teamAdvanced?.xslg),
+    xwOBA: parseNumber(teamAdvanced?.xwoba),
+    hardHitPct: normalizePctValue(teamAdvanced?.hardHit),
+    barrelPct: normalizePctValue(teamAdvanced?.barrelPct),
+    battingAverage: lineupAggregate.totalAVG,
+    wOBA: lineupAggregate.totalWOBA,
+    lineup: lineupAggregate,
+    regressionSignals: {
+      baMinusXba: lineupAggregate.regressionSignals.baMinusXba,
+      wobaMinusXwoba: lineupAggregate.regressionSignals.wobaMinusXwoba
+    },
+    missingKeyHitters: null,
+    splitContext: {
+      pitcherHandedness: pitcherHand,
+      splitDataAvailable: false
+    }
+  };
+}
+
+function buildBullpenAnalysis(bullpen = {}) {
+  const kPct = normalizePctValue(bullpen?.seasonKPct);
+  const bbPct = normalizePctValue(bullpen?.seasonBBPct);
+  const last3DaysIP = parseNumber(bullpen?.last3DaysIP);
+  let taxLevel = "normal";
+  if (last3DaysIP != null && last3DaysIP >= 11) taxLevel = "heavy";
+  else if (last3DaysIP != null && last3DaysIP >= 7) taxLevel = "moderate";
+
+  return {
+    last3DaysIP,
+    availabilityTopArms: null,
+    whip: parseNumber(bullpen?.seasonWHIP),
+    kMinusBbPct: (kPct != null && bbPct != null) ? Number((kPct - bbPct).toFixed(1)) : null,
+    xFIP: parseNumber(bullpen?.seasonXFIP),
+    taxLevel
+  };
+}
+
+function buildContextAnalysis(gameFacts, analysisObject) {
+  const metsLastGame = gameFacts?.gameContext?.metsRecentGames?.[0] || null;
+  const oppLastGame = gameFacts?.gameContext?.oppRecentGames?.[0] || null;
+  const travel = {
+    mets: metsLastGame ? `${metsLastGame.homeAway === "home" ? "home" : "road"} to ${gameFacts.meta.homeAway}` : null,
+    opp: oppLastGame ? `${oppLastGame.homeAway === "home" ? "home" : "road"} to ${gameFacts.meta.homeAway === "home" ? "road" : "home"}` : null
+  };
+  return {
+    travel,
+    restDays: {
+      mets: metsLastGame ? Math.max((diffDays(gameFacts.meta.date, metsLastGame.date) || 1) - 1, 0) : null,
+      opp: oppLastGame ? Math.max((diffDays(gameFacts.meta.date, oppLastGame.date) || 1) - 1, 0) : null
+    },
+    seriesGameNumber: gameFacts.game.seriesGameNumber || 1,
+    bullpenTax: {
+      mets: analysisObject.bullpen.mets.taxLevel,
+      opp: analysisObject.bullpen.opp.taxLevel
+    },
+    parkFactor: null,
+    weather: gameFacts.weather || null
+  };
+}
+
+function buildGameAnalysisObject(gameFacts) {
+  const moneyline = typeof gameFacts.odds?.metsMoneyline === "number" ? gameFacts.odds.metsMoneyline : null;
+  const analysisObject = {
+    gameInfo: {
+      date: gameFacts.meta.date,
+      opponent: gameFacts.game.opponent,
+      homeAway: gameFacts.meta.homeAway,
+      ballpark: gameFacts.meta.ballpark,
+      weather: gameFacts.weather || null,
+      metsMoneyline: moneyline,
+      impliedProbability: moneylineToImpliedProbability(moneyline)
+    },
+    pitchers: {
+      mets: buildPitcherAnalysis(gameFacts.pitching.mets, gameFacts.gameContext?.metsPitcherLog || [], gameFacts.lineups.opp, gameFacts.meta.date),
+      opp: buildPitcherAnalysis(gameFacts.pitching.opp, gameFacts.gameContext?.oppPitcherLog || [], gameFacts.lineups.mets, gameFacts.meta.date)
+    },
+    offense: {
+      mets: buildTeamOffenseAnalysis(gameFacts.advanced?.teamAdvanced?.mets, gameFacts.lineups.mets, gameFacts.pitching.opp.hand, gameFacts.gameContext?.metsInjuries),
+      opp: buildTeamOffenseAnalysis(gameFacts.advanced?.teamAdvanced?.opp, gameFacts.lineups.opp, gameFacts.pitching.mets.hand, gameFacts.gameContext?.oppInjuries)
+    },
+    projectedLineups: {
+      mets: {
+        status: gameFacts.lineups.status,
+        totalWAR: buildLineupAggregate(gameFacts.lineups.mets).totalWAR,
+        totalWRCPlus: buildLineupAggregate(gameFacts.lineups.mets).totalWRCPlus,
+        missingKeyHitters: []
+      },
+      opp: {
+        status: gameFacts.lineups.status,
+        totalWAR: buildLineupAggregate(gameFacts.lineups.opp).totalWAR,
+        totalWRCPlus: buildLineupAggregate(gameFacts.lineups.opp).totalWRCPlus,
+        missingKeyHitters: []
+      }
+    },
+    bullpen: {
+      mets: buildBullpenAnalysis(gameFacts.pitching.metsBullpen),
+      opp: buildBullpenAnalysis(gameFacts.pitching.oppBullpen)
+    }
+  };
+
+  analysisObject.context = buildContextAnalysis(gameFacts, analysisObject);
+  return analysisObject;
+}
+
+function buildMissingMetricsList(analysisObject) {
+  const checks = [
+    ["Game weather", analysisObject?.gameInfo?.weather],
+    ["Park factor", analysisObject?.context?.parkFactor],
+    ["Mets team wRC+ vs handedness", analysisObject?.offense?.mets?.teamWrcPlusVsHandedness],
+    ["Opponent team wRC+ vs handedness", analysisObject?.offense?.opp?.teamWrcPlusVsHandedness],
+    ["Mets projected lineup wRC+ vs handedness", analysisObject?.offense?.mets?.projectedLineupWrcPlusVsHandedness],
+    ["Opponent projected lineup wRC+ vs handedness", analysisObject?.offense?.opp?.projectedLineupWrcPlusVsHandedness],
+    ["Mets home/away split wRC+", analysisObject?.offense?.mets?.homeAwayWrcPlus],
+    ["Opponent home/away split wRC+", analysisObject?.offense?.opp?.homeAwayWrcPlus],
+    ["Mets missing key hitters", analysisObject?.offense?.mets?.missingKeyHitters],
+    ["Opponent missing key hitters", analysisObject?.offense?.opp?.missingKeyHitters],
+    ["Pitcher splits vs opponent handedness/profile", analysisObject?.pitchers?.mets?.splitsVsOpponentHandedness],
+    ["Opponent pitcher splits vs opponent handedness/profile", analysisObject?.pitchers?.opp?.splitsVsOpponentHandedness],
+    ["Mets bullpen leverage-arm availability", analysisObject?.bullpen?.mets?.availabilityTopArms],
+    ["Opponent bullpen leverage-arm availability", analysisObject?.bullpen?.opp?.availabilityTopArms]
+  ];
+
+  return checks.filter(([, value]) => value == null).map(([label]) => label);
+}
+
+function evaluateWeightedMetric(left, right, { higherBetter = true, scale = 1 } = {}) {
+  if (!Number.isFinite(left) || !Number.isFinite(right)) return 0;
+  const diff = higherBetter ? (left - right) : (right - left);
+  return diff * scale;
+}
+
+function classifyStrength(scoreAbs, slight = 4, moderate = 8) {
+  if (scoreAbs >= moderate) return "strong";
+  if (scoreAbs >= slight) return "moderate";
+  if (scoreAbs > 0) return "slight";
+  return "even";
+}
+
+function buildCategoryResult(category, weight, rawScore, explanation, fallback = "Even") {
+  const scoreAbs = Math.abs(rawScore);
+  const strength = classifyStrength(scoreAbs);
+  const edge = rawScore > 0 ? "Mets edge" : rawScore < 0 ? "Opponent edge" : fallback;
+  const direction = rawScore > 0 ? 1 : rawScore < 0 ? -1 : 0;
+  const normalizedStrength = strength === "strong" ? 1 : strength === "moderate" ? 0.66 : strength === "slight" ? 0.33 : 0;
+  return {
+    category,
+    weight,
+    edge,
+    strength,
+    explanation,
+    rawScore: Number(rawScore.toFixed(2)),
+    weightedImpact: Number((direction * weight * normalizedStrength).toFixed(2))
+  };
+}
+
+function withCategoryMeta(result, meta = {}) {
+  return {
+    ...result,
+    dataMode: meta.dataMode || "real",
+    supportedBy: meta.supportedBy || [],
+    missing: meta.missing || []
+  };
+}
+
+function scoreStartingPitchingEdge(analysisObject) {
+  const mets = analysisObject.pitchers.mets;
+  const opp = analysisObject.pitchers.opp;
+  let score = 0;
+  score += evaluateWeightedMetric(mets.xERA, opp.xERA, { higherBetter: false, scale: 6 });
+  score += evaluateWeightedMetric(mets.fip, opp.fip, { higherBetter: false, scale: 5 });
+  score += evaluateWeightedMetric(mets.whip, opp.whip, { higherBetter: false, scale: 4 });
+  score += evaluateWeightedMetric(mets.kMinusBbPct, opp.kMinusBbPct, { higherBetter: true, scale: 0.8 });
+  score += evaluateWeightedMetric(mets.hardHitPct, opp.hardHitPct, { higherBetter: false, scale: 0.25 });
+  score += evaluateWeightedMetric(mets.barrelPct, opp.barrelPct, { higherBetter: false, scale: 0.5 });
+  score += evaluateWeightedMetric(mets.xwOBAAllowed, opp.xwOBAAllowed, { higherBetter: false, scale: 25 });
+  score += evaluateWeightedMetric(mets.recentStarts.avgInnings, opp.recentStarts.avgInnings, { higherBetter: true, scale: 1.5 });
+  const explanation = `xERA/FIP profile: ${mets.name} ${formatMetric(mets.xERA, 2)}/${formatMetric(mets.fip, 2)} vs ${opp.name} ${formatMetric(opp.xERA, 2)}/${formatMetric(opp.fip, 2)}; K-BB% ${formatMetric(mets.kMinusBbPct, 1)} to ${formatMetric(opp.kMinusBbPct, 1)}.`;
+  return withCategoryMeta(
+    buildCategoryResult("Starting Pitching", 30, score, explanation),
+    {
+      dataMode: "real",
+      supportedBy: ["ERA", "xERA", "FIP", "WHIP", "K-BB%", "hard-hit allowed", "barrel allowed", "xwOBA allowed", "recent starts"]
+    }
+  );
+}
+
+function scoreLineupEdge(analysisObject) {
+  const mets = analysisObject.offense.mets;
+  const opp = analysisObject.offense.opp;
+  const hasSplitData = [
+    mets.teamWrcPlusVsHandedness,
+    opp.teamWrcPlusVsHandedness,
+    mets.projectedLineupWrcPlusVsHandedness,
+    opp.projectedLineupWrcPlusVsHandedness
+  ].every(Number.isFinite);
+
+  let score = 0;
+  if (hasSplitData) {
+    score += evaluateWeightedMetric(mets.teamWrcPlusVsHandedness, opp.teamWrcPlusVsHandedness, { higherBetter: true, scale: 0.5 });
+    score += evaluateWeightedMetric(mets.projectedLineupWrcPlusVsHandedness, opp.projectedLineupWrcPlusVsHandedness, { higherBetter: true, scale: 0.45 });
+    score += evaluateWeightedMetric(mets.projectedLineupWAR, opp.projectedLineupWAR, { higherBetter: true, scale: 2.5 });
+    score += evaluateWeightedMetric(mets.xwOBA, opp.xwOBA, { higherBetter: true, scale: 15 });
+    const explanation = `Handedness split edge: team wRC+ ${formatMetric(mets.teamWrcPlusVsHandedness, 1)} vs ${formatMetric(opp.teamWrcPlusVsHandedness, 1)}, projected lineup split wRC+ ${formatMetric(mets.projectedLineupWrcPlusVsHandedness, 1)} vs ${formatMetric(opp.projectedLineupWrcPlusVsHandedness, 1)}.`;
+    return withCategoryMeta(
+      buildCategoryResult("Lineup vs Handedness", 25, score, explanation),
+      {
+        dataMode: "real",
+        supportedBy: ["team wRC+ vs handedness", "projected lineup wRC+ vs handedness", "projected lineup WAR"]
+      }
+    );
+  }
+
+  score += evaluateWeightedMetric(mets.projectedLineupWRCPlus, opp.projectedLineupWRCPlus, { higherBetter: true, scale: 0.2 });
+  score += evaluateWeightedMetric(mets.projectedLineupWAR, opp.projectedLineupWAR, { higherBetter: true, scale: 2 });
+  score += evaluateWeightedMetric(mets.xwOBA, opp.xwOBA, { higherBetter: true, scale: 12 });
+  score += evaluateWeightedMetric(mets.hardHitPct, opp.hardHitPct, { higherBetter: true, scale: 0.12 });
+  score += evaluateWeightedMetric(mets.barrelPct, opp.barrelPct, { higherBetter: true, scale: 0.18 });
+  score += evaluateWeightedMetric(mets.bbPct, opp.bbPct, { higherBetter: true, scale: 0.2 });
+  score += evaluateWeightedMetric(mets.kPct, opp.kPct, { higherBetter: false, scale: 0.2 });
+  score = Number((score * 0.55).toFixed(2));
+  const explanation = `Overall lineup quality only: projected WAR ${formatMetric(mets.projectedLineupWAR, 1)} vs ${formatMetric(opp.projectedLineupWAR, 1)}, projected lineup wRC+ ${formatMetric(mets.projectedLineupWRCPlus, 1)} vs ${formatMetric(opp.projectedLineupWRCPlus, 1)}, xwOBA ${formatMetric(mets.xwOBA, 3)} vs ${formatMetric(opp.xwOBA, 3)}.`;
+  return withCategoryMeta(
+    buildCategoryResult("Overall Lineup Quality", 25, score, explanation, "Limited data"),
+    {
+      dataMode: "fallback",
+      supportedBy: ["projected lineup WAR", "projected lineup wRC+", "xwOBA", "contact quality"],
+      missing: ["team wRC+ vs handedness", "projected lineup wRC+ vs handedness"]
+    }
+  );
+}
+
+function pitcherOverperformanceSignal(pitcher) {
+  let signal = 0;
+  if (pitcher?.era != null && pitcher?.xERA != null) signal += Math.max(0, pitcher.xERA - pitcher.era);
+  if (pitcher?.era != null && pitcher?.fip != null) signal += Math.max(0, pitcher.fip - pitcher.era);
+  if (pitcher?.hardHitPct != null && pitcher.hardHitPct >= 40) signal += 0.75;
+  if (pitcher?.barrelPct != null && pitcher.barrelPct >= 9) signal += 0.75;
+  if (pitcher?.kMinusBbPct != null && pitcher.kMinusBbPct < 12) signal += 0.75;
+  return Number(signal.toFixed(2));
+}
+
+function scoreRegressionEdge(analysisObject) {
+  const metsOff = analysisObject.offense.mets.regressionSignals;
+  const oppOff = analysisObject.offense.opp.regressionSignals;
+  const metsPitcherFade = pitcherOverperformanceSignal(analysisObject.pitchers.mets);
+  const oppPitcherFade = pitcherOverperformanceSignal(analysisObject.pitchers.opp);
+  let score = 0;
+  score += evaluateWeightedMetric(metsOff?.baMinusXba, oppOff?.baMinusXba, { higherBetter: false, scale: 40 });
+  score += evaluateWeightedMetric(metsOff?.wobaMinusXwoba, oppOff?.wobaMinusXwoba, { higherBetter: false, scale: 60 });
+  score += evaluateWeightedMetric(oppPitcherFade, metsPitcherFade, { higherBetter: true, scale: 4 });
+  const explanation = `Regression lens: Mets BA-xBA ${formatMetric(metsOff?.baMinusXba, 3)} and wOBA-xwOBA ${formatMetric(metsOff?.wobaMinusXwoba, 3)}; opponent starter overperformance signal ${formatMetric(oppPitcherFade, 2)}.`;
+  return withCategoryMeta(
+    buildCategoryResult("Regression Signals", 10, score, explanation),
+    {
+      dataMode: "real",
+      supportedBy: ["BA vs xBA", "wOBA vs xwOBA", "starter surface-vs-underlying gap"]
+    }
+  );
+}
+
+function scoreBullpenEdge(analysisObject) {
+  const mets = analysisObject.bullpen.mets;
+  const opp = analysisObject.bullpen.opp;
+  let score = 0;
+  score += evaluateWeightedMetric(mets.xFIP, opp.xFIP, { higherBetter: false, scale: 3.5 });
+  score += evaluateWeightedMetric(mets.whip, opp.whip, { higherBetter: false, scale: 3 });
+  score += evaluateWeightedMetric(mets.kMinusBbPct, opp.kMinusBbPct, { higherBetter: true, scale: 0.5 });
+  score += evaluateWeightedMetric(mets.last3DaysIP, opp.last3DaysIP, { higherBetter: false, scale: 0.4 });
+  if (mets.availabilityTopArms == null || opp.availabilityTopArms == null) {
+    score = Number((score * 0.75).toFixed(2));
+  }
+  const explanation = `Bullpen shape: xFIP ${formatMetric(mets.xFIP, 2)} vs ${formatMetric(opp.xFIP, 2)}, WHIP ${formatMetric(mets.whip, 2)} vs ${formatMetric(opp.whip, 2)}, last 3-day usage ${formatMetric(mets.last3DaysIP, 1)} IP vs ${formatMetric(opp.last3DaysIP, 1)} IP.`;
+  return withCategoryMeta(
+    buildCategoryResult("Bullpen", 15, score, explanation, "Limited data"),
+    {
+      dataMode: mets.availabilityTopArms == null || opp.availabilityTopArms == null ? "fallback" : "real",
+      supportedBy: ["recent usage", "WHIP", "K-BB%", "xFIP"],
+      missing: mets.availabilityTopArms == null || opp.availabilityTopArms == null ? ["leverage-arm availability"] : []
+    }
+  );
+}
+
+function scoreHomeAwayEdge(analysisObject) {
+  const metsRest = analysisObject.context.restDays.mets;
+  const oppRest = analysisObject.context.restDays.opp;
+  const metsHomeAway = analysisObject.gameInfo.homeAway === "home" ? 1 : -1;
+  let score = metsHomeAway * 3;
+  score += evaluateWeightedMetric(metsRest, oppRest, { higherBetter: true, scale: 1.5 });
+  score = Number((score * 0.35).toFixed(2));
+  const explanation = `Split context is limited; fallback to venue and rest edge. Mets are ${analysisObject.gameInfo.homeAway} with rest ${metsRest ?? "N/A"} vs opponent ${oppRest ?? "N/A"} days.`;
+  return withCategoryMeta(
+    buildCategoryResult("Home/Away Split", 10, score, explanation, "Limited data"),
+    {
+      dataMode: "fallback",
+      supportedBy: ["venue", "rest"],
+      missing: ["home/away split wRC+", "park factor"]
+    }
+  );
+}
+
+function scoreContextEdge(analysisObject) {
+  const metsTravel = analysisObject.context.travel.mets || "";
+  const oppTravel = analysisObject.context.travel.opp || "";
+  let score = 0;
+  if (/road to home/i.test(metsTravel)) score += 1;
+  if (/road to road/i.test(metsTravel)) score -= 1;
+  if (/road to road/i.test(oppTravel)) score += 1;
+  if (analysisObject.context.bullpenTax.opp === "heavy") score += 2;
+  if (analysisObject.context.bullpenTax.mets === "heavy") score -= 2;
+  score = Number((score * 0.6).toFixed(2));
+  const explanation = `Schedule/context: Mets travel ${metsTravel || "N/A"}, opponent travel ${oppTravel || "N/A"}, bullpen tax ${analysisObject.context.bullpenTax.mets}/${analysisObject.context.bullpenTax.opp}.`;
+  return withCategoryMeta(
+    buildCategoryResult("Context", 5, score, explanation, "Limited data"),
+    {
+      dataMode: "fallback",
+      supportedBy: ["travel", "rest", "bullpen tax"],
+      missing: ["weather", "park factor"]
+    }
+  );
+}
+
+function scoreMarketEdge(analysisObject, projectedWinProbability) {
+  const implied = analysisObject.gameInfo.impliedProbability;
+  const edge = projectedWinProbability != null && implied != null ? projectedWinProbability - implied : 0;
+  const explanation = `Market check: Mets ML ${analysisObject.gameInfo.metsMoneyline ?? "N/A"} implies ${implied == null ? "N/A" : `${formatMetric(implied * 100, 1)}%`} vs model ${projectedWinProbability == null ? "N/A" : `${formatMetric(projectedWinProbability * 100, 1)}%`}.`;
+  return withCategoryMeta(
+    buildCategoryResult("Market Value", 5, edge * 100, explanation, "Limited data"),
+    {
+      dataMode: implied == null ? "fallback" : "real",
+      supportedBy: implied == null ? [] : ["current moneyline", "implied probability"],
+      missing: implied == null ? ["current moneyline / implied probability"] : []
+    }
+  );
+}
+
+function buildEdgeScoring(analysisObject) {
+  const categories = [
+    scoreStartingPitchingEdge(analysisObject),
+    scoreLineupEdge(analysisObject),
+    scoreBullpenEdge(analysisObject),
+    scoreRegressionEdge(analysisObject),
+    scoreHomeAwayEdge(analysisObject),
+    scoreContextEdge(analysisObject)
+  ];
+  const baseImpact = categories.reduce((sum, category) => sum + category.weightedImpact, 0);
+  const projectedWinProbability = Math.max(0.35, Math.min(0.7, 0.5 + (baseImpact / 100)));
+  const market = scoreMarketEdge(analysisObject, projectedWinProbability);
+  const allCategories = [...categories, market];
+  const totalWeightedImpact = allCategories.reduce((sum, category) => sum + category.weightedImpact, 0);
+  const criticalMissingCount = [
+    analysisObject?.offense?.mets?.teamWrcPlusVsHandedness,
+    analysisObject?.offense?.opp?.teamWrcPlusVsHandedness,
+    analysisObject?.gameInfo?.impliedProbability,
+    analysisObject?.context?.parkFactor,
+    analysisObject?.gameInfo?.weather,
+    analysisObject?.bullpen?.mets?.availabilityTopArms,
+    analysisObject?.bullpen?.opp?.availabilityTopArms
+  ].filter((value) => value == null).length;
+  let confidence = Math.abs(totalWeightedImpact) >= 25 ? "high" : Math.abs(totalWeightedImpact) >= 12 ? "medium" : "low";
+  if (criticalMissingCount >= 4) confidence = "low";
+  else if (criticalMissingCount >= 2 && confidence === "high") confidence = "medium";
+  return {
+    categories: allCategories,
+    projectedWinProbability: Number(projectedWinProbability.toFixed(3)),
+    totalWeightedImpact: Number(totalWeightedImpact.toFixed(2)),
+    confidence,
+    criticalMissingCount
+  };
+}
+
+function decidePick(edgeScoring, analysisObject) {
+  const implied = analysisObject.gameInfo.impliedProbability;
+  const projected = edgeScoring.projectedWinProbability;
+  const majorCategories = edgeScoring.categories.filter((category) => ["Starting Pitching", "Overall Lineup Quality", "Lineup vs Handedness", "Bullpen", "Regression Signals"].includes(category.category));
+  const metsMajorEdges = majorCategories.filter((category) => category.edge === "Mets edge").length;
+  const oppMajorEdges = majorCategories.filter((category) => category.edge === "Opponent edge").length;
+  const fallbackHeavy = edgeScoring.categories.filter((category) => category.dataMode === "fallback").length >= 3;
+  let analyticalLean = "Mixed";
+  let valueEdge = null;
+
+  if (projected != null && implied != null) {
+    valueEdge = Number(((projected - implied) * 100).toFixed(1));
+  }
+
+  if (edgeScoring.totalWeightedImpact >= 8 && metsMajorEdges > oppMajorEdges) analyticalLean = "Mets";
+  else if (edgeScoring.totalWeightedImpact >= 2) analyticalLean = "Slight Mets edge";
+  else if (edgeScoring.totalWeightedImpact <= -8 && oppMajorEdges >= metsMajorEdges) analyticalLean = "Opponent";
+  else if (edgeScoring.totalWeightedImpact <= -2) analyticalLean = "Slight opponent edge";
+
+  if (valueEdge != null) {
+    if (valueEdge >= 4 && edgeScoring.totalWeightedImpact > 0) analyticalLean = "Mets";
+    else if (valueEdge <= -4 && edgeScoring.totalWeightedImpact < 0) analyticalLean = "Opponent";
+  }
+
+  let confidence = edgeScoring.confidence;
+  if (fallbackHeavy && confidence === "medium") confidence = "low";
+  if ((analyticalLean === "Opponent" || analyticalLean === "Slight opponent edge" || analyticalLean === "Mixed") && confidence === "high") confidence = "medium";
+
+  return {
+    analyticalLean,
+    officialPick: "Mets ML",
+    confidence,
+    valueEdge,
+    metsMajorEdges,
+    oppMajorEdges,
+    fallbackHeavy
+  };
+}
+
+function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics = []) {
+  const topEdges = [...edgeScoring.categories]
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .filter((edge) => edge.strength !== "even")
+    .slice(0, 4);
+  const pick = decidePick(edgeScoring, analysisObject);
+  const strongest = topEdges[0] || null;
+  const opponent = gameFacts.game.opponent;
+  const headline = strongest
+    ? `Mets vs ${opponent}: ${strongest.category.toLowerCase()} is the clearest angle`
+    : `Mets vs ${opponent}: mixed board, limited conviction`;
+  const synopsis = [
+    `${gameFacts.pitching.mets.name} vs ${gameFacts.pitching.opp.name} sets the matchup, but the strongest supported angle is ${strongest ? strongest.category.toLowerCase() : "a mixed board with limited conviction"}.`,
+    strongest?.explanation || null,
+    edgeScoring.confidence === "low" ? "Several key inputs are still missing, so the read should stay conservative." : null
+  ].filter(Boolean).slice(0, 3).join(" ");
+
+  const metsAngles = topEdges
+    .filter((edge) => edge.edge === "Mets edge")
+    .slice(0, 4)
+    .map((edge) => edge);
+  const riskAngles = edgeScoring.categories
+    .filter((edge) => edge.edge === "Opponent edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 3);
+  const proMetsOfficialAngles = edgeScoring.categories
+    .filter((edge) => edge.edge === "Mets edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 3);
+
+  const contextLine = `Series game ${gameFacts.game.seriesGameNumber || 1}. Rest/travel: Mets ${analysisObject.context.restDays.mets ?? "N/A"} days, opponent ${analysisObject.context.restDays.opp ?? "N/A"}; bullpen tax ${analysisObject.bullpen.mets.taxLevel}/${analysisObject.bullpen.opp.taxLevel}.`;
+  const whyMets = metsAngles.length
+    ? metsAngles.slice(0, 2).map((edge) => {
+        if (/overall lineup quality|lineup vs handedness/i.test(edge.category)) {
+          return `The best Mets case is lineup quality: the projected group carries a small WAR edge and the stronger expected contact profile, even without true handedness-split data.`;
+        }
+        if (edge.category === "Starting Pitching") {
+          return `The pitching case is that ${gameFacts.pitching.mets.name} has the cleaner underlying run-prevention profile in the categories we can actually measure today.`;
+        }
+        if (edge.category === "Bullpen") {
+          return `There is at least a modest bullpen path if New York can get to the middle innings without trailing, because the season-long gap is close and usage is heavy on both sides.`;
+        }
+        return edge.explanation;
+      }).join(" ")
+    : "There is no strong supported Mets angle beyond a modest overall lineup-quality edge, which is why the read stays conservative.";
+  const whereRisk = riskAngles.length
+    ? riskAngles.slice(0, 2).map((edge) => {
+        if (edge.category === "Regression Signals") {
+          return `The main concern is that the Mets' contact-quality indicators still have not converted into actual production, so the offense is more projection than payoff right now.`;
+        }
+        if (edge.category === "Starting Pitching") {
+          return `${gameFacts.pitching.opp.name} still owns the better K-BB profile, so the strike-throwing edge is on the other side even if the surface numbers are not.`;
+        }
+        if (edge.category === "Bullpen") {
+          return `Bullpen support is not a clean Mets advantage, especially with both clubs carrying heavy recent workloads and no verified top-arm availability feed.`;
+        }
+        if (edge.category === "Home/Away Split" || edge.category === "Context") {
+          return `Context also leans slightly against New York because this is a road spot and the split data behind that angle is still incomplete.`;
+        }
+        return edge.explanation;
+      }).join(" ")
+    : "There is no single red-flag risk angle, but the missing data keeps the overall conviction down.";
+  const analyticalLeanBody = pick.analyticalLean === "Mets"
+    ? "The weighted board comes in on the Mets side."
+    : pick.analyticalLean === "Slight Mets edge"
+      ? "The weighted board leans slightly toward New York, but not by enough to overstate the case."
+      : pick.analyticalLean === "Opponent"
+        ? "The weighted board leans to the other side, largely because New York is still carrying more real risk than clean support in the current data."
+        : pick.analyticalLean === "Slight opponent edge"
+          ? "The weighted board gives the opponent a slight edge, even if the gap is not overwhelming."
+          : "The weighted board is mixed, with too many missing inputs to treat either side as a clean analytical play.";
+  const officialPickSummaryParts = [];
+  if (proMetsOfficialAngles[0]) {
+    if (/overall lineup quality|lineup vs handedness/i.test(proMetsOfficialAngles[0].category)) {
+      officialPickSummaryParts.push("The clearest case for backing the Mets is that the projected lineup still grades better overall, especially in expected offensive quality.");
+    } else if (proMetsOfficialAngles[0].category === "Starting Pitching") {
+      officialPickSummaryParts.push(`The best path starts with ${gameFacts.pitching.mets.name} giving New York the steadier underlying pitching line.`);
+    } else if (proMetsOfficialAngles[0].category === "Bullpen") {
+      officialPickSummaryParts.push("There is still a workable bullpen path for New York if the game stays close into the middle innings.");
+    } else {
+      officialPickSummaryParts.push(proMetsOfficialAngles[0].explanation);
+    }
+  }
+  if (proMetsOfficialAngles[1]) {
+    if (proMetsOfficialAngles[1].category === "Regression Signals") {
+      officialPickSummaryParts.push("There is also a reasonable positive-regression case if the Mets' contact quality finally cashes in.");
+    } else {
+      officialPickSummaryParts.push(proMetsOfficialAngles[1].explanation);
+    }
+  }
+  if (pick.analyticalLean === "Opponent" || pick.analyticalLean === "Slight opponent edge" || pick.analyticalLean === "Mixed") {
+    officialPickSummaryParts.push("That said, this is one of the more self-aware Mets ML spots: the analytical read is not fully on their side, so the brand pick is leaning on the best plausible New York path rather than a clean all-in edge.");
+  }
+  const pickSummary = officialPickSummaryParts.filter(Boolean).slice(0, 3).join(" ");
+
+  return {
+    raw: JSON.stringify({
+      generatedAt: new Date().toISOString(),
+      analysisObject,
+      edgeScoring,
+      missingMetrics,
+      pick
+    }),
+    headline,
+    synopsis,
+    edgeTable: edgeScoring.categories.map((edge) => ({
+      category: edge.category,
+      edge: edge.edge,
+      strength: edge.strength,
+      reason: edge.explanation,
+      dataMode: edge.dataMode
+    })),
+    keyAngles: topEdges.map((edge) => edge.explanation),
+    pick: pick.officialPick,
+    analyticalLean: pick.analyticalLean,
+    confidence: pick.confidence,
+    missingMetrics,
+    analysisObject,
+    edgeScoring,
+    sections: [
+      { heading: "1. Matchup Snapshot", body: synopsis },
+      { heading: "2. Starting Pitching", body: edgeScoring.categories.find((edge) => edge.category === "Starting Pitching")?.explanation || "Pitching edge is neutral." },
+      { heading: "3. Lineup Edge", body: edgeScoring.categories.find((edge) => /Lineup|Overall Lineup Quality/.test(edge.category))?.explanation || "Lineup edge is neutral." },
+      { heading: "4. Bullpen / Context", body: `${edgeScoring.categories.find((edge) => edge.category === "Bullpen")?.explanation || ""} ${contextLine}`.trim() },
+      { heading: "5. Why the Mets Have a Case", body: whyMets },
+      { heading: "6. Where the Risk Is", body: whereRisk },
+      { heading: "7. Analytical Lean", body: `${pick.analyticalLean}. ${analyticalLeanBody}` },
+      { heading: "8. Official MetsMoneyline Pick", body: pickSummary }
+    ],
+    pickSummary,
+    officialPick: "Official Pick: Mets ML"
+  };
+}
+
 function buildFallbackWriteup(gameFacts) {
   const opponent = gameFacts.game.opponent;
   const metsRecord = sanitizeRecord(gameFacts.records.metsRecord);
@@ -1766,91 +2504,17 @@ function buildFallbackWriteup(gameFacts) {
         body: `Today's Pick: New York Mets Moneyline. Reason: better lineup quality and the stronger bullpen numbers.`
       }
     ],
-    pickSummary: `Play the Mets moneyline. The case is simple: better team offense, cleaner bullpen profile, and a favorable recent series result.`,
-    officialPick: "Today's Pick: New York Mets Moneyline"
+    pickSummary: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.`,
+    officialPick: "Official Pick: Mets ML",
+    analyticalLean: "Mets"
   };
 }
 
 async function generateWriteupFromFacts(gameFacts) {
-  const factsForModel = sanitizeForModel(gameFacts);
-  ensureNoUndefinedStrings(factsForModel);
-
-  if (!openai) {
-    console.warn("[warn] OPENAI_API_KEY is not set. Falling back to deterministic writeup.");
-    return buildFallbackWriteup(gameFacts);
-  }
-
-  const system = [
-    "You write MetsMoneyline game previews.",
-    "Return JSON only.",
-    "You may only use facts present in the provided gameFacts object.",
-    "Do not invent records, standings, injuries, lineups, or recap details.",
-    "If a fact is null or missing, say it is not yet announced or omit it.",
-    "When gameFacts.gameContext.lastMeeting exists, explicitly reference the most recent game these teams played and include concrete details from that game.",
-    "When gameFacts.editorial.recentSources exists, use that sourced preview/recap context as support for the analysis and mention the specific sourced detail rather than speaking generically.",
-    "Write in a technical, stat-driven, concise style.",
-    "Use a betting-note structure: split -> edge -> implication.",
-    "Prioritize matchup mechanics, underlying metrics, handedness splits, contact quality, strikeout/walk profile, and bullpen indicators.",
-    "Keep every section tight and analytical. No filler, no scene-setting, no generic newsletter language.",
-    "Avoid phrases like by design, keeps it factual, remains not yet announced, or references to scripts/templates/automation.",
-    "Always pick the Mets.",
-    "There must be exactly 6 sections with these headings:",
-    "1. Short Recap",
-    "2. Pitching Matchup",
-    "3. Lineup Comparison",
-    "4. Bullpen",
-    "5. Key Edges",
-    "6. Today's Pick"
-  ].join(" ");
-
-  const user = JSON.stringify({
-    instructions: {
-      outputShape: {
-        sections: [
-          { heading: "1. Short Recap", body: "..." },
-          { heading: "2. Pitching Matchup", body: "..." },
-          { heading: "3. Lineup Comparison", body: "..." },
-          { heading: "4. Bullpen", body: "..." },
-          { heading: "5. Key Edges", body: "..." },
-          { heading: "6. Today's Pick", body: "..." }
-        ],
-        pickSummary: "one sharp, human-sounding paragraph",
-        officialPick: "Today's Pick: New York Mets Moneyline"
-      }
-    },
-    gameFacts: factsForModel
-  });
-
-  const completion = await openai.chat.completions.create({
-    model: DEFAULT_MODEL,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: user }
-    ]
-  });
-
-  const raw = completion?.choices?.[0]?.message?.content || "";
-  let parsed;
-  try {
-    parsed = JSON.parse(raw);
-  } catch (error) {
-    throw new Error(`OpenAI returned invalid JSON: ${error.message}`);
-  }
-
-  if (!Array.isArray(parsed.sections) || parsed.sections.length !== 6) {
-    throw new Error("OpenAI writeup must contain exactly 6 sections.");
-  }
-
-  return {
-    raw,
-    sections: parsed.sections.map((section) => ({
-      heading: String(section.heading || ""),
-      body: cleanText(section.body || "")
-    })),
-    pickSummary: cleanText(parsed.pickSummary || ""),
-    officialPick: parsed.officialPick || "Today's Pick: New York Mets Moneyline"
-  };
+  const analysisObject = buildGameAnalysisObject(gameFacts);
+  const missingMetrics = buildMissingMetricsList(analysisObject);
+  const edgeScoring = buildEdgeScoring(analysisObject);
+  return buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics);
 }
 
 function buildTrendArray(gameFacts) {
@@ -1901,7 +2565,7 @@ function buildPendingHistoryEntry(game, existingEntry = null) {
     return {
       ...existingEntry,
       gameId: game.id || existingEntry?.gameId || null,
-      officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
+      officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Official Pick: Mets ML",
       odds: moneyline,
       stake: typeof existingEntry?.stake === "number" ? existingEntry.stake : 100
     };
@@ -1914,7 +2578,7 @@ function buildPendingHistoryEntry(game, existingEntry = null) {
     estimated: Boolean(existingEntry?.estimated ?? false),
     status: "pending",
     finalScore: null,
-    officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
+    officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Official Pick: Mets ML",
     market: existingEntry?.market || "Mets Moneyline",
     odds: moneyline,
     stake: typeof existingEntry?.stake === "number" ? existingEntry.stake : 100,
@@ -1945,7 +2609,7 @@ function toHistoryEntry(game, existingEntry = null) {
     estimated: Boolean(existingEntry?.estimated ?? false),
     status: "final",
     finalScore,
-    officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Today's Pick: New York Mets Moneyline",
+    officialPick: game.writeup?.officialPick || existingEntry?.officialPick || "Official Pick: Mets ML",
     market: existingEntry?.market || "Mets Moneyline",
     odds: moneyline,
     stake,
@@ -1989,7 +2653,7 @@ function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEnt
 function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
-  const officialPick = writeup.officialPick || "Today's Pick: New York Mets Moneyline";
+  const officialPick = writeup.officialPick || "Official Pick: Mets ML";
   const sections = writeup.sections;
   const previousGames = Array.isArray(previousOutput?.games) ? previousOutput.games : [];
 
@@ -2036,9 +2700,19 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     trends: buildTrendArray(gameFacts),
     writeup: {
       raw: writeup.raw,
+      headline: writeup.headline || null,
+      synopsis: writeup.synopsis || null,
       sections,
       pickSummary: writeup.pickSummary,
-      officialPick
+      officialPick,
+      edgeTable: writeup.edgeTable || [],
+      keyAngles: writeup.keyAngles || [],
+      pick: writeup.pick || null,
+      analyticalLean: writeup.analyticalLean || null,
+      confidence: writeup.confidence || null,
+      missingMetrics: writeup.missingMetrics || [],
+      analysisObject: writeup.analysisObject || null,
+      edgeScoring: writeup.edgeScoring || null
     },
     bettingHistory: null,
     weather: null
@@ -2113,7 +2787,7 @@ function buildEmailHtml(game) {
     <h1 style="margin-bottom: 8px;">New York Mets vs ${game.opponent}</h1>
     <p style="margin-top: 0; color: #4b5563;">${game.date} | ${game.time} | ${game.ballpark}</p>
     ${sectionsHtml}
-    <p><strong>${game.writeup?.officialPick || "Today's Pick: New York Mets Moneyline"}</strong></p>
+    <p><strong>${game.writeup?.officialPick || "Official Pick: Mets ML"}</strong></p>
   </body>
 </html>`;
 }
@@ -2154,8 +2828,8 @@ async function createButtondownDraft(output) {
 }
 
 async function run() {
-  const { date, dryRun } = parseArgs(process.argv.slice(2));
-  console.log(`Building Mets game package for ${date}${dryRun ? " (dry run)" : ""}...`);
+  const { date, dryRun, debugAnalysis } = parseArgs(process.argv.slice(2));
+  console.log(`Building Mets game package for ${date}${dryRun ? " (dry run)" : ""}${debugAnalysis ? " (debug analysis)" : ""}...`);
 
   let gameFacts;
   try {
@@ -2182,6 +2856,24 @@ async function run() {
   const previousOutput = loadPreviousOutput();
   const pickHistory = loadPickHistory();
   const output = buildGameJson(gameFacts, writeup, previousOutput, pickHistory);
+
+  if (debugAnalysis) {
+    console.log(JSON.stringify({
+      analysisObject: writeup.analysisObject || null,
+      edgeScoring: writeup.edgeScoring || null,
+      finalWriteup: {
+        headline: writeup.headline || null,
+        synopsis: writeup.synopsis || null,
+        edgeTable: writeup.edgeTable || [],
+        sections: writeup.sections || [],
+        analyticalLean: writeup.analyticalLean || null,
+        pickSummary: writeup.pickSummary || null,
+        officialPick: writeup.officialPick || null,
+        confidence: writeup.confidence || null
+      },
+      missingMetrics: writeup.missingMetrics || []
+    }, null, 2));
+  }
 
   if (dryRun) {
     console.log(JSON.stringify(output, null, 2));
