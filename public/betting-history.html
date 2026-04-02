@@ -130,10 +130,6 @@
       });
     }
 
-    function isSpringTrainingDate(dateStr) {
-      return new Date(dateStr + "T00:00:00") < new Date("2026-04-02T00:00:00");
-    }
-
     function getTeamLogoUrl(teamName) {
       const slug = ESPN_LOGO[teamName];
       return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
@@ -181,15 +177,8 @@
         };
       });
 
-      const settledEntries = withCumulative
-        .filter((entry) => entry.settled)
-        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
-      const pendingEntries = withCumulative
-        .filter((entry) => !entry.settled)
-        .sort((a, b) => String(b.date).localeCompare(String(a.date)));
-
       return {
-        displayEntries: [...settledEntries, ...pendingEntries],
+        displayEntries: [...withCumulative].sort((a, b) => String(b.date).localeCompare(String(a.date))),
         seasonProfit: runningProfit
       };
     }
@@ -217,12 +206,9 @@
             ? "Away"
             : "&mdash;";
         const logoUrl = getTeamLogoUrl(entry.opponent);
-        const springBadge = isSpringTrainingDate(entry.date)
-          ? ` <span class="badge badge-spring">ST</span>`
-          : "";
         const opponentCell = logoUrl
-          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent}"><span>${entry.opponent}${springBadge}</span></div>`
-          : `${entry.opponent}${springBadge}`;
+          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent}"><span>${entry.opponent}</span></div>`
+          : `${entry.opponent}`;
 
         return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${entry.estimated ? '<span class="badge">Backfilled</span>' : '&mdash;'}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
       });
