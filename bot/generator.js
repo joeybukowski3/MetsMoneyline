@@ -3343,6 +3343,21 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         `).join("")}
       </tbody>
     </table>`;
+  const renderSummarySheetTable = (rows, headers = null) => `
+    <table style="width:100%;height:100%;border-collapse:collapse;font-size:14px;border:1px solid #d6dde8;background:#ffffff;">
+      ${headers ? `
+        <thead>
+          <tr>
+            ${headers.map((header) => `<th style="${header.style}">${valueCell(header.label)}</th>`).join("")}
+          </tr>
+        </thead>` : ""}
+      <tbody>
+        ${(rows || []).map((row) => `
+          <tr>
+            ${row.map((cell) => `<td style="${cell.style}">${valueCell(cell.value)}</td>`).join("")}
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
   const renderSingleSideTable = (rows, heading, teamColor) => `
     <div class="card full-card" style="padding:1.05rem 1.1rem;">
       <div style="${smallLabel}color:${teamColor};margin-bottom:0.65rem;">${heading}</div>
@@ -3443,7 +3458,33 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </div>
     </div>`;
   };
+  const renderPitcherColumn = (card, tables = []) => `
+    <div style="display:flex;flex-direction:column;gap:14px;min-width:0;">
+      ${renderPitcherCard(card)}
+      ${tables.map((table) => `
+        <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
+          <div style="margin:0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">${valueCell(table.title)}</div>
+          ${renderAdvancedSheetTable(table)}
+        </div>`).join("")}
+    </div>`;
   const schedulingRow = report.meta?.schedulingSpot;
+  const gameDetailsRows = (report.gameDetailsTable?.rows || []).map((row) => ([
+    { value: row.label, style: "width:34%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f3f6fb;color:#374151;font-weight:700;" },
+    { value: row.value, style: "padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#111827;font-weight:600;" }
+  ]));
+  const matchupHeaders = [
+    { label: report.teamComparison?.metsHeader || "New York Mets", style: "width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;" },
+    { label: "Category", style: "width:28%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:700;" },
+    { label: report.teamComparison?.oppHeader || "Opponent", style: "width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;" }
+  ];
+  const matchupRows = (report.teamComparison?.rows || []).map((row) => ([
+    { value: row.mets, style: "padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;" },
+    { value: row.label, style: "padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;" },
+    { value: row.opp, style: "padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;" }
+  ]));
+  const pitcherTables = report.startingPitchersComparison?.advancedMatchupTables || [];
+  const metsPitcherTables = [pitcherTables[0], pitcherTables[2]].filter(Boolean);
+  const oppPitcherTables = [pitcherTables[1], pitcherTables[3]].filter(Boolean);
 
   return `
     ${mode === "email" ? `<section style="${cardStyle}">
@@ -3466,39 +3507,20 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </table>
     </section>` : ""}
 
-    <section style="${cardStyle}">
+    ${mode === "site" ? `
+      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:18px;margin:0 0 18px 0;align-items:stretch;">
+        <section style="${cardStyle}margin:0;height:100%;">
+          ${sectionTitle("Game Details")}
+          ${renderSummarySheetTable(gameDetailsRows)}
+        </section>
+        <section style="${cardStyle}margin:0;height:100%;">
+          ${sectionTitle("Matchup Details")}
+          ${renderSummarySheetTable(matchupRows, matchupHeaders)}
+        </section>
+      </section>
+    ` : `<section style="${cardStyle}">
       ${sectionTitle("Game Details")}
-      ${mode === "site" ? `
-        <table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d6dde8;">
-          <tbody>
-            ${(report.gameDetailsTable?.rows || []).map((row) => `
-              <tr>
-                <td style="width:34%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f3f6fb;color:#374151;font-weight:700;">${valueCell(row.label)}</td>
-                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#111827;font-weight:600;">${valueCell(row.value)}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-        <div style="height:14px;"></div>
-        <table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d6dde8;">
-          <thead>
-            <tr>
-              <th style="width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(report.teamComparison?.metsHeader || "New York Mets")}</th>
-              <th style="width:28%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:700;">Category</th>
-              <th style="width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">${valueCell(report.teamComparison?.oppHeader || "Opponent")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${(report.teamComparison?.rows || []).map((row) => `
-              <tr>
-                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">${valueCell(row.mets)}</td>
-                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">${valueCell(row.label)}</td>
-                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">${valueCell(row.opp)}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      ` : renderKeyValueGrid([
+      ${renderKeyValueGrid([
         { label: "Date", value: report.gameDetails?.date || report.header?.date },
         { label: "Time", value: report.gameDetails?.time || report.header?.time },
         { label: "Venue", value: report.gameDetails?.ballpark || report.header?.ballpark },
@@ -3506,7 +3528,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         { label: "Lineups", value: report.gameDetails?.lineupStatus || "N/A" },
         { label: "Mets ML", value: report.meta?.moneylineValue || report.gameDetails?.moneyline || "N/A" }
       ])}
-    </section>
+    </section>`}
 
     ${mode === "email" ? `
       <section style="${cardStyle}">
@@ -3543,15 +3565,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     <section style="${cardStyle}">
       ${sectionTitle("Starting Pitchers Comparison")}
       ${mode === "site" ? `
-        <div class="pitcher-two-col" style="margin-bottom:1rem;">${renderPitcherCard(report.startingPitchersComparison?.metsCard)}${renderPitcherCard(report.startingPitchersComparison?.oppCard)}</div>
-        <h3 style="margin:0 0 12px 0;font-size:15px;color:#111827;text-transform:uppercase;letter-spacing:0.06em;">Advanced Matchup Tables</h3>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;">
-          ${(report.startingPitchersComparison?.advancedMatchupTables || []).map((table) => `
-            <div>
-              <div style="margin:0 0 8px 0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">${valueCell(table.title)}</div>
-              ${renderAdvancedSheetTable(table)}
-            </div>
-          `).join("")}
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:18px;align-items:start;">
+          ${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}
+          ${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}
         </div>
       ` : `
         ${renderComparisonTable(report.startingPitchersComparison?.rows || [], report.startingPitchersComparison?.metsPitcher || "Mets SP", report.startingPitchersComparison?.oppPitcher || "Opponent SP")}
