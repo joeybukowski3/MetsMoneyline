@@ -202,6 +202,70 @@ function sanitizeRecord(value, fallback = "0-0") {
   return isValidRecordString(value) ? String(value) : fallback;
 }
 
+function formatOrdinalDay(day) {
+  const value = Number(day);
+  if (!Number.isFinite(value)) return String(day || "");
+  const mod100 = value % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${value}th`;
+  const mod10 = value % 10;
+  if (mod10 === 1) return `${value}st`;
+  if (mod10 === 2) return `${value}nd`;
+  if (mod10 === 3) return `${value}rd`;
+  return `${value}th`;
+}
+
+function formatGameSheetDateTime(dateValue, timeValue) {
+  if (!dateValue && !timeValue) return "N/A";
+  const parsed = dateValue ? new Date(`${dateValue}T12:00:00Z`) : null;
+  const dateLabel = parsed && !Number.isNaN(parsed.getTime())
+    ? parsed.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" }).replace(/\d+/, (match) => formatOrdinalDay(match))
+    : String(dateValue || "TBD");
+  const timeLabel = String(timeValue || "TBD")
+    .replace(/\s*(AM|PM)\s*ET$/i, (_, meridiem) => `${String(meridiem).toLowerCase()} ET`)
+    .replace(/\s+/g, " ")
+    .trim();
+  return `${dateLabel}, ${timeLabel}`;
+}
+
+function teamCityLabel(teamName) {
+  const explicit = {
+    "Arizona Diamondbacks": "Phoenix",
+    "Boston Red Sox": "Boston",
+    "Chicago Cubs": "Chicago",
+    "Chicago White Sox": "Chicago",
+    "Kansas City Royals": "Kansas City",
+    "Los Angeles Angels": "Anaheim",
+    "Los Angeles Dodgers": "Los Angeles",
+    "Miami Marlins": "Miami",
+    "New York Mets": "New York",
+    "New York Yankees": "New York",
+    "Oakland Athletics": "Oakland",
+    "San Diego Padres": "San Diego",
+    "San Francisco Giants": "San Francisco",
+    "St. Louis Cardinals": "St. Louis",
+    "Tampa Bay Rays": "St. Petersburg",
+    "Toronto Blue Jays": "Toronto",
+    "Washington Nationals": "Washington"
+  };
+  if (explicit[teamName]) return explicit[teamName];
+  const value = String(teamName || "").trim();
+  if (!value) return "TBD";
+  const parts = value.split(" ");
+  return parts.length > 1 ? parts.slice(0, -1).join(" ") : value;
+}
+
+function formatWeatherForecast(value) {
+  if (!value || value === "N/A") return "N/A";
+  if (typeof value === "string") return value;
+  if (typeof value !== "object") return String(value);
+  const parts = [
+    value.temperature != null ? `${value.temperature} degrees` : null,
+    value.condition || value.forecast || null,
+    value.wind ? `${value.wind}` : null
+  ].filter(Boolean);
+  return parts.length ? parts.join(" - ") : "N/A";
+}
+
 function parseRecord(record) {
   if (!isValidRecordString(record)) return null;
   const [wins, losses] = record.split("-").map(Number);
@@ -2896,10 +2960,31 @@ function buildPresentationReport(game) {
   const analysisObject = writeup.analysisObject || {};
   const pitching = game?.pitching || {};
   const lineups = game?.lineups || {};
+  const gameContext = game?.gameContext || {};
+  const weatherSummary = formatWeatherForecast(game?.weather || writeup.gameDetails?.weather || analysisObject?.gameInfo?.weather);
   const homeAwayLabel = game?.homeAway === "home" ? "Home" : game?.homeAway === "away" || game?.homeAway === "road" ? "Away" : game?.homeAway || "N/A";
   const moneylineValue = typeof game?.moneyline?.mets === "number"
     ? (game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : String(game.moneyline.mets))
     : (writeup.gameDetails?.moneyline || "N/A");
+  const locationCity = teamCityLabel(game?.homeAway === "home" ? TEAM_NAME : game?.opponent);
+  const teamComparison = {
+    metsHeader: "New York Mets",
+    oppHeader: game?.opponent === "San Francisco Giants" ? "SF Giants" : (game?.opponent || "Opponent"),
+    rows: [
+      { label: "Season Record", mets: sanitizeRecord(game?.metsRecord, "N/A"), opp: sanitizeRecord(game?.oppRecord, "N/A") },
+      { label: "Last 5 Record", mets: recentRecordFromGames(gameContext?.metsRecentGames, 5), opp: recentRecordFromGames(gameContext?.oppRecentGames, 5) },
+      {
+        label: "Home/Away Record",
+        mets: `${sanitizeRecord(game?.homeAway === "home" ? game?.recordSplits?.metsHome : game?.recordSplits?.metsRoad, "N/A")} (${String(homeAwayLabel || "").toLowerCase() || "away"})`,
+        opp: `${sanitizeRecord(game?.homeAway === "home" ? game?.recordSplits?.oppRoad : game?.recordSplits?.oppHome, "N/A")} (${String(game?.homeAway === "home" ? "away" : "home")})`
+      },
+      {
+        label: "Season Series Record",
+        mets: gameContext?.headToHead ? `${Number(gameContext.headToHead.wins || 0)}-${Number(gameContext.headToHead.losses || 0)}` : "N/A",
+        opp: gameContext?.headToHead ? `${Number(gameContext.headToHead.losses || 0)}-${Number(gameContext.headToHead.wins || 0)}` : "N/A"
+      }
+    ]
+  };
   const schedulingSpot = writeup.edgeSummary?.schedulingSpot || (writeup.edgeSummary?.context
     ? { ...writeup.edgeSummary.context, category: "Scheduling Spot" }
     : null);
@@ -2914,6 +2999,15 @@ function buildPresentationReport(game) {
     },
     quickRead: writeup.quickRead || null,
     gameDetails: writeup.gameDetails || null,
+    gameDetailsTable: {
+      rows: [
+        { label: "Game Date / Time", value: formatGameSheetDateTime(game?.date || writeup.gameDetails?.date, game?.time || writeup.gameDetails?.time) },
+        { label: "Location", value: `${game?.ballpark || writeup.gameDetails?.ballpark || "Venue TBD"} - ${locationCity}` },
+        { label: "Weather Forecast", value: weatherSummary },
+        { label: "Mets ML Odds", value: moneylineValue }
+      ]
+    },
+    teamComparison,
     edgeSummary: writeup.edgeSummary || null,
     startingPitchersComparison: {
       metsPitcher: pitching.mets?.name || "TBD",
@@ -3021,7 +3115,8 @@ function buildPresentationReport(game) {
     meta: {
       homeAwayLabel,
       moneylineValue,
-      schedulingSpot
+      schedulingSpot,
+      weatherSummary
     }
   };
 }
@@ -3043,6 +3138,12 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     homeAway: gameFacts.meta.homeAway,
     metsRecord: sanitizeRecord(gameFacts.records.metsRecord),
     oppRecord: sanitizeRecord(gameFacts.records.oppRecord),
+    recordSplits: {
+      metsHome: sanitizeRecord(gameFacts.records.metsHome, "N/A"),
+      metsRoad: sanitizeRecord(gameFacts.records.metsRoad, "N/A"),
+      oppHome: sanitizeRecord(gameFacts.records.oppHome, "N/A"),
+      oppRoad: sanitizeRecord(gameFacts.records.oppRoad, "N/A")
+    },
     moneyline: {
       mets: gameFacts.money.metsMoneyline,
       opp: gameFacts.money.oppMoneyline
@@ -3320,13 +3421,43 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
 
     <section style="${cardStyle}">
       ${sectionTitle("Game Details")}
-      ${renderKeyValueGrid([
+      ${mode === "site" ? `
+        <table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d6dde8;">
+          <tbody>
+            ${(report.gameDetailsTable?.rows || []).map((row) => `
+              <tr>
+                <td style="width:34%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f3f6fb;color:#374151;font-weight:700;">${valueCell(row.label)}</td>
+                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#111827;font-weight:600;">${valueCell(row.value)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <div style="height:14px;"></div>
+        <table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #d6dde8;">
+          <thead>
+            <tr>
+              <th style="width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(report.teamComparison?.metsHeader || "New York Mets")}</th>
+              <th style="width:28%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:700;">Category</th>
+              <th style="width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">${valueCell(report.teamComparison?.oppHeader || "Opponent")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(report.teamComparison?.rows || []).map((row) => `
+              <tr>
+                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">${valueCell(row.mets)}</td>
+                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">${valueCell(row.label)}</td>
+                <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">${valueCell(row.opp)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      ` : renderKeyValueGrid([
         { label: "Date", value: report.gameDetails?.date || report.header?.date },
         { label: "Time", value: report.gameDetails?.time || report.header?.time },
         { label: "Venue", value: report.gameDetails?.ballpark || report.header?.ballpark },
         { label: "Home/Away", value: report.meta?.homeAwayLabel || report.gameDetails?.homeAway || "N/A" },
-        ...(mode === "email" ? [{ label: "Lineups", value: report.gameDetails?.lineupStatus || "N/A" }] : []),
-        { label: mode === "site" ? "Mets ML Odds" : "Mets ML", value: report.meta?.moneylineValue || report.gameDetails?.moneyline || "N/A" }
+        { label: "Lineups", value: report.gameDetails?.lineupStatus || "N/A" },
+        { label: "Mets ML", value: report.meta?.moneylineValue || report.gameDetails?.moneyline || "N/A" }
       ])}
     </section>
 
@@ -3600,6 +3731,17 @@ function formatRecentStartsCompact(starts = []) {
       </thead>
       <tbody>${rows}</tbody>
     </table>`;
+}
+
+function recentRecordFromGames(games, limit = 5) {
+  const rows = Array.isArray(games) ? games.slice(0, limit) : [];
+  let wins = 0;
+  let losses = 0;
+  for (const game of rows) {
+    if (game?.result === "W" || game?.result === "win") wins += 1;
+    else if (game?.result === "L" || game?.result === "loss") losses += 1;
+  }
+  return rows.length ? `${wins}-${losses}` : "N/A";
 }
 
 async function createButtondownDraft(output) {
