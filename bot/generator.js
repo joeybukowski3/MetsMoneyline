@@ -3837,11 +3837,11 @@ function reportWarCellStyle(value) {
   if (parsed == null) return "background:#f3f4f6;color:#374151;font-weight:700;border-radius:8px;";
   if (parsed === 0) return "background:transparent;color:#374151;font-weight:700;border-radius:8px;border:1px solid #d6dde8;";
   const magnitude = Math.min(Math.abs(parsed), 4);
-  const alpha = 0.18 + ((magnitude / 4) * 0.62);
+  const alpha = 0.34 + ((magnitude / 4) * 0.54);
   if (parsed > 0) {
-    return `background:rgba(192,57,43,${alpha.toFixed(3)});color:#ffffff;font-weight:700;border-radius:8px;`;
+    return `background:rgba(192,57,43,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(127,29,29,0.22);`;
   }
-  return `background:rgba(26,107,181,${alpha.toFixed(3)});color:#ffffff;font-weight:700;border-radius:8px;`;
+  return `background:rgba(26,107,181,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(30,64,175,0.22);`;
 }
 
 function parseReportNumber(value) {

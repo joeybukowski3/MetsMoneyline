@@ -15,6 +15,8 @@ const {
 const PUBLIC_API_ROOT = path.join(__dirname, "../public/api/mlb/mets");
 const GAME_ROOT = path.join(PUBLIC_API_ROOT, "game");
 const EASTERN_TIME_ZONE = "America/New_York";
+const ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4";
+const MLB_STATS_METS_TEAM_ID = 121;
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE }).slice(0, 4));
@@ -57,6 +59,26 @@ function isFinalStatus(game) {
 
 function isUpcomingStatus(game) {
   return !isLiveStatus(game) && !isFinalStatus(game);
+}
+
+async function fetchMlbStatsUpcomingGame() {
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
+  const endDate = new Date(`${today}T12:00:00Z`);
+  endDate.setUTCDate(endDate.getUTCDate() + 7);
+  const endDateIso = endDate.toISOString().slice(0, 10);
+  const payload = await fetchJsonOrNull(
+    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${MLB_STATS_METS_TEAM_ID}&startDate=${today}&endDate=${endDateIso}&hydrate=team,venue,linescore`
+  );
+  const games = (payload?.dates || [])
+    .flatMap((dateEntry) => dateEntry.games || [])
+    .sort((a, b) => new Date(a.gameDate || 0) - new Date(b.gameDate || 0));
+  const game = games[0] || null;
+  if (!game) return null;
+  return {
+    date: game.gameDate || null,
+    home: { name: game?.teams?.home?.team?.name || null },
+    away: { name: game?.teams?.away?.team?.name || null }
+  };
 }
 
 async function fetchApiSportsGames(config, season) {
@@ -104,6 +126,95 @@ async function fetchApiSportsOdds(config, targetGameId) {
       raw: null
     };
   }
+}
+
+function canonicalTeamKeyFromName(name) {
+  return normalizeTeamIdentity({ name }).canonicalKey || String(name || "").toLowerCase();
+}
+
+function normalizeTheOddsApiMarket(market = {}) {
+  return {
+    key: market?.key || null,
+    label: market?.key || "Market",
+    outcomes: Array.isArray(market?.outcomes)
+      ? market.outcomes.map((outcome) => ({
+          name: outcome?.name || null,
+          price: typeof outcome?.price === "number" ? outcome.price : null,
+          point: typeof outcome?.point === "number" ? outcome.point : null
+        }))
+      : []
+  };
+}
+
+function normalizeTheOddsApiEvent(event) {
+  if (!event) {
+    return {
+      gameId: null,
+      markets: [],
+      bookmakers: [],
+      consensus: null,
+      raw: null
+    };
+  }
+
+  const bookmakers = Array.isArray(event?.bookmakers)
+    ? event.bookmakers.map((bookmaker) => ({
+        key: bookmaker?.key || null,
+        title: bookmaker?.title || bookmaker?.key || "Bookmaker",
+        markets: Array.isArray(bookmaker?.markets) ? bookmaker.markets.map(normalizeTheOddsApiMarket) : []
+      }))
+    : [];
+
+  return {
+    gameId: event?.id || null,
+    markets: bookmakers[0]?.markets || [],
+    bookmakers,
+    consensus: bookmakers[0] || null,
+    raw: event
+  };
+}
+
+function scoreOddsEventMatch(event, nextGame) {
+  if (!event || !nextGame) return -1;
+  const homeKey = canonicalTeamKeyFromName(event.home_team);
+  const awayKey = canonicalTeamKeyFromName(event.away_team);
+  const nextHomeKey = canonicalTeamKeyFromName(nextGame.home?.name);
+  const nextAwayKey = canonicalTeamKeyFromName(nextGame.away?.name);
+  let score = 0;
+  if (homeKey === nextHomeKey) score += 2;
+  if (awayKey === nextAwayKey) score += 2;
+  const eventTime = event?.commence_time ? new Date(event.commence_time).getTime() : NaN;
+  const nextTime = nextGame?.date ? new Date(nextGame.date).getTime() : NaN;
+  if (Number.isFinite(eventTime) && Number.isFinite(nextTime)) {
+    const diffMinutes = Math.abs(eventTime - nextTime) / 60000;
+    if (diffMinutes <= 10) score += 2;
+    else if (diffMinutes <= 60) score += 1;
+  }
+  return score;
+}
+
+async function fetchTheOddsApiOdds(nextGame) {
+  const apiKey = process.env.ODDS_API_KEY;
+  if (!apiKey || !nextGame) return null;
+
+  const response = await axios.get(`${ODDS_API_BASE_URL}/sports/baseball_mlb/odds`, {
+    timeout: 15000,
+    params: {
+      apiKey,
+      regions: "us",
+      markets: "h2h,spreads,totals",
+      oddsFormat: "american",
+      dateFormat: "iso"
+    }
+  });
+
+  const events = Array.isArray(response.data) ? response.data : [];
+  const matched = events
+    .map((event) => ({ event, score: scoreOddsEventMatch(event, nextGame) }))
+    .filter((entry) => entry.score >= 4)
+    .sort((a, b) => b.score - a.score)[0]?.event || null;
+
+  return matched ? normalizeTheOddsApiEvent(matched) : null;
 }
 
 async function buildOverviewEndpoint(config, season, standings) {
@@ -160,9 +271,18 @@ async function run() {
 
   const liveGame = games.find(isLiveStatus) || null;
   const nextGame = games.filter(isUpcomingStatus)[0] || null;
+  const mlbStatsUpcomingGame = await fetchMlbStatsUpcomingGame();
   const recentGamesRaw = sortByDateDesc(games.filter(isFinalStatus)).slice(0, 10);
   const recentGames = normalizeRecentGames(recentGamesRaw, config.metsTeamId);
-  const odds = await fetchApiSportsOdds(config, liveGame?.gameId || nextGame?.gameId || null);
+  let odds = null;
+  try {
+    odds = await fetchTheOddsApiOdds(nextGame || liveGame || mlbStatsUpcomingGame);
+  } catch (error) {
+    console.warn(`[warn] OddsAPI odds fetch failed: ${error.message}`);
+  }
+  if (!odds) {
+    odds = await fetchApiSportsOdds(config, liveGame?.gameId || nextGame?.gameId || null);
+  }
 
   const nextGamePayload = {
     ...normalizeNextGame(nextGame, config.metsTeamId, odds),
@@ -205,7 +325,7 @@ async function run() {
   const oddsPayload = {
     ...odds,
     meta: {
-      provider: "api-sports",
+      provider: process.env.ODDS_API_KEY ? (odds?.raw?.sport_key ? "the-odds-api" : "api-sports") : "api-sports",
       generatedAt: new Date().toISOString(),
       cacheHint: "odds: 2-5 minutes"
     }
