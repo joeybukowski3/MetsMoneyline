@@ -25,6 +25,7 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds");
+const REPORT_HTML_PATH = path.join(__dirname, "../public/report.html");
 
 const TEAM_IDS = {
   "Arizona Diamondbacks": 109,
@@ -2362,7 +2363,15 @@ function buildEdgeSummary(edgeScoring, pick) {
     }
   }
 
+  const findVerdict = (categoryLabel) => uniqueRows.find((row) => row.category === categoryLabel) || null;
+
   return {
+    startingPitching: findVerdict("Starting Pitching"),
+    lineupQuality: findVerdict("Lineup Quality"),
+    bullpen: findVerdict("Bullpen"),
+    regressionSignals: findVerdict("Regression Signals"),
+    context: findVerdict("Context"),
+    marketValue: findVerdict("Market Value"),
     rows: uniqueRows,
     overallModelLean: pick.analyticalLean
   };
@@ -2560,6 +2569,16 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
   const pitchingEdgeSummary = buildPitchingEdgeSummary(gameFacts, edgeScoring);
   const projectedLineupEdgeSummary = buildProjectedLineupEdgeSummary(edgeScoring);
   const gameAnalysis = buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick);
+  const structuredGameAnalysisBody = [
+    "Why the Mets have a case",
+    ...gameAnalysis.whyMetsHaveCase.slice(0, 3).map((item) => `• ${item}`),
+    "",
+    "Where the risk is",
+    ...gameAnalysis.whereRiskIs.slice(0, 2).map((item) => `• ${item}`),
+    "",
+    "Bottom line",
+    gameAnalysis.bottomLine
+  ].join("\n");
 
   return {
     raw: JSON.stringify({
@@ -2576,6 +2595,11 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
     edgeSummary,
     pitchingEdgeSummary,
     projectedLineupEdgeSummary,
+    analysis: {
+      whyMetsHaveACase: gameAnalysis.whyMetsHaveCase,
+      whereTheRiskIs: gameAnalysis.whereRiskIs,
+      bottomLine: gameAnalysis.bottomLine
+    },
     gameAnalysis,
     edgeTable: edgeScoring.categories.map((edge) => ({
       category: edge.category,
@@ -2599,7 +2623,7 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
       { heading: "5. Pitcher Contact Profile vs Opponent", body: edgeScoring.categories.find((edge) => edge.category === "Starting Pitching")?.explanation || "Pitcher contact profile is neutral." },
       { heading: "6. Pitcher Split Matchup vs Opponent", body: `${edgeScoring.categories.find((edge) => /Lineup|Overall Lineup Quality/.test(edge.category))?.explanation || "No clear split matchup edge."} ${contextLine}`.trim() },
       { heading: "7. Projected Lineup Comparison", body: projectedLineupEdgeSummary },
-      { heading: "8. Game Analysis", body: `${whyMets} ${whereRisk} ${analyticalLeanBody}`.trim() },
+      { heading: "8. Game Analysis", body: structuredGameAnalysisBody },
       { heading: "9. Official MetsMoneyline Pick", body: pickSummary }
     ],
     pickSummary,
@@ -2655,6 +2679,12 @@ function buildFallbackWriteup(gameFacts) {
       moneyline: gameFacts.money?.metsMoneyline == null ? "N/A" : String(gameFacts.money.metsMoneyline)
     },
     edgeSummary: {
+      startingPitching: { category: "Starting Pitching", verdict: "Limited data", strength: "even", dataMode: "fallback" },
+      lineupQuality: { category: "Lineup Quality", verdict: "Mets edge", strength: "slight", dataMode: "fallback" },
+      bullpen: { category: "Bullpen", verdict: "Mets edge", strength: "slight", dataMode: "fallback" },
+      regressionSignals: { category: "Regression Signals", verdict: "Limited data", strength: "even", dataMode: "fallback" },
+      context: { category: "Context", verdict: "Even", strength: "even", dataMode: "fallback" },
+      marketValue: { category: "Market Value", verdict: "Limited data", strength: "even", dataMode: "fallback" },
       rows: [
         { category: "Starting Pitching", verdict: "Limited data", strength: "even", dataMode: "fallback" },
         { category: "Lineup Quality", verdict: "Mets edge", strength: "slight", dataMode: "fallback" },
@@ -2667,6 +2697,16 @@ function buildFallbackWriteup(gameFacts) {
     },
     pitchingEdgeSummary: `${metsPitcher} vs ${oppPitcher} is workable, but this version is still running on fallback data.`,
     projectedLineupEdgeSummary: "The best Mets case is still the overall lineup shape and run-creation potential.",
+    analysis: {
+      whyMetsHaveACase: [
+        "The lineup baseline is still good enough to give New York a plausible offensive path.",
+        "The bullpen and offensive profile keep the Mets case alive even in fallback mode."
+      ],
+      whereTheRiskIs: [
+        "This version is missing too much detail to overstate any one edge."
+      ],
+      bottomLine: "The fallback sheet still lands on the Mets, but with a lighter analytical touch."
+    },
     gameAnalysis: {
       whyMetsHaveCase: [
         "The lineup baseline is still good enough to give New York a plausible offensive path.",
@@ -2685,7 +2725,20 @@ function buildFallbackWriteup(gameFacts) {
       { heading: "5. Pitcher Contact Profile vs Opponent", body: `Bullpen check: Mets ERA ${metsBp.seasonERA || "N/A"}, xFIP ${metsBp.seasonXFIP || "N/A"}, WHIP ${metsBp.seasonWHIP || "N/A"}. ${opponent} ERA ${oppBp.seasonERA || "N/A"}, xFIP ${oppBp.seasonXFIP || "N/A"}, WHIP ${oppBp.seasonWHIP || "N/A"}.` },
       { heading: "6. Pitcher Split Matchup vs Opponent", body: `Lineups are ${lineupStatus}. Team offense: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"}, xwOBA ${ta.mets?.xwoba || "N/A"}, K% ${ta.mets?.kPct || "N/A"}. ${opponent} wRC+ ${ta.opp?.wrcPlus || "N/A"}, xwOBA ${ta.opp?.xwoba || "N/A"}, K% ${ta.opp?.kPct || "N/A"}.` },
       { heading: "7. Projected Lineup Comparison", body: `Main numbers: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"} vs ${ta.opp?.wrcPlus || "N/A"}, NYM xwOBA ${ta.mets?.xwoba || "N/A"} vs ${ta.opp?.xwoba || "N/A"}, NYM bullpen rating ${metsBp.rating || "N/A"} vs ${oppBp.rating || "N/A"}.` },
-      { heading: "8. Game Analysis", body: "The fallback sheet keeps the Mets case intact, but without enough depth to make the writeup more aggressive." },
+      {
+        heading: "8. Game Analysis",
+        body: [
+          "Why the Mets have a case",
+          "• The lineup baseline is still good enough to give New York a plausible offensive path.",
+          "• The bullpen and offensive profile keep the Mets case alive even in fallback mode.",
+          "",
+          "Where the risk is",
+          "• This version is missing too much detail to overstate any one edge.",
+          "",
+          "Bottom line",
+          "The fallback sheet still lands on the Mets, but with a lighter analytical touch."
+        ].join("\n")
+      },
       { heading: "9. Official MetsMoneyline Pick", body: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.` }
     ],
     pickSummary: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.`,
@@ -2834,6 +2887,80 @@ function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEnt
   return dedupeHistoryEntries(entries).slice(0, 200);
 }
 
+function buildPresentationReport(game) {
+  const writeup = game?.writeup || {};
+  const analysisObject = writeup.analysisObject || {};
+  const pitching = game?.pitching || {};
+  const lineups = game?.lineups || {};
+
+  return {
+    header: {
+      title: writeup.headline || `New York Mets vs ${game?.opponent || "Opponent"}`,
+      matchupTitle: `New York Mets vs ${game?.opponent || "Opponent"}`,
+      date: game?.date || null,
+      time: game?.time || null,
+      ballpark: game?.ballpark || null
+    },
+    quickRead: writeup.quickRead || null,
+    gameDetails: writeup.gameDetails || null,
+    edgeSummary: writeup.edgeSummary || null,
+    startingPitchersComparison: {
+      metsPitcher: pitching.mets?.name || "TBD",
+      oppPitcher: pitching.opp?.name || "TBD",
+      rows: [
+        { label: "ERA", mets: pitching.mets?.seasonERA || null, opp: pitching.opp?.seasonERA || null },
+        { label: "xERA", mets: pitching.mets?.seasonXERA || pitching.mets?.savant?.xERA || null, opp: pitching.opp?.seasonXERA || pitching.opp?.savant?.xERA || null },
+        { label: "FIP", mets: pitching.mets?.seasonFIP || null, opp: pitching.opp?.seasonFIP || null },
+        { label: "WHIP", mets: pitching.mets?.seasonWHIP || null, opp: pitching.opp?.seasonWHIP || null },
+        { label: "K%", mets: pitching.mets?.savant?.kPct || null, opp: pitching.opp?.savant?.kPct || null },
+        { label: "BB%", mets: pitching.mets?.savant?.bbPct || null, opp: pitching.opp?.savant?.bbPct || null },
+        { label: "K-BB%", mets: pitching.mets?.last3KBB || null, opp: pitching.opp?.last3KBB || null }
+      ],
+      summary: writeup.pitchingEdgeSummary || null
+    },
+    pitcherContactProfile: {
+      metsPitcher: pitching.mets?.name || "TBD",
+      oppPitcher: pitching.opp?.name || "TBD",
+      rows: [
+        { label: "xERA", mets: pitching.mets?.savant?.xERA || null, opp: pitching.opp?.savant?.xERA || null },
+        { label: "Barrel%", mets: pitching.mets?.savant?.barrelPct || null, opp: pitching.opp?.savant?.barrelPct || null },
+        { label: "Hard-Hit%", mets: pitching.mets?.savant?.hardHitPct || null, opp: pitching.opp?.savant?.hardHitPct || null },
+        { label: "Whiff%", mets: pitching.mets?.savant?.whiffPct || null, opp: pitching.opp?.savant?.whiffPct || null },
+        { label: "Chase%", mets: pitching.mets?.savant?.chasePct || null, opp: pitching.opp?.savant?.chasePct || null },
+        { label: "K%", mets: pitching.mets?.savant?.kPct || null, opp: pitching.opp?.savant?.kPct || null },
+        { label: "BB%", mets: pitching.mets?.savant?.bbPct || null, opp: pitching.opp?.savant?.bbPct || null }
+      ]
+    },
+    pitcherSplitMatchup: {
+      metsPitcher: pitching.mets?.name || "TBD",
+      oppPitcher: pitching.opp?.name || "TBD",
+      rows: [
+        { label: "Pitcher Hand", mets: pitching.mets?.hand || null, opp: pitching.opp?.hand || null },
+        { label: "Opponent Lineup wRC+", mets: analysisObject?.offense?.opp?.projectedLineupWRCPlus || null, opp: analysisObject?.offense?.mets?.projectedLineupWRCPlus || null },
+        { label: "Opponent Lineup xwOBA", mets: analysisObject?.offense?.opp?.xwOBA || null, opp: analysisObject?.offense?.mets?.xwOBA || null },
+        { label: "Opponent Lineup K%", mets: analysisObject?.offense?.opp?.kPct || null, opp: analysisObject?.offense?.mets?.kPct || null },
+        { label: "Opponent Lineup BB%", mets: analysisObject?.offense?.opp?.bbPct || null, opp: analysisObject?.offense?.mets?.bbPct || null },
+        {
+          label: "Split Data",
+          mets: analysisObject?.offense?.opp?.splitContext?.splitDataAvailable ? "Available" : "Fallback",
+          opp: analysisObject?.offense?.mets?.splitContext?.splitDataAvailable ? "Available" : "Fallback"
+        }
+      ]
+    },
+    projectedLineupComparison: {
+      summary: writeup.projectedLineupEdgeSummary || null,
+      mets: lineups.mets || [],
+      opp: lineups.opp || [],
+      lineupStatus: lineups.lineupStatus || null
+    },
+    analysis: writeup.analysis || null,
+    officialPick: {
+      label: writeup.officialPick || "Official Pick: Mets ML",
+      explanation: writeup.pickSummary || null
+    }
+  };
+}
+
 function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
@@ -2891,6 +3018,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       edgeSummary: writeup.edgeSummary || null,
       pitchingEdgeSummary: writeup.pitchingEdgeSummary || null,
       projectedLineupEdgeSummary: writeup.projectedLineupEdgeSummary || null,
+      analysis: writeup.analysis || null,
       gameAnalysis: writeup.gameAnalysis || null,
       sections,
       pickSummary: writeup.pickSummary,
@@ -2907,6 +3035,8 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     bettingHistory: null,
     weather: null
   };
+
+  currentGame.writeup.report = buildPresentationReport(currentGame);
 
   const knownHistoryEntries = dedupeHistoryEntries([
     ...(Array.isArray(previousOutput?.recentBreakdowns) ? previousOutput.recentBreakdowns : []),
@@ -2956,36 +3086,10 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
   return output;
 }
 
-function buildEmailHtml(game) {
-  const writeup = game.writeup || {};
-  const quickRead = writeup.quickRead || {};
-  const gameDetails = writeup.gameDetails || {};
-  const edgeSummary = writeup.edgeSummary || { rows: [] };
-  const gameAnalysis = writeup.gameAnalysis || {};
-  const pitching = game.pitching || {};
-  const lineups = game.lineups || {};
-  const contactRows = [
-    { label: "xERA", mets: pitching.mets?.savant?.xERA, opp: pitching.opp?.savant?.xERA },
-    { label: "Barrel%", mets: pitching.mets?.savant?.barrelPct, opp: pitching.opp?.savant?.barrelPct },
-    { label: "Hard-Hit%", mets: pitching.mets?.savant?.hardHitPct, opp: pitching.opp?.savant?.hardHitPct },
-    { label: "Whiff%", mets: pitching.mets?.savant?.whiffPct, opp: pitching.opp?.savant?.whiffPct },
-    { label: "Chase%", mets: pitching.mets?.savant?.chasePct, opp: pitching.opp?.savant?.chasePct },
-    { label: "K%", mets: pitching.mets?.savant?.kPct, opp: pitching.opp?.savant?.kPct },
-    { label: "BB%", mets: pitching.mets?.savant?.bbPct, opp: pitching.opp?.savant?.bbPct }
-  ];
-  const splitRows = [
-    { label: "Pitcher Hand", mets: pitching.mets?.hand, opp: pitching.opp?.hand },
-    { label: "Opponent Lineup wRC+", mets: writeup.analysisObject?.offense?.opp?.projectedLineupWRCPlus, opp: writeup.analysisObject?.offense?.mets?.projectedLineupWRCPlus },
-    { label: "Opponent Lineup xwOBA", mets: writeup.analysisObject?.offense?.opp?.xwOBA, opp: writeup.analysisObject?.offense?.mets?.xwOBA },
-    { label: "Opponent Lineup K%", mets: writeup.analysisObject?.offense?.opp?.kPct, opp: writeup.analysisObject?.offense?.mets?.kPct },
-    { label: "Opponent Lineup BB%", mets: writeup.analysisObject?.offense?.opp?.bbPct, opp: writeup.analysisObject?.offense?.mets?.bbPct },
-    {
-      label: "Split Data",
-      mets: writeup.analysisObject?.offense?.opp?.splitContext?.splitDataAvailable ? "Available" : "Fallback",
-      opp: writeup.analysisObject?.offense?.mets?.splitContext?.splitDataAvailable ? "Available" : "Fallback"
-    }
-  ];
-  const cardStyle = "background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;";
+function buildReportMarkup(report, { mode = "email" } = {}) {
+  const cardStyle = mode === "site"
+    ? "background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);"
+    : "background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;";
   const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;";
   const sectionTitle = (title) => `<h2 style="margin:0 0 10px 0;font-size:18px;color:#111827;">${title}</h2>`;
   const valueCell = (value) => value == null || value === "" ? "N/A" : value;
@@ -3009,7 +3113,7 @@ function buildEmailHtml(game) {
         </tr>
       </thead>
       <tbody>
-        ${rows.map((row) => `
+        ${(rows || []).map((row) => `
           <tr>
             <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;font-weight:600;">${row.label}</td>
             <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${valueCell(row.mets)}</td>
@@ -3044,7 +3148,7 @@ function buildEmailHtml(game) {
           <tr>
             <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#f97316;${smallLabel}">Mets</th>
             <th style="border-bottom:1px solid #dbe2ea;"></th>
-            <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#1f2937;${smallLabel}">${game.opponent}</th>
+            <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#1f2937;${smallLabel}">Opponent</th>
           </tr>
           <tr>
             <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">#</th>
@@ -3065,33 +3169,22 @@ function buildEmailHtml(game) {
   };
   const renderBulletList = (items = []) => `<ul style="margin:8px 0 0 18px;padding:0;color:#111827;">${items.map((item) => `<li style="margin:0 0 8px 0;">${item}</li>`).join("")}</ul>`;
 
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MetsMoneyline</title>
-  </head>
-  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 860px; margin: 0 auto; padding: 24px;">
-    <p style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280;">MetsMoneyline</p>
-    <h1 style="margin:0 0 8px 0;">${writeup.headline || `New York Mets vs ${game.opponent}`}</h1>
-    <p style="margin:0 0 18px 0; color: #4b5563;">${game.date} | ${game.time} | ${game.ballpark}</p>
-
+  return `
     <section style="${cardStyle}">
       ${sectionTitle("Quick Read")}
       <table style="width:100%;border-collapse:collapse;">
         <tbody>
           <tr>
             <td style="padding:8px 0;width:25%;${smallLabel}">Model Lean</td>
-            <td style="padding:8px 0;width:25%;font-weight:700;">${valueCell(quickRead.modelLean)}</td>
+            <td style="padding:8px 0;width:25%;font-weight:700;">${valueCell(report.quickRead?.modelLean)}</td>
             <td style="padding:8px 0;width:25%;${smallLabel}">Official Pick</td>
-            <td style="padding:8px 0;width:25%;font-weight:700;color:#f97316;">${valueCell(quickRead.officialPick)}</td>
+            <td style="padding:8px 0;width:25%;font-weight:700;color:#f97316;">${valueCell(report.quickRead?.officialPick)}</td>
           </tr>
           <tr>
             <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}">Best Edge</td>
-            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(quickRead.bestEdge)}</td>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(report.quickRead?.bestEdge)}</td>
             <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}">Biggest Risk</td>
-            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(quickRead.biggestRisk)}</td>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(report.quickRead?.biggestRisk)}</td>
           </tr>
         </tbody>
       </table>
@@ -3100,12 +3193,12 @@ function buildEmailHtml(game) {
     <section style="${cardStyle}">
       ${sectionTitle("Game Details")}
       ${renderKeyValueGrid([
-        { label: "Date", value: gameDetails.date || game.date },
-        { label: "Time", value: gameDetails.time || game.time },
-        { label: "Venue", value: gameDetails.ballpark || game.ballpark },
-        { label: "Home/Away", value: gameDetails.homeAway || game.homeAway },
-        { label: "Lineups", value: gameDetails.lineupStatus || lineups.lineupStatus },
-        { label: "Mets ML", value: gameDetails.moneyline || "N/A" }
+        { label: "Date", value: report.gameDetails?.date || report.header?.date },
+        { label: "Time", value: report.gameDetails?.time || report.header?.time },
+        { label: "Venue", value: report.gameDetails?.ballpark || report.header?.ballpark },
+        { label: "Home/Away", value: report.gameDetails?.homeAway || "N/A" },
+        { label: "Lineups", value: report.gameDetails?.lineupStatus || "N/A" },
+        { label: "Mets ML", value: report.gameDetails?.moneyline || "N/A" }
       ])}
     </section>
 
@@ -3119,14 +3212,21 @@ function buildEmailHtml(game) {
           </tr>
         </thead>
         <tbody>
-          ${(edgeSummary.rows || []).map((row) => `
+          ${[
+            report.edgeSummary?.startingPitching,
+            report.edgeSummary?.lineupQuality,
+            report.edgeSummary?.bullpen,
+            report.edgeSummary?.regressionSignals,
+            report.edgeSummary?.context,
+            report.edgeSummary?.marketValue
+          ].filter(Boolean).map((row) => `
             <tr>
               <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${row.category}</td>
               <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;">${row.verdict}${row.dataMode === "fallback" ? " (fallback)" : ""}</td>
             </tr>`).join("")}
           <tr>
             <td style="padding:9px 8px;color:#111827;font-weight:700;">Overall Model Lean</td>
-            <td style="padding:9px 8px;color:#111827;font-weight:700;">${valueCell(edgeSummary.overallModelLean)}</td>
+            <td style="padding:9px 8px;color:#111827;font-weight:700;">${valueCell(report.edgeSummary?.overallModelLean)}</td>
           </tr>
         </tbody>
       </table>
@@ -3134,49 +3234,131 @@ function buildEmailHtml(game) {
 
     <section style="${cardStyle}">
       ${sectionTitle("Starting Pitchers Comparison")}
-      ${renderComparisonTable([
-        { label: "ERA", mets: pitching.mets?.seasonERA, opp: pitching.opp?.seasonERA },
-        { label: "xERA", mets: pitching.mets?.seasonXERA || pitching.mets?.savant?.xERA, opp: pitching.opp?.seasonXERA || pitching.opp?.savant?.xERA },
-        { label: "FIP", mets: pitching.mets?.seasonFIP, opp: pitching.opp?.seasonFIP },
-        { label: "WHIP", mets: pitching.mets?.seasonWHIP, opp: pitching.opp?.seasonWHIP },
-        { label: "K%", mets: pitching.mets?.savant?.kPct, opp: pitching.opp?.savant?.kPct },
-        { label: "BB%", mets: pitching.mets?.savant?.bbPct, opp: pitching.opp?.savant?.bbPct },
-        { label: "K-BB%", mets: pitching.mets?.last3KBB, opp: pitching.opp?.last3KBB }
-      ], pitching.mets?.name || "Mets SP", pitching.opp?.name || `${game.opponent} SP`)}
-      <p style="margin:12px 0 0 0;color:#374151;font-size:14px;"><strong>Pitching Edge Summary:</strong> ${valueCell(writeup.pitchingEdgeSummary)}</p>
+      ${renderComparisonTable(report.startingPitchersComparison?.rows || [], report.startingPitchersComparison?.metsPitcher || "Mets SP", report.startingPitchersComparison?.oppPitcher || "Opponent SP")}
+      <p style="margin:12px 0 0 0;color:#374151;font-size:14px;"><strong>Pitching Edge Summary:</strong> ${valueCell(report.startingPitchersComparison?.summary)}</p>
     </section>
 
     <section style="${cardStyle}">
       ${sectionTitle("Pitcher Contact Profile vs Opponent")}
-      ${renderComparisonTable(contactRows, pitching.mets?.name || "Mets SP", pitching.opp?.name || `${game.opponent} SP`)}
+      ${renderComparisonTable(report.pitcherContactProfile?.rows || [], report.pitcherContactProfile?.metsPitcher || "Mets SP", report.pitcherContactProfile?.oppPitcher || "Opponent SP")}
     </section>
 
     <section style="${cardStyle}">
       ${sectionTitle("Pitcher Split Matchup vs Opponent")}
-      ${renderComparisonTable(splitRows, pitching.mets?.name || "Mets SP", pitching.opp?.name || `${game.opponent} SP`)}
+      ${renderComparisonTable(report.pitcherSplitMatchup?.rows || [], report.pitcherSplitMatchup?.metsPitcher || "Mets SP", report.pitcherSplitMatchup?.oppPitcher || "Opponent SP")}
     </section>
 
     <section style="${cardStyle}">
       ${sectionTitle("Projected Lineup Comparison")}
-      <p style="margin:0 0 12px 0;color:#374151;font-size:14px;"><strong>Projected Lineup Edge:</strong> ${valueCell(writeup.projectedLineupEdgeSummary)}</p>
-      ${renderLineupTable(lineups.mets || [], lineups.opp || [])}
+      <p style="margin:0 0 12px 0;color:#374151;font-size:14px;"><strong>Projected Lineup Edge:</strong> ${valueCell(report.projectedLineupComparison?.summary)}</p>
+      ${renderLineupTable(report.projectedLineupComparison?.mets || [], report.projectedLineupComparison?.opp || [])}
     </section>
 
     <section style="${cardStyle}">
       ${sectionTitle("Game Analysis")}
       <div style="${smallLabel}margin-bottom:6px;">Why the Mets have a case</div>
-      ${renderBulletList(gameAnalysis.whyMetsHaveCase || [])}
+      ${renderBulletList(report.analysis?.whyMetsHaveACase || [])}
       <div style="${smallLabel}margin:12px 0 6px 0;">Where the risk is</div>
-      ${renderBulletList(gameAnalysis.whereRiskIs || [])}
+      ${renderBulletList(report.analysis?.whereTheRiskIs || [])}
       <div style="${smallLabel}margin:12px 0 6px 0;">Bottom line</div>
-      <p style="margin:0;color:#374151;">${valueCell(gameAnalysis.bottomLine)}</p>
+      <p style="margin:0;color:#374151;">${valueCell(report.analysis?.bottomLine)}</p>
     </section>
 
     <section style="${cardStyle}">
       ${sectionTitle("Official MetsMoneyline Pick")}
-      <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">${writeup.officialPick || "Official Pick: Mets ML"}</p>
-      <p style="margin:0;color:#374151;">${valueCell(writeup.pickSummary)}</p>
-    </section>
+      <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">${valueCell(report.officialPick?.label)}</p>
+      <p style="margin:0;color:#374151;">${valueCell(report.officialPick?.explanation)}</p>
+    </section>`;
+}
+
+function buildEmailHtml(game) {
+  const report = game?.writeup?.report || buildPresentationReport(game);
+  const reportMarkup = buildReportMarkup(report, { mode: "email" });
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MetsMoneyline</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 860px; margin: 0 auto; padding: 24px;">
+    <p style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280;">MetsMoneyline</p>
+    <h1 style="margin:0 0 8px 0;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
+    <p style="margin:0 0 18px 0; color: #4b5563;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
+    ${reportMarkup}
+  </body>
+</html>`;
+}
+
+function buildSiteReportHtml(game) {
+  const report = game?.writeup?.report || buildPresentationReport(game);
+  const reportMarkup = buildReportMarkup(report, { mode: "site" });
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>${report.header?.title || "MetsMoneyline Report"}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="favicon.jpg">
+    <link rel="stylesheet" href="css/styles.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
+    <header>
+      <nav>
+        <a href="/" class="nav-brand">
+          <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+        </a>
+        <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Game Day</a></li>
+          <li><a href="report.html" class="nav-link active">Today's Report</a></li>
+          <li><a href="advanced-stats.html" class="nav-link">Stats &amp; Standings</a></li>
+          <li><a href="betting-history.html" class="nav-link">History</a></li>
+          <li><a href="news.html" class="nav-link">Team News</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main style="max-width:980px;padding-top:2.5rem;">
+      <section style="margin-bottom:1.75rem;">
+        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#9099b0;font-weight:800;">Daily Report</div>
+        <h1 style="margin:0.35rem 0 0.5rem 0;font-size:2.2rem;line-height:1.1;color:#10213a;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
+        <p style="margin:0;color:#5b6477;font-size:1rem;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
+      </section>
+      ${reportMarkup}
+    </main>
+    <footer>
+      <div class="footer-brand">
+        <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+      </div>
+      <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
+      <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+    </footer>
+    <script>
+      const hamburger = document.querySelector('.nav-hamburger');
+      const navLinks = document.querySelector('.nav-links');
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+          const open = navLinks.classList.toggle('open');
+          hamburger.classList.toggle('open', open);
+          hamburger.setAttribute('aria-expanded', open);
+        });
+        navLinks.querySelectorAll('.nav-link').forEach((link) => {
+          link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            hamburger.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+    </script>
   </body>
 </html>`;
 }
@@ -3258,6 +3440,7 @@ async function run() {
         edgeSummary: writeup.edgeSummary || null,
         pitchingEdgeSummary: writeup.pitchingEdgeSummary || null,
         projectedLineupEdgeSummary: writeup.projectedLineupEdgeSummary || null,
+        analysis: writeup.analysis || null,
         gameAnalysis: writeup.gameAnalysis || null,
         edgeTable: writeup.edgeTable || [],
         sections: writeup.sections || [],
@@ -3277,6 +3460,10 @@ async function run() {
 
   fs.writeFileSync(SAMPLE_JSON_PATH, JSON.stringify(output, null, 2));
   console.log(`Wrote ${SAMPLE_JSON_PATH}`);
+  if (output.games?.[0]) {
+    fs.writeFileSync(REPORT_HTML_PATH, buildSiteReportHtml(output.games[0]));
+    console.log(`Wrote ${REPORT_HTML_PATH}`);
+  }
   const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
   console.log(`Wrote ${PICK_HISTORY_PATH} with ${pickHistoryOutput.entries.length} entr${pickHistoryOutput.entries.length === 1 ? "y" : "ies"}`);
   await createButtondownDraft(output);

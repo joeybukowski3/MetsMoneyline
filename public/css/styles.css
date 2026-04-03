@@ -275,6 +275,21 @@ nav {
 .email-form button:hover,
 .signup-form button:hover { background: #e04a05; transform: translateY(-1px); }
 
+.hero-report-link {
+  display: inline-block;
+  margin-top: 0.9rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.78);
+  text-decoration: underline;
+  text-underline-offset: 0.18rem;
+  transition: color 0.15s ease;
+}
+
+.hero-report-link:hover {
+  color: #ffffff;
+}
+
 /* =====================
    MAIN CONTENT WRAPPER
    ===================== */
