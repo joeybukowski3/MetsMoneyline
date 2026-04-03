@@ -3401,6 +3401,17 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </table>
     </div>`;
   const renderLineupTable = (mets = [], opp = []) => {
+    const lineupHeadshot = (player) => {
+      const pid = player?.playerId || player?.id || player?.mlbId || 0;
+      if (!pid) return "";
+      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
+    };
+    const lineupNameCell = (player, side) => {
+      return `<div style="display:flex;align-items:center;gap:8px;min-width:0;">
+        ${lineupHeadshot(player)}
+        <span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${valueCell(player?.name)}</span>
+      </div>`;
+    };
     const maxRows = Math.max(mets.length, opp.length, 9);
     const rows = [];
     for (let i = 0; i < maxRows; i += 1) {
@@ -3408,13 +3419,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const o = opp[i] || {};
       rows.push(`
         <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:700;text-align:left;white-space:nowrap;">${valueCell(m.name)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;text-align:left;white-space:nowrap;">${lineupNameCell(m, "mets")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("xBA", m.savant?.xBA || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("K%", m.savant?.kPct || m.fangraphs?.kPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("Hard Hit %", m.savant?.hardHitPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("WAR", m.fangraphs?.war || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:800;">${valueCell(m.order ?? o.order ?? i + 1)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;font-weight:700;text-align:left;white-space:nowrap;">${valueCell(o.name)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:left;white-space:nowrap;">${lineupNameCell(o, "opp")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("xBA", o.savant?.xBA || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("K%", o.savant?.kPct || o.fangraphs?.kPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("Hard Hit %", o.savant?.hardHitPct || null)}</td>
@@ -3696,8 +3707,7 @@ function buildSiteReportHtml(game) {
             <img src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:112px;height:112px;object-fit:contain;">
           </div>
         </div>
-        <h1 style="margin:0.9rem 0 0.4rem 0;font-size:2rem;line-height:1.08;color:#10213a;">${report.header?.tagline || report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
-        <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
+        <p style="margin:0.9rem 0 0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
       </section>
       ${reportMarkup}
     </main>
