@@ -7,6 +7,7 @@
     "build:api-cache": "node build-api-cache.js",
     "download:mlb-logos": "node download-mlb-logos.js",
     "test": "echo \"Error: no test specified\" && exit 1",
+    "send:report": "node check-and-send-report.js",
     "start": "node generator.js",
     "verify": "node verify-data.js",
     "backfill-history": "node backfill-history.js"

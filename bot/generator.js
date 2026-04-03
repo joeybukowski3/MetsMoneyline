@@ -154,7 +154,7 @@ function getTodayEasternISO() {
 }
 
 function parseArgs(argv) {
-  const args = { date: getTodayEasternISO(), dryRun: false, debugAnalysis: false };
+  const args = { date: getTodayEasternISO(), dryRun: false, debugAnalysis: false, buttondownDraft: false };
 
   for (let i = 0; i < argv.length; i += 1) {
     const token = argv[i];
@@ -165,6 +165,8 @@ function parseArgs(argv) {
       args.dryRun = true;
     } else if (token === "--debug-analysis") {
       args.debugAnalysis = true;
+    } else if (token === "--buttondown-draft") {
+      args.buttondownDraft = true;
     } else {
       throw new Error(`Unknown argument: ${token}`);
     }
@@ -175,6 +177,11 @@ function parseArgs(argv) {
   }
 
   return args;
+}
+
+function formatButtondownSubject(game) {
+  if (!game) return "MetsMoneyline";
+  return `MetsMoneyline - ${game.date}: New York Mets vs ${game.opponent}`;
 }
 
 function slugify(value) {
@@ -1743,6 +1750,7 @@ async function buildGameFacts(targetDate) {
     meta: {
       requestedDate,
       date: resolvedDate,
+      gameDateTime: game?.gameDate || null,
       time: formatTimeET(game?.gameDate),
       ballpark: game?.venue?.name || "Venue TBD",
       homeTeam: game?.teams?.home?.team?.name || TEAM_NAME,
@@ -3920,7 +3928,7 @@ async function createButtondownDraft(output) {
   const game = output?.games?.[0];
   if (!game) return;
 
-  const subject = `MetsMoneyline - ${game.date}: New York Mets vs ${game.opponent}`;
+  const subject = formatButtondownSubject(game);
   const body = buildEmailHtml(game);
 
   try {
@@ -3945,19 +3953,94 @@ async function createButtondownDraft(output) {
   }
 }
 
-async function run() {
-  const { date, dryRun, debugAnalysis } = parseArgs(process.argv.slice(2));
-  console.log(`Building Mets game package for ${date}${dryRun ? " (dry run)" : ""}${debugAnalysis ? " (debug analysis)" : ""}...`);
+async function createButtondownEmail({ game, status = "draft" }) {
+  const apiKey = process.env.BUTTONDOWN_API_KEY;
+  if (!apiKey) {
+    throw new Error("BUTTONDOWN_API_KEY is required to create Buttondown emails.");
+  }
+  if (!game) {
+    throw new Error("Game payload is required to create a Buttondown email.");
+  }
 
+  const subject = formatButtondownSubject(game);
+  const body = buildEmailHtml(game);
+  const response = await axios.post(
+    "https://api.buttondown.com/v1/emails",
+    {
+      subject,
+      body,
+      status
+    },
+    {
+      timeout: 15000,
+      headers: {
+        Authorization: `Token ${apiKey}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  return response.data || null;
+}
+
+async function updateButtondownEmail(emailId, payload = {}) {
+  const apiKey = process.env.BUTTONDOWN_API_KEY;
+  if (!apiKey) {
+    throw new Error("BUTTONDOWN_API_KEY is required to update Buttondown emails.");
+  }
+  if (!emailId) {
+    throw new Error("Buttondown email id is required.");
+  }
+
+  const response = await axios.patch(
+    `https://api.buttondown.com/v1/emails/${emailId}`,
+    payload,
+    {
+      timeout: 15000,
+      headers: {
+        Authorization: `Token ${apiKey}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
+  return response.data || null;
+}
+
+function logDebugAnalysis(writeup) {
+  console.log(JSON.stringify({
+    analysisObject: writeup.analysisObject || null,
+    edgeScoring: writeup.edgeScoring || null,
+    finalWriteup: {
+      headline: writeup.headline || null,
+      synopsis: writeup.synopsis || null,
+      quickRead: writeup.quickRead || null,
+      gameDetails: writeup.gameDetails || null,
+      edgeSummary: writeup.edgeSummary || null,
+      pitchingEdgeSummary: writeup.pitchingEdgeSummary || null,
+      projectedLineupEdgeSummary: writeup.projectedLineupEdgeSummary || null,
+      analysis: writeup.analysis || null,
+      gameAnalysis: writeup.gameAnalysis || null,
+      edgeTable: writeup.edgeTable || [],
+      sections: writeup.sections || [],
+      analyticalLean: writeup.analyticalLean || null,
+      pickSummary: writeup.pickSummary || null,
+      officialPick: writeup.officialPick || null,
+      confidence: writeup.confidence || null
+    },
+    missingMetrics: writeup.missingMetrics || []
+  }, null, 2));
+}
+
+async function generateOutputPackage({ date, dryRun = false, debugAnalysis = false } = {}) {
+  const targetDate = date || getTodayEasternISO();
   let gameFacts;
   try {
-    gameFacts = await buildGameFacts(date);
+    gameFacts = await buildGameFacts(targetDate);
   } catch (error) {
     const previousOutput = loadPreviousOutput();
     if (!dryRun && previousOutput) {
-      console.warn(`[warn] Unable to build fresh game data for ${date}: ${error.message}`);
+      console.warn(`[warn] Unable to build fresh game data for ${targetDate}: ${error.message}`);
       console.warn("[warn] Keeping existing public/data/sample-game.json so deploy can continue.");
-      return;
+      return { skipped: true, gameFacts: null, writeup: null, output: null };
     }
     throw error;
   }
@@ -3976,35 +4059,13 @@ async function run() {
   const output = buildGameJson(gameFacts, writeup, previousOutput, pickHistory);
 
   if (debugAnalysis) {
-    console.log(JSON.stringify({
-      analysisObject: writeup.analysisObject || null,
-      edgeScoring: writeup.edgeScoring || null,
-      finalWriteup: {
-        headline: writeup.headline || null,
-        synopsis: writeup.synopsis || null,
-        quickRead: writeup.quickRead || null,
-        gameDetails: writeup.gameDetails || null,
-        edgeSummary: writeup.edgeSummary || null,
-        pitchingEdgeSummary: writeup.pitchingEdgeSummary || null,
-        projectedLineupEdgeSummary: writeup.projectedLineupEdgeSummary || null,
-        analysis: writeup.analysis || null,
-        gameAnalysis: writeup.gameAnalysis || null,
-        edgeTable: writeup.edgeTable || [],
-        sections: writeup.sections || [],
-        analyticalLean: writeup.analyticalLean || null,
-        pickSummary: writeup.pickSummary || null,
-        officialPick: writeup.officialPick || null,
-        confidence: writeup.confidence || null
-      },
-      missingMetrics: writeup.missingMetrics || []
-    }, null, 2));
+    logDebugAnalysis(writeup);
   }
 
-  if (dryRun) {
-    console.log(JSON.stringify(output, null, 2));
-    return;
-  }
+  return { skipped: false, gameFacts, writeup, output };
+}
 
+function persistGeneratedOutput(output) {
   fs.writeFileSync(SAMPLE_JSON_PATH, JSON.stringify(output, null, 2));
   console.log(`Wrote ${SAMPLE_JSON_PATH}`);
   if (output.games?.[0]) {
@@ -4013,16 +4074,66 @@ async function run() {
   }
   const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
   console.log(`Wrote ${PICK_HISTORY_PATH} with ${pickHistoryOutput.entries.length} entr${pickHistoryOutput.entries.length === 1 ? "y" : "ies"}`);
-  await createButtondownDraft(output);
+  return pickHistoryOutput;
 }
 
-run().catch((error) => {
-  console.error("Generator failed:", error.message);
-  process.exit(1);
-});
+async function run() {
+  const { date, dryRun, debugAnalysis, buttondownDraft } = parseArgs(process.argv.slice(2));
+  console.log(`Building Mets game package for ${date}${dryRun ? " (dry run)" : ""}${debugAnalysis ? " (debug analysis)" : ""}${buttondownDraft ? " (buttondown draft)" : ""}...`);
+
+  const { skipped, output } = await generateOutputPackage({ date, dryRun, debugAnalysis });
+  if (skipped) return;
+
+  if (dryRun) {
+    console.log(JSON.stringify(output, null, 2));
+    return;
+  }
+
+  persistGeneratedOutput(output);
+  if (buttondownDraft) {
+    await createButtondownDraft(output);
+  }
+}
+
+if (require.main === module) {
+  run().catch((error) => {
+    console.error("Generator failed:", error.message);
+    process.exit(1);
+  });
+}
 
 /*
 How to run:
 - node bot/generator.js
 - node bot/generator.js --date 2026-03-16 --dry-run
 */
+
+module.exports = {
+  TEAM_ID,
+  TEAM_NAME,
+  TIME_ZONE,
+  SAMPLE_JSON_PATH,
+  PICK_HISTORY_PATH,
+  REPORT_HTML_PATH,
+  API_ODDS_PATH,
+  parseArgs,
+  getTodayEasternISO,
+  getGameForDate,
+  buildGameFacts,
+  generateWriteupFromFacts,
+  buildFallbackWriteup,
+  buildPresentationReport,
+  buildGameJson,
+  buildEmailHtml,
+  buildSiteReportHtml,
+  loadPreviousOutput,
+  loadPickHistory,
+  writePickHistory,
+  generateOutputPackage,
+  persistGeneratedOutput,
+  formatButtondownSubject,
+  createButtondownDraft,
+  createButtondownEmail,
+  updateButtondownEmail,
+  run
+};

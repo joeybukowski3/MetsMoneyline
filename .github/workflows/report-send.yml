@@ -1,0 +1,67 @@
+name: Send Daily Report
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install bot dependencies
+        working-directory: ./bot
+        run: npm install
+
+      - name: Refresh API cache
+        working-directory: ./bot
+        env:
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
+        run: node build-api-cache.js
+
+      - name: Check eligibility and send report
+        id: sendcheck
+        continue-on-error: true
+        working-directory: ./bot
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
+        run: node check-and-send-report.js
+
+      - name: Commit report send state and refreshed report data
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bot/report-send-state.json public/data/sample-game.json public/data/pick-history.json public/report.html public/api/mlb/mets/odds public/api/mlb/mets/standings.json public/api/mlb/mets/overview.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: report send state update [skip ci]"
+            git push
+          fi
+
+      - name: Fail workflow if send step failed
+        if: steps.sendcheck.outcome == 'failure'
+        run: exit 1
