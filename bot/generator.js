@@ -3385,7 +3385,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     }
     return `
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <table style="width:100%;min-width:1020px;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;">
+        <table style="width:100%;min-width:1180px;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;">
           <thead>
             <tr>
               <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;${smallLabel}">New York Mets</th>
@@ -3656,11 +3656,11 @@ function buildSiteReportHtml(game) {
         </ul>
       </nav>
     </header>
-    <main style="max-width:980px;padding-top:2.5rem;">
+    <main style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
       <section style="margin-bottom:1.75rem;">
         <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#9099b0;font-weight:800;">Daily Report</div>
-        <h1 style="margin:0.35rem 0 0.5rem 0;font-size:2.2rem;line-height:1.1;color:#10213a;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
-        <p style="margin:0;color:#5b6477;font-size:1rem;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
+        <h1 style="margin:0.35rem 0 0.5rem 0;font-size:2.35rem;line-height:1.08;color:#10213a;max-width:1100px;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
+        <p style="margin:0;color:#5b6477;font-size:1rem;max-width:1100px;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
       </section>
       ${reportMarkup}
     </main>
