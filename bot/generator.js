@@ -235,6 +235,18 @@ function formatGameSheetDate(dateValue) {
     : String(dateValue || "TBD");
 }
 
+function expandPitchingHandLabel(value) {
+  const normalized = String(value || "").trim().toUpperCase();
+  if (normalized === "R") return "Right";
+  if (normalized === "L") return "Left";
+  return value || null;
+}
+
+function formatVsSplitLabel(hand) {
+  const expanded = expandPitchingHandLabel(hand);
+  return expanded ? `vs ${expanded}-handed pitching` : null;
+}
+
 function teamCityLabel(teamName) {
   const explicit = {
     "Arizona Diamondbacks": "Phoenix",
@@ -551,7 +563,7 @@ async function loadSavantExpectedBatters() {
   const season = new Date().getFullYear();
   const url =
     "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
-    `?type=batter&year=${season}&position=&team=&min=q&csv=true`;
+    `?type=batter&year=${season}&position=&team=&min=0&csv=true`;
   const csv = await safeGetText(url, `Savant expected batter leaderboard ${season}`);
   cachedSavantExpectedBatters = csv ? parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true }) : [];
   return cachedSavantExpectedBatters;
@@ -694,6 +706,8 @@ function buildLeagueRankMap(battingRows = [], pitchingRows = []) {
   assignRanks(battingRows, 'xAVG', 'xba');
   assignRanks(battingRows, 'xSLG', 'xslg');
   assignRanks(battingRows, 'xwOBA', 'xwoba');
+  assignRanks(battingRows, 'HardHit%', 'hardHit');
+  assignRanks(battingRows, 'Hard%', 'hardHit');
   assignRanks(battingRows, 'BB%', 'bbPct');
   assignRanks(battingRows, 'K%', 'kPct', { descending: false });
   assignRanks(pitchingRows, 'ERA', 'rotEra', { descending: false });
@@ -2982,6 +2996,7 @@ function buildPresentationReport(game) {
   const oppAbbr = TEAM_NAME_TO_ABBR[game?.opponent] || "OPP";
   const metsProjectedPa = sumProjectedLineupPa(lineups?.mets || []);
   const oppProjectedPa = sumProjectedLineupPa(lineups?.opp || []);
+  const teamAdvanced = game?.teamAdvanced || game?.advanced?.teamAdvanced || {};
   const headline = writeup.headline || `New York Mets vs ${game?.opponent || "Opponent"}`;
   const tagline = headline.includes(":") ? cleanText(headline.split(":").slice(1).join(":")) : headline;
   const teamComparison = {
@@ -3073,44 +3088,48 @@ function buildPresentationReport(game) {
           title: "Advanced Stats vs Opponent",
           leftHeader: `NYM ${pitching.mets?.name || "Mets SP"}`,
           rightHeader: `${oppAbbr} Offense`,
+          rightTeamKey: "opp",
           rows: [
             { label: "Barrel %", left: pitching.mets?.savant?.barrelPct || null, right: analysisObject?.offense?.opp?.barrelPct || null },
-            { label: "xBA", left: pitching.mets?.savant?.xBAAllowed || null, right: analysisObject?.offense?.opp?.xBA || null },
-            { label: "Hard Hit %", left: pitching.mets?.savant?.hardHitPct || null, right: analysisObject?.offense?.opp?.hardHitPct || null },
-            { label: "xSLG %", left: pitching.mets?.savant?.xSLGAllowed || null, right: analysisObject?.offense?.opp?.xSLG || null }
+            { label: "xBA", left: pitching.mets?.savant?.xBAAllowed || null, right: analysisObject?.offense?.opp?.xBA || null, rightRankKey: "xba" },
+            { label: "Hard Hit %", left: pitching.mets?.savant?.hardHitPct || null, right: analysisObject?.offense?.opp?.hardHitPct || null, rightRankKey: "hardHit" },
+            { label: "xSLG %", left: pitching.mets?.savant?.xSLGAllowed || null, right: analysisObject?.offense?.opp?.xSLG || null, rightRankKey: "xslg" }
           ]
         },
         {
           title: "Opponent Advanced Stats vs Mets",
           leftHeader: `${oppAbbr} ${pitching.opp?.name || "Opponent SP"}`,
           rightHeader: "NYM Offense",
+          rightTeamKey: "mets",
           rows: [
             { label: "Barrel %", left: pitching.opp?.savant?.barrelPct || null, right: analysisObject?.offense?.mets?.barrelPct || null },
-            { label: "xBA", left: pitching.opp?.savant?.xBAAllowed || null, right: analysisObject?.offense?.mets?.xBA || null },
-            { label: "Hard Hit %", left: pitching.opp?.savant?.hardHitPct || null, right: analysisObject?.offense?.mets?.hardHitPct || null },
-            { label: "xSLG %", left: pitching.opp?.savant?.xSLGAllowed || null, right: analysisObject?.offense?.mets?.xSLG || null }
+            { label: "xBA", left: pitching.opp?.savant?.xBAAllowed || null, right: analysisObject?.offense?.mets?.xBA || null, rightRankKey: "xba" },
+            { label: "Hard Hit %", left: pitching.opp?.savant?.hardHitPct || null, right: analysisObject?.offense?.mets?.hardHitPct || null, rightRankKey: "hardHit" },
+            { label: "xSLG %", left: pitching.opp?.savant?.xSLGAllowed || null, right: analysisObject?.offense?.mets?.xSLG || null, rightRankKey: "xslg" }
           ]
         },
         {
           title: "Advanced Stats vs Opponent Splits",
           leftHeader: `NYM ${pitching.mets?.name || "Mets SP"}`,
           rightHeader: `${oppAbbr} Profile`,
+          rightTeamKey: "opp",
           rows: [
-            { label: "Pitching Hand / vs Split", left: pitching.mets?.hand || null, right: pitching.mets?.hand ? `vs ${pitching.mets.hand}HP` : null },
+            { label: "Pitching Hand / vs Split", left: expandPitchingHandLabel(pitching.mets?.hand), right: formatVsSplitLabel(pitching.mets?.hand) },
             { label: "Innings Pitched / Plate Appearances", left: extractSeasonIp(pitching.mets?.seasonLine, pitching.mets?.note), right: oppProjectedPa },
-            { label: "K%", left: pitching.mets?.savant?.kPct || null, right: analysisObject?.offense?.opp?.kPct || null },
-            { label: "BB%", left: pitching.mets?.savant?.bbPct || null, right: analysisObject?.offense?.opp?.bbPct || null }
+            { label: "K%", left: pitching.mets?.savant?.kPct || null, right: analysisObject?.offense?.opp?.kPct || null, rightRankKey: "kPct" },
+            { label: "BB%", left: pitching.mets?.savant?.bbPct || null, right: analysisObject?.offense?.opp?.bbPct || null, rightRankKey: "bbPct" }
           ]
         },
         {
           title: "Opponent Advanced Stats vs Mets Splits",
           leftHeader: `${oppAbbr} ${pitching.opp?.name || "Opponent SP"}`,
           rightHeader: "NYM Profile",
+          rightTeamKey: "mets",
           rows: [
-            { label: "Pitching Hand / vs Split", left: pitching.opp?.hand || null, right: pitching.opp?.hand ? `vs ${pitching.opp.hand}HP` : null },
+            { label: "Pitching Hand / vs Split", left: expandPitchingHandLabel(pitching.opp?.hand), right: formatVsSplitLabel(pitching.opp?.hand) },
             { label: "Innings Pitched / Plate Appearances", left: extractSeasonIp(pitching.opp?.seasonLine, pitching.opp?.note), right: metsProjectedPa },
-            { label: "K%", left: pitching.opp?.savant?.kPct || null, right: analysisObject?.offense?.mets?.kPct || null },
-            { label: "BB%", left: pitching.opp?.savant?.bbPct || null, right: analysisObject?.offense?.mets?.bbPct || null }
+            { label: "K%", left: pitching.opp?.savant?.kPct || null, right: analysisObject?.offense?.mets?.kPct || null, rightRankKey: "kPct" },
+            { label: "BB%", left: pitching.opp?.savant?.bbPct || null, right: analysisObject?.offense?.mets?.bbPct || null, rightRankKey: "bbPct" }
           ]
         }
       ],
@@ -3163,6 +3182,7 @@ function buildPresentationReport(game) {
       lineupStatus: lineups.lineupStatus || null
     },
     analysis: writeup.analysis || null,
+    teamAdvanced,
     officialPick: {
       label: writeup.officialPick || "Official Pick: Mets ML",
       explanation: writeup.pickSummary || null
@@ -3315,8 +3335,12 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   const sectionTitle = (title) => `<h2 style="margin:0 0 10px 0;font-size:18px;color:#111827;">${title}</h2>`;
   const valueCell = (value) => value == null || value === "" ? "N/A" : value;
   const heatCell = (label, value) => {
-    const pct = reportMetricPct(label, value);
-    const style = pct == null ? "background:#f3f4f6;color:#374151;border-radius:8px;" : reportCellToneStyle(pct);
+    const style = label === "WAR"
+      ? reportWarCellStyle(value)
+      : (() => {
+        const pct = reportMetricPct(label, value);
+        return pct == null ? "background:#f3f4f6;color:#374151;border-radius:8px;" : reportCellToneStyle(pct);
+      })();
     return `<span style="display:inline-block;min-width:64px;padding:6px 8px;${style}">${valueCell(value)}</span>`;
   };
   const renderKeyValueGrid = (items) => `
@@ -3357,13 +3381,20 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         </tr>
       </thead>
       <tbody>
-        ${(table.rows || []).map((row) => `
+        ${(table.rows || []).map((row) => {
+          const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
+          return `
           <tr>
             <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;">${heatCell(row.label, row.left)}</td>
             <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">${valueCell(row.label)}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;">${heatCell(row.label, row.right)}</td>
+            <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;">${resolvedRank
+              ? `<div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;flex-wrap:wrap;">
+                  ${heatCell(row.label, row.right)}
+                  <span style="font-size:11px;line-height:1;color:#6b7280;font-weight:700;white-space:nowrap;">#${resolvedRank} MLB</span>
+                </div>`
+              : heatCell(row.label, row.right)}</td>
           </tr>
-        `).join("")}
+        `;}).join("")}
       </tbody>
     </table>`;
   const renderSummarySheetTable = (rows, headers = null) => `
@@ -3772,6 +3803,18 @@ function reportCellToneStyle(pct) {
   const bg = reportPctlColor(pct);
   const darkText = pct >= 45 && pct < 80;
   return `background:${bg};color:${darkText ? "#10213a" : "#ffffff"};font-weight:700;border-radius:8px;`;
+}
+
+function reportWarCellStyle(value) {
+  const parsed = parseReportNumber(value);
+  if (parsed == null) return "background:#f3f4f6;color:#374151;font-weight:700;border-radius:8px;";
+  if (parsed === 0) return "background:transparent;color:#374151;font-weight:700;border-radius:8px;border:1px solid #d6dde8;";
+  const magnitude = Math.min(Math.abs(parsed), 4);
+  const alpha = 0.18 + ((magnitude / 4) * 0.62);
+  if (parsed > 0) {
+    return `background:rgba(192,57,43,${alpha.toFixed(3)});color:#ffffff;font-weight:700;border-radius:8px;`;
+  }
+  return `background:rgba(26,107,181,${alpha.toFixed(3)});color:#ffffff;font-weight:700;border-radius:8px;`;
 }
 
 function parseReportNumber(value) {
