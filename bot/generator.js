@@ -3330,35 +3330,37 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       ])}
     </section>
 
-    <section style="${cardStyle}">
-      ${sectionTitle("Edge Summary")}
-      <table style="width:100%;border-collapse:collapse;font-size:13px;">
-        <thead>
-          <tr>
-            <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Category</th>
-            <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Verdict</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${[
-            report.edgeSummary?.startingPitching,
-            report.edgeSummary?.lineupQuality,
-            report.edgeSummary?.bullpen,
-            report.edgeSummary?.regressionSignals,
-            mode === "site" ? schedulingRow : report.edgeSummary?.context,
-            ...(mode === "email" ? [report.edgeSummary?.marketValue] : [])
-          ].filter(Boolean).map((row) => `
+    ${mode === "email" ? `
+      <section style="${cardStyle}">
+        ${sectionTitle("Edge Summary")}
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
             <tr>
-              <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${row.category}</td>
-              <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;">${row.verdict}${mode === "email" && row.dataMode === "fallback" ? " (fallback)" : ""}</td>
-            </tr>`).join("")}
-          ${mode === "email" ? `<tr>
-            <td style="padding:9px 8px;color:#111827;font-weight:700;">Overall Model Lean</td>
-            <td style="padding:9px 8px;color:#111827;font-weight:700;">${valueCell(report.edgeSummary?.overallModelLean)}</td>
-          </tr>` : ""}
-        </tbody>
-      </table>
-    </section>
+              <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Category</th>
+              <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Verdict</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[
+              report.edgeSummary?.startingPitching,
+              report.edgeSummary?.lineupQuality,
+              report.edgeSummary?.bullpen,
+              report.edgeSummary?.regressionSignals,
+              report.edgeSummary?.context,
+              report.edgeSummary?.marketValue
+            ].filter(Boolean).map((row) => `
+              <tr>
+                <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${row.category}</td>
+                <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;">${row.verdict}${row.dataMode === "fallback" ? " (fallback)" : ""}</td>
+              </tr>`).join("")}
+            <tr>
+              <td style="padding:9px 8px;color:#111827;font-weight:700;">Overall Model Lean</td>
+              <td style="padding:9px 8px;color:#111827;font-weight:700;">${valueCell(report.edgeSummary?.overallModelLean)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    ` : ""}
 
     <section style="${cardStyle}">
       ${sectionTitle("Starting Pitchers Comparison")}
