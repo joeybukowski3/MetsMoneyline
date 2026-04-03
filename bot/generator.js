@@ -3370,43 +3370,45 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const o = opp[i] || {};
       rows.push(`
         <tr>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${m.order ?? i + 1}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${m.name || ""}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${m.pos || ""}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${heatCell("Projected wRC+", m.fangraphs?.wRCPlus || null)}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${heatCell("xwOBA", m.savant?.xwOBA || null)}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#d1d5db;"></td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${o.order ?? i + 1}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${o.name || ""}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${o.pos || ""}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${heatCell("Projected wRC+", o.fangraphs?.wRCPlus || null)}</td>
-          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${heatCell("xwOBA", o.savant?.xwOBA || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:700;text-align:left;white-space:nowrap;">${valueCell(m.name)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("xBA", m.savant?.xBA || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("K%", m.savant?.kPct || m.fangraphs?.kPct || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("Hard Hit %", m.savant?.hardHitPct || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("WAR", m.fangraphs?.war || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:800;">${valueCell(m.order ?? o.order ?? i + 1)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;font-weight:700;text-align:left;white-space:nowrap;">${valueCell(o.name)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("xBA", o.savant?.xBA || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("K%", o.savant?.kPct || o.fangraphs?.kPct || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("Hard Hit %", o.savant?.hardHitPct || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("WAR", o.fangraphs?.war || null)}</td>
         </tr>`);
     }
     return `
-      <table style="width:100%;border-collapse:collapse;font-size:12px;">
-        <thead>
-          <tr>
-            <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#f97316;${smallLabel}">Mets</th>
-            <th style="border-bottom:1px solid #dbe2ea;"></th>
-            <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#1f2937;${smallLabel}">Opponent</th>
-          </tr>
-          <tr>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">#</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Player</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Pos</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">wRC+</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">xwOBA</th>
-            <th style="border-bottom:1px solid #dbe2ea;"></th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">#</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Player</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Pos</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">wRC+</th>
-            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">xwOBA</th>
-          </tr>
-        </thead>
-        <tbody>${rows.join("")}</tbody>
-      </table>`;
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <table style="width:100%;min-width:1020px;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;">
+          <thead>
+            <tr>
+              <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;${smallLabel}">New York Mets</th>
+              <th style="padding:10px 8px;text-align:center;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;${smallLabel}">Order</th>
+              <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;${smallLabel}">San Francisco Giants</th>
+            </tr>
+            <tr>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:left;">Mets Player</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">xBA</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">K%</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">Hard Hit %</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">WAR</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;${smallLabel}text-align:center;">Order</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:left;">Opponent Player</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">xBA</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">K%</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">Hard Hit %</th>
+              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">WAR</th>
+            </tr>
+          </thead>
+          <tbody>${rows.join("")}</tbody>
+        </table>
+      </div>`;
   };
   const renderBulletList = (items = []) => `<ul style="margin:8px 0 0 18px;padding:0;color:#111827;">${items.map((item) => `<li style="margin:0 0 8px 0;">${item}</li>`).join("")}</ul>`;
   const renderPitcherCard = (card) => {
@@ -3579,7 +3581,6 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
 
     <section style="${cardStyle}">
       ${sectionTitle("Projected Lineup Comparison")}
-      <p style="margin:0 0 12px 0;color:#374151;font-size:14px;"><strong>Projected Lineup Edge:</strong> ${valueCell(report.projectedLineupComparison?.summary)}</p>
       ${renderLineupTable(report.projectedLineupComparison?.mets || [], report.projectedLineupComparison?.opp || [])}
     </section>
 
@@ -3762,6 +3763,7 @@ function reportMetricPct(label, value) {
     case "Lineup xSLG": return REPORT_PCTL.xSLG(parsed);
     case "xBA":
     case "Lineup xBA": return REPORT_PCTL.xBA(parsed);
+    case "WAR": return REPORT_PCTL.WAR(parsed);
     case "Lineup WAR": return REPORT_PCTL.WAR(parsed);
     default: return null;
   }
