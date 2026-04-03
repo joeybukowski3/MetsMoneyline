@@ -2313,6 +2313,153 @@ function decidePick(edgeScoring, analysisObject) {
   };
 }
 
+function normalizeCategoryLabel(category) {
+  if (category === "Overall Lineup Quality" || category === "Lineup vs Handedness") return "Lineup Quality";
+  return category;
+}
+
+function buildQuickRead(edgeScoring, pick) {
+  const bestEdge = edgeScoring.categories
+    .filter((edge) => edge.edge === "Mets edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))[0] || null;
+  const biggestRisk = edgeScoring.categories
+    .filter((edge) => edge.edge === "Opponent edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))[0] || null;
+
+  return {
+    modelLean: pick.analyticalLean,
+    officialPick: "Mets ML",
+    bestEdge: bestEdge ? normalizeCategoryLabel(bestEdge.category) : "No clear edge",
+    biggestRisk: biggestRisk ? normalizeCategoryLabel(biggestRisk.category) : "Limited data"
+  };
+}
+
+function buildEdgeSummary(edgeScoring, pick) {
+  const orderedCategories = [
+    "Starting Pitching",
+    "Overall Lineup Quality",
+    "Lineup vs Handedness",
+    "Bullpen",
+    "Regression Signals",
+    "Context",
+    "Market Value"
+  ];
+
+  const rows = orderedCategories
+    .map((category) => edgeScoring.categories.find((edge) => edge.category === category))
+    .filter(Boolean)
+    .map((edge) => ({
+      category: normalizeCategoryLabel(edge.category),
+      verdict: edge.edge,
+      strength: edge.strength,
+      dataMode: edge.dataMode
+    }));
+
+  const uniqueRows = [];
+  for (const row of rows) {
+    if (!uniqueRows.some((existing) => existing.category === row.category)) {
+      uniqueRows.push(row);
+    }
+  }
+
+  return {
+    rows: uniqueRows,
+    overallModelLean: pick.analyticalLean
+  };
+}
+
+function buildGameDetailsSummary(gameFacts, analysisObject) {
+  return {
+    date: gameFacts.meta.date,
+    time: gameFacts.meta.time,
+    opponent: gameFacts.game.opponent,
+    homeAway: gameFacts.meta.homeAway,
+    ballpark: gameFacts.meta.ballpark,
+    weather: analysisObject.gameInfo.weather || "N/A",
+    lineupStatus: gameFacts.lineups.status === "confirmed" ? "Confirmed" : "Projected",
+    moneyline: gameFacts.money.metsMoneyline == null
+      ? "N/A"
+      : (gameFacts.money.metsMoneyline > 0 ? `+${gameFacts.money.metsMoneyline}` : String(gameFacts.money.metsMoneyline))
+  };
+}
+
+function buildPitchingEdgeSummary(gameFacts, edgeScoring) {
+  const edge = edgeScoring.categories.find((category) => category.category === "Starting Pitching");
+  if (!edge) return "No clear starting-pitching edge.";
+  if (edge.edge === "Mets edge") {
+    return `${gameFacts.pitching.mets.name} gives the Mets the cleaner underlying starting-pitcher case.`;
+  }
+  if (edge.edge === "Opponent edge") {
+    return `${gameFacts.pitching.opp.name} holds the steadier underlying pitching profile entering this matchup.`;
+  }
+  return "Starting pitching grades as essentially even on the current board.";
+}
+
+function buildProjectedLineupEdgeSummary(edgeScoring) {
+  const edge = edgeScoring.categories.find((category) => /Lineup|Overall Lineup Quality/.test(category.category));
+  if (!edge) return "No clear lineup edge.";
+  if (edge.edge === "Mets edge") {
+    return edge.dataMode === "real"
+      ? "The Mets hold the cleaner lineup-vs-handedness case."
+      : "The Mets hold the better overall lineup-quality case, even without true split support.";
+  }
+  if (edge.edge === "Opponent edge") {
+    return edge.dataMode === "real"
+      ? "The opponent carries the stronger split-driven lineup case."
+      : "The opponent has the better overall lineup-quality profile on the current inputs.";
+  }
+  return "Lineup quality is mostly neutral on the current board.";
+}
+
+function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
+  const whyMetsHaveCase = [];
+  const whereRiskIs = [];
+
+  for (const edge of metsAngles.slice(0, 3)) {
+    if (/overall lineup quality|lineup vs handedness/i.test(edge.category)) {
+      whyMetsHaveCase.push("The clearest Mets path is the projected lineup carrying the better overall offensive shape and expected contact quality.");
+    } else if (edge.category === "Starting Pitching") {
+      whyMetsHaveCase.push(`${gameFacts.pitching.mets.name} gives New York the cleaner run-prevention case in the underlying metrics that are actually available.`);
+    } else if (edge.category === "Bullpen") {
+      whyMetsHaveCase.push("There is still a workable bullpen path if the game reaches the middle innings in a tie or with a narrow Mets lead.");
+    } else if (edge.category === "Regression Signals") {
+      whyMetsHaveCase.push("There is at least a plausible positive-regression case if the Mets' quality of contact finally turns into actual runs.");
+    }
+  }
+
+  if (!whyMetsHaveCase.length) {
+    whyMetsHaveCase.push("The best Mets argument is still lineup quality, but it is narrower than a true all-green matchup.");
+  }
+
+  for (const edge of riskAngles.slice(0, 2)) {
+    if (edge.category === "Regression Signals") {
+      whereRiskIs.push("The offense is still asking the model to trust expected results more than actual production.");
+    } else if (edge.category === "Starting Pitching") {
+      whereRiskIs.push(`${gameFacts.pitching.opp.name} owns the better strike-throwing profile, so the mound edge does not sit with New York.`);
+    } else if (edge.category === "Bullpen") {
+      whereRiskIs.push("Bullpen support is not a clean Mets edge, especially with both relief groups carrying recent workload.");
+    } else {
+      whereRiskIs.push("The softer context inputs lean slightly away from New York, and several of those inputs are still incomplete.");
+    }
+  }
+
+  if (!whereRiskIs.length) {
+    whereRiskIs.push("The missing-data load is the biggest reason this read stays conservative.");
+  }
+
+  const bottomLine = pick.analyticalLean === "Mets"
+    ? "The board still leans Mets, but the strongest case is narrow enough that the writeup should stay disciplined."
+    : pick.analyticalLean === "Slight Mets edge"
+      ? "New York has a live case, but the margin is thin and the read is more measured than emphatic."
+      : pick.analyticalLean === "Opponent"
+        ? "The honest board leans the other way, so the Mets case is more about the clearest plausible path than a full-model endorsement."
+        : pick.analyticalLean === "Slight opponent edge"
+          ? "The board gives the other side a small edge, which keeps the Mets case narrow and conditional."
+          : "The board is mixed enough that the Mets case needs to stay focused on the cleanest supporting angles.";
+
+  return { whyMetsHaveCase, whereRiskIs, bottomLine };
+}
+
 function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics = []) {
   const topEdges = [...edgeScoring.categories]
     .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
@@ -2407,6 +2554,12 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
     officialPickSummaryParts.push("That said, this is one of the more self-aware Mets ML spots: the analytical read is not fully on their side, so the brand pick is leaning on the best plausible New York path rather than a clean all-in edge.");
   }
   const pickSummary = officialPickSummaryParts.filter(Boolean).slice(0, 3).join(" ");
+  const quickRead = buildQuickRead(edgeScoring, pick);
+  const edgeSummary = buildEdgeSummary(edgeScoring, pick);
+  const gameDetails = buildGameDetailsSummary(gameFacts, analysisObject);
+  const pitchingEdgeSummary = buildPitchingEdgeSummary(gameFacts, edgeScoring);
+  const projectedLineupEdgeSummary = buildProjectedLineupEdgeSummary(edgeScoring);
+  const gameAnalysis = buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick);
 
   return {
     raw: JSON.stringify({
@@ -2418,6 +2571,12 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
     }),
     headline,
     synopsis,
+    quickRead,
+    gameDetails,
+    edgeSummary,
+    pitchingEdgeSummary,
+    projectedLineupEdgeSummary,
+    gameAnalysis,
     edgeTable: edgeScoring.categories.map((edge) => ({
       category: edge.category,
       edge: edge.edge,
@@ -2433,14 +2592,15 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
     analysisObject,
     edgeScoring,
     sections: [
-      { heading: "1. Matchup Snapshot", body: synopsis },
-      { heading: "2. Starting Pitching", body: edgeScoring.categories.find((edge) => edge.category === "Starting Pitching")?.explanation || "Pitching edge is neutral." },
-      { heading: "3. Lineup Edge", body: edgeScoring.categories.find((edge) => /Lineup|Overall Lineup Quality/.test(edge.category))?.explanation || "Lineup edge is neutral." },
-      { heading: "4. Bullpen / Context", body: `${edgeScoring.categories.find((edge) => edge.category === "Bullpen")?.explanation || ""} ${contextLine}`.trim() },
-      { heading: "5. Why the Mets Have a Case", body: whyMets },
-      { heading: "6. Where the Risk Is", body: whereRisk },
-      { heading: "7. Analytical Lean", body: `${pick.analyticalLean}. ${analyticalLeanBody}` },
-      { heading: "8. Official MetsMoneyline Pick", body: pickSummary }
+      { heading: "1. Quick Read", body: `Model Lean: ${quickRead.modelLean}. Official Pick: ${quickRead.officialPick}. Best Edge: ${quickRead.bestEdge}. Biggest Risk: ${quickRead.biggestRisk}.` },
+      { heading: "2. Game Details", body: `${gameFacts.meta.date} | ${gameFacts.meta.time} | ${gameFacts.meta.ballpark}. ${gameFacts.meta.homeAway === "home" ? "Mets home game." : "Mets road game."} Lineups: ${gameDetails.lineupStatus}. Mets ML: ${gameDetails.moneyline}.` },
+      { heading: "3. Edge Summary", body: `${edgeSummary.rows.map((row) => `${row.category}: ${row.verdict}${row.dataMode === "fallback" ? " (fallback)" : ""}`).join(" | ")} | Overall Model Lean: ${edgeSummary.overallModelLean}.` },
+      { heading: "4. Starting Pitchers Comparison", body: pitchingEdgeSummary },
+      { heading: "5. Pitcher Contact Profile vs Opponent", body: edgeScoring.categories.find((edge) => edge.category === "Starting Pitching")?.explanation || "Pitcher contact profile is neutral." },
+      { heading: "6. Pitcher Split Matchup vs Opponent", body: `${edgeScoring.categories.find((edge) => /Lineup|Overall Lineup Quality/.test(edge.category))?.explanation || "No clear split matchup edge."} ${contextLine}`.trim() },
+      { heading: "7. Projected Lineup Comparison", body: projectedLineupEdgeSummary },
+      { heading: "8. Game Analysis", body: `${whyMets} ${whereRisk} ${analyticalLeanBody}`.trim() },
+      { heading: "9. Official MetsMoneyline Pick", body: pickSummary }
     ],
     pickSummary,
     officialPick: "Official Pick: Mets ML"
@@ -2478,31 +2638,55 @@ function buildFallbackWriteup(gameFacts) {
 
   return {
     raw: JSON.stringify({ fallback: true, generatedAt: new Date().toISOString() }),
+    quickRead: {
+      modelLean: "Mets",
+      officialPick: "Mets ML",
+      bestEdge: "Lineup Quality",
+      biggestRisk: "Limited data"
+    },
+    gameDetails: {
+      date: gameFacts.meta.date,
+      time: gameFacts.meta.time,
+      opponent,
+      homeAway: gameFacts.meta.homeAway,
+      ballpark,
+      weather: "N/A",
+      lineupStatus: lineupStatus === "confirmed" ? "Confirmed" : "Projected",
+      moneyline: gameFacts.money?.metsMoneyline == null ? "N/A" : String(gameFacts.money.metsMoneyline)
+    },
+    edgeSummary: {
+      rows: [
+        { category: "Starting Pitching", verdict: "Limited data", strength: "even", dataMode: "fallback" },
+        { category: "Lineup Quality", verdict: "Mets edge", strength: "slight", dataMode: "fallback" },
+        { category: "Bullpen", verdict: "Mets edge", strength: "slight", dataMode: "fallback" },
+        { category: "Regression Signals", verdict: "Limited data", strength: "even", dataMode: "fallback" },
+        { category: "Context", verdict: "Even", strength: "even", dataMode: "fallback" },
+        { category: "Market Value", verdict: "Limited data", strength: "even", dataMode: "fallback" }
+      ],
+      overallModelLean: "Mets"
+    },
+    pitchingEdgeSummary: `${metsPitcher} vs ${oppPitcher} is workable, but this version is still running on fallback data.`,
+    projectedLineupEdgeSummary: "The best Mets case is still the overall lineup shape and run-creation potential.",
+    gameAnalysis: {
+      whyMetsHaveCase: [
+        "The lineup baseline is still good enough to give New York a plausible offensive path.",
+        "The bullpen and offensive profile keep the Mets case alive even in fallback mode."
+      ],
+      whereRiskIs: [
+        "This version is missing too much detail to overstate any one edge."
+      ],
+      bottomLine: "The fallback sheet still lands on the Mets, but with a lighter analytical touch."
+    },
     sections: [
-      {
-        heading: "1. Short Recap",
-        body: shortRecapBody
-      },
-      {
-        heading: "2. Pitching Matchup",
-        body: `${metsPitcher}${gameFacts.pitching.mets.seasonERA ? ` (${gameFacts.pitching.mets.seasonERA} ERA` : ""}${gameFacts.pitching.mets.seasonWHIP ? `, ${gameFacts.pitching.mets.seasonWHIP} WHIP` : ""}${gameFacts.pitching.mets.note ? `, ${gameFacts.pitching.mets.note}` : ""}${gameFacts.pitching.mets.seasonERA ? ")" : ""} vs ${oppPitcher}${gameFacts.pitching.opp.seasonERA ? ` (${gameFacts.pitching.opp.seasonERA} ERA` : ""}${gameFacts.pitching.opp.seasonWHIP ? `, ${gameFacts.pitching.opp.seasonWHIP} WHIP` : ""}${gameFacts.pitching.opp.note ? `, ${gameFacts.pitching.opp.note}` : ""}${gameFacts.pitching.opp.seasonERA ? ")" : ""}.`
-      },
-      {
-        heading: "3. Lineup Comparison",
-        body: `Lineups are ${lineupStatus}. Team offense: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"}, xwOBA ${ta.mets?.xwoba || "N/A"}, K% ${ta.mets?.kPct || "N/A"}. ${opponent} wRC+ ${ta.opp?.wrcPlus || "N/A"}, xwOBA ${ta.opp?.xwoba || "N/A"}, K% ${ta.opp?.kPct || "N/A"}.`
-      },
-      {
-        heading: "4. Bullpen",
-        body: `Bullpen check: Mets ERA ${metsBp.seasonERA || "N/A"}, xFIP ${metsBp.seasonXFIP || "N/A"}, WHIP ${metsBp.seasonWHIP || "N/A"}. ${opponent} ERA ${oppBp.seasonERA || "N/A"}, xFIP ${oppBp.seasonXFIP || "N/A"}, WHIP ${oppBp.seasonWHIP || "N/A"}.`
-      },
-      {
-        heading: "5. Key Edges",
-        body: `Main numbers: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"} vs ${ta.opp?.wrcPlus || "N/A"}, NYM xwOBA ${ta.mets?.xwoba || "N/A"} vs ${ta.opp?.xwoba || "N/A"}, NYM bullpen rating ${metsBp.rating || "N/A"} vs ${oppBp.rating || "N/A"}.`
-      },
-      {
-        heading: "6. Today's Pick",
-        body: `Today's Pick: New York Mets Moneyline. Reason: better lineup quality and the stronger bullpen numbers.`
-      }
+      { heading: "1. Quick Read", body: `Model Lean: Mets. Official Pick: Mets ML. Best Edge: Lineup Quality. Biggest Risk: Limited data.` },
+      { heading: "2. Game Details", body: shortRecapBody },
+      { heading: "3. Edge Summary", body: `Starting Pitching: Limited data | Lineup Quality: Mets edge | Bullpen: Mets edge | Regression Signals: Limited data | Context: Even | Market Value: Limited data | Overall Model Lean: Mets.` },
+      { heading: "4. Starting Pitchers Comparison", body: `${metsPitcher}${gameFacts.pitching.mets.seasonERA ? ` (${gameFacts.pitching.mets.seasonERA} ERA` : ""}${gameFacts.pitching.mets.seasonWHIP ? `, ${gameFacts.pitching.mets.seasonWHIP} WHIP` : ""}${gameFacts.pitching.mets.note ? `, ${gameFacts.pitching.mets.note}` : ""}${gameFacts.pitching.mets.seasonERA ? ")" : ""} vs ${oppPitcher}${gameFacts.pitching.opp.seasonERA ? ` (${gameFacts.pitching.opp.seasonERA} ERA` : ""}${gameFacts.pitching.opp.seasonWHIP ? `, ${gameFacts.pitching.opp.seasonWHIP} WHIP` : ""}${gameFacts.pitching.opp.note ? `, ${gameFacts.pitching.opp.note}` : ""}${gameFacts.pitching.opp.seasonERA ? ")" : ""}.` },
+      { heading: "5. Pitcher Contact Profile vs Opponent", body: `Bullpen check: Mets ERA ${metsBp.seasonERA || "N/A"}, xFIP ${metsBp.seasonXFIP || "N/A"}, WHIP ${metsBp.seasonWHIP || "N/A"}. ${opponent} ERA ${oppBp.seasonERA || "N/A"}, xFIP ${oppBp.seasonXFIP || "N/A"}, WHIP ${oppBp.seasonWHIP || "N/A"}.` },
+      { heading: "6. Pitcher Split Matchup vs Opponent", body: `Lineups are ${lineupStatus}. Team offense: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"}, xwOBA ${ta.mets?.xwoba || "N/A"}, K% ${ta.mets?.kPct || "N/A"}. ${opponent} wRC+ ${ta.opp?.wrcPlus || "N/A"}, xwOBA ${ta.opp?.xwoba || "N/A"}, K% ${ta.opp?.kPct || "N/A"}.` },
+      { heading: "7. Projected Lineup Comparison", body: `Main numbers: NYM wRC+ ${ta.mets?.wrcPlus || "N/A"} vs ${ta.opp?.wrcPlus || "N/A"}, NYM xwOBA ${ta.mets?.xwoba || "N/A"} vs ${ta.opp?.xwoba || "N/A"}, NYM bullpen rating ${metsBp.rating || "N/A"} vs ${oppBp.rating || "N/A"}.` },
+      { heading: "8. Game Analysis", body: "The fallback sheet keeps the Mets case intact, but without enough depth to make the writeup more aggressive." },
+      { heading: "9. Official MetsMoneyline Pick", body: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.` }
     ],
     pickSummary: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.`,
     officialPick: "Official Pick: Mets ML",
@@ -2702,6 +2886,12 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       raw: writeup.raw,
       headline: writeup.headline || null,
       synopsis: writeup.synopsis || null,
+      quickRead: writeup.quickRead || null,
+      gameDetails: writeup.gameDetails || null,
+      edgeSummary: writeup.edgeSummary || null,
+      pitchingEdgeSummary: writeup.pitchingEdgeSummary || null,
+      projectedLineupEdgeSummary: writeup.projectedLineupEdgeSummary || null,
+      gameAnalysis: writeup.gameAnalysis || null,
       sections,
       pickSummary: writeup.pickSummary,
       officialPick,
@@ -2767,13 +2957,113 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
 }
 
 function buildEmailHtml(game) {
-  const sectionsHtml = (game.writeup?.sections || [])
-    .filter((section) => section.body || /^today's pick/i.test(section.heading))
-    .map((section) => {
-      if (!section.body) return `<h2>${section.heading}</h2>`;
-      return `<h2>${section.heading}</h2><p>${section.body}</p>`;
-    })
-    .join("");
+  const writeup = game.writeup || {};
+  const quickRead = writeup.quickRead || {};
+  const gameDetails = writeup.gameDetails || {};
+  const edgeSummary = writeup.edgeSummary || { rows: [] };
+  const gameAnalysis = writeup.gameAnalysis || {};
+  const pitching = game.pitching || {};
+  const lineups = game.lineups || {};
+  const contactRows = [
+    { label: "xERA", mets: pitching.mets?.savant?.xERA, opp: pitching.opp?.savant?.xERA },
+    { label: "Barrel%", mets: pitching.mets?.savant?.barrelPct, opp: pitching.opp?.savant?.barrelPct },
+    { label: "Hard-Hit%", mets: pitching.mets?.savant?.hardHitPct, opp: pitching.opp?.savant?.hardHitPct },
+    { label: "Whiff%", mets: pitching.mets?.savant?.whiffPct, opp: pitching.opp?.savant?.whiffPct },
+    { label: "Chase%", mets: pitching.mets?.savant?.chasePct, opp: pitching.opp?.savant?.chasePct },
+    { label: "K%", mets: pitching.mets?.savant?.kPct, opp: pitching.opp?.savant?.kPct },
+    { label: "BB%", mets: pitching.mets?.savant?.bbPct, opp: pitching.opp?.savant?.bbPct }
+  ];
+  const splitRows = [
+    { label: "Pitcher Hand", mets: pitching.mets?.hand, opp: pitching.opp?.hand },
+    { label: "Opponent Lineup wRC+", mets: writeup.analysisObject?.offense?.opp?.projectedLineupWRCPlus, opp: writeup.analysisObject?.offense?.mets?.projectedLineupWRCPlus },
+    { label: "Opponent Lineup xwOBA", mets: writeup.analysisObject?.offense?.opp?.xwOBA, opp: writeup.analysisObject?.offense?.mets?.xwOBA },
+    { label: "Opponent Lineup K%", mets: writeup.analysisObject?.offense?.opp?.kPct, opp: writeup.analysisObject?.offense?.mets?.kPct },
+    { label: "Opponent Lineup BB%", mets: writeup.analysisObject?.offense?.opp?.bbPct, opp: writeup.analysisObject?.offense?.mets?.bbPct },
+    {
+      label: "Split Data",
+      mets: writeup.analysisObject?.offense?.opp?.splitContext?.splitDataAvailable ? "Available" : "Fallback",
+      opp: writeup.analysisObject?.offense?.mets?.splitContext?.splitDataAvailable ? "Available" : "Fallback"
+    }
+  ];
+  const cardStyle = "background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;";
+  const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;";
+  const sectionTitle = (title) => `<h2 style="margin:0 0 10px 0;font-size:18px;color:#111827;">${title}</h2>`;
+  const valueCell = (value) => value == null || value === "" ? "N/A" : value;
+  const renderKeyValueGrid = (items) => `
+    <table style="width:100%;border-collapse:collapse;">
+      <tbody>
+        ${items.map((item) => `
+          <tr>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}width:34%;">${item.label}</td>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-size:14px;color:#111827;font-weight:600;">${valueCell(item.value)}</td>
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
+  const renderComparisonTable = (rows, leftLabel, rightLabel) => `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead>
+        <tr>
+          <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;color:#6b7280;${smallLabel}">Metric</th>
+          <th style="text-align:center;padding:10px 8px;border-bottom:1px solid #dbe2ea;color:#f97316;${smallLabel}">${leftLabel}</th>
+          <th style="text-align:center;padding:10px 8px;border-bottom:1px solid #dbe2ea;color:#1f2937;${smallLabel}">${rightLabel}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((row) => `
+          <tr>
+            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;font-weight:600;">${row.label}</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${valueCell(row.mets)}</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${valueCell(row.opp)}</td>
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
+  const renderLineupTable = (mets = [], opp = []) => {
+    const maxRows = Math.max(mets.length, opp.length, 9);
+    const rows = [];
+    for (let i = 0; i < maxRows; i += 1) {
+      const m = mets[i] || {};
+      const o = opp[i] || {};
+      rows.push(`
+        <tr>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${m.order ?? i + 1}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${m.name || ""}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${m.pos || ""}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${m.fangraphs?.wRCPlus || "N/A"}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${m.savant?.xwOBA || "N/A"}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#d1d5db;"></td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${o.order ?? i + 1}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${o.name || ""}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#6b7280;text-align:center;">${o.pos || ""}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${o.fangraphs?.wRCPlus || "N/A"}</td>
+          <td style="padding:8px;border-bottom:1px solid #f0f2f5;color:#111827;text-align:center;">${o.savant?.xwOBA || "N/A"}</td>
+        </tr>`);
+    }
+    return `
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr>
+            <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#f97316;${smallLabel}">Mets</th>
+            <th style="border-bottom:1px solid #dbe2ea;"></th>
+            <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #dbe2ea;color:#1f2937;${smallLabel}">${game.opponent}</th>
+          </tr>
+          <tr>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">#</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Player</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Pos</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">wRC+</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">xwOBA</th>
+            <th style="border-bottom:1px solid #dbe2ea;"></th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">#</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Player</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Pos</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">wRC+</th>
+            <th style="padding:8px;border-bottom:1px solid #dbe2ea;${smallLabel}">xwOBA</th>
+          </tr>
+        </thead>
+        <tbody>${rows.join("")}</tbody>
+      </table>`;
+  };
+  const renderBulletList = (items = []) => `<ul style="margin:8px 0 0 18px;padding:0;color:#111827;">${items.map((item) => `<li style="margin:0 0 8px 0;">${item}</li>`).join("")}</ul>`;
 
   return `<!doctype html>
 <html lang="en">
@@ -2782,12 +3072,111 @@ function buildEmailHtml(game) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MetsMoneyline</title>
   </head>
-  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 680px; margin: 0 auto; padding: 24px;">
+  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 860px; margin: 0 auto; padding: 24px;">
     <p style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280;">MetsMoneyline</p>
-    <h1 style="margin-bottom: 8px;">New York Mets vs ${game.opponent}</h1>
-    <p style="margin-top: 0; color: #4b5563;">${game.date} | ${game.time} | ${game.ballpark}</p>
-    ${sectionsHtml}
-    <p><strong>${game.writeup?.officialPick || "Official Pick: Mets ML"}</strong></p>
+    <h1 style="margin:0 0 8px 0;">${writeup.headline || `New York Mets vs ${game.opponent}`}</h1>
+    <p style="margin:0 0 18px 0; color: #4b5563;">${game.date} | ${game.time} | ${game.ballpark}</p>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Quick Read")}
+      <table style="width:100%;border-collapse:collapse;">
+        <tbody>
+          <tr>
+            <td style="padding:8px 0;width:25%;${smallLabel}">Model Lean</td>
+            <td style="padding:8px 0;width:25%;font-weight:700;">${valueCell(quickRead.modelLean)}</td>
+            <td style="padding:8px 0;width:25%;${smallLabel}">Official Pick</td>
+            <td style="padding:8px 0;width:25%;font-weight:700;color:#f97316;">${valueCell(quickRead.officialPick)}</td>
+          </tr>
+          <tr>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}">Best Edge</td>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(quickRead.bestEdge)}</td>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}">Biggest Risk</td>
+            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(quickRead.biggestRisk)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Game Details")}
+      ${renderKeyValueGrid([
+        { label: "Date", value: gameDetails.date || game.date },
+        { label: "Time", value: gameDetails.time || game.time },
+        { label: "Venue", value: gameDetails.ballpark || game.ballpark },
+        { label: "Home/Away", value: gameDetails.homeAway || game.homeAway },
+        { label: "Lineups", value: gameDetails.lineupStatus || lineups.lineupStatus },
+        { label: "Mets ML", value: gameDetails.moneyline || "N/A" }
+      ])}
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Edge Summary")}
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Category</th>
+            <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Verdict</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(edgeSummary.rows || []).map((row) => `
+            <tr>
+              <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${row.category}</td>
+              <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;">${row.verdict}${row.dataMode === "fallback" ? " (fallback)" : ""}</td>
+            </tr>`).join("")}
+          <tr>
+            <td style="padding:9px 8px;color:#111827;font-weight:700;">Overall Model Lean</td>
+            <td style="padding:9px 8px;color:#111827;font-weight:700;">${valueCell(edgeSummary.overallModelLean)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Starting Pitchers Comparison")}
+      ${renderComparisonTable([
+        { label: "ERA", mets: pitching.mets?.seasonERA, opp: pitching.opp?.seasonERA },
+        { label: "xERA", mets: pitching.mets?.seasonXERA || pitching.mets?.savant?.xERA, opp: pitching.opp?.seasonXERA || pitching.opp?.savant?.xERA },
+        { label: "FIP", mets: pitching.mets?.seasonFIP, opp: pitching.opp?.seasonFIP },
+        { label: "WHIP", mets: pitching.mets?.seasonWHIP, opp: pitching.opp?.seasonWHIP },
+        { label: "K%", mets: pitching.mets?.savant?.kPct, opp: pitching.opp?.savant?.kPct },
+        { label: "BB%", mets: pitching.mets?.savant?.bbPct, opp: pitching.opp?.savant?.bbPct },
+        { label: "K-BB%", mets: pitching.mets?.last3KBB, opp: pitching.opp?.last3KBB }
+      ], pitching.mets?.name || "Mets SP", pitching.opp?.name || `${game.opponent} SP`)}
+      <p style="margin:12px 0 0 0;color:#374151;font-size:14px;"><strong>Pitching Edge Summary:</strong> ${valueCell(writeup.pitchingEdgeSummary)}</p>
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Pitcher Contact Profile vs Opponent")}
+      ${renderComparisonTable(contactRows, pitching.mets?.name || "Mets SP", pitching.opp?.name || `${game.opponent} SP`)}
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Pitcher Split Matchup vs Opponent")}
+      ${renderComparisonTable(splitRows, pitching.mets?.name || "Mets SP", pitching.opp?.name || `${game.opponent} SP`)}
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Projected Lineup Comparison")}
+      <p style="margin:0 0 12px 0;color:#374151;font-size:14px;"><strong>Projected Lineup Edge:</strong> ${valueCell(writeup.projectedLineupEdgeSummary)}</p>
+      ${renderLineupTable(lineups.mets || [], lineups.opp || [])}
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Game Analysis")}
+      <div style="${smallLabel}margin-bottom:6px;">Why the Mets have a case</div>
+      ${renderBulletList(gameAnalysis.whyMetsHaveCase || [])}
+      <div style="${smallLabel}margin:12px 0 6px 0;">Where the risk is</div>
+      ${renderBulletList(gameAnalysis.whereRiskIs || [])}
+      <div style="${smallLabel}margin:12px 0 6px 0;">Bottom line</div>
+      <p style="margin:0;color:#374151;">${valueCell(gameAnalysis.bottomLine)}</p>
+    </section>
+
+    <section style="${cardStyle}">
+      ${sectionTitle("Official MetsMoneyline Pick")}
+      <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">${writeup.officialPick || "Official Pick: Mets ML"}</p>
+      <p style="margin:0;color:#374151;">${valueCell(writeup.pickSummary)}</p>
+    </section>
   </body>
 </html>`;
 }
@@ -2864,6 +3253,12 @@ async function run() {
       finalWriteup: {
         headline: writeup.headline || null,
         synopsis: writeup.synopsis || null,
+        quickRead: writeup.quickRead || null,
+        gameDetails: writeup.gameDetails || null,
+        edgeSummary: writeup.edgeSummary || null,
+        pitchingEdgeSummary: writeup.pitchingEdgeSummary || null,
+        projectedLineupEdgeSummary: writeup.projectedLineupEdgeSummary || null,
+        gameAnalysis: writeup.gameAnalysis || null,
         edgeTable: writeup.edgeTable || [],
         sections: writeup.sections || [],
         analyticalLean: writeup.analyticalLean || null,
