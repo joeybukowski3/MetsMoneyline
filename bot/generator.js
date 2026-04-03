@@ -184,6 +184,11 @@ function formatButtondownSubject(game) {
   return `MetsMoneyline - ${game.date}: New York Mets vs ${game.opponent}`;
 }
 
+function formatPreliminaryButtondownSubject(game, lineupSourceLabel = "projected lineups") {
+  if (!game) return "PRELIMINARY REPORT - MetsMoneyline";
+  return `PRELIMINARY REPORT - ${lineupSourceLabel} - New York Mets vs ${game.opponent}`;
+}
+
 function slugify(value) {
   return String(value || "")
     .toLowerCase()
@@ -2987,6 +2992,7 @@ function mergeRecentBreakdowns(previousOutput, currentGame, persistentHistoryEnt
 
 function buildPresentationReport(game) {
   const writeup = game?.writeup || {};
+  const preliminaryMeta = writeup.preliminaryMeta || null;
   const analysisObject = writeup.analysisObject || {};
   const pitching = game?.pitching || {};
   const lineups = game?.lineups || {};
@@ -3007,6 +3013,9 @@ function buildPresentationReport(game) {
   const teamAdvanced = game?.teamAdvanced || game?.advanced?.teamAdvanced || {};
   const headline = writeup.headline || `New York Mets vs ${game?.opponent || "Opponent"}`;
   const tagline = headline.includes(":") ? cleanText(headline.split(":").slice(1).join(":")) : headline;
+  const preliminaryTitle = preliminaryMeta?.enabled
+    ? `${preliminaryMeta.titlePrefix || "PRELIMINARY REPORT"} - ${headline}`
+    : headline;
   const teamComparison = {
     metsHeader: "New York Mets",
     oppHeader: game?.opponent === "San Francisco Giants" ? "SF Giants" : (game?.opponent || "Opponent"),
@@ -3032,7 +3041,7 @@ function buildPresentationReport(game) {
 
   return {
     header: {
-      title: headline,
+      title: preliminaryTitle,
       matchupTitle: `New York Mets vs ${game?.opponent || "Opponent"}`,
       tagline,
       date: game?.date || null,
@@ -3047,6 +3056,15 @@ function buildPresentationReport(game) {
         weatherSummary || "N/A"
       ].filter(Boolean).join(" | ")
     },
+    preliminary: preliminaryMeta?.enabled
+      ? {
+          enabled: true,
+          titlePrefix: preliminaryMeta.titlePrefix || "PRELIMINARY REPORT",
+          lineupSource: preliminaryMeta.lineupSource || null,
+          lineupSourceLabel: preliminaryMeta.lineupSourceLabel || null,
+          note: preliminaryMeta.note || null
+        }
+      : null,
     quickRead: writeup.quickRead || null,
     gameDetails: writeup.gameDetails || null,
     gameDetailsTable: {
@@ -3695,6 +3713,7 @@ function buildEmailHtml(game) {
     <p style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280;">MetsMoneyline</p>
     <h1 style="margin:0 0 8px 0;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
     <p style="margin:0 0 18px 0; color: #4b5563;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
+    ${report.preliminary?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${report.preliminary.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
     ${reportMarkup}
   </body>
 </html>`;
@@ -4132,8 +4151,10 @@ module.exports = {
   generateOutputPackage,
   persistGeneratedOutput,
   formatButtondownSubject,
+  formatPreliminaryButtondownSubject,
   createButtondownDraft,
   createButtondownEmail,
   updateButtondownEmail,
+  getMostRecentConfirmedLineup,
   run
 };
