@@ -227,6 +227,14 @@ function formatGameSheetDateTime(dateValue, timeValue) {
   return `${dateLabel}, ${timeLabel}`;
 }
 
+function formatGameSheetDate(dateValue) {
+  if (!dateValue) return "N/A";
+  const parsed = new Date(`${dateValue}T12:00:00Z`);
+  return parsed && !Number.isNaN(parsed.getTime())
+    ? parsed.toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "UTC" }).replace(/\d+/, (match) => formatOrdinalDay(match))
+    : String(dateValue || "TBD");
+}
+
 function teamCityLabel(teamName) {
   const explicit = {
     "Arizona Diamondbacks": "Phoenix",
@@ -2967,14 +2975,20 @@ function buildPresentationReport(game) {
   const moneylineValue = typeof game?.moneyline?.mets === "number"
     ? (game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : String(game.moneyline.mets))
     : (writeup.gameDetails?.moneyline || "N/A");
+  const oppMoneylineValue = typeof game?.moneyline?.opp === "number"
+    ? (game.moneyline.opp > 0 ? `+${game.moneyline.opp}` : String(game.moneyline.opp))
+    : "N/A";
   const locationCity = teamCityLabel(game?.homeAway === "home" ? TEAM_NAME : game?.opponent);
   const oppAbbr = TEAM_NAME_TO_ABBR[game?.opponent] || "OPP";
   const metsProjectedPa = sumProjectedLineupPa(lineups?.mets || []);
   const oppProjectedPa = sumProjectedLineupPa(lineups?.opp || []);
+  const headline = writeup.headline || `New York Mets vs ${game?.opponent || "Opponent"}`;
+  const tagline = headline.includes(":") ? cleanText(headline.split(":").slice(1).join(":")) : headline;
   const teamComparison = {
     metsHeader: "New York Mets",
     oppHeader: game?.opponent === "San Francisco Giants" ? "SF Giants" : (game?.opponent || "Opponent"),
     rows: [
+      { label: "Odds", mets: moneylineValue, opp: oppMoneylineValue },
       { label: "Season Record", mets: sanitizeRecord(game?.metsRecord, "N/A"), opp: sanitizeRecord(game?.oppRecord, "N/A") },
       { label: "Last 5 Record", mets: recentRecordFromGames(gameContext?.metsRecentGames, 5), opp: recentRecordFromGames(gameContext?.oppRecentGames, 5) },
       {
@@ -2995,11 +3009,20 @@ function buildPresentationReport(game) {
 
   return {
     header: {
-      title: writeup.headline || `New York Mets vs ${game?.opponent || "Opponent"}`,
+      title: headline,
       matchupTitle: `New York Mets vs ${game?.opponent || "Opponent"}`,
+      tagline,
       date: game?.date || null,
       time: game?.time || null,
-      ballpark: game?.ballpark || null
+      ballpark: game?.ballpark || null,
+      metsLogoUrl: "https://www.mlbstatic.com/team-logos/121.svg",
+      oppLogoUrl: game?.oppTeamId ? `https://www.mlbstatic.com/team-logos/${game.oppTeamId}.svg` : null,
+      metadataLine: [
+        formatGameSheetDate(game?.date || writeup.gameDetails?.date),
+        game?.time || writeup.gameDetails?.time || null,
+        game?.ballpark || writeup.gameDetails?.ballpark || null,
+        weatherSummary || "N/A"
+      ].filter(Boolean).join(" | ")
     },
     quickRead: writeup.quickRead || null,
     gameDetails: writeup.gameDetails || null,
@@ -3468,10 +3491,6 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         </div>`).join("")}
     </div>`;
   const schedulingRow = report.meta?.schedulingSpot;
-  const gameDetailsRows = (report.gameDetailsTable?.rows || []).map((row) => ([
-    { value: row.label, style: "width:34%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f3f6fb;color:#374151;font-weight:700;" },
-    { value: row.value, style: "padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#111827;font-weight:600;" }
-  ]));
   const matchupHeaders = [
     { label: report.teamComparison?.metsHeader || "New York Mets", style: "width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;" },
     { label: "Category", style: "width:28%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:700;" },
@@ -3508,15 +3527,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     </section>` : ""}
 
     ${mode === "site" ? `
-      <section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:18px;margin:0 0 18px 0;align-items:stretch;">
-        <section style="${cardStyle}margin:0;height:100%;">
-          ${sectionTitle("Game Details")}
-          ${renderSummarySheetTable(gameDetailsRows)}
-        </section>
-        <section style="${cardStyle}margin:0;height:100%;">
-          ${sectionTitle("Matchup Details")}
-          ${renderSummarySheetTable(matchupRows, matchupHeaders)}
-        </section>
+      <section style="${cardStyle}margin:0 0 18px 0;">
+        ${sectionTitle("Matchup Details")}
+        ${renderSummarySheetTable(matchupRows, matchupHeaders)}
       </section>
     ` : `<section style="${cardStyle}">
       ${sectionTitle("Game Details")}
@@ -3673,10 +3686,18 @@ function buildSiteReportHtml(game) {
       </nav>
     </header>
     <main style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
-      <section style="margin-bottom:1.75rem;">
-        <div style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#9099b0;font-weight:800;">Daily Report</div>
-        <h1 style="margin:0.35rem 0 0.5rem 0;font-size:2.35rem;line-height:1.08;color:#10213a;max-width:1100px;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
-        <p style="margin:0;color:#5b6477;font-size:1rem;max-width:1100px;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
+      <section style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
+            <img src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:112px;height:112px;object-fit:contain;">
+          </div>
+          <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</div>
+          <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
+            <img src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:112px;height:112px;object-fit:contain;">
+          </div>
+        </div>
+        <h1 style="margin:0.9rem 0 0.4rem 0;font-size:2rem;line-height:1.08;color:#10213a;">${report.header?.tagline || report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
+        <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
       </section>
       ${reportMarkup}
     </main>
