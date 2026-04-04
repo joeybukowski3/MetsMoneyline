@@ -3358,8 +3358,12 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     ? "background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);"
     : "background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;";
   const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;";
-  const sectionTitle = (title) => `<h2 style="margin:0 0 10px 0;font-size:18px;color:#111827;">${title}</h2>`;
+  const sectionTitle = (title) => `<h2 style="margin:0 0 12px 0;font-size:${mode === "site" ? "18px" : "17px"};line-height:1.25;color:#111827;">${title}</h2>`;
   const valueCell = (value) => value == null || value === "" ? "N/A" : value;
+  const wrapSection = (title, content) => `<section style="${cardStyle}">${sectionTitle(title)}${content}</section>`;
+  const twoColStyle = mode === "site"
+    ? "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;"
+    : "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;";
   const heatCell = (label, value) => {
     const style = label === "WAR"
       ? reportWarCellStyle(value)
@@ -3398,7 +3402,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </tbody>
     </table>`;
   const renderAdvancedSheetTable = (table) => `
-    <table style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #d6dde8;background:#ffffff;">
+    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+    <table class="report-sheet-table" style="width:100%;border-collapse:collapse;font-size:${mode === "site" ? "13px" : "12px"};border:1px solid #d6dde8;background:#ffffff;">
       <thead>
         <tr>
           <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(table.leftHeader)}</th>
@@ -3422,9 +3427,11 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           </tr>
         `;}).join("")}
       </tbody>
-    </table>`;
+    </table>
+    </div>`;
   const renderSummarySheetTable = (rows, headers = null) => `
-    <table style="width:100%;height:100%;border-collapse:collapse;font-size:14px;border:1px solid #d6dde8;background:#ffffff;">
+    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+    <table class="report-sheet-table" style="width:100%;height:100%;border-collapse:collapse;font-size:${mode === "site" ? "14px" : "13px"};border:1px solid #d6dde8;background:#ffffff;">
       ${headers ? `
         <thead>
           <tr>
@@ -3437,7 +3444,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             ${row.map((cell) => `<td style="${cell.style}">${valueCell(cell.value)}</td>`).join("")}
           </tr>`).join("")}
       </tbody>
-    </table>`;
+    </table>
+    </div>`;
   const renderSingleSideTable = (rows, heading, teamColor) => `
     <div class="card full-card" style="padding:1.05rem 1.1rem;">
       <div style="${smallLabel}color:${teamColor};margin-bottom:0.65rem;">${heading}</div>
@@ -3461,7 +3469,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     const lineupHeadshot = (player) => {
       const pid = player?.playerId || player?.id || player?.mlbId || 0;
       if (!pid) return "";
-      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)}" style="width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
+      const photoSize = mode === "site" ? 30 : 24;
+      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)}" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
     };
     const lineupNameCell = (player, side) => {
       return `<div style="display:flex;align-items:center;gap:8px;min-width:0;">
@@ -3490,8 +3499,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         </tr>`);
     }
     return `
-      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <table style="width:100%;min-width:1180px;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;">
+      <div class="report-lineup-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <table style="width:100%;min-width:${mode === "site" ? "1180px" : "960px"};border-collapse:collapse;font-size:${mode === "site" ? "12px" : "11px"};border:1px solid #d6dde8;">
           <thead>
             <tr>
               <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;${smallLabel}">New York Mets</th>
@@ -3545,12 +3554,12 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         ${statBar("WHIP", card.stats?.whip)}
         ${statBar("K%", card.stats?.kPct)}
         ${statBar("BB%", card.stats?.bbPct)}
-        ${mode === "site" ? formatRecentStartsCompact(card.recentStarts) : ""}
+        ${formatRecentStartsCompact(card.recentStarts)}
       </div>
     </div>`;
   };
   const renderPitcherColumn = (card, tables = []) => `
-    <div style="display:flex;flex-direction:column;gap:14px;min-width:0;">
+    <div class="report-pitcher-col" style="display:flex;flex-direction:column;gap:${mode === "site" ? "14px" : "12px"};min-width:0;">
       ${renderPitcherCard(card)}
       ${tables.map((table) => `
         <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
@@ -3572,130 +3581,38 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   const pitcherTables = report.startingPitchersComparison?.advancedMatchupTables || [];
   const metsPitcherTables = [pitcherTables[0], pitcherTables[2]].filter(Boolean);
   const oppPitcherTables = [pitcherTables[1], pitcherTables[3]].filter(Boolean);
+  const pitcherComparisonMarkup = mode === "site"
+    ? `<div class="report-two-col report-pitcher-grid" style="${twoColStyle}">
+        ${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}
+        ${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}
+      </div>`
+    : `<table role="presentation" width="100%" style="width:100%;border-collapse:separate;border-spacing:0 0;">
+        <tr>
+          <td class="email-stack-col" valign="top" style="width:50%;padding-right:8px;">${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}</td>
+          <td class="email-stack-col" valign="top" style="width:50%;padding-left:8px;">${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}</td>
+        </tr>
+      </table>`;
 
   return `
-    ${mode === "email" ? `<section style="${cardStyle}">
-      ${sectionTitle("Quick Read")}
-      <table style="width:100%;border-collapse:collapse;">
-        <tbody>
-          <tr>
-            <td style="padding:8px 0;width:25%;${smallLabel}">Model Lean</td>
-            <td style="padding:8px 0;width:25%;font-weight:700;">${valueCell(report.quickRead?.modelLean)}</td>
-            <td style="padding:8px 0;width:25%;${smallLabel}">Official Pick</td>
-            <td style="padding:8px 0;width:25%;font-weight:700;color:#f97316;">${valueCell(report.quickRead?.officialPick)}</td>
-          </tr>
-          <tr>
-            <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}">Best Edge</td>
-            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(report.quickRead?.bestEdge)}</td>
-            <td style="padding:8px 0;border-top:1px solid #f0f2f5;${smallLabel}">Biggest Risk</td>
-            <td style="padding:8px 0;border-top:1px solid #f0f2f5;font-weight:600;">${valueCell(report.quickRead?.biggestRisk)}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>` : ""}
+    ${wrapSection("Matchup Details", renderSummarySheetTable(matchupRows, matchupHeaders))}
 
-    ${mode === "site" ? `
-      <section style="${cardStyle}margin:0 0 18px 0;">
-        ${sectionTitle("Matchup Details")}
-        ${renderSummarySheetTable(matchupRows, matchupHeaders)}
-      </section>
-    ` : `<section style="${cardStyle}">
-      ${sectionTitle("Game Details")}
-      ${renderKeyValueGrid([
-        { label: "Date", value: report.gameDetails?.date || report.header?.date },
-        { label: "Time", value: report.gameDetails?.time || report.header?.time },
-        { label: "Venue", value: report.gameDetails?.ballpark || report.header?.ballpark },
-        { label: "Home/Away", value: report.meta?.homeAwayLabel || report.gameDetails?.homeAway || "N/A" },
-        { label: "Lineups", value: report.gameDetails?.lineupStatus || "N/A" },
-        { label: "Mets ML", value: report.meta?.moneylineValue || report.gameDetails?.moneyline || "N/A" }
-      ])}
-    </section>`}
+    ${wrapSection("Starting Pitchers Comparison", pitcherComparisonMarkup)}
 
-    ${mode === "email" ? `
-      <section style="${cardStyle}">
-        ${sectionTitle("Edge Summary")}
-        <table style="width:100%;border-collapse:collapse;font-size:13px;">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Category</th>
-              <th style="text-align:left;padding:10px 8px;border-bottom:1px solid #dbe2ea;${smallLabel}">Verdict</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${[
-              report.edgeSummary?.startingPitching,
-              report.edgeSummary?.lineupQuality,
-              report.edgeSummary?.bullpen,
-              report.edgeSummary?.regressionSignals,
-              report.edgeSummary?.context,
-              report.edgeSummary?.marketValue
-            ].filter(Boolean).map((row) => `
-              <tr>
-                <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#111827;font-weight:600;">${row.category}</td>
-                <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;">${row.verdict}${row.dataMode === "fallback" ? " (fallback)" : ""}</td>
-              </tr>`).join("")}
-            <tr>
-              <td style="padding:9px 8px;color:#111827;font-weight:700;">Overall Model Lean</td>
-              <td style="padding:9px 8px;color:#111827;font-weight:700;">${valueCell(report.edgeSummary?.overallModelLean)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-    ` : ""}
+    ${wrapSection("Projected Lineup Comparison", renderLineupTable(report.projectedLineupComparison?.mets || [], report.projectedLineupComparison?.opp || []))}
 
-    <section style="${cardStyle}">
-      ${sectionTitle("Starting Pitchers Comparison")}
-      ${mode === "site" ? `
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:18px;align-items:start;">
-          ${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}
-          ${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}
-        </div>
-      ` : `
-        ${renderComparisonTable(report.startingPitchersComparison?.rows || [], report.startingPitchersComparison?.metsPitcher || "Mets SP", report.startingPitchersComparison?.oppPitcher || "Opponent SP")}
-        <p style="margin:12px 0 0 0;color:#374151;font-size:14px;"><strong>Pitching Edge Summary:</strong> ${valueCell(report.startingPitchersComparison?.summary)}</p>
-      `}
-    </section>
-
-    ${mode === "email" ? `<section style="${cardStyle}">
-      ${sectionTitle("Pitcher Contact Profile vs Opponent")}
-      ${mode === "site"
-        ? `<div class="pitcher-two-col">
-            ${renderSingleSideTable((report.pitcherContactProfile?.pitcherRows || []).map((row) => ({ label: row.label, value: row.mets })), `${report.pitcherContactProfile?.metsPitcher || "Mets SP"} Contact`, "#f97316")}
-            ${renderSingleSideTable((report.pitcherContactProfile?.opponentRows || []).map((row) => ({ label: row.label, value: row.mets })), `${report.pitcherContactProfile?.oppPitcher || "Opponent"} Offense`, "#10213a")}
-          </div>`
-        : renderComparisonTable(report.pitcherContactProfile?.pitcherRows || [], report.pitcherContactProfile?.metsPitcher || "Mets SP", report.pitcherContactProfile?.oppPitcher || "Opponent SP")}
-    </section>` : ""}
-
-    ${mode === "email" ? `<section style="${cardStyle}">
-      ${sectionTitle("Pitcher Split Matchup vs Opponent")}
-      ${mode === "site"
-        ? `<div class="pitcher-two-col">
-            ${renderSingleSideTable((report.pitcherSplitMatchup?.pitcherRows || []).map((row) => ({ label: row.label, value: row.mets })), `${report.pitcherSplitMatchup?.metsPitcher || "Mets SP"} Split Matchup`, "#f97316")}
-            ${renderSingleSideTable((report.pitcherSplitMatchup?.opponentRows || []).map((row) => ({ label: row.label, value: row.mets })), `${report.pitcherSplitMatchup?.oppPitcher || "Opponent"} Split Profile`, "#10213a")}
-          </div>`
-        : renderComparisonTable(report.pitcherSplitMatchup?.pitcherRows || [], report.pitcherSplitMatchup?.metsPitcher || "Mets SP", report.pitcherSplitMatchup?.oppPitcher || "Opponent SP")}
-    </section>` : ""}
-
-    <section style="${cardStyle}">
-      ${sectionTitle("Projected Lineup Comparison")}
-      ${renderLineupTable(report.projectedLineupComparison?.mets || [], report.projectedLineupComparison?.opp || [])}
-    </section>
-
-    <section style="${cardStyle}">
-      ${sectionTitle("Game Analysis")}
+    ${wrapSection("Game Analysis", `
       <div style="${smallLabel}margin-bottom:6px;">Why the Mets have a case</div>
       ${renderBulletList(report.analysis?.whyMetsHaveACase || [])}
       <div style="${smallLabel}margin:12px 0 6px 0;">Where the risk is</div>
       ${renderBulletList(report.analysis?.whereTheRiskIs || [])}
       <div style="${smallLabel}margin:12px 0 6px 0;">Bottom line</div>
       <p style="margin:0;color:#374151;">${valueCell(report.analysis?.bottomLine)}</p>
-    </section>
+    `)}
 
-    <section style="${cardStyle}">
-      ${sectionTitle("Official MetsMoneyline Pick")}
+    ${wrapSection("Official MetsMoneyline Pick", `
       <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">${valueCell(report.officialPick?.label)}</p>
       <p style="margin:0;color:#374151;">${valueCell(report.officialPick?.explanation)}</p>
-    </section>`;
+    `)}`;
 }
 
 function buildEmailHtml(game) {
@@ -3708,13 +3625,52 @@ function buildEmailHtml(game) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>MetsMoneyline</title>
+    <style>
+      body { margin:0; padding:0; background:#eef2f7; }
+      img { border:0; outline:none; text-decoration:none; display:block; max-width:100%; }
+      table { border-spacing:0; }
+      @media only screen and (max-width: 700px) {
+        .email-shell { width:100% !important; }
+        .email-pad { padding:16px !important; }
+        .report-two-col { display:block !important; }
+        .report-pitcher-col { margin-bottom:14px !important; }
+        .email-stack-col { display:block !important; width:100% !important; padding:0 0 12px 0 !important; }
+        .report-sheet-table { min-width:560px !important; }
+        .report-banner-logo { width:72px !important; height:72px !important; }
+        .report-banner-vs { font-size:18px !important; }
+      }
+    </style>
   </head>
-  <body style="font-family: Arial, sans-serif; color: #111827; line-height: 1.6; max-width: 860px; margin: 0 auto; padding: 24px;">
-    <p style="font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #6b7280;">MetsMoneyline</p>
-    <h1 style="margin:0 0 8px 0;">${report.header?.title || `New York Mets vs ${game.opponent}`}</h1>
-    <p style="margin:0 0 18px 0; color: #4b5563;">${report.header?.date || game.date} | ${report.header?.time || game.time} | ${report.header?.ballpark || game.ballpark}</p>
-    ${report.preliminary?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${report.preliminary.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
-    ${reportMarkup}
+  <body style="font-family:Arial,sans-serif;color:#111827;line-height:1.55;background:#eef2f7;margin:0;padding:0;">
+    <table role="presentation" width="100%" style="width:100%;background:#eef2f7;">
+      <tr>
+        <td align="center" style="padding:18px 10px;">
+          <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:1080px;background:#ffffff;border:1px solid #dde4ef;border-radius:20px;overflow:hidden;">
+            <tr>
+              <td class="email-pad" style="padding:22px 24px;">
+                <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;margin:0 0 12px 0;">MetsMoneyline</p>
+                <div style="margin:0 0 18px 0;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:20px;padding:18px 16px;text-align:center;">
+                  <table role="presentation" width="100%" style="width:100%;">
+                    <tr>
+                      <td align="center" style="width:40%;padding:0 6px;">
+                        <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:96px;height:96px;object-fit:contain;margin:0 auto;">
+                      </td>
+                      <td align="center" class="report-banner-vs" style="width:20%;font-size:20px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
+                      <td align="center" style="width:40%;padding:0 6px;">
+                        <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:96px;height:96px;object-fit:contain;margin:0 auto;">
+                      </td>
+                    </tr>
+                  </table>
+                  <p style="margin:12px 0 0 0;color:#5b6477;font-size:14px;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
+                </div>
+                ${report.preliminary?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${report.preliminary.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
+                ${reportMarkup}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>`;
 }
@@ -3733,6 +3689,21 @@ function buildSiteReportHtml(game) {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
+    <style>
+      @media (max-width: 980px) {
+        .report-main { width:100% !important; padding:1.25rem 0.85rem 0 !important; }
+        .report-banner { padding:1.2rem 0.95rem !important; }
+        .report-banner-logo { width:88px !important; height:88px !important; }
+        .report-two-col { grid-template-columns:1fr !important; }
+      }
+      @media (max-width: 640px) {
+        .report-main { padding:0.9rem 0.55rem 0 !important; }
+        .report-banner { border-radius:18px !important; }
+        .report-banner-logo { width:72px !important; height:72px !important; }
+        .report-sheet-table-wrap { margin:0 -4px; }
+        .report-lineup-wrap { margin:0 -4px; }
+      }
+    </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -3754,15 +3725,15 @@ function buildSiteReportHtml(game) {
         </ul>
       </nav>
     </header>
-    <main style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
-      <section style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
+    <main class="report-main" style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
+      <section class="report-banner" style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
         <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
-            <img src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:112px;height:112px;object-fit:contain;">
+            <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:112px;height:112px;object-fit:contain;">
           </div>
           <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</div>
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
-            <img src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:112px;height:112px;object-fit:contain;">
+            <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:112px;height:112px;object-fit:contain;">
           </div>
         </div>
         <p style="margin:0.9rem 0 0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
