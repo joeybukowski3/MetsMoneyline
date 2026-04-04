@@ -93,6 +93,69 @@ const TEAM_NAME_TO_ABBR = {
   "Washington Nationals": "WSN"
 };
 
+const BALLPARK_WEATHER_LOOKUP = {
+  "Angel Stadium": { lat: 33.8003, lon: -117.8827 },
+  "Busch Stadium": { lat: 38.6226, lon: -90.1928 },
+  "Chase Field": { lat: 33.4453, lon: -112.0667 },
+  "Citi Field": { lat: 40.7571, lon: -73.8458 },
+  "Citizens Bank Park": { lat: 39.9061, lon: -75.1665 },
+  "Comerica Park": { lat: 42.339, lon: -83.0485 },
+  "Coors Field": { lat: 39.7559, lon: -104.9942 },
+  "Daikin Park": { lat: 29.7573, lon: -95.3555 },
+  "Dodger Stadium": { lat: 34.0739, lon: -118.24 },
+  "Fenway Park": { lat: 42.3467, lon: -71.0972 },
+  "George M. Steinbrenner Field": { lat: 27.9804, lon: -82.5076 },
+  "Globe Life Field": { lat: 32.7473, lon: -97.0847, retractable: true },
+  "Great American Ball Park": { lat: 39.0979, lon: -84.5081 },
+  "Guaranteed Rate Field": { lat: 41.83, lon: -87.6338 },
+  "Kauffman Stadium": { lat: 39.0517, lon: -94.4803 },
+  "loanDepot park": { lat: 25.7781, lon: -80.2197, retractable: true },
+  "Nationals Park": { lat: 38.873, lon: -77.0074 },
+  "Oracle Park": { lat: 37.7786, lon: -122.3893 },
+  "Oriole Park at Camden Yards": { lat: 39.284, lon: -76.6217 },
+  "Petco Park": { lat: 32.7073, lon: -117.1573 },
+  "PNC Park": { lat: 40.4469, lon: -80.0057 },
+  "Progressive Field": { lat: 41.4962, lon: -81.6852 },
+  "Rogers Centre": { lat: 43.6414, lon: -79.3894, retractable: true },
+  "Sutter Health Park": { lat: 38.5806, lon: -121.5136 },
+  "Target Field": { lat: 44.9817, lon: -93.2776 },
+  "T-Mobile Park": { lat: 47.5914, lon: -122.3325, retractable: true },
+  "Truist Park": { lat: 33.89, lon: -84.4677 },
+  "Wrigley Field": { lat: 41.9484, lon: -87.6553 },
+  "Yankee Stadium": { lat: 40.8296, lon: -73.9262 }
+};
+
+const WEATHER_CODE_LABELS = {
+  0: "Clear",
+  1: "Mostly clear",
+  2: "Partly cloudy",
+  3: "Cloudy",
+  45: "Fog",
+  48: "Fog",
+  51: "Light drizzle",
+  53: "Drizzle",
+  55: "Heavy drizzle",
+  56: "Freezing drizzle",
+  57: "Freezing drizzle",
+  61: "Light rain",
+  63: "Rain",
+  65: "Heavy rain",
+  66: "Freezing rain",
+  67: "Freezing rain",
+  71: "Light snow",
+  73: "Snow",
+  75: "Heavy snow",
+  77: "Snow grains",
+  80: "Rain showers",
+  81: "Rain showers",
+  82: "Heavy showers",
+  85: "Snow showers",
+  86: "Heavy snow showers",
+  95: "Thunderstorms",
+  96: "Thunderstorms",
+  99: "Thunderstorms"
+};
+
 const FANGRAPHS_TEAM_SLUGS = {
   "Arizona Diamondbacks": "diamondbacks",
   "Atlanta Braves": "braves",
@@ -146,6 +209,7 @@ let cachedSavantPitchers = null;
 let cachedSavantBatters = null;
 let cachedSavantExpectedBatters = null;
 let cachedSavantExpectedPitchers = null;
+let cachedPitcherPercentileMaps = null;
 const cachedFangraphsTeams = new Map();
 const cachedFangraphsLeaderboards = new Map();
 
@@ -286,16 +350,100 @@ function teamCityLabel(teamName) {
   return parts.length > 1 ? parts.slice(0, -1).join(" ") : value;
 }
 
+function formatWeatherTemperature(value) {
+  const temp = Number(value);
+  if (!Number.isFinite(temp)) return null;
+  return `${Math.round(temp)}°`;
+}
+
+function compassDirection(degrees) {
+  const value = Number(degrees);
+  if (!Number.isFinite(value)) return null;
+  const points = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  const index = Math.round(((value % 360) / 22.5)) % 16;
+  return points[index];
+}
+
+function formatWeatherWind(speed, directionDegrees) {
+  const mph = Number(speed);
+  if (!Number.isFinite(mph) || mph < 1) return null;
+  const dir = compassDirection(directionDegrees);
+  return `Wind ${Math.round(mph)} mph${dir ? ` ${dir}` : ""}`;
+}
+
+function getWeatherConditionLabel(code) {
+  if (code == null || code === "") return null;
+  return WEATHER_CODE_LABELS[Number(code)] || "Forecast";
+}
+
+function findNearestHourlyIndex(times = [], targetIso) {
+  const targetTime = Date.parse(targetIso);
+  if (!Number.isFinite(targetTime) || !Array.isArray(times) || !times.length) return -1;
+  let bestIndex = -1;
+  let bestDiff = Number.POSITIVE_INFINITY;
+  times.forEach((timeValue, index) => {
+    const parsed = Date.parse(`${timeValue}Z`);
+    if (!Number.isFinite(parsed)) return;
+    const diff = Math.abs(parsed - targetTime);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestIndex = index;
+    }
+  });
+  return bestDiff <= 6 * 60 * 60 * 1000 ? bestIndex : -1;
+}
+
+async function getGameWeather(ballpark, gameDateTime) {
+  if (!ballpark || !gameDateTime) return null;
+  const venue = BALLPARK_WEATHER_LOOKUP[ballpark];
+  if (!venue) return null;
+  if (venue.indoor) {
+    return {
+      condition: "Indoor stadium",
+      compact: "Indoor stadium",
+      source: "venue-map"
+    };
+  }
+
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${venue.lat}&longitude=${venue.lon}&hourly=temperature_2m,weather_code,wind_speed_10m,wind_direction_10m&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=UTC&forecast_days=7`;
+  const forecast = await safeGetJson(url, `weather forecast for ${ballpark}`);
+  const hourly = forecast?.hourly;
+  const index = findNearestHourlyIndex(hourly?.time || [], gameDateTime);
+  if (!hourly || index < 0) return null;
+
+  const temperature = hourly.temperature_2m?.[index];
+  const weatherCode = hourly.weather_code?.[index];
+  const windSpeed = hourly.wind_speed_10m?.[index];
+  const windDirection = hourly.wind_direction_10m?.[index];
+  const temperatureDisplay = formatWeatherTemperature(temperature);
+  const condition = getWeatherConditionLabel(weatherCode);
+  const wind = formatWeatherWind(windSpeed, windDirection);
+  const compact = [temperatureDisplay, condition, wind].filter(Boolean).join(" | ");
+
+  if (!compact) return null;
+
+  return {
+    temperature,
+    temperatureDisplay,
+    condition,
+    wind,
+    compact,
+    source: "open-meteo",
+    forecastTimeUtc: hourly.time?.[index] ? `${hourly.time[index]}Z` : null
+  };
+}
+
 function formatWeatherForecast(value) {
-  if (!value || value === "N/A") return "N/A";
+  if (!value || value === "N/A") return "Weather unavailable";
   if (typeof value === "string") return value;
   if (typeof value !== "object") return String(value);
+  if (value.compact) return value.compact;
   const parts = [
-    value.temperature != null ? `${value.temperature} degrees` : null,
+    value.temperatureDisplay || formatWeatherTemperature(value.temperature),
     value.condition || value.forecast || null,
     value.wind ? `${value.wind}` : null
   ].filter(Boolean);
-  return parts.length ? parts.join(" - ") : "N/A";
+  return parts.length ? [...new Set(parts)].join(" | ") : "Weather unavailable";
 }
 
 function parseRecord(record) {
@@ -700,6 +848,48 @@ function rankRows(rows, statKey, { descending = true } = {}) {
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
 }
 
+function ordinalSuffix(value) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return String(value || "");
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
+  const mod10 = n % 10;
+  if (mod10 === 1) return `${n}st`;
+  if (mod10 === 2) return `${n}nd`;
+  if (mod10 === 3) return `${n}rd`;
+  return `${n}th`;
+}
+
+function computePercentileMap(rows, statKey, { descending = true } = {}) {
+  const ranked = rankRows(rows, statKey, { descending });
+  const total = ranked.length;
+  const map = {};
+  ranked.forEach((entry, index) => {
+    const playerId = Number(entry?.row?.player_id);
+    if (!playerId) return;
+    const percentile = total <= 1 ? 100 : Math.round(((total - (index + 1)) / (total - 1)) * 100);
+    map[playerId] = Math.max(1, Math.min(100, percentile));
+  });
+  return map;
+}
+
+async function loadPitcherPercentileMaps() {
+  if (cachedPitcherPercentileMaps) return cachedPitcherPercentileMaps;
+  const [savantRows, expectedRows] = await Promise.all([
+    loadSavantPitcherLeaderboard(),
+    loadSavantExpectedPitchers()
+  ]);
+  cachedPitcherPercentileMaps = {
+    barrelPct: computePercentileMap(savantRows, "barrel_batted_rate", { descending: false }),
+    hardHitPct: computePercentileMap(savantRows, "hard_hit_percent", { descending: false }),
+    kPct: computePercentileMap(savantRows, "k_percent", { descending: true }),
+    bbPct: computePercentileMap(savantRows, "bb_percent", { descending: false }),
+    xBAAllowed: computePercentileMap(expectedRows, "est_ba", { descending: false }),
+    xSLGAllowed: computePercentileMap(expectedRows, "est_slg", { descending: false })
+  };
+  return cachedPitcherPercentileMaps;
+}
+
 function buildLeagueRankMap(battingRows = [], pitchingRows = []) {
   const teamRanks = {};
   const assignRanks = (rows, statKey, rankKey, options) => {
@@ -720,6 +910,8 @@ function buildLeagueRankMap(battingRows = [], pitchingRows = []) {
   assignRanks(battingRows, 'xwOBA', 'xwoba');
   assignRanks(battingRows, 'HardHit%', 'hardHit');
   assignRanks(battingRows, 'Hard%', 'hardHit');
+  assignRanks(battingRows, 'Barrel%', 'barrelPct');
+  assignRanks(battingRows, 'Barrel %', 'barrelPct');
   assignRanks(battingRows, 'BB%', 'bbPct');
   assignRanks(battingRows, 'K%', 'kPct', { descending: false });
   assignRanks(pitchingRows, 'ERA', 'rotEra', { descending: false });
@@ -845,6 +1037,7 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
     loadSavantExpectedPitchers(),
     teamName ? loadFangraphsTeamData(teamName) : null
   ]);
+  const percentileMaps = await loadPitcherPercentileMaps();
 
   const stat = currentStats || previousStats;
   const statSeason = currentStats ? season : previousStats ? previousSeason : null;
@@ -887,7 +1080,15 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
       bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
       gbPct: savant.gb_percent ? `${savant.gb_percent}%` : null,
       exitVeloAllowed: savant.avg_hit_speed || null,
-      launchAngleAllowed: savant.avg_hit_angle || null
+      launchAngleAllowed: savant.avg_hit_angle || null,
+      percentiles: {
+        barrelPct: percentileMaps?.barrelPct?.[personId] ?? null,
+        hardHitPct: percentileMaps?.hardHitPct?.[personId] ?? null,
+        kPct: percentileMaps?.kPct?.[personId] ?? null,
+        bbPct: percentileMaps?.bbPct?.[personId] ?? null,
+        xBAAllowed: percentileMaps?.xBAAllowed?.[personId] ?? null,
+        xSLGAllowed: percentileMaps?.xSLGAllowed?.[personId] ?? null
+      }
     } : null
   };
 }
@@ -1709,14 +1910,16 @@ async function buildGameFacts(targetDate) {
   const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
   const previousOutput = loadPreviousOutput();
   const previousGame = previousOutput?.games?.[0];
+  const weatherPromise = getGameWeather(game?.venue?.name, game?.gameDate);
 
-  const [feed, content, metsRecords, oppRecords, metsInjuries, oppInjuries] = await Promise.all([
+  const [feed, content, metsRecords, oppRecords, metsInjuries, oppInjuries, weather] = await Promise.all([
     getGameFeed(game.gamePk),
     getGameContent(game.gamePk),
     getTeamSeasonRecordFacts(TEAM_ID, resolvedDate, false),
     getTeamSeasonRecordFacts(oppTeam.id, resolvedDate, false),
     getTeamInjuries(TEAM_ID),
-    getTeamInjuries(oppTeam.id)
+    getTeamInjuries(oppTeam.id),
+    weatherPromise
   ]);
 
   const probablePitchers = {
@@ -1807,6 +2010,7 @@ async function buildGameFacts(targetDate) {
       },
       teamAdvanced
     },
+    weather: weather || null,
     game: {
       gamePk: game.gamePk,
       opponent: oppTeam?.name || "Opponent TBD",
@@ -2320,7 +2524,10 @@ function scoreContextEdge(analysisObject) {
     {
       dataMode: "fallback",
       supportedBy: ["travel", "rest", "bullpen tax"],
-      missing: ["weather", "park factor"]
+      missing: [
+        analysisObject.context.weather == null ? "weather" : null,
+        analysisObject.context.parkFactor == null ? "park factor" : null
+      ].filter(Boolean)
     }
   );
 }
@@ -2486,7 +2693,7 @@ function buildGameDetailsSummary(gameFacts, analysisObject) {
     opponent: gameFacts.game.opponent,
     homeAway: gameFacts.meta.homeAway,
     ballpark: gameFacts.meta.ballpark,
-    weather: analysisObject.gameInfo.weather || "N/A",
+    weather: formatWeatherForecast(analysisObject.gameInfo.weather || gameFacts.weather),
     lineupStatus: gameFacts.lineups.status === "confirmed" ? "Confirmed" : "Projected",
     moneyline: gameFacts.money.metsMoneyline == null
       ? "N/A"
@@ -3116,10 +3323,10 @@ function buildPresentationReport(game) {
           rightHeader: `${oppAbbr} Offense`,
           rightTeamKey: "opp",
           rows: [
-            { label: "Barrel %", left: pitching.mets?.savant?.barrelPct || null, right: analysisObject?.offense?.opp?.barrelPct || null },
-            { label: "xBA", left: pitching.mets?.savant?.xBAAllowed || null, right: analysisObject?.offense?.opp?.xBA || null, rightRankKey: "xba" },
-            { label: "Hard Hit %", left: pitching.mets?.savant?.hardHitPct || null, right: analysisObject?.offense?.opp?.hardHitPct || null, rightRankKey: "hardHit" },
-            { label: "xSLG %", left: pitching.mets?.savant?.xSLGAllowed || null, right: analysisObject?.offense?.opp?.xSLG || null, rightRankKey: "xslg" }
+            { label: "Barrel %", left: pitching.mets?.savant?.barrelPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.barrelPct ?? null, right: analysisObject?.offense?.opp?.barrelPct || null, rightRankKey: "barrelPct" },
+            { label: "xBA", left: pitching.mets?.savant?.xBAAllowed || null, leftPercentile: pitching.mets?.savant?.percentiles?.xBAAllowed ?? null, right: analysisObject?.offense?.opp?.xBA || null, rightRankKey: "xba" },
+            { label: "Hard Hit %", left: pitching.mets?.savant?.hardHitPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.hardHitPct ?? null, right: analysisObject?.offense?.opp?.hardHitPct || null, rightRankKey: "hardHit" },
+            { label: "xSLG %", left: pitching.mets?.savant?.xSLGAllowed || null, leftPercentile: pitching.mets?.savant?.percentiles?.xSLGAllowed ?? null, right: analysisObject?.offense?.opp?.xSLG || null, rightRankKey: "xslg" }
           ]
         },
         {
@@ -3128,10 +3335,10 @@ function buildPresentationReport(game) {
           rightHeader: "NYM Offense",
           rightTeamKey: "mets",
           rows: [
-            { label: "Barrel %", left: pitching.opp?.savant?.barrelPct || null, right: analysisObject?.offense?.mets?.barrelPct || null },
-            { label: "xBA", left: pitching.opp?.savant?.xBAAllowed || null, right: analysisObject?.offense?.mets?.xBA || null, rightRankKey: "xba" },
-            { label: "Hard Hit %", left: pitching.opp?.savant?.hardHitPct || null, right: analysisObject?.offense?.mets?.hardHitPct || null, rightRankKey: "hardHit" },
-            { label: "xSLG %", left: pitching.opp?.savant?.xSLGAllowed || null, right: analysisObject?.offense?.mets?.xSLG || null, rightRankKey: "xslg" }
+            { label: "Barrel %", left: pitching.opp?.savant?.barrelPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.barrelPct ?? null, right: analysisObject?.offense?.mets?.barrelPct || null, rightRankKey: "barrelPct" },
+            { label: "xBA", left: pitching.opp?.savant?.xBAAllowed || null, leftPercentile: pitching.opp?.savant?.percentiles?.xBAAllowed ?? null, right: analysisObject?.offense?.mets?.xBA || null, rightRankKey: "xba" },
+            { label: "Hard Hit %", left: pitching.opp?.savant?.hardHitPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.hardHitPct ?? null, right: analysisObject?.offense?.mets?.hardHitPct || null, rightRankKey: "hardHit" },
+            { label: "xSLG %", left: pitching.opp?.savant?.xSLGAllowed || null, leftPercentile: pitching.opp?.savant?.percentiles?.xSLGAllowed ?? null, right: analysisObject?.offense?.mets?.xSLG || null, rightRankKey: "xslg" }
           ]
         },
         {
@@ -3142,8 +3349,8 @@ function buildPresentationReport(game) {
           rows: [
             { label: "Pitching Hand / vs Split", left: expandPitchingHandLabel(pitching.mets?.hand), right: formatVsSplitLabel(pitching.mets?.hand) },
             { label: "Innings Pitched / Plate Appearances", left: extractSeasonIp(pitching.mets?.seasonLine, pitching.mets?.note), right: oppProjectedPa },
-            { label: "K%", left: pitching.mets?.savant?.kPct || null, right: analysisObject?.offense?.opp?.kPct || null, rightRankKey: "kPct" },
-            { label: "BB%", left: pitching.mets?.savant?.bbPct || null, right: analysisObject?.offense?.opp?.bbPct || null, rightRankKey: "bbPct" }
+            { label: "K%", left: pitching.mets?.savant?.kPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.kPct ?? null, right: analysisObject?.offense?.opp?.kPct || null, rightRankKey: "kPct" },
+            { label: "BB%", left: pitching.mets?.savant?.bbPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.bbPct ?? null, right: analysisObject?.offense?.opp?.bbPct || null, rightRankKey: "bbPct" }
           ]
         },
         {
@@ -3154,8 +3361,8 @@ function buildPresentationReport(game) {
           rows: [
             { label: "Pitching Hand / vs Split", left: expandPitchingHandLabel(pitching.opp?.hand), right: formatVsSplitLabel(pitching.opp?.hand) },
             { label: "Innings Pitched / Plate Appearances", left: extractSeasonIp(pitching.opp?.seasonLine, pitching.opp?.note), right: metsProjectedPa },
-            { label: "K%", left: pitching.opp?.savant?.kPct || null, right: analysisObject?.offense?.mets?.kPct || null, rightRankKey: "kPct" },
-            { label: "BB%", left: pitching.opp?.savant?.bbPct || null, right: analysisObject?.offense?.mets?.bbPct || null, rightRankKey: "bbPct" }
+            { label: "K%", left: pitching.opp?.savant?.kPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.kPct ?? null, right: analysisObject?.offense?.mets?.kPct || null, rightRankKey: "kPct" },
+            { label: "BB%", left: pitching.opp?.savant?.bbPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.bbPct ?? null, right: analysisObject?.offense?.mets?.bbPct || null, rightRankKey: "bbPct" }
           ]
         }
       ],
@@ -3300,7 +3507,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       edgeScoring: writeup.edgeScoring || null
     },
     bettingHistory: null,
-    weather: null
+    weather: gameFacts.weather || null
   };
 
   currentGame.writeup.report = buildPresentationReport(currentGame);
@@ -3401,6 +3608,16 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           </tr>`).join("")}
       </tbody>
     </table>`;
+  const renderContextNote = (value, kind = "rank") => {
+    if (!value) return `<span style="display:block;min-height:14px;"></span>`;
+    const label = kind === "percentile" ? `${ordinalSuffix(value)} %ile` : `#${value} MLB`;
+    return `<span style="display:block;min-height:14px;font-size:11px;line-height:1.15;color:#6b7280;font-weight:700;white-space:nowrap;">${label}</span>`;
+  };
+  const renderMetricStack = (label, value, contextValue = null, contextKind = "rank", align = "center") => `
+    <div style="display:flex;flex-direction:column;justify-content:center;align-items:${align};gap:4px;min-height:56px;">
+      ${heatCell(label, value)}
+      ${renderContextNote(contextValue, contextKind)}
+    </div>`;
   const renderAdvancedSheetTable = (table) => `
     <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
     <table class="report-sheet-table" style="width:100%;border-collapse:collapse;font-size:${mode === "site" ? "13px" : "12px"};border:1px solid #d6dde8;background:#ffffff;">
@@ -3416,14 +3633,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
           return `
           <tr>
-            <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;">${heatCell(row.label, row.left)}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">${valueCell(row.label)}</td>
-            <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;">${resolvedRank
-              ? `<div style="display:flex;justify-content:flex-end;align-items:center;gap:6px;flex-wrap:wrap;">
-                  ${heatCell(row.label, row.right)}
-                  <span style="font-size:11px;line-height:1;color:#6b7280;font-weight:700;white-space:nowrap;">#${resolvedRank} MLB</span>
-                </div>`
-              : heatCell(row.label, row.right)}</td>
+            <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+            <td style="width:28%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
+            <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
           </tr>
         `;}).join("")}
       </tbody>
@@ -3528,8 +3740,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   const renderBulletList = (items = []) => `<ul style="margin:8px 0 0 18px;padding:0;color:#111827;">${items.map((item) => `<li style="margin:0 0 8px 0;">${item}</li>`).join("")}</ul>`;
   const renderPitcherCard = (card) => {
     if (!card) return "";
-    const photoHtml = card.mlbId
-      ? `<img class="pitcher-photo-sm" src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:action:hero:current.png/w_360,q_auto:best/v1/people/${card.mlbId}/action/hero/current" alt="${card.name}" onerror="this.src='https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current'">`
+    const pitcherImageSrc = card.mlbId
+      ? (mode === "site"
+          ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:action:hero:current.png/w_360,q_auto:best/v1/people/${card.mlbId}/action/hero/current`
+          : `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current`)
+      : null;
+    const photoHtml = pitcherImageSrc
+      ? `<img class="pitcher-photo-sm" src="${pitcherImageSrc}" alt="${card.name}">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
     const statBar = (label, value) => {
       const pct = reportMetricPct(label, value);
