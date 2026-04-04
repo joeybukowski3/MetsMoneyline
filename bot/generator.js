@@ -3578,7 +3578,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         const pct = reportMetricPct(label, value);
         return pct == null ? "background:#f3f4f6;color:#374151;border-radius:8px;" : reportCellToneStyle(pct);
       })();
-    return `<span style="display:inline-block;min-width:64px;padding:6px 8px;${style}">${valueCell(value)}</span>`;
+    return `<span class="report-heat-pill" style="display:inline-block;min-width:64px;padding:6px 8px;${style}">${valueCell(value)}</span>`;
   };
   const renderKeyValueGrid = (items) => `
     <table style="width:100%;border-collapse:collapse;">
@@ -3618,32 +3618,59 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       ${heatCell(label, value)}
       ${renderContextNote(contextValue, contextKind)}
     </div>`;
-  const renderAdvancedSheetTable = (table) => `
-    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-    <table class="report-sheet-table" style="width:100%;border-collapse:collapse;font-size:${mode === "site" ? "13px" : "12px"};border:1px solid #d6dde8;background:#ffffff;">
-      <thead>
-        <tr>
-          <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(table.leftHeader)}</th>
-          <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:800;">${valueCell(table.season || report.startingPitchersComparison?.seasonLabel)}</th>
-          <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">${valueCell(table.rightHeader)}</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${(table.rows || []).map((row) => {
-          const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
-          return `
+  const renderAdvancedSheetTable = (table) => {
+    if (mode === "email") {
+      return `
+        <div class="report-sheet-table-wrap" style="width:100%;">
+          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d6dde8;background:#ffffff;">
+            <tr>
+              <td style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-size:12px;font-weight:800;">${valueCell(table.leftHeader)}</td>
+              <td style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-size:12px;font-weight:800;">${valueCell(table.rightHeader)}</td>
+            </tr>
+          </table>
+          ${(table.rows || []).map((row) => {
+            const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
+            return `
+              <div class="email-adv-row" style="border:1px solid #d6dde8;border-top:none;background:#ffffff;">
+                <div class="email-adv-label" style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f8fafc;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">${valueCell(row.label)}</div>
+                <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                  <tr>
+                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+                  </tr>
+                </table>
+              </div>
+            `;
+          }).join("")}
+        </div>`;
+    }
+    return `
+      <div class="report-sheet-table-wrap" style="width:100%;overflow:hidden;-webkit-overflow-scrolling:touch;">
+      <table class="report-sheet-table report-advanced-table" style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
+        <thead>
           <tr>
-            <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
-            <td style="width:28%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
-            <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+            <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(table.leftHeader)}</th>
+            <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:800;">${valueCell(table.season || report.startingPitchersComparison?.seasonLabel)}</th>
+            <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">${valueCell(table.rightHeader)}</th>
           </tr>
-        `;}).join("")}
-      </tbody>
-    </table>
-    </div>`;
+        </thead>
+        <tbody>
+          ${(table.rows || []).map((row) => {
+            const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
+            return `
+            <tr>
+              <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+              <td style="width:28%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
+              <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+            </tr>
+          `;}).join("")}
+        </tbody>
+      </table>
+      </div>`;
+  };
   const renderSummarySheetTable = (rows, headers = null) => `
-    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-    <table class="report-sheet-table" style="width:100%;height:100%;border-collapse:collapse;font-size:${mode === "site" ? "14px" : "13px"};border:1px solid #d6dde8;background:#ffffff;">
+    <div class="report-sheet-table-wrap" style="width:100%;overflow:${mode === "site" ? "hidden" : "auto"};-webkit-overflow-scrolling:touch;">
+    <table class="report-sheet-table report-summary-table" style="width:100%;height:100%;border-collapse:collapse;font-size:${mode === "site" ? "14px" : "13px"};border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
       ${headers ? `
         <thead>
           <tr>
@@ -3710,9 +3737,41 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("WAR", o.fangraphs?.war || null)}</td>
         </tr>`);
     }
+    const mobileCards = Array.from({ length: maxRows }, (_, i) => {
+      const m = mets[i] || {};
+      const o = opp[i] || {};
+      const order = valueCell(m.order ?? o.order ?? i + 1);
+      const sideBlock = (title, player, sideBg) => `
+        <div style="flex:1 1 0;min-width:0;padding:10px;border:1px solid #d6dde8;border-radius:12px;background:${sideBg};">
+          <div style="${smallLabel}margin-bottom:8px;color:#475569;">${title}</div>
+          <div style="display:flex;align-items:center;gap:8px;min-width:0;margin-bottom:10px;">
+            ${lineupHeadshot(player)}
+            <div style="min-width:0;">
+              <div style="font-weight:800;color:#111827;white-space:normal;line-height:1.25;">${valueCell(player?.name)}</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
+            <div><div style="${smallLabel}margin-bottom:4px;">xBA</div>${heatCell("xBA", player.savant?.xBA || null)}</div>
+            <div><div style="${smallLabel}margin-bottom:4px;">K%</div>${heatCell("K%", player.savant?.kPct || player.fangraphs?.kPct || null)}</div>
+            <div><div style="${smallLabel}margin-bottom:4px;">Hard Hit</div>${heatCell("Hard Hit %", player.savant?.hardHitPct || null)}</div>
+            <div><div style="${smallLabel}margin-bottom:4px;">WAR</div>${heatCell("WAR", player.fangraphs?.war || null)}</div>
+          </div>
+        </div>`;
+      return `
+        <article class="report-lineup-mobile-card" style="border:1px solid #d6dde8;border-radius:14px;background:#ffffff;padding:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;">
+            <div style="${smallLabel}color:#6b7280;">Order ${order}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${sideBlock("New York Mets", m, "#f4f9ff")}
+            ${sideBlock("San Francisco Giants", o, "#fff7ef")}
+          </div>
+        </article>`;
+    }).join("");
     return `
-      <div class="report-lineup-wrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <table style="width:100%;min-width:${mode === "site" ? "1180px" : "960px"};border-collapse:collapse;font-size:${mode === "site" ? "12px" : "11px"};border:1px solid #d6dde8;">
+      ${mode === "site" ? `<div class="report-lineup-mobile" style="display:none;">${mobileCards}</div>` : ""}
+      <div class="report-lineup-wrap" style="overflow-x:${mode === "site" ? "hidden" : "auto"};-webkit-overflow-scrolling:touch;">
+        <table class="report-lineup-table" style="width:100%;${mode === "site" ? "" : "min-width:960px;"}border-collapse:collapse;font-size:${mode === "site" ? "12px" : "11px"};border:1px solid #d6dde8;table-layout:${mode === "site" ? "fixed" : "auto"};">
           <thead>
             <tr>
               <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;${smallLabel}">New York Mets</th>
@@ -3803,10 +3862,12 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         ${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}
         ${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}
       </div>`
-    : `<table role="presentation" width="100%" style="width:100%;border-collapse:separate;border-spacing:0 0;">
+    : `<table role="presentation" width="100%" style="width:100%;border-collapse:separate;border-spacing:0;">
         <tr>
-          <td class="email-stack-col" valign="top" style="width:50%;padding-right:8px;">${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}</td>
-          <td class="email-stack-col" valign="top" style="width:50%;padding-left:8px;">${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}</td>
+          <td class="email-stack-col" valign="top" style="width:100%;padding:0 0 14px 0;">${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}</td>
+        </tr>
+        <tr>
+          <td class="email-stack-col" valign="top" style="width:100%;padding:0;">${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}</td>
         </tr>
       </table>`;
 
@@ -3846,15 +3907,31 @@ function buildEmailHtml(game) {
       body { margin:0; padding:0; background:#eef2f7; }
       img { border:0; outline:none; text-decoration:none; display:block; max-width:100%; }
       table { border-spacing:0; }
+      .report-sheet-table { width:100% !important; table-layout:fixed !important; }
+      .report-sheet-table th, .report-sheet-table td { word-break:normal !important; overflow-wrap:normal !important; }
+      .report-heat-pill { min-width:0 !important; width:100% !important; text-align:center !important; box-sizing:border-box !important; white-space:normal !important; }
+      .report-pitcher-col { width:100% !important; }
+      .pitcher-card-v2 { width:100% !important; }
+      .email-adv-row { width:100% !important; }
+      .email-adv-side { width:50% !important; }
       @media only screen and (max-width: 700px) {
         .email-shell { width:100% !important; }
         .email-pad { padding:16px !important; }
         .report-two-col { display:block !important; }
         .report-pitcher-col { margin-bottom:14px !important; }
         .email-stack-col { display:block !important; width:100% !important; padding:0 0 12px 0 !important; }
-        .report-sheet-table { min-width:560px !important; }
+        .report-sheet-table { width:100% !important; table-layout:fixed !important; }
+        .report-sheet-table th, .report-sheet-table td { padding:6px 5px !important; font-size:11px !important; line-height:1.25 !important; word-break:normal !important; overflow-wrap:normal !important; }
+        .report-heat-pill { min-width:0 !important; width:100% !important; padding:5px 4px !important; font-size:11px !important; line-height:1.25 !important; }
         .report-banner-logo { width:72px !important; height:72px !important; }
         .report-banner-vs { font-size:18px !important; }
+        .pitcher-card-v2 { display:block !important; }
+        .pitcher-img-panel, .pitcher-stats-panel { display:block !important; width:100% !important; }
+        .pitcher-stats-panel { padding-top:12px !important; }
+        .sbar-row { grid-template-columns:54px 1fr 44px !important; column-gap:6px !important; }
+        .sbar-label, .sbar-val, .sbar-pct { font-size:11px !important; line-height:1.2 !important; }
+        .email-adv-label { padding:7px 8px !important; font-size:10px !important; line-height:1.2 !important; }
+        .email-adv-side { display:block !important; width:50% !important; padding:8px 6px !important; }
       }
     </style>
   </head>
@@ -3907,6 +3984,7 @@ function buildSiteReportHtml(game) {
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
     <style>
+      html, body { max-width:100%; overflow-x:hidden; }
       @media (max-width: 980px) {
         .report-main { width:100% !important; padding:1.25rem 0.85rem 0 !important; }
         .report-banner { padding:1.2rem 0.95rem !important; }
@@ -3917,8 +3995,23 @@ function buildSiteReportHtml(game) {
         .report-main { padding:0.9rem 0.55rem 0 !important; }
         .report-banner { border-radius:18px !important; }
         .report-banner-logo { width:72px !important; height:72px !important; }
-        .report-sheet-table-wrap { margin:0 -4px; }
-        .report-lineup-wrap { margin:0 -4px; }
+        .report-banner > div:first-child { gap:12px !important; }
+        .report-banner > div:first-child > div { min-width:0 !important; }
+        .report-banner p { font-size:0.88rem !important; line-height:1.45 !important; word-break:break-word; }
+        .report-sheet-table-wrap, .report-lineup-wrap { margin:0; width:100%; overflow:hidden !important; }
+        .report-sheet-table { width:100% !important; table-layout:fixed !important; }
+        .report-summary-table th, .report-summary-table td { padding:8px 6px !important; font-size:12px !important; word-break:break-word; }
+        .report-advanced-table th, .report-advanced-table td { padding:6px 5px !important; font-size:11px !important; word-break:break-word; }
+        .report-heat-pill { min-width:0 !important; width:100%; padding:5px 4px !important; font-size:11px !important; text-align:center; }
+        .report-lineup-wrap { display:none !important; }
+        .report-lineup-mobile { display:grid !important; gap:12px !important; }
+        .report-pitcher-col { gap:12px !important; }
+        .pitcher-card-v2 { grid-template-columns:1fr !important; }
+        .pitcher-img-panel { min-height:160px !important; }
+        .pitcher-photo-sm { max-height:180px !important; object-fit:contain !important; }
+        .pitcher-stats-panel { padding:14px !important; }
+        .sbar-row { grid-template-columns:54px 1fr 44px !important; column-gap:6px !important; }
+        .sbar-label, .sbar-val, .sbar-pct { font-size:11px !important; }
       }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>

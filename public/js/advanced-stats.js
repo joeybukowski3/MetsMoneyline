@@ -306,45 +306,92 @@ async function loadLeagueAverages(season) {
     const fSplits = statsArr.find(s => s.group?.displayName === "fielding")?.splits || [];
 
     return {
-      hitting: {
-        avg:         mean(hSplits, "avg"),
-        obp:         mean(hSplits, "obp"),
-        slg:         mean(hSplits, "slg"),
-        ops:         mean(hSplits, "ops"),
-        runsPerGame: meanRate(hSplits, s => {
-          const r = Number(s.stat?.runs), g = Number(s.stat?.gamesPlayed);
-          return g > 0 ? r / g : null;
-        }),
-        bbPct: meanRate(hSplits, s => {
-          const bb = Number(s.stat?.baseOnBalls), pa = Number(s.stat?.plateAppearances);
-          return pa > 0 ? bb / pa : null;
-        }),
-        kPct: meanRate(hSplits, s => {
-          const k = Number(s.stat?.strikeOuts), pa = Number(s.stat?.plateAppearances);
-          return pa > 0 ? k / pa : null;
-        }),
-        homeRuns: mean(hSplits, "homeRuns"),
-        stolenBases: mean(hSplits, "stolenBases")
+      averages: {
+        hitting: {
+          avg:         mean(hSplits, "avg"),
+          obp:         mean(hSplits, "obp"),
+          slg:         mean(hSplits, "slg"),
+          ops:         mean(hSplits, "ops"),
+          runsPerGame: meanRate(hSplits, s => {
+            const r = Number(s.stat?.runs), g = Number(s.stat?.gamesPlayed);
+            return g > 0 ? r / g : null;
+          }),
+          bbPct: meanRate(hSplits, s => {
+            const bb = Number(s.stat?.baseOnBalls), pa = Number(s.stat?.plateAppearances);
+            return pa > 0 ? bb / pa : null;
+          }),
+          kPct: meanRate(hSplits, s => {
+            const k = Number(s.stat?.strikeOuts), pa = Number(s.stat?.plateAppearances);
+            return pa > 0 ? k / pa : null;
+          }),
+          homeRuns: mean(hSplits, "homeRuns"),
+          stolenBases: mean(hSplits, "stolenBases")
+        },
+        pitching: {
+          era:  mean(pSplits, "era"),
+          whip: mean(pSplits, "whip"),
+          k9:   mean(pSplits, "strikeoutsPer9Inn"),
+          bb9:  mean(pSplits, "walksPer9Inn"),
+          h9:   mean(pSplits, "hitsPer9Inn"),
+          hr9:  mean(pSplits, "homeRunsPer9"),
+          saves: mean(pSplits, "saves"),
+          holds: mean(pSplits, "holds"),
+          inningsPitched: meanRate(pSplits, s => parseFloat(s.stat?.inningsPitched))
+        },
+        fielding: {
+          fielding: mean(fSplits, "fielding"),
+          errors: mean(fSplits, "errors"),
+          doublePlays: mean(fSplits, "doublePlays"),
+          assists: mean(fSplits, "assists"),
+          putOuts: mean(fSplits, "putOuts"),
+          stolenBases: mean(fSplits, "stolenBases"),
+          caughtStealing: mean(fSplits, "caughtStealing")
+        }
       },
-      pitching: {
-        era:  mean(pSplits, "era"),
-        whip: mean(pSplits, "whip"),
-        k9:   mean(pSplits, "strikeoutsPer9Inn"),
-        bb9:  mean(pSplits, "walksPer9Inn"),
-        h9:   mean(pSplits, "hitsPer9Inn"),
-        hr9:  mean(pSplits, "homeRunsPer9"),
-        saves: mean(pSplits, "saves"),
-        holds: mean(pSplits, "holds"),
-        inningsPitched: meanRate(pSplits, s => parseFloat(s.stat?.inningsPitched))
-      },
-      fielding: {
-        fielding: mean(fSplits, "fielding"),
-        errors: mean(fSplits, "errors"),
-        doublePlays: mean(fSplits, "doublePlays"),
-        assists: mean(fSplits, "assists"),
-        putOuts: mean(fSplits, "putOuts"),
-        stolenBases: mean(fSplits, "stolenBases"),
-        caughtStealing: mean(fSplits, "caughtStealing")
+      ranks: {
+        hitting: {
+          avg: buildRankMap(hSplits, s => parseFloat(s.stat?.avg), { higherBetter: true }).get(TEAM_ID) ?? null,
+          obp: buildRankMap(hSplits, s => parseFloat(s.stat?.obp), { higherBetter: true }).get(TEAM_ID) ?? null,
+          slg: buildRankMap(hSplits, s => parseFloat(s.stat?.slg), { higherBetter: true }).get(TEAM_ID) ?? null,
+          ops: buildRankMap(hSplits, s => parseFloat(s.stat?.ops), { higherBetter: true }).get(TEAM_ID) ?? null,
+          runsPerGame: buildRankMap(hSplits, s => {
+            const r = Number(s.stat?.runs);
+            const g = Number(s.stat?.gamesPlayed);
+            return g > 0 ? r / g : null;
+          }, { higherBetter: true }).get(TEAM_ID) ?? null,
+          homeRuns: buildRankMap(hSplits, s => Number(s.stat?.homeRuns), { higherBetter: true }).get(TEAM_ID) ?? null,
+          stolenBases: buildRankMap(hSplits, s => Number(s.stat?.stolenBases), { higherBetter: true }).get(TEAM_ID) ?? null,
+          bbPct: buildRankMap(hSplits, s => {
+            const bb = Number(s.stat?.baseOnBalls);
+            const pa = Number(s.stat?.plateAppearances);
+            return pa > 0 ? bb / pa : null;
+          }, { higherBetter: true }).get(TEAM_ID) ?? null,
+          kPct: buildRankMap(hSplits, s => {
+            const k = Number(s.stat?.strikeOuts);
+            const pa = Number(s.stat?.plateAppearances);
+            return pa > 0 ? k / pa : null;
+          }, { higherBetter: false }).get(TEAM_ID) ?? null
+        },
+        pitching: {
+          era: buildRankMap(pSplits, s => parseFloat(s.stat?.era), { higherBetter: false }).get(TEAM_ID) ?? null,
+          whip: buildRankMap(pSplits, s => parseFloat(s.stat?.whip), { higherBetter: false }).get(TEAM_ID) ?? null,
+          k9: buildRankMap(pSplits, s => parseFloat(s.stat?.strikeoutsPer9Inn), { higherBetter: true }).get(TEAM_ID) ?? null,
+          bb9: buildRankMap(pSplits, s => parseFloat(s.stat?.walksPer9Inn), { higherBetter: false }).get(TEAM_ID) ?? null,
+          h9: buildRankMap(pSplits, s => parseFloat(s.stat?.hitsPer9Inn), { higherBetter: false }).get(TEAM_ID) ?? null,
+          hr9: buildRankMap(pSplits, s => parseFloat(s.stat?.homeRunsPer9), { higherBetter: false }).get(TEAM_ID) ?? null,
+          saves: buildRankMap(pSplits, s => Number(s.stat?.saves), { higherBetter: true }).get(TEAM_ID) ?? null,
+          holds: buildRankMap(pSplits, s => Number(s.stat?.holds), { higherBetter: true }).get(TEAM_ID) ?? null,
+          inningsPitched: buildRankMap(pSplits, s => parseFloat(s.stat?.inningsPitched), { higherBetter: true }).get(TEAM_ID) ?? null
+        },
+        fielding: {
+          fielding: buildRankMap(fSplits, s => parseFloat(s.stat?.fielding), { higherBetter: true }).get(TEAM_ID) ?? null,
+          errors: buildRankMap(fSplits, s => Number(s.stat?.errors), { higherBetter: false }).get(TEAM_ID) ?? null,
+          doublePlays: buildRankMap(fSplits, s => Number(s.stat?.doublePlays), { higherBetter: true }).get(TEAM_ID) ?? null,
+          assists: buildRankMap(fSplits, s => Number(s.stat?.assists), { higherBetter: true }).get(TEAM_ID) ?? null,
+          putOuts: buildRankMap(fSplits, s => Number(s.stat?.putOuts), { higherBetter: true }).get(TEAM_ID) ?? null,
+          stolenBases: buildRankMap(fSplits, s => Number(s.stat?.stolenBases), { higherBetter: false }).get(TEAM_ID) ?? null,
+          caughtStealing: buildRankMap(fSplits, s => Number(s.stat?.caughtStealing), { higherBetter: true }).get(TEAM_ID) ?? null
+        }
       }
     };
   } catch (e) {
@@ -382,6 +429,92 @@ function loadRosterStats(overview, group) {
       stats:    person.stats?.[0]?.splits?.[0]?.stat || null
     };
   });
+}
+
+async function loadSeasonGameLog(teamId, season) {
+  const startDate = `${season}-03-01`;
+  const endDate = `${season}-11-30`;
+  const data = await fetchJson(
+    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&sportId=1&gameType=R&startDate=${startDate}&endDate=${endDate}`
+  );
+  return (data?.dates || [])
+    .flatMap((dateEntry) => (dateEntry.games || []).map((game) => {
+      const isHome = Number(game?.teams?.home?.team?.id) === Number(teamId);
+      const teamSide = isHome ? game?.teams?.home : game?.teams?.away;
+      const oppSide = isHome ? game?.teams?.away : game?.teams?.home;
+      const finalLike = ["Final", "Game Over", "Completed Early"].includes(String(game?.status?.detailedState || ""));
+      const teamScore = Number(teamSide?.score);
+      const oppScore = Number(oppSide?.score);
+      return {
+        date: game?.officialDate || dateEntry?.date || null,
+        isHome,
+        status: finalLike ? "final" : "scheduled",
+        runsFor: Number.isFinite(teamScore) ? teamScore : null,
+        runsAgainst: Number.isFinite(oppScore) ? oppScore : null,
+        result: finalLike && Number.isFinite(teamScore) && Number.isFinite(oppScore)
+          ? (teamScore > oppScore ? "W" : "L")
+          : null
+      };
+    }));
+}
+
+function buildSeasonSummaryFromGames(games = []) {
+  const completed = (games || [])
+    .filter((game) => game?.status === "final" && Number.isFinite(game?.runsFor) && Number.isFinite(game?.runsAgainst))
+    .sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+
+  if (!completed.length) {
+    return {
+      record: null,
+      runDifferential: null,
+      home: null,
+      road: null,
+      last10: null,
+      streak: null
+    };
+  }
+
+  let wins = 0;
+  let losses = 0;
+  let homeWins = 0;
+  let homeLosses = 0;
+  let roadWins = 0;
+  let roadLosses = 0;
+  let runsFor = 0;
+  let runsAgainst = 0;
+
+  for (const game of completed) {
+    runsFor += Number(game.runsFor || 0);
+    runsAgainst += Number(game.runsAgainst || 0);
+    if (game.result === "W") {
+      wins += 1;
+      if (game.isHome) homeWins += 1;
+      else roadWins += 1;
+    } else if (game.result === "L") {
+      losses += 1;
+      if (game.isHome) homeLosses += 1;
+      else roadLosses += 1;
+    }
+  }
+
+  const last10Games = completed.slice(-10);
+  const last10Wins = last10Games.filter((game) => game.result === "W").length;
+  const last10Losses = last10Games.filter((game) => game.result === "L").length;
+  const latestResult = completed[completed.length - 1]?.result || null;
+  let streakCount = 0;
+  for (let i = completed.length - 1; i >= 0; i -= 1) {
+    if (completed[i]?.result !== latestResult) break;
+    streakCount += 1;
+  }
+
+  return {
+    record: `${wins}-${losses}`,
+    runDifferential: runsFor - runsAgainst,
+    home: `${homeWins}-${homeLosses}`,
+    road: `${roadWins}-${roadLosses}`,
+    last10: `${last10Wins}-${last10Losses}`,
+    streak: latestResult && streakCount ? `${latestResult}${streakCount}` : null
+  };
 }
 
 // ── Utilities ────────────────────────────────────────────────────────────────
@@ -427,6 +560,12 @@ function formatPerGame(value, games, digits = 2) {
   return (num / gp).toFixed(digits);
 }
 
+function formatRunDiff(value) {
+  if (!Number.isFinite(value)) return "—";
+  if (value > 0) return `+${value}`;
+  return String(value);
+}
+
 function formatStrikeoutWalkRatio(stats) {
   const ratio = stats?.strikeoutWalkRatio;
   if (ratio != null && ratio !== "" && ratio !== "-.--" && ratio !== ".---") {
@@ -452,21 +591,55 @@ function averageComparable(values) {
   return nums.reduce((sum, value) => sum + value, 0) / nums.length;
 }
 
-function statClass(subjectRaw, baselineRaw, higherIsBetter) {
-  const subject = parseComparableNumber(subjectRaw);
-  const baseline = parseComparableNumber(baselineRaw);
-  if (subject == null || baseline == null || subject === baseline) return "";
-  return (higherIsBetter ? subject > baseline : subject < baseline) ? "stat-above-avg" : "stat-below-avg";
+function buildRankMap(splits, extractor, { higherBetter = true } = {}) {
+  const ranked = (splits || [])
+    .map((split) => ({
+      teamId: split?.team?.id,
+      value: extractor(split)
+    }))
+    .filter((entry) => Number.isFinite(entry.teamId) && Number.isFinite(entry.value))
+    .sort((a, b) => higherBetter ? b.value - a.value : a.value - b.value);
+
+  const rankMap = new Map();
+  ranked.forEach((entry, index) => {
+    if (!rankMap.has(entry.teamId)) rankMap.set(entry.teamId, index + 1);
+  });
+  return rankMap;
 }
 
-function buildComparisonCell(display, subjectRaw, baselineRaw, higherIsBetter) {
-  const cls = statClass(subjectRaw, baselineRaw, higherIsBetter);
-  return `<td class="${cls}"><strong>${display}</strong></td>`;
+function buildMetricTone(subjectRaw, baselineRaw, higherIsBetter) {
+  const subject = parseComparableNumber(subjectRaw);
+  const baseline = parseComparableNumber(baselineRaw);
+  if (subject == null || baseline == null || baseline === 0) {
+    return { style: "", color: "#111827" };
+  }
+
+  const diff = higherIsBetter ? (subject - baseline) : (baseline - subject);
+  const distance = Math.abs(subject - baseline) / Math.max(Math.abs(baseline), 1);
+  const neutralFloor = 0.03;
+  const scaled = distance <= neutralFloor ? 0 : Math.min(1, (distance - neutralFloor) / 0.32);
+  if (scaled === 0) {
+    return {
+      style: "background:rgba(148,163,184,0.03);",
+      color: "#111827"
+    };
+  }
+
+  const alpha = 0.05 + (scaled * 0.2);
+  return diff >= 0
+    ? { style: `background:rgba(192,57,43,${alpha.toFixed(3)});`, color: "#9f2a1d" }
+    : { style: `background:rgba(37,99,235,${alpha.toFixed(3)});`, color: "#1d4ed8" };
+}
+
+function buildComparisonCell(display, subjectRaw, baselineRaw, higherIsBetter, rank = null) {
+  const tone = buildMetricTone(subjectRaw, baselineRaw, higherIsBetter);
+  const rankHtml = Number.isFinite(rank) ? `<span class="stat-rank">(#${rank} MLB)</span>` : "";
+  return `<td style="${tone.style}"><span class="stat-value-stack"><strong style="color:${tone.color};">${display}</strong>${rankHtml}</span></td>`;
 }
 
 function buildPlayerCell(display, subjectRaw, baselineRaw, higherIsBetter) {
-  const cls = statClass(subjectRaw, baselineRaw, higherIsBetter);
-  return `<td class="${cls}">${display}</td>`;
+  const tone = buildMetricTone(subjectRaw, baselineRaw, higherIsBetter);
+  return `<td style="${tone.style};color:${tone.color};">${display}</td>`;
 }
 
 function compareAgainstAverage(players, accessor) {
@@ -497,22 +670,28 @@ function setText(targetId, value) {
 
 // ── Render: at-a-glance ──────────────────────────────────────────────────────
 
-function renderAtAGlance(metsStanding, matchupSnapshot = null) {
+function renderAtAGlance(metsStanding, matchupSnapshot = null, seasonSummary = null) {
   const snapshotRecord = isValidRecordString(matchupSnapshot?.metsRecord) ? matchupSnapshot.metsRecord : null;
   const homeRoadText = String(matchupSnapshot?.homeRoad || "");
   const snapshotHome = /^Home\s+/i.test(homeRoadText) ? homeRoadText.replace(/^Home\s+/i, "") : null;
   const snapshotRoad = /^Road\s+/i.test(homeRoadText) ? homeRoadText.replace(/^Road\s+/i, "") : null;
   const snapshotLast10 = isValidRecordString(matchupSnapshot?.last10) ? matchupSnapshot.last10 : null;
   const snapshotStreak = matchupSnapshot?.streak || null;
+  const derivedRecord = isValidRecordString(seasonSummary?.record) ? seasonSummary.record : null;
+  const derivedHome = isValidRecordString(seasonSummary?.home) ? seasonSummary.home : null;
+  const derivedRoad = isValidRecordString(seasonSummary?.road) ? seasonSummary.road : null;
+  const derivedLast10 = isValidRecordString(seasonSummary?.last10) ? seasonSummary.last10 : null;
+  const derivedStreak = seasonSummary?.streak || null;
+  const derivedRunDiff = Number.isFinite(seasonSummary?.runDifferential) ? seasonSummary.runDifferential : null;
 
   if (!metsStanding) {
     renderRows("at-a-glance", [
-      `<div class="glance-item"><div class="glance-label">Record</div><div class="glance-value highlight">${snapshotRecord || "2026 only"}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Run Diff</div><div class="glance-value">—</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Home</div><div class="glance-value">${snapshotHome || "—"}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Road</div><div class="glance-value">${snapshotRoad || "—"}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Last 10</div><div class="glance-value">${snapshotLast10 || "—"}</div></div>`,
-      `<div class="glance-item"><div class="glance-label">Streak</div><div class="glance-value">${snapshotStreak || "Unavailable"}</div></div>`
+      `<div class="glance-item"><div class="glance-label">Record</div><div class="glance-value highlight">${derivedRecord || snapshotRecord || "2026 only"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Run Diff</div><div class="glance-value">${formatRunDiff(derivedRunDiff)}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Home</div><div class="glance-value">${derivedHome || snapshotHome || "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Road</div><div class="glance-value">${derivedRoad || snapshotRoad || "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Last 10</div><div class="glance-value">${derivedLast10 || snapshotLast10 || "—"}</div></div>`,
+      `<div class="glance-item"><div class="glance-label">Streak</div><div class="glance-value">${derivedStreak || snapshotStreak || "Unavailable"}</div></div>`
     ]);
     return;
   }
@@ -522,14 +701,15 @@ function renderAtAGlance(metsStanding, matchupSnapshot = null) {
   const roadRecord = splitRecord(metsStanding, "away");
   const last10Record = splitRecord(metsStanding, "lastTen");
   const standingStreak = metsStanding.streak?.streakCode || "-";
+  const standingRunDiff = Number.isFinite(metsStanding.runDifferential) ? metsStanding.runDifferential : null;
 
   const items = [
-    { label: "Record",   value: isValidRecordString(standingRecord) ? standingRecord : (snapshotRecord || "—"), highlight: true },
-    { label: "Run Diff", value: metsStanding.runDifferential > 0 ? `+${metsStanding.runDifferential}` : String(metsStanding.runDifferential || 0) },
-    { label: "Home",     value: homeRecord !== "0-0" ? homeRecord : (snapshotHome || "—") },
-    { label: "Road",     value: roadRecord !== "0-0" ? roadRecord : (snapshotRoad || "—") },
-    { label: "Last 10",  value: last10Record !== "0-0" ? last10Record : (snapshotLast10 || "—") },
-    { label: "Streak",   value: standingStreak !== "-" ? standingStreak : (snapshotStreak || "—") }
+    { label: "Record",   value: isValidRecordString(standingRecord) ? standingRecord : (derivedRecord || snapshotRecord || "—"), highlight: true },
+    { label: "Run Diff", value: formatRunDiff(derivedRunDiff ?? standingRunDiff) },
+    { label: "Home",     value: homeRecord !== "0-0" ? homeRecord : (derivedHome || snapshotHome || "—") },
+    { label: "Road",     value: roadRecord !== "0-0" ? roadRecord : (derivedRoad || snapshotRoad || "—") },
+    { label: "Last 10",  value: last10Record !== "0-0" ? last10Record : (derivedLast10 || snapshotLast10 || "—") },
+    { label: "Streak",   value: standingStreak !== "-" ? standingStreak : (derivedStreak || snapshotStreak || "—") }
   ];
   const target = document.getElementById("at-a-glance");
   if (!target) return;
@@ -545,9 +725,12 @@ function renderAtAGlance(metsStanding, matchupSnapshot = null) {
 
 function renderTeamStats(teamStats, leagueAvg, season) {
   const { hitting, pitching, fielding } = teamStats;
-  const lh = leagueAvg?.hitting  || null;
-  const lp = leagueAvg?.pitching || null;
-  const lf = leagueAvg?.fielding || null;
+  const lh = leagueAvg?.averages?.hitting  || null;
+  const lp = leagueAvg?.averages?.pitching || null;
+  const lf = leagueAvg?.averages?.fielding || null;
+  const rh = leagueAvg?.ranks?.hitting || {};
+  const rp = leagueAvg?.ranks?.pitching || {};
+  const rf = leagueAvg?.ranks?.fielding || {};
   const noAvg = leagueAvg != null ? "—" : `${season} only`;
 
   function fmtLgPct(v)  { return v != null ? formatPct(v)           : noAvg; }
@@ -559,42 +742,42 @@ function renderTeamStats(teamStats, leagueAvg, season) {
   const metsBBPct  = Number(hitting.plateAppearances) > 0 ? Number(hitting.baseOnBalls) / Number(hitting.plateAppearances) : null;
   const metsKPct   = Number(hitting.plateAppearances) > 0 ? Number(hitting.strikeOuts)  / Number(hitting.plateAppearances) : null;
 
-  function row(label, value, lgDisplay, metsRaw, lgRaw, higherBetter) {
-    return `<tr><td>${label}</td>${buildComparisonCell(value, metsRaw, lgRaw, higherBetter)}<td>${lgDisplay}</td></tr>`;
+  function row(label, value, lgDisplay, metsRaw, lgRaw, higherBetter, rank = null) {
+    return `<tr><td>${label}</td>${buildComparisonCell(value, metsRaw, lgRaw, higherBetter, rank)}<td>${lgDisplay}</td></tr>`;
   }
 
   renderRows("offense-body", [
-    row("AVG",      formatPct(hitting.avg),                                    fmtLgPct(lh?.avg),         parseFloat(hitting.avg),  lh?.avg,         true),
-    row("OBP",      formatPct(hitting.obp),                                    fmtLgPct(lh?.obp),         parseFloat(hitting.obp),  lh?.obp,         true),
-    row("SLG",      formatPct(hitting.slg),                                    fmtLgPct(lh?.slg),         parseFloat(hitting.slg),  lh?.slg,         true),
-    row("OPS",      formatPct(hitting.ops),                                    fmtLgPct(lh?.ops),         parseFloat(hitting.ops),  lh?.ops,         true),
-    row("Runs / G", formatPerGame(hitting.runs, hitting.gamesPlayed),          fmtLgDec(lh?.runsPerGame), metsRPG,                  lh?.runsPerGame, true),
-    row("HR",       hitting.homeRuns ?? "0",                                   fmtLgNum(lh?.homeRuns),    hitting.homeRuns,         lh?.homeRuns,    true),
-    row("SB",       hitting.stolenBases ?? "0",                                fmtLgNum(lh?.stolenBases), hitting.stolenBases,      lh?.stolenBases, true),
-    row("BB%",      formatRate(hitting.baseOnBalls,  hitting.plateAppearances),fmtLgRate(lh?.bbPct),      metsBBPct, lh?.bbPct,   true),
-    row("K%",       formatRate(hitting.strikeOuts,   hitting.plateAppearances),fmtLgRate(lh?.kPct),       metsKPct,  lh?.kPct,    false)
+    row("AVG",      formatPct(hitting.avg),                                    fmtLgPct(lh?.avg),         parseFloat(hitting.avg),  lh?.avg,         true, rh.avg),
+    row("OBP",      formatPct(hitting.obp),                                    fmtLgPct(lh?.obp),         parseFloat(hitting.obp),  lh?.obp,         true, rh.obp),
+    row("SLG",      formatPct(hitting.slg),                                    fmtLgPct(lh?.slg),         parseFloat(hitting.slg),  lh?.slg,         true, rh.slg),
+    row("OPS",      formatPct(hitting.ops),                                    fmtLgPct(lh?.ops),         parseFloat(hitting.ops),  lh?.ops,         true, rh.ops),
+    row("Runs / G", formatPerGame(hitting.runs, hitting.gamesPlayed),          fmtLgDec(lh?.runsPerGame), metsRPG,                  lh?.runsPerGame, true, rh.runsPerGame),
+    row("HR",       hitting.homeRuns ?? "0",                                   fmtLgNum(lh?.homeRuns),    hitting.homeRuns,         lh?.homeRuns,    true, rh.homeRuns),
+    row("SB",       hitting.stolenBases ?? "0",                                fmtLgNum(lh?.stolenBases), hitting.stolenBases,      lh?.stolenBases, true, rh.stolenBases),
+    row("BB%",      formatRate(hitting.baseOnBalls,  hitting.plateAppearances),fmtLgRate(lh?.bbPct),      metsBBPct,               lh?.bbPct,       true, rh.bbPct),
+    row("K%",       formatRate(hitting.strikeOuts,   hitting.plateAppearances),fmtLgRate(lh?.kPct),       metsKPct,                lh?.kPct,        false, rh.kPct)
   ]);
 
   renderRows("pitching-body", [
-    row("ERA",    formatDecimal(pitching.era),               fmtLgDec(lp?.era),  parseFloat(pitching.era),               lp?.era,  false),
-    row("WHIP",   formatDecimal(pitching.whip),              fmtLgDec(lp?.whip), parseFloat(pitching.whip),              lp?.whip, false),
-    row("K / 9",  formatDecimal(pitching.strikeoutsPer9Inn), fmtLgDec(lp?.k9),   parseFloat(pitching.strikeoutsPer9Inn), lp?.k9,   true),
-    row("BB / 9", formatDecimal(pitching.walksPer9Inn),      fmtLgDec(lp?.bb9),  parseFloat(pitching.walksPer9Inn),      lp?.bb9,  false),
-    row("H / 9",  formatDecimal(pitching.hitsPer9Inn),       fmtLgDec(lp?.h9),   parseFloat(pitching.hitsPer9Inn),       lp?.h9,   false),
-    row("HR / 9", formatDecimal(pitching.homeRunsPer9),      fmtLgDec(lp?.hr9),  parseFloat(pitching.homeRunsPer9),      lp?.hr9,  false),
-    row("Saves",  pitching.saves  ?? "0",                    fmtLgNum(lp?.saves),         pitching.saves,              lp?.saves,         true),
-    row("Holds",  pitching.holds  ?? "0",                    fmtLgNum(lp?.holds),         pitching.holds,              lp?.holds,         true),
-    row("IP",     pitching.inningsPitched || "0.0",          fmtLgNum(lp?.inningsPitched), pitching.inningsPitched,    lp?.inningsPitched, true)
+    row("ERA",    formatDecimal(pitching.era),               fmtLgDec(lp?.era),            parseFloat(pitching.era),               lp?.era,            false, rp.era),
+    row("WHIP",   formatDecimal(pitching.whip),              fmtLgDec(lp?.whip),           parseFloat(pitching.whip),              lp?.whip,           false, rp.whip),
+    row("K / 9",  formatDecimal(pitching.strikeoutsPer9Inn), fmtLgDec(lp?.k9),             parseFloat(pitching.strikeoutsPer9Inn), lp?.k9,             true, rp.k9),
+    row("BB / 9", formatDecimal(pitching.walksPer9Inn),      fmtLgDec(lp?.bb9),            parseFloat(pitching.walksPer9Inn),      lp?.bb9,            false, rp.bb9),
+    row("H / 9",  formatDecimal(pitching.hitsPer9Inn),       fmtLgDec(lp?.h9),             parseFloat(pitching.hitsPer9Inn),       lp?.h9,             false, rp.h9),
+    row("HR / 9", formatDecimal(pitching.homeRunsPer9),      fmtLgDec(lp?.hr9),            parseFloat(pitching.homeRunsPer9),      lp?.hr9,            false, rp.hr9),
+    row("Saves",  pitching.saves  ?? "0",                    fmtLgNum(lp?.saves),          pitching.saves,                         lp?.saves,          true, rp.saves),
+    row("Holds",  pitching.holds  ?? "0",                    fmtLgNum(lp?.holds),          pitching.holds,                         lp?.holds,          true, rp.holds),
+    row("IP",     pitching.inningsPitched || "0.0",          fmtLgNum(lp?.inningsPitched), parseFloat(pitching.inningsPitched),    lp?.inningsPitched, true, rp.inningsPitched)
   ]);
 
   renderRows("defense-body", [
-    row("Fielding %", formatPct(fielding.fielding), fmtLgPct(lf?.fielding), fielding.fielding, lf?.fielding, true),
-    row("Errors", fielding.errors ?? "0", fmtLgNum(lf?.errors), fielding.errors, lf?.errors, false),
-    row("Double Plays", fielding.doublePlays ?? "0", fmtLgNum(lf?.doublePlays), fielding.doublePlays, lf?.doublePlays, true),
-    row("Assists", fielding.assists ?? "0", fmtLgNum(lf?.assists), fielding.assists, lf?.assists, true),
-    row("Putouts", fielding.putOuts ?? "0", fmtLgNum(lf?.putOuts), fielding.putOuts, lf?.putOuts, true),
-    row("SB Allowed", fielding.stolenBases ?? "0", fmtLgNum(lf?.stolenBases), fielding.stolenBases, lf?.stolenBases, false),
-    row("CS", fielding.caughtStealing ?? "0", fmtLgNum(lf?.caughtStealing), fielding.caughtStealing, lf?.caughtStealing, true)
+    row("Fielding %", formatPct(fielding.fielding), fmtLgPct(lf?.fielding), fielding.fielding, lf?.fielding, true, rf.fielding),
+    row("Errors", fielding.errors ?? "0", fmtLgNum(lf?.errors), fielding.errors, lf?.errors, false, rf.errors),
+    row("Double Plays", fielding.doublePlays ?? "0", fmtLgNum(lf?.doublePlays), fielding.doublePlays, lf?.doublePlays, true, rf.doublePlays),
+    row("Assists", fielding.assists ?? "0", fmtLgNum(lf?.assists), fielding.assists, lf?.assists, true, rf.assists),
+    row("Putouts", fielding.putOuts ?? "0", fmtLgNum(lf?.putOuts), fielding.putOuts, lf?.putOuts, true, rf.putOuts),
+    row("SB Allowed", fielding.stolenBases ?? "0", fmtLgNum(lf?.stolenBases), fielding.stolenBases, lf?.stolenBases, false, rf.stolenBases),
+    row("CS", fielding.caughtStealing ?? "0", fmtLgNum(lf?.caughtStealing), fielding.caughtStealing, lf?.caughtStealing, true, rf.caughtStealing)
   ]);
 }
 
@@ -808,11 +991,12 @@ async function init() {
   setText("page-banner", `Live ${season} season mode \u2014 current-season data only.`);
 
   try {
-    const [standings, overview, matchupSnapshot, leagueAvg] = await Promise.all([
+    const [standings, overview, matchupSnapshot, leagueAvg, seasonGames] = await Promise.all([
       loadStandings(season),
       loadOverview(),
       loadMatchupSnapshot(season),
-      loadLeagueAverages(season)
+      loadLeagueAverages(season),
+      loadSeasonGameLog(TEAM_ID, season).catch(() => [])
     ]);
 
     ensureOverviewSeason(overview, season);
@@ -820,9 +1004,17 @@ async function init() {
     const teamStats = loadTeamStats(overview);
     const hitters   = loadRosterStats(overview, "hitting");
     const pitchers  = loadRosterStats(overview, "pitching");
+    const seasonSummary = buildSeasonSummaryFromGames(seasonGames);
+    if (!Number.isFinite(seasonSummary.runDifferential)) {
+      const runsFor = Number(teamStats?.hitting?.runs);
+      const runsAgainst = Number(teamStats?.pitching?.runs);
+      if (Number.isFinite(runsFor) && Number.isFinite(runsAgainst)) {
+        seasonSummary.runDifferential = runsFor - runsAgainst;
+      }
+    }
 
     updateSeasonCopy(season, standings);
-    renderAtAGlance(standings.mets, matchupSnapshot?.featuredGame || null);
+    renderAtAGlance(standings.mets, matchupSnapshot?.featuredGame || null, seasonSummary);
     renderTeamStats(teamStats, leagueAvg, season);
     renderHitters(hitters, season);
     renderPitchers(pitchers, season);
