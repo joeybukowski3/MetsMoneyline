@@ -249,8 +249,8 @@ function formatButtondownSubject(game) {
 }
 
 function formatPreliminaryButtondownSubject(game, lineupSourceLabel = "projected lineups") {
-  if (!game) return "PRELIMINARY REPORT - MetsMoneyline";
-  return `PRELIMINARY REPORT - ${lineupSourceLabel} - New York Mets vs ${game.opponent}`;
+  if (!game) return "[TEST] MetsMoneyline";
+  return `[TEST] MetsMoneyline - ${lineupSourceLabel} - New York Mets vs ${game.opponent}`;
 }
 
 function slugify(value) {
@@ -3618,6 +3618,97 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       ${heatCell(label, value)}
       ${renderContextNote(contextValue, contextKind)}
     </div>`;
+  const renderEmailRecentStarts = (starts = []) => {
+    if (!Array.isArray(starts) || !starts.length) return "";
+    return `
+      <div style="margin-top:14px;">
+        <div style="${smallLabel}margin-bottom:8px;color:#6b7280;">Recent Starts</div>
+        ${(starts.slice(0, 3)).map((start) => `
+          <div style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px;background:#ffffff;margin-bottom:8px;">
+            <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.35;">${valueCell(String(start.date || "").slice(5))} vs ${valueCell(start.opponent || "-")}</div>
+            <div style="margin-top:4px;font-size:12px;line-height:1.4;color:#4b5563;">IP ${valueCell(start.ip || "-")} | ER ${valueCell(start.er ?? "-")} | K ${valueCell(start.k ?? "-")}${start.result ? ` | ${valueCell(start.result)}` : ""}</div>
+          </div>
+        `).join("")}
+      </div>`;
+  };
+  const renderEmailMetricRow = (label, value, contextValue = null, contextKind = "percentile", side = "left") => `
+    <tr>
+      <td style="padding:8px 0 8px ${side === "left" ? "0" : "8px"};vertical-align:top;">
+        <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${valueCell(label)}</div>
+        <div>${heatCell(label, value)}</div>
+        ${contextValue ? `<div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">${contextKind === "percentile" ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`}</div>` : ""}
+      </td>
+    </tr>`;
+  const renderEmailAdvancedBlock = (table) => {
+    if (!table) return "";
+    return `
+      <div style="margin-top:14px;padding:12px;border:1px solid #d6dde8;border-radius:14px;background:#ffffff;">
+        <div style="margin:0 0 10px 0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">${valueCell(table.title)}</div>
+        ${(table.rows || []).map((row) => {
+          const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
+          return `
+            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
+              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">${valueCell(row.label)}</div>
+              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                <tr>
+                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
+                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">${valueCell(table.leftHeader)}</div>
+                    ${renderEmailMetricRow(row.label, row.left, row.leftPercentile ?? null, "percentile", "left")}
+                  </td>
+                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
+                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">${valueCell(table.rightHeader)}</div>
+                    ${renderEmailMetricRow(row.label, row.right, resolvedRank, "rank", "right")}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          `;
+        }).join("")}
+      </div>`;
+  };
+  const renderEmailPitcherCard = (card, tables = []) => {
+    if (!card) return "";
+    const pitcherImageSrc = card?.image || card?.photoUrl || card?.headshot || null;
+    const photoHtml = pitcherImageSrc
+      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)}" style="width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
+      : `<div style="width:96px;height:96px;border-radius:16px;border:1px solid #d6dde8;background:#f3f4f6;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto;">&#9918;</div>`;
+    const statTile = (label, value) => `
+      <td valign="top" style="width:50%;padding:0 4px 8px 4px;">
+        <div style="border:1px solid #d6dde8;border-radius:10px;background:#f8fafc;padding:8px 9px;">
+          <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${label}</div>
+          <div>${heatCell(label, value)}</div>
+        </div>
+      </td>`;
+    return `
+      <div class="email-pitcher-card" style="margin-bottom:18px;border:1px solid #d9e1ee;border-radius:18px;background:#ffffff;padding:16px;">
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+          <tr>
+            <td align="center" style="padding:0 0 12px 0;">${photoHtml}</td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:0;">
+              <div style="font-size:22px;line-height:1.2;font-weight:800;color:#111827;">${valueCell(card.name)}</div>
+              <div style="margin-top:6px;font-size:13px;line-height:1.4;color:#4b5563;font-weight:700;">${valueCell(card.teamLabel)}${card.hand ? ` | ${valueCell(card.hand)}` : ""}${card.record ? ` | Record ${valueCell(card.record)}` : ""}</div>
+            </td>
+          </tr>
+        </table>
+        <div style="margin-top:14px;">
+          <div style="${smallLabel}margin-bottom:8px;color:#6b7280;">Traditional Stats</div>
+          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+            <tr>
+              ${statTile("ERA", card.stats?.era)}
+              ${statTile("WHIP", card.stats?.whip)}
+            </tr>
+            <tr>
+              ${statTile("K%", card.stats?.kPct)}
+              ${statTile("BB%", card.stats?.bbPct)}
+            </tr>
+          </table>
+        </div>
+        ${tables.map((table) => renderEmailAdvancedBlock(table)).join("")}
+        ${renderEmailRecentStarts(card.recentStarts)}
+      </div>`;
+  };
   const renderAdvancedSheetTable = (table) => {
     if (mode === "email") {
       return `
@@ -3864,10 +3955,10 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </div>`
     : `<table role="presentation" width="100%" style="width:100%;border-collapse:separate;border-spacing:0;">
         <tr>
-          <td class="email-stack-col" valign="top" style="width:100%;padding:0 0 14px 0;">${renderPitcherColumn(report.startingPitchersComparison?.metsCard, metsPitcherTables)}</td>
+          <td class="email-stack-col" valign="top" style="width:100%;padding:0 0 16px 0;">${renderEmailPitcherCard(report.startingPitchersComparison?.metsCard, metsPitcherTables)}</td>
         </tr>
         <tr>
-          <td class="email-stack-col" valign="top" style="width:100%;padding:0;">${renderPitcherColumn(report.startingPitchersComparison?.oppCard, oppPitcherTables)}</td>
+          <td class="email-stack-col" valign="top" style="width:100%;padding:0;">${renderEmailPitcherCard(report.startingPitchersComparison?.oppCard, oppPitcherTables)}</td>
         </tr>
       </table>`;
 
@@ -4253,7 +4344,7 @@ async function createButtondownDraft(output) {
   }
 }
 
-async function createButtondownEmail({ game, status = "draft" }) {
+async function createButtondownEmail({ game, status = "draft", subject: subjectOverride = null, body: bodyOverride = null }) {
   const apiKey = process.env.BUTTONDOWN_API_KEY;
   if (!apiKey) {
     throw new Error("BUTTONDOWN_API_KEY is required to create Buttondown emails.");
@@ -4262,24 +4353,29 @@ async function createButtondownEmail({ game, status = "draft" }) {
     throw new Error("Game payload is required to create a Buttondown email.");
   }
 
-  const subject = formatButtondownSubject(game);
-  const body = buildEmailHtml(game);
-  const response = await axios.post(
-    "https://api.buttondown.com/v1/emails",
-    {
-      subject,
-      body,
-      status
-    },
-    {
-      timeout: 15000,
-      headers: {
-        Authorization: `Token ${apiKey}`,
-        "Content-Type": "application/json"
+  const subject = subjectOverride || formatButtondownSubject(game);
+  const body = bodyOverride || buildEmailHtml(game);
+  try {
+    const response = await axios.post(
+      "https://api.buttondown.com/v1/emails",
+      {
+        subject,
+        body,
+        status
+      },
+      {
+        timeout: 15000,
+        headers: {
+          Authorization: `Token ${apiKey}`,
+          "Content-Type": "application/json"
+        }
       }
-    }
-  );
-  return response.data || null;
+    );
+    return response.data || null;
+  } catch (error) {
+    const details = error.response?.data || error.message;
+    throw new Error(`Buttondown create failed: ${JSON.stringify(details)}`);
+  }
 }
 
 async function updateButtondownEmail(emailId, payload = {}) {
@@ -4291,18 +4387,23 @@ async function updateButtondownEmail(emailId, payload = {}) {
     throw new Error("Buttondown email id is required.");
   }
 
-  const response = await axios.patch(
-    `https://api.buttondown.com/v1/emails/${emailId}`,
-    payload,
-    {
-      timeout: 15000,
-      headers: {
-        Authorization: `Token ${apiKey}`,
-        "Content-Type": "application/json"
+  try {
+    const response = await axios.patch(
+      `https://api.buttondown.com/v1/emails/${emailId}`,
+      payload,
+      {
+        timeout: 15000,
+        headers: {
+          Authorization: `Token ${apiKey}`,
+          "Content-Type": "application/json"
+        }
       }
-    }
-  );
-  return response.data || null;
+    );
+    return response.data || null;
+  } catch (error) {
+    const details = error.response?.data || error.message;
+    throw new Error(`Buttondown update failed: ${JSON.stringify(details)}`);
+  }
 }
 
 function logDebugAnalysis(writeup) {
