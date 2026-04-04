@@ -314,9 +314,14 @@ async function main() {
     : formatButtondownSubject(game);
   const body = buildEmailHtml(game);
   const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
+  const forceFreshDraft = Boolean(args.allowDuplicate);
+
+  if (forceFreshDraft) {
+    gameState[emailIdKey] = null;
+  }
 
   if (!gameState[emailIdKey]) {
-    const created = await createButtondownEmail({ game, status: "draft" });
+    const created = await createButtondownEmail({ game, status: "draft", subject, body });
     if (!created?.id) {
       throw new Error("Buttondown draft creation did not return an id.");
     }
