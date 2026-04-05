@@ -3565,7 +3565,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     ? "background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);"
     : "background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;";
   const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;";
-  const sectionTitle = (title) => `<h2 style="margin:0 0 12px 0;font-size:${mode === "site" ? "18px" : "17px"};line-height:1.25;color:#111827;">${title}</h2>`;
+  const sectionTitle = (title) => `<h2 style="margin:0 0 12px 0;font-size:${mode === "site" ? "18px" : "17px"};line-height:1.25;color:#111827;">${String(title || "").replace(/^#+\s*/, "")}</h2>`;
   const valueCell = (value) => value == null || value === "" ? "N/A" : value;
   const wrapSection = (title, content) => `<section style="${cardStyle}">${sectionTitle(title)}${content}</section>`;
   const twoColStyle = mode === "site"
@@ -3653,11 +3653,19 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
                 <tr>
                   <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
                     <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">${valueCell(table.leftHeader)}</div>
-                    ${renderEmailMetricRow(row.label, row.left, row.leftPercentile ?? null, "percentile", "left")}
+                    <div style="padding:8px 0;vertical-align:top;">
+                      <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${valueCell(row.label)}</div>
+                      <div>${heatCell(row.label, row.left)}</div>
+                      ${row.leftPercentile != null ? `<div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">${ordinalSuffix(row.leftPercentile)} %ile</div>` : ""}
+                    </div>
                   </td>
                   <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
                     <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">${valueCell(table.rightHeader)}</div>
-                    ${renderEmailMetricRow(row.label, row.right, resolvedRank, "rank", "right")}
+                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
+                      <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${valueCell(row.label)}</div>
+                      <div>${heatCell(row.label, row.right)}</div>
+                      ${resolvedRank != null ? `<div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#${resolvedRank} MLB</div>` : ""}
+                    </div>
                   </td>
                 </tr>
               </table>
@@ -3668,7 +3676,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   };
   const renderEmailPitcherCard = (card, tables = []) => {
     if (!card) return "";
-    const pitcherImageSrc = card?.image || card?.photoUrl || card?.headshot || null;
+    const pitcherImageSrc = card?.image || card?.photoUrl || card?.headshot
+      || (card?.mlbId ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current` : null);
     const photoHtml = pitcherImageSrc
       ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)}" style="width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
       : `<div style="width:96px;height:96px;border-radius:16px;border:1px solid #d6dde8;background:#f3f4f6;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto;">&#9918;</div>`;
@@ -3988,14 +3997,7 @@ function buildEmailHtml(game) {
   const report = game?.writeup?.report || buildPresentationReport(game);
   const reportMarkup = buildReportMarkup(report, { mode: "email" });
 
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>MetsMoneyline</title>
-    <style>
-      body { margin:0; padding:0; background:#eef2f7; }
+  return `<style>
       img { border:0; outline:none; text-decoration:none; display:block; max-width:100%; }
       table { border-spacing:0; }
       .report-sheet-table { width:100% !important; table-layout:fixed !important; }
@@ -4019,18 +4021,15 @@ function buildEmailHtml(game) {
         .pitcher-card-v2 { display:block !important; }
         .pitcher-img-panel, .pitcher-stats-panel { display:block !important; width:100% !important; }
         .pitcher-stats-panel { padding-top:12px !important; }
-        .sbar-row { grid-template-columns:54px 1fr 44px !important; column-gap:6px !important; }
-        .sbar-label, .sbar-val, .sbar-pct { font-size:11px !important; line-height:1.2 !important; }
+        .sbar-label, .sbar-val { font-size:11px !important; line-height:1.2 !important; }
         .email-adv-label { padding:7px 8px !important; font-size:10px !important; line-height:1.2 !important; }
         .email-adv-side { display:block !important; width:50% !important; padding:8px 6px !important; }
       }
     </style>
-  </head>
-  <body style="font-family:Arial,sans-serif;color:#111827;line-height:1.55;background:#eef2f7;margin:0;padding:0;">
-    <table role="presentation" width="100%" style="width:100%;background:#eef2f7;">
+    <table role="presentation" width="100%" style="width:100%;background:#eef2f7;font-family:Arial,sans-serif;color:#111827;line-height:1.55;">
       <tr>
         <td align="center" style="padding:18px 10px;">
-          <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:1080px;background:#ffffff;border:1px solid #dde4ef;border-radius:20px;overflow:hidden;">
+          <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #dde4ef;border-radius:20px;overflow:hidden;">
             <tr>
               <td class="email-pad" style="padding:22px 24px;">
                 <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;margin:0 0 12px 0;">MetsMoneyline</p>
@@ -4042,7 +4041,7 @@ function buildEmailHtml(game) {
                       </td>
                       <td align="center" class="report-banner-vs" style="width:20%;font-size:20px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
                       <td align="center" style="width:40%;padding:0 6px;">
-                        <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:96px;height:96px;object-fit:contain;margin:0 auto;">
+                        <img class="report-banner-logo" src="${report.header?.oppLogoUrl || "https://www.mlbstatic.com/team-logos/generic.svg"}" alt="${game.opponent || "Opponent"}" style="width:96px;height:96px;object-fit:contain;margin:0 auto;">
                       </td>
                     </tr>
                   </table>
@@ -4055,9 +4054,7 @@ function buildEmailHtml(game) {
           </table>
         </td>
       </tr>
-    </table>
-  </body>
-</html>`;
+    </table>`;
 }
 
 function buildSiteReportHtml(game) {
