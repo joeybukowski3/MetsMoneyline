@@ -4057,8 +4057,7 @@ function buildEmailHtml(game) {
     throw new Error(`[buildEmailHtml] reportMarkup is too short (${reportMarkup?.length ?? 0} chars) — buildReportMarkup produced nothing`);
   }
 
-  return `<!-- buttondown-editor-mode: fancy -->
-<style>
+  return `<style>
       @media only screen and (max-width: 700px) {
         .email-shell { width:100% !important; }
         .email-pad { padding:16px !important; }
@@ -4367,15 +4366,16 @@ async function createButtondownDraft(output) {
 
   const subject = formatButtondownSubject(game);
   const bodyHtml = buildEmailHtml(game);
-  const bodyText = buildPlainTextEmail(game);
 
+  console.log(`[buttondown] createButtondownDraft — payload keys: subject, body, editor_type, status`);
+  console.log(`[buttondown] createButtondownDraft — body (HTML, first 200): ${bodyHtml.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body_html: bodyHtml,
-        body: bodyText,
+        body: bodyHtml,
+        editor_type: "html",
         status: "draft"
       },
       {
@@ -4403,14 +4403,15 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
 
   const subject = subjectOverride || formatButtondownSubject(game);
   const bodyHtml = bodyOverride || buildEmailHtml(game);
-  const bodyText = buildPlainTextEmail(game);
+  console.log(`[buttondown] createButtondownEmail — payload keys: subject, body, editor_type, status`);
+  console.log(`[buttondown] createButtondownEmail — body (HTML, first 200): ${bodyHtml.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body_html: bodyHtml,
-        body: bodyText,
+        body: bodyHtml,
+        editor_type: "html",
         status
       },
       {
