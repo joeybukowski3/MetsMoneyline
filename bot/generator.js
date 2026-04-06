@@ -253,6 +253,24 @@ function formatPreliminaryButtondownSubject(game, lineupSourceLabel = "projected
   return `[TEST] MetsMoneyline - ${lineupSourceLabel} - New York Mets vs ${game.opponent}`;
 }
 
+function buildPlainTextEmail(game) {
+  const report = game?.writeup?.report;
+  const date = report?.header?.metadataLine || game?.date || "";
+  const matchup = `New York Mets vs ${game?.opponent || "Opponent"}`;
+  const pick = report?.officialPick?.label || "See full report";
+  const isPreliminary = report?.preliminary?.enabled;
+  return [
+    `MetsMoneyline${isPreliminary ? " (Preliminary Report)" : ""}`,
+    `${matchup}${date ? " | " + date : ""}`,
+    "",
+    `Today's Pick: ${pick}`,
+    "",
+    "Read the full breakdown at metsmoneyline.com",
+    "",
+    "To unsubscribe, click the link in the footer of this email."
+  ].join("\n");
+}
+
 function slugify(value) {
   return String(value || "")
     .toLowerCase()
@@ -4317,14 +4335,16 @@ async function createButtondownDraft(output) {
   if (!game) return;
 
   const subject = formatButtondownSubject(game);
-  const body = buildEmailHtml(game);
+  const bodyHtml = buildEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
 
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body,
+        body_html: bodyHtml,
+        body: bodyText,
         status: "draft"
       },
       {
@@ -4351,13 +4371,15 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
   }
 
   const subject = subjectOverride || formatButtondownSubject(game);
-  const body = bodyOverride || buildEmailHtml(game);
+  const bodyHtml = bodyOverride || buildEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body,
+        body_html: bodyHtml,
+        body: bodyText,
         status
       },
       {
@@ -4531,6 +4553,7 @@ module.exports = {
   persistGeneratedOutput,
   formatButtondownSubject,
   formatPreliminaryButtondownSubject,
+  buildPlainTextEmail,
   createButtondownDraft,
   createButtondownEmail,
   updateButtondownEmail,

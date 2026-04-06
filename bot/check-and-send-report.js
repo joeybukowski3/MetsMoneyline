@@ -9,6 +9,7 @@ const {
   generateOutputPackage,
   persistGeneratedOutput,
   buildEmailHtml,
+  buildPlainTextEmail,
   buildPresentationReport,
   formatButtondownSubject,
   formatPreliminaryButtondownSubject,
@@ -312,7 +313,8 @@ async function main() {
   const subject = args.testSend
     ? formatPreliminaryButtondownSubject(game, lineupPlan?.sourceLabel || "projected lineups")
     : formatButtondownSubject(game);
-  const body = buildEmailHtml(game);
+  const bodyHtml = buildEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
   const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
   const forceFreshDraft = Boolean(args.allowDuplicate);
 
@@ -321,7 +323,7 @@ async function main() {
   }
 
   if (!gameState[emailIdKey]) {
-    const created = await createButtondownEmail({ game, status: "draft", subject, body });
+    const created = await createButtondownEmail({ game, status: "draft", subject, body: bodyHtml });
     if (!created?.id) {
       throw new Error("Buttondown draft creation did not return an id.");
     }
@@ -333,7 +335,8 @@ async function main() {
 
   await updateButtondownEmail(gameState[emailIdKey], {
     subject,
-    body,
+    body_html: bodyHtml,
+    body: bodyText,
     status: "about_to_send"
   });
 
