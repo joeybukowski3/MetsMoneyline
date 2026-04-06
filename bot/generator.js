@@ -3596,7 +3596,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         const pct = reportMetricPct(label, value);
         return pct == null ? "background:#f3f4f6;color:#374151;border-radius:8px;" : reportCellToneStyle(pct);
       })();
-    return `<span class="report-heat-pill" style="display:inline-block;min-width:64px;padding:6px 8px;${style}">${valueCell(value)}</span>`;
+    return `<span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;${style}">${valueCell(value)}</span>`;
   };
   const renderKeyValueGrid = (items) => `
     <table style="width:100%;border-collapse:collapse;">
@@ -3632,7 +3632,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     return `<span style="display:block;min-height:14px;font-size:11px;line-height:1.15;color:#6b7280;font-weight:700;white-space:nowrap;">${label}</span>`;
   };
   const renderMetricStack = (label, value, contextValue = null, contextKind = "rank", align = "center") => `
-    <div style="display:flex;flex-direction:column;justify-content:center;align-items:${align};gap:4px;min-height:56px;">
+    <div style="text-align:${align === "flex-start" ? "left" : align === "flex-end" ? "right" : "center"};padding:4px 0;">
       ${heatCell(label, value)}
       ${renderContextNote(contextValue, contextKind)}
     </div>`;
@@ -3697,8 +3697,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     const pitcherImageSrc = card?.image || card?.photoUrl || card?.headshot
       || (card?.mlbId ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current` : null);
     const photoHtml = pitcherImageSrc
-      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)}" style="width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
-      : `<div style="width:96px;height:96px;border-radius:16px;border:1px solid #d6dde8;background:#f3f4f6;color:#94a3b8;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto;">&#9918;</div>`;
+      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)}" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
+      : `<div style="width:96px;height:96px;border-radius:16px;border:1px solid #d6dde8;background:#f3f4f6;color:#94a3b8;text-align:center;line-height:96px;font-size:32px;margin:0 auto;">&#9918;</div>`;
     const statTile = (label, value) => `
       <td valign="top" style="width:50%;padding:0 4px 8px 4px;">
         <div style="border:1px solid #d6dde8;border-radius:10px;background:#f8fafc;padding:8px 9px;">
@@ -3749,7 +3749,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           ${(table.rows || []).map((row) => {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
-              <div class="email-adv-row" style="border:1px solid #d6dde8;border-top:none;background:#ffffff;">
+              <div class="email-adv-row" style="width:100%;border:1px solid #d6dde8;border-top:none;background:#ffffff;">
                 <div class="email-adv-label" style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f8fafc;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">${valueCell(row.label)}</div>
                 <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
                   <tr>
@@ -3823,6 +3823,39 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </table>
     </div>`;
   const renderLineupTable = (mets = [], opp = []) => {
+    if (mode === "email") {
+      const oppLabel = report.teamComparison?.oppHeader || "Opponent";
+      const simpleLineupTable = (players, label, bgHeader, bgRow) => {
+        if (!players.length) return "";
+        return `
+          <div style="margin-bottom:16px;">
+            <div style="padding:8px 10px;background:${bgHeader};color:#0f172a;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid #d6dde8;">${label}</div>
+            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;border:1px solid #d6dde8;border-top:none;">
+              <thead>
+                <tr>
+                  <th style="width:8%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">#</th>
+                  <th style="width:36%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:left;font-size:10px;font-weight:700;color:#6b7280;">Player</th>
+                  <th style="width:18%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">xBA</th>
+                  <th style="width:18%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">K%</th>
+                  <th style="width:20%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">Hard Hit</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${players.map((p, i) => `
+                  <tr>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;color:#6b7280;font-weight:700;">${valueCell(p.order ?? i + 1)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};font-weight:700;color:#111827;">${valueCell(p.name)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("xBA", p.savant?.xBA || null)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null)}</td>
+                  </tr>`).join("")}
+              </tbody>
+            </table>
+          </div>`;
+      };
+      return simpleLineupTable(mets, "New York Mets", "#e9f3ff", "#f4f9ff")
+           + simpleLineupTable(opp, oppLabel, "#fdf1e5", "#fff7ef");
+    }
     const lineupHeadshot = (player) => {
       const pid = player?.playerId || player?.id || player?.mlbId || 0;
       if (!pid) return "";
@@ -3830,6 +3863,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)}" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
     };
     const lineupNameCell = (player, side) => {
+      if (mode === "email") return `<span style="font-weight:700;">${valueCell(player?.name)}</span>`;
       return `<div style="display:flex;align-items:center;gap:8px;min-width:0;">
         ${lineupHeadshot(player)}
         <span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${valueCell(player?.name)}</span>
@@ -4016,50 +4050,38 @@ function buildEmailHtml(game) {
   const reportMarkup = buildReportMarkup(report, { mode: "email" });
 
   return `<style>
-      img { border:0; outline:none; text-decoration:none; display:block; max-width:100%; }
-      table { border-spacing:0; }
-      .report-sheet-table { width:100% !important; table-layout:fixed !important; }
-      .report-sheet-table th, .report-sheet-table td { word-break:normal !important; overflow-wrap:normal !important; }
-      .report-heat-pill { min-width:0 !important; width:100% !important; text-align:center !important; box-sizing:border-box !important; white-space:normal !important; }
-      .report-pitcher-col { width:100% !important; }
-      .pitcher-card-v2 { width:100% !important; }
-      .email-adv-row { width:100% !important; }
-      .email-adv-side { width:50% !important; }
       @media only screen and (max-width: 700px) {
         .email-shell { width:100% !important; }
         .email-pad { padding:16px !important; }
-        .report-two-col { display:block !important; }
         .report-pitcher-col { margin-bottom:14px !important; }
         .email-stack-col { display:block !important; width:100% !important; padding:0 0 12px 0 !important; }
         .report-sheet-table { width:100% !important; table-layout:fixed !important; }
-        .report-sheet-table th, .report-sheet-table td { padding:6px 5px !important; font-size:11px !important; line-height:1.25 !important; word-break:normal !important; overflow-wrap:normal !important; }
-        .report-heat-pill { min-width:0 !important; width:100% !important; padding:5px 4px !important; font-size:11px !important; line-height:1.25 !important; }
+        .report-sheet-table th, .report-sheet-table td { padding:6px 5px !important; font-size:11px !important; line-height:1.25 !important; }
+        .report-heat-pill { min-width:0 !important; max-width:100% !important; padding:5px 4px !important; font-size:11px !important; line-height:1.25 !important; }
         .report-banner-logo { width:72px !important; height:72px !important; }
         .report-banner-vs { font-size:18px !important; }
-        .pitcher-card-v2 { display:block !important; }
         .pitcher-img-panel, .pitcher-stats-panel { display:block !important; width:100% !important; }
         .pitcher-stats-panel { padding-top:12px !important; }
-        .sbar-label, .sbar-val { font-size:11px !important; line-height:1.2 !important; }
         .email-adv-label { padding:7px 8px !important; font-size:10px !important; line-height:1.2 !important; }
-        .email-adv-side { display:block !important; width:50% !important; padding:8px 6px !important; }
+        .email-adv-side { display:block !important; width:100% !important; padding:8px 6px !important; }
       }
     </style>
-    <table role="presentation" width="100%" style="width:100%;background:#eef2f7;font-family:Arial,sans-serif;color:#111827;line-height:1.55;">
+    <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border-spacing:0;background:#eef2f7;font-family:Arial,sans-serif;color:#111827;line-height:1.55;">
       <tr>
         <td align="center" style="padding:18px 10px;">
-          <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;background:#ffffff;border:1px solid #dde4ef;border-radius:20px;overflow:hidden;">
+          <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;border-collapse:collapse;border-spacing:0;background:#ffffff;border:1px solid #dde4ef;border-radius:20px;overflow:hidden;">
             <tr>
               <td class="email-pad" style="padding:22px 24px;">
                 <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;margin:0 0 12px 0;">MetsMoneyline</p>
                 <div style="margin:0 0 18px 0;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:20px;padding:18px 16px;text-align:center;">
-                  <table role="presentation" width="100%" style="width:100%;">
+                  <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border-spacing:0;">
                     <tr>
                       <td align="center" style="width:40%;padding:0 6px;">
-                        <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:96px;height:96px;object-fit:contain;margin:0 auto;">
+                        <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="display:block;border:0;width:96px;height:96px;object-fit:contain;margin:0 auto;">
                       </td>
                       <td align="center" class="report-banner-vs" style="width:20%;font-size:20px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
                       <td align="center" style="width:40%;padding:0 6px;">
-                        <img class="report-banner-logo" src="${report.header?.oppLogoUrl || "https://www.mlbstatic.com/team-logos/generic.svg"}" alt="${game.opponent || "Opponent"}" style="width:96px;height:96px;object-fit:contain;margin:0 auto;">
+                        <img class="report-banner-logo" src="${report.header?.oppLogoUrl || "https://www.mlbstatic.com/team-logos/generic.svg"}" alt="${game.opponent || "Opponent"}" style="display:block;border:0;width:96px;height:96px;object-fit:contain;margin:0 auto;">
                       </td>
                     </tr>
                   </table>
