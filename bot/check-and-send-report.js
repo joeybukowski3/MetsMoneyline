@@ -314,16 +314,13 @@ async function main() {
     : formatButtondownSubject(game);
   const bodyHtml = buildEmailHtml(game);
   const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
-  const forceFreshDraft = Boolean(args.allowDuplicate);
-
+  const sendBodyHtml = args.allowDuplicate
+    ? `${bodyHtml}\n<!-- resend:${new Date().toISOString()} -->`
+    : bodyHtml;
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to send blank email`);
   }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
-
-  if (forceFreshDraft) {
-    gameState[emailIdKey] = null;
-  }
 
   if (!gameState[emailIdKey]) {
     const created = await createButtondownEmail({ game, status: "draft", subject });
@@ -334,11 +331,13 @@ async function main() {
     state.games[gameId] = gameState;
     saveState(state);
     console.log(`Created Buttondown draft ${created.id}.`);
+  } else {
+    console.log(`Reusing existing Buttondown draft ${gameState[emailIdKey]}.`);
   }
 
   await updateButtondownEmail(gameState[emailIdKey], {
     subject,
-    body: bodyHtml,
+    body: sendBodyHtml,
     status: "about_to_send"
   });
 

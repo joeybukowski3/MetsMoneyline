@@ -4433,10 +4433,10 @@ async function updateButtondownEmail(emailId, payload = {}) {
     throw new Error("Buttondown email id is required.");
   }
 
-  try {
+  const doRequest = async (extraFields = {}) => {
     const response = await axios.patch(
       `https://api.buttondown.com/v1/emails/${emailId}`,
-      payload,
+      { ...payload, ...extraFields },
       {
         timeout: 15000,
         headers: {
@@ -4449,8 +4449,21 @@ async function updateButtondownEmail(emailId, payload = {}) {
     console.log(`[buttondown] PATCH response body present: ${Boolean(response.data?.body)}`);
     console.log(`[buttondown] PATCH response body length: ${response.data?.body?.length ?? 0}`);
     return response.data || null;
+  };
+
+  try {
+    return await doRequest();
   } catch (error) {
     const details = error.response?.data || error.message;
+    if (error.response?.data?.code === "email_duplicate") {
+      console.warn("[buttondown] email_duplicate detected — retrying with confirmed:true");
+      try {
+        return await doRequest({ confirmed: true });
+      } catch (retryError) {
+        const retryDetails = retryError.response?.data || retryError.message;
+        throw new Error(`Buttondown update failed after duplicate retry: ${JSON.stringify(retryDetails)}`);
+      }
+    }
     throw new Error(`Buttondown update failed: ${JSON.stringify(details)}`);
   }
 }
