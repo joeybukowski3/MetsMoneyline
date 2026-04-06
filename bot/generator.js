@@ -4047,9 +4047,18 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
 
 function buildEmailHtml(game) {
   const report = game?.writeup?.report || buildPresentationReport(game);
-  const reportMarkup = buildReportMarkup(report, { mode: "email" });
+  if (!report) throw new Error("[buildEmailHtml] report is null — buildPresentationReport returned nothing");
+  if (!report.header) console.warn("[buildEmailHtml] WARNING: report.header is missing — email banner will be blank");
+  if (!report.startingPitchersComparison) console.warn("[buildEmailHtml] WARNING: report.startingPitchersComparison is missing");
+  if (!report.projectedLineupComparison) console.warn("[buildEmailHtml] WARNING: report.projectedLineupComparison is missing");
 
-  return `<style>
+  const reportMarkup = buildReportMarkup(report, { mode: "email" });
+  if (!reportMarkup || reportMarkup.trim().length < 500) {
+    throw new Error(`[buildEmailHtml] reportMarkup is too short (${reportMarkup?.length ?? 0} chars) — buildReportMarkup produced nothing`);
+  }
+
+  return `<!-- buttondown-editor-mode: fancy -->
+<style>
       @media only screen and (max-width: 700px) {
         .email-shell { width:100% !important; }
         .email-pad { padding:16px !important; }
@@ -4087,7 +4096,7 @@ function buildEmailHtml(game) {
                   </table>
                   <p style="margin:12px 0 0 0;color:#5b6477;font-size:14px;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
                 </div>
-                ${report.preliminary?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${report.preliminary.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
+                ${game.writeup?.preliminaryMeta?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${game.writeup.preliminaryMeta.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
                 ${reportMarkup}
               </td>
             </tr>
@@ -4358,15 +4367,13 @@ async function createButtondownDraft(output) {
 
   const subject = formatButtondownSubject(game);
   const bodyHtml = buildEmailHtml(game);
-  const bodyText = buildPlainTextEmail(game);
 
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body_html: bodyHtml,
-        body: bodyText,
+        body: bodyHtml,
         status: "draft"
       },
       {
@@ -4394,14 +4401,12 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
 
   const subject = subjectOverride || formatButtondownSubject(game);
   const bodyHtml = bodyOverride || buildEmailHtml(game);
-  const bodyText = buildPlainTextEmail(game);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body_html: bodyHtml,
-        body: bodyText,
+        body: bodyHtml,
         status
       },
       {
@@ -4440,6 +4445,9 @@ async function updateButtondownEmail(emailId, payload = {}) {
         }
       }
     );
+    console.log(`[buttondown] PATCH response status: ${response.status}`);
+    console.log(`[buttondown] PATCH response body present: ${Boolean(response.data?.body)}`);
+    console.log(`[buttondown] PATCH response body length: ${response.data?.body?.length ?? 0}`);
     return response.data || null;
   } catch (error) {
     const details = error.response?.data || error.message;
