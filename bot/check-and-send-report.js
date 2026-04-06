@@ -322,8 +322,8 @@ async function main() {
   }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
 
-  if (!gameState[emailIdKey]) {
-    const created = await createButtondownEmail({ game, status: "draft", subject });
+  if (!gameState[emailIdKey] || args.allowDuplicate) {
+    const created = await createButtondownEmail({ game, status: "draft", subject, body: sendBodyHtml });
     if (!created?.id) {
       throw new Error("Buttondown draft creation did not return an id.");
     }
@@ -331,8 +331,6 @@ async function main() {
     state.games[gameId] = gameState;
     saveState(state);
     console.log(`Created Buttondown draft ${created.id}.`);
-  } else {
-    console.log(`Reusing existing Buttondown draft ${gameState[emailIdKey]}.`);
   }
 
   await updateButtondownEmail(gameState[emailIdKey], {

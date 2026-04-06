@@ -4374,8 +4374,7 @@ async function createButtondownDraft(output) {
       {
         subject,
         body: bodyHtml,
-        status: "draft",
-        email_type: "html"
+        status: "draft"
       },
       {
         timeout: 15000,
@@ -4408,8 +4407,7 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
       {
         subject,
         body: bodyHtml,
-        status,
-        email_type: "html"
+        status
       },
       {
         timeout: 15000,
