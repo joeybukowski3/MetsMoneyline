@@ -4373,8 +4373,9 @@ async function createButtondownDraft(output) {
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: `<!-- buttondown-editor-mode: plaintext -->\n${bodyHtml}`,
-        status: "draft"
+        body: bodyHtml,
+        status: "draft",
+        content_type: "html"
       },
       {
         timeout: 15000,
@@ -4406,8 +4407,9 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: `<!-- buttondown-editor-mode: plaintext -->\n${bodyHtml}`,
-        status
+        body: bodyHtml,
+        status,
+        content_type: "html"
       },
       {
         timeout: 15000,

@@ -321,6 +321,7 @@ async function main() {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to send blank email`);
   }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
+  console.log(`[send] bodyHtml preview: ${bodyHtml.slice(0, 500)}`);
 
   if (!gameState[emailIdKey] || args.allowDuplicate) {
     const created = await createButtondownEmail({ game, status: "draft", subject, body: sendBodyHtml });
@@ -336,7 +337,8 @@ async function main() {
   await updateButtondownEmail(gameState[emailIdKey], {
     subject,
     body: sendBodyHtml,
-    status: "about_to_send"
+    status: "about_to_send",
+    content_type: "html"
   });
 
   if (args.testSend) {
