@@ -4373,7 +4373,7 @@ async function createButtondownDraft(output) {
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: bodyHtml,
+        body: `<!-- buttondown-editor-mode: plaintext -->\n${bodyHtml}`,
         status: "draft"
       },
       {
@@ -4406,7 +4406,7 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: bodyHtml,
+        body: `<!-- buttondown-editor-mode: plaintext -->\n${bodyHtml}`,
         status
       },
       {
