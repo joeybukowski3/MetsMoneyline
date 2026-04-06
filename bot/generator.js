@@ -4367,15 +4367,16 @@ async function createButtondownDraft(output) {
 
   const subject = formatButtondownSubject(game);
   const bodyHtml = buildEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
 
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: bodyHtml,
-        status: "draft",
-        content_type: "html"
+        body_html: bodyHtml,
+        body: bodyText,
+        status: "draft"
       },
       {
         timeout: 15000,
@@ -4402,14 +4403,15 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
 
   const subject = subjectOverride || formatButtondownSubject(game);
   const bodyHtml = bodyOverride || buildEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body: bodyHtml,
-        status,
-        content_type: "html"
+        body_html: bodyHtml,
+        body: bodyText,
+        status
       },
       {
         timeout: 15000,
