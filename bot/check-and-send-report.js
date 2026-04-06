@@ -10,6 +10,7 @@ const {
   persistGeneratedOutput,
   buildEmailHtml,
   buildPlainTextEmail,
+  buildButtondownPayload,
   buildPresentationReport,
   formatButtondownSubject,
   formatPreliminaryButtondownSubject,
@@ -321,9 +322,13 @@ async function main() {
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to send blank email`);
   }
+  const bodyText = buildPlainTextEmail(game);
+  if (/<[a-z]/i.test(bodyText)) {
+    throw new Error("[send] plain-text fallback contains HTML tags — buildPlainTextEmail returned HTML");
+  }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
-  console.log(`[send] bodyHtml field (first 200): ${bodyHtml.slice(0, 200)}`);
-  console.log(`[send] plain-text fallback (first 200): ${buildPlainTextEmail(game).slice(0, 200)}`);
+  console.log(`[send] bodyHtml first 200: ${bodyHtml.slice(0, 200)}`);
+  console.log(`[send] bodyText first 200: ${bodyText.slice(0, 200)}`);
 
   if (!gameState[emailIdKey] || args.allowDuplicate) {
     const created = await createButtondownEmail({ game, status: "draft", subject, body: sendBodyHtml });
@@ -336,14 +341,8 @@ async function main() {
     console.log(`Created Buttondown draft ${created.id}.`);
   }
 
-  const patchPayload = {
-    subject,
-    body: sendBodyHtml,
-    editor_type: "html",
-    status: "about_to_send"
-  };
+  const patchPayload = buildButtondownPayload(sendBodyHtml, { subject, status: "about_to_send" });
   console.log(`[send] PATCH payload keys: ${Object.keys(patchPayload).join(", ")}`);
-  console.log(`[send] PATCH body field (HTML, first 200): ${sendBodyHtml.slice(0, 200)}`);
   await updateButtondownEmail(gameState[emailIdKey], patchPayload);
 
   if (args.testSend) {

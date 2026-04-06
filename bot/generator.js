@@ -4354,6 +4354,22 @@ function sumProjectedLineupPa(lineup = []) {
   return total > 0 ? String(total) : null;
 }
 
+function buildButtondownPayload(bodyHtml, { subject, status }) {
+  if (!bodyHtml || bodyHtml.trim().length < 1000) {
+    throw new Error(`[buttondown] bodyHtml too short (${bodyHtml?.length ?? 0} chars) — refusing to build payload`);
+  }
+  if (bodyHtml.includes("codehilite")) {
+    throw new Error("[buttondown] bodyHtml contains 'codehilite' — markdown processing leaked into HTML, refusing to send");
+  }
+  if (bodyHtml.includes("<pre><code>")) {
+    throw new Error("[buttondown] bodyHtml contains <pre><code> — code block wrapping detected, refusing to send");
+  }
+  if (!/^\s*<(style|table|div)/i.test(bodyHtml)) {
+    throw new Error(`[buttondown] bodyHtml does not start with <style>, <table>, or <div> — first 80 chars: ${bodyHtml.slice(0, 80)}`);
+  }
+  return { subject, body: bodyHtml, editor_type: "html", status };
+}
+
 async function createButtondownDraft(output) {
   const apiKey = process.env.BUTTONDOWN_API_KEY;
   if (!apiKey) {
@@ -4366,18 +4382,14 @@ async function createButtondownDraft(output) {
 
   const subject = formatButtondownSubject(game);
   const bodyHtml = buildEmailHtml(game);
+  const payload = buildButtondownPayload(bodyHtml, { subject, status: "draft" });
 
-  console.log(`[buttondown] createButtondownDraft — payload keys: subject, body, editor_type, status`);
-  console.log(`[buttondown] createButtondownDraft — body (HTML, first 200): ${bodyHtml.slice(0, 200)}`);
+  console.log(`[buttondown] createButtondownDraft POST — keys: ${Object.keys(payload).join(", ")}`);
+  console.log(`[buttondown] createButtondownDraft POST — body first 200: ${bodyHtml.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
-      {
-        subject,
-        body: bodyHtml,
-        editor_type: "html",
-        status: "draft"
-      },
+      payload,
       {
         timeout: 15000,
         headers: {
@@ -4386,7 +4398,8 @@ async function createButtondownDraft(output) {
         }
       }
     );
-    console.log(`Buttondown draft created: ${response.data?.id || "unknown id"}`);
+    const d = response.data || {};
+    console.log(`[buttondown] createButtondownDraft response — id: ${d.id}, editor_type: ${d.editor_type}, body_html length: ${d.body_html?.length ?? 0}`);
   } catch (error) {
     console.error("Failed to create Buttondown draft:", error.response?.data || error.message);
   }
@@ -4403,17 +4416,14 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
 
   const subject = subjectOverride || formatButtondownSubject(game);
   const bodyHtml = bodyOverride || buildEmailHtml(game);
-  console.log(`[buttondown] createButtondownEmail — payload keys: subject, body, editor_type, status`);
-  console.log(`[buttondown] createButtondownEmail — body (HTML, first 200): ${bodyHtml.slice(0, 200)}`);
+  const payload = buildButtondownPayload(bodyHtml, { subject, status });
+
+  console.log(`[buttondown] createButtondownEmail POST — keys: ${Object.keys(payload).join(", ")}`);
+  console.log(`[buttondown] createButtondownEmail POST — body first 200: ${bodyHtml.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
-      {
-        subject,
-        body: bodyHtml,
-        editor_type: "html",
-        status
-      },
+      payload,
       {
         timeout: 15000,
         headers: {
@@ -4422,7 +4432,9 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
         }
       }
     );
-    return response.data || null;
+    const d = response.data || {};
+    console.log(`[buttondown] createButtondownEmail response — id: ${d.id}, editor_type: ${d.editor_type}, body_html length: ${d.body_html?.length ?? 0}`);
+    return d.id ? d : null;
   } catch (error) {
     const details = error.response?.data || error.message;
     throw new Error(`Buttondown create failed: ${JSON.stringify(details)}`);
@@ -4450,9 +4462,9 @@ async function updateButtondownEmail(emailId, payload = {}) {
         }
       }
     );
-    console.log(`[buttondown] PATCH response status: ${response.status}`);
-    console.log(`[buttondown] PATCH response body present: ${Boolean(response.data?.body)}`);
-    console.log(`[buttondown] PATCH response body length: ${response.data?.body?.length ?? 0}`);
+    const d = response.data || {};
+    console.log(`[buttondown] PATCH ${emailId} — status: ${response.status}, editor_type: ${d.editor_type}, body length: ${d.body?.length ?? 0}, body_html length: ${d.body_html?.length ?? 0}`);
+    console.log(`[buttondown] PATCH body_html first 200: ${d.body_html?.slice(0, 200) ?? "(none)"}`);
     return response.data || null;
   };
 
@@ -4602,6 +4614,7 @@ module.exports = {
   formatButtondownSubject,
   formatPreliminaryButtondownSubject,
   buildPlainTextEmail,
+  buildButtondownPayload,
   createButtondownDraft,
   createButtondownEmail,
   updateButtondownEmail,
