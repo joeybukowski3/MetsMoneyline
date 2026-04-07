@@ -4049,7 +4049,8 @@ function buildEmailHtml(game) {
   const report = game?.writeup?.report || buildPresentationReport(game);
   const reportMarkup = buildReportMarkup(report, { mode: "email" });
 
-  return `<style>
+  return `<!-- buttondown-editor-mode: html -->
+<style>
       @media only screen and (max-width: 700px) {
         .email-shell { width:100% !important; }
         .email-pad { padding:16px !important; }
@@ -4358,15 +4359,13 @@ async function createButtondownDraft(output) {
 
   const subject = formatButtondownSubject(game);
   const bodyHtml = buildEmailHtml(game);
-  const bodyText = buildPlainTextEmail(game);
 
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body_html: bodyHtml,
-        body: bodyText,
+        body: bodyHtml,
         status: "draft"
       },
       {
@@ -4394,14 +4393,12 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
 
   const subject = subjectOverride || formatButtondownSubject(game);
   const bodyHtml = bodyOverride || buildEmailHtml(game);
-  const bodyText = buildPlainTextEmail(game);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
       {
         subject,
-        body_html: bodyHtml,
-        body: bodyText,
+        body: bodyHtml,
         status
       },
       {
