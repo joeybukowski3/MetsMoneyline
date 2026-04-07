@@ -4355,6 +4355,7 @@ function sumProjectedLineupPa(lineup = []) {
 }
 
 function buildButtondownPayload(bodyHtml, { subject, status }) {
+  // Guards on the raw report HTML — must be clean before we add the editor directive
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[buttondown] bodyHtml too short (${bodyHtml?.length ?? 0} chars) — refusing to build payload`);
   }
@@ -4364,10 +4365,17 @@ function buildButtondownPayload(bodyHtml, { subject, status }) {
   if (bodyHtml.includes("<pre><code>")) {
     throw new Error("[buttondown] bodyHtml contains <pre><code> — code block wrapping detected, refusing to send");
   }
+  if (bodyHtml.includes("buttondown-editor-mode")) {
+    throw new Error("[buttondown] bodyHtml already contains a buttondown-editor-mode directive — remove it from buildEmailHtml");
+  }
   if (!/^\s*<(style|table|div)/i.test(bodyHtml)) {
     throw new Error(`[buttondown] bodyHtml does not start with <style>, <table>, or <div> — first 80 chars: ${bodyHtml.slice(0, 80)}`);
   }
-  return { subject, body: bodyHtml, editor_type: "html", status };
+  // Prepend the raw-HTML editor directive.
+  // "html" mode = Buttondown's raw HTML editor — no WYSIWYG parsing, no markdown processing.
+  // Do NOT use editor_type: "html" in the payload — that maps to "fancy" (WYSIWYG) internally.
+  const body = `<!-- buttondown-editor-mode: html -->\n${bodyHtml}`;
+  return { subject, body, status };
 }
 
 async function createButtondownDraft(output) {
@@ -4385,7 +4393,7 @@ async function createButtondownDraft(output) {
   const payload = buildButtondownPayload(bodyHtml, { subject, status: "draft" });
 
   console.log(`[buttondown] createButtondownDraft POST — keys: ${Object.keys(payload).join(", ")}`);
-  console.log(`[buttondown] createButtondownDraft POST — body first 200: ${bodyHtml.slice(0, 200)}`);
+  console.log(`[buttondown] createButtondownDraft POST — body first 200: ${payload.body.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
@@ -4419,7 +4427,7 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
   const payload = buildButtondownPayload(bodyHtml, { subject, status });
 
   console.log(`[buttondown] createButtondownEmail POST — keys: ${Object.keys(payload).join(", ")}`);
-  console.log(`[buttondown] createButtondownEmail POST — body first 200: ${bodyHtml.slice(0, 200)}`);
+  console.log(`[buttondown] createButtondownEmail POST — body first 200: ${payload.body.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
