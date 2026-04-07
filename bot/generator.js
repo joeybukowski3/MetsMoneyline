@@ -3589,10 +3589,11 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   const twoColStyle = mode === "site"
     ? "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;"
     : "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;";
-  const heatCell = (label, value) => {
+  const heatCell = (label, value, percentileOverride = null) => {
     const style = label === "WAR"
       ? reportWarCellStyle(value)
       : (() => {
+        if (percentileOverride != null) return reportCellToneStyle(percentileOverride);
         const pct = reportMetricPct(label, value);
         return pct == null ? "background:#f3f4f6;color:#374151;border-radius:8px;" : reportCellToneStyle(pct);
       })();
@@ -3633,7 +3634,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   };
   const renderMetricStack = (label, value, contextValue = null, contextKind = "rank", align = "center") => `
     <div style="text-align:${align === "flex-start" ? "left" : align === "flex-end" ? "right" : "center"};padding:4px 0;">
-      ${heatCell(label, value)}
+      ${heatCell(label, value, contextKind === "percentile" ? contextValue : null)}
       ${renderContextNote(contextValue, contextKind)}
     </div>`;
   const renderEmailRecentStarts = (starts = []) => {
@@ -3767,9 +3768,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       <table class="report-sheet-table report-advanced-table" style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
         <thead>
           <tr>
-            <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(table.leftHeader)}</th>
-            <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:800;">${valueCell(table.season || report.startingPitchersComparison?.seasonLabel)}</th>
-            <th style="padding:9px 10px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">${valueCell(table.rightHeader)}</th>
+            <th style="width:33%;padding:9px 10px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">${valueCell(table.leftHeader)}</th>
+            <th style="width:34%;padding:9px 10px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:800;">${valueCell(table.season || report.startingPitchersComparison?.seasonLabel)}</th>
+            <th style="width:33%;padding:9px 10px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">${valueCell(table.rightHeader)}</th>
           </tr>
         </thead>
         <tbody>
@@ -3777,9 +3778,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
             <tr>
-              <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
-              <td style="width:28%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
-              <td style="width:36%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+              <td style="width:34%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
             </tr>
           `;}).join("")}
         </tbody>
@@ -3823,8 +3824,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </table>
     </div>`;
   const renderLineupTable = (mets = [], opp = []) => {
+    const oppLabel = report.teamComparison?.oppHeader || report.game?.opponent || "Opponent";
     if (mode === "email") {
-      const oppLabel = report.teamComparison?.oppHeader || "Opponent";
       const simpleLineupTable = (players, label, bgHeader, bgRow) => {
         if (!players.length) return "";
         return `
@@ -3916,7 +3917,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           </div>
           <div style="display:flex;flex-direction:column;gap:10px;">
             ${sideBlock("New York Mets", m, "#f4f9ff")}
-            ${sideBlock("San Francisco Giants", o, "#fff7ef")}
+            ${sideBlock(oppLabel, o, "#fff7ef")}
           </div>
         </article>`;
     }).join("");
@@ -3928,7 +3929,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             <tr>
               <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;${smallLabel}">New York Mets</th>
               <th style="padding:10px 8px;text-align:center;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;${smallLabel}">Order</th>
-              <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;${smallLabel}">San Francisco Giants</th>
+              <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;${smallLabel}">${oppLabel}</th>
             </tr>
             <tr>
               <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:left;">Mets Player</th>
