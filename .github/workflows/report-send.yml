@@ -29,6 +29,7 @@ jobs:
       - name: Refresh API cache
         working-directory: ./bot
         env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
           API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
           API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
