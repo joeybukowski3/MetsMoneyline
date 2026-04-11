@@ -4,6 +4,7 @@ const path = require("path");
 const {
   TEAM_ID,
   getTodayEasternISO,
+  selectFeaturedGame,
   getGameForDate,
   buildGameFacts,
   generateOutputPackage,
@@ -16,7 +17,8 @@ const {
   formatPreliminaryButtondownSubject,
   createButtondownEmail,
   updateButtondownEmail,
-  getMostRecentConfirmedLineup
+  getMostRecentConfirmedLineup,
+  buildCondensedEmailHtml
 } = require("./generator");
 
 const STATE_PATH = path.join(__dirname, "report-send-state.json");
@@ -266,11 +268,10 @@ async function main() {
     dryRun: args.dryRun,
     debugAnalysis: args.debugAnalysis
   });
-  if (skipped || !output?.games?.[0]) {
+  const game = selectFeaturedGame(output?.games, args.date);
+  if (skipped || !game) {
     throw new Error("Generator did not return a report payload.");
   }
-
-  const game = output.games[0];
   let lineupPlan = null;
   if (args.testSend) {
     lineupPlan = await selectPreliminaryLineups(gameFacts, { allowProjected: args.allowProjected });
@@ -295,7 +296,7 @@ async function main() {
   }
 
   if (!args.testSend) {
-    persistGeneratedOutput(output);
+    persistGeneratedOutput(output, { referenceDate: args.date });
   }
 
   const gameState = {
@@ -314,51 +315,26 @@ async function main() {
   const subject = args.testSend
     ? formatPreliminaryButtondownSubject(game, lineupPlan?.sourceLabel || "projected lineups")
     : formatButtondownSubject(game);
+
+  // Always build the full HTML report for the site.
   const bodyHtml = buildEmailHtml(game);
-  const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
-  const sendBodyHtml = args.allowDuplicate
-    ? `${bodyHtml}\n<!-- resend:${new Date().toISOString()} -->`
-    : bodyHtml;
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
-    throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to send blank email`);
-  }
-  const bodyText = buildPlainTextEmail(game);
-  if (/<[a-z]/i.test(bodyText)) {
-    throw new Error("[send] plain-text fallback contains HTML tags — buildPlainTextEmail returned HTML");
+    throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to generate blank report`);
   }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
   console.log(`[send] bodyHtml first 200: ${bodyHtml.slice(0, 200)}`);
-  console.log(`[send] bodyText first 200: ${bodyText.slice(0, 200)}`);
 
-  if (!gameState[emailIdKey] || args.allowDuplicate) {
-    const created = await createButtondownEmail({ game, status: "draft", subject, body: sendBodyHtml });
-    if (!created?.id) {
-      throw new Error("Buttondown draft creation did not return an id.");
-    }
-    gameState[emailIdKey] = created.id;
-    state.games[gameId] = gameState;
-    saveState(state);
-    console.log(`Created Buttondown draft ${created.id}.`);
-  }
+  // Also build a condensed email-friendly HTML block and write it to disk so it
+  // can be pasted into Buttondown's editor manually when composing the email.
+  const condensedHtml = buildCondensedEmailHtml(game);
+  const condensedDir = path.join(__dirname, "output");
+  const condensedPath = path.join(condensedDir, `${gameId}-email-condensed.html`);
+  fs.mkdirSync(condensedDir, { recursive: true });
+  fs.writeFileSync(condensedPath, condensedHtml, "utf8");
+  console.log(`[send] Wrote condensed email HTML to ${condensedPath}`);
 
-  const patchPayload = buildButtondownPayload(sendBodyHtml, { subject, status: "about_to_send" });
-  console.log(`[send] PATCH payload keys: ${Object.keys(patchPayload).join(", ")}`);
-  await updateButtondownEmail(gameState[emailIdKey], patchPayload);
-
-  if (args.testSend) {
-    gameState.testSent = true;
-    gameState.testSentAt = new Date().toISOString();
-    gameState.lineupSourceUsedForTest = lineupPlan?.source || null;
-    gameState.updatedAt = gameState.testSentAt;
-  } else {
-    gameState.finalSent = true;
-    gameState.finalSentAt = new Date().toISOString();
-    gameState.updatedAt = gameState.finalSentAt;
-  }
-  state.games[gameId] = gameState;
-  saveState(state);
-
-  console.log(`Queued Buttondown email ${gameState[emailIdKey]} to send for ${gameId}${args.testSend ? " (preliminary)" : " (final)"}.`);
+  // Stop after writing HTML assets; no direct Buttondown API calls.
+  return;
 }
 
 main().catch((error) => {

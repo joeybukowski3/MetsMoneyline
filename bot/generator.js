@@ -217,6 +217,14 @@ function getTodayEasternISO() {
   return new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
 }
 
+function selectFeaturedGame(games, referenceDate = getTodayEasternISO()) {
+  if (!Array.isArray(games) || games.length === 0) return null;
+  return games.find((game) => game?.date === referenceDate)
+    || games.find((game) => game?.date > referenceDate)
+    || games[0]
+    || null;
+}
+
 function parseArgs(argv) {
   const args = { date: getTodayEasternISO(), dryRun: false, debugAnalysis: false, buttondownDraft: false };
 
@@ -4355,8 +4363,7 @@ function sumProjectedLineupPa(lineup = []) {
   return total > 0 ? String(total) : null;
 }
 
-function buildButtondownPayload(bodyHtml, { subject, status }) {
-  // Guards on the raw report HTML — must be clean before we add the editor directive
+function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, condensedMode = false }) {
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[buttondown] bodyHtml too short (${bodyHtml?.length ?? 0} chars) — refusing to build payload`);
   }
@@ -4366,17 +4373,105 @@ function buildButtondownPayload(bodyHtml, { subject, status }) {
   if (bodyHtml.includes("<pre><code>")) {
     throw new Error("[buttondown] bodyHtml contains <pre><code> — code block wrapping detected, refusing to send");
   }
-  if (bodyHtml.includes("buttondown-editor-mode")) {
-    throw new Error("[buttondown] bodyHtml already contains a buttondown-editor-mode directive — remove it from buildEmailHtml");
-  }
   if (!/^\s*<(style|table|div)/i.test(bodyHtml)) {
     throw new Error(`[buttondown] bodyHtml does not start with <style>, <table>, or <div> — first 80 chars: ${bodyHtml.slice(0, 80)}`);
   }
-  // Prepend the raw-HTML editor directive.
-  // "html" mode = Buttondown's raw HTML editor — no WYSIWYG parsing, no markdown processing.
-  // Do NOT use editor_type: "html" in the payload — that maps to "fancy" (WYSIWYG) internally.
-  const body = `<!-- buttondown-editor-mode: html -->\n${bodyHtml}`;
-  return { subject, body, status };
+
+  const plainText = String(bodyText || "").trim();
+
+  if (condensedMode) {
+    // In condensed mode we let Buttondown treat `body` as the full HTML payload.
+    // This keeps behavior closest to "what we render is what subscribers see".
+    return {
+      subject,
+      status,
+      body: bodyHtml,
+      email_type: "public"
+    };
+  }
+
+  return {
+    subject,
+    status,
+    body: plainText || bodyHtml,
+    email_type: "public"
+  };
+}
+
+function buildCondensedEmailHtml(game) {
+  const report = game?.writeup?.report;
+  const header = report?.header;
+  const pick = report?.officialPick;
+  const meta = header?.metadataLine || "";
+  const matchup = `${header?.metsTeamLabel || "New York Mets"} vs ${header?.oppTeamLabel || game?.opponent || "Opponent"}`;
+  const weather = header?.weatherLine || "";
+  const metsLogo = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
+  const oppLogo = header?.oppLogoUrl || "";
+  const oddsHome = report?.header?.oddsHomeLabel || "";
+  const oddsAway = report?.header?.oddsAwayLabel || "";
+
+  return `
+  <div style="max-width:640px;margin:0 auto;padding:16px 14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0b1120;color:#e5e7eb;">
+    <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Today's Report</div>
+
+    <table role="presentation" style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+      <tr>
+        <td style="width:64px;padding:0 8px 0 0;vertical-align:middle;">
+          <img src="${metsLogo}" alt="Mets" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:12px;background:#020617;">
+        </td>
+        <td style="text-align:center;vertical-align:middle;font-size:13px;color:#9ca3af;">vs</td>
+        <td style="width:64px;padding:0 0 0 8px;vertical-align:middle;text-align:right;">
+          ${oppLogo ? `<img src="${oppLogo}" alt="Opponent" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:12px;background:#020617;">` : ""}
+        </td>
+      </tr>
+    </table>
+
+    <h1 style="margin:0 0 6px 0;font-size:20px;line-height:1.25;color:#f9fafb;">${matchup}</h1>
+    <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;">${meta}</div>
+    ${weather ? `<div style="font-size:13px;color:#9ca3af;margin-bottom:10px;">${weather}</div>` : ""}
+
+    ${(oddsHome || oddsAway) ? `
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 14px 0;font-size:12px;color:#e5e7eb;">
+        <tr style="background:#020617;border-radius:10px;">
+          <td style="padding:8px 8px 8px 10px;border:1px solid #1f2937;border-right:none;border-radius:10px 0 0 10px;">
+            <div style="font-weight:600;color:#9ca3af;font-size:11px;margin-bottom:2px;">Mets</div>
+            <div style="font-weight:700;">${oddsHome || ""}</div>
+          </td>
+          <td style="padding:8px;border:1px solid #1f2937;border-left:none;border-radius:0 10px 10px 0;text-align:right;">
+            <div style="font-weight:600;color:#9ca3af;font-size:11px;margin-bottom:2px;">Opponent</div>
+            <div style="font-weight:700;">${oddsAway || ""}</div>
+          </td>
+        </tr>
+      </table>` : ""}
+
+    <div style="padding:12px 12px;border-radius:12px;background:linear-gradient(135deg,#0f766e,#22c55e);color:#ecfdf5;margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;opacity:0.9;">Official Pick</div>
+      <div style="margin-top:4px;font-size:18px;font-weight:800;">${pick?.label || "See full report"}</div>
+      ${pick?.confidence != null ? `<div style="margin-top:4px;font-size:12px;opacity:0.9;">Confidence: ${pick.confidence}/10</div>` : ""}
+      ${report?.analyticalLean ? `<div style="margin-top:6px;font-size:13px;line-height:1.5;">${report.analyticalLean}</div>` : ""}
+    </div>
+
+    ${report?.quickRead ? `
+      <div style="margin-bottom:14px;padding:10px 12px;border-radius:10px;background:#020617;border:1px solid #1f2937;">
+        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:4px;">Why this angle?</div>
+        <div style="font-size:13px;line-height:1.6;color:#e5e7eb;">${report.quickRead}</div>
+      </div>` : ""}
+
+    <div style="margin-bottom:10px;">
+      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:4px;">Edge snapshot</div>
+      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#e5e7eb;">
+        ${report?.pitchingEdgeSummary ? `<li>${report.pitchingEdgeSummary}</li>` : ""}
+        ${report?.projectedLineupEdgeSummary ? `<li>${report.projectedLineupEdgeSummary}</li>` : ""}
+        ${report?.edgeSummary ? `<li>${report.edgeSummary}</li>` : ""}
+      </ul>
+    </div>
+
+    <div style="margin-top:18px;font-size:12px;color:#94a3b8;">
+      View the full report with matchup tables and charts:
+      <a href="https://metsmoneyline.com/report" style="color:#38bdf8;text-decoration:none;">Open Today&rsquo;s Report</a>
+    </div>
+  </div>
+  `;
 }
 
 async function createButtondownDraft(output) {
@@ -4390,11 +4485,11 @@ async function createButtondownDraft(output) {
   if (!game) return;
 
   const subject = formatButtondownSubject(game);
-  const bodyHtml = buildEmailHtml(game);
-  const payload = buildButtondownPayload(bodyHtml, { subject, status: "draft" });
+  const bodyHtml = buildCondensedEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
+  const payload = buildButtondownPayload(bodyHtml, { subject, status: "draft", bodyText, condensedMode: true });
 
   console.log(`[buttondown] createButtondownDraft POST — keys: ${Object.keys(payload).join(", ")}`);
-  console.log(`[buttondown] createButtondownDraft POST — body first 200: ${payload.body.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
@@ -4424,11 +4519,11 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
   }
 
   const subject = subjectOverride || formatButtondownSubject(game);
-  const bodyHtml = bodyOverride || buildEmailHtml(game);
-  const payload = buildButtondownPayload(bodyHtml, { subject, status });
+  const bodyHtml = bodyOverride || buildCondensedEmailHtml(game);
+  const bodyText = buildPlainTextEmail(game);
+  const payload = buildButtondownPayload(bodyHtml, { subject, status, bodyText, condensedMode: true });
 
   console.log(`[buttondown] createButtondownEmail POST — keys: ${Object.keys(payload).join(", ")}`);
-  console.log(`[buttondown] createButtondownEmail POST — body first 200: ${payload.body.slice(0, 200)}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
@@ -4554,11 +4649,12 @@ async function generateOutputPackage({ date, dryRun = false, debugAnalysis = fal
   return { skipped: false, gameFacts, writeup, output };
 }
 
-function persistGeneratedOutput(output) {
+function persistGeneratedOutput(output, { referenceDate = getTodayEasternISO() } = {}) {
   fs.writeFileSync(SAMPLE_JSON_PATH, JSON.stringify(output, null, 2));
   console.log(`Wrote ${SAMPLE_JSON_PATH}`);
-  if (output.games?.[0]) {
-    fs.writeFileSync(REPORT_HTML_PATH, buildSiteReportHtml(output.games[0]));
+  const featuredGame = selectFeaturedGame(output.games, referenceDate);
+  if (featuredGame) {
+    fs.writeFileSync(REPORT_HTML_PATH, buildSiteReportHtml(featuredGame));
     console.log(`Wrote ${REPORT_HTML_PATH}`);
   }
   const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
@@ -4578,7 +4674,7 @@ async function run() {
     return;
   }
 
-  persistGeneratedOutput(output);
+  persistGeneratedOutput(output, { referenceDate: date });
   if (buttondownDraft) {
     await createButtondownDraft(output);
   }
@@ -4607,6 +4703,7 @@ module.exports = {
   API_ODDS_PATH,
   parseArgs,
   getTodayEasternISO,
+  selectFeaturedGame,
   getGameForDate,
   buildGameFacts,
   generateWriteupFromFacts,
@@ -4628,5 +4725,6 @@ module.exports = {
   createButtondownEmail,
   updateButtondownEmail,
   getMostRecentConfirmedLineup,
+  buildCondensedEmailHtml,
   run
 };
