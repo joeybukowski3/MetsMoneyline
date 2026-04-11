@@ -87,18 +87,31 @@ function mergeLiveGame(staticGame, liveGame) {
 
   const pickPreferred = (primary, fallback) => (hasMeaningfulValue(primary) ? primary : fallback);
 
+  const mergeMoneyline = (liveMoneyline, staticMoneyline) => {
+    if (!liveMoneyline && !staticMoneyline) return null;
+    return {
+      ...(staticMoneyline || {}),
+      ...(liveMoneyline || {}),
+      mets: hasMeaningfulValue(liveMoneyline?.mets) ? liveMoneyline.mets : staticMoneyline?.mets ?? null,
+      opp: hasMeaningfulValue(liveMoneyline?.opp) ? liveMoneyline.opp : staticMoneyline?.opp ?? null
+    };
+  };
+
   return {
     ...staticGame,
     ...liveGame,
-    moneyline: pickPreferred(liveGame.moneyline, staticGame.moneyline),
-    lineups: pickPreferred(staticGame.lineups, liveGame.lineups),
-    pitching: pickPreferred(staticGame.pitching, liveGame.pitching),
-    advancedMatchup: pickPreferred(staticGame.advancedMatchup, liveGame.advancedMatchup),
-    teamAdvanced: pickPreferred(staticGame.teamAdvanced, liveGame.teamAdvanced),
-    gameContext: pickPreferred(staticGame.gameContext, liveGame.gameContext),
+    moneyline: mergeMoneyline(liveGame.moneyline, staticGame.moneyline),
+    // Prefer live data for core game state so Todays Report always reflects the latest intel
+    lineups: pickPreferred(liveGame.lineups, staticGame.lineups),
+    pitching: pickPreferred(liveGame.pitching, staticGame.pitching),
+    advancedMatchup: pickPreferred(liveGame.advancedMatchup, staticGame.advancedMatchup),
+    teamAdvanced: pickPreferred(liveGame.teamAdvanced, staticGame.teamAdvanced),
+    gameContext: pickPreferred(liveGame.gameContext, staticGame.gameContext),
+    // Keep trends and weather favoring live when available
     trends: pickPreferred(liveGame.trends, staticGame.trends),
-    weather: pickPreferred(staticGame.weather, liveGame.weather),
-    writeup: pickPreferred(staticGame.writeup, liveGame.writeup)
+    weather: pickPreferred(liveGame.weather, staticGame.weather),
+    // If we ever generate a live writeup, let it win; otherwise fall back to static
+    writeup: pickPreferred(liveGame.writeup, staticGame.writeup)
   };
 }
 
