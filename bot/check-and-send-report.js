@@ -6,7 +6,6 @@ const {
   getTodayEasternISO,
   selectFeaturedGame,
   getGameForDate,
-  buildGameFacts,
   generateOutputPackage,
   persistGeneratedOutput,
   buildEmailHtml,
@@ -227,7 +226,26 @@ async function main() {
     return;
   }
 
-  const gameFacts = await buildGameFacts(args.date);
+  // Generate the full report package first so the site always shows fresh data,
+  // regardless of whether the email is eligible to send today.
+  const { skipped, gameFacts, output } = await generateOutputPackage({
+    date: args.date,
+    dryRun: args.dryRun,
+    debugAnalysis: args.debugAnalysis
+  });
+
+  if (skipped || !gameFacts) {
+    console.log("Generator returned no data — keeping existing report.");
+    return;
+  }
+
+  // Persist site data unconditionally on every run (not for dry-run or testSend,
+  // which use modified lineups and should not overwrite the real-data report).
+  if (!args.dryRun && !args.testSend) {
+    persistGeneratedOutput(output, { referenceDate: args.date });
+    console.log(`[refresh] Site report updated for ${args.date}`);
+  }
+
   const gameId = deriveGameId(gameFacts);
   const state = loadState();
   const existingState = state.games[gameId] || {};
@@ -263,13 +281,8 @@ async function main() {
     return;
   }
 
-  const { skipped, output } = await generateOutputPackage({
-    date: args.date,
-    dryRun: args.dryRun,
-    debugAnalysis: args.debugAnalysis
-  });
   const game = selectFeaturedGame(output?.games, args.date);
-  if (skipped || !game) {
+  if (!game) {
     throw new Error("Generator did not return a report payload.");
   }
   let lineupPlan = null;
@@ -293,10 +306,6 @@ async function main() {
       reportTitle: game?.writeup?.report?.header?.title || null
     }, null, 2));
     return;
-  }
-
-  if (!args.testSend) {
-    persistGeneratedOutput(output, { referenceDate: args.date });
   }
 
   const gameState = {

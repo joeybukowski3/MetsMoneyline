@@ -195,7 +195,7 @@ function scoreOddsEventMatch(event, nextGame) {
 
 async function fetchTheOddsApiOdds(nextGame) {
   const apiKey = process.env.ODDS_API_KEY;
-  if (!apiKey || !nextGame) return null;
+  if (!apiKey) return null;
 
   const response = await axios.get(`${ODDS_API_BASE_URL}/sports/baseball_mlb/odds`, {
     timeout: 15000,
@@ -209,12 +209,35 @@ async function fetchTheOddsApiOdds(nextGame) {
   });
 
   const events = Array.isArray(response.data) ? response.data : [];
-  const matched = events
-    .map((event) => ({ event, score: scoreOddsEventMatch(event, nextGame) }))
-    .filter((entry) => entry.score >= 4)
-    .sort((a, b) => b.score - a.score)[0]?.event || null;
+  console.log(`[odds] The Odds API returned ${events.length} MLB events`);
 
-  return matched ? normalizeTheOddsApiEvent(matched) : null;
+  if (events.length === 0) return null;
+
+  // Primary: score-based matching against the reference game (requires both teams to match)
+  if (nextGame) {
+    const best = events
+      .map((event) => ({ event, score: scoreOddsEventMatch(event, nextGame) }))
+      .filter((entry) => entry.score >= 4)
+      .sort((a, b) => b.score - a.score)[0];
+    if (best) {
+      console.log(`[odds] Score match: ${best.event.home_team} vs ${best.event.away_team} (score ${best.score})`);
+      return normalizeTheOddsApiEvent(best.event);
+    }
+    console.log(`[odds] No score >= 4 match found; falling back to Mets name search`);
+  }
+
+  // Fallback: find any upcoming event that includes the Mets
+  const metsEvent = events.find((e) =>
+    /new york mets|^mets$/i.test(e.home_team || "") ||
+    /new york mets|^mets$/i.test(e.away_team || "")
+  );
+  if (metsEvent) {
+    console.log(`[odds] Mets name match: ${metsEvent.home_team} vs ${metsEvent.away_team}`);
+    return normalizeTheOddsApiEvent(metsEvent);
+  }
+
+  console.log(`[odds] No Mets game found in The Odds API response`);
+  return null;
 }
 
 async function buildOverviewEndpoint(config, season, standings) {
