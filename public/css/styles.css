@@ -671,11 +671,19 @@ main, .page-content {
 }
 
 /* Advanced stats table — vertical alignment and consistent padding */
-.report-advanced-table td,
 .report-advanced-table th {
   padding: 6px 10px;
   vertical-align: middle;
+}
+
+/* Allow the avg-label below the bar track to overflow visibly */
+.report-advanced-table td {
+  overflow: visible;
   height: auto;
+}
+
+.report-advanced-table .report-sheet-table-wrap {
+  overflow: visible;
 }
 
 

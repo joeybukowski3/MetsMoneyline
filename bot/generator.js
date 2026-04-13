@@ -3745,6 +3745,57 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         ${renderEmailRecentStarts(card.recentStarts)}
       </div>`;
   };
+  const ADVCELL_MLB_AVG = {
+    'ERA':        { pctPos: 54, label: '4.20' },
+    'FIP':        { pctPos: 53, label: '4.10' },
+    'xERA':       { pctPos: 52, label: '4.05' },
+    'WHIP':       { pctPos: 51, label: '1.28' },
+    'K%':         { pctPos: 47, label: '22.5%' },
+    'BB%':        { pctPos: 51, label: '8.2%' },
+    'Barrel %':   { pctPos: 50, label: '7.5%' },
+    'Barrel%':    { pctPos: 50, label: '7.5%' },
+    'xBA':        { pctPos: 48, label: '0.248' },
+    'Hard Hit %': { pctPos: 50, label: '37%' },
+    'Hard-Hit%':  { pctPos: 50, label: '37%' },
+    'xSLG %':     { pctPos: 49, label: '0.400' },
+    'xSLG':       { pctPos: 49, label: '0.400' },
+    'xwOBA':      { pctPos: 48, label: '0.310' },
+    'wRC+':       { pctPos: 47, label: '100' },
+    'WAR':        { pctPos: 43, label: '0.5' },
+  };
+  const renderAdvancedBar = (label, value, contextValue = null, contextKind = 'rank') => {
+    const pct = reportMetricPct(label, value);
+    const shown = valueCell(value);
+    if (pct == null) {
+      const ctx = contextValue != null
+        ? `<span style="font-size:10px;color:#9099b0;font-weight:600;">${contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`}</span>`
+        : '';
+      return `<div style="padding:2px 0;">
+        <span style="font-weight:700;font-size:13px;color:#111827;">${shown}</span>
+        ${ctx ? `<br>${ctx}` : ''}
+      </div>`;
+    }
+    const color = reportPctlColor(pct);
+    const avg = ADVCELL_MLB_AVG[label];
+    const avgMarker = avg
+      ? `<div style="position:absolute;top:0;left:${avg.pctPos}%;height:100%;width:2px;background:#374151;transform:translateX(-50%);z-index:2;border-radius:1px;"></div>`
+      : '';
+    const avgLabel = avg
+      ? `<span style="position:absolute;top:100%;left:${avg.pctPos}%;transform:translateX(-50%);font-size:8px;color:#9099b0;font-weight:700;white-space:nowrap;margin-top:1px;">${avg.label}</span>`
+      : '';
+    const ctxLabel = contextValue != null
+      ? `<span style="font-size:10px;color:#9099b0;font-weight:600;display:block;margin-top:10px;">${contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`}</span>`
+      : '';
+    return `<div style="padding:2px 0 14px 0;">
+      <div style="font-size:12px;font-weight:800;color:#111827;margin-bottom:4px;">${shown}</div>
+      <div style="position:relative;height:12px;background:#e9ecf3;border-radius:3px;overflow:visible;">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;position:relative;"></div>
+        ${avgMarker}
+        ${avgLabel}
+      </div>
+      ${ctxLabel}
+    </div>`;
+  };
   const renderAdvancedSheetTable = (table) => {
     if (mode === "email") {
       return `
@@ -3786,9 +3837,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
             <tr>
-              <td style="width:33%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.left, row.leftPercentile ?? null, 'percentile')}</td>
               <td style="width:34%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
-              <td style="width:33%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.right, resolvedRank, 'rank')}</td>
             </tr>
           `;}).join("")}
         </tbody>
