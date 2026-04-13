@@ -34,6 +34,57 @@ async function fetchJsonWithFallback(primary, fallback) {
   }
 }
 
+function validateCachedStandingsPayload(data, season) {
+  const provider = String(data?.meta?.provider || "").toLowerCase();
+  const teams = Array.isArray(data?.teams) ? data.teams : [];
+
+  if (!isValidSeasonValue(data?.season, season)) {
+    throw new Error(`Cached standings season mismatch: expected ${season}, got ${data?.season ?? "unknown"}`);
+  }
+  if (provider.includes("fallback-2025")) {
+    throw new Error("Cached standings are a previous-season fallback");
+  }
+  if (!teams.length) {
+    throw new Error("Cached standings are empty");
+  }
+
+  const divisions = new Map();
+  for (const team of teams) {
+    const divisionName = team.division || data?.division || "NL East";
+    if (!divisions.has(divisionName)) divisions.set(divisionName, []);
+    divisions.get(divisionName).push({
+      team: team.team,
+      wins: team.wins,
+      losses: team.losses,
+      pct: team.pct,
+      gamesBack: team.gamesBack,
+      home: team.home,
+      road: team.road,
+      last10: team.last10,
+      streak: team.streak
+    });
+  }
+
+  const nlFull = [...divisions.entries()].map(([divisionName, divisionTeams]) => ({
+    divisionName,
+    teams: divisionTeams
+  }));
+  const nlEast = nlFull.find((division) => /east/i.test(division.divisionName))?.teams || [];
+  const metsRaw = teams.find((team) => String(team.teamId) === String(TEAM_ID) || team.team === "New York Mets") || null;
+
+  if (!nlEast.length || !nlFull.length) {
+    throw new Error("Cached standings payload is incomplete");
+  }
+
+  return {
+    season,
+    source: "api-cache",
+    mets: metsRaw ? buildMetsStanding(metsRaw) : null,
+    nlEast,
+    nlFull
+  };
+}
+
 function isValidSeasonValue(value, season) {
   return Number(value) === Number(season);
 }
@@ -224,63 +275,21 @@ async function loadStandings(season) {
     console.warn(`[advanced-stats] ESPN standings failed: ${espnErr.message}`);
   }
 
-  try {
-    const data = await fetchJsonWithFallback(
-      "api/mlb/mets/standings",
-      "api/mlb/mets/standings.json"
-    );
-    const provider = String(data?.meta?.provider || "").toLowerCase();
-    const teams = Array.isArray(data?.teams) ? data.teams : [];
+  const cacheUrls = [
+    "api/mlb/mets/standings",
+    "api/mlb/mets/standings.json"
+  ];
 
-    if (!isValidSeasonValue(data?.season, season)) {
-      throw new Error(`Cached standings season mismatch: expected ${season}, got ${data?.season ?? "unknown"}`);
+  for (const url of cacheUrls) {
+    try {
+      const data = await fetchJson(url);
+      return validateCachedStandingsPayload(data, season);
+    } catch (cacheErr) {
+      console.warn(`[advanced-stats] cached standings rejected (${url}): ${cacheErr.message}`);
     }
-    if (provider.includes("fallback-2025")) {
-      throw new Error("Cached standings are a previous-season fallback");
-    }
-    if (!teams.length) {
-      throw new Error("Cached standings are empty");
-    }
-
-    const divisions = new Map();
-    for (const team of teams) {
-      const divisionName = team.division || data?.division || "NL East";
-      if (!divisions.has(divisionName)) divisions.set(divisionName, []);
-      divisions.get(divisionName).push({
-        team: team.team,
-        wins: team.wins,
-        losses: team.losses,
-        pct: team.pct,
-        gamesBack: team.gamesBack,
-        home: team.home,
-        road: team.road,
-        last10: team.last10,
-        streak: team.streak
-      });
-    }
-
-    const nlFull = [...divisions.entries()].map(([divisionName, divisionTeams]) => ({
-      divisionName,
-      teams: divisionTeams
-    }));
-    const nlEast = nlFull.find((division) => /east/i.test(division.divisionName))?.teams || [];
-    const metsRaw = teams.find((team) => String(team.teamId) === String(TEAM_ID) || team.team === "New York Mets") || null;
-
-    if (!nlEast.length || !nlFull.length) {
-      throw new Error("Cached standings payload is incomplete");
-    }
-
-    return {
-      season,
-      source: "api-cache",
-      mets: metsRaw ? buildMetsStanding(metsRaw) : null,
-      nlEast,
-      nlFull
-    };
-  } catch (cacheErr) {
-    console.warn(`[advanced-stats] cached standings rejected: ${cacheErr.message}`);
-    return emptyStandingsState(season, "2026 standings are unavailable from the current sources.");
   }
+
+  return emptyStandingsState(season, `${season} standings are unavailable from the current sources.`);
 }
 
 // ── League averages ──────────────────────────────────────────────────────────

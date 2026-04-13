@@ -12,6 +12,7 @@ const {
 
 const EASTERN_TIME_ZONE = "America/New_York";
 const DEFAULT_MLB_STATS_TEAM_ID = 121;
+const NATIONAL_LEAGUE_ID = 104;
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE }).slice(0, 4));
@@ -35,6 +36,74 @@ function isFinalStatus(game) {
 
 function isUpcomingStatus(game) {
   return !isLiveStatus(game) && !isFinalStatus(game);
+}
+
+function normalizePct(value) {
+  if (value == null || value === "") return null;
+  const text = String(value).trim();
+  if (!text) return null;
+  return text.startsWith("0.") ? text.slice(1) : text;
+}
+
+function getSplitSummary(teamRecord, splitType) {
+  const splitRecords = Array.isArray(teamRecord?.records?.splitRecords)
+    ? teamRecord.records.splitRecords
+    : Array.isArray(teamRecord?.records)
+      ? teamRecord.records
+      : [];
+  const match = splitRecords.find((record) => String(record?.type || "").toLowerCase() === String(splitType).toLowerCase());
+  if (!match) return null;
+  const wins = Number(match?.wins);
+  const losses = Number(match?.losses);
+  if (!Number.isFinite(wins) || !Number.isFinite(losses)) return null;
+  return `${wins}-${losses}`;
+}
+
+function sortDivisionTeams(a, b) {
+  const aRank = Number(a?.divisionRank);
+  const bRank = Number(b?.divisionRank);
+  if (Number.isFinite(aRank) && Number.isFinite(bRank) && aRank !== bRank) {
+    return aRank - bRank;
+  }
+  return String(a?.team || "").localeCompare(String(b?.team || ""));
+}
+
+function normalizeMlbStandings(payload) {
+  const records = Array.isArray(payload?.records) ? payload.records : [];
+  const teams = records.flatMap((divisionRecord) => {
+    const divisionName = divisionRecord?.division?.name || divisionRecord?.name || "National League";
+    const teamRecords = Array.isArray(divisionRecord?.teamRecords) ? divisionRecord.teamRecords : [];
+    return teamRecords.map((teamRecord) => {
+      const identity = normalizeTeamIdentity(teamRecord?.team || {}, null);
+      return {
+        teamId: identity.mlbStatsTeamId ?? teamRecord?.team?.id ?? null,
+        canonicalKey: identity.canonicalKey,
+        mlbStatsTeamId: identity.mlbStatsTeamId ?? teamRecord?.team?.id ?? null,
+        apiSportsTeamId: identity.apiSportsTeamId,
+        team: identity.name || teamRecord?.team?.name || "Unknown Team",
+        abbreviation: identity.abbreviation || teamRecord?.team?.abbreviation || null,
+        wins: Number(teamRecord?.wins) || 0,
+        losses: Number(teamRecord?.losses) || 0,
+        pct: normalizePct(teamRecord?.winningPercentage ?? teamRecord?.pct),
+        gamesBack: teamRecord?.divisionGamesBack || teamRecord?.gamesBack || "-",
+        home: getSplitSummary(teamRecord, "home"),
+        road: getSplitSummary(teamRecord, "away"),
+        last10: getSplitSummary(teamRecord, "lastTen"),
+        streak: teamRecord?.streak?.streakCode || null,
+        division: divisionName,
+        divisionRank: Number(teamRecord?.divisionRank) || null
+      };
+    });
+  });
+
+  teams.sort(sortDivisionTeams);
+  const mets = teams.find((team) => String(team.teamId) === String(DEFAULT_MLB_STATS_TEAM_ID)) || null;
+
+  return {
+    division: mets?.division || "NL East",
+    season: Number(payload?.records?.[0]?.league?.season || payload?.records?.[0]?.season || getCurrentSeason()),
+    teams
+  };
 }
 
 async function fetchApiSportsGames(config = getApiSportsConfig(), season = getCurrentSeason()) {
@@ -68,14 +137,40 @@ async function fetchApiSportsStandings(config = getApiSportsConfig(), season = g
   return normalizeStandings(payload, config.metsTeamId);
 }
 
+async function fetchMlbStatsStandings(season = getCurrentSeason()) {
+  const payload = await fetchJsonWithRetry(
+    `https://statsapi.mlb.com/api/v1/standings?leagueId=${NATIONAL_LEAGUE_ID}&season=${season}&standingsTypes=regularSeason`
+  );
+  return normalizeMlbStandings(payload);
+}
+
 async function fetchStandingsWithFallback(config = getApiSportsConfig()) {
   const season = getCurrentSeason();
-  const result = await fetchApiSportsStandings(config, season);
-  if (Array.isArray(result?.teams) && result.teams.length > 0) {
-    console.log(`[debug] Standings found for season ${season}`);
-    return result;
+  try {
+    const result = await fetchApiSportsStandings(config, season);
+    if (Array.isArray(result?.teams) && result.teams.length > 0) {
+      console.log(`[debug] Standings found for season ${season}`);
+      return {
+        ...result,
+        sourceProvider: "api-sports"
+      };
+    }
+  } catch (error) {
+    console.warn(`[warn] API-Sports standings fetch failed: ${error?.message || error}`);
   }
   console.warn(`[warn] Standings unavailable for current season ${season}`);
+  try {
+    const fallback = await fetchMlbStatsStandings(season);
+    if (Array.isArray(fallback?.teams) && fallback.teams.length > 0) {
+      console.log(`[debug] MLB Stats standings fallback found for season ${season}`);
+      return {
+        ...fallback,
+        sourceProvider: "mlb-stats-api"
+      };
+    }
+  } catch (error) {
+    console.warn(`[warn] MLB Stats standings fallback failed: ${error?.message || error}`);
+  }
   return null;
 }
 
@@ -152,10 +247,11 @@ async function buildLiveGamePayload() {
 
 async function buildStandingsPayload() {
   const standings = await fetchStandingsWithFallback();
+  const provider = standings?.sourceProvider || "api-sports";
   return {
     ...(standings || { division: "NL East", season: null, teams: [] }),
     meta: {
-      provider: "api-sports",
+      provider,
       generatedAt: new Date().toISOString(),
       cacheHint: "standings: 10-15 minutes"
     }
