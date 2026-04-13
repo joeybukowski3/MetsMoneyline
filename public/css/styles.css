@@ -571,10 +571,10 @@ main, .page-content {
 
 .sbar-row {
   display: grid;
-  grid-template-columns: 58px 1fr 44px;
-  align-items: center;
+  grid-template-columns: 58px 1fr 48px;
+  align-items: start;
   gap: 6px;
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.55rem;
 }
 
 .sbar-label {
@@ -582,43 +582,97 @@ main, .page-content {
   font-weight: 600;
   color: var(--text-muted);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding-top: 3px;
+}
+
+.sbar-track-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .sbar-track {
-  height: 14px;
+  height: 16px;
   background: #e9ecf3;
-  border-radius: 3px;
-  overflow: hidden;
+  border-radius: 4px;
+  overflow: visible;
+  position: relative;
 }
 
 .sbar-fill {
   height: 100%;
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 3px;
-  min-width: 20px;
+  border-radius: 4px;
   transition: width 0.5s ease;
+  position: relative;
 }
 
-.sbar-pct {
-  font-size: 0.6rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1;
+/* Legacy — hidden, no longer rendered inside bar */
+.sbar-pct { display: none; }
+
+.sbar-avg-marker {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.sbar-avg-line {
+  width: 2px;
+  height: 16px;
+  background: #374151;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.sbar-avg-label {
+  font-size: 9px;
+  color: #6b7280;
+  font-weight: 700;
   white-space: nowrap;
+  margin-top: 2px;
+  line-height: 1;
+}
+
+.sbar-pctile {
+  font-size: 10px;
+  color: #9099b0;
+  font-weight: 600;
+  line-height: 1;
 }
 
 .sbar-val {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 800;
   color: var(--text-main);
   text-align: right;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  padding-top: 1px;
+}
+
+/* Pitcher column layout — equal height cards */
+.report-pitcher-grid {
+  align-items: stretch;
+}
+
+.report-pitcher-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.pitcher-card-v2 {
+  flex: 1;
+}
+
+/* Advanced stats table — vertical alignment fix */
+.report-advanced-table td {
+  vertical-align: middle;
 }
 
 

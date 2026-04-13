@@ -3968,13 +3968,30 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     const photoHtml = pitcherImageSrc
       ? `<img class="pitcher-photo-sm" src="${pitcherImageSrc}" alt="${card.name}">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
+    const MLB_AVG_VALUES = {
+      'ERA': 4.20, 'WHIP': 1.28, 'K%': 22.5, 'BB%': 8.2, 'FIP': 4.10, 'xERA': 4.05
+    };
     const statBar = (label, value) => {
       const pct = reportMetricPct(label, value);
       const color = pct == null ? "#d1d5db" : reportPctlColor(pct);
       const shown = valueCell(value);
+      const avgVal = MLB_AVG_VALUES[label];
+      const pctileLabel = pct != null ? `${pct}th %ile` : '';
+      const avgMarker = avgVal != null
+        ? `<div class="sbar-avg-marker" style="left:50%;">
+             <div class="sbar-avg-line"></div>
+             <span class="sbar-avg-label">Avg: ${avgVal}</span>
+           </div>`
+        : '';
       return `<div class="sbar-row">
         <span class="sbar-label">${label}</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:${pct == null ? 0 : pct}%;background:${color}"><span class="sbar-pct">${pct == null ? "" : pct}</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:${pct == null ? 0 : pct}%;background:${color};"></div>
+            ${avgMarker}
+          </div>
+          ${pctileLabel ? `<span class="sbar-pctile">${pctileLabel}</span>` : ''}
+        </div>
         <span class="sbar-val">${shown}</span>
       </div>`;
     };

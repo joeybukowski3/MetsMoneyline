@@ -37,7 +37,9 @@
         .pitcher-photo-sm { max-height:180px !important; object-fit:contain !important; }
         .pitcher-stats-panel { padding:14px !important; }
         .sbar-row { grid-template-columns:54px 1fr 44px !important; column-gap:6px !important; }
-        .sbar-label, .sbar-val, .sbar-pct { font-size:11px !important; }
+        .sbar-label, .sbar-val { font-size:11px !important; }
+        .sbar-pctile { font-size:9px !important; }
+        .sbar-avg-label { font-size:8px !important; }
       }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
@@ -119,22 +121,46 @@
         <div class="sbar-section-label">Traditional</div>
         <div class="sbar-row">
         <span class="sbar-label">ERA</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:5%;background:#1a6bb5"><span class="sbar-pct">5</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:5%;background:#1a6bb5;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 4.20</span></div>
+          </div>
+          <span class="sbar-pctile">5th %ile</span>
+        </div>
         <span class="sbar-val">6.14</span>
       </div>
         <div class="sbar-row">
         <span class="sbar-label">WHIP</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:5%;background:#1a6bb5"><span class="sbar-pct">5</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:5%;background:#1a6bb5;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 1.28</span></div>
+          </div>
+          <span class="sbar-pctile">5th %ile</span>
+        </div>
         <span class="sbar-val">1.84</span>
       </div>
         <div class="sbar-row">
         <span class="sbar-label">K%</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:34%;background:#5a9fd4"><span class="sbar-pct">34</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:34%;background:#5a9fd4;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 22.5</span></div>
+          </div>
+          <span class="sbar-pctile">34th %ile</span>
+        </div>
         <span class="sbar-val">19.4%</span>
       </div>
         <div class="sbar-row">
         <span class="sbar-label">BB%</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:57%;background:#aab8c8"><span class="sbar-pct">57</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:57%;background:#aab8c8;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 8.2</span></div>
+          </div>
+          <span class="sbar-pctile">57th %ile</span>
+        </div>
         <span class="sbar-val">8.3%</span>
       </div>
         
@@ -337,22 +363,46 @@
         <div class="sbar-section-label">Traditional</div>
         <div class="sbar-row">
         <span class="sbar-label">ERA</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:59%;background:#aab8c8"><span class="sbar-pct">59</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:59%;background:#aab8c8;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 4.20</span></div>
+          </div>
+          <span class="sbar-pctile">59th %ile</span>
+        </div>
         <span class="sbar-val">4.00</span>
       </div>
         <div class="sbar-row">
         <span class="sbar-label">WHIP</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:64%;background:#e08060"><span class="sbar-pct">64</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:64%;background:#e08060;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 1.28</span></div>
+          </div>
+          <span class="sbar-pctile">64th %ile</span>
+        </div>
         <span class="sbar-val">1.22</span>
       </div>
         <div class="sbar-row">
         <span class="sbar-label">K%</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:5%;background:#1a6bb5"><span class="sbar-pct">5</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:5%;background:#1a6bb5;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 22.5</span></div>
+          </div>
+          <span class="sbar-pctile">5th %ile</span>
+        </div>
         <span class="sbar-val">10.5%</span>
       </div>
         <div class="sbar-row">
         <span class="sbar-label">BB%</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:13%;background:#1a6bb5"><span class="sbar-pct">13</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:13%;background:#1a6bb5;"></div>
+            <div class="sbar-avg-marker" style="left:50%;"><div class="sbar-avg-line"></div><span class="sbar-avg-label">Avg: 8.2</span></div>
+          </div>
+          <span class="sbar-pctile">13th %ile</span>
+        </div>
         <span class="sbar-val">13.2%</span>
       </div>
         
