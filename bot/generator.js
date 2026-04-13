@@ -3763,16 +3763,17 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     'wRC+':       { pctPos: 47, label: '100' },
     'WAR':        { pctPos: 43, label: '0.5' },
   };
-  const renderAdvancedBar = (label, value, contextValue = null, contextKind = 'rank') => {
+  const renderAdvancedBar = (label, value, contextValue = null, contextKind = 'rank', align = 'left') => {
     const pct = reportMetricPct(label, value);
     const shown = valueCell(value);
+    const textAlign = align === 'right' ? 'right' : 'left';
+    const ctxText = contextValue != null
+      ? (contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`)
+      : '';
     if (pct == null) {
-      const ctx = contextValue != null
-        ? `<span style="font-size:10px;color:#9099b0;font-weight:600;">${contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`}</span>`
-        : '';
-      return `<div style="padding:2px 0;">
-        <span style="font-weight:700;font-size:13px;color:#111827;">${shown}</span>
-        ${ctx ? `<br>${ctx}` : ''}
+      return `<div style="min-height:72px;display:flex;flex-direction:column;justify-content:center;padding:4px 0;">
+        <span style="font-weight:700;font-size:13px;color:#111827;text-align:${textAlign};display:block;">${shown}</span>
+        ${ctxText ? `<span style="font-size:12px;color:#6b7280;font-weight:600;display:block;margin-top:3px;text-align:${textAlign};">${ctxText}</span>` : ''}
       </div>`;
     }
     const color = reportPctlColor(pct);
@@ -3781,19 +3782,16 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       ? `<div style="position:absolute;top:0;left:${avg.pctPos}%;height:100%;width:2px;background:#374151;transform:translateX(-50%);z-index:2;border-radius:1px;"></div>`
       : '';
     const avgLabel = avg
-      ? `<span style="position:absolute;top:100%;left:${avg.pctPos}%;transform:translateX(-50%);font-size:8px;color:#9099b0;font-weight:700;white-space:nowrap;margin-top:1px;">${avg.label}</span>`
+      ? `<span style="position:absolute;top:100%;left:${avg.pctPos}%;transform:translateX(-50%);font-size:10px;color:#6b7280;font-weight:700;white-space:nowrap;margin-top:2px;">${avg.label}</span>`
       : '';
-    const ctxLabel = contextValue != null
-      ? `<span style="font-size:10px;color:#9099b0;font-weight:600;display:block;margin-top:10px;">${contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`}</span>`
-      : '';
-    return `<div style="padding:2px 0 14px 0;">
-      <div style="font-size:12px;font-weight:800;color:#111827;margin-bottom:4px;">${shown}</div>
+    return `<div style="min-height:72px;display:flex;flex-direction:column;justify-content:center;padding:4px 0 20px 0;">
+      <div style="font-size:14px;font-weight:800;color:#111827;margin-bottom:5px;text-align:${textAlign};">${shown}</div>
       <div style="position:relative;height:12px;background:#e9ecf3;border-radius:3px;overflow:visible;">
         <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;position:relative;"></div>
         ${avgMarker}
         ${avgLabel}
       </div>
-      ${ctxLabel}
+      ${ctxText ? `<span style="font-size:12px;color:#6b7280;font-weight:700;display:block;margin-top:14px;text-align:${textAlign};">${ctxText}</span>` : ''}
     </div>`;
   };
   const renderAdvancedSheetTable = (table) => {
@@ -3837,9 +3835,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
             <tr>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.left, row.leftPercentile ?? null, 'percentile')}</td>
-              <td style="width:34%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.right, resolvedRank, 'rank')}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.left, row.leftPercentile ?? null, 'percentile', 'left')}</td>
+              <td style="width:34%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;height:88px;">${valueCell(row.label)}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.right, resolvedRank, 'rank', 'right')}</td>
             </tr>
           `;}).join("")}
         </tbody>
