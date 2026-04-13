@@ -670,9 +670,12 @@ main, .page-content {
   flex: 1;
 }
 
-/* Advanced stats table — vertical alignment fix */
-.report-advanced-table td {
+/* Advanced stats table — vertical alignment and consistent padding */
+.report-advanced-table td,
+.report-advanced-table th {
+  padding: 6px 10px;
   vertical-align: middle;
+  height: auto;
 }
 
 

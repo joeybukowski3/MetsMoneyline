@@ -3636,9 +3636,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </tbody>
     </table>`;
   const renderContextNote = (value, kind = "rank") => {
-    if (!value) return `<span style="display:block;min-height:14px;"></span>`;
+    if (!value) return ``;
     const label = kind === "percentile" ? `${ordinalSuffix(value)} %ile` : `#${value} MLB`;
-    return `<span style="display:block;min-height:14px;font-size:11px;line-height:1.15;color:#6b7280;font-weight:700;white-space:nowrap;">${label}</span>`;
+    return `<span style="display:block;font-size:11px;line-height:1.15;color:#6b7280;font-weight:700;white-space:nowrap;">${label}</span>`;
   };
   const renderMetricStack = (label, value, contextValue = null, contextKind = "rank", align = "center") => `
     <div style="text-align:${align === "flex-start" ? "left" : align === "flex-end" ? "right" : "center"};padding:4px 0;">
@@ -3786,9 +3786,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
             <tr>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
-              <td style="width:34%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+              <td style="width:33%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+              <td style="width:34%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
+              <td style="width:33%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
             </tr>
           `;}).join("")}
         </tbody>
@@ -3875,7 +3875,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       if (mode === "email") return `<span style="font-weight:700;">${valueCell(player?.name)}</span>`;
       return `<div style="display:flex;align-items:center;gap:8px;min-width:0;">
         ${lineupHeadshot(player)}
-        <span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${valueCell(player?.name)}</span>
+        <span style="font-weight:700;white-space:normal;line-height:1.25;">${valueCell(player?.name)}</span>
       </div>`;
     };
     const maxRows = Math.max(mets.length, opp.length, 9);
@@ -3885,13 +3885,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const o = opp[i] || {};
       rows.push(`
         <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;text-align:left;white-space:nowrap;">${lineupNameCell(m, "mets")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;text-align:left;">${lineupNameCell(m, "mets")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("xBA", m.savant?.xBA || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("K%", m.savant?.kPct || m.fangraphs?.kPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("Hard Hit %", m.savant?.hardHitPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("WAR", m.fangraphs?.war || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:800;">${valueCell(m.order ?? o.order ?? i + 1)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:left;white-space:nowrap;">${lineupNameCell(o, "opp")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:left;">${lineupNameCell(o, "opp")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("xBA", o.savant?.xBA || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("K%", o.savant?.kPct || o.fangraphs?.kPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("Hard Hit %", o.savant?.hardHitPct || null)}</td>
@@ -3940,17 +3940,17 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
               <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;${smallLabel}">${oppLabel}</th>
             </tr>
             <tr>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:left;">Mets Player</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">xBA</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">K%</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">Hard Hit %</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">WAR</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;${smallLabel}text-align:center;">Order</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:left;">Opponent Player</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">xBA</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">K%</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">Hard Hit %</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">WAR</th>
+              <th style="width:18%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:left;">Mets Player</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">xBA</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">K%</th>
+              <th style="width:9%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">Hard Hit %</th>
+              <th style="width:6%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">WAR</th>
+              <th style="width:5%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;${smallLabel}text-align:center;">Order</th>
+              <th style="width:18%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:left;">Opponent Player</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">xBA</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">K%</th>
+              <th style="width:9%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">Hard Hit %</th>
+              <th style="width:6%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">WAR</th>
             </tr>
           </thead>
           <tbody>${rows.join("")}</tbody>
