@@ -341,9 +341,54 @@ async function main() {
   fs.mkdirSync(condensedDir, { recursive: true });
   fs.writeFileSync(condensedPath, condensedHtml, "utf8");
   console.log(`[send] Wrote condensed email HTML to ${condensedPath}`);
+  const bodyText = buildPlainTextEmail(game);
 
-  // Stop after writing HTML assets; no direct Buttondown API calls.
-  return;
+  // Validate before sending
+  if (!bodyHtml || bodyHtml.trim().length < 1000) {
+    throw new Error(`[send] bodyHtml too short (${bodyHtml?.length ?? 0} chars)`);
+  }
+  console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
+  console.log(`[send] bodyText length: ${bodyText.length} chars`);
+
+  const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
+  const forceFreshDraft = Boolean(args.allowDuplicate);
+
+  if (forceFreshDraft) {
+    gameState[emailIdKey] = null;
+  }
+
+  if (!gameState[emailIdKey]) {
+    const created = await createButtondownEmail({ game, status: "draft", subject });
+    if (!created?.id) {
+      throw new Error("Buttondown draft creation did not return an id.");
+    }
+    gameState[emailIdKey] = created.id;
+    state.games[gameId] = gameState;
+    saveState(state);
+    console.log(`Created Buttondown draft ${created.id}.`);
+  }
+
+  await updateButtondownEmail(gameState[emailIdKey], {
+    subject,
+    body_html: bodyHtml,
+    body: bodyText,
+    status: "about_to_send"
+  });
+
+  if (args.testSend) {
+    gameState.testSent = true;
+    gameState.testSentAt = new Date().toISOString();
+    gameState.lineupSourceUsedForTest = lineupPlan?.source || null;
+    gameState.updatedAt = gameState.testSentAt;
+  } else {
+    gameState.finalSent = true;
+    gameState.finalSentAt = new Date().toISOString();
+    gameState.updatedAt = gameState.finalSentAt;
+  }
+  state.games[gameId] = gameState;
+  saveState(state);
+
+  console.log(`Queued Buttondown email ${gameState[emailIdKey]} for ${gameId}${args.testSend ? " (test)" : " (final)"}.`);
 }
 
 main().catch((error) => {
