@@ -3,12 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2026 Stats &amp; Standings | MetsMoneyline</title>
+  <title>Mets Moneyline | Daily NY Mets Game Analysis & Betting Breakdown</title>
+  <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
+  <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
+  <link rel="canonical" href="https://www.metsmoneyline.com/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://statsapi.mlb.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="favicon.jpg">
   <link rel="stylesheet" href="css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VV13077MN0');
+  </script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/">
+  <meta property="og:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+  <meta property="og:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+  <meta property="og:image" content="https://www.metsmoneyline.com/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+  <meta name="twitter:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+  <meta name="twitter:image" content="https://www.metsmoneyline.com/og-image.png">
+  <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Mets Moneyline",
+      "url": "https://www.metsmoneyline.com",
+      "description": "Daily NY Mets game analysis, moneyline value, and betting insights."
+    }
+  </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
   <style>
     html, body { max-width: 100%; overflow-x: hidden; }
@@ -52,7 +82,7 @@
       text-transform: uppercase;
       color: #9099b0;
       padding: 0 0 0.6rem;
-      margin-bottom: 0;
+      margin: 0 0 0.6rem;
     }
 
     .player-row-headshot {
@@ -149,32 +179,32 @@
   <header></header>
 
   <main>
-    <div class="stats-page-header">
+    <header class="stats-page-header">
       <h1>Stats &amp; Standings</h1>
       <p id="stats-subtitle">2026 Mets &mdash; live team stats, active roster production, pitching staff, and NL standings.</p>
-    </div>
+    </header>
 
     <div id="at-a-glance" class="at-a-glance"></div>
 
     <div class="stats-section">
-      <div class="stats-section-title">Team Stats</div>
+      <h2 class="stats-section-title">Team Stats</h2>
       <div class="tile-grid">
         <div class="table-wrap">
-          <div class="section-title">Offensive Metrics</div>
+          <h3 class="section-title">Offensive Metrics</h3>
           <table>
             <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="offense-body"></tbody>
           </table>
         </div>
         <div class="table-wrap">
-          <div class="section-title">Pitching &amp; Bullpen</div>
+          <h3 class="section-title">Pitching &amp; Bullpen</h3>
           <table>
             <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="pitching-body"></tbody>
           </table>
         </div>
         <div class="table-wrap">
-          <div class="section-title">Defense &amp; Baserunning</div>
+          <h3 class="section-title">Defense &amp; Baserunning</h3>
           <table>
             <thead><tr><th>Stat</th><th>Mets</th><th>Lg Avg</th></tr></thead>
             <tbody id="defense-body"></tbody>
@@ -184,9 +214,9 @@
     </div>
 
     <div class="stats-section">
-      <div class="stats-section-title">Position Players</div>
+      <h2 class="stats-section-title">Position Players</h2>
       <div class="card full-card">
-        <div class="card-header" id="hitters-card-title">Hitters - Live Stats</div>
+        <h3 class="card-header" id="hitters-card-title">Hitters - Live Stats</h3>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Player</th><th>Pos</th><th>AVG</th><th>OBP</th><th>OPS</th><th>HR</th><th>RBI</th><th>BB%</th><th>K%</th></tr></thead>
@@ -197,9 +227,9 @@
     </div>
 
     <div class="stats-section">
-      <div class="stats-section-title">Pitching</div>
+      <h2 class="stats-section-title">Pitching</h2>
       <div class="card full-card">
-        <div class="card-header" id="rotation-card-title">Starting Rotation - Live Stats</div>
+        <h3 class="card-header" id="rotation-card-title">Starting Rotation - Live Stats</h3>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Pitcher</th><th>GS</th><th>IP</th><th>ERA</th><th>WHIP</th><th>K/BB</th><th>K/9</th><th>BB/9</th></tr></thead>
@@ -208,7 +238,7 @@
         </div>
       </div>
       <div class="card full-card" style="margin-top:1rem;">
-        <div class="card-header" id="bullpen-card-title">Bullpen - Live Stats</div>
+        <h3 class="card-header" id="bullpen-card-title">Bullpen - Live Stats</h3>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Pitcher</th><th>G</th><th>IP</th><th>ERA</th><th>WHIP</th><th>HLD</th><th>SV</th><th>K/9</th></tr></thead>
@@ -219,9 +249,9 @@
     </div>
 
     <div class="stats-section">
-      <div class="stats-section-title">Standings</div>
+      <h2 class="stats-section-title">Standings</h2>
       <div class="card full-card">
-        <div class="card-header">NL East Standings</div>
+        <h3 class="card-header">NL East Standings</h3>
         <div class="table-wrap">
           <table class="standings-table">
             <thead><tr><th>Team</th><th>W</th><th>L</th><th>PCT</th><th>GB</th><th>Home</th><th>Road</th><th>L10</th><th>Streak</th></tr></thead>
@@ -242,8 +272,8 @@
       </div>
     </div>
 
-    <div class="glossary" id="glossary">
-      <h3>Stats Glossary</h3>
+    <section class="glossary" id="glossary">
+      <h2>Stats Glossary</h2>
       <dl>
         <dt>OBP</dt><dd>On-base percentage.</dd>
         <dt>OPS</dt><dd>On-base plus slugging.</dd>
@@ -255,7 +285,7 @@
         <dt>HLD</dt><dd>Holds.</dd>
         <dt>SV</dt><dd>Saves.</dd>
       </dl>
-    </div>
+    </section>
   </main>
 
   <footer>
@@ -267,7 +297,7 @@
     <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
   </footer>
 
-  <script src="js/site-header.js"></script>
+  <script defer src="js/site-header.js"></script>
   <script type="module" src="js/advanced-stats.js"></script>
 </body>
 </html>

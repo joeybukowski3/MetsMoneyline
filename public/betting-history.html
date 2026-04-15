@@ -3,12 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>History - MetsMoneyline</title>
+  <title>Mets Moneyline | Daily NY Mets Game Analysis & Betting Breakdown</title>
+  <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
+  <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
+  <link rel="canonical" href="https://www.metsmoneyline.com/">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://statsapi.mlb.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="favicon.jpg">
   <link rel="stylesheet" href="css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VV13077MN0');
+  </script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/">
+  <meta property="og:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+  <meta property="og:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+  <meta property="og:image" content="https://www.metsmoneyline.com/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+  <meta name="twitter:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+  <meta name="twitter:image" content="https://www.metsmoneyline.com/og-image.png">
+  <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Mets Moneyline",
+      "url": "https://www.metsmoneyline.com",
+      "description": "Daily NY Mets game analysis, moneyline value, and betting insights."
+    }
+  </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -19,7 +49,7 @@
 
   <main>
     <div class="page-header">
-      <h2>Pick History</h2>
+      <h1>Pick History</h1>
       <p>Season-long Mets moneyline tracker with persistent pending and final rows.</p>
     </div>
 
@@ -165,7 +195,7 @@
             : "&mdash;";
         const logoUrl = getTeamLogoUrl(entry.opponent);
         const opponentCell = logoUrl
-          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent}"><span>${entry.opponent}</span></div>`
+          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent} team logo for Mets betting history" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
           : `${entry.opponent}`;
 
         return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${entry.estimated ? '<span class="badge">Backfilled</span>' : '&mdash;'}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
@@ -228,6 +258,6 @@
         document.getElementById("history-body").innerHTML = `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">History unavailable.</td></tr>`;
       });
   </script>
-  <script src="js/site-header.js"></script>
+  <script defer src="js/site-header.js"></script>
 </body>
 </html>
