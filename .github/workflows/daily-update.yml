@@ -38,6 +38,10 @@ jobs:
           API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: node generator.js
 
+      - name: Refresh pick history
+        working-directory: ./bot
+        run: node refresh-pick-history.js
+
       - name: Build advanced-stats JSON
         working-directory: ./bot
         env:

@@ -5,8 +5,9 @@
   "main": "generator.js",
   "scripts": {
     "build:api-cache": "node build-api-cache.js",
+    "refresh:history": "node refresh-pick-history.js",
     "seo": "node generate-sitemap.js && node generate-rss.js",
-    "build": "node generator.js && npm run seo",
+    "build": "node generator.js && npm run refresh:history && npm run seo",
     "download:mlb-logos": "node download-mlb-logos.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "send:report": "node check-and-send-report.js",

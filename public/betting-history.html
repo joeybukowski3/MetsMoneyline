@@ -133,6 +133,18 @@
       return odds > 0 ? `+${odds}` : `${odds}`;
     }
 
+    function isGradedEntry(entry) {
+      return entry?.status === "final"
+        && (entry?.result === "W" || entry?.result === "L")
+        && typeof entry?.profit === "number";
+    }
+
+    function getEntryMetaLabel(entry) {
+      if (entry?.gradingStatus === "missing_odds") return '<span class="badge">Missing odds</span>';
+      if (entry?.estimated) return '<span class="badge">Backfilled</span>';
+      return '&mdash;';
+    }
+
     function normalizeEntries(data) {
       const sourceEntries = Array.isArray(data?.entries)
         ? data.entries
@@ -154,14 +166,16 @@
 
       const withCumulative = chronological.map((entry) => {
         const settled = isSettledEntry(entry);
+        const graded = isGradedEntry(entry);
         const profit = typeof entry?.profit === "number" ? entry.profit : null;
-        if (settled && profit != null) {
+        if (graded && profit != null) {
           runningProfit += profit;
         }
         return {
           ...entry,
-          cumulativeProfit: settled && profit != null ? runningProfit : null,
-          settled
+          cumulativeProfit: graded && profit != null ? runningProfit : null,
+          settled,
+          graded
         };
       });
 
@@ -177,7 +191,7 @@
 
       const rows = displayEntries.map((entry) => {
         const isFinal = entry.settled;
-        const hasProfit = typeof entry?.profit === "number";
+        const hasProfit = typeof entry?.profit === "number" && entry.graded;
 
         const cumulative = entry.cumulativeProfit;
         const resultClass = isFinal
@@ -198,7 +212,7 @@
           ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent} team logo for Mets betting history" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
           : `${entry.opponent}`;
 
-        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${entry.estimated ? '<span class="badge">Backfilled</span>' : '&mdash;'}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
+        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${getEntryMetaLabel(entry)}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
       });
 
       document.getElementById("history-body").innerHTML = rows.length
@@ -208,14 +222,16 @@
       const summary = data?.record || {};
       const wins = typeof summary.wins === "number"
         ? summary.wins
-        : historyData.filter((entry) => isSettledEntry(entry) && entry?.result === "W").length;
+        : historyData.filter((entry) => isGradedEntry(entry) && entry?.result === "W").length;
       const losses = typeof summary.losses === "number"
         ? summary.losses
-        : historyData.filter((entry) => isSettledEntry(entry) && entry?.result === "L").length;
-      const totalBets = typeof summary.totalBets === "number" ? summary.totalBets : historyData.length;
+        : historyData.filter((entry) => isGradedEntry(entry) && entry?.result === "L").length;
+      const totalBets = typeof summary.totalBets === "number"
+        ? summary.totalBets
+        : historyData.filter(isGradedEntry).length;
       const totalWagered = typeof summary.totalWagered === "number"
         ? summary.totalWagered
-          : historyData.reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
+          : historyData.filter(isGradedEntry).reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
       const cumulativeProfit = typeof summary.profit === "number" ? summary.profit : seasonProfit;
       const roi = typeof summary.roi === "number"
         ? summary.roi
