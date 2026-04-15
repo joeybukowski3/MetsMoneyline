@@ -482,7 +482,7 @@ function buildMatchupStrip(game) {
   });
 
   const oppLogoHtml = oppLogoUrl
-    ? `<img src="${oppLogoUrl}" alt="${game.opponent}">`
+    ? `<img src="${oppLogoUrl}" alt="${game.opponent} team logo" width="40" height="40" decoding="async">`
     : `<span style="width:36px;height:36px;display:inline-block;"></span>`;
   const metsRecord = getMetsRecord(game);
   const oppRecord = getOppRecord(game);
@@ -491,7 +491,7 @@ function buildMatchupStrip(game) {
     <div class="matchup-bar-compact">
       <div class="mb-teams">
         <div class="mb-team">
-          <img src="${getTeamLogoUrl(METS_TEAM_ID)}" alt="NYM">
+          <img src="${getTeamLogoUrl(METS_TEAM_ID)}" alt="New York Mets team logo" width="40" height="40" decoding="async">
           <div>
             <div class="mb-team-name">New York Mets</div>
             <span class="mb-record">${metsRecord}</span>
@@ -758,7 +758,7 @@ function buildPitchingCard(game) {
     if (!id) return `<div class="pitcher-photo-placeholder">&#9918;</div>`;
     return `<img
       src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current"
-      class="pitcher-photo" alt="${name}"
+      class="pitcher-photo" alt="${name} headshot for Mets pitching matchup analysis" width="200" height="200" loading="lazy" decoding="async"
       onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot;>&#9918;</div>'">`;
   };
 
@@ -836,7 +836,8 @@ function buildPitchingCard(game) {
     const photoHtml = id
       ? `<img class="pitcher-photo-sm"
            src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:action:hero:current.png/w_360,q_auto:best/v1/people/${id}/action/hero/current"
-           alt="${pitcher.name}"
+           alt="${pitcher.name} pitching matchup photo"
+           width="360" height="360" loading="lazy" decoding="async"
            onerror="this.src='https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current'">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
 
@@ -991,7 +992,7 @@ function buildRow3(game) {
 
   const headshotImg = (p) => {
     const pid = p.playerId || p.id || 0;
-    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
+    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name} headshot for Mets lineup analysis" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
   };
 
   const statCell = (label, value) => `<td class="metric-cell ${metricValueClass(label, value)}">${value ?? "N/A"}</td>`;
@@ -1295,9 +1296,9 @@ function buildGameContextCard(game) {
           <div style="font-size:0.78rem;color:#64748b;font-weight:600;">${dateText}</div>
           <div style="background:${badgeBg};color:${badgeColor};font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:999px;">${resultWord}</div>
           <div style="display:flex;align-items:center;gap:0.55rem;min-width:0;flex-wrap:wrap;">
-            ${teamLogo ? `<img src="${teamLogo}" alt="${teamName}" style="width:18px;height:18px;object-fit:contain;">` : ""}
+            ${teamLogo ? `<img src="${teamLogo}" alt="${teamName} team logo" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;">` : ""}
             <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${teamScore}</span>
-            ${oppLogo ? `<img src="${oppLogo}" alt="${g.opponent}" style="width:18px;height:18px;object-fit:contain;">` : ""}
+            ${oppLogo ? `<img src="${oppLogo}" alt="${g.opponent} team logo" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;">` : ""}
             <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${oppScore}</span>
           </div>
         </div>`;
@@ -1367,7 +1368,7 @@ function buildTeamAdvancedCard(game) {
     mlbStatsTeamId: game.oppTeamId,
     name: game.opponent
   });
-  const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label}">` : ""}<span>${label}</span></span>`;
+  const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label} team logo" width="18" height="18" loading="lazy" decoding="async">` : ""}<span>${label}</span></span>`;
 
   const rows = [
     { label: "wRC+",         mVal: ta.mets.wrcPlus,   oVal: ta.opp.wrcPlus,   higherBetter: true  },

@@ -813,7 +813,7 @@ function renderHitters(players, season) {
     const kPct = playerRateBase(player, "strikeOuts", "plateAppearances");
     return `
       <tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name}" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
+        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name} headshot for Mets active roster stats" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
         <td>${player.position || "-"}</td>
         ${buildPlayerCell(formatPct(s.avg), s.avg, baselines.avg, true)}
         ${buildPlayerCell(formatPct(s.obp), s.obp, baselines.obp, true)}
@@ -860,7 +860,7 @@ function renderPitchers(players, season) {
     const s = player.stats || {};
     return `
       <tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name}" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
+        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name} headshot for Mets rotation stats" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
         <td>${s.gamesStarted ?? 0}</td>
         <td>${s.inningsPitched || "0.0"}</td>
         ${buildPlayerCell(formatDecimal(s.era), s.era, starterBaselines.era, false)}
@@ -876,7 +876,7 @@ function renderPitchers(players, season) {
     const s = player.stats || {};
     return `
       <tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name}" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
+        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name} headshot for Mets bullpen stats" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
         <td>${s.gamesPitched ?? 0}</td>
         <td>${s.inningsPitched || "0.0"}</td>
         ${buildPlayerCell(formatDecimal(s.era), s.era, relieverBaselines.era, false)}
@@ -907,7 +907,7 @@ function renderStandings(standings) {
     return `
       <tr class="${isMets ? "mets-row" : ""}">
         <td><div class="standings-team-cell">
-          <img src="${logo}" class="standings-logo" alt="${team.team}" onerror="this.style.display='none'">
+          <img src="${logo}" class="standings-logo" alt="${team.team} team logo in NL East standings" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ""}>${team.team}</span>
         </div></td>
         <td>${team.wins}</td>
@@ -930,7 +930,7 @@ function renderStandings(standings) {
       return `
         <tr class="${isMets ? "mets-row" : ""}">
           <td><div class="standings-team-cell">
-            <img src="${logo}" class="standings-logo" alt="${team.team}" onerror="this.style.display='none'">
+            <img src="${logo}" class="standings-logo" alt="${team.team} team logo in National League standings" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
             <span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ""}>${team.team}</span>
           </div></td>
           <td>${team.wins}</td>

@@ -14,6 +14,8 @@ const fs = require("fs");
 const axios = require("axios");
 const OpenAI = require("openai");
 const { parse } = require("csv-parse/sync");
+const generateSitemap = require("./generate-sitemap");
+const generateRss = require("./generate-rss");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -3981,7 +3983,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const pid = player?.playerId || player?.id || player?.mlbId || 0;
       if (!pid) return "";
       const photoSize = mode === "site" ? 30 : 24;
-      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)}" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
+      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)} headshot for ${valueCell(game?.opponent || "Mets report")} lineup analysis" width="${photoSize}" height="${photoSize}" loading="lazy" decoding="async" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
     };
     const lineupNameCell = (player, side) => {
       if (mode === "email") return `<span style="font-weight:700;">${valueCell(player?.name)}</span>`;
@@ -4078,7 +4080,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           : `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current`)
       : null;
     const photoHtml = pitcherImageSrc
-      ? `<img class="pitcher-photo-sm" src="${pitcherImageSrc}" alt="${card.name}">`
+      ? `<img class="pitcher-photo-sm" src="${pitcherImageSrc}" alt="${card.name} pitching matchup photo" width="360" height="360" loading="lazy" decoding="async">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
     const MLB_AVG_VALUES = {
       'ERA': 4.20, 'WHIP': 1.28, 'K%': 22.5, 'BB%': 8.2, 'FIP': 4.10, 'xERA': 4.05
@@ -4255,12 +4257,35 @@ function buildSiteReportHtml(game) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${report.header?.title || "MetsMoneyline Report"}</title>
+    <title>Mets Moneyline | Daily NY Mets Game Analysis & Betting Breakdown</title>
+    <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
+    <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
+    <link rel="canonical" href="https://www.metsmoneyline.com/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://statsapi.mlb.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.metsmoneyline.com/">
+    <meta property="og:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+    <meta property="og:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+    <meta property="og:image" content="https://www.metsmoneyline.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+    <meta name="twitter:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+    <meta name="twitter:image" content="https://www.metsmoneyline.com/og-image.png">
+    <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Mets Moneyline",
+        "url": "https://www.metsmoneyline.com",
+        "description": "Daily NY Mets game analysis, moneyline value, and betting insights."
+      }
+    </script>
     <style>
       html, body { max-width:100%; overflow-x:hidden; }
       @media (max-width: 980px) {
@@ -4317,14 +4342,15 @@ function buildSiteReportHtml(game) {
       <section class="report-banner" style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
         <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
-            <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:112px;height:112px;object-fit:contain;">
+            <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets team logo" width="112" height="112" decoding="async" style="width:112px;height:112px;object-fit:contain;">
           </div>
           <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</div>
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
-            <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:112px;height:112px;object-fit:contain;">
+            <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"} team logo" width="112" height="112" decoding="async" style="width:112px;height:112px;object-fit:contain;">
           </div>
         </div>
-        <p style="margin:0.9rem 0 0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
+        <h1 style="margin:0.9rem 0 0.35rem;color:#111827;font-size:1.9rem;line-height:1.2;">${game.homeAway === "away" ? `Mets at ${game.opponent}` : `${game.opponent} at Mets`} Betting Breakdown</h1>
+        <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
       </section>
       ${reportMarkup}
     </main>
@@ -4792,6 +4818,8 @@ function persistGeneratedOutput(output, { referenceDate = getTodayEasternISO() }
   }
   const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
   console.log(`Wrote ${PICK_HISTORY_PATH} with ${pickHistoryOutput.entries.length} entr${pickHistoryOutput.entries.length === 1 ? "y" : "ies"}`);
+  generateSitemap();
+  generateRss();
   return pickHistoryOutput;
 }
 
