@@ -61,9 +61,8 @@
         <span>Total Wagered: <strong id="wagered-display">&mdash;</strong></span>
         <span>Cumulative P/L: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
         <span>ROI: <strong id="roi-display">&mdash;</strong></span>
-        <span class="disclaimer">Completed games only. Estimated odds are marked.</span>
+        <span class="disclaimer">Completed games only.</span>
       </div>
-      <p id="history-note" style="margin:0 0 1rem 0;color:#9099b0;font-size:0.8rem;"></p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -72,7 +71,6 @@
               <th>Opponent</th>
               <th>Home/Away</th>
               <th>Mets ML</th>
-              <th>Estimated</th>
               <th>Result</th>
               <th>Final Score</th>
               <th>Stake</th>
@@ -138,12 +136,6 @@
       return entry?.status === "final"
         && (entry?.result === "W" || entry?.result === "L")
         && typeof entry?.profit === "number";
-    }
-
-    function getEntryMetaLabel(entry) {
-      if (entry?.gradingStatus === "missing_odds") return '<span class="badge">No stored odds</span>';
-      if (entry?.estimated) return '<span class="badge">Estimated</span>';
-      return '&mdash;';
     }
 
     function normalizeEntries(data) {
@@ -213,33 +205,12 @@
           ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent} team logo for Mets betting history" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
           : `${entry.opponent}`;
 
-        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${getEntryMetaLabel(entry)}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
+        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
       });
 
       document.getElementById("history-body").innerHTML = rows.length
         ? rows.join("")
-        : `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
-
-      const historyNote = document.getElementById("history-note");
-      if (historyNote) {
-        const completedGames = typeof data?.record?.completedGames === "number"
-          ? data.record.completedGames
-          : historyData.length;
-        const missingOddsGames = typeof data?.record?.missingOddsGames === "number"
-          ? data.record.missingOddsGames
-          : historyData.filter((entry) => entry?.gradingStatus === "missing_odds").length;
-        const omittedPendingGames = typeof data?.omittedPendingGames === "number"
-          ? data.omittedPendingGames
-          : 0;
-
-        if (missingOddsGames > 0) {
-          historyNote.textContent = `${completedGames} completed games tracked. ${missingOddsGames} completed games are not included in totals because no stored Mets moneyline was captured for them.${omittedPendingGames > 0 ? ` ${omittedPendingGames} future games are omitted until completion.` : ""}`;
-        } else if (omittedPendingGames > 0) {
-          historyNote.textContent = `${completedGames} completed games tracked. ${omittedPendingGames} future games are omitted until completion.`;
-        } else {
-          historyNote.textContent = `${completedGames} completed games tracked.`;
-        }
-      }
+        : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
 
       const summary = data?.record || {};
       const wins = typeof summary.wins === "number"

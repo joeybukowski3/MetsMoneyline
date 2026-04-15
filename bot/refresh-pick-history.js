@@ -6,6 +6,20 @@ const TIME_ZONE = "America/New_York";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
+const MANUAL_HISTORY_ODDS = [
+  { date: "2026-04-14", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 145 },
+  { date: "2026-04-13", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 155 },
+  { date: "2026-04-12", opponent: "Athletics", homeAway: "home", odds: -185 },
+  { date: "2026-04-11", opponent: "Athletics", homeAway: "home", odds: -175 },
+  { date: "2026-04-10", opponent: "Athletics", homeAway: "home", odds: -180 },
+  { date: "2026-04-09", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -125 },
+  { date: "2026-04-08", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -130 },
+  { date: "2026-04-07", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -120 },
+  { date: "2026-04-05", opponent: "San Francisco Giants", homeAway: "road", odds: 110 },
+  { date: "2026-04-04", opponent: "San Francisco Giants", homeAway: "road", odds: 105 },
+  { date: "2026-04-02", opponent: "San Francisco Giants", homeAway: "road", odds: 115 },
+  { date: "2026-03-26", opponent: "Pittsburgh Pirates", homeAway: "home", odds: -165 }
+];
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE }).slice(0, 4));
@@ -154,6 +168,15 @@ function buildOddsLookup(existingEntries, seedEntries, sampleGames) {
       odds: game?.bettingHistory?.odds,
       source: "sample-game.bettingHistory",
       priority: 2
+    });
+  }
+
+  for (const entry of MANUAL_HISTORY_ODDS) {
+    captureMeta(entry, { estimated: false });
+    addOddsCandidate(oddsMap, entry, {
+      odds: entry.odds,
+      source: "history-manual-override",
+      priority: 0
     });
   }
 
