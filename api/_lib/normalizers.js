@@ -8,6 +8,19 @@ function firstDefined(...values) {
   return values.find((value) => value !== undefined && value !== null);
 }
 
+function resolveStandingsDivision(entry, row) {
+  return firstDefined(
+    row?.group?.name,
+    row?.division?.name,
+    row?.stage?.name,
+    entry?.group?.name,
+    entry?.division?.name,
+    entry?.stage?.name,
+    entry?.league?.name,
+    "Standings"
+  );
+}
+
 function normalizeDateTime(value) {
   if (!value) return null;
   const parsed = new Date(value);
@@ -81,12 +94,12 @@ function normalizeStandings(payload, metsTeamId) {
     if (table.length) {
       return table.map((teamRow) => ({
         row: teamRow,
-        division: entry?.group?.name || entry?.division?.name || entry?.league?.name || "Standings"
+        division: resolveStandingsDivision(entry, teamRow)
       }));
     }
     return [{
       row: entry,
-      division: entry?.group?.name || entry?.division?.name || entry?.league?.name || "Standings"
+      division: resolveStandingsDivision(entry, entry)
     }];
   });
 

@@ -19,6 +19,19 @@ async function fetchJson(url) {
   return response.json();
 }
 
+async function fetchJsonWithRetry(url, attempts = 2) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fetchJson(url);
+    } catch (error) {
+      lastError = error;
+      console.warn(`[advanced-stats] fetch attempt ${attempt}/${attempts} failed for ${url}: ${error.message}`);
+    }
+  }
+  throw lastError || new Error(`Request failed: ${url}`);
+}
+
 async function fetchJsonWithFallback(primary, fallback) {
   try {
     return await fetchJson(primary);
@@ -75,6 +88,8 @@ function validateCachedStandingsPayload(data, season) {
   if (!nlEast.length || !nlFull.length) {
     throw new Error("Cached standings payload is incomplete");
   }
+
+  console.info(`[advanced-stats] cached standings accepted from ${provider || "unknown-provider"} with ${teams.length} teams`);
 
   return {
     season,
@@ -262,6 +277,20 @@ async function loadEspnStandings(season) {
 }
 
 async function loadStandings(season) {
+  const cacheUrls = [
+    "api/mlb/mets/standings",
+    "api/mlb/mets/standings.json"
+  ];
+
+  for (const url of cacheUrls) {
+    try {
+      const data = await fetchJsonWithRetry(url, 2);
+      return validateCachedStandingsPayload(data, season);
+    } catch (cacheErr) {
+      console.warn(`[advanced-stats] cached standings rejected (${url}): ${cacheErr.message}`);
+    }
+  }
+
   try {
     const espn = await loadEspnStandings(season);
     if (!isValidSeasonValue(espn?.season, season)) {
@@ -270,23 +299,10 @@ async function loadStandings(season) {
     if (!espn.nlEast.length || !espn.nlFull.length) {
       throw new Error("ESPN returned an incomplete NL standings table");
     }
+    console.info(`[advanced-stats] ESPN standings accepted for season ${season}`);
     return espn;
   } catch (espnErr) {
     console.warn(`[advanced-stats] ESPN standings failed: ${espnErr.message}`);
-  }
-
-  const cacheUrls = [
-    "api/mlb/mets/standings",
-    "api/mlb/mets/standings.json"
-  ];
-
-  for (const url of cacheUrls) {
-    try {
-      const data = await fetchJson(url);
-      return validateCachedStandingsPayload(data, season);
-    } catch (cacheErr) {
-      console.warn(`[advanced-stats] cached standings rejected (${url}): ${cacheErr.message}`);
-    }
   }
 
   return emptyStandingsState(season, `${season} standings are unavailable from the current sources.`);
