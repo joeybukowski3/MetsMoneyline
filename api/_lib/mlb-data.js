@@ -13,6 +13,14 @@ const {
 const EASTERN_TIME_ZONE = "America/New_York";
 const DEFAULT_MLB_STATS_TEAM_ID = 121;
 const NATIONAL_LEAGUE_ID = 104;
+const MLB_DIVISION_NAMES = {
+  200: "American League West",
+  201: "American League East",
+  202: "American League Central",
+  203: "National League West",
+  204: "National League East",
+  205: "National League Central"
+};
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE }).slice(0, 4));
@@ -68,10 +76,19 @@ function sortDivisionTeams(a, b) {
   return String(a?.team || "").localeCompare(String(b?.team || ""));
 }
 
+function getMlbDivisionName(record = {}) {
+  const divisionId = Number(record?.division?.id);
+  return MLB_DIVISION_NAMES[divisionId]
+    || record?.division?.name
+    || record?.name
+    || record?.league?.name
+    || "National League";
+}
+
 function normalizeMlbStandings(payload) {
   const records = Array.isArray(payload?.records) ? payload.records : [];
   const teams = records.flatMap((divisionRecord) => {
-    const divisionName = divisionRecord?.division?.name || divisionRecord?.name || "National League";
+    const divisionName = getMlbDivisionName(divisionRecord);
     const teamRecords = Array.isArray(divisionRecord?.teamRecords) ? divisionRecord.teamRecords : [];
     return teamRecords.map((teamRecord) => {
       const identity = normalizeTeamIdentity(teamRecord?.team || {}, null);
@@ -147,9 +164,23 @@ async function fetchMlbStatsStandings(season = getCurrentSeason()) {
 async function fetchStandingsWithFallback(config = getApiSportsConfig()) {
   const season = getCurrentSeason();
   try {
+    const primary = await fetchMlbStatsStandings(season);
+    if (Array.isArray(primary?.teams) && primary.teams.length > 0) {
+      console.log(`[standings] MLB Stats API standings loaded for season ${season} (${primary.teams.length} teams)`);
+      return {
+        ...primary,
+        sourceProvider: "mlb-stats-api"
+      };
+    }
+    console.warn(`[standings] MLB Stats API returned no teams for season ${season}`);
+  } catch (error) {
+    console.warn(`[warn] MLB Stats standings primary fetch failed: ${error?.message || error}`);
+  }
+
+  try {
     const result = await fetchApiSportsStandings(config, season);
     if (Array.isArray(result?.teams) && result.teams.length > 0) {
-      console.log(`[debug] Standings found for season ${season}`);
+      console.log(`[standings] API-Sports fallback standings loaded for season ${season} (${result.teams.length} teams)`);
       return {
         ...result,
         sourceProvider: "api-sports"
@@ -159,18 +190,6 @@ async function fetchStandingsWithFallback(config = getApiSportsConfig()) {
     console.warn(`[warn] API-Sports standings fetch failed: ${error?.message || error}`);
   }
   console.warn(`[warn] Standings unavailable for current season ${season}`);
-  try {
-    const fallback = await fetchMlbStatsStandings(season);
-    if (Array.isArray(fallback?.teams) && fallback.teams.length > 0) {
-      console.log(`[debug] MLB Stats standings fallback found for season ${season}`);
-      return {
-        ...fallback,
-        sourceProvider: "mlb-stats-api"
-      };
-    }
-  } catch (error) {
-    console.warn(`[warn] MLB Stats standings fallback failed: ${error?.message || error}`);
-  }
   return null;
 }
 
