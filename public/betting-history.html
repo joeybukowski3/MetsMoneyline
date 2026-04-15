@@ -50,7 +50,7 @@
   <main>
     <div class="page-header">
       <h1>Pick History</h1>
-      <p>Season-long Mets moneyline tracker with persistent pending and final rows.</p>
+      <p>Season-long Mets moneyline betting history for completed games only.</p>
     </div>
 
     <div class="section-card">
@@ -61,8 +61,9 @@
         <span>Total Wagered: <strong id="wagered-display">&mdash;</strong></span>
         <span>Cumulative P/L: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
         <span>ROI: <strong id="roi-display">&mdash;</strong></span>
-        <span class="disclaimer">Estimated rows are backfilled</span>
+        <span class="disclaimer">Completed games only. Estimated odds are marked.</span>
       </div>
+      <p id="history-note" style="margin:0 0 1rem 0;color:#9099b0;font-size:0.8rem;"></p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -140,8 +141,8 @@
     }
 
     function getEntryMetaLabel(entry) {
-      if (entry?.gradingStatus === "missing_odds") return '<span class="badge">Missing odds</span>';
-      if (entry?.estimated) return '<span class="badge">Backfilled</span>';
+      if (entry?.gradingStatus === "missing_odds") return '<span class="badge">No stored odds</span>';
+      if (entry?.estimated) return '<span class="badge">Estimated</span>';
       return '&mdash;';
     }
 
@@ -153,7 +154,7 @@
           : [];
 
       return sourceEntries
-        .filter((entry) => entry?.date && entry?.opponent);
+        .filter((entry) => entry?.date && entry?.opponent && entry?.status === "final");
     }
 
     function isSettledEntry(entry) {
@@ -190,14 +191,14 @@
       const { displayEntries, seasonProfit } = buildDisplayEntries(historyData);
 
       const rows = displayEntries.map((entry) => {
-        const isFinal = entry.settled;
+        const isFinal = true;
         const hasProfit = typeof entry?.profit === "number" && entry.graded;
 
         const cumulative = entry.cumulativeProfit;
         const resultClass = isFinal
           ? (entry.result === "W" ? "badge badge-win" : "badge badge-loss")
           : "badge";
-        const resultLabel = isFinal ? entry.result : "Pending";
+        const resultLabel = entry.result;
         const plClass = hasProfit ? (entry.profit >= 0 ? "text-profit" : "text-loss") : "";
         const cumulativeClass = typeof cumulative === "number"
           ? (cumulative >= 0 ? "text-profit" : "text-loss")
@@ -218,6 +219,27 @@
       document.getElementById("history-body").innerHTML = rows.length
         ? rows.join("")
         : `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
+
+      const historyNote = document.getElementById("history-note");
+      if (historyNote) {
+        const completedGames = typeof data?.record?.completedGames === "number"
+          ? data.record.completedGames
+          : historyData.length;
+        const missingOddsGames = typeof data?.record?.missingOddsGames === "number"
+          ? data.record.missingOddsGames
+          : historyData.filter((entry) => entry?.gradingStatus === "missing_odds").length;
+        const omittedPendingGames = typeof data?.omittedPendingGames === "number"
+          ? data.omittedPendingGames
+          : 0;
+
+        if (missingOddsGames > 0) {
+          historyNote.textContent = `${completedGames} completed games tracked. ${missingOddsGames} completed games are not included in totals because no stored Mets moneyline was captured for them.${omittedPendingGames > 0 ? ` ${omittedPendingGames} future games are omitted until completion.` : ""}`;
+        } else if (omittedPendingGames > 0) {
+          historyNote.textContent = `${completedGames} completed games tracked. ${omittedPendingGames} future games are omitted until completion.`;
+        } else {
+          historyNote.textContent = `${completedGames} completed games tracked.`;
+        }
+      }
 
       const summary = data?.record || {};
       const wins = typeof summary.wins === "number"

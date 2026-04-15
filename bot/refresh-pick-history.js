@@ -254,6 +254,7 @@ function summarize(entries) {
   return {
     orderedEntries: chronological.sort((a, b) => String(b.date).localeCompare(String(a.date))),
     record: {
+      completedGames: chronological.length,
       wins,
       losses,
       profit,
@@ -276,7 +277,10 @@ async function main() {
   const sampleGames = Array.isArray(sampleGame?.games) ? sampleGame.games : [];
   const { oddsMap, metaMap } = buildOddsLookup(existingEntries, seedEntries, sampleGames);
   const scheduleGames = await fetchSeasonSchedule(season);
-  const entries = scheduleGames.map((game) => buildHistoryEntry(game, oddsMap, metaMap));
+  const completedGames = scheduleGames.filter((game) => isFinalGameStatus(game));
+  const pendingGames = Math.max(scheduleGames.length - completedGames.length, 0);
+  console.log(`[history-refresh] Completed games=${completedGames.length} pending games omitted=${pendingGames}`);
+  const entries = completedGames.map((game) => buildHistoryEntry(game, oddsMap, metaMap));
   const { orderedEntries, record } = summarize(entries);
 
   const output = {
@@ -284,6 +288,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     season,
     record,
+    omittedPendingGames: pendingGames,
     entries: orderedEntries,
     recentBreakdowns: orderedEntries
   };
