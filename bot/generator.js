@@ -3983,7 +3983,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const pid = player?.playerId || player?.id || player?.mlbId || 0;
       if (!pid) return "";
       const photoSize = mode === "site" ? 30 : 24;
-      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)} headshot for ${valueCell(game?.opponent || "Mets report")} lineup analysis" width="${photoSize}" height="${photoSize}" loading="lazy" decoding="async" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
+      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)} headshot for ${valueCell(report?.header?.oppTeamLabel || "Mets report")} lineup analysis" width="${photoSize}" height="${photoSize}" loading="lazy" decoding="async" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
     };
     const lineupNameCell = (player, side) => {
       if (mode === "email") return `<span style="font-weight:700;">${valueCell(player?.name)}</span>`;
