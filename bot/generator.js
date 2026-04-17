@@ -3886,7 +3886,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         </div>`;
     }
     return `
-      <div class="report-sheet-table-wrap" style="width:100%;overflow:hidden;-webkit-overflow-scrolling:touch;">
+      <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <table class="report-sheet-table report-advanced-table" style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
         <thead>
           <tr>
@@ -3910,7 +3910,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </div>`;
   };
   const renderSummarySheetTable = (rows, headers = null) => `
-    <div class="report-sheet-table-wrap" style="width:100%;overflow:${mode === "site" ? "hidden" : "auto"};-webkit-overflow-scrolling:touch;">
+    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
     <table class="report-sheet-table report-summary-table" style="width:100%;height:100%;border-collapse:collapse;font-size:${mode === "site" ? "14px" : "13px"};border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
       ${headers ? `
         <thead>
@@ -4301,8 +4301,9 @@ function buildSiteReportHtml(game) {
         .report-banner > div:first-child { gap:12px !important; }
         .report-banner > div:first-child > div { min-width:0 !important; }
         .report-banner p { font-size:0.88rem !important; line-height:1.45 !important; word-break:break-word; }
-        .report-sheet-table-wrap, .report-lineup-wrap { margin:0; width:100%; overflow:hidden !important; }
-        .report-sheet-table { width:100% !important; table-layout:fixed !important; }
+        .report-sheet-table-wrap { margin:0; width:100%; overflow-x:auto !important; -webkit-overflow-scrolling:touch !important; }
+        .report-lineup-wrap { margin:0; width:100%; overflow:hidden !important; }
+        .report-sheet-table { width:100% !important; }
         .report-summary-table th, .report-summary-table td { padding:8px 6px !important; font-size:12px !important; word-break:break-word; }
         .report-advanced-table th, .report-advanced-table td { padding:6px 5px !important; font-size:11px !important; word-break:break-word; }
         .report-heat-pill { min-width:0 !important; width:100%; padding:5px 4px !important; font-size:11px !important; text-align:center; }

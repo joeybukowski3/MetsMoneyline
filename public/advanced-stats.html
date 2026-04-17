@@ -161,8 +161,10 @@
       .glance-label { font-size: 0.62rem; }
       .stats-section-title { font-size: 0.66rem; padding-bottom: 0.45rem; }
       .table-wrap { margin: 0; border-radius: 14px; }
-      .table-wrap table { font-size: 12px; table-layout: fixed; }
-      .table-wrap th, .table-wrap td { padding: 0.48rem 0.34rem; word-break: break-word; }
+      .table-wrap table { font-size: 12px; table-layout: auto; }
+      .table-wrap th, .table-wrap td { padding: 0.45rem 0.5rem; white-space: nowrap; }
+      /* Player name column: allow wrapping on name but keep stats tight */
+      .table-wrap td:first-child, .table-wrap th:first-child { white-space: normal; max-width: 120px; }
       .player-row-headshot, .standings-logo { width: 22px; height: 22px; }
       .player-name-td, .standings-team-cell { gap: 0.35rem; min-width: 0; }
       .player-name-td strong, .standings-team-cell span { overflow-wrap: anywhere; }
