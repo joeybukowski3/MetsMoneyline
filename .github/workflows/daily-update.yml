@@ -55,11 +55,30 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/sample-game.json public/data/pick-history.json public/api/mlb/mets/standings.json public/api/mlb/mets/overview.json
+
+          # Save the freshly generated files before touching git history
+          cp public/data/sample-game.json /tmp/sample-game.json 2>/dev/null || true
+          cp public/data/pick-history.json /tmp/pick-history.json 2>/dev/null || true
+          cp -r public/api/ /tmp/api-backup/ 2>/dev/null || true
+
+          # Reset to exactly what's on remote — no conflicts possible
+          git fetch origin main
+          git reset --hard origin/main
+
+          # Restore the freshly generated files on top of remote state
+          cp /tmp/sample-game.json public/data/sample-game.json 2>/dev/null || true
+          cp /tmp/pick-history.json public/data/pick-history.json 2>/dev/null || true
+          cp -r /tmp/api-backup/. public/api/ 2>/dev/null || true
+
+          # Stage and commit
+          git add public/data/sample-game.json || true
+          git add public/data/pick-history.json || true
           git add public/api/ 2>/dev/null || true
-          git diff --staged --quiet && echo "No changes to commit" && exit 0
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
           git commit -m "chore: daily data update [skip ci]"
-          git stash
-          git pull --rebase origin main
-          git stash pop
           git push origin main
