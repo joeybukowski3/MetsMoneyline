@@ -64,7 +64,7 @@
         <span class="disclaimer">Completed games only.</span>
       </div>
       <div class="table-wrap">
-        <table>
+        <table class="history-table">
           <thead>
             <tr>
               <th>Date</th>
@@ -224,7 +224,17 @@
           ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent} team logo for Mets betting history" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
           : `${entry.opponent}`;
 
-        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
+        return `<tr>
+          <td data-label="Date">${formatDate(entry.date)}</td>
+          <td data-label="Opponent">${opponentCell}</td>
+          <td data-label="H/A">${homeAwayDisplay}</td>
+          <td data-label="Mets ML">${formatOdds(entry.odds)}</td>
+          <td data-label="Result"><span class="${resultClass}">${resultLabel}</span></td>
+          <td data-label="Score">${entry.finalScore || "&mdash;"}</td>
+          <td data-label="Stake">${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td>
+          <td data-label="Game P/L" class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td>
+          <td data-label="Cumulative" class="${cumulativeClass}">${formatCurrency(cumulative)}</td>
+        </tr>`;
       });
 
       document.getElementById("history-body").innerHTML = rows.length

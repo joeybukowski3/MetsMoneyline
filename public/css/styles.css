@@ -1083,8 +1083,8 @@ main, .page-content {
 /* =====================
    TABLES
    ===================== */
-.table-wrap   { overflow-x: auto; }
-.table-container { overflow-x: auto; }
+.table-wrap   { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
 
 table {
   width: 100%;
@@ -1204,7 +1204,9 @@ tbody td:first-child { font-weight: 500; }
   margin-bottom: 0.5rem;
   border: 1px solid var(--border);
   border-radius: 10px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .compact-log-table {
@@ -1826,3 +1828,125 @@ footer {
 .team-edge-badge { display: inline-block; margin-left: 0.45rem; padding: 0.12rem 0.45rem; border-radius: 999px; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
 .team-edge-badge-mets { background: rgba(21, 128, 61, 0.12); color: #15803d; }
 .team-edge-badge-opp { background: rgba(185, 28, 28, 0.12); color: #b91c1c; }
+
+/* =====================
+   MOBILE TABLE SYSTEM
+   ===================== */
+
+/* Sticky first column on wide scrolling tables */
+@media (max-width: 700px) {
+  .table-wrap {
+    /* Scroll-hint shadow: fades in on the right edge when content overflows */
+    background:
+      linear-gradient(to right, #fff 30%, rgba(255,255,255,0)),
+      linear-gradient(to right, rgba(0,0,0,0.06), rgba(0,0,0,0)) right;
+    background-repeat: no-repeat;
+    background-size: 30px 100%, 8px 100%;
+    background-attachment: local, scroll;
+  }
+
+  /* Tighten default cell padding so more columns fit before forcing scroll */
+  thead th {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.67rem;
+  }
+  tbody td {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.82rem;
+  }
+
+  /* Statcast table: clip for border-radius but allow internal scroll */
+  .statcast-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent pitcher names from causing table-layout issues on mobile */
+  .statcast-pitcher {
+    white-space: normal;
+    min-width: 80px;
+  }
+
+  /* Compact log: ensure min-width so columns stay usable before scrolling */
+  .compact-log-table {
+    min-width: 420px;
+  }
+}
+
+/* ── Betting-History card layout on phone ── */
+@media (max-width: 600px) {
+  .history-table thead { display: none; }
+
+  .history-table tbody tr {
+    display: block;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px 14px 8px;
+  }
+
+  .history-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border: none;
+    border-bottom: 1px solid #f1f3f8;
+    font-size: 13px;
+    min-height: 28px;
+  }
+
+  .history-table tbody td:last-child { border-bottom: none; }
+
+  /* Label via data-label attribute */
+  .history-table tbody td[data-label]::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #9099b0;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  /* Opponent cell: let logo + name sit left, label right */
+  .history-table tbody td[data-label="Opponent"] {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .history-table tbody td[data-label="Opponent"]::before {
+    display: none;
+  }
+
+  /* Stake is constant ($100); hide it to save space on mobile */
+  .history-table tbody td[data-label="Stake"] { display: none; }
+
+  /* Wider table-wrap should not clip the card layout */
+  .table-wrap:has(.history-table) {
+    overflow: visible;
+    background: none;
+  }
+}
+
+/* ── Advanced-stats player tables: force min-width to trigger scroll ── */
+@media (max-width: 640px) {
+  /* Hitters: 9 cols — needs ~520px to be readable */
+  #hitters-body ~ tr,
+  table:has(#hitters-body) {
+    min-width: 520px;
+  }
+
+  /* Rotation/Bullpen: 8 cols — needs ~460px */
+  table:has(#rotation-body),
+  table:has(#bullpen-body) {
+    min-width: 460px;
+  }
+
+  /* NL East standings: 9 cols — needs ~500px */
+  table:has(#nle-body) {
+    min-width: 500px;
+  }
+}
