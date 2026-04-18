@@ -735,87 +735,73 @@ async function loadSavantExpectedPitchers() {
 
 async function fetchPitcherContactAllowed(mlbId, season) {
   if (!mlbId) return { exitVelo: null, launchAngle: null };
-  const url =
-    `https://baseballsavant.mlb.com/leaderboard/custom?type=pitcher&year=${season}` +
-    `&min=0&pitchers_lookup[]=${mlbId}&sort=player_id&sortDir=asc&csv=true`;
-  const csv = await safeGetText(url, `savant pitcher contact ${mlbId} ${season}`);
-  if (!csv) return { exitVelo: null, launchAngle: null };
-  try {
-    const rows = parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true });
-    const row = rows.find((r) => String(r.player_id) === String(mlbId)) || rows[0];
-    if (!row) return { exitVelo: null, launchAngle: null };
-    const exitVelo = parseFloat(row.avg_hit_speed || "") || null;
-    const launchAngle = parseFloat(row.avg_hit_angle || "") || null;
-    console.log(`[savant] pitcher ${mlbId} contact: exitVelo=${exitVelo}, launchAngle=${launchAngle}`);
-    return { exitVelo, launchAngle };
-  } catch (e) {
-    console.warn(`[savant] pitcher contact fetch failed for ${mlbId}:`, e.message);
-    return { exitVelo: null, launchAngle: null };
+  // leaderboard/statcast has avg_hit_speed and avg_hit_angle
+  // leaderboard/custom does NOT return those columns regardless of &selections=
+  const seasonsToTry = [season, season - 1];
+  for (const year of seasonsToTry) {
+    const url =
+      `https://baseballsavant.mlb.com/leaderboard/statcast?type=pitcher&year=${year}` +
+      `&position=&team=&min=0&csv=true`;
+    const csv = await safeGetText(url, `savant statcast leaderboard pitcher ${year}`);
+    if (!csv) continue;
+    try {
+      const rows = parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true });
+      const row = rows.find((r) => String(r.player_id) === String(mlbId));
+      if (!row) continue;
+      const exitVelo = parseFloat(row.avg_hit_speed || "") || null;
+      const launchAngle = parseFloat(row.avg_hit_angle || "") || null;
+      if (exitVelo !== null || launchAngle !== null) {
+        console.log(`[savant] pitcher ${mlbId} contact (${year}): exitVelo=${exitVelo}, launchAngle=${launchAngle}`);
+        return { exitVelo, launchAngle };
+      }
+    } catch (e) {
+      console.warn(`[savant] pitcher contact fetch failed for ${mlbId} ${year}:`, e.message);
+    }
   }
+  return { exitVelo: null, launchAngle: null };
 }
 
-async function fetchPitcherVsRoster(pitcherMlbId, batterMlbIds = [], seasons = [2026, 2025, 2024]) {
+async function fetchPitcherVsRoster(pitcherMlbId, batterMlbIds = []) {
   if (!pitcherMlbId || !batterMlbIds.length) return null;
-  const seasonParam = seasons.map((s) => `${s}%7C`).join("");
-  const url =
-    `https://baseballsavant.mlb.com/statcast_search/csv?hfGT=R%7C&hfSea=${seasonParam}` +
-    `&player_type=pitcher&pitchers_lookup[]=${pitcherMlbId}&type=details&group_by=name-event&min_pas=0&csv=true`;
-  const csv = await safeGetText(url, `savant pitcher vs roster ${pitcherMlbId}`);
-  if (!csv) return null;
-  try {
-    const rows = parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true });
-    const batterIdSet = new Set(batterMlbIds.map(String));
-    const matched = rows.filter((r) =>
-      batterIdSet.has(String(r.batter || r.hitter_id || r.player_id || ""))
-    );
-    if (!matched.length) {
-      console.log(`[savant] pitcher ${pitcherMlbId} vs roster: no career matchup data found`);
-      return null;
-    }
-    const pa = matched.length;
-    const hits = matched.filter((r) =>
-      ["single", "double", "triple", "home_run"].includes(r.events)
-    ).length;
-    const strikeouts = matched.filter((r) => r.events === "strikeout").length;
-    const walks = matched.filter((r) => ["walk", "intent_walk"].includes(r.events)).length;
-    const homeRuns = matched.filter((r) => r.events === "home_run").length;
-    const avg = pa > 0 ? (hits / pa).toFixed(3) : null;
-    const kPct = pa > 0 ? strikeouts / pa : null;
-    const bbPct = pa > 0 ? walks / pa : null;
-    const contact = matched.filter((r) => r.launch_speed && parseFloat(r.launch_speed) > 0);
-    const exitVelo = contact.length
-      ? (contact.reduce((s, r) => s + parseFloat(r.launch_speed), 0) / contact.length).toFixed(1)
-      : null;
-    const launchAngle = contact.length
-      ? (contact.reduce((s, r) => s + parseFloat(r.launch_angle), 0) / contact.length).toFixed(1)
-      : null;
-    const xbaValues = matched
-      .filter((r) => r.estimated_ba_using_speedangle)
-      .map((r) => parseFloat(r.estimated_ba_using_speedangle));
-    const xBA = xbaValues.length
-      ? (xbaValues.reduce((s, v) => s + v, 0) / xbaValues.length).toFixed(3)
-      : null;
-    const xslgValues = matched
-      .filter((r) => r.estimated_slg_using_speedangle)
-      .map((r) => parseFloat(r.estimated_slg_using_speedangle));
-    const xSLG = xslgValues.length
-      ? (xslgValues.reduce((s, v) => s + v, 0) / xslgValues.length).toFixed(3)
-      : null;
-    const xwobaValues = matched
-      .filter((r) => r.estimated_woba_using_speedangle)
-      .map((r) => parseFloat(r.estimated_woba_using_speedangle));
-    const xwOBA = xwobaValues.length
-      ? (xwobaValues.reduce((s, v) => s + v, 0) / xwobaValues.length).toFixed(3)
-      : null;
-    console.log(
-      `[savant] pitcher ${pitcherMlbId} vs ${batterMlbIds.length} roster batters: ` +
-      `${pa} PA, AVG ${avg}, K% ${kPct?.toFixed(3)}, exitVelo ${exitVelo}`
-    );
-    return { PA: pa, kPct, bbPct, AVG: avg, HR: homeRuns, xBA, xSLG, xwOBA, exitVelo, launchAngle };
-  } catch (e) {
-    console.warn(`[savant] vsRoster fetch failed for pitcher ${pitcherMlbId}:`, e.message);
+  // Savant statcast_search with pitchers_lookup filter returns empty results for
+  // programmatic requests — MLB Stats API vsPlayerTotal is reliable
+  const results = await Promise.all(
+    batterMlbIds.map((batterId) =>
+      safeGetJson(
+        `https://statsapi.mlb.com/api/v1/people/${pitcherMlbId}/stats` +
+          `?stats=vsPlayerTotal&group=pitching&opposingPlayerId=${batterId}`,
+        `vsPlayer ${pitcherMlbId} vs ${batterId}`
+      )
+    )
+  );
+
+  let totalPA = 0, totalHits = 0, totalK = 0, totalBB = 0, totalHR = 0, totalAB = 0;
+  for (const data of results) {
+    const stat = data?.stats?.[0]?.splits?.[0]?.stat;
+    if (!stat || !Number(stat.battersFaced)) continue;
+    totalPA += Number(stat.battersFaced || 0);
+    totalHits += Number(stat.hits || 0);
+    totalK += Number(stat.strikeOuts || 0);
+    totalBB += Number(stat.baseOnBalls || 0);
+    totalHR += Number(stat.homeRuns || 0);
+    totalAB += Number(stat.atBats || 0);
+  }
+
+  if (!totalPA) {
+    console.log(`[mlb] pitcher ${pitcherMlbId} vs roster: no career matchup data found`);
     return null;
   }
+
+  const avg = totalAB > 0 ? (totalHits / totalAB).toFixed(3) : null;
+  const kPct = totalPA > 0 ? totalK / totalPA : null;
+  const bbPct = totalPA > 0 ? totalBB / totalPA : null;
+
+  console.log(
+    `[mlb] pitcher ${pitcherMlbId} vs ${batterMlbIds.length} roster batters: ` +
+    `${totalPA} PA, AVG ${avg}, K% ${kPct?.toFixed(3)}`
+  );
+
+  return { PA: totalPA, kPct, bbPct, AVG: avg, HR: totalHR, xBA: null, xSLG: null, xwOBA: null, exitVelo: null, launchAngle: null };
 }
 
 async function loadSavantBatterLeaderboard() {
