@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T15:35:44.267Z",
+  "generatedAt": "2026-04-19T16:19:59.090Z",
   "games": [
     {
       "id": "2026-04-19-mets-vs-chicago-cubs",
@@ -67,10 +67,10 @@
             }
           },
           "vsRoster": {
-            "PA": 56,
-            "kPct": 0.19642857142857142,
-            "bbPct": 0.07142857142857142,
-            "AVG": "0.280",
+            "PA": 53,
+            "kPct": 0.20754716981132076,
+            "bbPct": 0.05660377358490566,
+            "AVG": "0.271",
             "HR": 3,
             "xBA": null,
             "xSLG": null,
@@ -593,9 +593,40 @@
           },
           {
             "order": 6,
+            "playerId": 694208,
+            "name": "Moisés Ballesteros",
+            "pos": "DH",
+            "hand": null,
+            "seasonAVG": ".381",
+            "seasonOPS": "1.032",
+            "seasonHR": 3,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.284",
+              "xSLG": "0.534",
+              "xwOBA": "0.364",
+              "hardHitPct": "60.6%",
+              "barrelPct": "15.2%",
+              "whiffPct": "27.8%",
+              "kPct": "21.7%",
+              "bbPct": "6.5%",
+              "pa": 46
+            },
+            "fangraphs": {
+              "wRCPlus": "186",
+              "wOBA": ".448",
+              "OBP": ".413",
+              "ISO": ".238",
+              "bbPct": "6.5%",
+              "kPct": "21.7%",
+              "war": "0.4"
+            }
+          },
+          {
+            "order": 7,
             "playerId": 608348,
             "name": "Carson Kelly",
-            "pos": "DH",
+            "pos": "C",
             "hand": null,
             "seasonAVG": ".340",
             "seasonOPS": ".970",
@@ -620,37 +651,6 @@
               "bbPct": "16.7%",
               "kPct": "13.3%",
               "war": "0.7"
-            }
-          },
-          {
-            "order": 7,
-            "playerId": 665804,
-            "name": "Miguel Amaya",
-            "pos": "C",
-            "hand": null,
-            "seasonAVG": ".273",
-            "seasonOPS": ".794",
-            "seasonHR": 1,
-            "statsSeason": "2026",
-            "savant": {
-              "xBA": "0.213",
-              "xSLG": "0.314",
-              "xwOBA": "0.313",
-              "hardHitPct": "16.7%",
-              "barrelPct": "4.2%",
-              "whiffPct": "26.4%",
-              "kPct": "22.5%",
-              "bbPct": "15%",
-              "pa": 40
-            },
-            "fangraphs": {
-              "wRCPlus": "133",
-              "wOBA": ".369",
-              "OBP": ".400",
-              "ISO": ".121",
-              "bbPct": "15.0%",
-              "kPct": "22.5%",
-              "war": "0.3"
             }
           },
           {
@@ -716,7 +716,7 @@
             }
           }
         ],
-        "lineupStatus": "projected"
+        "lineupStatus": "confirmed"
       },
       "advancedMatchup": [
         {
@@ -812,10 +812,10 @@
             "iso": 12,
             "ops": 5,
             "xba": 14,
-            "xslg": 18,
-            "xwoba": 14,
+            "xslg": 13,
+            "xwoba": 13,
             "hardHit": 9,
-            "barrelPct": 16,
+            "barrelPct": 13,
             "bbPct": 5,
             "kPct": 13,
             "rotEra": 10,
@@ -1064,7 +1064,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-04-19T15:35:44.254Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-04-19\",\"opponent\":\"Chicago Cubs\",\"homeAway\":\"road\",\"ballpark\":\"Wrigley Field\",\"weather\":{\"temperature\":46.6,\"temperatureDisplay\":\"47°\",\"condition\":\"Light drizzle\",\"wind\":\"Wind 18 mph WNW\",\"compact\":\"47° | Light drizzle | Wind 18 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-04-19T18:00Z\"},\"metsMoneyline\":null,\"impliedProbability\":null},\"pitchers\":{\"mets\":{\"name\":\"Tobias Myers\",\"handedness\":\"R\",\"era\":3.46,\"xERA\":2.67,\"fip\":3.97,\"whip\":0.77,\"kPct\":18.8,\"bbPct\":2.1,\"kMinusBbPct\":16.7,\"hardHitPct\":39.5,\"barrelPct\":5.3,\"xBAAllowed\":0.252,\"xSLGAllowed\":0.363,\"xwOBAAllowed\":0.264,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-04-15\",\"opponent\":\"Los Angeles Dodgers\",\"ip\":\"2.0\",\"er\":1,\"k\":2,\"result\":\"-\"},{\"date\":\"2026-04-10\",\"opponent\":\"Athletics\",\"ip\":\"3.0\",\"er\":3,\"k\":1,\"result\":\"-\"},{\"date\":\"2026-04-04\",\"opponent\":\"San Francisco Giants\",\"ip\":\"2.0\",\"er\":0,\"k\":1,\"result\":\"W\"},{\"date\":\"2026-04-01\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"1.2\",\"er\":0,\"k\":1,\"result\":\"L\"}],\"avgInnings\":2.17,\"avgEarnedRuns\":1,\"avgStrikeouts\":1.25,\"daysSinceLastStart\":4},\"workload\":{\"inningsTrend\":2.17,\"daysSinceLastStart\":4},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Javier Assad\",\"handedness\":\"R\",\"era\":8.1,\"xERA\":4.7,\"fip\":5.72,\"whip\":1.6,\"kPct\":13.3,\"bbPct\":8.9,\"kMinusBbPct\":4.4,\"hardHitPct\":37.1,\"barrelPct\":5.7,\"xBAAllowed\":0.277,\"xSLGAllowed\":0.413,\"xwOBAAllowed\":0.343,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-04-13\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.1\",\"er\":9,\"k\":3,\"result\":\"L\"},{\"date\":\"2026-04-07\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"5.2\",\"er\":0,\"k\":3,\"result\":\"W\"}],\"avgInnings\":5,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":3,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":-0.1,\"projectedLineupWRCPlus\":72.3,\"obp\":0.283,\"iso\":0.111,\"kPct\":21.4,\"bbPct\":8.1,\"xBA\":0.251,\"xSLG\":0.402,\"xwOBA\":0.315,\"hardHitPct\":39.8,\"barrelPct\":7.5,\"battingAverage\":0.22,\"wOBA\":0.274,\"lineup\":{\"totalWAR\":-0.1,\"totalWRCPlus\":72.3,\"totalOBP\":0.283,\"totalISO\":0.096,\"totalKPct\":22.8,\"totalBBPct\":7.9,\"totalAVG\":0.22,\"totalWOBA\":0.274,\"totalXBA\":0.248,\"totalXSLG\":0.38,\"totalXWOBA\":0.304,\"totalHardHitPct\":40.1,\"totalBarrelPct\":6.3,\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.03}},\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.03},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":3.8,\"projectedLineupWRCPlus\":109,\"obp\":0.342,\"iso\":0.15,\"kPct\":21.4,\"bbPct\":11.7,\"xBA\":0.244,\"xSLG\":0.4,\"xwOBA\":0.326,\"hardHitPct\":42.4,\"barrelPct\":8.8,\"battingAverage\":0.245,\"wOBA\":0.331,\"lineup\":{\"totalWAR\":3.8,\"totalWRCPlus\":109,\"totalOBP\":0.342,\"totalISO\":0.142,\"totalKPct\":20.9,\"totalBBPct\":12.3,\"totalAVG\":0.245,\"totalWOBA\":0.331,\"totalXBA\":0.236,\"totalXSLG\":0.385,\"totalXWOBA\":0.321,\"totalHardHitPct\":41.4,\"totalBarrelPct\":8.4,\"regressionSignals\":{\"baMinusXba\":0.009,\"wobaMinusXwoba\":0.01}},\"regressionSignals\":{\"baMinusXba\":0.009,\"wobaMinusXwoba\":0.01},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":-0.1,\"totalWRCPlus\":72.3,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":3.8,\"totalWRCPlus\":109,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"last3DaysIP\":16,\"availabilityTopArms\":null,\"whip\":1.29,\"kMinusBbPct\":13.7,\"xFIP\":3.76,\"taxLevel\":\"heavy\"},\"opp\":{\"last3DaysIP\":18,\"availabilityTopArms\":null,\"whip\":1.19,\"kMinusBbPct\":14.6,\"xFIP\":3.91,\"taxLevel\":\"heavy\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"heavy\",\"opp\":\"heavy\"},\"parkFactor\":null,\"weather\":{\"temperature\":46.6,\"temperatureDisplay\":\"47°\",\"condition\":\"Light drizzle\",\"wind\":\"Wind 18 mph WNW\",\"compact\":\"47° | Light drizzle | Wind 18 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-04-19T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Tobias Myers 2.67/3.97 vs Javier Assad 4.70/5.72; K-BB% 16.7 to 4.4.\",\"rawScore\":31.42,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR -0.1 vs 3.8, projected lineup wRC+ 72.3 vs 109.0, xwOBA 0.315 vs 0.326.\",\"rawScore\":-9.1,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.76 vs 3.91, WHIP 1.29 vs 1.19, last 3-day usage 16.0 IP vs 18.0 IP.\",\"rawScore\":0.43,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.75.\",\"rawScore\":4.84,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax heavy/heavy.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 61.6%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.616,\"totalWeightedImpact\":11.6,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"valueEdge\":null,\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-04-19T16:19:59.078Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-04-19\",\"opponent\":\"Chicago Cubs\",\"homeAway\":\"road\",\"ballpark\":\"Wrigley Field\",\"weather\":{\"temperature\":46.6,\"temperatureDisplay\":\"47°\",\"condition\":\"Light drizzle\",\"wind\":\"Wind 18 mph WNW\",\"compact\":\"47° | Light drizzle | Wind 18 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-04-19T18:00Z\"},\"metsMoneyline\":null,\"impliedProbability\":null},\"pitchers\":{\"mets\":{\"name\":\"Tobias Myers\",\"handedness\":\"R\",\"era\":3.46,\"xERA\":2.67,\"fip\":3.97,\"whip\":0.77,\"kPct\":18.8,\"bbPct\":2.1,\"kMinusBbPct\":16.7,\"hardHitPct\":39.5,\"barrelPct\":5.3,\"xBAAllowed\":0.252,\"xSLGAllowed\":0.363,\"xwOBAAllowed\":0.264,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-04-15\",\"opponent\":\"Los Angeles Dodgers\",\"ip\":\"2.0\",\"er\":1,\"k\":2,\"result\":\"-\"},{\"date\":\"2026-04-10\",\"opponent\":\"Athletics\",\"ip\":\"3.0\",\"er\":3,\"k\":1,\"result\":\"-\"},{\"date\":\"2026-04-04\",\"opponent\":\"San Francisco Giants\",\"ip\":\"2.0\",\"er\":0,\"k\":1,\"result\":\"W\"},{\"date\":\"2026-04-01\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"1.2\",\"er\":0,\"k\":1,\"result\":\"L\"}],\"avgInnings\":2.17,\"avgEarnedRuns\":1,\"avgStrikeouts\":1.25,\"daysSinceLastStart\":4},\"workload\":{\"inningsTrend\":2.17,\"daysSinceLastStart\":4},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Javier Assad\",\"handedness\":\"R\",\"era\":8.1,\"xERA\":4.7,\"fip\":5.72,\"whip\":1.6,\"kPct\":13.3,\"bbPct\":8.9,\"kMinusBbPct\":4.4,\"hardHitPct\":37.1,\"barrelPct\":5.7,\"xBAAllowed\":0.277,\"xSLGAllowed\":0.413,\"xwOBAAllowed\":0.343,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-04-13\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.1\",\"er\":9,\"k\":3,\"result\":\"L\"},{\"date\":\"2026-04-07\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"5.2\",\"er\":0,\"k\":3,\"result\":\"W\"}],\"avgInnings\":5,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":3,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":-0.1,\"projectedLineupWRCPlus\":72.3,\"obp\":0.283,\"iso\":0.111,\"kPct\":21.4,\"bbPct\":8.1,\"xBA\":0.251,\"xSLG\":0.402,\"xwOBA\":0.315,\"hardHitPct\":39.8,\"barrelPct\":7.5,\"battingAverage\":0.22,\"wOBA\":0.274,\"lineup\":{\"totalWAR\":-0.1,\"totalWRCPlus\":72.3,\"totalOBP\":0.283,\"totalISO\":0.096,\"totalKPct\":22.8,\"totalBBPct\":7.9,\"totalAVG\":0.22,\"totalWOBA\":0.274,\"totalXBA\":0.248,\"totalXSLG\":0.38,\"totalXWOBA\":0.304,\"totalHardHitPct\":40.1,\"totalBarrelPct\":6.3,\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.03}},\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.03},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":3.9,\"projectedLineupWRCPlus\":112.9,\"obp\":0.344,\"iso\":0.15,\"kPct\":21.4,\"bbPct\":11.7,\"xBA\":0.244,\"xSLG\":0.4,\"xwOBA\":0.326,\"hardHitPct\":42.4,\"barrelPct\":8.8,\"battingAverage\":0.253,\"wOBA\":0.337,\"lineup\":{\"totalWAR\":3.9,\"totalWRCPlus\":112.9,\"totalOBP\":0.344,\"totalISO\":0.15,\"totalKPct\":20.8,\"totalBBPct\":11.7,\"totalAVG\":0.253,\"totalWOBA\":0.337,\"totalXBA\":0.241,\"totalXSLG\":0.4,\"totalXWOBA\":0.324,\"totalHardHitPct\":44.3,\"totalBarrelPct\":9.1,\"regressionSignals\":{\"baMinusXba\":0.012,\"wobaMinusXwoba\":0.013}},\"regressionSignals\":{\"baMinusXba\":0.012,\"wobaMinusXwoba\":0.013},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"confirmed\",\"totalWAR\":-0.1,\"totalWRCPlus\":72.3,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"confirmed\",\"totalWAR\":3.9,\"totalWRCPlus\":112.9,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"last3DaysIP\":16,\"availabilityTopArms\":null,\"whip\":1.29,\"kMinusBbPct\":13.7,\"xFIP\":3.76,\"taxLevel\":\"heavy\"},\"opp\":{\"last3DaysIP\":18,\"availabilityTopArms\":null,\"whip\":1.19,\"kMinusBbPct\":14.6,\"xFIP\":3.91,\"taxLevel\":\"heavy\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"heavy\",\"opp\":\"heavy\"},\"parkFactor\":null,\"weather\":{\"temperature\":46.6,\"temperatureDisplay\":\"47°\",\"condition\":\"Light drizzle\",\"wind\":\"Wind 18 mph WNW\",\"compact\":\"47° | Light drizzle | Wind 18 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-04-19T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Tobias Myers 2.67/3.97 vs Javier Assad 4.70/5.72; K-BB% 16.7 to 4.4.\",\"rawScore\":31.42,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR -0.1 vs 3.9, projected lineup wRC+ 72.3 vs 112.9, xwOBA 0.315 vs 0.326.\",\"rawScore\":-9.63,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.76 vs 3.91, WHIP 1.29 vs 1.19, last 3-day usage 16.0 IP vs 18.0 IP.\",\"rawScore\":0.43,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.75.\",\"rawScore\":5.14,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax heavy/heavy.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 61.6%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.616,\"totalWeightedImpact\":11.6,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"valueEdge\":null,\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Chicago Cubs: starting pitching is the clearest angle",
         "synopsis": "Tobias Myers vs Javier Assad sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Tobias Myers 2.67/3.97 vs Javier Assad 4.70/5.72; K-BB% 16.7 to 4.4. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1080,7 +1080,7 @@
           "homeAway": "road",
           "ballpark": "Wrigley Field",
           "weather": "47° | Light drizzle | Wind 18 mph WNW",
-          "lineupStatus": "Projected",
+          "lineupStatus": "Confirmed",
           "moneyline": "N/A"
         },
         "edgeSummary": {
@@ -1199,7 +1199,7 @@
           },
           {
             "heading": "2. Game Details",
-            "body": "2026-04-19 | 2:20 PM ET | Wrigley Field. Mets road game. Lineups: Projected. Mets ML: N/A."
+            "body": "2026-04-19 | 2:20 PM ET | Wrigley Field. Mets road game. Lineups: Confirmed. Mets ML: N/A."
           },
           {
             "heading": "3. Edge Summary",
@@ -1215,7 +1215,7 @@
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
-            "body": "Overall lineup quality only: projected WAR -0.1 vs 3.8, projected lineup wRC+ 72.3 vs 109.0, xwOBA 0.315 vs 0.326. Series game 3. Rest/travel: Mets 0 days, opponent 0; bullpen tax heavy/heavy."
+            "body": "Overall lineup quality only: projected WAR -0.1 vs 3.9, projected lineup wRC+ 72.3 vs 112.9, xwOBA 0.315 vs 0.326. Series game 3. Rest/travel: Mets 0 days, opponent 0; bullpen tax heavy/heavy."
           },
           {
             "heading": "7. Projected Lineup Comparison",
@@ -1244,7 +1244,7 @@
             "category": "Overall Lineup Quality",
             "edge": "Opponent edge",
             "strength": "strong",
-            "reason": "Overall lineup quality only: projected WAR -0.1 vs 3.8, projected lineup wRC+ 72.3 vs 109.0, xwOBA 0.315 vs 0.326.",
+            "reason": "Overall lineup quality only: projected WAR -0.1 vs 3.9, projected lineup wRC+ 72.3 vs 112.9, xwOBA 0.315 vs 0.326.",
             "dataMode": "fallback"
           },
           {
@@ -1285,7 +1285,7 @@
         ],
         "keyAngles": [
           "xERA/FIP profile: Tobias Myers 2.67/3.97 vs Javier Assad 4.70/5.72; K-BB% 16.7 to 4.4.",
-          "Overall lineup quality only: projected WAR -0.1 vs 3.8, projected lineup wRC+ 72.3 vs 109.0, xwOBA 0.315 vs 0.326.",
+          "Overall lineup quality only: projected WAR -0.1 vs 3.9, projected lineup wRC+ 72.3 vs 112.9, xwOBA 0.315 vs 0.326.",
           "Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.75.",
           "Bullpen shape: xFIP 3.76 vs 3.91, WHIP 1.29 vs 1.19, last 3-day usage 16.0 IP vs 18.0 IP."
         ],
@@ -1494,9 +1494,9 @@
               "teamWrcPlusVsHandedness": null,
               "projectedLineupWrcPlusVsHandedness": null,
               "homeAwayWrcPlus": null,
-              "projectedLineupWAR": 3.8,
-              "projectedLineupWRCPlus": 109,
-              "obp": 0.342,
+              "projectedLineupWAR": 3.9,
+              "projectedLineupWRCPlus": 112.9,
+              "obp": 0.344,
               "iso": 0.15,
               "kPct": 21.4,
               "bbPct": 11.7,
@@ -1505,30 +1505,30 @@
               "xwOBA": 0.326,
               "hardHitPct": 42.4,
               "barrelPct": 8.8,
-              "battingAverage": 0.245,
-              "wOBA": 0.331,
+              "battingAverage": 0.253,
+              "wOBA": 0.337,
               "lineup": {
-                "totalWAR": 3.8,
-                "totalWRCPlus": 109,
-                "totalOBP": 0.342,
-                "totalISO": 0.142,
-                "totalKPct": 20.9,
-                "totalBBPct": 12.3,
-                "totalAVG": 0.245,
-                "totalWOBA": 0.331,
-                "totalXBA": 0.236,
-                "totalXSLG": 0.385,
-                "totalXWOBA": 0.321,
-                "totalHardHitPct": 41.4,
-                "totalBarrelPct": 8.4,
+                "totalWAR": 3.9,
+                "totalWRCPlus": 112.9,
+                "totalOBP": 0.344,
+                "totalISO": 0.15,
+                "totalKPct": 20.8,
+                "totalBBPct": 11.7,
+                "totalAVG": 0.253,
+                "totalWOBA": 0.337,
+                "totalXBA": 0.241,
+                "totalXSLG": 0.4,
+                "totalXWOBA": 0.324,
+                "totalHardHitPct": 44.3,
+                "totalBarrelPct": 9.1,
                 "regressionSignals": {
-                  "baMinusXba": 0.009,
-                  "wobaMinusXwoba": 0.01
+                  "baMinusXba": 0.012,
+                  "wobaMinusXwoba": 0.013
                 }
               },
               "regressionSignals": {
-                "baMinusXba": 0.009,
-                "wobaMinusXwoba": 0.01
+                "baMinusXba": 0.012,
+                "wobaMinusXwoba": 0.013
               },
               "missingKeyHitters": null,
               "splitContext": {
@@ -1539,15 +1539,15 @@
           },
           "projectedLineups": {
             "mets": {
-              "status": "projected",
+              "status": "confirmed",
               "totalWAR": -0.1,
               "totalWRCPlus": 72.3,
               "missingKeyHitters": []
             },
             "opp": {
-              "status": "projected",
-              "totalWAR": 3.8,
-              "totalWRCPlus": 109,
+              "status": "confirmed",
+              "totalWAR": 3.9,
+              "totalWRCPlus": 112.9,
               "missingKeyHitters": []
             }
           },
@@ -1624,8 +1624,8 @@
               "weight": 25,
               "edge": "Opponent edge",
               "strength": "strong",
-              "explanation": "Overall lineup quality only: projected WAR -0.1 vs 3.8, projected lineup wRC+ 72.3 vs 109.0, xwOBA 0.315 vs 0.326.",
-              "rawScore": -9.1,
+              "explanation": "Overall lineup quality only: projected WAR -0.1 vs 3.9, projected lineup wRC+ 72.3 vs 112.9, xwOBA 0.315 vs 0.326.",
+              "rawScore": -9.63,
               "weightedImpact": -25,
               "dataMode": "fallback",
               "supportedBy": [
@@ -1664,7 +1664,7 @@
               "edge": "Mets edge",
               "strength": "moderate",
               "explanation": "Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.75.",
-              "rawScore": 4.84,
+              "rawScore": 5.14,
               "weightedImpact": 6.6,
               "dataMode": "real",
               "supportedBy": [
@@ -1756,7 +1756,7 @@
             "homeAway": "road",
             "ballpark": "Wrigley Field",
             "weather": "47° | Light drizzle | Wind 18 mph WNW",
-            "lineupStatus": "Projected",
+            "lineupStatus": "Confirmed",
             "moneyline": "N/A"
           },
           "gameDetailsTable": {
@@ -2062,7 +2062,7 @@
                   {
                     "label": "Innings Pitched / Plate Appearances",
                     "left": "13.0",
-                    "right": "652"
+                    "right": "658"
                   },
                   {
                     "label": "K%",
@@ -2158,7 +2158,7 @@
             "opponentRows": [
               {
                 "label": "Projected wRC+",
-                "mets": 109,
+                "mets": 112.9,
                 "opp": 72.3
               },
               {
@@ -2204,7 +2204,7 @@
               },
               {
                 "label": "Opponent Lineup wRC+",
-                "mets": 109,
+                "mets": 112.9,
                 "opp": 72.3
               },
               {
@@ -2231,7 +2231,7 @@
               },
               {
                 "label": "Lineup WAR",
-                "mets": 3.8,
+                "mets": 3.9,
                 "opp": -0.1
               },
               {
@@ -2692,9 +2692,40 @@
               },
               {
                 "order": 6,
+                "playerId": 694208,
+                "name": "Moisés Ballesteros",
+                "pos": "DH",
+                "hand": null,
+                "seasonAVG": ".381",
+                "seasonOPS": "1.032",
+                "seasonHR": 3,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.284",
+                  "xSLG": "0.534",
+                  "xwOBA": "0.364",
+                  "hardHitPct": "60.6%",
+                  "barrelPct": "15.2%",
+                  "whiffPct": "27.8%",
+                  "kPct": "21.7%",
+                  "bbPct": "6.5%",
+                  "pa": 46
+                },
+                "fangraphs": {
+                  "wRCPlus": "186",
+                  "wOBA": ".448",
+                  "OBP": ".413",
+                  "ISO": ".238",
+                  "bbPct": "6.5%",
+                  "kPct": "21.7%",
+                  "war": "0.4"
+                }
+              },
+              {
+                "order": 7,
                 "playerId": 608348,
                 "name": "Carson Kelly",
-                "pos": "DH",
+                "pos": "C",
                 "hand": null,
                 "seasonAVG": ".340",
                 "seasonOPS": ".970",
@@ -2719,37 +2750,6 @@
                   "bbPct": "16.7%",
                   "kPct": "13.3%",
                   "war": "0.7"
-                }
-              },
-              {
-                "order": 7,
-                "playerId": 665804,
-                "name": "Miguel Amaya",
-                "pos": "C",
-                "hand": null,
-                "seasonAVG": ".273",
-                "seasonOPS": ".794",
-                "seasonHR": 1,
-                "statsSeason": "2026",
-                "savant": {
-                  "xBA": "0.213",
-                  "xSLG": "0.314",
-                  "xwOBA": "0.313",
-                  "hardHitPct": "16.7%",
-                  "barrelPct": "4.2%",
-                  "whiffPct": "26.4%",
-                  "kPct": "22.5%",
-                  "bbPct": "15%",
-                  "pa": 40
-                },
-                "fangraphs": {
-                  "wRCPlus": "133",
-                  "wOBA": ".369",
-                  "OBP": ".400",
-                  "ISO": ".121",
-                  "bbPct": "15.0%",
-                  "kPct": "22.5%",
-                  "war": "0.3"
                 }
               },
               {
@@ -2815,7 +2815,7 @@
                 }
               }
             ],
-            "lineupStatus": "projected"
+            "lineupStatus": "confirmed"
           },
           "analysis": {
             "whyMetsHaveACase": [
@@ -2891,10 +2891,10 @@
                 "iso": 12,
                 "ops": 5,
                 "xba": 14,
-                "xslg": 18,
-                "xwoba": 14,
+                "xslg": 13,
+                "xwoba": 13,
                 "hardHit": 9,
-                "barrelPct": 16,
+                "barrelPct": 13,
                 "bbPct": 5,
                 "kPct": 13,
                 "rotEra": 10,
