@@ -1227,7 +1227,7 @@ function buildPickSection(game) {
   const sections = game.writeup.sections ?? [];
   // Find pick/today section by heading keyword
   const pickSection = sections.find(s => /today|pick|final|bottom line/i.test(s.heading));
-  const summary = cleanSectionBody(pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "");
+  const summary = cleanSectionBody(game.writeup?.pickNarrative || pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "");
 
   const metsML  = game.moneyline?.mets;
   const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";

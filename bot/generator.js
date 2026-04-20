@@ -2910,6 +2910,219 @@ function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
   return { whyMetsHaveCase, whereRiskIs, bottomLine };
 }
 
+function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
+  const metsPitcher  = gameFacts.pitching?.mets?.name  || "the Mets starter";
+  const oppPitcher   = gameFacts.pitching?.opp?.name   || "the opposing starter";
+  const opponent     = gameFacts.game?.opponent         || "the opponent";
+  const ml           = gameFacts.money?.metsMoneyline;
+  const mlStr        = ml != null ? (ml > 0 ? `+${ml}` : `${ml}`) : null;
+
+  // Deterministic variation seed (prevents same opener every day)
+  function hashPick(salt) {
+    const key = `${gameFacts.meta?.date || ""}${metsPitcher}${salt}`;
+    let h = 5381;
+    for (let i = 0; i < key.length; i++) h = ((h << 5) + h) ^ key.charCodeAt(i);
+    return Math.abs(h);
+  }
+
+  // --- PART 1: HOOK (recent streak context) ---
+  const recentGames = gameFacts.gameContext?.metsRecentGames || [];
+  const lastFive    = recentGames.slice(0, 5);
+  const wins        = lastFive.filter(g => g.result === "W").length;
+  const losses      = lastFive.filter(g => g.result === "L").length;
+
+  let hook = "";
+  if (lastFive.length >= 4 && wins >= 4) {
+    const hookOpts = [
+      `The Mets have won ${wins} of their last ${lastFive.length}, carrying some genuine momentum into today.`,
+      `New York has been playing its best ball lately — ${wins}-${losses} over the last ${lastFive.length} games.`,
+      `On a ${wins}-${losses} run over the last ${lastFive.length}, the Mets are in a good spot heading into this one.`
+    ];
+    hook = hookOpts[hashPick("hook") % hookOpts.length];
+  } else if (lastFive.length >= 4 && losses >= 4) {
+    const hookOpts = [
+      `The Mets are ${wins}-${losses} over their last ${lastFive.length}, but the board still finds a workable path today.`,
+      `New York has been grinding through a tough stretch — ${wins}-${losses} in the last ${lastFive.length} — which makes the price more interesting than the record suggests.`,
+      `Coming in at ${wins}-${losses} over the last ${lastFive.length}, the Mets haven't found a rhythm lately, but the underlying case here isn't built on results.`
+    ];
+    hook = hookOpts[hashPick("hook") % hookOpts.length];
+  } else if (lastFive.length >= 3) {
+    const hookOpts = [
+      `The Mets enter this one at ${wins}-${losses} over their last ${lastFive.length}, a mixed run that makes today more about the matchup than the streak.`,
+      `New York is ${wins}-${losses} in their last ${lastFive.length}, which is about as split as it gets — so this one comes down to the specific read.`,
+      `At ${wins}-${losses} over their last ${lastFive.length} games, the Mets are neither riding momentum nor running from a slump.`
+    ];
+    hook = hookOpts[hashPick("hook") % hookOpts.length];
+  }
+
+  // --- PART 2: PITCHER CASE (most specific stat available) ---
+  const mp    = gameFacts.pitching?.mets || {};
+  const op    = gameFacts.pitching?.opp  || {};
+  const mFIP  = mp.seasonFIP  != null ? parseFloat(mp.seasonFIP)  : null;
+  const oFIP  = op.seasonFIP  != null ? parseFloat(op.seasonFIP)  : null;
+  const mXERA = mp.savant?.xERA != null ? parseFloat(mp.savant.xERA) : (mp.seasonXERA != null ? parseFloat(mp.seasonXERA) : null);
+  const oXERA = op.savant?.xERA != null ? parseFloat(op.savant.xERA) : (op.seasonXERA != null ? parseFloat(op.seasonXERA) : null);
+  const mWHIP = mp.seasonWHIP != null ? parseFloat(mp.seasonWHIP) : null;
+  const oWHIP = op.seasonWHIP != null ? parseFloat(op.seasonWHIP) : null;
+  const mKPct = mp.savant?.kPct != null ? parseFloat(mp.savant.kPct) : null;
+  const oKPct = op.savant?.kPct != null ? parseFloat(op.savant.kPct) : null;
+  const vsRoster = mp.vsRoster || {};
+
+  let pitcherCase = "";
+
+  if (mFIP != null && oFIP != null && (oFIP - mFIP) >= 1.0) {
+    // Large FIP gap favoring Mets
+    const gap = (oFIP - mFIP).toFixed(2);
+    const opts = [
+      `${metsPitcher} comes in with a ${mFIP.toFixed(2)} FIP against ${oppPitcher}'s ${oFIP.toFixed(2)} — a ${gap}-run gap that's the clearest edge on this board today.`,
+      `The starting pitching split is hard to ignore: ${metsPitcher} at ${mFIP.toFixed(2)} FIP, ${oppPitcher} at ${oFIP.toFixed(2)}, a ${gap}-point advantage that anchors the Mets case.`,
+      `On pure process numbers, ${metsPitcher} (${mFIP.toFixed(2)} FIP) has a ${gap}-run edge over ${oppPitcher} (${oFIP.toFixed(2)} FIP) — the kind of gap that shows up in outcomes over time.`
+    ];
+    pitcherCase = opts[hashPick("fip") % opts.length];
+  } else if (mXERA != null && oXERA != null && (oXERA - mXERA) >= 0.4) {
+    // xERA gap favoring Mets
+    const gap = (oXERA - mXERA).toFixed(2);
+    const opts = [
+      `The xERA read splits in New York's favor: ${metsPitcher} at ${mXERA.toFixed(2)} versus ${oppPitcher}'s ${oXERA.toFixed(2)}, a ${gap}-run edge on contact-quality projection.`,
+      `Statcast's expected ERA gives ${metsPitcher} (${mXERA.toFixed(2)}) a ${gap}-point edge over ${oppPitcher} (${oXERA.toFixed(2)}), which is real separation at the contact quality level.`,
+      `${metsPitcher}'s ${mXERA.toFixed(2)} xERA stacks up favorably against ${oppPitcher}'s ${oXERA.toFixed(2)} — a ${gap}-run Statcast gap that's more signal than surface stat.`
+    ];
+    pitcherCase = opts[hashPick("xera") % opts.length];
+  } else if (mWHIP != null && oWHIP != null && (oWHIP - mWHIP) >= 0.15) {
+    // WHIP gap favoring Mets
+    const opts = [
+      `${metsPitcher} (${mWHIP.toFixed(2)} WHIP) has been cleaner than ${oppPitcher} (${oWHIP.toFixed(2)}) in terms of base traffic — fewer threats, fewer leverage situations for New York's opponents.`,
+      `The WHIP gap — ${metsPitcher} at ${mWHIP.toFixed(2)}, ${oppPitcher} at ${oWHIP.toFixed(2)} — tells you who's been limiting baserunners, and that edge sits with the Mets.`
+    ];
+    pitcherCase = opts[hashPick("whip") % opts.length];
+  } else if (mKPct != null && oKPct != null && (mKPct - oKPct) >= 3.0) {
+    // K% gap favoring Mets pitcher
+    const opts = [
+      `${metsPitcher} owns a ${mKPct.toFixed(1)}% strikeout rate versus ${oppPitcher}'s ${oKPct.toFixed(1)}% — a real swing-and-miss gap that limits the damage any single hit can do.`,
+      `The whiff profile favors New York: ${metsPitcher} at ${mKPct.toFixed(1)}% K-rate compared to ${oppPitcher}'s ${oKPct.toFixed(1)}% gives the Mets a legitimate strikeout edge today.`
+    ];
+    pitcherCase = opts[hashPick("kpct") % opts.length];
+  } else if (vsRoster?.PA >= 30 && vsRoster?.AVG != null) {
+    // Career vs roster data
+    const avg = parseFloat(vsRoster.AVG).toFixed(3);
+    const kRate = vsRoster.kPct != null ? ` with a ${parseFloat(vsRoster.kPct).toFixed(1)}% K-rate` : "";
+    const opts = [
+      `${metsPitcher} has a real track record against this ${opponent} roster — holding them to a ${avg} average${kRate} across ${vsRoster.PA} plate appearances — which adds some substance beyond the seasonal line.`,
+      `The history matters here: ${metsPitcher} against the active ${opponent} roster is a ${avg} average${kRate} over ${vsRoster.PA} PAs, a sample large enough to say something real.`
+    ];
+    pitcherCase = opts[hashPick("vs") % opts.length];
+  } else if (mFIP != null && oFIP != null) {
+    // Small FIP gap or either direction — generic
+    const metsAdv = mFIP < oFIP;
+    if (metsAdv) {
+      const opts = [
+        `${metsPitcher} (${mFIP.toFixed(2)} FIP) edges out ${oppPitcher} (${oFIP.toFixed(2)}) on process numbers — not a massive split, but the advantage is real.`,
+        `On underlying pitching metrics, ${metsPitcher}'s ${mFIP.toFixed(2)} FIP gives New York the marginal edge over ${oppPitcher} at ${oFIP.toFixed(2)}.`
+      ];
+      pitcherCase = opts[hashPick("fipsmall") % opts.length];
+    } else {
+      const opts = [
+        `The pitching numbers actually lean toward ${oppPitcher} (${oFIP.toFixed(2)} FIP vs ${metsPitcher}'s ${mFIP.toFixed(2)}), which is the honest read — the Mets case has to come from elsewhere today.`,
+        `${oppPitcher} holds the underlying pitching edge at ${oFIP.toFixed(2)} FIP compared to ${metsPitcher}'s ${mFIP.toFixed(2)}, so New York needs the offense to carry this one.`
+      ];
+      pitcherCase = opts[hashPick("fipbad") % opts.length];
+    }
+  } else {
+    pitcherCase = `${metsPitcher} takes the ball today for New York against ${oppPitcher}, and while full underlying splits aren't available yet, the matchup shapes up as workable.`;
+  }
+
+  // --- PART 3: SUPPORT ANGLE ---
+  const ta        = gameFacts.advanced?.teamAdvanced || {};
+  const metsTA    = ta.mets || {};
+  const rotRank   = metsTA.leagueRanks?.rotFip;
+  const wrcRank   = metsTA.leagueRanks?.wrcPlus;
+  const wrcPlus   = metsTA.wrcPlus;
+
+  // Check regression signals from edgeScoring
+  const hasRegressionEdge = edgeScoring.categories
+    .some(e => e.category === "Regression Signals" && e.edge === "Mets edge");
+  const hasBullpenEdge = edgeScoring.categories
+    .some(e => e.category === "Bullpen" && e.edge === "Mets edge");
+
+  let supportAngle = "";
+  if (rotRank != null && rotRank <= 12) {
+    const opts = [
+      `The supporting case sits in the rotation: New York ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff.`,
+      `Context worth noting: the Mets' rotation ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in the league by FIP, putting this lineup behind one of the better pitching groups in baseball right now.`
+    ];
+    supportAngle = opts[hashPick("rotrank") % opts.length];
+  } else if (hasRegressionEdge && wrcPlus != null && wrcRank != null) {
+    const opts = [
+      `The supporting angle is offense: New York's ${wrcPlus} wRC+ ranks ${ordinalSuffix(wrcRank)} in MLB, and the underlying contact quality suggests the production hasn't fully caught up to the expected output yet.`,
+      `On the offensive side, the Mets are ${ordinalSuffix(wrcRank)} in wRC+ at ${wrcPlus}, and Statcast-based metrics show a team that should be generating more damage than the results have shown — a positive-regression setup.`
+    ];
+    supportAngle = opts[hashPick("wrc") % opts.length];
+  } else if (hasBullpenEdge) {
+    const opts = [
+      `The secondary angle is the bullpen: New York's relief group has a real seasonal edge in the underlying numbers, which matters most if the game reaches the middle innings close.`,
+      `If the game stays tight, New York's bullpen is a live secondary advantage — the relief numbers have held up better than the opponent's this season.`
+    ];
+    supportAngle = opts[hashPick("bp") % opts.length];
+  } else if (wrcPlus != null && wrcRank != null && wrcRank <= 15) {
+    const opts = [
+      `The offensive support is real: a ${wrcPlus} wRC+ ranking ${ordinalSuffix(wrcRank)} in MLB means the Mets lineup is genuinely above average at generating expected run value.`,
+      `New York's offense ranks ${ordinalSuffix(wrcRank)} in wRC+ at ${wrcPlus} — a legitimate offensive group that gives today's starter a real margin to work with.`
+    ];
+    supportAngle = opts[hashPick("wrcgood") % opts.length];
+  } else {
+    supportAngle = "The supporting case is more about process than a clean secondary edge — the model isn't finding a dominant secondary angle, which is part of why the pick stays measured.";
+  }
+
+  // --- PART 4: CLOSE (calibrated to analyticalLean) ---
+  const lean = pick?.analyticalLean || "Mixed";
+  let close = "";
+
+  if (lean === "Mets") {
+    const opts = [
+      mlStr
+        ? `New York at ${mlStr} is the play — the board has the cleaner shape on the Mets side and the price still offers value for the matchup.`
+        : `The board has the cleaner shape on the Mets side, and that's the play.`,
+      `This is one of the cleaner Mets ML spots of the week — the process is pointing in the right direction and the price is workable.`,
+      `Taking the Mets here. The analytical lean is unambiguous and the matchup structure supports it.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  } else if (lean === "Slight Mets edge") {
+    const opts = [
+      mlStr
+        ? `The board gives New York a slim edge, and ${mlStr} is where the value is — tight, but still the right side.`
+        : `The board gives New York a slim edge — the pick is Mets ML, though with measured conviction.`,
+      `This isn't a slam-dunk spot, but the Mets have the marginal lean and the matchup supports taking it at this price.`,
+      `Mets ML, but held loosely — the edge is real, just not overwhelming.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  } else if (lean === "Opponent" || lean === "Slight opponent edge") {
+    const opts = [
+      `The honest read is that today's case is thinner than a full-model endorsement, but the clearest Mets path is still playable${mlStr ? ` at ${mlStr}` : ""} — this is a lean, not a conviction bet.`,
+      `The model doesn't love this spot, but the Mets' best-case path is real enough to back at this price — just not with heavy confidence.`,
+      `Taking the Mets here as the best available path, not a strong analytical endorsement — the board leans the other way, but the price and the case hold up.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  } else {
+    // Mixed
+    const opts = [
+      `The board is split, so today's pick leans on the clearest specific angle rather than overall model conviction${mlStr ? ` — Mets ML at ${mlStr}` : ""}.`,
+      `Mixed board, but the Mets still get the pick — the strongest individual angle tips it in New York's direction even without a clean all-green read.`,
+      `On a board this balanced, the bet comes down to which specific edge you trust most${mlStr ? `, and at ${mlStr}` : ""} the Mets case is the one worth backing.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  }
+
+  // Assemble paragraph — filter empty parts
+  const parts = [hook, pitcherCase, supportAngle, close].filter(s => s && s.trim().length > 0);
+  return parts.join(" ");
+}
+
+function ordinalSuffix(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
 function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics = []) {
   const topEdges = [...edgeScoring.categories]
     .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
@@ -3004,6 +3217,7 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
     officialPickSummaryParts.push("That said, this is one of the more self-aware Mets ML spots: the analytical read is not fully on their side, so the brand pick is leaning on the best plausible New York path rather than a clean all-in edge.");
   }
   const pickSummary = officialPickSummaryParts.filter(Boolean).slice(0, 3).join(" ");
+  const pickNarrative = buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject);
   const quickRead = buildQuickRead(edgeScoring, pick);
   const edgeSummary = buildEdgeSummary(edgeScoring, pick);
   const gameDetails = buildGameDetailsSummary(gameFacts, analysisObject);
@@ -3068,6 +3282,7 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
       { heading: "9. Official MetsMoneyline Pick", body: pickSummary }
     ],
     pickSummary,
+    pickNarrative,
     officialPick: "Official Pick: Mets ML"
   };
 }
@@ -3628,6 +3843,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       gameAnalysis: writeup.gameAnalysis || null,
       sections,
       pickSummary: writeup.pickSummary,
+      pickNarrative: writeup.pickNarrative || null,
       officialPick,
       edgeTable: writeup.edgeTable || [],
       keyAngles: writeup.keyAngles || [],
@@ -4871,6 +5087,7 @@ function logDebugAnalysis(writeup) {
       sections: writeup.sections || [],
       analyticalLean: writeup.analyticalLean || null,
       pickSummary: writeup.pickSummary || null,
+      pickNarrative: writeup.pickNarrative || null,
       officialPick: writeup.officialPick || null,
       confidence: writeup.confidence || null
     },
