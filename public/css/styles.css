@@ -1191,6 +1191,75 @@ tbody td:first-child { font-weight: 500; }
   color: #1e40af;
 }
 
+/* ── Game context two-column: side by side on tablet+, stacked on mobile ── */
+.gc-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+  .gc-two-col {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+}
+
+/* ── Statcast: desktop = table, mobile = stacked cards ── */
+.statcast-mobile-cards { display: none; }
+
+@media (max-width: 640px) {
+  .statcast-table-wrap { display: none; }
+  .statcast-mobile-cards { display: block; }
+  .statcast-card { padding: 0.85rem 0.9rem 1rem; }
+}
+
+.statcast-mobile-pitcher {
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.statcast-mobile-pitcher:last-child { margin-bottom: 0; }
+
+.statcast-mobile-pitcher-name {
+  padding: 0.5rem 0.75rem;
+  background: #f4f6fa;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--navy);
+  border-bottom: 1px solid var(--border);
+}
+
+.statcast-mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.statcast-mobile-cell {
+  padding: 0.45rem 0.35rem;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.statcast-mobile-cell:nth-child(4n) { border-right: none; }
+.statcast-mobile-cell:nth-last-child(-n+4) { border-bottom: none; }
+
+.statcast-mobile-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #9099b0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
 .compact-log-title {
   margin-bottom: 0.35rem;
   font-size: 0.71rem;
@@ -1853,18 +1922,6 @@ footer {
   tbody td {
     padding: 0.42rem 0.65rem;
     font-size: 0.82rem;
-  }
-
-  /* Statcast table: clip for border-radius but allow internal scroll */
-  .statcast-table-wrap {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Prevent pitcher names from causing table-layout issues on mobile */
-  .statcast-pitcher {
-    white-space: normal;
-    min-width: 80px;
   }
 
   /* Compact log: ensure min-width so columns stay usable before scrolling */

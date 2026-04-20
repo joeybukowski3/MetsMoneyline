@@ -938,6 +938,35 @@ function buildPitchingCard(game) {
       </table>
     </div>` : "";
 
+  const statcastMobileSection = (p.mets.savant || p.opp.savant) ? (() => {
+    const mobileCard = (pitcher, savant, isMets) => {
+      const stats = [
+        { label: "xERA",      val: savant?.xERA },
+        { label: "Barrel%",   val: savant?.barrelPct },
+        { label: "Hard-Hit%", val: savant?.hardHitPct },
+        { label: "Whiff%",    val: savant?.whiffPct },
+        { label: "Chase%",    val: savant?.chasePct },
+        { label: "K%",        val: savant?.kPct },
+        { label: "BB%",       val: savant?.bbPct },
+      ];
+      const cells = stats.map(s => `
+        <div class="statcast-mobile-cell">
+          <div class="statcast-mobile-label">${s.label}</div>
+          ${statcastCell(s.label, s.val).replace(/<\/?td>/g, "")}
+        </div>`).join("");
+      return `
+        <div class="statcast-mobile-pitcher">
+          <div class="statcast-mobile-pitcher-name ${isMets ? "statcast-pitcher-mets" : ""}">${pitcher}</div>
+          <div class="statcast-mobile-grid">${cells}</div>
+        </div>`;
+    };
+    return `
+      <div class="statcast-mobile-cards">
+        ${mobileCard(p.mets.name, p.mets.savant, true)}
+        ${mobileCard(p.opp.name, p.opp.savant, false)}
+      </div>`;
+  })() : "";
+
   return `
     <div class="section-floating-label">Starting Pitching</div>
     <div class="pitcher-two-col">
@@ -945,7 +974,7 @@ function buildPitchingCard(game) {
       ${oppCard}
     </div>
     ${vsRosterSection}
-    ${statcastSection ? `<div class="card full-card statcast-card">${statcastSection}</div>` : ""}
+    ${(statcastSection || statcastMobileSection) ? `<div class="card full-card statcast-card">${statcastSection}${statcastMobileSection}</div>` : ""}
 
     <div class="section-floating-label">Bullpen</div>
     <div class="pitcher-two-col">
@@ -1292,15 +1321,16 @@ function buildGameContextCard(game) {
       const teamScore = isMetsLog ? rawLeftScore : rawRightScore;
       const oppScore = isMetsLog ? rawRightScore : rawLeftScore;
       return `
-        <div style="display:grid;grid-template-columns:70px auto 1fr;gap:0.75rem;align-items:center;padding:0.45rem 0;border-bottom:1px solid #eef2f7;">
-          <div style="font-size:0.78rem;color:#64748b;font-weight:600;">${dateText}</div>
-          <div style="background:${badgeBg};color:${badgeColor};font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:999px;">${resultWord}</div>
-          <div style="display:flex;align-items:center;gap:0.55rem;min-width:0;flex-wrap:wrap;">
-            ${teamLogo ? `<img src="${teamLogo}" alt="${teamName} team logo" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;">` : ""}
-            <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${teamScore}</span>
-            ${oppLogo ? `<img src="${oppLogo}" alt="${g.opponent} team logo" width="18" height="18" loading="lazy" decoding="async" style="width:18px;height:18px;object-fit:contain;">` : ""}
-            <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${oppScore}</span>
-          </div>
+        <div style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0;border-bottom:1px solid #eef2f7;flex-wrap:nowrap;">
+          <span style="font-size:0.75rem;color:#64748b;font-weight:600;min-width:52px;flex-shrink:0;">${dateText}</span>
+          <span style="background:${badgeBg};color:${badgeColor};font-size:0.68rem;font-weight:800;padding:2px 7px;border-radius:999px;flex-shrink:0;">${resultWord}</span>
+          <span style="display:flex;align-items:center;gap:0.3rem;flex:1;min-width:0;justify-content:flex-end;">
+            ${teamLogo ? `<img src="${teamLogo}" width="14" height="14" style="width:14px;height:14px;object-fit:contain;flex-shrink:0;">` : ""}
+            <span style="font-size:0.82rem;font-weight:800;color:var(--ink);">${teamScore}</span>
+            <span style="font-size:0.75rem;color:#9099b0;">-</span>
+            ${oppLogo ? `<img src="${oppLogo}" width="14" height="14" style="width:14px;height:14px;object-fit:contain;flex-shrink:0;">` : ""}
+            <span style="font-size:0.82rem;font-weight:800;color:var(--ink);">${oppScore}</span>
+          </span>
         </div>`;
     }).join("");
 
@@ -1327,7 +1357,7 @@ function buildGameContextCard(game) {
     <div class="card full-card" style="padding:1.25rem">
 
       <!-- Recent form row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+      <div class="gc-two-col">
         <div>
           ${resultLog(gc.metsRecentGames, "Mets Last 5")}
         </div>
@@ -1343,7 +1373,7 @@ function buildGameContextCard(game) {
       </div>
 
       <!-- Injury report -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
+      <div class="gc-two-col">
         <div>${injuryChips(gc.metsInjuries, "Mets")}</div>
         <div>${injuryChips(gc.oppInjuries, oppAbbr)}</div>
       </div>
