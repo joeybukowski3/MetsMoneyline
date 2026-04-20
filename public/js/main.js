@@ -999,6 +999,7 @@ function buildPitchingCard(game) {
 
 /* ── ROW 3: Lineups + Advanced Metrics ── */
 function buildRow3(game) {
+  const ta = game.teamAdvanced;
   const l = game.lineups || {};
   const metsLineup = (Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : [];
   const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
@@ -1071,6 +1072,18 @@ function buildRow3(game) {
   // Advanced metrics - individual cards with progress bars (matching Lovable design)
   const resolvedMetrics = resolveAdvancedMatchup(game);
   const edgeLabel = computeAdvancedEdgeLabel(resolvedMetrics, oppAbbr);
+  const METRIC_RANK_KEY = {
+    "Offense vs SP Hand - wRC+": "wrcPlus",
+    "Hard-Hit %":                "hardHit",
+    "Barrel %":                  "barrelPct",
+    "Walk Rate (BB%)":           "bbPct",
+    "Strikeout Rate (K%)":       "kPct",
+  };
+  const rankBadge = (rank) => {
+    if (rank == null) return "";
+    const rankColor = rank <= 10 ? "#15803d" : rank <= 20 ? "#92400e" : "#b91c1c";
+    return `<div style="font-size:0.68rem;font-weight:700;color:${rankColor};margin-top:1px;">#${rank} MLB</div>`;
+  };
   const advCards = resolvedMetrics.map(r => {
     const nymRaw = parseMetricNumber(r.mets);
     const oppRaw = parseMetricNumber(r.opp);
@@ -1080,19 +1093,28 @@ function buildRow3(game) {
     const maxVal = comparable ? Math.max(nymRaw, oppRaw, 0.001) : 1;
     const nymPct = comparable ? (Math.min((nymRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
     const oppPct = comparable ? (Math.min((oppRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
+    const rankKey = METRIC_RANK_KEY[r.category];
+    const metsRank = rankKey ? ta?.mets?.leagueRanks?.[rankKey] : null;
+    const oppRank  = rankKey ? ta?.opp?.leagueRanks?.[rankKey]  : null;
     return `
       <div class="adv-metric-card">
         <div class="amc-label">${r.category}</div>
         <div class="amc-row">
           <span class="amc-abbr ${nymWins ? "winner" : ""}">NYM</span>
-          <span class="amc-val ${nymWins ? "winner" : ""}">${r.mets}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;">
+            <span class="amc-val ${nymWins ? "winner" : ""}">${r.mets}</span>
+            ${rankBadge(metsRank)}
+          </div>
         </div>
         <div class="amc-bar-track">
           <div class="amc-bar-fill ${nymWins ? "win" : "lose"}" style="width:${nymPct.toFixed(1)}%"></div>
         </div>
         <div class="amc-row" style="margin-top:0.5rem">
           <span class="amc-abbr ${comparable && !nymWins ? "winner" : ""}">${oppAbbr}</span>
-          <span class="amc-val ${comparable && !nymWins ? "winner" : ""}">${r.opp}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;">
+            <span class="amc-val ${comparable && !nymWins ? "winner" : ""}">${r.opp}</span>
+            ${rankBadge(oppRank)}
+          </div>
         </div>
         <div class="amc-bar-track">
           <div class="amc-bar-fill ${comparable && !nymWins ? "win" : "lose"}" style="width:${oppPct.toFixed(1)}%"></div>
@@ -1381,6 +1403,12 @@ function buildGameContextCard(game) {
     </div>`;
 }
 
+function ordinalSuffix(n) {
+  const s = ["th","st","nd","rd"];
+  const v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+
 /* ── Team Advanced Stats Card ── */
 function buildTeamAdvancedCard(game) {
   const ta = game.teamAdvanced;
@@ -1401,16 +1429,16 @@ function buildTeamAdvancedCard(game) {
   const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label} team logo" width="18" height="18" loading="lazy" decoding="async">` : ""}<span>${label}</span></span>`;
 
   const rows = [
-    { label: "wRC+",         mVal: ta.mets.wrcPlus,   oVal: ta.opp.wrcPlus,   higherBetter: true  },
-    { label: "wOBA",         mVal: ta.mets.woba,      oVal: ta.opp.woba,      higherBetter: true  },
-    { label: "ISO",          mVal: ta.mets.iso,       oVal: ta.opp.iso,       higherBetter: true  },
-    { label: "xBA",          mVal: ta.mets.xba,       oVal: ta.opp.xba,       higherBetter: true  },
-    { label: "xSLG",         mVal: ta.mets.xslg,      oVal: ta.opp.xslg,      higherBetter: true  },
-    { label: "xwOBA",        mVal: ta.mets.xwoba,     oVal: ta.opp.xwoba,     higherBetter: true  },
-    { label: "OPS",          mVal: ta.mets.ops,       oVal: ta.opp.ops,       higherBetter: true  },
-    { label: "BB%",          mVal: ta.mets.bbPct,     oVal: ta.opp.bbPct,     higherBetter: true  },
-    { label: "K%",           mVal: ta.mets.kPct,      oVal: ta.opp.kPct,      higherBetter: false },
-    { label: "Rotation xFIP",mVal: ta.mets.rotXfip || ta.mets.rotFip, oVal: ta.opp.rotXfip || ta.opp.rotFip, higherBetter: false },
+    { label: "wRC+",          mVal: ta.mets.wrcPlus,                     oVal: ta.opp.wrcPlus,                     higherBetter: true,  rankKey: "wrcPlus" },
+    { label: "wOBA",          mVal: ta.mets.woba,                        oVal: ta.opp.woba,                        higherBetter: true,  rankKey: "woba"    },
+    { label: "ISO",           mVal: ta.mets.iso,                         oVal: ta.opp.iso,                         higherBetter: true,  rankKey: "iso"     },
+    { label: "xBA",           mVal: ta.mets.xba,                         oVal: ta.opp.xba,                         higherBetter: true,  rankKey: "xba"     },
+    { label: "xSLG",          mVal: ta.mets.xslg,                        oVal: ta.opp.xslg,                        higherBetter: true,  rankKey: "xslg"    },
+    { label: "xwOBA",         mVal: ta.mets.xwoba,                       oVal: ta.opp.xwoba,                       higherBetter: true,  rankKey: "xwoba"   },
+    { label: "OPS",           mVal: ta.mets.ops,                         oVal: ta.opp.ops,                         higherBetter: true,  rankKey: "ops"     },
+    { label: "BB%",           mVal: ta.mets.bbPct,                       oVal: ta.opp.bbPct,                       higherBetter: true,  rankKey: "bbPct"   },
+    { label: "K%",            mVal: ta.mets.kPct,                        oVal: ta.opp.kPct,                        higherBetter: false, rankKey: "kPct"    },
+    { label: "Rotation xFIP", mVal: ta.mets.rotXfip || ta.mets.rotFip,  oVal: ta.opp.rotXfip || ta.opp.rotFip,   higherBetter: false, rankKey: "rotFip"  },
   ].map(r => {
     const fmt = v => (v == null || v === "") ? "-" : String(v);
     const mNum = parseMetricNumber(r.mVal);
@@ -1420,6 +1448,14 @@ function buildTeamAdvancedCard(game) {
     const oppLeads  = hasComparison && !metsLeads && mNum !== oNum;
     const mStyle = metsLeads ? "font-weight:700;color:#15803d" : "";
     const oStyle = oppLeads  ? "font-weight:700;color:#b91c1c" : "";
+    const mRank = ta.mets.leagueRanks?.[r.rankKey];
+    const oRank = ta.opp.leagueRanks?.[r.rankKey];
+    const fmtCell = (val, rank, isLeading) => {
+      const statStr = fmt(val);
+      if (rank == null) return `<span style="${isLeading ? "font-weight:700;" : ""}">${statStr}</span>`;
+      const rankColor = rank <= 10 ? "#15803d" : rank <= 20 ? "#92400e" : "#b91c1c";
+      return `<div style="line-height:1.3;"><span style="font-size:1rem;font-weight:800;color:${rankColor};">${ordinalSuffix(rank)}</span><span style="font-size:0.72rem;color:#6b7280;font-weight:500;margin-left:3px;">— ${statStr}</span></div>`;
+    };
     const edgeBadge = metsLeads
       ? `${teamHeader("Mets", metsLogo)} <span class="team-edge-badge team-edge-badge-mets">edge</span>`
       : oppLeads
@@ -1427,8 +1463,8 @@ function buildTeamAdvancedCard(game) {
         : "-";
     return `<tr>
       <td>${r.label}</td>
-      <td style="${mStyle}">${fmt(r.mVal)}</td>
-      <td style="${oStyle}">${fmt(r.oVal)}</td>
+      <td style="${mStyle}">${fmtCell(r.mVal, mRank, metsLeads)}</td>
+      <td style="${oStyle}">${fmtCell(r.oVal, oRank, oppLeads)}</td>
       <td>${edgeBadge}</td>
     </tr>`;
   }).join("");
