@@ -26,6 +26,16 @@ jobs:
         run: npm install
         working-directory: ./bot
 
+      - name: Build API cache
+        working-directory: ./bot
+        env:
+          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
+          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
+          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
+          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: node build-api-cache.js
+
       - name: Generate Mets data
         working-directory: ./bot
         env:
@@ -56,21 +66,21 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Save the freshly generated files before touching git history
+          # Save only generated data files (not pick-history — that gets regenerated)
           cp public/data/sample-game.json /tmp/sample-game.json 2>/dev/null || true
-          cp public/data/pick-history.json /tmp/pick-history.json 2>/dev/null || true
           cp -r public/api/ /tmp/api-backup/ 2>/dev/null || true
 
-          # Reset to exactly what's on remote — no conflicts possible
+          # Reset to remote — no conflicts possible
           git fetch origin main
           git reset --hard origin/main
 
-          # Restore the freshly generated files on top of remote state
+          # Restore generated files
           cp /tmp/sample-game.json public/data/sample-game.json 2>/dev/null || true
-          cp /tmp/pick-history.json public/data/pick-history.json 2>/dev/null || true
           cp -r /tmp/api-backup/. public/api/ 2>/dev/null || true
 
-          # Stage and commit
+          # Regenerate pick history fresh (reads MLB schedule API for latest results)
+          node bot/refresh-pick-history.js
+
           git add public/data/sample-game.json || true
           git add public/data/pick-history.json || true
           git add public/api/ 2>/dev/null || true

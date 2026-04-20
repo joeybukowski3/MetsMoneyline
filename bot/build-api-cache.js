@@ -340,15 +340,18 @@ async function fetchTheOddsApiOdds(nextGame) {
 
   // Primary: score-based matching against the reference game (requires both teams to match)
   if (nextGame) {
-    const best = events
-      .map((event) => ({ event, score: scoreOddsEventMatch(event, nextGame) }))
-      .filter((entry) => entry.score >= 4)
-      .sort((a, b) => b.score - a.score)[0];
+    const scored = events.map((event) => ({ event, score: scoreOddsEventMatch(event, nextGame) }));
+    scored.forEach(({ event, score }) => {
+      if (score > 0) {
+        console.log(`[odds] event candidate: ${event.away_team} @ ${event.home_team} (score ${score})`);
+      }
+    });
+    const best = scored.filter((entry) => entry.score >= 3).sort((a, b) => b.score - a.score)[0];
     if (best) {
       console.log(`[odds] Score match: ${best.event.home_team} vs ${best.event.away_team} (score ${best.score})`);
       return normalizeTheOddsApiEvent(best.event);
     }
-    console.log(`[odds] No score >= 4 match found; falling back to Mets name search`);
+    console.log(`[odds] No score >= 3 match found; falling back to Mets name search`);
   }
 
   // Fallback: find any upcoming event that includes the Mets

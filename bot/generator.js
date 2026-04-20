@@ -1960,7 +1960,17 @@ async function buildLastMeetingSummary(teamId, oppTeamId, beforeDate) {
 
 async function getOddsFacts(game) {
   try {
-    const cachedOdds = JSON.parse(fs.readFileSync(API_ODDS_PATH, "utf8"));
+    if (!fs.existsSync(API_ODDS_PATH)) {
+      console.warn(`[odds] Cache file not found at ${API_ODDS_PATH} — odds will be null`);
+      return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
+    }
+    const raw = fs.readFileSync(API_ODDS_PATH, "utf8");
+    const cachedOdds = JSON.parse(raw);
+    console.log(`[odds] Cache loaded — provider: ${cachedOdds?.provider || "unknown"}, markets: ${Array.isArray(cachedOdds?.markets) ? cachedOdds.markets.length : 0}`);
+    if (!cachedOdds || (!Array.isArray(cachedOdds.markets) && !Array.isArray(cachedOdds?.consensus?.markets))) {
+      console.warn(`[odds] Cache file exists but has no markets — odds will be null`);
+      return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
+    }
     const market = Array.isArray(cachedOdds?.markets)
       ? cachedOdds.markets.find((entry) => /moneyline|h2h/i.test(entry.label || entry.key || ""))
       : null;
@@ -1984,6 +1994,14 @@ async function getOddsFacts(game) {
       ? totalMarket.outcomes.find((outcome) => /over/i.test(outcome.name || ""))
       : null;
 
+    if (!moneylineMarket) {
+      console.warn(`[odds] No moneyline market found in cache`);
+    } else if (!metsOutcome) {
+      console.warn(`[odds] Moneyline market found but no Mets outcome (team name: "${TEAM_NAME}")`);
+    } else {
+      console.log(`[odds] Mets ML: ${metsOutcome.price}, Opp ML: ${oppOutcome?.price ?? "null"}`);
+    }
+
     return {
       metsMoneyline: typeof metsOutcome?.price === "number" ? metsOutcome.price : null,
       oppMoneyline: typeof oppOutcome?.price === "number" ? oppOutcome.price : null,
@@ -1997,7 +2015,7 @@ async function getOddsFacts(game) {
       total: typeof overOutcome?.point === "number" ? overOutcome.point : null
     };
   } catch (error) {
-    console.warn(`[warn] API-SPORTS odds cache read failed: ${error.message}`);
+    console.warn(`[odds] Cache read failed: ${error.message}`);
     return {
       metsMoneyline: null,
       oppMoneyline: null,

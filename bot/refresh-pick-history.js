@@ -7,6 +7,10 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const MANUAL_HISTORY_ODDS = [
+  { date: "2026-04-19", opponent: "Chicago Cubs", homeAway: "road", odds: 130 },
+  { date: "2026-04-18", opponent: "Chicago Cubs", homeAway: "road", odds: 120 },
+  { date: "2026-04-17", opponent: "Chicago Cubs", homeAway: "road", odds: 115 },
+  { date: "2026-04-15", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 150 },
   { date: "2026-04-14", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 145 },
   { date: "2026-04-13", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 155 },
   { date: "2026-04-12", opponent: "Athletics", homeAway: "home", odds: -185 },
@@ -298,9 +302,18 @@ async function main() {
   const existingEntries = normalizeStoredEntries(existingHistory.entries || existingHistory.recentBreakdowns);
   const seedEntries = normalizeStoredEntries(seededHistory.entries);
   const sampleGames = Array.isArray(sampleGame?.games) ? sampleGame.games : [];
+  console.log(`[history-refresh] Starting — season=${season}, sample games=${sampleGames.length}, existing entries=${existingEntries.length}, seed entries=${seedEntries.length}`);
+  console.log(`[history-refresh] MANUAL_HISTORY_ODDS covers: ${MANUAL_HISTORY_ODDS.map(e => e.date).join(", ")}`);
   const { oddsMap, metaMap } = buildOddsLookup(existingEntries, seedEntries, sampleGames);
   const scheduleGames = await fetchSeasonSchedule(season);
   const completedGames = scheduleGames.filter((game) => isFinalGameStatus(game));
+  const gamesByDate = completedGames.reduce((acc, g) => {
+    const date = String(g?.officialDate || g?.gameDate || "").slice(0, 10);
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+  console.log(`[history-refresh] Completed games by date (last 10):`,
+    Object.entries(gamesByDate).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 10));
   const pendingGames = Math.max(scheduleGames.length - completedGames.length, 0);
   console.log(`[history-refresh] Completed games=${completedGames.length} pending games omitted=${pendingGames}`);
   const entries = completedGames.map((game) => buildHistoryEntry(game, oddsMap, metaMap));
