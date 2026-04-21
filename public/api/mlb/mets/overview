@@ -279,7 +279,7 @@
     "sourceProvider": "mlb-stats-api",
     "meta": {
       "provider": "mlb-stats-api",
-      "generatedAt": "2026-04-21T08:16:21.850Z",
+      "generatedAt": "2026-04-21T08:16:18.883Z",
       "cacheHint": "standings: 10-15 minutes"
     }
   },
@@ -6107,11 +6107,6 @@
   ],
   "source": {
     "provider": "mlb-stats-api",
-    "note": "Overview remains server-side MLB Stats API because API-SPORTS is the primary structured provider for game state, standings, recent results, and odds."
-  },
-  "meta": {
-    "provider": "mlb-stats-api",
-    "generatedAt": "2026-04-21T08:16:21.900Z",
-    "cacheHint": "overview: 10-15 minutes"
+    "note": "Overview remains server-side MLB Stats API because API-SPORTS is only being used as the primary provider for game, standings, recent results, and odds data."
   }
 }
