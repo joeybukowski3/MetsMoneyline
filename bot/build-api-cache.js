@@ -473,12 +473,28 @@ async function run() {
     }
   };
 
+  const oddsHasData = odds?.gameId && Array.isArray(odds?.markets) && odds.markets.length > 0;
+  let resolvedOdds = odds;
+  if (!oddsHasData) {
+    const existingOddsPath = path.join(PUBLIC_API_ROOT, "odds");
+    try {
+      const existingRaw = fs.readFileSync(existingOddsPath, "utf8");
+      const existingOdds = JSON.parse(existingRaw);
+      if (existingOdds?.gameId && Array.isArray(existingOdds?.markets) && existingOdds.markets.length > 0) {
+        console.log(`[odds] Fetch returned empty — preserving existing valid odds (gameId: ${existingOdds.gameId})`);
+        resolvedOdds = existingOdds;
+      }
+    } catch {
+      // No existing file or unparseable — continue with empty odds
+    }
+  }
   const oddsPayload = {
-    ...odds,
+    ...resolvedOdds,
     meta: {
       provider: process.env.ODDS_API_KEY ? (odds?.raw?.sport_key ? "the-odds-api" : "api-sports") : "api-sports",
       generatedAt: new Date().toISOString(),
-      cacheHint: "odds: 2-5 minutes"
+      cacheHint: "odds: 2-5 minutes",
+      ...((!oddsHasData && resolvedOdds !== odds) ? { note: "preserved from previous cache — live fetch returned empty" } : {})
     }
   };
 

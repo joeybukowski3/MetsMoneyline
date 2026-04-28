@@ -7,6 +7,11 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const MANUAL_HISTORY_ODDS = [
+  { date: "2026-04-26", opponent: "Colorado Rockies", homeAway: "home", odds: -182, estimated: true },
+  { date: "2026-04-24", opponent: "Colorado Rockies", homeAway: "home", odds: -188, estimated: true },
+  { date: "2026-04-23", opponent: "Minnesota Twins", homeAway: "home", odds: -130, estimated: true },
+  { date: "2026-04-22", opponent: "Minnesota Twins", homeAway: "home", odds: -135, estimated: true },
+  { date: "2026-04-21", opponent: "Minnesota Twins", homeAway: "home", odds: -132, estimated: true },
   { date: "2026-04-19", opponent: "Chicago Cubs", homeAway: "road", odds: 130 },
   { date: "2026-04-18", opponent: "Chicago Cubs", homeAway: "road", odds: 120 },
   { date: "2026-04-17", opponent: "Chicago Cubs", homeAway: "road", odds: 115 },
@@ -63,6 +68,8 @@ function isFinalGameStatus(game = {}) {
   const abstractState = String(game?.status?.abstractGameState || "").toLowerCase();
   const detailedState = String(game?.status?.detailedState || "").toLowerCase();
   const codedState = String(game?.status?.codedGameState || "").toUpperCase();
+  // Exclude postponed/suspended games even if abstractState is "final"
+  if (["D", "T"].includes(codedState)) return false;
   return abstractState === "final"
     || /final|completed|game over/.test(detailedState)
     || ["F", "O"].includes(codedState);
