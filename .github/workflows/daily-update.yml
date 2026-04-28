@@ -91,4 +91,4 @@ jobs:
           fi
 
           git commit -m "chore: daily data update [skip ci]"
-          git push origin main
+          git push --force-with-lease origin main || (git pull --rebase origin main && git push origin main)

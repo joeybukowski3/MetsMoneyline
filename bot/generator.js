@@ -1151,11 +1151,22 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
   const launchAngleAllowed = contactAllowed?.launchAngle ?? (savant?.avg_hit_angle ? Number(savant.avg_hit_angle) : null);
   console.log(`[savant] ${pitcherName} exitVelo: ${exitVeloAllowed}, launchAngle: ${launchAngleAllowed}`);
 
+  const pitcherGeneratedAt = new Date().toISOString();
+  const statsSources = {
+    era: stat?.era ? "mlb" : fangraphsPitcher?.ERA ? "fangraphs" : null,
+    fip: stat?.fip ? "mlb" : fangraphsPitcher?.FIP ? "fangraphs" : computeApproxFip(stat) ? "computed" : null,
+    savant: savant ? "savant" : null,
+    statSeason: statSeason || null
+  };
+  console.log(`[pitcher] ${pitcherName}: era=${stat?.era ?? null} fip=${stat?.fip ?? null} savant=${Boolean(savant)} statSeason=${statSeason} generatedAt=${pitcherGeneratedAt}`);
+
   return {
     name: pitcherName,
     mlbId: personId,
     announced: true,
     hand: person?.pitchHand?.code || null,
+    generatedAt: pitcherGeneratedAt,
+    statsSources,
     seasonLine: formatPitcherSeasonLine(stat, currentSeasonRecord),
     seasonRecord: currentSeasonRecord,
     seasonERA: stat?.era || fangraphsPitcher?.ERA || null,

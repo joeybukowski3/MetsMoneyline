@@ -1555,6 +1555,14 @@ async function init() {
         hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
       });
     }
+    const ageHours = (Date.now() - new Date(generatedAt).getTime()) / 36e5;
+    if (ageHours > 12) {
+      const staleEl = document.getElementById("stale-data-banner");
+      if (staleEl) {
+        staleEl.style.display = "block";
+        staleEl.textContent = `⚠ Pitcher data may be outdated — last refreshed ${Math.round(ageHours)} hours ago. Check back soon.`;
+      }
+    }
   }
 }
 

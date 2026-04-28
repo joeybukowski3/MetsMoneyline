@@ -60,7 +60,7 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "chore: report send state update [skip ci]"
-            git push
+            git push --force-with-lease origin main || (git pull --rebase origin main && git push origin main)
           fi
 
       - name: Fail workflow if send step failed
