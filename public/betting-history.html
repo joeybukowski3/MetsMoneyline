@@ -172,8 +172,17 @@
       return entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
     }
 
+    // Primary sort: date; secondary: sourceGamePk (lower = earlier game on same day)
+    function chronologicalAsc(a, b) {
+      const dateCmp = String(a.date).localeCompare(String(b.date));
+      if (dateCmp !== 0) return dateCmp;
+      return (Number(a.sourceGamePk) || 0) - (Number(b.sourceGamePk) || 0);
+    }
+
     function buildDisplayEntries(entries) {
-      const chronological = [...entries].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      // Always accumulate oldest→newest with stable tiebreaker so doubleheaders
+      // accumulate in gamePk order (lower gamePk = earlier game)
+      const chronological = [...entries].sort(chronologicalAsc);
       let runningProfit = 0;
 
       const withCumulative = chronological.map((entry) => {
@@ -185,14 +194,15 @@
         }
         return {
           ...entry,
-          cumulativeProfit: graded && profit != null ? runningProfit : null,
+          cumulativeProfit: graded && profit != null ? Number(runningProfit.toFixed(2)) : null,
           settled,
           graded
         };
       });
 
+      // Display newest→oldest; for same-date games, higher gamePk (later game) first
       return {
-        displayEntries: [...withCumulative].sort((a, b) => String(b.date).localeCompare(String(a.date))),
+        displayEntries: [...withCumulative].sort((a, b) => -chronologicalAsc(a, b)),
         seasonProfit: runningProfit
       };
     }

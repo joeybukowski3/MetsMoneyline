@@ -603,7 +603,11 @@ function dedupeHistoryEntries(entries = []) {
     });
   }
 
-  return [...map.values()].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return [...map.values()].sort((a, b) => {
+    const dateCmp = String(b.date).localeCompare(String(a.date));
+    if (dateCmp !== 0) return dateCmp;
+    return (Number(b.sourceGamePk) || 0) - (Number(a.sourceGamePk) || 0);
+  });
 }
 
 function loadPickHistory() {
@@ -648,14 +652,18 @@ function writePickHistory(entries = []) {
     ...existingHistory.entries,
     ...entries
   ]);
+  // Only count settled (final + W/L result + numeric profit) entries for grading stats
   const normalizedSummary = normalizedEntries.reduce((acc, entry) => {
-    if (entry?.status === "final") {
-      if (entry?.result === "W") acc.wins += 1;
-      if (entry?.result === "L") acc.losses += 1;
-      if (typeof entry?.profit === "number") acc.profit += entry.profit;
+    const isSettled = entry?.status === "final"
+      && (entry?.result === "W" || entry?.result === "L")
+      && typeof entry?.profit === "number";
+    if (isSettled) {
+      acc.totalBets += 1;
+      acc.totalWagered += typeof entry?.stake === "number" ? entry.stake : 100;
+      acc.profit += entry.profit;
+      if (entry.result === "W") acc.wins += 1;
+      if (entry.result === "L") acc.losses += 1;
     }
-    if (typeof entry?.stake === "number") acc.totalWagered += entry.stake;
-    acc.totalBets += 1;
     return acc;
   }, { wins: 0, losses: 0, profit: 0, totalBets: 0, totalWagered: 0 });
 

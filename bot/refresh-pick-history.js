@@ -253,8 +253,15 @@ function buildHistoryEntry(game, oddsLookup, metaLookup) {
   };
 }
 
+function chronologicalSort(a, b) {
+  const dateCmp = String(a.date).localeCompare(String(b.date));
+  if (dateCmp !== 0) return dateCmp;
+  // Stable tiebreaker for same-date games (doubleheaders): lower gamePk = earlier game
+  return (Number(a.sourceGamePk) || 0) - (Number(b.sourceGamePk) || 0);
+}
+
 function summarize(entries) {
-  const chronological = [...entries].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  const chronological = [...entries].sort(chronologicalSort);
   let runningProfit = 0;
   let wins = 0;
   let losses = 0;
@@ -286,8 +293,31 @@ function summarize(entries) {
   const totalWagered = gradedBets * 100;
   const profit = Number(runningProfit.toFixed(2));
 
+  // Validation: every graded W must have positive profit; every L must be -100;
+  // cumulative must move in same direction as profit
+  let prevCumulative = null;
+  for (const entry of chronological) {
+    if (entry.gradingStatus !== "graded" || typeof entry.profit !== "number") continue;
+    if (entry.result === "W" && entry.profit <= 0) {
+      console.error(`[history-refresh] VALIDATION FAIL: ${entry.date} ${entry.opponent} W but profit=${entry.profit}`);
+    }
+    if (entry.result === "L" && entry.profit !== -100) {
+      console.error(`[history-refresh] VALIDATION FAIL: ${entry.date} ${entry.opponent} L but profit=${entry.profit} (expected -100)`);
+    }
+    if (prevCumulative !== null && typeof entry.cumulativeProfit === "number") {
+      const delta = Number((entry.cumulativeProfit - prevCumulative).toFixed(2));
+      if (Math.abs(delta - entry.profit) > 0.01) {
+        console.error(`[history-refresh] VALIDATION FAIL: ${entry.date} ${entry.opponent} cumulativeProfit delta=${delta} but profit=${entry.profit}`);
+      }
+    }
+    prevCumulative = entry.cumulativeProfit;
+  }
+  if (Math.abs(profit - (prevCumulative ?? profit)) > 0.01) {
+    console.error(`[history-refresh] VALIDATION FAIL: final cumulative=${prevCumulative} != summary profit=${profit}`);
+  }
+
   return {
-    orderedEntries: chronological.sort((a, b) => String(b.date).localeCompare(String(a.date))),
+    orderedEntries: chronological.sort((a, b) => -chronologicalSort(a, b)),
     record: {
       completedGames: chronological.length,
       wins,
