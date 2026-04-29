@@ -7,6 +7,7 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const MANUAL_HISTORY_ODDS = [
+  { date: "2026-04-28", opponent: "Washington Nationals", homeAway: "home", odds: -162, estimated: true },
   { date: "2026-04-26", opponent: "Colorado Rockies", homeAway: "home", odds: -182, estimated: true },
   { date: "2026-04-24", opponent: "Colorado Rockies", homeAway: "home", odds: -188, estimated: true },
   { date: "2026-04-23", opponent: "Minnesota Twins", homeAway: "home", odds: -130, estimated: true },

@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Queue with history-refresh — both write pick-history.json
+concurrency:
+  group: pick-history-write
+  cancel-in-progress: false
+
 jobs:
   send-report:
     runs-on: ubuntu-latest
