@@ -151,10 +151,8 @@
       return odds > 0 ? `+${odds}` : `${odds}`;
     }
 
-    function isGradedEntry(entry) {
-      return entry?.status === "final"
-        && (entry?.result === "W" || entry?.result === "L")
-        && typeof entry?.profit === "number";
+    function getStake(entry) {
+      return typeof entry?.stake === "number" && Number.isFinite(entry.stake) ? entry.stake : 100;
     }
 
     function normalizeEntries(data) {
@@ -172,6 +170,16 @@
       return entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
     }
 
+    function calculateGameProfit(entry) {
+      if (!isSettledEntry(entry)) return null;
+      if (typeof entry?.odds !== "number" || !Number.isFinite(entry.odds)) return null;
+
+      const stake = getStake(entry);
+      if (entry.result === "L") return Number((-stake).toFixed(2));
+      if (entry.odds > 0) return Number((stake * (entry.odds / 100)).toFixed(2));
+      return Number((stake * (100 / Math.abs(entry.odds))).toFixed(2));
+    }
+
     // Primary sort: date; secondary: sourceGamePk (lower = earlier game on same day)
     function chronologicalAsc(a, b) {
       const dateCmp = String(a.date).localeCompare(String(b.date));
@@ -180,36 +188,51 @@
     }
 
     function buildDisplayEntries(entries) {
-      // Always accumulate oldest→newest with stable tiebreaker so doubleheaders
-      // accumulate in gamePk order (lower gamePk = earlier game)
       const chronological = [...entries].sort(chronologicalAsc);
       let runningProfit = 0;
+      let wins = 0;
+      let losses = 0;
+      let totalBets = 0;
+      let totalWagered = 0;
 
       const withCumulative = chronological.map((entry) => {
         const settled = isSettledEntry(entry);
-        const graded = isGradedEntry(entry);
-        const profit = typeof entry?.profit === "number" ? entry.profit : null;
-        if (graded && profit != null) {
+        const profit = calculateGameProfit(entry);
+        const graded = settled && profit != null;
+
+        if (graded) {
+          totalBets += 1;
+          totalWagered += getStake(entry);
           runningProfit += profit;
+          if (entry.result === "W") wins += 1;
+          if (entry.result === "L") losses += 1;
         }
+
         return {
           ...entry,
-          cumulativeProfit: graded && profit != null ? Number(runningProfit.toFixed(2)) : null,
+          profit,
+          cumulativeProfit: graded ? Number(runningProfit.toFixed(2)) : null,
           settled,
           graded
         };
       });
 
-      // Display newest→oldest; for same-date games, higher gamePk (later game) first
       return {
         displayEntries: [...withCumulative].sort((a, b) => -chronologicalAsc(a, b)),
-        seasonProfit: runningProfit
+        summary: {
+          wins,
+          losses,
+          totalBets,
+          totalWagered: Number(totalWagered.toFixed(2)),
+          profit: Number(runningProfit.toFixed(2)),
+          roi: totalWagered > 0 ? Number(((runningProfit / totalWagered) * 100).toFixed(2)) : 0
+        }
       };
     }
 
     function renderHistory(data) {
       const historyData = normalizeEntries(data);
-      const { displayEntries, seasonProfit } = buildDisplayEntries(historyData);
+      const { displayEntries, summary } = buildDisplayEntries(historyData);
 
       const rows = displayEntries.map((entry) => {
         const isFinal = true;
@@ -241,7 +264,7 @@
           <td data-label="Mets ML">${formatOdds(entry.odds)}</td>
           <td data-label="Result"><span class="${resultClass}">${resultLabel}</span></td>
           <td data-label="Score">${entry.finalScore || "&mdash;"}</td>
-          <td data-label="Stake">${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td>
+          <td data-label="Stake">$${getStake(entry).toFixed(2)}</td>
           <td data-label="Game P/L" class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td>
           <td data-label="Cumulative" class="${cumulativeClass}">${formatCurrency(cumulative)}</td>
         </tr>`;
@@ -251,36 +274,18 @@
         ? rows.join("")
         : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
 
-      const summary = data?.record || {};
-      const wins = typeof summary.wins === "number"
-        ? summary.wins
-        : historyData.filter((entry) => isGradedEntry(entry) && entry?.result === "W").length;
-      const losses = typeof summary.losses === "number"
-        ? summary.losses
-        : historyData.filter((entry) => isGradedEntry(entry) && entry?.result === "L").length;
-      const totalBets = typeof summary.totalBets === "number"
-        ? summary.totalBets
-        : historyData.filter(isGradedEntry).length;
-      const totalWagered = typeof summary.totalWagered === "number"
-        ? summary.totalWagered
-          : historyData.filter(isGradedEntry).reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
-      const cumulativeProfit = typeof summary.profit === "number" ? summary.profit : seasonProfit;
-      const roi = typeof summary.roi === "number"
-        ? summary.roi
-        : (totalWagered > 0 ? Number(((cumulativeProfit / totalWagered) * 100).toFixed(2)) : 0);
-
-      document.getElementById("total-bets-display").textContent = String(totalBets);
-      document.getElementById("wins-display").textContent = String(wins);
-      document.getElementById("losses-display").textContent = String(losses);
-      document.getElementById("wagered-display").textContent = `$${Number(totalWagered).toFixed(2)}`;
+      document.getElementById("total-bets-display").textContent = String(summary.totalBets);
+      document.getElementById("wins-display").textContent = String(summary.wins);
+      document.getElementById("losses-display").textContent = String(summary.losses);
+      document.getElementById("wagered-display").textContent = `$${summary.totalWagered.toFixed(2)}`;
 
       const plDisplay = document.getElementById("pl-display");
-      plDisplay.textContent = `${cumulativeProfit >= 0 ? "+$" : "-$"}${Math.abs(cumulativeProfit).toFixed(2)}`;
-      plDisplay.className = cumulativeProfit >= 0 ? "text-profit" : "text-loss";
+      plDisplay.textContent = `${summary.profit >= 0 ? "+$" : "-$"}${Math.abs(summary.profit).toFixed(2)}`;
+      plDisplay.className = summary.profit >= 0 ? "text-profit" : "text-loss";
 
       const roiDisplay = document.getElementById("roi-display");
-      roiDisplay.textContent = `${roi >= 0 ? "+" : ""}${roi.toFixed(2)}%`;
-      roiDisplay.className = roi >= 0 ? "text-profit" : "text-loss";
+      roiDisplay.textContent = `${summary.roi >= 0 ? "+" : ""}${summary.roi.toFixed(2)}%`;
+      roiDisplay.className = summary.roi >= 0 ? "text-profit" : "text-loss";
 
       if (data?.generatedAt || data?.updatedAt) {
         const timestamp = data.generatedAt || data.updatedAt;

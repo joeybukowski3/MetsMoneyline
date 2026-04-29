@@ -644,6 +644,55 @@ function loadPickHistorySeed() {
   }
 }
 
+function getHistoryStake(entry = {}) {
+  return typeof entry?.stake === "number" ? entry.stake : 100;
+}
+
+function calculateHistoryProfit(entry = {}) {
+  if (!isSettledHistoryEntry(entry)) return null;
+  if (typeof entry?.odds !== "number") return null;
+
+  const stake = getHistoryStake(entry);
+  if (entry.result === "L") return Number((-stake).toFixed(2));
+  if (entry.odds > 0) return Number((stake * (entry.odds / 100)).toFixed(2));
+  return Number((stake * (100 / Math.abs(entry.odds))).toFixed(2));
+}
+
+function chronologicalHistoryAsc(a, b) {
+  const dateCmp = String(a?.date || "").localeCompare(String(b?.date || ""));
+  if (dateCmp !== 0) return dateCmp;
+  return (Number(a?.sourceGamePk) || 0) - (Number(b?.sourceGamePk) || 0);
+}
+
+function recomputePickHistoryEntries(entries = []) {
+  const chronological = [...entries].sort(chronologicalHistoryAsc);
+  let runningProfit = 0;
+
+  const recomputed = chronological.map((entry) => {
+    const settled = isSettledHistoryEntry(entry);
+    const profit = calculateHistoryProfit(entry);
+    const graded = settled && profit != null;
+
+    if (graded) {
+      runningProfit += profit;
+    }
+
+    return {
+      ...entry,
+      gradingStatus: !settled ? "pending" : graded ? "graded" : "missing_odds",
+      stake: getHistoryStake(entry),
+      profit,
+      cumulativeProfit: graded ? Number(runningProfit.toFixed(2)) : null
+    };
+  });
+
+  return recomputed.sort((a, b) => {
+    const dateCmp = String(b.date).localeCompare(String(a.date));
+    if (dateCmp !== 0) return dateCmp;
+    return (Number(b.sourceGamePk) || 0) - (Number(a.sourceGamePk) || 0);
+  });
+}
+
 function writePickHistory(entries = []) {
   const existingHistory = loadPickHistory();
   const seededHistory = loadPickHistorySeed();
@@ -652,14 +701,15 @@ function writePickHistory(entries = []) {
     ...existingHistory.entries,
     ...entries
   ]);
+  const recomputedEntries = recomputePickHistoryEntries(normalizedEntries);
   // Only count settled (final + W/L result + numeric profit) entries for grading stats
-  const normalizedSummary = normalizedEntries.reduce((acc, entry) => {
+  const normalizedSummary = recomputedEntries.reduce((acc, entry) => {
     const isSettled = entry?.status === "final"
       && (entry?.result === "W" || entry?.result === "L")
       && typeof entry?.profit === "number";
     if (isSettled) {
       acc.totalBets += 1;
-      acc.totalWagered += typeof entry?.stake === "number" ? entry.stake : 100;
+      acc.totalWagered += getHistoryStake(entry);
       acc.profit += entry.profit;
       if (entry.result === "W") acc.wins += 1;
       if (entry.result === "L") acc.losses += 1;
@@ -680,8 +730,8 @@ function writePickHistory(entries = []) {
         ? Number(((normalizedSummary.profit / normalizedSummary.totalWagered) * 100).toFixed(2))
         : 0
     },
-    entries: normalizedEntries,
-    recentBreakdowns: normalizedEntries
+    entries: recomputedEntries,
+    recentBreakdowns: recomputedEntries
   };
 
   fs.writeFileSync(PICK_HISTORY_PATH, JSON.stringify(output, null, 2));
