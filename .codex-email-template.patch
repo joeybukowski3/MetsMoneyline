@@ -1,0 +1,160 @@
+diff --git a/bot/generator.js b/bot/generator.js
+--- a/bot/generator.js
++++ b/bot/generator.js
+@@ -3706,15 +3706,44 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
+     const pitcherImageSrc = card?.image || card?.photoUrl || card?.headshot
+       || (card?.mlbId ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current` : null);
+     const photoHtml = pitcherImageSrc
+-      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)}" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
++      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)} headshot for Mets betting report" width="96" height="96" loading="lazy" decoding="async" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
+       : `<div style="width:96px;height:96px;border-radius:16px;border:1px solid #d6dde8;background:#f3f4f6;color:#94a3b8;text-align:center;line-height:96px;font-size:32px;margin:0 auto;">&#9918;</div>`;
+-    const statTile = (label, value) => `
+-      <td valign="top" style="width:50%;padding:0 4px 8px 4px;">
+-        <div style="border:1px solid #d6dde8;border-radius:10px;background:#f8fafc;padding:8px 9px;">
+-          <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${label}</div>
+-          <div>${heatCell(label, value)}</div>
+-        </div>
+-      </td>`;
++    const emailStatBar = (label, value) => {
++      const pct = reportMetricPct(label, value);
++      const shown = valueCell(value);
++      if (pct == null) return `
++        <tr>
++          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 4px 0;white-space:nowrap;vertical-align:middle;">${label}</td>
++          <td style="padding:4px 0;vertical-align:middle;"><span style="font-size:12px;font-weight:700;color:#111827;">${shown}</span></td>
++        </tr>`;
++
++      const color = reportPctlColor(pct);
++      const avg = ADVCELL_MLB_AVG[label];
++      const barTotalPx = 120;
++      const fillPx = Math.round((pct / 100) * barTotalPx);
++      const emptyPx = barTotalPx - fillPx;
++
++      return `
++        <tr>
++          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 8px 0;white-space:nowrap;vertical-align:top;">${label}</td>
++          <td style="padding:4px 0 8px 0;vertical-align:top;">
++            <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px;">${shown}</div>
++            <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
++              <tr>
++                <td style="width:${fillPx}px;height:10px;background:${color};border-radius:3px 0 0 3px;font-size:0;line-height:0;">&nbsp;</td>
++                ${avg ? `
++                  <td style="width:2px;height:10px;background:#374151;font-size:0;line-height:0;">&nbsp;</td>
++                  <td style="width:${Math.max(0, barTotalPx - fillPx - 2)}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
++                ` : `
++                  <td style="width:${emptyPx}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
++                `}
++              </tr>
++            </table>
++            ${avg ? `<div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: ${avg.label}</div>` : ''}
++            <div style="font-size:10px;color:#9099b0;font-weight:600;">${pct}th %ile</div>
++          </td>
++        </tr>`;
++    };
+@@ -3730,15 +3759,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
+         </table>
+         <div style="margin-top:14px;">
+           <div style="${smallLabel}margin-bottom:8px;color:#6b7280;">Traditional Stats</div>
+-          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+-            <tr>
+-              ${statTile("ERA", card.stats?.era)}
+-              ${statTile("WHIP", card.stats?.whip)}
+-            </tr>
+-            <tr>
+-              ${statTile("K%", card.stats?.kPct)}
+-              ${statTile("BB%", card.stats?.bbPct)}
+-            </tr>
++          <table role="presentation" style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:10px;">
++            <tbody>
++              ${emailStatBar("ERA",  card.stats?.era)}
++              ${emailStatBar("WHIP", card.stats?.whip)}
++              ${emailStatBar("K%",   card.stats?.kPct)}
++              ${emailStatBar("BB%",  card.stats?.bbPct)}
++            </tbody>
+           </table>
+         </div>
+         ${tables.map((table) => renderEmailAdvancedBlock(table)).join("")}
+@@ -3794,6 +3821,42 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
+       ${ctxText ? `<span style="font-size:12px;color:#6b7280;font-weight:700;display:block;margin-top:14px;text-align:${textAlign};">${ctxText}</span>` : ''}
+     </div>`;
+   };
++  const renderEmailAdvBar = (label, value, contextValue = null, contextKind = 'rank') => {
++    const pct = reportMetricPct(label, value);
++    const shown = valueCell(value);
++
++    if (pct == null) {
++      const ctx = contextValue != null
++        ? (contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`)
++        : '';
++      return `<div style="padding:4px 0;">
++        <span style="font-size:13px;font-weight:700;color:#111827;">${shown}</span>
++        ${ctx ? `<div style="font-size:10px;color:#9099b0;font-weight:600;margin-top:2px;">${ctx}</div>` : ''}
++      </div>`;
++    }
++
++    const color = reportPctlColor(pct);
++    const avg = ADVCELL_MLB_AVG[label];
++    const barTotalPx = 100;
++    const fillPx = Math.round((pct / 100) * barTotalPx);
++    const ctx = contextValue != null
++      ? (contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`)
++      : '';
++
++    return `<div style="padding:4px 0 12px 0;">
++      <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:4px;">${shown}</div>
++      <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
++        <tr>
++          <td style="width:${fillPx}px;height:10px;background:${color};border-radius:3px 0 0 3px;font-size:0;">&nbsp;</td>
++          ${avg ? `<td style="width:2px;height:10px;background:#374151;font-size:0;">&nbsp;</td>
++                   <td style="width:${Math.max(0, barTotalPx - fillPx - 2)}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;">&nbsp;</td>`
++                 : `<td style="width:${barTotalPx - fillPx}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;">&nbsp;</td>`}
++        </tr>
++      </table>
++      ${avg ? `<div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: ${avg.label}</div>` : ''}
++      ${ctx ? `<div style="font-size:11px;color:#6b7280;font-weight:700;margin-top:2px;">${ctx}</div>` : ''}
++    </div>`;
++  };
+   const renderAdvancedSheetTable = (table) => {
+     if (mode === "email") {
+       return `
+@@ -3811,8 +3874,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
+                 <div class="email-adv-label" style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f8fafc;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">${valueCell(row.label)}</div>
+                 <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
+                   <tr>
+-                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
+-                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
++                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderEmailAdvBar(row.label, row.left, row.leftPercentile ?? null, "percentile")}</td>
++                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderEmailAdvBar(row.label, row.right, resolvedRank, "rank")}</td>
+                   </tr>
+                 </table>
+               </div>
+@@ -3900,12 +3963,12 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
+               </thead>
+               <tbody>
+                 ${players.map((p, i) => `
+-                  <tr>
+-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;color:#6b7280;font-weight:700;">${valueCell(p.order ?? i + 1)}</td>
+-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};font-weight:700;color:#111827;">${valueCell(p.name)}</td>
+-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("xBA", p.savant?.xBA || null)}</td>
+-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null)}</td>
+-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null)}</td>
++                  <tr style="background:${i % 2 === 0 ? '#ffffff' : '#f9fafb'};">
++                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">${valueCell(p.order ?? i + 1)}</td>
++                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">${valueCell(p.name)}</td>
++                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("xBA", p.savant?.xBA || null)}</td>
++                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null)}</td>
++                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null)}</td>
+                   </tr>`).join("")}
+               </tbody>
+             </table>
+@@ -4172,6 +4235,10 @@ function buildEmailHtml(game) {
+                 </div>
+                 ${game.writeup?.preliminaryMeta?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${game.writeup.preliminaryMeta.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
+                 ${reportMarkup}
++                <div style="margin-top:20px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
++                  <p style="margin:0 0 8px 0;font-size:13px;color:#475569;">See the full interactive breakdown with charts and lineup stats</p>
++                  <a href="https://www.metsmoneyline.com/report.html" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report ?</a>
++                </div>
+               </td>
+             </tr>
+           </table>
