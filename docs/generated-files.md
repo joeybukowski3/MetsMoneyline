@@ -47,13 +47,15 @@ Notes:
 
 Current source of generation:
 
-- `bot/generator.js`
-- `bot/refresh-pick-history.js`
+- `bot/generator.js` for `public/data/sample-game.json`
+- `bot/refresh-pick-history.js` as the canonical full-season writer for `public/data/pick-history.json`
+- `bot/backfill-history.js` only as a manual one-off repair utility when explicitly used
 
 Notes:
 
 - Frontend pages read these files directly.
 - These are data artifacts, not hand-authored reference documents.
+- `bot/generator.js` should read existing betting history, not own the `pick-history.json` write path.
 
 ### Generated static API cache
 

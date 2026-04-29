@@ -5,6 +5,9 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 
+// Manual one-off repair utility only.
+// Normal full-season ownership of public/data/pick-history.json belongs to bot/refresh-pick-history.js.
+
 function buildHistoryKey(entry = {}) {
   return entry.gameId || `${entry.date || ""}::${entry.opponent || ""}::${entry.homeAway || ""}`;
 }

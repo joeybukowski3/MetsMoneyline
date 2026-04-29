@@ -25,7 +25,6 @@ const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
-const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds");
 const REPORT_HTML_PATH = path.join(__dirname, "../public/report.html");
 
@@ -627,115 +626,6 @@ function loadPickHistory() {
   } catch {
     return { updatedAt: null, generatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
   }
-}
-
-function loadPickHistorySeed() {
-  try {
-    const parsed = JSON.parse(fs.readFileSync(PICK_HISTORY_SEED_PATH, "utf8"));
-    const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
-    return {
-      updatedAt: parsed?.updatedAt || null,
-      generatedAt: parsed?.generatedAt || null,
-      record: parsed?.record || { wins: 0, losses: 0, profit: 0 },
-      entries: dedupeHistoryEntries(entries)
-    };
-  } catch {
-    return { updatedAt: null, generatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
-  }
-}
-
-function getHistoryStake(entry = {}) {
-  return typeof entry?.stake === "number" ? entry.stake : 100;
-}
-
-function calculateHistoryProfit(entry = {}) {
-  if (!isSettledHistoryEntry(entry)) return null;
-  if (typeof entry?.odds !== "number") return null;
-
-  const stake = getHistoryStake(entry);
-  if (entry.result === "L") return Number((-stake).toFixed(2));
-  if (entry.odds > 0) return Number((stake * (entry.odds / 100)).toFixed(2));
-  return Number((stake * (100 / Math.abs(entry.odds))).toFixed(2));
-}
-
-function chronologicalHistoryAsc(a, b) {
-  const dateCmp = String(a?.date || "").localeCompare(String(b?.date || ""));
-  if (dateCmp !== 0) return dateCmp;
-  return (Number(a?.sourceGamePk) || 0) - (Number(b?.sourceGamePk) || 0);
-}
-
-function recomputePickHistoryEntries(entries = []) {
-  const chronological = [...entries].sort(chronologicalHistoryAsc);
-  let runningProfit = 0;
-
-  const recomputed = chronological.map((entry) => {
-    const settled = isSettledHistoryEntry(entry);
-    const profit = calculateHistoryProfit(entry);
-    const graded = settled && profit != null;
-
-    if (graded) {
-      runningProfit += profit;
-    }
-
-    return {
-      ...entry,
-      gradingStatus: !settled ? "pending" : graded ? "graded" : "missing_odds",
-      stake: getHistoryStake(entry),
-      profit,
-      cumulativeProfit: graded ? Number(runningProfit.toFixed(2)) : null
-    };
-  });
-
-  return recomputed.sort((a, b) => {
-    const dateCmp = String(b.date).localeCompare(String(a.date));
-    if (dateCmp !== 0) return dateCmp;
-    return (Number(b.sourceGamePk) || 0) - (Number(a.sourceGamePk) || 0);
-  });
-}
-
-function writePickHistory(entries = []) {
-  const existingHistory = loadPickHistory();
-  const seededHistory = loadPickHistorySeed();
-  const normalizedEntries = dedupeHistoryEntries([
-    ...seededHistory.entries,
-    ...existingHistory.entries,
-    ...entries
-  ]);
-  const recomputedEntries = recomputePickHistoryEntries(normalizedEntries);
-  // Only count settled (final + W/L result + numeric profit) entries for grading stats
-  const normalizedSummary = recomputedEntries.reduce((acc, entry) => {
-    const isSettled = entry?.status === "final"
-      && (entry?.result === "W" || entry?.result === "L")
-      && typeof entry?.profit === "number";
-    if (isSettled) {
-      acc.totalBets += 1;
-      acc.totalWagered += getHistoryStake(entry);
-      acc.profit += entry.profit;
-      if (entry.result === "W") acc.wins += 1;
-      if (entry.result === "L") acc.losses += 1;
-    }
-    return acc;
-  }, { wins: 0, losses: 0, profit: 0, totalBets: 0, totalWagered: 0 });
-
-  const output = {
-    updatedAt: new Date().toISOString(),
-    generatedAt: new Date().toISOString(),
-    record: {
-      wins: normalizedSummary.wins,
-      losses: normalizedSummary.losses,
-      profit: Number(normalizedSummary.profit.toFixed(2)),
-      totalBets: normalizedSummary.totalBets,
-      totalWagered: Number(normalizedSummary.totalWagered.toFixed(2)),
-      roi: normalizedSummary.totalWagered > 0
-        ? Number(((normalizedSummary.profit / normalizedSummary.totalWagered) * 100).toFixed(2))
-        : 0
-    },
-    entries: recomputedEntries,
-    recentBreakdowns: recomputedEntries
-  };
-
-  fs.writeFileSync(PICK_HISTORY_PATH, JSON.stringify(output, null, 2));
-  return output;
 }
 
 async function loadSavantPitcherLeaderboard() {
@@ -5207,11 +5097,9 @@ function persistGeneratedOutput(output, { referenceDate = getTodayEasternISO() }
     fs.writeFileSync(REPORT_HTML_PATH, buildSiteReportHtml(featuredGame));
     console.log(`Wrote ${REPORT_HTML_PATH}`);
   }
-  const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
-  console.log(`Wrote ${PICK_HISTORY_PATH} with ${pickHistoryOutput.entries.length} entr${pickHistoryOutput.entries.length === 1 ? "y" : "ies"}`);
   generateSitemap();
   generateRss();
-  return pickHistoryOutput;
+  return { sampleJsonPath: SAMPLE_JSON_PATH, reportHtmlPath: featuredGame ? REPORT_HTML_PATH : null };
 }
 
 async function run() {
@@ -5266,7 +5154,6 @@ module.exports = {
   buildSiteReportHtml,
   loadPreviousOutput,
   loadPickHistory,
-  writePickHistory,
   generateOutputPackage,
   persistGeneratedOutput,
   formatButtondownSubject,
