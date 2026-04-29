@@ -1787,6 +1787,7 @@ async function getHeadToHead(teamId, oppTeamId, season) {
 
   let wins = 0;
   let losses = 0;
+  const recentGames = [];
   for (const dateEntry of data?.dates || []) {
     for (const game of dateEntry.games || []) {
       const state = game?.status?.detailedState || "";
@@ -1794,12 +1795,25 @@ async function getHeadToHead(teamId, oppTeamId, season) {
       const isHome = game?.teams?.home?.team?.id === teamId;
       const teamScore = isHome ? game?.teams?.home?.score : game?.teams?.away?.score;
       const oppScore = isHome ? game?.teams?.away?.score : game?.teams?.home?.score;
+      const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
+      const result = Number(teamScore) > Number(oppScore) ? "W" : "L";
       if (Number(teamScore) > Number(oppScore)) wins += 1;
       else losses += 1;
+      recentGames.push({
+        date: dateEntry.date,
+        opponent: oppTeam?.name || "Opponent TBD",
+        homeAway: isHome ? "home" : "road",
+        result,
+        score: `${teamScore}-${oppScore}`
+      });
     }
   }
 
-  return { wins, losses };
+  return {
+    wins,
+    losses,
+    recentGames: recentGames.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5)
+  };
 }
 
 async function getPitcherRecentStarts(mlbId, beforeDate, n = 4) {
@@ -1907,6 +1921,7 @@ async function buildLastMeetingSummary(teamId, oppTeamId, beforeDate) {
     gamePk: game.gamePk,
     date: game.officialDate,
     ballpark: game?.venue?.name || "Venue TBD",
+    homeAway: metsAreHome ? "home" : "road",
     metsScore: metsSide?.score ?? null,
     oppScore: oppSide?.score ?? null,
     result: Number(metsSide?.score) > Number(oppSide?.score) ? "win" : "loss",
