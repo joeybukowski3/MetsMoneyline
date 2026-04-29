@@ -749,7 +749,100 @@ async function fetchPitcherVsRoster(pitcherMlbId, batterMlbIds = []) {
     `${totalPA} PA, AVG ${avg}, K% ${kPct?.toFixed(3)}`
   );
 
-  return { PA: totalPA, kPct, bbPct, AVG: avg, HR: totalHR, xBA: null, xSLG: null, xwOBA: null, exitVelo: null, launchAngle: null };
+  return { PA: totalPA, kPct, bbPct, AVG: avg, HR: totalHR };
+}
+
+function toNumericOrNull(value) {
+  if (value == null || value === "") return null;
+  const parsed = Number.parseFloat(String(value).replace(/%/g, "").trim());
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function buildPitcherVsRosterSnapshot(lineup = [], pitcherSavant = {}) {
+  const hitters = Array.isArray(lineup)
+    ? lineup.filter((player) => player && player.primaryPosition?.abbreviation !== "P")
+    : [];
+  if (!hitters.length) return null;
+
+  let weightedPa = 0;
+  let weightedK = 0;
+  let weightedBB = 0;
+  let weightedAvgTotal = 0;
+  let weightedWobaTotal = 0;
+  let weightedXwobaTotal = 0;
+  let weightedXbaTotal = 0;
+  let weightedXslgTotal = 0;
+  let avgWeight = 0;
+  let wobaWeight = 0;
+  let xwobaWeight = 0;
+  let xbaWeight = 0;
+  let xslgWeight = 0;
+
+  for (const player of hitters) {
+    const rawPa = Number(player?.savant?.pa ?? player?.stats?.plateAppearances ?? 0);
+    const pa = Number.isFinite(rawPa) && rawPa > 0 ? rawPa : 1;
+    weightedPa += pa;
+
+    const kPct = toNumericOrNull(player?.savant?.kPct);
+    if (kPct != null) weightedK += (kPct / 100) * pa;
+
+    const bbPct = toNumericOrNull(player?.savant?.bbPct);
+    if (bbPct != null) weightedBB += (bbPct / 100) * pa;
+
+    const avg = toNumericOrNull(player?.seasonAVG);
+    if (avg != null) {
+      weightedAvgTotal += avg * pa;
+      avgWeight += pa;
+    }
+
+    const woba = toNumericOrNull(player?.fangraphs?.wOBA);
+    if (woba != null) {
+      weightedWobaTotal += woba * pa;
+      wobaWeight += pa;
+    }
+
+    const xwoba = toNumericOrNull(player?.savant?.xwOBA);
+    if (xwoba != null) {
+      weightedXwobaTotal += xwoba * pa;
+      xwobaWeight += pa;
+    }
+
+    const xba = toNumericOrNull(player?.savant?.xBA);
+    if (xba != null) {
+      weightedXbaTotal += xba * pa;
+      xbaWeight += pa;
+    }
+
+    const xslg = toNumericOrNull(player?.savant?.xSLG);
+    if (xslg != null) {
+      weightedXslgTotal += xslg * pa;
+      xslgWeight += pa;
+    }
+  }
+
+  const formatWeightedRate = (total, weight) => (weight > 0 ? (total / weight).toFixed(3) : null);
+
+  return {
+    PA: weightedPa || hitters.length,
+    kPct: weightedPa > 0 ? weightedK / weightedPa : null,
+    bbPct: weightedPa > 0 ? weightedBB / weightedPa : null,
+    AVG: formatWeightedRate(weightedAvgTotal, avgWeight),
+    wOBA: formatWeightedRate(weightedWobaTotal, wobaWeight),
+    xwOBA: formatWeightedRate(weightedXwobaTotal, xwobaWeight),
+    exitVelo: toNumericOrNull(pitcherSavant?.exitVeloAllowed),
+    launchAngle: toNumericOrNull(pitcherSavant?.launchAngleAllowed),
+    xBA: formatWeightedRate(weightedXbaTotal, xbaWeight),
+    xSLG: formatWeightedRate(weightedXslgTotal, xslgWeight)
+  };
+}
+
+function mergeNonNullRosterMetrics(fallbackSnapshot, preferredSnapshot) {
+  if (!fallbackSnapshot && !preferredSnapshot) return null;
+  const merged = { ...(fallbackSnapshot || {}) };
+  for (const [key, value] of Object.entries(preferredSnapshot || {})) {
+    if (value != null) merged[key] = value;
+  }
+  return merged;
 }
 
 async function loadSavantBatterLeaderboard() {
@@ -2048,8 +2141,14 @@ async function buildGameFacts(targetDate) {
     fetchPitcherVsRoster(pitching.mets.mlbId, oppBatterIds),
     fetchPitcherVsRoster(pitching.opp.mlbId, metsBatterIds)
   ]);
-  pitching.mets.vsRoster = metsVsRoster;
-  pitching.opp.vsRoster = oppVsRoster;
+  pitching.mets.vsRoster = mergeNonNullRosterMetrics(
+    buildPitcherVsRosterSnapshot(lineups.opp, pitching.mets.savant),
+    metsVsRoster
+  );
+  pitching.opp.vsRoster = mergeNonNullRosterMetrics(
+    buildPitcherVsRosterSnapshot(lineups.mets, pitching.opp.savant),
+    oppVsRoster
+  );
 
   const metsTeamRow = null;
   const oppTeamRow = null;

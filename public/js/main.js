@@ -918,7 +918,11 @@ function buildPitchingCard(game) {
 
   const mergeVsRoster = (fallbackSnapshot, explicitSnapshot) => {
     if (!fallbackSnapshot && !explicitSnapshot) return null;
-    return { ...(fallbackSnapshot || {}), ...(explicitSnapshot || {}) };
+    const merged = { ...(fallbackSnapshot || {}) };
+    Object.entries(explicitSnapshot || {}).forEach(([key, value]) => {
+      if (value != null) merged[key] = value;
+    });
+    return merged;
   };
 
   const metsVsRoster = mergeVsRoster(aggregateLineupSnapshot(game.lineups?.opp, p.mets.savant), p.mets.vsRoster);
