@@ -1382,6 +1382,7 @@ function buildGameContextCard(game) {
       const site = getSiteMeta(g.homeAway, label);
       const resultClass = g.result === "W" ? "gc-pill-win" : g.result === "L" ? "gc-pill-loss" : "gc-pill-neutral";
       const matchupPrefix = site.opponentPrefix;
+      const opponentLogo = getTeamLogoUrl(g.opponent);
       return `
         <div class="gc-log-row">
           <div class="gc-log-meta">
@@ -1391,7 +1392,7 @@ function buildGameContextCard(game) {
           </div>
           <div class="gc-log-main">
             <span class="gc-log-score">${g.score || "--"}</span>
-            <span class="gc-log-opponent">${matchupPrefix} ${g.opponent || "Opponent TBD"}</span>
+            <span class="gc-log-opponent">${matchupPrefix} ${g.opponent || "Opponent TBD"}${opponentLogo ? ` <img src="${opponentLogo}" alt="${g.opponent || "Opponent TBD"} logo" class="gc-log-team-logo" width="15" height="15" loading="lazy" decoding="async">` : ""}</span>
           </div>
         </div>`;
     }).join("");
@@ -1446,6 +1447,7 @@ function buildGameContextCard(game) {
     ? h2hGames.map((meeting) => {
         const site = getSiteMeta(meeting.homeAway, "Mets");
         const resultClass = meeting.result === "W" ? "gc-pill-win" : meeting.result === "L" ? "gc-pill-loss" : "gc-pill-neutral";
+        const opponentLogo = getTeamLogoUrl(meeting.opponent || game.opponent);
         return `
           <div class="gc-log-row gc-h2h-row">
             <div class="gc-log-meta">
@@ -1455,7 +1457,7 @@ function buildGameContextCard(game) {
             </div>
             <div class="gc-log-main">
               <span class="gc-log-score">${meeting.score || "--"}</span>
-              <span class="gc-log-opponent">${site.opponentPrefix} ${meeting.opponent || game.opponent}</span>
+              <span class="gc-log-opponent">${site.opponentPrefix} ${meeting.opponent || game.opponent}${opponentLogo ? ` <img src="${opponentLogo}" alt="${meeting.opponent || game.opponent} logo" class="gc-log-team-logo" width="15" height="15" loading="lazy" decoding="async">` : ""}</span>
             </div>
           </div>`;
       }).join("")
