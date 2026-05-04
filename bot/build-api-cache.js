@@ -4,6 +4,12 @@ const axios = require("axios");
 const { normalizeTeamIdentity } = require("../lib/mlb-team-identity");
 const { apiSportsGet, getApiSportsConfig } = require("./lib/api-sports-client");
 const {
+  formatOddsValue,
+  loadOddsHistory,
+  saveOddsHistory,
+  upsertOddsHistoryEntry
+} = require("./lib/odds-history");
+const {
   extractApiSportsGames,
   normalizeLiveGame,
   normalizeNextGame,
@@ -12,8 +18,11 @@ const {
   normalizeStandings
 } = require("./lib/api-sports-normalizers");
 
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
+
 const PUBLIC_API_ROOT = path.join(__dirname, "../public/api/mlb/mets");
 const GAME_ROOT = path.join(PUBLIC_API_ROOT, "game");
+const ODDS_HISTORY_PATH = path.join(__dirname, "../public/data/odds-history.json");
 const EASTERN_TIME_ZONE = "America/New_York";
 const ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4";
 const MLB_STATS_METS_TEAM_ID = 121;
@@ -409,6 +418,43 @@ function buildGameEndpointPayload(game, config, standings, recentGames, odds) {
   };
 }
 
+function archiveResolvedOdds(targetGame, oddsPayload) {
+  if (!targetGame || !oddsPayload) return;
+
+  const isMetsHome = String(targetGame?.home?.name || "").toLowerCase() === "new york mets";
+  const opponent = isMetsHome ? targetGame?.away?.name : targetGame?.home?.name;
+  const homeAway = isMetsHome ? "home" : "road";
+
+  const currentHistory = loadOddsHistory(ODDS_HISTORY_PATH);
+  const nextHistory = upsertOddsHistoryEntry(currentHistory, {
+    date: targetGame?.date,
+    startTime: targetGame?.date,
+    opponent,
+    homeAway,
+    apiGameId: targetGame?.gameId || null,
+    homeTeamName: targetGame?.home?.name || null,
+    awayTeamName: targetGame?.away?.name || null,
+    oddsPayload,
+    capturedAt: new Date().toISOString()
+  });
+
+  if (!nextHistory) {
+    console.log("[odds] No numeric Mets moneyline available to archive");
+    return;
+  }
+
+  saveOddsHistory(ODDS_HISTORY_PATH, nextHistory);
+  const archivedEntry = nextHistory.entries[nextHistory.entries.length - 1];
+  const isArchivedMetsHome = archivedEntry?.homeAway === "home";
+  const metsPrice = isArchivedMetsHome ? archivedEntry?.latest?.home : archivedEntry?.latest?.away;
+  const oppPrice = isArchivedMetsHome ? archivedEntry?.latest?.away : archivedEntry?.latest?.home;
+  console.log(
+    `[odds] Archived ${archivedEntry?.date} ${archivedEntry?.opponent} `
+    + `${archivedEntry?.homeAway} Mets ${formatOddsValue(metsPrice)} / Opp ${formatOddsValue(oppPrice)} `
+    + `at ${archivedEntry?.lastCapturedAt}`
+  );
+}
+
 async function run() {
   const config = getApiSportsConfig();
   const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" }, config.metsTeamId);
@@ -497,6 +543,8 @@ async function run() {
       ...((!oddsHasData && resolvedOdds !== odds) ? { note: "preserved from previous cache — live fetch returned empty" } : {})
     }
   };
+
+  archiveResolvedOdds(liveGame || nextGame || null, oddsPayload);
 
   const overviewPayload = await buildOverviewEndpoint(config, season, standingsPayload);
 

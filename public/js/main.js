@@ -20,6 +20,19 @@ function formatGameTimeET(dateTime) {
   });
 }
 
+function formatTimestampET(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleString("en-US", {
+    timeZone: EASTERN_TIME_ZONE,
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short"
+  });
+}
+
 function createFallbackPitching(probables = {}) {
   return {
     mets: {
@@ -206,6 +219,7 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
     metsRecord: metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : "0-0",
     oppRecord: oppStanding ? `${oppStanding.wins}-${oppStanding.losses}` : "0-0",
     moneyline: mapOddsSummaryToMoneyline(odds, { opponent: opponentTeam?.name || "" }),
+    oddsUpdatedAt: odds?.meta?.generatedAt || null,
     runLine: null,
     total: null,
     overUnder: null,
@@ -507,6 +521,9 @@ function buildMatchupStrip(game) {
   const ouItem = total != null
     ? `<span class="mb-meta-item"><span>&#x2197;</span> O/U ${total}</span>`
     : "";
+  const oddsUpdatedItem = game.oddsUpdatedAt
+    ? `<span class="mb-meta-item">Odds updated ${formatTimestampET(game.oddsUpdatedAt)}</span>`
+    : "";
 
   const oppLogoUrl = getTeamLogoUrl({
     canonicalKey: game.oppCanonicalKey,
@@ -548,6 +565,7 @@ function buildMatchupStrip(game) {
         <span class="mb-meta-item">&#x1F4CD; ${game.ballpark}</span>
         ${metsML != null && oppML != null ? `<span class="mb-meta-item">$ <span class="mb-ml-nym">NYM ${metsML}</span> / OPP ${oppML}</span>` : ""}
         ${ouItem}
+        ${oddsUpdatedItem}
       </div>
     </div>`;
 }

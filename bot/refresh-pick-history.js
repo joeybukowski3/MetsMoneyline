@@ -1,35 +1,15 @@
 const fs = require("fs");
 const path = require("path");
+const { loadOddsHistory, resolveArchivedOdds } = require("./lib/odds-history");
+
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
 const TEAM_ID = 121;
 const TIME_ZONE = "America/New_York";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
-const MANUAL_HISTORY_ODDS = [
-  { date: "2026-04-28", opponent: "Washington Nationals", homeAway: "home", odds: -162, estimated: true },
-  { date: "2026-04-26", opponent: "Colorado Rockies", homeAway: "home", odds: -182, estimated: true },
-  { date: "2026-04-24", opponent: "Colorado Rockies", homeAway: "home", odds: -188, estimated: true },
-  { date: "2026-04-23", opponent: "Minnesota Twins", homeAway: "home", odds: -130, estimated: true },
-  { date: "2026-04-22", opponent: "Minnesota Twins", homeAway: "home", odds: -135, estimated: true },
-  { date: "2026-04-21", opponent: "Minnesota Twins", homeAway: "home", odds: -132, estimated: true },
-  { date: "2026-04-19", opponent: "Chicago Cubs", homeAway: "road", odds: 130 },
-  { date: "2026-04-18", opponent: "Chicago Cubs", homeAway: "road", odds: 120 },
-  { date: "2026-04-17", opponent: "Chicago Cubs", homeAway: "road", odds: 115 },
-  { date: "2026-04-15", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 150 },
-  { date: "2026-04-14", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 145 },
-  { date: "2026-04-13", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 155 },
-  { date: "2026-04-12", opponent: "Athletics", homeAway: "home", odds: -185 },
-  { date: "2026-04-11", opponent: "Athletics", homeAway: "home", odds: -175 },
-  { date: "2026-04-10", opponent: "Athletics", homeAway: "home", odds: -180 },
-  { date: "2026-04-09", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -125 },
-  { date: "2026-04-08", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -130 },
-  { date: "2026-04-07", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -120 },
-  { date: "2026-04-05", opponent: "San Francisco Giants", homeAway: "road", odds: 110 },
-  { date: "2026-04-04", opponent: "San Francisco Giants", homeAway: "road", odds: 105 },
-  { date: "2026-04-02", opponent: "San Francisco Giants", homeAway: "road", odds: 115 },
-  { date: "2026-03-26", opponent: "Pittsburgh Pirates", homeAway: "home", odds: -165 }
-];
+const ODDS_HISTORY_PATH = path.join(__dirname, "../public/data/odds-history.json");
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE }).slice(0, 4));
@@ -111,6 +91,9 @@ function addOddsCandidate(map, entry, candidate) {
   if (entry?.date && entry?.opponent) {
     keys.push(`${entry.date}::${entry.opponent}::${entry.homeAway || ""}`);
     keys.push(buildGameId(entry.date, entry.opponent));
+    if (entry?.startTime) {
+      keys.push(`${entry.date}::${entry.opponent}::${entry.homeAway || ""}::${entry.startTime}`);
+    }
   }
   for (const key of keys) {
     if (!key) continue;
@@ -130,6 +113,9 @@ function buildOddsLookup(existingEntries, seedEntries, sampleGames) {
     if (entry?.date && entry?.opponent) {
       keys.push(`${entry.date}::${entry.opponent}::${entry.homeAway || ""}`);
       keys.push(buildGameId(entry.date, entry.opponent));
+      if (entry?.startTime) {
+        keys.push(`${entry.date}::${entry.opponent}::${entry.homeAway || ""}::${entry.startTime}`);
+      }
     }
     for (const key of keys) {
       if (!key || metaMap.has(key)) continue;
@@ -183,15 +169,6 @@ function buildOddsLookup(existingEntries, seedEntries, sampleGames) {
     });
   }
 
-  for (const entry of MANUAL_HISTORY_ODDS) {
-    captureMeta(entry, { estimated: false });
-    addOddsCandidate(oddsMap, entry, {
-      odds: entry.odds,
-      source: "history-manual-override",
-      priority: 0
-    });
-  }
-
   return { oddsMap, metaMap };
 }
 
@@ -210,13 +187,20 @@ async function fetchSeasonSchedule(season) {
   return games;
 }
 
-function buildHistoryEntry(game, oddsLookup, metaLookup) {
+function buildHistoryEntry(game, oddsLookup, metaLookup, archivedOddsHistory) {
   const date = String(game?.officialDate || game?.gameDate || "").slice(0, 10);
+  const startTime = game?.gameDate ? new Date(game.gameDate).toISOString() : null;
   const opponent = toOpponent(game);
   const homeAway = toHomeAway(game);
   const gameId = buildGameId(date, opponent);
-  const lookupKeys = [gameId, `${date}::${opponent}::${homeAway}`];
-  const oddsMatch = lookupKeys.map((key) => oddsLookup.get(key)).find(Boolean) || null;
+  const lookupKeys = [gameId, `${date}::${opponent}::${homeAway}`, `${date}::${opponent}::${homeAway}::${startTime}`];
+  const archivedOdds = resolveArchivedOdds(archivedOddsHistory, {
+    date,
+    startTime,
+    opponent,
+    homeAway
+  });
+  const oddsMatch = archivedOdds || lookupKeys.map((key) => oddsLookup.get(key)).find(Boolean) || null;
   const metaMatch = lookupKeys.map((key) => metaLookup.get(key)).find(Boolean) || {};
   const isFinal = isFinalGameStatus(game);
   const finalScore = isFinal ? getFinalScore(game) : null;
@@ -247,6 +231,7 @@ function buildHistoryEntry(game, oddsLookup, metaLookup) {
     oddsSource: oddsMatch?.source || "missing",
     resultSource: "mlb-stats-schedule",
     sourceGamePk: game?.gamePk || null,
+    startTime,
     stake: 100,
     result,
     profit
@@ -337,11 +322,11 @@ async function main() {
   const existingHistory = readJson(PICK_HISTORY_PATH, { entries: [] });
   const seededHistory = readJson(PICK_HISTORY_SEED_PATH, { entries: [] });
   const sampleGame = readJson(SAMPLE_JSON_PATH, { games: [] });
+  const archivedOddsHistory = loadOddsHistory(ODDS_HISTORY_PATH);
   const existingEntries = normalizeStoredEntries(existingHistory.entries || existingHistory.recentBreakdowns);
   const seedEntries = normalizeStoredEntries(seededHistory.entries);
   const sampleGames = Array.isArray(sampleGame?.games) ? sampleGame.games : [];
   console.log(`[history-refresh] Starting — season=${season}, sample games=${sampleGames.length}, existing entries=${existingEntries.length}, seed entries=${seedEntries.length}`);
-  console.log(`[history-refresh] MANUAL_HISTORY_ODDS covers: ${MANUAL_HISTORY_ODDS.map(e => e.date).join(", ")}`);
   const { oddsMap, metaMap } = buildOddsLookup(existingEntries, seedEntries, sampleGames);
   const scheduleGames = await fetchSeasonSchedule(season);
   const completedGames = scheduleGames.filter((game) => isFinalGameStatus(game));
@@ -354,7 +339,7 @@ async function main() {
     Object.entries(gamesByDate).sort((a, b) => b[0].localeCompare(a[0])).slice(0, 10));
   const pendingGames = Math.max(scheduleGames.length - completedGames.length, 0);
   console.log(`[history-refresh] Completed games=${completedGames.length} pending games omitted=${pendingGames}`);
-  const entries = completedGames.map((game) => buildHistoryEntry(game, oddsMap, metaMap));
+  const entries = completedGames.map((game) => buildHistoryEntry(game, oddsMap, metaMap, archivedOddsHistory));
   const { orderedEntries, record } = summarize(entries);
 
   const output = {

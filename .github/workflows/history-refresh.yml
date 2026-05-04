@@ -2,79 +2,66 @@ name: Postgame History Refresh
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "0 4,5 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
-# Queue runs that write pick-history.json — don't let two instances race
 concurrency:
-  group: pick-history-write
+  group: site-data-write
   cancel-in-progress: false
 
 jobs:
   refresh-history:
     runs-on: ubuntu-latest
     steps:
+      - name: Check midnight ET window
+        id: gate
+        run: |
+          ET_HOUR=$(TZ=America/New_York date +%H)
+          if [ "$ET_HOUR" != "00" ]; then
+            echo "Current America/New_York hour is ${ET_HOUR}; skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Current America/New_York hour is ${ET_HOUR}; continuing."
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check out repository
+        if: steps.gate.outputs.should_run == 'true'
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Node.js
+        if: steps.gate.outputs.should_run == 'true'
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
 
       - name: Install bot dependencies
+        if: steps.gate.outputs.should_run == 'true'
         working-directory: ./bot
-        run: npm install
-
-      - name: Sync to latest main before generating
-        run: |
-          git fetch origin main
-          git reset --hard origin/main
-          echo "[history] Generating on top of $(git rev-parse --short HEAD) ($(git log -1 --format='%s' HEAD))"
+        run: npm ci
 
       - name: Refresh pick history
+        if: steps.gate.outputs.should_run == 'true'
         working-directory: ./bot
         run: node refresh-pick-history.js
 
       - name: Commit and push updated history
+        if: steps.gate.outputs.should_run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          ENTRIES_BEFORE=$(node -e "try{const d=require('./public/data/pick-history.json');console.log(d.entries?.length??0)}catch{console.log(0)}" 2>/dev/null || echo 0)
-          echo "[history] Entries before commit: ${ENTRIES_BEFORE}"
-
           git add public/data/pick-history.json
           if git diff --staged --quiet; then
-            echo "[history] No history changes to commit — already up to date"
+            echo "No pick history changes to commit."
             exit 0
           fi
-
           git commit -m "chore: refresh pick history [skip ci]"
-          echo "[history] Committed. Current HEAD: $(git rev-parse --short HEAD)"
-
-          # Push with one safe retry — if rejected, reset to latest main, regenerate, and push
-          if ! git push --force-with-lease origin main; then
-            echo "[history] Push rejected — fetching latest main and regenerating..."
-            git fetch origin main
-            git reset --soft HEAD~1
-            git reset --hard origin/main
-            echo "[history] Retrying on top of $(git rev-parse --short HEAD)"
-            node bot/refresh-pick-history.js
-
-            git add public/data/pick-history.json
-            if git diff --staged --quiet; then
-              echo "[history] No changes after retry — already up to date"
-              exit 0
-            fi
-            git commit -m "chore: refresh pick history [skip ci]"
-            git push origin main
-          fi
-
-          ENTRIES_AFTER=$(node -e "try{const d=require('./public/data/pick-history.json');console.log(d.entries?.length??0)}catch{console.log(0)}" 2>/dev/null || echo 0)
-          echo "[history] Done. Entries after commit: ${ENTRIES_AFTER}"
+          git pull --rebase origin main
+          git push origin main
