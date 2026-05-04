@@ -1,15 +1,15 @@
-name: Daily Data Update
+name: Daily Odds Update
 
 on:
   schedule:
-    - cron: "30 6 * * *"
+    - cron: "0 14,22 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  refresh-data:
+  refresh-odds:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -21,12 +21,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
 
       - name: Install bot dependencies
-        run: npm install
         working-directory: ./bot
+        run: npm ci
 
-      - name: Build API cache
+      - name: Fetch and archive Mets odds
         working-directory: ./bot
         env:
           API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
@@ -36,59 +38,15 @@ jobs:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: node build-api-cache.js
 
-      - name: Generate Mets data
-        working-directory: ./bot
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
-          BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
-          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
-          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
-          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
-          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
-        run: node generator.js
-
-      - name: Refresh pick history
-        working-directory: ./bot
-        run: node refresh-pick-history.js
-
-      - name: Build advanced-stats JSON
-        working-directory: ./bot
-        env:
-          API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
-          API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
-          API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
-          API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
-        run: node build-advanced-stats-json.js
-
-      - name: Commit and push updated data
+      - name: Commit and push updated odds artifacts
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Save only generated data files (not pick-history — that gets regenerated)
-          cp public/data/sample-game.json /tmp/sample-game.json 2>/dev/null || true
-          cp -r public/api/ /tmp/api-backup/ 2>/dev/null || true
-
-          # Reset to remote — no conflicts possible
-          git fetch origin main
-          git reset --hard origin/main
-
-          # Restore generated files
-          cp /tmp/sample-game.json public/data/sample-game.json 2>/dev/null || true
-          cp -r /tmp/api-backup/. public/api/ 2>/dev/null || true
-
-          # Regenerate pick history fresh (reads MLB schedule API for latest results)
-          node bot/refresh-pick-history.js
-
-          git add public/data/sample-game.json || true
-          git add public/data/pick-history.json || true
-          git add public/api/ 2>/dev/null || true
-
+          git add public/data/odds-history.json public/api/mlb/mets
           if git diff --staged --quiet; then
-            echo "No changes to commit"
+            echo "No odds updates to commit."
             exit 0
           fi
-
-          git commit -m "chore: daily data update [skip ci]"
-          git push --force-with-lease origin main || (git pull --rebase origin main && git push origin main)
+          git commit -m "chore: refresh Mets odds artifacts [skip ci]"
+          git pull --rebase origin main
+          git push origin main
