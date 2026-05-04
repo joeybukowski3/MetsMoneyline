@@ -1122,31 +1122,14 @@ async function getPlayerSeasonStats(personId, group, season) {
   return data?.stats?.[0]?.splits?.[0]?.stat || null;
 }
 
-async function getPitcherGameLog(personId, season) {
-  if (!personId) return [];
-  const url =
-    `https://statsapi.mlb.com/api/v1/people/${personId}/stats` +
-    `?stats=gameLog&group=pitching&season=${season}`;
-  const data = await safeGetJson(url, `pitching game log ${personId} ${season}`);
-  return Array.isArray(data?.stats?.[0]?.splits) ? data.stats[0].splits : [];
+function formatPitcherSeasonDecisionRecord(stat = null) {
+  const wins = Number(stat?.wins);
+  const losses = Number(stat?.losses);
+  if (!Number.isFinite(wins) || !Number.isFinite(losses)) return null;
+  return `${wins}-${losses}`;
 }
 
-function derivePitcherRecordFromGameLog(gameLogSplits = [], beforeDate) {
-  const completedStarts = gameLogSplits.filter((split) => split?.date && split.date < beforeDate);
-  if (!completedStarts.length) return null;
-
-  const totals = completedStarts.reduce((acc, split) => {
-    const won = split?.isWin === true || Number(split?.stat?.wins || 0) > 0;
-    const lost = split?.isLoss === true || Number(split?.stat?.losses || 0) > 0;
-    if (won) acc.wins += 1;
-    if (lost) acc.losses += 1;
-    return acc;
-  }, { wins: 0, losses: 0 });
-
-  return `${totals.wins}-${totals.losses}`;
-}
-
-async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDate = getTodayEasternISO()) {
+async function getPitcherFacts(personId, fallbackName, teamName = null) {
   if (!personId) {
     return {
       name: fallbackName || "TBD",
@@ -1168,11 +1151,10 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
 
   const season = String(new Date().getFullYear());
   const previousSeason = String(Number(season) - 1);
-  const [person, currentStats, previousStats, currentGameLog, savantRows, expectedRows, fangraphsTeam, contactAllowed] = await Promise.all([
+  const [person, currentStats, previousStats, savantRows, expectedRows, fangraphsTeam, contactAllowed] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
     getPlayerSeasonStats(personId, "pitching", previousSeason),
-    getPitcherGameLog(personId, season),
     loadSavantPitcherLeaderboard(),
     loadSavantExpectedPitchers(),
     teamName ? loadFangraphsTeamData(teamName) : null,
@@ -1182,8 +1164,7 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
 
   const stat = currentStats || previousStats;
   const statSeason = currentStats ? season : previousStats ? previousSeason : null;
-  const currentSeasonRecord = derivePitcherRecordFromGameLog(currentGameLog, beforeDate)
-    || (currentStats?.wins != null && currentStats?.losses != null ? `${currentStats.wins}-${currentStats.losses}` : null);
+  const currentSeasonRecord = formatPitcherSeasonDecisionRecord(currentStats);
   const savant = getSavantRow(savantRows, personId);
   const expected = getSavantRow(expectedRows, personId);
   const pitcherName = person?.fullName || fallbackName || "TBD";
