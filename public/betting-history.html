@@ -193,6 +193,7 @@
       let wins = 0;
       let losses = 0;
       let totalBets = 0;
+      let gradedBets = 0;
       let totalWagered = 0;
 
       const withCumulative = chronological.map((entry) => {
@@ -200,12 +201,16 @@
         const profit = calculateGameProfit(entry);
         const graded = settled && profit != null;
 
-        if (graded) {
+        if (settled) {
           totalBets += 1;
-          totalWagered += getStake(entry);
-          runningProfit += profit;
           if (entry.result === "W") wins += 1;
           if (entry.result === "L") losses += 1;
+        }
+
+        if (graded) {
+          gradedBets += 1;
+          totalWagered += getStake(entry);
+          runningProfit += profit;
         }
 
         return {
@@ -223,6 +228,7 @@
           wins,
           losses,
           totalBets,
+          gradedBets,
           totalWagered: Number(totalWagered.toFixed(2)),
           profit: Number(runningProfit.toFixed(2)),
           roi: totalWagered > 0 ? Number(((runningProfit / totalWagered) * 100).toFixed(2)) : 0

@@ -302,10 +302,21 @@ async function loadGameData() {
       } else {
         games.unshift(normalizedGame);
       }
+    } else if (games.length > 0 && odds) {
+      const fallbackMoneyline = mapOddsSummaryToMoneyline(odds, { opponent: games[0]?.opponent || "" });
+      games[0] = {
+        ...games[0],
+        moneyline: {
+          ...(games[0]?.moneyline || {}),
+          mets: fallbackMoneyline.mets ?? games[0]?.moneyline?.mets ?? null,
+          opp: fallbackMoneyline.opp ?? games[0]?.moneyline?.opp ?? null
+        },
+        oddsUpdatedAt: odds?.meta?.generatedAt || games[0]?.oddsUpdatedAt || null
+      };
     }
     data.games = games;
-    if (endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt) {
-      data.generatedAt = endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || new Date().toISOString();
+    if (endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt) {
+      data.generatedAt = endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt || new Date().toISOString();
     }
   } catch (err) {
     console.warn("Unable to refresh internal Mets data endpoints.", err);

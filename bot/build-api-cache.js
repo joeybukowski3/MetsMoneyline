@@ -169,10 +169,40 @@ async function fetchMlbStatsUpcomingGame() {
     .sort((a, b) => new Date(a.gameDate || 0) - new Date(b.gameDate || 0));
   const game = games[0] || null;
   if (!game) return null;
+  const homeIdentity = normalizeTeamIdentity(game?.teams?.home?.team || {}, null);
+  const awayIdentity = normalizeTeamIdentity(game?.teams?.away?.team || {}, null);
   return {
+    gameId: game?.gamePk || null,
+    leagueId: 1,
+    season: getCurrentSeason(),
     date: game.gameDate || null,
-    home: { name: game?.teams?.home?.team?.name || null },
-    away: { name: game?.teams?.away?.team?.name || null }
+    status: {
+      short: String(game?.status?.codedGameState || "S"),
+      long: game?.status?.detailedState || game?.status?.abstractGameState || "Scheduled",
+      inning: null,
+      isLive: false,
+      isFinal: false
+    },
+    home: {
+      id: homeIdentity.mlbStatsTeamId ?? game?.teams?.home?.team?.id ?? null,
+      canonicalKey: homeIdentity.canonicalKey,
+      mlbStatsTeamId: homeIdentity.mlbStatsTeamId ?? game?.teams?.home?.team?.id ?? null,
+      apiSportsTeamId: homeIdentity.apiSportsTeamId,
+      name: homeIdentity.name || game?.teams?.home?.team?.name || null,
+      abbreviation: homeIdentity.abbreviation || game?.teams?.home?.team?.abbreviation || null,
+      record: null
+    },
+    away: {
+      id: awayIdentity.mlbStatsTeamId ?? game?.teams?.away?.team?.id ?? null,
+      canonicalKey: awayIdentity.canonicalKey,
+      mlbStatsTeamId: awayIdentity.mlbStatsTeamId ?? game?.teams?.away?.team?.id ?? null,
+      apiSportsTeamId: awayIdentity.apiSportsTeamId,
+      name: awayIdentity.name || game?.teams?.away?.team?.name || null,
+      abbreviation: awayIdentity.abbreviation || game?.teams?.away?.team?.abbreviation || null,
+      record: null
+    },
+    venue: game?.venue?.name || null,
+    raw: game
   };
 }
 
@@ -469,22 +499,23 @@ async function run() {
   const liveGame = games.find(isLiveStatus) || null;
   const nextGame = games.filter(isUpcomingStatus)[0] || null;
   const mlbStatsUpcomingGame = await fetchMlbStatsUpcomingGame();
+  const resolvedUpcomingGame = nextGame || mlbStatsUpcomingGame || null;
   const recentGamesRaw = sortByDateDesc(games.filter(isFinalStatus)).slice(0, 10);
   const recentGames = normalizeRecentGames(recentGamesRaw, config.metsTeamId);
   let odds = null;
   try {
-    odds = await fetchTheOddsApiOdds(nextGame || liveGame || mlbStatsUpcomingGame);
+    odds = await fetchTheOddsApiOdds(liveGame || resolvedUpcomingGame);
   } catch (error) {
     console.warn(`[warn] OddsAPI odds fetch failed: ${error.message}`);
   }
   if (!odds) {
-    odds = await fetchApiSportsOdds(config, liveGame?.gameId || nextGame?.gameId || null);
+    odds = await fetchApiSportsOdds(config, liveGame?.gameId || resolvedUpcomingGame?.gameId || null);
   }
 
   const nextGamePayload = {
-    ...normalizeNextGame(nextGame, config.metsTeamId, odds),
+    ...normalizeNextGame(resolvedUpcomingGame, config.metsTeamId, odds),
     meta: {
-      provider: "api-sports",
+      provider: nextGame ? "api-sports" : mlbStatsUpcomingGame ? "mlb-stats-api" : "api-sports",
       generatedAt: new Date().toISOString(),
       cacheHint: "schedule: 15-30 minutes"
     }
@@ -544,7 +575,7 @@ async function run() {
     }
   };
 
-  archiveResolvedOdds(liveGame || nextGame || null, oddsPayload);
+  archiveResolvedOdds(liveGame || resolvedUpcomingGame || null, oddsPayload);
 
   const overviewPayload = await buildOverviewEndpoint(config, season, standingsPayload);
 

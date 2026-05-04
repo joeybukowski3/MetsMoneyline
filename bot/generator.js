@@ -4773,6 +4773,7 @@ function buildSiteReportHtml(game) {
         });
       }
     </script>
+    <script defer src="js/report-live-odds.js"></script>
   </body>
 </html>`;
 }

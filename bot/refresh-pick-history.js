@@ -10,6 +10,30 @@ const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json")
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
 const ODDS_HISTORY_PATH = path.join(__dirname, "../public/data/odds-history.json");
+const MANUAL_HISTORY_ODDS = [
+  { date: "2026-04-28", opponent: "Washington Nationals", homeAway: "home", odds: -162, estimated: true },
+  { date: "2026-04-26", opponent: "Colorado Rockies", homeAway: "home", odds: -182, estimated: true },
+  { date: "2026-04-24", opponent: "Colorado Rockies", homeAway: "home", odds: -188, estimated: true },
+  { date: "2026-04-23", opponent: "Minnesota Twins", homeAway: "home", odds: -130, estimated: true },
+  { date: "2026-04-22", opponent: "Minnesota Twins", homeAway: "home", odds: -135, estimated: true },
+  { date: "2026-04-21", opponent: "Minnesota Twins", homeAway: "home", odds: -132, estimated: true },
+  { date: "2026-04-19", opponent: "Chicago Cubs", homeAway: "road", odds: 130 },
+  { date: "2026-04-18", opponent: "Chicago Cubs", homeAway: "road", odds: 120 },
+  { date: "2026-04-17", opponent: "Chicago Cubs", homeAway: "road", odds: 115 },
+  { date: "2026-04-15", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 150 },
+  { date: "2026-04-14", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 145 },
+  { date: "2026-04-13", opponent: "Los Angeles Dodgers", homeAway: "road", odds: 155 },
+  { date: "2026-04-12", opponent: "Athletics", homeAway: "home", odds: -185 },
+  { date: "2026-04-11", opponent: "Athletics", homeAway: "home", odds: -175 },
+  { date: "2026-04-10", opponent: "Athletics", homeAway: "home", odds: -180 },
+  { date: "2026-04-09", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -125 },
+  { date: "2026-04-08", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -130 },
+  { date: "2026-04-07", opponent: "Arizona Diamondbacks", homeAway: "home", odds: -120 },
+  { date: "2026-04-05", opponent: "San Francisco Giants", homeAway: "road", odds: 110 },
+  { date: "2026-04-04", opponent: "San Francisco Giants", homeAway: "road", odds: 105 },
+  { date: "2026-04-02", opponent: "San Francisco Giants", homeAway: "road", odds: 115 },
+  { date: "2026-03-26", opponent: "Pittsburgh Pirates", homeAway: "home", odds: -165 }
+];
 
 function getCurrentSeason() {
   return Number(new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE }).slice(0, 4));
@@ -169,6 +193,15 @@ function buildOddsLookup(existingEntries, seedEntries, sampleGames) {
     });
   }
 
+  for (const entry of MANUAL_HISTORY_ODDS) {
+    captureMeta(entry, { estimated: false });
+    addOddsCandidate(oddsMap, entry, {
+      odds: entry.odds,
+      source: "history-manual-override",
+      priority: 2
+    });
+  }
+
   return { oddsMap, metaMap };
 }
 
@@ -248,6 +281,7 @@ function chronologicalSort(a, b) {
 function summarize(entries) {
   const chronological = [...entries].sort(chronologicalSort);
   let runningProfit = 0;
+  let totalSettledBets = 0;
   let wins = 0;
   let losses = 0;
   let gradedBets = 0;
@@ -255,11 +289,15 @@ function summarize(entries) {
   let missingOddsGames = 0;
 
   for (const entry of chronological) {
+    if (entry.result === "W" || entry.result === "L") {
+      totalSettledBets += 1;
+      if (entry.result === "W") wins += 1;
+      if (entry.result === "L") losses += 1;
+    }
+
     if (entry.gradingStatus === "graded" && typeof entry.profit === "number") {
       gradedBets += 1;
       runningProfit += entry.profit;
-      if (entry.result === "W") wins += 1;
-      if (entry.result === "L") losses += 1;
       entry.cumulativeProfit = Number(runningProfit.toFixed(2));
     } else {
       entry.cumulativeProfit = null;
@@ -308,7 +346,7 @@ function summarize(entries) {
       wins,
       losses,
       profit,
-      totalBets: gradedBets,
+      totalBets: totalSettledBets,
       totalWagered: Number(totalWagered.toFixed(2)),
       roi: totalWagered > 0 ? Number(((profit / totalWagered) * 100).toFixed(2)) : 0,
       pendingGames,
