@@ -178,21 +178,20 @@ function buildRecentLogRows(recentGames = []) {
 }
 
 function mapOddsSummaryToMoneyline(odds, game) {
-  const consensus = odds?.consensus || {};
-  const markets = Array.isArray(consensus.markets) ? consensus.markets : Array.isArray(odds?.markets) ? odds.markets : [];
-  const moneylineMarket = markets.find((market) => /moneyline|h2h/i.test(market.label || market.key || ""));
+  const markets = Array.isArray(odds?.markets) ? odds.markets : [];
+  const moneylineMarket = markets.find((market) => String(market?.key || "").toLowerCase() === "h2h");
   if (!moneylineMarket) return { mets: null, opp: null };
 
-  const opponentName = game.opponent;
+  const opponentName = String(game?.opponent || "");
   const getPrice = (teamName) => {
     const outcome = Array.isArray(moneylineMarket.outcomes)
-      ? moneylineMarket.outcomes.find((entry) => String(entry.name || "").toLowerCase().includes(String(teamName).toLowerCase()))
+      ? moneylineMarket.outcomes.find((entry) => String(entry?.name || "") === teamName)
       : null;
-    return typeof outcome?.price === "number" ? outcome.price : null;
+    return typeof outcome?.price === "number" && Number.isFinite(outcome.price) ? outcome.price : null;
   };
 
   return {
-    mets: getPrice("Mets"),
+    mets: getPrice("New York Mets"),
     opp: getPrice(opponentName)
   };
 }

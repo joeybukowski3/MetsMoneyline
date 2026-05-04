@@ -4,15 +4,14 @@ function formatAmericanOdds(value) {
 }
 
 function findMoneylineMarket(payload) {
-  const direct = Array.isArray(payload?.markets) ? payload.markets : [];
-  const consensus = Array.isArray(payload?.consensus?.markets) ? payload.consensus.markets : [];
-  return [...direct, ...consensus].find((market) => /moneyline|h2h/i.test(String(market?.label || market?.key || ""))) || null;
+  const markets = Array.isArray(payload?.markets) ? payload.markets : [];
+  return markets.find((market) => String(market?.key || "").toLowerCase() === "h2h") || null;
 }
 
 function findOutcomePrice(market, teamName) {
   if (!market || !teamName) return null;
   const outcome = Array.isArray(market?.outcomes)
-    ? market.outcomes.find((entry) => String(entry?.name || "").toLowerCase() === String(teamName).toLowerCase())
+    ? market.outcomes.find((entry) => String(entry?.name || "") === teamName)
     : null;
   return typeof outcome?.price === "number" && Number.isFinite(outcome.price) ? outcome.price : null;
 }
@@ -34,8 +33,8 @@ async function updateReportOddsRow() {
     const market = findMoneylineMarket(oddsPayload);
     if (!market) return;
 
-    const metsOdds = findOutcomePrice(market, "New York Mets") ?? findOutcomePrice(market, "Mets");
-    const opponentName = game.opponent || "";
+    const metsOdds = findOutcomePrice(market, "New York Mets");
+    const opponentName = String(game?.opponent || "");
     const oppOdds = findOutcomePrice(market, opponentName);
     if (metsOdds == null && oppOdds == null) return;
 
