@@ -1,7 +1,7 @@
 {
   "gameId": 824363,
   "startTime": "2026-05-04T21:40:00Z",
-  "status": "Scheduled",
+  "status": "In Progress",
   "homeTeam": {
     "id": 115,
     "canonicalKey": "rockies",
@@ -33,12 +33,12 @@
         "outcomes": [
           {
             "name": "Colorado Rockies",
-            "price": 122,
+            "price": 340,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -144,
+            "price": -500,
             "point": null
           }
         ]
@@ -49,13 +49,13 @@
         "outcomes": [
           {
             "name": "Colorado Rockies",
-            "price": -134,
-            "point": 1.5
+            "price": -138,
+            "point": 2.5
           },
           {
             "name": "New York Mets",
-            "price": 112,
-            "point": -1.5
+            "price": 104,
+            "point": -2.5
           }
         ]
       },
@@ -65,13 +65,13 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -124,
-            "point": 10.5
+            "price": -106,
+            "point": 6.5
           },
           {
             "name": "Under",
-            "price": 102,
-            "point": 10.5
+            "price": -125,
+            "point": 6.5
           }
         ]
       }
@@ -86,12 +86,12 @@
     "gameDate": "2026-05-04T21:40:00Z",
     "officialDate": "2026-05-04",
     "status": {
-      "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "abstractGameState": "Live",
+      "codedGameState": "I",
+      "detailedState": "In Progress",
+      "statusCode": "I",
       "startTimeTBD": false,
-      "abstractGameCode": "P"
+      "abstractGameCode": "L"
     },
     "teams": {
       "away": {
@@ -147,6 +147,7 @@
           "losses": 22,
           "pct": ".353"
         },
+        "score": 2,
         "splitSquad": false,
         "seriesNumber": 12,
         "springLeague": {
@@ -209,6 +210,7 @@
           "losses": 21,
           "pct": ".400"
         },
+        "score": 0,
         "splitSquad": false,
         "seriesNumber": 12,
         "springLeague": {
@@ -220,13 +222,185 @@
       }
     },
     "linescore": {
+      "currentInning": 6,
+      "currentInningOrdinal": "6th",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 1
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        },
+        {
+          "num": 2,
+          "ordinalNum": "2nd",
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        },
+        {
+          "num": 3,
+          "ordinalNum": "3rd",
+          "home": {
+            "runs": 0,
+            "hits": 1,
+            "errors": 0,
+            "leftOnBase": 1
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        },
+        {
+          "num": 4,
+          "ordinalNum": "4th",
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        },
+        {
+          "num": 5,
+          "ordinalNum": "5th",
+          "home": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "runs": 0,
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        },
+        {
+          "num": 6,
+          "ordinalNum": "6th",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "runs": 2,
+            "hits": 3,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 1,
+          "errors": 0,
+          "leftOnBase": 2
+        },
+        "away": {
+          "runs": 2,
+          "hits": 3,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 677955,
+          "fullName": "Jaden Hill",
+          "link": "/api/v1/people/677955"
+        },
+        "catcher": {
+          "id": 696100,
+          "fullName": "Hunter Goodman",
+          "link": "/api/v1/people/696100"
+        },
+        "first": {
+          "id": 681198,
+          "fullName": "TJ Rumfield",
+          "link": "/api/v1/people/681198"
+        },
+        "second": {
+          "id": 650489,
+          "fullName": "Willi Castro",
+          "link": "/api/v1/people/650489"
+        },
+        "third": {
+          "id": 691720,
+          "fullName": "Kyle Karros",
+          "link": "/api/v1/people/691720"
+        },
+        "shortstop": {
+          "id": 678662,
+          "fullName": "Ezequiel Tovar",
+          "link": "/api/v1/people/678662"
+        },
+        "left": {
+          "id": 666160,
+          "fullName": "Mickey Moniak",
+          "link": "/api/v1/people/666160"
+        },
+        "center": {
+          "id": 686668,
+          "fullName": "Brenton Doyle",
+          "link": "/api/v1/people/686668"
+        },
+        "right": {
+          "id": 687597,
+          "fullName": "Jordan Beck",
+          "link": "/api/v1/people/687597"
+        },
+        "batter": {
+          "id": 686668,
+          "fullName": "Brenton Doyle",
+          "link": "/api/v1/people/686668"
+        },
+        "onDeck": {
+          "id": 666160,
+          "fullName": "Mickey Moniak",
+          "link": "/api/v1/people/666160"
+        },
+        "inHole": {
+          "id": 671289,
+          "fullName": "Tyler Freeman",
+          "link": "/api/v1/people/671289"
+        },
+        "battingOrder": 9,
         "team": {
           "id": 115,
           "name": "Colorado Rockies",
@@ -234,12 +408,46 @@
         }
       },
       "offense": {
+        "batter": {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901"
+        },
+        "onDeck": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "inHole": {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760"
+        },
+        "second": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "third": {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443"
+        },
+        "pitcher": {
+          "id": 656849,
+          "fullName": "David Peterson",
+          "link": "/api/v1/people/656849"
+        },
+        "battingOrder": 4,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
-      }
+      },
+      "balls": 1,
+      "strikes": 1,
+      "outs": 2
     },
     "venue": {
       "id": 19,
@@ -271,7 +479,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-04T16:02:50.542Z",
+    "generatedAt": "2026-05-04T22:57:24.344Z",
     "cacheHint": "schedule: 15-30 minutes"
   }
 }
