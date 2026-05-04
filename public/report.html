@@ -3,35 +3,43 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mets Moneyline | Daily NY Mets Game Analysis & Betting Breakdown</title>
-    <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
-    <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
-    <link rel="canonical" href="https://www.metsmoneyline.com/">
+    <title>Today's Mets Betting Report & Game Breakdown | MetsMoneyline</title>
+    <meta name="description" content="Full betting breakdown for today's Mets game — starting pitcher analysis, lineup matchups, bullpen metrics, weather, and the official MetsMoneyline pick.">
+    <meta name="keywords" content="Mets moneyline, Mets game prediction, Mets betting picks, MLB moneyline picks, Mets starting pitcher odds">
+    <link rel="canonical" href="https://www.metsmoneyline.com/report.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://statsapi.mlb.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VV13077MN0');
+  </script>
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.metsmoneyline.com/">
-    <meta property="og:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
-    <meta property="og:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
-    <meta property="og:image" content="https://www.metsmoneyline.com/og-image.png">
+    <meta property="og:url" content="https://www.metsmoneyline.com/report.html">
+    <meta property="og:title" content="Today's Mets Betting Report | MetsMoneyline">
+    <meta property="og:description" content="Starting pitcher breakdown, lineup analysis, bullpen metrics, and the official Mets moneyline pick for today's game.">
+    <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
-    <meta name="twitter:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
-    <meta name="twitter:image" content="https://www.metsmoneyline.com/og-image.png">
+    <meta name="twitter:title" content="Today's Mets Betting Report | MetsMoneyline">
+    <meta name="twitter:description" content="Starting pitcher breakdown, lineup analysis, bullpen metrics, and the official Mets moneyline pick for today's game.">
+    <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
     <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Mets Moneyline",
-        "url": "https://www.metsmoneyline.com",
-        "description": "Daily NY Mets game analysis, moneyline value, and betting insights."
-      }
-    </script>
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Today's Mets Betting Report",
+      "url": "https://www.metsmoneyline.com/report.html",
+      "description": "Full betting breakdown for today's Mets game with pitching matchups, lineup analysis, and the official MetsMoneyline pick.",
+      "isPartOf": { "@type": "WebSite", "name": "Mets Moneyline", "url": "https://www.metsmoneyline.com" }
+    }
+  </script>
     <style>
       html, body { max-width:100%; overflow-x:hidden; }
       @media (max-width: 980px) {
@@ -1255,5 +1263,47 @@
       }
     </script>
     <script defer src="js/report-live-odds.js"></script>
+  
+    <script>
+      // Dynamic SportsEvent structured data from sample-game.json
+      (async function injectSportsEventSchema() {
+        try {
+          const res = await fetch('/data/sample-game.json');
+          const data = await res.json();
+          const game = data.games && data.games[0];
+          if (!game) return;
+
+          const isHome = game.homeAway === 'home';
+          const metsTeam = { "@type": "SportsTeam", "name": "New York Mets" };
+          const oppTeam = { "@type": "SportsTeam", "name": game.opponent };
+
+          const isoDate = new Date(game.date + 'T' +
+            (game.time || '19:00').replace(/\s*(AM|PM)\s*ET/i, (m, p) => {
+              return '';
+            }) + ':00-04:00').toISOString();
+
+          const schema = {
+            "@context": "https://schema.org",
+            "@type": "SportsEvent",
+            "name": isHome
+              ? `${game.opponent} at New York Mets - ${game.date}`
+              : `New York Mets at ${game.opponent} - ${game.date}`,
+            "startDate": game.date,
+            "location": { "@type": "Place", "name": game.ballpark },
+            "homeTeam": isHome ? metsTeam : oppTeam,
+            "awayTeam": isHome ? oppTeam : metsTeam,
+            "sport": "Baseball",
+            "description": `Mets moneyline betting breakdown and analysis for ${game.date}`
+          };
+
+          const script = document.createElement('script');
+          script.type = 'application/ld+json';
+          script.textContent = JSON.stringify(schema);
+          document.head.appendChild(script);
+        } catch (e) {
+          console.warn('SportsEvent schema injection failed:', e);
+        }
+      })();
+    </script>
   </body>
 </html>
