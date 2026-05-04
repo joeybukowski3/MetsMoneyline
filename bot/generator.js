@@ -25,7 +25,7 @@ const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
-const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds");
+const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds.json");
 const REPORT_HTML_PATH = path.join(__dirname, "../public/report.html");
 
 const TEAM_IDS = {

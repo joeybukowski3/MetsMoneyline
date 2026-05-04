@@ -20,7 +20,7 @@ async function updateReportOddsRow() {
   try {
     const [sampleGameResponse, oddsResponse] = await Promise.all([
       fetch("data/sample-game.json"),
-      fetch("api/mlb/mets/odds")
+      fetch("api/mlb/mets/odds.json")
     ]);
 
     if (!sampleGameResponse.ok || !oddsResponse.ok) return;

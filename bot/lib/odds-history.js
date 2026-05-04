@@ -158,6 +158,25 @@ function resolveArchivedOdds(history, game) {
   const gameTime = normalizeStartTime(game?.startTime);
   const gameOpponent = String(game?.opponent || "");
   const gameHomeAway = String(game?.homeAway || "").toLowerCase();
+  const manualBackfill = entries.find((entry) => (
+    entry?.archived === true &&
+    entry?.source === "manual-backfill" &&
+    normalizeDate(entry?.date) === gameDate &&
+    String(entry?.opponent || "") === gameOpponent &&
+    typeof entry?.metsML === "number" &&
+    Number.isFinite(entry.metsML)
+  ));
+
+  if (manualBackfill) {
+    return {
+      odds: manualBackfill.metsML,
+      oppOdds: null,
+      source: "odds-history-manual-backfill",
+      capturedAt: null,
+      bookmaker: manualBackfill.source,
+      key: `manual-backfill::${gameDate}::${gameOpponent}::${gameHomeAway || "unknown"}`
+    };
+  }
 
   const candidates = entries.filter((entry) => (
     normalizeDate(entry?.date) === gameDate &&

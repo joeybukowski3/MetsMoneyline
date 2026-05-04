@@ -583,7 +583,7 @@ async function run() {
   writeJsonEndpoint("live-game", liveGamePayload);
   writeJsonEndpoint("standings", standingsPayload);
   writeJsonEndpoint("recent-games", recentGamesPayload);
-  writeJsonEndpoint("odds", oddsPayload);
+  writeJsonEndpoint("odds.json", oddsPayload);
   writeJsonEndpoint("overview", overviewPayload);
 
   for (const game of games) {

@@ -281,7 +281,7 @@ async function loadGameData() {
     fetchInternalJson("api/mlb/mets/live-game").catch(() => null),
     fetchInternalJson("api/mlb/mets/standings").catch(() => null),
     fetchInternalJson("api/mlb/mets/recent-games").catch(() => null),
-    fetchInternalJson("api/mlb/mets/odds").catch(() => null)
+    fetchInternalJson("api/mlb/mets/odds.json").catch(() => null)
   ]);
 
   try {
