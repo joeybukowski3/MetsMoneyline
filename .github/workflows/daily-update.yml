@@ -48,5 +48,7 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh Mets odds artifacts [skip ci]"
+          git stash
           git pull --rebase origin main
+          git stash pop || true
           git push origin main

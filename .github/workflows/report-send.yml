@@ -65,7 +65,9 @@ jobs:
             echo "No changes to commit."
           else
             git commit -m "chore: report send state update [skip ci]"
+            git stash
             git pull --rebase origin main
+            git stash pop || true
             git push origin main
           fi
 
