@@ -1,17 +1,277 @@
 {
-  "gameId": null,
-  "startTime": null,
-  "status": "No upcoming Mets game",
-  "homeTeam": null,
-  "awayTeam": null,
-  "isMetsHome": null,
-  "venue": null,
-  "league": null,
-  "sportsbookSummary": null,
-  "raw": null,
+  "gameId": 824363,
+  "startTime": "2026-05-04T21:40:00Z",
+  "status": "Scheduled",
+  "homeTeam": {
+    "id": 115,
+    "canonicalKey": "rockies",
+    "mlbStatsTeamId": 115,
+    "apiSportsTeamId": 115,
+    "name": "Colorado Rockies",
+    "abbreviation": "COL",
+    "record": null
+  },
+  "awayTeam": {
+    "id": 121,
+    "canonicalKey": "mets",
+    "mlbStatsTeamId": 121,
+    "apiSportsTeamId": 121,
+    "name": "New York Mets",
+    "abbreviation": "NYM",
+    "record": null
+  },
+  "isMetsHome": false,
+  "venue": "Coors Field",
+  "league": 1,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Colorado Rockies",
+            "price": 122,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -144,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Colorado Rockies",
+            "price": -134,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 112,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -120,
+            "point": 10.5
+          },
+          {
+            "name": "Under",
+            "price": -102,
+            "point": 10.5
+          }
+        ]
+      }
+    ]
+  },
+  "raw": {
+    "gamePk": 824363,
+    "gameGuid": "8caa964e-9825-4caf-8b53-af1a3c3c921f",
+    "link": "/api/v1.1/game/824363/feed/live",
+    "gameType": "R",
+    "season": "2026",
+    "gameDate": "2026-05-04T21:40:00Z",
+    "officialDate": "2026-05-04",
+    "status": {
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
+      "startTimeTBD": false,
+      "abstractGameCode": "P"
+    },
+    "teams": {
+      "away": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121",
+          "season": 2026,
+          "venue": {
+            "id": 3289,
+            "name": "Citi Field",
+            "link": "/api/v1/venues/3289"
+          },
+          "springVenue": {
+            "id": 2856,
+            "link": "/api/v1/venues/2856"
+          },
+          "teamCode": "nyn",
+          "fileCode": "nym",
+          "abbreviation": "NYM",
+          "teamName": "Mets",
+          "locationName": "Flushing",
+          "firstYearOfPlay": "1962",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 204,
+            "name": "National League East",
+            "link": "/api/v1/divisions/204"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "NY Mets",
+          "franchiseName": "New York",
+          "clubName": "Mets",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 12,
+          "losses": 22,
+          "pct": ".353"
+        },
+        "splitSquad": false,
+        "seriesNumber": 12,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      },
+      "home": {
+        "team": {
+          "springLeague": {
+            "id": 114,
+            "name": "Cactus League",
+            "link": "/api/v1/league/114",
+            "abbreviation": "CL"
+          },
+          "allStarStatus": "N",
+          "id": 115,
+          "name": "Colorado Rockies",
+          "link": "/api/v1/teams/115",
+          "season": 2026,
+          "venue": {
+            "id": 19,
+            "name": "Coors Field",
+            "link": "/api/v1/venues/19"
+          },
+          "springVenue": {
+            "id": 4249,
+            "link": "/api/v1/venues/4249"
+          },
+          "teamCode": "col",
+          "fileCode": "col",
+          "abbreviation": "COL",
+          "teamName": "Rockies",
+          "locationName": "Denver",
+          "firstYearOfPlay": "1992",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 203,
+            "name": "National League West",
+            "link": "/api/v1/divisions/203"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Colorado",
+          "franchiseName": "Colorado",
+          "clubName": "Rockies",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 14,
+          "losses": 21,
+          "pct": ".400"
+        },
+        "splitSquad": false,
+        "seriesNumber": 12,
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        }
+      }
+    },
+    "linescore": {
+      "scheduledInnings": 9,
+      "innings": [],
+      "teams": {
+        "home": {},
+        "away": {}
+      },
+      "defense": {
+        "team": {
+          "id": 115,
+          "name": "Colorado Rockies",
+          "link": "/api/v1/teams/115"
+        }
+      },
+      "offense": {
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      }
+    },
+    "venue": {
+      "id": 19,
+      "name": "Coors Field",
+      "link": "/api/v1/venues/19",
+      "active": true,
+      "season": "2026"
+    },
+    "content": {
+      "link": "/api/v1/game/824363/content"
+    },
+    "gameNumber": 1,
+    "publicFacing": true,
+    "doubleHeader": "N",
+    "gamedayType": "P",
+    "tiebreaker": "N",
+    "calendarEventID": "14-824363-2026-05-04",
+    "seasonDisplay": "2026",
+    "dayNight": "day",
+    "scheduledInnings": 9,
+    "reverseHomeAwayStatus": false,
+    "inningBreakLength": 120,
+    "gamesInSeries": 3,
+    "seriesGameNumber": 1,
+    "seriesDescription": "Regular Season",
+    "recordSource": "S",
+    "ifNecessary": "N",
+    "ifNecessaryDescription": "Normal Game"
+  },
   "meta": {
-    "provider": "api-sports",
-    "generatedAt": "2026-05-04T13:53:05.339Z",
+    "provider": "mlb-stats-api",
+    "generatedAt": "2026-05-04T14:25:42.722Z",
     "cacheHint": "schedule: 15-30 minutes"
   }
 }
