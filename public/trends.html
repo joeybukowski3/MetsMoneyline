@@ -155,13 +155,28 @@
     function fmtBa(v) { return v != null ? v.toFixed(3).replace(/^0/, '') : '—'; }
 
     /* ── Chart creation ── */
+    function normalizeRolling(windowData) {
+      const rolling = windowData?.rolling || {};
+      const labels = Array.isArray(rolling.labels) ? rolling.labels : [];
+      const rollingBa = Array.isArray(rolling.ba) ? rolling.ba : [];
+      const perGameBa = Array.isArray(rolling.game)
+        ? rolling.game
+        : rollingBa.map(v => (typeof v === 'number' ? v : null));
+      const xba = windowData?.xba ?? null;
+      return { labels, rollingBa, perGameBa, xba };
+    }
+
     function createChart(canvasId, labels, rollingBa, perGameBa, xba) {
       if (charts[canvasId]) { charts[canvasId].destroy(); }
       const ctx = document.getElementById(canvasId);
       if (!ctx) return;
+      const safeLabels = Array.isArray(labels) ? labels : [];
+      const safeRollingBa = Array.isArray(rollingBa) ? rollingBa : [];
+      const safePerGameBa = Array.isArray(perGameBa) ? perGameBa : [];
+      if (!safeLabels.length || !safeRollingBa.length) return;
 
       // Compute Y-axis bounds from data
-      const allVals = [...(rollingBa || []), ...(perGameBa || [])].filter(v => v != null && v > 0);
+      const allVals = [...safeRollingBa, ...safePerGameBa].filter(v => v != null && v > 0);
       if (xba != null) allVals.push(xba);
       const dataMin = allVals.length ? Math.min(...allVals) : 0.100;
       const dataMax = allVals.length ? Math.max(...allVals) : 0.400;
@@ -172,7 +187,7 @@
       const datasets = [
         // Per-game BA dots (background scatter)
         {
-          label: 'Game BA', data: perGameBa,
+          label: 'Game BA', data: safePerGameBa,
           type: 'bar',
           backgroundColor: 'rgba(0,45,114,0.10)',
           borderColor: 'rgba(0,45,114,0.20)',
@@ -182,7 +197,7 @@
         },
         // 5-game rolling BA (main line)
         {
-          label: '5-Game Rolling BA', data: rollingBa,
+          label: '5-Game Rolling BA', data: safeRollingBa,
           type: 'line',
           borderColor: '#002d72', backgroundColor: 'rgba(0,45,114,0.06)',
           borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5,
@@ -194,7 +209,7 @@
       if (xba != null) {
         datasets.push({
           label: `Season xBA (${fmtBa(xba)})`,
-          data: labels.map(() => xba),
+          data: safeLabels.map(() => xba),
           type: 'line',
           borderColor: '#ff5910', backgroundColor: 'transparent',
           borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 0,
@@ -204,7 +219,7 @@
 
       charts[canvasId] = new Chart(ctx.getContext('2d'), {
         type: 'bar', // base type for mixed chart
-        data: { labels, datasets },
+        data: { labels: safeLabels, datasets },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -318,7 +333,8 @@
       teamSection.innerHTML = renderTeamCard(trendsData.team, windowKey);
       const teamW = trendsData.team[windowKey] || trendsData.team.season;
       if (teamW?.rolling) {
-        createChart('chart-team', teamW.rolling.labels, teamW.rolling.ba, teamW.rolling.game, teamW.xba);
+        const { labels, rollingBa, perGameBa, xba } = normalizeRolling(teamW);
+        createChart('chart-team', labels, rollingBa, perGameBa, xba);
       }
 
       // Player cards sorted by PA
@@ -335,7 +351,8 @@
       players.forEach((player, idx) => {
         const w = player[windowKey] || player.season;
         if (w?.rolling) {
-          createChart(`chart-player-${idx}`, w.rolling.labels, w.rolling.ba, w.rolling.game, w.xba);
+          const { labels, rollingBa, perGameBa, xba } = normalizeRolling(w);
+          createChart(`chart-player-${idx}`, labels, rollingBa, perGameBa, xba);
         }
       });
     }
