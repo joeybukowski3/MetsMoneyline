@@ -4687,7 +4687,7 @@ function buildSiteReportHtml(game) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Mets Moneyline | Daily NY Mets Game Analysis & Betting Breakdown</title>
+    <title>Mets Moneyline | Daily NY Mets Game Analysis</title>
     <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
     <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
     <link rel="canonical" href="https://www.metsmoneyline.com/">
@@ -4752,23 +4752,7 @@ function buildSiteReportHtml(game) {
   </head>
   <body>
     <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
-    <header>
-      <nav>
-        <a href="/" class="nav-brand">
-          <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
-        </a>
-        <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links">
-          <li><a href="/" class="nav-link">Game Day</a></li>
-          <li><a href="report.html" class="nav-link active">Today's Report</a></li>
-          <li><a href="advanced-stats.html" class="nav-link">Stats &amp; Standings</a></li>
-          <li><a href="betting-history.html" class="nav-link">History</a></li>
-          <li><a href="news.html" class="nav-link">Team News</a></li>
-        </ul>
-      </nav>
-    </header>
+    <header></header>
     <main class="report-main" style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
       <section class="report-banner" style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
         <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
@@ -4780,7 +4764,7 @@ function buildSiteReportHtml(game) {
             <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"} team logo" width="112" height="112" decoding="async" style="width:112px;height:112px;object-fit:contain;">
           </div>
         </div>
-        <h1 style="margin:0.9rem 0 0.35rem;color:#111827;font-size:1.9rem;line-height:1.2;">${game.homeAway === "away" ? `Mets at ${game.opponent}` : `${game.opponent} at Mets`} Betting Breakdown</h1>
+        <h1 style="margin:0.9rem 0 0.35rem;color:#111827;font-size:1.9rem;line-height:1.2;">${game.homeAway === "away" ? `Mets at ${game.opponent}` : `${game.opponent} at Mets`}</h1>
         <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
       </section>
       ${reportMarkup}
@@ -4792,24 +4776,7 @@ function buildSiteReportHtml(game) {
       <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
       <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
     </footer>
-    <script>
-      const hamburger = document.querySelector('.nav-hamburger');
-      const navLinks = document.querySelector('.nav-links');
-      if (hamburger && navLinks) {
-        hamburger.addEventListener('click', () => {
-          const open = navLinks.classList.toggle('open');
-          hamburger.classList.toggle('open', open);
-          hamburger.setAttribute('aria-expanded', open);
-        });
-        navLinks.querySelectorAll('.nav-link').forEach((link) => {
-          link.addEventListener('click', () => {
-            navLinks.classList.remove('open');
-            hamburger.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-          });
-        });
-      }
-    </script>
+    <script defer src="js/site-header.js"></script>
     <script defer src="js/report-live-odds.js"></script>
   </body>
 </html>`;
