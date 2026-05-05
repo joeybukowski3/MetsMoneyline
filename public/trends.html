@@ -4,165 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mets Batting Trends & xBA Analysis 2026 | MetsMoneyline</title>
-  <meta name="description" content="Track 2026 New York Mets batting trends &mdash; BA vs xBA overlay charts for the team and individual players. Season, last 20, and last 10 game windows.">
+  <meta name="description" content="Track 2026 New York Mets batting trends — BA vs xBA overlay charts for the team and individual players. Season, last 20, and last 10 game windows.">
   <meta name="keywords" content="Mets xBA, Mets batting average, Mets Statcast, New York Mets hitting trends, Mets expected batting average">
   <link rel="canonical" href="https://www.metsmoneyline.com/trends.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.metsmoneyline.com/trends.html">
   <meta property="og:title" content="Mets Batting Trends & xBA Analysis 2026 | MetsMoneyline">
-  <meta property="og:description" content="BA vs xBA overlay charts for every Mets hitter &mdash; are they running hot or due for a breakout?">
+  <meta property="og:description" content="BA vs xBA overlay charts for every Mets hitter — are they running hot or due for a breakout?">
   <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mets Batting Trends & xBA Analysis 2026 | MetsMoneyline">
-  <meta name="twitter:description" content="BA vs xBA overlay charts for every Mets hitter &mdash; are they running hot or due for a breakout?">
+  <meta name="twitter:description" content="BA vs xBA overlay charts for every Mets hitter — are they running hot or due for a breakout?">
   <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/jpeg" href="/favicon.jpg">
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <link rel="stylesheet" href="css/styles.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebPage","name":"Mets Batting Trends & xBA Analysis 2026","url":"https://www.metsmoneyline.com/trends.html","description":"Track 2026 New York Mets batting trends with BA vs xBA overlay charts.","isPartOf":{"@type":"WebSite","name":"Mets Moneyline","url":"https://www.metsmoneyline.com"}}
   </script>
   <style>
     .trends-shell { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
-    .trends-header { padding: 2rem 0 1.25rem; text-align: center; }
+    .trends-header { padding: 2rem 0 0.5rem; text-align: center; }
     .trends-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
-    .trends-header p { color: var(--text-muted); font-size: 0.9rem; }
+    .trends-header .sub { color: var(--text-muted); font-size: 0.85rem; max-width: 520px; margin: 0 auto; line-height: 1.45; }
+    .trends-header .updated { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+    .chart-legend-guide {
+      display: flex; gap: 1.25rem; justify-content: center; align-items: center;
+      flex-wrap: wrap; padding: 0.6rem 1rem; margin: 0.75rem auto 1.25rem;
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
+      max-width: 560px; font-size: 0.72rem; color: var(--text-muted);
+    }
+    .chart-legend-guide .lg-item { display: flex; align-items: center; gap: 5px; }
+    .lg-line { width: 22px; height: 3px; border-radius: 2px; }
+    .lg-line.ba { background: #002d72; }
+    .lg-line.xba { background: #ff5910; border: none; height: 0; border-top: 2px dashed #ff5910; }
+    .lg-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,45,114,0.25); border: 1px solid rgba(0,45,114,0.4); }
 
     .window-tabs { display: flex; gap: 0.4rem; justify-content: center; margin-bottom: 1.5rem; }
     .window-tab {
-      border: none;
-      border-radius: 999px;
-      background: #e8ecf4;
-      color: var(--navy);
-      padding: 0.5rem 1.2rem;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
+      border: none; border-radius: 999px; background: #e8ecf4; color: var(--navy);
+      padding: 0.5rem 1.2rem; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: all 0.15s;
     }
     .window-tab.active { background: var(--navy); color: #fff; }
     .window-tab:hover:not(.active) { background: #d4dae6; }
 
-    #team-trend-section,
-    #player-trend-section,
-    .trend-card--team,
-    .player-section-label,
-    .player-grid {
-      max-width: 1100px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
     .trend-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
-      box-shadow: var(--shadow);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px;
+      padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
     }
-    .trend-card--player {
-      margin-bottom: 0;
-      height: 100%;
-    }
-    .trend-card-header {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
+    .trend-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
     .trend-card-header img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--border);
-      background: #fff;
+      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--border); background: #fff;
     }
-    .trend-card-header .player-info h3 { font-size: 1rem; font-weight: 800; color: var(--navy); }
+    .trend-card-header .player-info h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0; }
     .trend-card-header .player-info span { font-size: 0.78rem; color: var(--text-muted); }
-    .trend-card--player .player-info h3 { font-size: 14px; font-weight: 800; }
-    .trend-card--player .player-info span { font-size: 11px; color: var(--text-muted); }
 
-    .trend-chart-wrap { position: relative; }
-    .trend-card--team .trend-chart-wrap { min-height: 260px; }
-    .trend-card--player .trend-chart-wrap { min-height: 160px; }
-    .trend-legend {
-      display: flex;
-      gap: 1.5rem;
-      justify-content: center;
-      margin-top: 0.5rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
+    .verdict-badge {
+      display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.6rem;
+      border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; margin-left: auto;
     }
-    .trend-legend span::before {
-      content: '';
-      display: inline-block;
-      width: 12px;
-      height: 3px;
-      border-radius: 2px;
-      margin-right: 5px;
-      vertical-align: middle;
-    }
-    .trend-legend .leg-ba::before { background: var(--navy); }
-    .trend-legend .leg-xba::before { background: var(--orange); }
+    .verdict-hot { background: rgba(220,38,38,0.1); color: #dc2626; }
+    .verdict-cold { background: rgba(37,99,235,0.1); color: #2563eb; }
+    .verdict-track { background: rgba(22,163,74,0.1); color: #16a34a; }
+
+    .trend-chart-wrap { position: relative; height: 200px; }
 
     .trend-stats-row {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid var(--border);
+      display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem;
+      padding-top: 0.75rem; border-top: 1px solid var(--border);
     }
-    .trend-card--player .trend-stats-row { gap: 0.75rem; }
-    .trend-stat { text-align: center; flex: 1; min-width: 70px; }
-    .trend-card--player .trend-stat { min-width: 0; }
-    .trend-stat .val { font-size: 1.1rem; font-weight: 800; color: var(--navy); }
-    .trend-stat .lbl {
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-    }
-
-    .diff-positive { color: #16a34a !important; }
-    .diff-negative { color: #dc2626 !important; }
+    .trend-stat { text-align: center; flex: 1; min-width: 55px; }
+    .trend-stat .val { font-size: 1rem; font-weight: 800; color: var(--navy); }
+    .trend-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .diff-positive { color: #dc2626 !important; }
+    .diff-negative { color: #2563eb !important; }
 
     .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; font-size: 0.9rem; }
 
-    .player-section-label {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #6b7280;
-      margin: 24px auto 12px auto;
-    }
-    .player-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    @media (max-width: 900px) {
-      .player-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 600px) {
-      .player-grid { grid-template-columns: 1fr; }
-    }
-
     @media (max-width: 640px) {
       .trends-shell { padding: 0 0.75rem 2rem; }
+      .trend-chart-wrap { height: 170px; }
       .trend-card { padding: 1rem; }
-      .trend-card--team .trend-chart-wrap { min-height: 220px; }
-      .trend-card--player .trend-chart-wrap { min-height: 160px; }
+      .trend-stats-row { gap: 0.5rem; }
+      .trend-stat .val { font-size: 0.9rem; }
     }
   </style>
 </head>
@@ -174,8 +105,14 @@
     <div class="trends-shell">
       <div class="trends-header">
         <h1>Mets Batting Trends &amp; xBA Analysis</h1>
-        <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
-        <p>Rolling BA vs expected batting average (xBA) &mdash; spot who's lucky, unlucky, or due for regression.</p>
+        <p class="sub">5-game rolling batting average vs season xBA (expected batting average from Statcast). When the blue line is above the orange line, the hitter is outperforming expectations. Below = underperforming.</p>
+        <p class="updated" id="last-updated"></p>
+      </div>
+
+      <div class="chart-legend-guide">
+        <div class="lg-item"><div class="lg-line ba"></div> 5-Game Rolling BA</div>
+        <div class="lg-item"><div class="lg-line xba"></div> Season xBA</div>
+        <div class="lg-item"><div class="lg-dot"></div> Single-Game BA</div>
       </div>
 
       <div class="window-tabs">
@@ -188,6 +125,7 @@
         <div class="loading-msg" id="trends-loading">Loading trend data&hellip;</div>
       </div>
 
+      <h2 id="players-heading" style="display:none;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin:1.5rem 0 0.75rem;">Individual Hitters</h2>
       <div id="player-trend-section"></div>
     </div>
   </main>
@@ -196,194 +134,213 @@
     <div class="footer-brand"><span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span></div>
     <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
     <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
-    <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
   </footer>
 
-  <script defer src="/js/site-header.js"></script>
+  <script defer src="js/site-header.js"></script>
   <script>
+    const TRENDS_DATA_URL = 'data/trends.json';
     let trendsData = null;
     let activeWindow = 'season';
+    const charts = {};
 
-    function renderLineChart(canvasEl, labels, datasets, opts) {
-      const W = canvasEl.offsetWidth || 500;
-      const H = parseInt(canvasEl.getAttribute('data-height') || canvasEl.style.height || '200', 10);
-      const padL = 36, padR = 12, padT = 12, padB = 28;
-      const chartW = W - padL - padR;
-      const chartH = H - padT - padB;
-
-      const allVals = datasets.flatMap(d => d.data.filter(v => v != null));
-      if (!allVals.length) {
-        canvasEl.innerHTML = '<p style="text-align:center;padding:20px;color:#9ca3af;font-size:12px;">No data available</p>';
-        return;
-      }
-
-      const minV = Math.min(...allVals);
-      const maxV = Math.max(...allVals);
-      const range = maxV - minV || 0.01;
-
-      const xScale = (i) => {
-        if (labels.length <= 1) return padL + (chartW / 2);
-        return padL + (i / (labels.length - 1)) * chartW;
-      };
-      const yScale = (v) => padT + chartH - ((v - minV) / range) * chartH;
-
-      const tickCount = 4;
-      const ticks = Array.from({ length: tickCount + 1 }, (_, i) => minV + (range / tickCount) * i);
-      const tickLines = ticks.map(t => {
-        const y = yScale(t);
-        return `<line x1="${padL}" y1="${y}" x2="${padL + chartW}" y2="${y}" stroke="#e5e7eb" stroke-width="1"/>
-            <text x="${padL - 4}" y="${y + 4}" text-anchor="end" font-size="9" fill="#9ca3af">${t.toFixed(3)}</text>`;
-      }).join('');
-
-      const step = Math.max(1, Math.ceil(labels.length / 8));
-      const xLabels = labels.map((l, i) => {
-        if (i % step !== 0 && i !== labels.length - 1) return '';
-        return `<text x="${xScale(i)}" y="${padT + chartH + 18}" text-anchor="middle" font-size="9" fill="#9ca3af">${l}</text>`;
-      }).join('');
-
-      const lines = datasets.map(ds => {
-        const points = ds.data.map((v, i) => v != null ? `${xScale(i)},${yScale(v)}` : null).filter(Boolean);
-        if (points.length < 2) return '';
-        let d = '';
-        ds.data.forEach((v, i) => {
-          if (v == null) return;
-          d += (d === '' ? 'M' : 'L') + `${xScale(i)},${yScale(v)} `;
-        });
-        const dots = ds.data.map((v, i) => v != null
-          ? `<circle cx="${xScale(i)}" cy="${yScale(v)}" r="2.5" fill="${ds.color}" opacity="0.7"/>`
-          : '').join('');
-        return `<path d="${d.trim()}" fill="none" stroke="${ds.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}`;
-      }).join('');
-
-      const legend = datasets.map((ds, i) =>
-        `<g transform="translate(${padL + i * 120}, ${H - 6})">
-          <line x1="0" y1="-4" x2="14" y2="-4" stroke="${ds.color}" stroke-width="2"/>
-          <circle cx="7" cy="-4" r="2.5" fill="${ds.color}"/>
-          <text x="18" y="0" font-size="10" fill="#6b7280">${ds.label}</text>
-        </g>`
-      ).join('');
-
-      canvasEl.innerHTML = `
-        <svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}"
-             style="display:block;overflow:visible;"
-             xmlns="http://www.w3.org/2000/svg">
-          <rect x="${padL}" y="${padT}" width="${chartW}" height="${chartH}"
-                fill="#fafafa" rx="4"/>
-          ${tickLines}
-          ${lines}
-          ${xLabels}
-          ${legend}
-        </svg>`;
-    }
-
-    function getDiffClass(ba, xba) {
+    /* ── Verdict badge ── */
+    function verdictBadge(ba, xba) {
       if (ba == null || xba == null) return '';
-      return ba > xba ? 'diff-positive' : ba < xba ? 'diff-negative' : '';
+      const diff = ba - xba;
+      if (diff > 0.020) return '<span class="verdict-badge verdict-hot">Running hot</span>';
+      if (diff < -0.020) return '<span class="verdict-badge verdict-cold">Running cold</span>';
+      return '<span class="verdict-badge verdict-track">On track</span>';
     }
 
-    function renderTeamCard(team, windowName) {
-      const w = team[windowName] || team.season;
-      if (!w) return '';
-      const diff = w.ba != null && w.xba != null ? (w.ba - w.xba).toFixed(3) : '&mdash;';
-      const diffSign = parseFloat(diff) > 0 ? '+' : '';
-      const diffCls = getDiffClass(w.ba, w.xba);
-      return `
-        <div class="trend-card trend-card--team">
-          <div class="trend-card-header">
-            <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="New York Mets logo" width="40" height="40">
-            <div class="player-info">
-              <h3>New York Mets &mdash; Team Batting</h3>
-              <span>${windowName === 'season' ? 'Full 2026 Season' : windowName === 'last20' ? 'Last 20 Games' : 'Last 10 Games'}</span>
-            </div>
-          </div>
-          <div class="trend-chart-wrap" id="teamChartContainer">
-            <div id="teamChart" data-height="260" style="width:100%;height:260px;"></div>
-          </div>
-          <div class="trend-legend"><span class="leg-ba">Batting Avg (BA)</span><span class="leg-xba">Expected BA (xBA)</span></div>
-          <div class="trend-stats-row">
-            <div class="trend-stat"><div class="val">${w.ba != null ? w.ba.toFixed(3) : '&mdash;'}</div><div class="lbl">BA</div></div>
-            <div class="trend-stat"><div class="val">${w.xba != null ? w.xba.toFixed(3) : '&mdash;'}</div><div class="lbl">xBA</div></div>
-            <div class="trend-stat"><div class="val ${diffCls}">${diffSign}${diff}</div><div class="lbl">BA &minus; xBA</div></div>
-            <div class="trend-stat"><div class="val">${w.ops != null ? w.ops.toFixed(3) : '&mdash;'}</div><div class="lbl">OPS</div></div>
-            <div class="trend-stat"><div class="val">${w.slg != null ? w.slg.toFixed(3) : '&mdash;'}</div><div class="lbl">SLG</div></div>
-          </div>
-        </div>`;
-    }
+    function fmtBa(v) { return v != null ? v.toFixed(3).replace(/^0/, '') : '—'; }
 
-    function renderPlayerCard(player, windowName, idx) {
-      const w = player[windowName] || player.season;
-      if (!w) return '';
-      const diff = w.ba != null && w.xba != null ? (w.ba - w.xba).toFixed(3) : '&mdash;';
-      const diffSign = parseFloat(diff) > 0 ? '+' : '';
-      const diffCls = getDiffClass(w.ba, w.xba);
-      const headshotUrl = player.mlbId
-        ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${player.mlbId}/headshot/67/current`
-        : '';
-      const chartId = `chart-player-${idx}`;
-      return `
-        <div class="trend-card trend-card--player">
-          <div class="trend-card-header">
-            ${headshotUrl ? `<img src="${headshotUrl}" alt="${player.name} headshot" width="40" height="40" loading="lazy">` : ''}
-            <div class="player-info">
-              <h3>${player.name}</h3>
-              <span>${player.position || ''} &middot; ${w.pa || 0} PA</span>
-            </div>
-          </div>
-          <div class="trend-chart-wrap">
-            <div id="${chartId}" data-height="160" style="width:100%;height:160px;"></div>
-          </div>
-          <div class="trend-legend"><span class="leg-ba">BA</span><span class="leg-xba">xBA</span></div>
-          <div class="trend-stats-row">
-            <div class="trend-stat"><div class="val">${w.ba != null ? w.ba.toFixed(3) : '&mdash;'}</div><div class="lbl">BA</div></div>
-            <div class="trend-stat"><div class="val">${w.xba != null ? w.xba.toFixed(3) : '&mdash;'}</div><div class="lbl">xBA</div></div>
-            <div class="trend-stat"><div class="val ${diffCls}">${diffSign}${diff}</div><div class="lbl">BA &minus; xBA</div></div>
-          </div>
-        </div>`;
-    }
+    /* ── Chart creation ── */
+    function createChart(canvasId, labels, rollingBa, perGameBa, xba) {
+      if (charts[canvasId]) { charts[canvasId].destroy(); }
+      const ctx = document.getElementById(canvasId);
+      if (!ctx) return;
 
-    function renderAll(windowName) {
-      if (!trendsData) return;
-      const teamSection = document.getElementById('team-trend-section');
-      const playerSection = document.getElementById('player-trend-section');
+      // Compute Y-axis bounds from data
+      const allVals = [...(rollingBa || []), ...(perGameBa || [])].filter(v => v != null && v > 0);
+      if (xba != null) allVals.push(xba);
+      const dataMin = allVals.length ? Math.min(...allVals) : 0.100;
+      const dataMax = allVals.length ? Math.max(...allVals) : 0.400;
+      const padding = Math.max(0.030, (dataMax - dataMin) * 0.2);
+      const yMin = Math.max(0, Math.floor((dataMin - padding) * 100) / 100);
+      const yMax = Math.ceil((dataMax + padding) * 100) / 100;
 
-      teamSection.innerHTML = renderTeamCard(trendsData.team, windowName);
-      const teamData = trendsData.team[windowName] || trendsData.team.season;
-      if (teamData && teamData.rolling) {
-        renderLineChart(
-          document.getElementById('teamChart'),
-          teamData.rolling.labels,
-          [
-            { label: 'Batting Avg (BA)', data: teamData.rolling.ba, color: '#1d4ed8' },
-            { label: 'Expected BA (xBA)', data: teamData.rolling.xba, color: '#f97316' }
-          ]
-        );
+      const datasets = [
+        // Per-game BA dots (background scatter)
+        {
+          label: 'Game BA', data: perGameBa,
+          type: 'bar',
+          backgroundColor: 'rgba(0,45,114,0.10)',
+          borderColor: 'rgba(0,45,114,0.20)',
+          borderWidth: 1, borderRadius: 3,
+          barPercentage: 0.6, categoryPercentage: 0.8,
+          order: 3,
+        },
+        // 5-game rolling BA (main line)
+        {
+          label: '5-Game Rolling BA', data: rollingBa,
+          type: 'line',
+          borderColor: '#002d72', backgroundColor: 'rgba(0,45,114,0.06)',
+          borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5,
+          tension: 0.35, fill: false, order: 1,
+        },
+      ];
+
+      // xBA reference line (flat)
+      if (xba != null) {
+        datasets.push({
+          label: `Season xBA (${fmtBa(xba)})`,
+          data: labels.map(() => xba),
+          type: 'line',
+          borderColor: '#ff5910', backgroundColor: 'transparent',
+          borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 0,
+          borderDash: [6, 4], fill: false, order: 2,
+        });
       }
 
-      const players = [...(trendsData.players || [])].sort((a, b) => {
-        const paA = (a[windowName] || a.season)?.pa || 0;
-        const paB = (b[windowName] || b.season)?.pa || 0;
-        return paB - paA;
-      });
-
-      playerSection.innerHTML = '<h2 class="player-section-label">Individual Hitters</h2><div class="player-grid">'
-        + players.map((p, i) => renderPlayerCard(p, windowName, i)).join('')
-        + '</div>';
-
-      players.forEach((player, idx) => {
-        const playerData = player[windowName] || player.season;
-        if (playerData && playerData.rolling) {
-          renderLineChart(
-            document.getElementById(`chart-player-${idx}`),
-            playerData.rolling.labels,
-            [
-              { label: 'BA', data: playerData.rolling.ba, color: '#1d4ed8' },
-              { label: 'xBA', data: playerData.rolling.xba, color: '#f97316' }
-            ]
-          );
+      charts[canvasId] = new Chart(ctx.getContext('2d'), {
+        type: 'bar', // base type for mixed chart
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1a1a2e',
+              titleFont: { family: 'Inter', size: 11, weight: '600' },
+              bodyFont: { family: 'Inter', size: 11 },
+              padding: 10, cornerRadius: 8, displayColors: true, boxPadding: 4,
+              callbacks: {
+                label: function(ctx) {
+                  const v = ctx.parsed.y;
+                  if (v == null) return null;
+                  return `${ctx.dataset.label}: ${fmtBa(v)}`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                font: { family: 'Inter', size: 10 }, color: '#9099b0',
+                maxRotation: 0, autoSkipPadding: 16,
+              }
+            },
+            y: {
+              min: yMin, max: yMax,
+              grid: { color: 'rgba(0,0,0,0.04)' },
+              ticks: {
+                font: { family: 'Inter', size: 10 }, color: '#9099b0',
+                callback: v => fmtBa(v),
+                stepSize: 0.050,
+              }
+            }
+          }
         }
       });
     }
 
+    /* ── Render cards ── */
+    function renderTeamCard(team, windowKey) {
+      const w = team[windowKey] || team.season;
+      if (!w) return '';
+      const diffVal = w.ba != null && w.xba != null ? w.ba - w.xba : null;
+      const diffStr = diffVal != null ? (diffVal >= 0 ? '+' : '') + diffVal.toFixed(3) : '—';
+      const diffCls = diffVal != null ? (diffVal > 0 ? 'diff-positive' : diffVal < 0 ? 'diff-negative' : '') : '';
+      const windowLabel = windowKey === 'season' ? 'Full 2026 Season' : windowKey === 'last20' ? 'Last 20 Games' : 'Last 10 Games';
+      return `
+        <div class="trend-card">
+          <div class="trend-card-header">
+            <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="New York Mets logo" width="40" height="40">
+            <div class="player-info">
+              <h3>New York Mets — Team</h3>
+              <span>${windowLabel} · ${w.games || 0} games</span>
+            </div>
+            ${verdictBadge(w.ba, w.xba)}
+          </div>
+          <div class="trend-chart-wrap"><canvas id="chart-team"></canvas></div>
+          <div class="trend-stats-row">
+            <div class="trend-stat"><div class="val">${fmtBa(w.ba)}</div><div class="lbl">BA</div></div>
+            <div class="trend-stat"><div class="val">${fmtBa(w.xba)}</div><div class="lbl">xBA</div></div>
+            <div class="trend-stat"><div class="val ${diffCls}">${diffStr}</div><div class="lbl">BA − xBA</div></div>
+            <div class="trend-stat"><div class="val">${fmtBa(w.ops)}</div><div class="lbl">OPS</div></div>
+            <div class="trend-stat"><div class="val">${fmtBa(w.slg)}</div><div class="lbl">SLG</div></div>
+            <div class="trend-stat"><div class="val">${fmtBa(w.obp)}</div><div class="lbl">OBP</div></div>
+          </div>
+        </div>`;
+    }
+
+    function renderPlayerCard(player, windowKey, idx) {
+      const w = player[windowKey] || player.season;
+      if (!w) return '';
+      const diffVal = w.ba != null && w.xba != null ? w.ba - w.xba : null;
+      const diffStr = diffVal != null ? (diffVal >= 0 ? '+' : '') + diffVal.toFixed(3) : '—';
+      const diffCls = diffVal != null ? (diffVal > 0 ? 'diff-positive' : diffVal < 0 ? 'diff-negative' : '') : '';
+      const headshotUrl = player.mlbId
+        ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${player.mlbId}/headshot/67/current`
+        : '';
+      const canvasId = `chart-player-${idx}`;
+      return `
+        <div class="trend-card" data-canvas-id="${canvasId}" data-player-idx="${idx}">
+          <div class="trend-card-header">
+            ${headshotUrl ? `<img src="${headshotUrl}" alt="${player.name}" width="40" height="40" loading="lazy">` : ''}
+            <div class="player-info">
+              <h3>${player.name}</h3>
+              <span>${player.position || ''} · ${w.pa || 0} PA · ${w.games || 0} G</span>
+            </div>
+            ${verdictBadge(w.ba, w.xba)}
+          </div>
+          <div class="trend-chart-wrap"><canvas id="${canvasId}"></canvas></div>
+          <div class="trend-stats-row">
+            <div class="trend-stat"><div class="val">${fmtBa(w.ba)}</div><div class="lbl">BA</div></div>
+            <div class="trend-stat"><div class="val">${fmtBa(w.xba)}</div><div class="lbl">xBA</div></div>
+            <div class="trend-stat"><div class="val ${diffCls}">${diffStr}</div><div class="lbl">Diff</div></div>
+            <div class="trend-stat"><div class="val">${fmtBa(w.ops)}</div><div class="lbl">OPS</div></div>
+            <div class="trend-stat"><div class="val">${w.hr ?? '—'}</div><div class="lbl">HR</div></div>
+          </div>
+        </div>`;
+    }
+
+    /* ── Main render ── */
+    function renderAll(windowKey) {
+      if (!trendsData) return;
+      const teamSection = document.getElementById('team-trend-section');
+      const playerSection = document.getElementById('player-trend-section');
+
+      // Team card
+      teamSection.innerHTML = renderTeamCard(trendsData.team, windowKey);
+      const teamW = trendsData.team[windowKey] || trendsData.team.season;
+      if (teamW?.rolling) {
+        createChart('chart-team', teamW.rolling.labels, teamW.rolling.ba, teamW.rolling.game, teamW.xba);
+      }
+
+      // Player cards sorted by PA
+      const players = [...(trendsData.players || [])].sort((a, b) => {
+        const paA = (a[windowKey] || a.season)?.pa || 0;
+        const paB = (b[windowKey] || b.season)?.pa || 0;
+        return paB - paA;
+      });
+
+      document.getElementById('players-heading').style.display = players.length ? 'block' : 'none';
+      playerSection.innerHTML = players.map((p, i) => renderPlayerCard(p, windowKey, i)).join('');
+
+      // Render player charts
+      players.forEach((player, idx) => {
+        const w = player[windowKey] || player.season;
+        if (w?.rolling) {
+          createChart(`chart-player-${idx}`, w.rolling.labels, w.rolling.ba, w.rolling.game, w.xba);
+        }
+      });
+    }
+
+    // Tab switching
     document.querySelector('.window-tabs').addEventListener('click', (e) => {
       if (!e.target.matches('.window-tab')) return;
       document.querySelectorAll('.window-tab').forEach(t => t.classList.remove('active'));
@@ -392,30 +349,19 @@
       renderAll(activeWindow);
     });
 
-    window.addEventListener('resize', () => {
-      if (trendsData) {
-        renderAll(activeWindow);
-      }
-    });
-
-    fetch('/data/trends.json')
-      .then(res => {
-        if (!res.ok) throw new Error('Data failed to load');
-        return res.json();
-      })
+    // Load data
+    fetch(TRENDS_DATA_URL)
+      .then(r => r.json())
       .then(data => {
         trendsData = data;
         document.getElementById('trends-loading').style.display = 'none';
         if (data.generatedAt) {
-          const lastUpdated = document.getElementById('last-updated');
-          const ts = document.getElementById('data-timestamp');
-          if (lastUpdated) lastUpdated.innerText = new Date(data.generatedAt).toLocaleString();
-          if (ts) ts.textContent = `Data updated: ${new Date(data.generatedAt).toLocaleString()}`;
+          document.getElementById('last-updated').textContent = `Updated: ${new Date(data.generatedAt).toLocaleString()}`;
         }
         renderAll(activeWindow);
       })
       .catch(() => {
-        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
+        document.getElementById('trends-loading').textContent = 'Trend data not yet available. Run the build-trends script to generate.';
       });
   </script>
 </body>

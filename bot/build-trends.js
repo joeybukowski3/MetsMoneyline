@@ -7,8 +7,12 @@
  *   - MLB Stats API: game logs for BA/OPS/SLG per game
  *   - Baseball Savant: expected stats (xBA) from CSV leaderboards
  *
+ * CHART DATA MODEL:
+ *   - rolling.ba    = 5-game rolling batting average (H in last 5 / AB in last 5)
+ *   - rolling.game  = per-game BA for each game (scatter dots)
+ *   - xba           = single season-level value (horizontal reference line)
+ *
  * Usage: node bot/build-trends.js
- * Add to a GitHub Actions workflow to run daily.
  */
 
 const fs = require("fs");
@@ -18,6 +22,7 @@ const { parse } = require("csv-parse/sync");
 
 const TEAM_ID = 121;
 const SEASON = new Date().getFullYear();
+const ROLLING_WINDOW = 5; // 5-game rolling average
 const OUTPUT_PATH = path.join(__dirname, "../public/data/trends.json");
 
 async function fetchJson(url) {
@@ -40,17 +45,13 @@ async function fetchText(url) {
   }
 }
 
-/* ── MLB Stats API: Mets active roster hitters ── */
 async function getActiveHitters() {
   const data = await fetchJson(
     `https://statsapi.mlb.com/api/v1/teams/${TEAM_ID}/roster/active?season=${SEASON}`
   );
   if (!data || !data.roster) return [];
   return data.roster
-    .filter(p => {
-      const type = p.position?.type;
-      return type !== "Pitcher";
-    })
+    .filter(p => p.position?.type !== "Pitcher")
     .map(p => ({
       mlbId: p.person.id,
       name: p.person.fullName,
@@ -58,7 +59,6 @@ async function getActiveHitters() {
     }));
 }
 
-/* ── MLB Stats API: player game log for the season ── */
 async function getPlayerGameLog(playerId) {
   const data = await fetchJson(
     `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&season=${SEASON}&group=hitting`
@@ -85,7 +85,6 @@ async function getPlayerGameLog(playerId) {
   }));
 }
 
-/* ── Baseball Savant: expected stats for team hitters ── */
 async function getSavantExpectedStats() {
   const url =
     `https://baseballsavant.mlb.com/leaderboard/expected_statistics` +
@@ -115,70 +114,65 @@ async function getSavantExpectedStats() {
   }
 }
 
-/* ── Compute rolling averages from game logs ── */
-function computeRolling(gameLogs, windowSize) {
+/**
+ * Compute a true N-game rolling BA.
+ * Each point = sum(hits in last N games) / sum(AB in last N games).
+ * Also returns per-game BA for scatter dots.
+ */
+function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
   const labels = [];
-  const baValues = [];
-  let totalH = 0, totalAB = 0;
+  const rollingBa = [];
+  const perGameBa = [];
 
-  const games = windowSize ? gameLogs.slice(-windowSize) : gameLogs;
-
-  games.forEach((g, i) => {
-    totalH += g.h;
-    totalAB += g.ab;
-    const rollingBA = totalAB > 0 ? totalH / totalAB : 0;
+  gameLogs.forEach((g, i) => {
     labels.push(g.date ? g.date.slice(5) : `G${i + 1}`);
-    baValues.push(parseFloat(rollingBA.toFixed(3)));
+
+    // Per-game BA
+    const gameBa = g.ab > 0 ? g.h / g.ab : null;
+    perGameBa.push(gameBa != null ? parseFloat(gameBa.toFixed(3)) : null);
+
+    // Rolling: use the last N games up to and including this one
+    const windowStart = Math.max(0, i + 1 - rollingN);
+    const window = gameLogs.slice(windowStart, i + 1);
+    const wH = window.reduce((s, w) => s + w.h, 0);
+    const wAB = window.reduce((s, w) => s + w.ab, 0);
+    const rba = wAB > 0 ? wH / wAB : null;
+    rollingBa.push(rba != null ? parseFloat(rba.toFixed(3)) : null);
   });
 
-  return { labels, ba: baValues };
+  return { labels, ba: rollingBa, game: perGameBa };
 }
 
-/* ── Build window stats (season / last20 / last10) ── */
 function buildWindowStats(gameLogs, savantData, windowSize) {
   const games = windowSize ? gameLogs.slice(-windowSize) : gameLogs;
   if (games.length === 0) return null;
 
   const totals = games.reduce((acc, g) => {
-    acc.h += g.h;
-    acc.ab += g.ab;
-    acc.doubles += g.doubles || 0;
-    acc.triples += g.triples || 0;
-    acc.hr += g.hr;
-    acc.bb += g.bb || 0;
-    acc.hbp += g.hbp || 0;
-    acc.sf += g.sf || 0;
-    acc.pa += g.pa;
+    acc.h += g.h; acc.ab += g.ab;
+    acc.doubles += g.doubles || 0; acc.triples += g.triples || 0;
+    acc.hr += g.hr; acc.bb += g.bb || 0;
+    acc.hbp += g.hbp || 0; acc.sf += g.sf || 0; acc.pa += g.pa;
     return acc;
   }, { h: 0, ab: 0, doubles: 0, triples: 0, hr: 0, bb: 0, hbp: 0, sf: 0, pa: 0 });
 
-  const ba = totals.ab > 0 ? totals.h / totals.ab : null;
+  const ba = totals.ab > 0 ? parseFloat((totals.h / totals.ab).toFixed(3)) : null;
   const singles = Math.max(0, totals.h - totals.doubles - totals.triples - totals.hr);
-  const totalBases = singles + (2 * totals.doubles) + (3 * totals.triples) + (4 * totals.hr);
-  const slg = totals.ab > 0 ? totalBases / totals.ab : null;
-  const obpDenominator = totals.ab + totals.bb + totals.hbp + totals.sf;
-  const obp = obpDenominator > 0 ? (totals.h + totals.bb + totals.hbp) / obpDenominator : null;
-  const ops = obp != null && slg != null ? obp + slg : null;
-  const rolling = computeRolling(games);
-  // xBA is only available as a season-level stat from Savant
-  const xba = savantData?.xba ?? null;
+  const totalBases = singles + 2 * totals.doubles + 3 * totals.triples + 4 * totals.hr;
+  const slg = totals.ab > 0 ? parseFloat((totalBases / totals.ab).toFixed(3)) : null;
+  const obpD = totals.ab + totals.bb + totals.hbp + totals.sf;
+  const obp = obpD > 0 ? parseFloat(((totals.h + totals.bb + totals.hbp) / obpD).toFixed(3)) : null;
+  const ops = obp != null && slg != null ? parseFloat((obp + slg).toFixed(3)) : null;
 
-  // For the rolling xBA line, use a flat line at the season xBA
-  // (Savant doesn't provide per-game xBA)
-  const xbaLine = rolling.labels.map(() => xba);
+  const rolling = computeRolling(games);
+  const xba = savantData?.xba != null ? parseFloat(savantData.xba.toFixed(3)) : null;
 
   return {
-    ba, xba,
-    ops,
-    slg,
-    hr: totals.hr,
-    pa: totals.pa,
-    games: games.length,
-    rolling: { labels: rolling.labels, ba: rolling.ba, xba: xbaLine },
+    ba, xba, ops, slg, obp,
+    hr: totals.hr, pa: totals.pa, games: games.length,
+    rolling, // { labels, ba (5-game rolling), game (per-game) }
   };
 }
 
-/* ── Main ── */
 async function main() {
   console.log("[trends] Starting build...");
 
@@ -189,13 +183,12 @@ async function main() {
 
   console.log(`[trends] Found ${hitters.length} active hitters, ${Object.keys(savantMap).length} savant entries`);
 
-  // Fetch game logs for each hitter
   const playerResults = [];
   const playerLogs = [];
   for (const hitter of hitters) {
     const logs = await getPlayerGameLog(hitter.mlbId);
     playerLogs.push(logs);
-    if (logs.length < 3) continue; // skip players with very few games
+    if (logs.length < 3) continue;
     const savant = savantMap[hitter.mlbId] || {};
 
     playerResults.push({
@@ -208,47 +201,32 @@ async function main() {
     });
   }
 
-  // Build team-level aggregation
+  // Team-level aggregation
   const allLogs = playerLogs.flat();
-  // Group by date for team-level rolling
   const byDate = {};
   allLogs.forEach(g => {
     if (!byDate[g.date]) {
-      byDate[g.date] = {
-        date: g.date,
-        h: 0,
-        ab: 0,
-        doubles: 0,
-        triples: 0,
-        hr: 0,
-        bb: 0,
-        hbp: 0,
-        sf: 0,
-        pa: 0,
-      };
+      byDate[g.date] = { date: g.date, h: 0, ab: 0, doubles: 0, triples: 0, hr: 0, bb: 0, hbp: 0, sf: 0, pa: 0 };
     }
-    byDate[g.date].h += g.h;
-    byDate[g.date].ab += g.ab;
-    byDate[g.date].doubles += g.doubles || 0;
-    byDate[g.date].triples += g.triples || 0;
-    byDate[g.date].hr += g.hr;
-    byDate[g.date].bb += g.bb || 0;
-    byDate[g.date].hbp += g.hbp || 0;
-    byDate[g.date].sf += g.sf || 0;
-    byDate[g.date].pa += g.pa;
+    const d = byDate[g.date];
+    d.h += g.h; d.ab += g.ab; d.doubles += g.doubles || 0;
+    d.triples += g.triples || 0; d.hr += g.hr; d.bb += g.bb || 0;
+    d.hbp += g.hbp || 0; d.sf += g.sf || 0; d.pa += g.pa;
   });
   const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
 
-  // Team-level Savant: average xBA across all hitters
-  const savantValues = Object.values(savantMap).filter(v => v.xba != null);
-  const teamXba = savantValues.length > 0
-    ? savantValues.reduce((s, v) => s + v.xba, 0) / savantValues.length
+  // Team xBA: PA-weighted average from Savant
+  const savantEntries = Object.values(savantMap).filter(v => v.xba != null && v.pa > 0);
+  const totalPA = savantEntries.reduce((s, v) => s + v.pa, 0);
+  const teamXba = totalPA > 0
+    ? savantEntries.reduce((s, v) => s + v.xba * v.pa, 0) / totalPA
     : null;
   const teamSavant = { xba: teamXba };
 
   const output = {
     generatedAt: new Date().toISOString(),
     season: SEASON,
+    rollingWindow: ROLLING_WINDOW,
     team: {
       season: buildWindowStats(teamLogs, teamSavant, null),
       last20: buildWindowStats(teamLogs, teamSavant, 20),
