@@ -50,6 +50,13 @@ function writeJsonEndpoint(relativePath, payload) {
   fs.writeFileSync(fullPath, JSON.stringify(payload, null, 2));
 }
 
+function isFutureStartTime(value) {
+  if (!value) return false;
+  const startMs = new Date(value).getTime();
+  if (!Number.isFinite(startMs)) return false;
+  return startMs > (Date.now() + 60000);
+}
+
 async function fetchJsonOrNull(url) {
   try {
     const response = await axios.get(url, { timeout: 15000 });
@@ -166,6 +173,7 @@ async function fetchMlbStatsUpcomingGame() {
   );
   const games = (payload?.dates || [])
     .flatMap((dateEntry) => dateEntry.games || [])
+    .filter((game) => isFutureStartTime(game?.gameDate))
     .sort((a, b) => new Date(a.gameDate || 0) - new Date(b.gameDate || 0));
   const game = games[0] || null;
   if (!game) return null;
@@ -504,12 +512,12 @@ async function run() {
   const recentGames = normalizeRecentGames(recentGamesRaw, config.metsTeamId);
   let odds = null;
   try {
-    odds = await fetchTheOddsApiOdds(liveGame || resolvedUpcomingGame);
+    odds = await fetchTheOddsApiOdds(resolvedUpcomingGame || liveGame);
   } catch (error) {
     console.warn(`[warn] OddsAPI odds fetch failed: ${error.message}`);
   }
   if (!odds) {
-    odds = await fetchApiSportsOdds(config, liveGame?.gameId || resolvedUpcomingGame?.gameId || null);
+    odds = await fetchApiSportsOdds(config, resolvedUpcomingGame?.gameId || liveGame?.gameId || null);
   }
 
   const nextGamePayload = {

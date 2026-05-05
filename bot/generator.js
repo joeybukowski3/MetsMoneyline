@@ -2019,6 +2019,26 @@ async function getOddsFacts(game) {
       console.warn(`[odds] Cache file exists but has no markets — odds will be null`);
       return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
     }
+
+    const targetHomeTeam = game?.teams?.home?.team?.name || "";
+    const targetAwayTeam = game?.teams?.away?.team?.name || "";
+    const cachedHomeTeam = cachedOdds?.raw?.home_team || "";
+    const cachedAwayTeam = cachedOdds?.raw?.away_team || "";
+    const cachedGameDateEt = cachedOdds?.raw?.commence_time
+      ? new Date(cachedOdds.raw.commence_time).toLocaleDateString("en-CA", { timeZone: TIME_ZONE })
+      : null;
+    const targetGameDate = game?.officialDate || null;
+    const teamsMatch = cachedHomeTeam === targetHomeTeam && cachedAwayTeam === targetAwayTeam;
+    const dateMatches = cachedGameDateEt === targetGameDate;
+
+    if (cachedHomeTeam && cachedAwayTeam && (!teamsMatch || !dateMatches)) {
+      console.warn(
+        `[odds] Cache mismatch — cached ${cachedAwayTeam} @ ${cachedHomeTeam} on ${cachedGameDateEt || "unknown-date"}, `
+        + `target ${targetAwayTeam} @ ${targetHomeTeam} on ${targetGameDate || "unknown-date"}`
+      );
+      return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
+    }
+
     const market = Array.isArray(cachedOdds?.markets)
       ? cachedOdds.markets.find((entry) => /moneyline|h2h/i.test(entry.label || entry.key || ""))
       : null;
