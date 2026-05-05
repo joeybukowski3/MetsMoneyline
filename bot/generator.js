@@ -2918,48 +2918,84 @@ function buildProjectedLineupEdgeSummary(edgeScoring) {
 function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
   const whyMetsHaveCase = [];
   const whereRiskIs = [];
+  const mp = gameFacts.pitching?.mets || {};
+  const op = gameFacts.pitching?.opp || {};
+  const ta = gameFacts.advanced?.teamAdvanced || {};
+  const metsTA = ta.mets || {};
+  const oppTA = ta.opp || {};
+  const metsBp = gameFacts.pitching?.metsBullpen || {};
+  const oppBp = gameFacts.pitching?.oppBullpen || {};
 
   for (const edge of metsAngles.slice(0, 3)) {
     if (/overall lineup quality|lineup vs handedness/i.test(edge.category)) {
-      whyMetsHaveCase.push("The clearest Mets path is the projected lineup carrying the better overall offensive shape and expected contact quality.");
+      const parts = [];
+      if (metsTA.wrcPlus) parts.push(`wRC+ ${metsTA.wrcPlus} vs ${oppTA.wrcPlus || "N/A"}`);
+      if (metsTA.xwoba) parts.push(`xwOBA ${metsTA.xwoba} vs ${oppTA.xwoba || "N/A"}`);
+      whyMetsHaveCase.push(`Lineup: ${parts.length ? parts.join(", ") : "Mets grade higher in overall offensive quality"}.`);
     } else if (edge.category === "Starting Pitching") {
-      whyMetsHaveCase.push(`${gameFacts.pitching.mets.name} gives New York the cleaner run-prevention case in the underlying metrics that are actually available.`);
+      const parts = [];
+      if (mp.seasonERA) parts.push(`${mp.name}: ${mp.seasonERA} ERA`);
+      if (mp.savant?.kPct) parts.push(`${mp.savant.kPct}% K rate`);
+      if (mp.seasonFIP) parts.push(`${mp.seasonFIP} FIP`);
+      if (op.seasonERA) parts.push(`vs ${op.name}: ${op.seasonERA} ERA`);
+      if (op.seasonFIP) parts.push(`${op.seasonFIP} FIP`);
+      whyMetsHaveCase.push(parts.length ? parts.join(", ") + "." : `${mp.name || "Mets SP"} has the better underlying pitching profile.`);
     } else if (edge.category === "Bullpen") {
-      whyMetsHaveCase.push("There is still a workable bullpen path if the game reaches the middle innings in a tie or with a narrow Mets lead.");
+      const parts = [];
+      if (metsBp.seasonERA) parts.push(`Mets BP: ${metsBp.seasonERA} ERA`);
+      if (metsBp.seasonXFIP) parts.push(`${metsBp.seasonXFIP} xFIP`);
+      if (oppBp.seasonERA) parts.push(`Opp BP: ${oppBp.seasonERA} ERA`);
+      if (oppBp.seasonXFIP) parts.push(`${oppBp.seasonXFIP} xFIP`);
+      whyMetsHaveCase.push(parts.length ? `Bullpen: ${parts.join(", ")}.` : "Mets bullpen holds a seasonal edge in ERA and xFIP.");
     } else if (edge.category === "Regression Signals") {
-      whyMetsHaveCase.push("There is at least a plausible positive-regression case if the Mets' quality of contact finally turns into actual runs.");
+      const parts = [];
+      if (metsTA.xwoba && metsTA.woba) parts.push(`xwOBA ${metsTA.xwoba} vs actual wOBA ${metsTA.woba}`);
+      whyMetsHaveCase.push(parts.length
+        ? `Regression: ${parts.join(", ")} — expected stats above actual production.`
+        : "Mets contact-quality metrics (xBA, xwOBA) are running ahead of actual results.");
     }
   }
 
   if (!whyMetsHaveCase.length) {
-    whyMetsHaveCase.push("The best Mets argument is still lineup quality, but it is narrower than a true all-green matchup.");
+    whyMetsHaveCase.push("No single dominant Mets edge. Lineup quality is the primary case.");
   }
 
   for (const edge of riskAngles.slice(0, 2)) {
     if (edge.category === "Regression Signals") {
-      whereRiskIs.push("The offense is still asking the model to trust expected results more than actual production.");
+      whereRiskIs.push("Expected stats haven't converted to runs yet — production lags contact quality.");
     } else if (edge.category === "Starting Pitching") {
-      whereRiskIs.push(`${gameFacts.pitching.opp.name} owns the better strike-throwing profile, so the mound edge does not sit with New York.`);
+      const parts = [];
+      if (op.savant?.kPct && mp.savant?.kPct) parts.push(`K% ${op.savant.kPct} vs ${mp.savant.kPct}`);
+      if (op.seasonFIP && mp.seasonFIP) parts.push(`FIP ${op.seasonFIP} vs ${mp.seasonFIP}`);
+      whereRiskIs.push(parts.length
+        ? `${op.name || "Opp SP"} has the better pitching profile: ${parts.join(", ")}.`
+        : `${op.name || "Opponent starter"} owns the better underlying pitching numbers.`);
     } else if (edge.category === "Bullpen") {
-      whereRiskIs.push("Bullpen support is not a clean Mets edge, especially with both relief groups carrying recent workload.");
+      whereRiskIs.push(`Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: ${metsBp.taxLevel || "N/A"}, Opp: ${oppBp.taxLevel || "N/A"}).`);
+    } else if (edge.category === "Home/Away Split" || edge.category === "Context") {
+      whereRiskIs.push(`Road/context splits lean against Mets. ${gameFacts.meta.homeAway === "away" ? "Away game." : ""}`);
     } else {
-      whereRiskIs.push("The softer context inputs lean slightly away from New York, and several of those inputs are still incomplete.");
+      whereRiskIs.push(edge.explanation || "Contextual factors slightly favor the opponent.");
     }
   }
 
   if (!whereRiskIs.length) {
-    whereRiskIs.push("The missing-data load is the biggest reason this read stays conservative.");
+    whereRiskIs.push("No standout risk factor. Missing-data load is the main concern.");
   }
 
-  const bottomLine = pick.analyticalLean === "Mets"
-    ? "The board still leans Mets, but the strongest case is narrow enough that the writeup should stay disciplined."
-    : pick.analyticalLean === "Slight Mets edge"
-      ? "New York has a live case, but the margin is thin and the read is more measured than emphatic."
-      : pick.analyticalLean === "Opponent"
-        ? "The honest board leans the other way, so the Mets case is more about the clearest plausible path than a full-model endorsement."
-        : pick.analyticalLean === "Slight opponent edge"
-          ? "The board gives the other side a small edge, which keeps the Mets case narrow and conditional."
-          : "The board is mixed enough that the Mets case needs to stay focused on the cleanest supporting angles.";
+  const ml = gameFacts.money?.metsMoneyline;
+  const mlStr = ml != null ? (ml > 0 ? `+${ml}` : `${ml}`) : null;
+  const leanStr = pick.analyticalLean || "Mixed";
+
+  let bottomLine;
+  if (leanStr === "Mets" || leanStr === "Slight Mets edge") {
+    const topEdge = metsAngles[0]?.category || "lineup quality";
+    bottomLine = `Model leans Mets${mlStr ? ` at ${mlStr}` : ""}. Primary edge: ${topEdge.toLowerCase()}.`;
+  } else if (leanStr === "Opponent" || leanStr === "Slight opponent edge") {
+    bottomLine = `Model leans opponent, but Mets ML is still the play based on the best available angle${mlStr ? ` at ${mlStr}` : ""}.`;
+  } else {
+    bottomLine = `Mixed board${mlStr ? `, Mets at ${mlStr}` : ""}. Pick based on strongest individual matchup edge.`;
+  }
 
   return { whyMetsHaveCase, whereRiskIs, bottomLine };
 }
@@ -3211,34 +3247,34 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
   const whyMets = metsAngles.length
     ? metsAngles.slice(0, 2).map((edge) => {
         if (/overall lineup quality|lineup vs handedness/i.test(edge.category)) {
-          return `The best Mets case is lineup quality: the projected group carries a small WAR edge and the stronger expected contact profile, even without true handedness-split data.`;
+          return `Lineup: Mets project higher in offensive quality (WAR, xwOBA) against ${gameFacts.pitching.opp.name || "this opponent"}.`;
         }
         if (edge.category === "Starting Pitching") {
-          return `The pitching case is that ${gameFacts.pitching.mets.name} has the cleaner underlying run-prevention profile in the categories we can actually measure today.`;
+          return `${gameFacts.pitching.mets.name}: better run-prevention profile in ERA, FIP, and/or xERA.`;
         }
         if (edge.category === "Bullpen") {
-          return `There is at least a modest bullpen path if New York can get to the middle innings without trailing, because the season-long gap is close and usage is heavy on both sides.`;
+          return `Bullpen: Mets hold a seasonal ERA/xFIP edge in relief.`;
         }
         return edge.explanation;
       }).join(" ")
-    : "There is no strong supported Mets angle beyond a modest overall lineup-quality edge, which is why the read stays conservative.";
+    : "Primary case: Mets lineup quality edge. No other dominant angle.";
   const whereRisk = riskAngles.length
     ? riskAngles.slice(0, 2).map((edge) => {
         if (edge.category === "Regression Signals") {
-          return `The main concern is that the Mets' contact-quality indicators still have not converted into actual production, so the offense is more projection than payoff right now.`;
+          return `Regression risk: expected offensive stats (xBA, xwOBA) running ahead of actual production.`;
         }
         if (edge.category === "Starting Pitching") {
-          return `${gameFacts.pitching.opp.name} still owns the better K-BB profile, so the strike-throwing edge is on the other side even if the surface numbers are not.`;
+          return `${gameFacts.pitching.opp.name} has the better K-BB% profile.`;
         }
         if (edge.category === "Bullpen") {
-          return `Bullpen support is not a clean Mets advantage, especially with both clubs carrying heavy recent workloads and no verified top-arm availability feed.`;
+          return `Bullpen edge is unclear — both sides carrying recent workload.`;
         }
         if (edge.category === "Home/Away Split" || edge.category === "Context") {
-          return `Context also leans slightly against New York because this is a road spot and the split data behind that angle is still incomplete.`;
+          return `Road/context splits lean slightly against Mets.`;
         }
         return edge.explanation;
       }).join(" ")
-    : "There is no single red-flag risk angle, but the missing data keeps the overall conviction down.";
+    : "No standout risk. Limited data keeps conviction measured.";
   const analyticalLeanBody = pick.analyticalLean === "Mets"
     ? "The weighted board comes in on the Mets side."
     : pick.analyticalLean === "Slight Mets edge"
@@ -3251,24 +3287,24 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
   const officialPickSummaryParts = [];
   if (proMetsOfficialAngles[0]) {
     if (/overall lineup quality|lineup vs handedness/i.test(proMetsOfficialAngles[0].category)) {
-      officialPickSummaryParts.push("The clearest case for backing the Mets is that the projected lineup still grades better overall, especially in expected offensive quality.");
+      officialPickSummaryParts.push("Main case: projected lineup grades higher in xwOBA and WAR.");
     } else if (proMetsOfficialAngles[0].category === "Starting Pitching") {
-      officialPickSummaryParts.push(`The best path starts with ${gameFacts.pitching.mets.name} giving New York the steadier underlying pitching line.`);
+      officialPickSummaryParts.push(`Primary edge: ${gameFacts.pitching.mets.name}'s run-prevention metrics.`);
     } else if (proMetsOfficialAngles[0].category === "Bullpen") {
-      officialPickSummaryParts.push("There is still a workable bullpen path for New York if the game stays close into the middle innings.");
+      officialPickSummaryParts.push("Secondary edge: Mets bullpen holds a seasonal metrics advantage.");
     } else {
       officialPickSummaryParts.push(proMetsOfficialAngles[0].explanation);
     }
   }
   if (proMetsOfficialAngles[1]) {
     if (proMetsOfficialAngles[1].category === "Regression Signals") {
-      officialPickSummaryParts.push("There is also a reasonable positive-regression case if the Mets' contact quality finally cashes in.");
+      officialPickSummaryParts.push("Supporting factor: contact quality metrics suggest positive regression ahead.");
     } else {
       officialPickSummaryParts.push(proMetsOfficialAngles[1].explanation);
     }
   }
   if (pick.analyticalLean === "Opponent" || pick.analyticalLean === "Slight opponent edge" || pick.analyticalLean === "Mixed") {
-    officialPickSummaryParts.push("That said, this is one of the more self-aware Mets ML spots: the analytical read is not fully on their side, so the brand pick is leaning on the best plausible New York path rather than a clean all-in edge.");
+    officialPickSummaryParts.push("Note: model does not fully favor Mets. Pick is based on the best supported individual angle.");
   }
   const pickSummary = officialPickSummaryParts.filter(Boolean).slice(0, 3).join(" ");
   const pickNarrative = buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject);
@@ -4934,79 +4970,251 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
 }
 
 function buildCondensedEmailHtml(game) {
-  const report = game?.writeup?.report;
+  const report = game?.writeup?.report || buildPresentationReport(game);
   const header = report?.header;
   const pick = report?.officialPick;
   const meta = header?.metadataLine || "";
-  const matchup = `${header?.metsTeamLabel || "New York Mets"} vs ${header?.oppTeamLabel || game?.opponent || "Opponent"}`;
-  const weather = header?.weatherLine || "";
+  const opponent = game?.opponent || "Opponent";
   const metsLogo = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
   const oppLogo = header?.oppLogoUrl || "";
-  const oddsHome = report?.header?.oddsHomeLabel || "";
-  const oddsAway = report?.header?.oddsAwayLabel || "";
+  const metsCard = report?.startingPitchersComparison?.metsCard;
+  const oppCard = report?.startingPitchersComparison?.oppCard;
+  const metsLineup = report?.projectedLineupComparison?.mets || [];
+  const oppLineup = report?.projectedLineupComparison?.opp || [];
+  const edgeRows = report?.edgeTable || [];
+  const analysis = report?.analysis;
 
-  return `
-  <div style="max-width:640px;margin:0 auto;padding:16px 14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0b1120;color:#e5e7eb;">
-    <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Today's Report</div>
+  const valueCell = (v) => v == null || v === "" ? "—" : v;
+  const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;";
 
-    <table role="presentation" style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+  const heatPill = (label, value) => {
+    const pct = reportMetricPct(label, value);
+    const style = pct == null
+      ? "background:#f3f4f6;color:#374151;"
+      : reportCellToneStyle(pct);
+    return `<span style="display:inline-block;min-width:48px;padding:4px 7px;text-align:center;border-radius:6px;font-size:12px;font-weight:700;${style}">${valueCell(value)}</span>`;
+  };
+
+  const recentStartsBlock = (starts, name) => {
+    if (!Array.isArray(starts) || !starts.length) return "";
+    const rows = starts.slice(0, 3).map(s => `
       <tr>
-        <td style="width:64px;padding:0 8px 0 0;vertical-align:middle;">
-          <img src="${metsLogo}" alt="Mets" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:12px;background:#020617;">
-        </td>
-        <td style="text-align:center;vertical-align:middle;font-size:13px;color:#9ca3af;">vs</td>
-        <td style="width:64px;padding:0 0 0 8px;vertical-align:middle;text-align:right;">
-          ${oppLogo ? `<img src="${oppLogo}" alt="Opponent" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:12px;background:#020617;">` : ""}
-        </td>
-      </tr>
-    </table>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;color:#6b7280;font-size:11px;">${String(s.date || "").slice(5)}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;font-size:11px;font-weight:600;">${valueCell(s.opponent)}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.ip)}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.er ?? "-")}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.k ?? "-")}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${s.result || ""}</td>
+      </tr>`).join("");
+    return `
+      <div style="margin-top:10px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:6px;">Recent Starts — ${name}</div>
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #e5e7eb;border-radius:8px;">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th style="padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Date</th>
+              <th style="padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Opp</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">IP</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">ER</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">K</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Dec</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  };
 
-    <h1 style="margin:0 0 6px 0;font-size:20px;line-height:1.25;color:#f9fafb;">${matchup}</h1>
-    <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;">${meta}</div>
-    ${weather ? `<div style="font-size:13px;color:#9ca3af;margin-bottom:10px;">${weather}</div>` : ""}
+  const pitcherComparisonBlock = () => {
+    if (!metsCard && !oppCard) return "";
+    const metsPhoto = metsCard?.mlbId
+      ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${metsCard.mlbId}/headshot/67/current" alt="${metsCard.name}" width="48" height="48" style="border-radius:50%;border:2px solid #d6dde8;">`
+      : "";
+    const oppPhoto = oppCard?.mlbId
+      ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${oppCard.mlbId}/headshot/67/current" alt="${oppCard.name}" width="48" height="48" style="border-radius:50%;border:2px solid #d6dde8;">`
+      : "";
+    const metrics = ["ERA", "WHIP", "K%", "BB%"];
+    const metsStats = metsCard?.stats || {};
+    const oppStats = oppCard?.stats || {};
+    const statsMap = { "ERA": "era", "WHIP": "whip", "K%": "kPct", "BB%": "bbPct" };
 
-    ${(oddsHome || oddsAway) ? `
-      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 14px 0;font-size:12px;color:#e5e7eb;">
-        <tr style="background:#020617;border-radius:10px;">
-          <td style="padding:8px 8px 8px 10px;border:1px solid #1f2937;border-right:none;border-radius:10px 0 0 10px;">
-            <div style="font-weight:600;color:#9ca3af;font-size:11px;margin-bottom:2px;">Mets</div>
-            <div style="font-weight:700;">${oddsHome || ""}</div>
-          </td>
-          <td style="padding:8px;border:1px solid #1f2937;border-left:none;border-radius:0 10px 10px 0;text-align:right;">
-            <div style="font-weight:600;color:#9ca3af;font-size:11px;margin-bottom:2px;">Opponent</div>
-            <div style="font-weight:700;">${oddsAway || ""}</div>
-          </td>
-        </tr>
-      </table>` : ""}
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Starting Pitchers</div>
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d6dde8;border-radius:12px;overflow:hidden;font-size:12px;">
+          <thead>
+            <tr>
+              <th style="width:30%;padding:10px 8px;background:#e9f3ff;color:#0f172a;text-align:left;${smallLabel}">
+                ${metsPhoto} <div style="margin-top:4px;">${valueCell(metsCard?.name)}</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:500;text-transform:none;letter-spacing:0;">${valueCell(metsCard?.teamLabel)}${metsCard?.hand ? ` · ${metsCard.hand}` : ""}${metsCard?.record ? ` · ${metsCard.record}` : ""}</div>
+              </th>
+              <th style="width:14%;padding:10px 4px;background:#f8fafc;text-align:center;${smallLabel}color:#475569;">Stat</th>
+              <th style="width:30%;padding:10px 8px;background:#fdf1e5;color:#7c2d12;text-align:right;${smallLabel}">
+                ${oppPhoto} <div style="margin-top:4px;">${valueCell(oppCard?.name)}</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:500;text-transform:none;letter-spacing:0;">${valueCell(oppCard?.teamLabel)}${oppCard?.hand ? ` · ${oppCard.hand}` : ""}${oppCard?.record ? ` · ${oppCard.record}` : ""}</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            ${metrics.map(m => `
+              <tr>
+                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;text-align:center;">${heatPill(m, metsStats[statsMap[m]])}</td>
+                <td style="padding:7px 4px;border-bottom:1px solid #f0f2f5;text-align:center;font-weight:700;color:#475569;font-size:11px;">${m}</td>
+                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;text-align:center;">${heatPill(m, oppStats[statsMap[m]])}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        ${recentStartsBlock(metsCard?.recentStarts, metsCard?.name || "Mets SP")}
+        ${recentStartsBlock(oppCard?.recentStarts, oppCard?.name || "Opp SP")}
+      </div>`;
+  };
 
-    <div style="padding:12px 12px;border-radius:12px;background:linear-gradient(135deg,#0f766e,#22c55e);color:#ecfdf5;margin-bottom:14px;">
-      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;opacity:0.9;">Official Pick</div>
-      <div style="margin-top:4px;font-size:18px;font-weight:800;">${pick?.label || "See full report"}</div>
-      ${pick?.confidence != null ? `<div style="margin-top:4px;font-size:12px;opacity:0.9;">Confidence: ${pick.confidence}/10</div>` : ""}
-      ${report?.analyticalLean ? `<div style="margin-top:6px;font-size:13px;line-height:1.5;">${report.analyticalLean}</div>` : ""}
-    </div>
+  const lineupBlock = () => {
+    if (!metsLineup.length && !oppLineup.length) return "";
+    const renderSide = (players, label, bgHeader) => {
+      if (!players.length) return "";
+      return `
+        <div style="margin-bottom:12px;">
+          <div style="padding:7px 10px;background:${bgHeader};${smallLabel}color:#0f172a;border-radius:8px 8px 0 0;border:1px solid #d6dde8;">${label}</div>
+          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d6dde8;border-top:none;">
+            <thead>
+              <tr style="background:#f8fafc;">
+                <th style="width:6%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">#</th>
+                <th style="width:34%;padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">Player</th>
+                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">xBA</th>
+                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">K%</th>
+                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">Hard Hit</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${players.map((p, i) => `
+                <tr style="background:${i % 2 === 0 ? '#fff' : '#f9fafb'};">
+                  <td style="padding:5px 4px;text-align:center;color:#6b7280;font-weight:700;border-bottom:1px solid #f0f2f5;">${p.order ?? i + 1}</td>
+                  <td style="padding:5px 6px;font-weight:700;color:#111827;border-bottom:1px solid #f0f2f5;">${valueCell(p.name)}</td>
+                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("xBA", p.savant?.xBA)}</td>
+                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("K%", p.savant?.kPct || p.fangraphs?.kPct)}</td>
+                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("Hard Hit %", p.savant?.hardHitPct)}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>`;
+    };
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Projected Lineups</div>
+        ${renderSide(metsLineup, "New York Mets", "#e9f3ff")}
+        ${renderSide(oppLineup, opponent, "#fdf1e5")}
+      </div>`;
+  };
 
-    ${report?.quickRead ? `
-      <div style="margin-bottom:14px;padding:10px 12px;border-radius:10px;background:#020617;border:1px solid #1f2937;">
-        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:4px;">Why this angle?</div>
-        <div style="font-size:13px;line-height:1.6;color:#e5e7eb;">${report.quickRead}</div>
-      </div>` : ""}
+  const edgeBlock = () => {
+    if (!edgeRows.length) return "";
+    const edgeColor = (edge) => {
+      if (/mets/i.test(edge)) return "#16a34a";
+      if (/opponent/i.test(edge)) return "#dc2626";
+      return "#6b7280";
+    };
+    const strengthDot = (str) => {
+      if (str === "strong") return "●●●";
+      if (str === "moderate") return "●●○";
+      if (str === "slight") return "●○○";
+      return "—";
+    };
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Edge Summary</div>
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;border-radius:10px;overflow:hidden;">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th style="padding:8px 8px;text-align:left;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Category</th>
+              <th style="padding:8px 6px;text-align:center;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Edge</th>
+              <th style="padding:8px 6px;text-align:center;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Strength</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${edgeRows.map(row => `
+              <tr>
+                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;font-weight:600;color:#374151;">${row.category}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-weight:700;color:${edgeColor(row.edge)};font-size:11px;">${row.edge}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:10px;letter-spacing:1px;">${strengthDot(row.strength)}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>`;
+  };
 
-    <div style="margin-bottom:10px;">
-      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:4px;">Edge snapshot</div>
-      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#e5e7eb;">
-        ${report?.pitchingEdgeSummary ? `<li>${report.pitchingEdgeSummary}</li>` : ""}
-        ${report?.projectedLineupEdgeSummary ? `<li>${report.projectedLineupEdgeSummary}</li>` : ""}
-        ${report?.edgeSummary ? `<li>${report.edgeSummary}</li>` : ""}
-      </ul>
-    </div>
+  const analysisBlock = () => {
+    if (!analysis) return "";
+    const bulletStyle = "margin:0 0 6px 0;padding-left:14px;text-indent:-14px;font-size:13px;line-height:1.5;color:#374151;";
+    const sectionLabel = (text) => `<div style="${smallLabel}color:#6b7280;margin:12px 0 6px 0;">${text}</div>`;
+    const bullets = (items) => (items || []).map(b => `<p style="${bulletStyle}">→ ${b}</p>`).join("");
+    return `
+      <div style="margin-bottom:16px;padding:14px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e5e7eb;">
+        ${sectionLabel("Key angles — Mets case")}
+        ${bullets(analysis.whyMetsHaveACase)}
+        ${sectionLabel("Key angles — Risk")}
+        ${bullets(analysis.whereTheRiskIs)}
+        ${sectionLabel("Bottom line")}
+        <p style="margin:0;font-size:13px;line-height:1.5;color:#111827;font-weight:600;">${valueCell(analysis.bottomLine)}</p>
+      </div>`;
+  };
 
-    <div style="margin-top:18px;font-size:12px;color:#94a3b8;">
-      View the full report with matchup tables and charts:
-      <a href="https://metsmoneyline.com/report" style="color:#38bdf8;text-decoration:none;">Open Today&rsquo;s Report</a>
-    </div>
-  </div>
-  `;
+  return `<style>
+    @media only screen and (max-width: 620px) {
+      .email-shell { width:100% !important; }
+      .email-pad { padding:14px !important; }
+    }
+  </style>
+  <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#111827;line-height:1.55;">
+    <tr>
+      <td align="center" style="padding:16px 8px;">
+        <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;border-collapse:collapse;background:#ffffff;border:1px solid #dde4ef;border-radius:16px;overflow:hidden;">
+          <tr>
+            <td class="email-pad" style="padding:20px 22px;">
+              <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:0 0 12px 0;">MetsMoneyline · Today's Report</p>
+              <div style="margin:0 0 16px 0;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:16px;padding:16px 14px;text-align:center;">
+                <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+                  <tr>
+                    <td align="center" style="width:35%;padding:0 4px;">
+                      <img src="${metsLogo}" alt="New York Mets" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin:0 auto;">
+                    </td>
+                    <td align="center" style="width:30%;font-size:18px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
+                    <td align="center" style="width:35%;padding:0 4px;">
+                      ${oppLogo ? `<img src="${oppLogo}" alt="${opponent}" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin:0 auto;">` : ""}
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:10px 0 0 0;color:#5b6477;font-size:13px;line-height:1.45;">${meta}</p>
+              </div>
+              ${game.writeup?.preliminaryMeta?.enabled ? `<div style="margin:0 0 14px 0;padding:10px 14px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:10px;font-size:12px;font-weight:600;">${game.writeup.preliminaryMeta.note || "Preliminary report — final update when lineups are confirmed."}</div>` : ""}
+              <div style="margin:0 0 16px 0;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#002d72,#003d8f);color:#ffffff;text-align:center;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;opacity:0.8;">Official Pick</div>
+                <div style="margin-top:6px;font-size:20px;font-weight:900;">${valueCell(pick?.label)}</div>
+                ${pick?.confidence != null ? `<div style="margin-top:4px;font-size:12px;opacity:0.85;">Confidence: ${pick.confidence}/10</div>` : ""}
+              </div>
+              ${pitcherComparisonBlock()}
+              ${lineupBlock()}
+              ${edgeBlock()}
+              ${analysisBlock()}
+              <div style="margin-top:18px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
+                <p style="margin:0 0 8px 0;font-size:12px;color:#475569;">Full interactive breakdown with charts and advanced matchup data</p>
+                <a href="https://www.metsmoneyline.com/report.html" style="display:inline-block;background:#ff5910;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <table role="presentation" width="100%" style="width:100%;max-width:600px;border-collapse:collapse;">
+          <tr>
+            <td style="padding:14px 20px;text-align:center;font-size:11px;color:#9099b0;line-height:1.5;">
+              For entertainment purposes only. Always gamble responsibly.<br>
+              &copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>`;
 }
 
 async function createButtondownDraft(output) {
