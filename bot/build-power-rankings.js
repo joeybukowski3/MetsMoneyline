@@ -42,6 +42,17 @@ async function fetchText(url) {
   }
 }
 
+function inningsToDecimal(value) {
+  if (value == null) return 0;
+  const str = String(value).trim();
+  if (!str) return 0;
+  const parts = str.split(".");
+  const whole = parseInt(parts[0], 10);
+  const outs = parseInt(parts[1] || "0", 10);
+  if (!Number.isFinite(whole) || !Number.isFinite(outs)) return 0;
+  return whole + (outs / 3);
+}
+
 /* ── MLB Stats API: standings for all teams ── */
 async function getStandings() {
   const data = await fetchJson(
@@ -97,19 +108,37 @@ async function getTeamOpsPlus() {
 async function getStarterXera() {
   const url =
     `https://baseballsavant.mlb.com/leaderboard/expected_statistics` +
-    `?type=pitcher&year=${SEASON}&position=&team=&min=25&csv=true`;
-  const csv = await fetchText(url);
-  if (!csv) return {};
+    `?type=pitcher&year=${SEASON}&position=SP&team=&min=10&csv=true`;
+  const [csv, mlbPitchingData] = await Promise.all([
+    fetchText(url),
+    fetchJson(
+      `https://statsapi.mlb.com/api/v1/stats?stats=season&group=pitching&playerPool=ALL&sportIds=1&season=${SEASON}&limit=1000`
+    ),
+  ]);
+  if (!csv || !mlbPitchingData?.stats?.[0]?.splits) return {};
 
   try {
     const rows = parse(csv, { columns: true, skip_empty_lines: true });
-    // Group by team, average xERA for starters (high IP = likely starters)
+    const pitcherMeta = new Map();
+    for (const split of mlbPitchingData.stats[0].splits) {
+      const playerId = Number(split?.player?.id);
+      const teamId = Number(split?.team?.id);
+      const gamesStarted = Number(split?.stat?.gamesStarted || 0);
+      const ip = Number(split?.stat?.outs) > 0
+        ? Number(split.stat.outs) / 3
+        : inningsToDecimal(split?.stat?.inningsPitched);
+      if (!playerId || !teamId || !(ip > 0)) continue;
+      pitcherMeta.set(playerId, { teamId, gamesStarted, ip });
+    }
+
     const teamData = {};
     for (const row of rows) {
-      const teamId = parseInt(row.team_id, 10) || null;
-      const xera = parseFloat(row.est_era);
-      const ip = parseFloat(row.ip);
-      if (!teamId || isNaN(xera) || isNaN(ip) || ip < 15) continue;
+      const playerId = Number(row.player_id);
+      const xera = parseFloat(row.xera);
+      const meta = pitcherMeta.get(playerId);
+      if (!meta || isNaN(xera)) continue;
+      if (meta.gamesStarted <= 0 || meta.ip < 10) continue;
+      const { teamId, ip } = meta;
       if (!teamData[teamId]) teamData[teamId] = [];
       teamData[teamId].push({ xera, ip });
     }
@@ -173,19 +202,22 @@ async function main() {
   const teams = standings.map(t => ({
     ...t,
     opsPlus: opsMap[t.teamId]?.opsPlus ?? 100,
-    starterXera: xeraMap[t.teamId] ?? 4.50,
+    starterXera: xeraMap[t.teamId] ?? null,
     bullpenXfip: bpMap[t.teamId] ?? 4.50,
   }));
 
   // Compute composite scores
   const opsPlusValues = teams.map(t => t.opsPlus);
-  const xeraValues = teams.map(t => t.starterXera);
+  const xeraValues = teams.map(t => t.starterXera).filter(v => typeof v === "number" && Number.isFinite(v));
   const bpValues = teams.map(t => t.bullpenXfip);
   const rdValues = teams.map(t => t.runDiff);
 
   teams.forEach(t => {
     const s1 = percentileRank(opsPlusValues, t.opsPlus, true);
-    const s2 = percentileRank(xeraValues, t.starterXera, false); // lower ERA = better
+    const starterXeraForScore = typeof t.starterXera === "number" && Number.isFinite(t.starterXera)
+      ? t.starterXera
+      : 4.50;
+    const s2 = percentileRank(xeraValues, starterXeraForScore, false); // lower ERA = better
     const s3 = percentileRank(bpValues, t.bullpenXfip, false);
     const s4 = percentileRank(rdValues, t.runDiff, true);
     t.composite = parseFloat((s1 + s2 + s3 + s4).toFixed(1));
