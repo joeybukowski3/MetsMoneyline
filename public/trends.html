@@ -89,6 +89,7 @@
     <div class="trends-shell">
       <div class="trends-header">
         <h1>Mets Batting Trends &amp; xBA Analysis</h1>
+        <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
         <p>Rolling BA vs expected batting average (xBA) — spot who's lucky, unlucky, or due for regression.</p>
       </div>
 
@@ -274,18 +275,23 @@
 
     // Load data
     fetch('/data/trends.json')
-      .then(r => r.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Data failed to load');
+        return res.json();
+      })
       .then(data => {
         trendsData = data;
         document.getElementById('trends-loading').style.display = 'none';
         if (data.generatedAt) {
+          const lastUpdated = document.getElementById('last-updated');
           const ts = document.getElementById('data-timestamp');
+          if (lastUpdated) lastUpdated.innerText = new Date(data.generatedAt).toLocaleString();
           if (ts) ts.textContent = `Data updated: ${new Date(data.generatedAt).toLocaleString()}`;
         }
         renderAll(activeWindow);
       })
       .catch(() => {
-        document.getElementById('trends-loading').textContent = 'Trend data not yet available. Run the build-trends script to generate.';
+        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
       });
   </script>
 </body>

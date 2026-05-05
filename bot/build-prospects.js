@@ -14,16 +14,7 @@ const path = require("path");
 const axios = require("axios");
 
 const SEASON = new Date().getFullYear();
-const SOURCE_OUTPUT_PATH = path.join(__dirname, "../data/prospects.json");
-const PUBLIC_OUTPUT_PATH = path.join(__dirname, "../public/data/prospects.json");
-
-function writeOutputFile(payload) {
-  const text = JSON.stringify(payload, null, 2);
-  [SOURCE_OUTPUT_PATH, PUBLIC_OUTPUT_PATH].forEach((targetPath) => {
-    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-    fs.writeFileSync(targetPath, text);
-  });
-}
+const OUTPUT_PATH = path.join(__dirname, "../public/data/prospects.json");
 
 /* ── Top 15 Mets prospects (MLB Pipeline 2026 preseason) ── */
 const PROSPECT_LIST = [
@@ -187,8 +178,9 @@ async function main() {
     prospects,
   };
 
-  writeOutputFile(output);
-  console.log(`[prospects] Wrote ${SOURCE_OUTPUT_PATH} and ${PUBLIC_OUTPUT_PATH} (${prospects.length} prospects)`);
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  console.log(`[prospects] Wrote ${OUTPUT_PATH} (${prospects.length} prospects)`);
 }
 
 main().catch(e => {

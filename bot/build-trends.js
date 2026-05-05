@@ -18,16 +18,7 @@ const { parse } = require("csv-parse/sync");
 
 const TEAM_ID = 121;
 const SEASON = new Date().getFullYear();
-const SOURCE_OUTPUT_PATH = path.join(__dirname, "../data/trends.json");
-const PUBLIC_OUTPUT_PATH = path.join(__dirname, "../public/data/trends.json");
-
-function writeOutputFile(payload) {
-  const text = JSON.stringify(payload, null, 2);
-  [SOURCE_OUTPUT_PATH, PUBLIC_OUTPUT_PATH].forEach((targetPath) => {
-    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-    fs.writeFileSync(targetPath, text);
-  });
-}
+const OUTPUT_PATH = path.join(__dirname, "../public/data/trends.json");
 
 async function fetchJson(url) {
   try {
@@ -231,8 +222,9 @@ async function main() {
     players: playerResults.sort((a, b) => (b.season?.pa || 0) - (a.season?.pa || 0)),
   };
 
-  writeOutputFile(output);
-  console.log(`[trends] Wrote ${SOURCE_OUTPUT_PATH} and ${PUBLIC_OUTPUT_PATH} (${playerResults.length} players)`);
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  console.log(`[trends] Wrote ${OUTPUT_PATH} (${playerResults.length} players)`);
 }
 
 main().catch(e => {

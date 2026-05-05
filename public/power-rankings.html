@@ -94,6 +94,7 @@
     <div class="pr-shell">
       <div class="pr-header">
         <h1>MLB Power Rankings</h1>
+        <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
         <p>All 30 teams ranked by composite score. Updated daily from live MLB data.</p>
       </div>
 
@@ -217,16 +218,20 @@
     }
 
     fetch('/data/power-rankings.json')
-      .then(r => r.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Data failed to load');
+        return res.json();
+      })
       .then(data => {
         prData = data;
         renderTable(data.teams);
         if (data.generatedAt) {
+          document.getElementById('last-updated').innerText = new Date(data.generatedAt).toLocaleString();
           document.getElementById('data-timestamp').textContent = `Data updated: ${new Date(data.generatedAt).toLocaleString()}`;
         }
       })
       .catch(() => {
-        document.getElementById('pr-container').innerHTML = '<div class="loading-msg">Power rankings data not yet available. Run the build-power-rankings script to generate.</div>';
+        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
       });
   </script>
 </body>

@@ -20,16 +20,7 @@ const axios = require("axios");
 const { parse } = require("csv-parse/sync");
 
 const SEASON = new Date().getFullYear();
-const SOURCE_OUTPUT_PATH = path.join(__dirname, "../data/power-rankings.json");
-const PUBLIC_OUTPUT_PATH = path.join(__dirname, "../public/data/power-rankings.json");
-
-function writeOutputFile(payload) {
-  const text = JSON.stringify(payload, null, 2);
-  [SOURCE_OUTPUT_PATH, PUBLIC_OUTPUT_PATH].forEach((targetPath) => {
-    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-    fs.writeFileSync(targetPath, text);
-  });
-}
+const OUTPUT_PATH = path.join(__dirname, "../public/data/power-rankings.json");
 
 async function fetchJson(url) {
   try {
@@ -210,8 +201,9 @@ async function main() {
     teams,
   };
 
-  writeOutputFile(output);
-  console.log(`[rankings] Wrote ${SOURCE_OUTPUT_PATH} and ${PUBLIC_OUTPUT_PATH}`);
+  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  console.log(`[rankings] Wrote ${OUTPUT_PATH}`);
 }
 
 main().catch(e => {

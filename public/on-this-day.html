@@ -101,6 +101,7 @@
     <div class="otd-shell">
       <div class="otd-header">
         <h1>On This Day in Mets History</h1>
+        <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
         <div class="otd-date" id="today-display"></div>
         <p>Notable Mets moments from 5, 10, 20+ years ago.</p>
       </div>
@@ -194,14 +195,20 @@
     }
 
     fetch('/data/mets-history.json')
-      .then(r => r.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Data failed to load');
+        return res.json();
+      })
       .then(data => {
+        if (data.generatedAt) {
+          document.getElementById('last-updated').innerText = new Date(data.generatedAt).toLocaleString();
+        }
         const today = getMonthDay();
         const events = data[today] || [];
         renderEvents(events);
       })
       .catch(() => {
-        document.getElementById('otd-container').innerHTML = '<div class="loading-msg">History data not yet available.</div>';
+        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
       });
   </script>
 </body>

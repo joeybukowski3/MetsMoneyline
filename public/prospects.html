@@ -100,6 +100,7 @@
     <div class="prospects-shell">
       <div class="prospects-header">
         <h1>Mets Top 15 Prospect Rankings</h1>
+        <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
         <p>2026 rankings based on MLB Pipeline. Stats auto-update from the MiLB Stats API.</p>
       </div>
       <div id="prospects-container">
@@ -221,12 +222,16 @@
     }
 
     fetch('/data/prospects.json')
-      .then(r => r.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Data failed to load');
+        return res.json();
+      })
       .then(data => {
         const container = document.getElementById('prospects-container');
         container.innerHTML = data.prospects.map((p, i) => renderCard(p, i)).join('');
         renderSparklines(data.prospects);
         if (data.generatedAt) {
+          document.getElementById('last-updated').innerText = new Date(data.generatedAt).toLocaleString();
           document.getElementById('data-timestamp').textContent = `Data updated: ${new Date(data.generatedAt).toLocaleString()}`;
         }
         if (data.source) {
@@ -234,7 +239,7 @@
         }
       })
       .catch(() => {
-        document.getElementById('prospects-container').innerHTML = '<div class="loading-msg">Prospect data not yet available. Run the build-prospects script to generate.</div>';
+        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
       });
   </script>
 </body>
