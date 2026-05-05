@@ -3,6 +3,7 @@ const path = require("path");
 const { TwitterApi } = require("twitter-api-v2");
 
 const SAMPLE_GAME_PATH = path.join(__dirname, "..", "public", "data", "sample-game.json");
+const ODDS_CACHE_PATH = path.join(__dirname, "..", "public", "api", "mlb", "mets", "odds.json");
 const STATE_PATH = path.join(__dirname, "x-post-state.json");
 const SITE_URL = "https://www.metsmoneyline.com";
 const MAX_TWEET_LENGTH = 280;
@@ -40,6 +41,14 @@ function loadJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
+function maybeLoadJson(filePath) {
+  try {
+    return loadJson(filePath);
+  } catch {
+    return null;
+  }
+}
+
 function loadState() {
   try {
     const parsed = loadJson(STATE_PATH);
@@ -61,7 +70,7 @@ function logSkip(reason) {
 function cleanText(value) {
   return String(value || "")
     .replace(/%%/g, "%")
-    .replace(/[–—]/g, "-")
+    .replace(/[â€“â€”]/g, "-")
     .replace(/\r\n/g, "\n")
     .split("\n")
     .map((line) => line.replace(/[ \t]+/g, " ").trim())
@@ -121,17 +130,6 @@ function normalizePick(game) {
     .replace(/^Today's Pick:\s*/i, "");
 }
 
-function normalizeConfidence(game) {
-  const writeup = game?.writeup || {};
-  const report = writeup?.report || {};
-  const raw = report?.officialPick?.confidence ?? writeup?.confidence ?? report?.meta?.confidence ?? null;
-  if (raw == null) return null;
-  if (typeof raw === "number") return String(raw);
-  const text = cleanText(raw);
-  if (!text) return null;
-  return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
 function normalizeKeyEdge(game) {
   const writeup = game?.writeup || {};
   const report = writeup?.report || {};
@@ -145,9 +143,12 @@ function normalizeKeyEdge(game) {
   ];
   const selected = candidates.find((value) => cleanText(value));
   if (!selected) return null;
-  return clip(cleanText(selected)
-    .replace(/^Primary edge:\s*/i, "")
-    .replace(/^Main case:\s*/i, ""), 70);
+  return clip(
+    cleanText(selected)
+      .replace(/^Primary edge:\s*/i, "")
+      .replace(/^Main case:\s*/i, ""),
+    70
+  );
 }
 
 function formatOdds(value) {
@@ -162,9 +163,24 @@ function formatOdds(value) {
   return text;
 }
 
-function getPickWithOdds(game, pick) {
-  const odds = formatOdds(game?.moneyline?.mets ?? game?.writeup?.gameDetails?.moneyline ?? null);
-  return odds ? `${pick} ${odds}` : pick;
+function extractMetsOddsFromCache() {
+  const oddsData = maybeLoadJson(ODDS_CACHE_PATH);
+  const markets = oddsData?.consensus?.markets || oddsData?.markets || [];
+  const h2h = markets.find((market) => market?.key === "h2h");
+  const metsOutcome = h2h?.outcomes?.find((outcome) => cleanText(outcome?.name) === "New York Mets");
+  return formatOdds(metsOutcome?.price ?? null);
+}
+
+function getMetsOdds(game) {
+  const reportOdds = [
+    game?.moneyline?.mets,
+    game?.writeup?.analysisObject?.gameInfo?.metsMoneyline,
+    game?.writeup?.gameDetails?.moneyline,
+    game?.writeup?.report?.gameDetails?.moneyline,
+    game?.writeup?.report?.teamComparison?.rows?.find((row) => row?.label === "Odds")?.mets
+  ].map((value) => formatOdds(value)).find(Boolean);
+
+  return reportOdds || extractMetsOddsFromCache();
 }
 
 function formatStatNumber(value, digits = 2) {
@@ -185,14 +201,6 @@ function formatPercent(value, digits = 1) {
   return num.toFixed(digits);
 }
 
-function formatDotStat(value, digits = 3) {
-  if (value == null) return null;
-  const text = cleanText(value);
-  const num = Number(text);
-  if (Number.isNaN(num)) return null;
-  return `.${num.toFixed(digits).split(".")[1]}`;
-}
-
 function lastName(fullName) {
   const cleaned = cleanText(fullName);
   if (!cleaned) return null;
@@ -200,78 +208,39 @@ function lastName(fullName) {
   return parts[parts.length - 1];
 }
 
-function normalizeRiskSummary(game) {
-  const mets = game?.writeup?.analysisObject?.offense?.mets || {};
-  const opp = game?.writeup?.analysisObject?.offense?.opp || {};
-  const metsWar = formatStatNumber(mets.projectedLineupWAR, 1);
-  const oppWar = formatStatNumber(opp.projectedLineupWAR, 1);
-  const metsWrcPlus = formatStatNumber(mets.projectedLineupWRCPlus, 1);
-  const oppWrcPlus = formatStatNumber(opp.projectedLineupWRCPlus, 1);
-  const metsXwoba = formatDotStat(mets.xwOBA, 3);
-  const oppXwoba = formatDotStat(opp.xwOBA, 3);
-
-  if (metsWar && oppWar && metsWrcPlus && oppWrcPlus && metsXwoba && oppXwoba) {
-    return `Lineup edge favors COL: WAR ${metsWar} vs ${oppWar}, wRC+ ${metsWrcPlus} vs ${oppWrcPlus}, xwOBA ${metsXwoba} vs ${oppXwoba}.`;
-  }
-
-  const fallback = game?.writeup?.quickRead?.biggestRisk || game?.writeup?.report?.quickRead?.biggestRisk || null;
-  if (!fallback) return null;
-  return `${cleanText(fallback)}.`;
-}
-
 function buildThreadParts(game) {
   const opponent = cleanText(game?.opponent);
   const opponentShort = opponentShortName(opponent);
   const pick = normalizePick(game);
-  const confidence = normalizeConfidence(game);
   const keyEdge = normalizeKeyEdge(game);
-  const riskSummary = normalizeRiskSummary(game);
   const time = cleanText(game?.time || game?.writeup?.gameDetails?.time);
   const venue = cleanText(game?.ballpark || game?.writeup?.gameDetails?.ballpark);
+  const odds = getMetsOdds(game);
 
   const metsPitcher = game?.pitching?.mets || {};
   const oppPitcher = game?.pitching?.opp || {};
-  const metsOffense = game?.writeup?.analysisObject?.offense?.mets || {};
   const metsBullpen = game?.pitching?.metsBullpen || {};
   const oppBullpen = game?.pitching?.oppBullpen || {};
-
-  const metsPitcherLastName = lastName(metsPitcher.name);
-  const oppPitcherLastName = lastName(oppPitcher.name);
-  const metsPitcherEra = formatStatNumber(metsPitcher.seasonERA ?? metsPitcher.era);
-  const metsPitcherKRate = formatPercent(metsPitcher.savant?.kPct ?? metsPitcher.kPct);
-  const metsPitcherFip = formatStatNumber(metsPitcher.seasonFIP ?? metsPitcher.fip);
-  const oppPitcherEra = formatStatNumber(oppPitcher.seasonERA ?? oppPitcher.era);
-  const oppPitcherFip = formatStatNumber(oppPitcher.seasonFIP ?? oppPitcher.fip);
-  const metsXwoba = formatStatNumber(metsOffense.xwOBA, 3);
-  const metsActualWoba = formatStatNumber(metsOffense.wOBA, 3);
-  const metsBullpenEra = formatStatNumber(metsBullpen.seasonERA);
-  const metsBullpenXFip = formatStatNumber(metsBullpen.seasonXFIP);
-  const oppBullpenEra = formatStatNumber(oppBullpen.seasonERA);
-  const oppBullpenXFip = formatStatNumber(oppBullpen.seasonXFIP);
 
   return {
     opponent,
     opponentShort,
     pick,
-    confidence,
     keyEdge,
-    riskSummary,
     time,
     venue,
-    pickWithOdds: getPickWithOdds(game, pick),
-    metsPitcherLastName,
-    oppPitcherLastName,
-    metsPitcherEra,
-    metsPitcherKRate,
-    metsPitcherFip,
-    oppPitcherEra,
-    oppPitcherFip,
-    metsXwoba,
-    metsActualWoba,
-    metsBullpenEra,
-    metsBullpenXFip,
-    oppBullpenEra,
-    oppBullpenXFip
+    odds,
+    metsPitcherLastName: lastName(metsPitcher.name),
+    oppPitcherLastName: lastName(oppPitcher.name),
+    metsPitcherEra: formatStatNumber(metsPitcher.seasonERA ?? metsPitcher.era),
+    metsPitcherKRate: formatPercent(metsPitcher.savant?.kPct ?? metsPitcher.kPct),
+    metsPitcherFip: formatStatNumber(metsPitcher.seasonFIP ?? metsPitcher.fip),
+    oppPitcherEra: formatStatNumber(oppPitcher.seasonERA ?? oppPitcher.era),
+    oppPitcherFip: formatStatNumber(oppPitcher.seasonFIP ?? oppPitcher.fip),
+    metsBullpenEra: formatStatNumber(metsBullpen.seasonERA),
+    metsBullpenXFip: formatStatNumber(metsBullpen.seasonXFIP),
+    oppBullpenEra: formatStatNumber(oppBullpen.seasonERA),
+    oppBullpenXFip: formatStatNumber(oppBullpen.seasonXFIP)
   };
 }
 
@@ -285,10 +254,10 @@ function validateGame(game, targetDate, state) {
   const parts = buildThreadParts(game);
   if (looksPlaceholder(parts.opponent)) return { ok: false, reason: "opponent is placeholder or missing" };
   if (!parts.pick || looksPlaceholder(parts.pick)) return { ok: false, reason: "pick is missing or placeholder" };
-  if (!parts.confidence || looksPlaceholder(parts.confidence)) return { ok: false, reason: "confidence is missing or placeholder" };
   if (!parts.keyEdge || looksPlaceholder(parts.keyEdge)) return { ok: false, reason: "key edge is missing or placeholder" };
   if (!parts.time || looksPlaceholder(parts.time)) return { ok: false, reason: "game time is missing" };
   if (!parts.venue || looksPlaceholder(parts.venue)) return { ok: false, reason: "venue is missing" };
+  if (!parts.odds || looksPlaceholder(parts.odds)) return { ok: false, reason: "Mets moneyline odds are missing" };
   if (looksPlaceholder(game?.writeup?.headline) || looksPlaceholder(game?.writeup?.synopsis)) {
     return { ok: false, reason: "report text looks like placeholder/sample content" };
   }
@@ -301,21 +270,13 @@ function validateGame(game, targetDate, state) {
     ["Opponent starter last name", parts.oppPitcherLastName],
     ["Opponent starter ERA", parts.oppPitcherEra],
     ["Opponent starter FIP", parts.oppPitcherFip],
-    ["Mets xwOBA", parts.metsXwoba],
-    ["Mets actual wOBA", parts.metsActualWoba]
-  ];
-  const missingTweet2 = requiredTweet2.find(([, value]) => !value || looksPlaceholder(value));
-  if (missingTweet2) return { ok: false, reason: `${missingTweet2[0]} is missing for tweet 2` };
-
-  const requiredTweet3 = [
     ["Mets bullpen ERA", parts.metsBullpenEra],
     ["Mets bullpen xFIP", parts.metsBullpenXFip],
     ["Opponent bullpen ERA", parts.oppBullpenEra],
-    ["Opponent bullpen xFIP", parts.oppBullpenXFip],
-    ["Risk summary", parts.riskSummary]
+    ["Opponent bullpen xFIP", parts.oppBullpenXFip]
   ];
-  const missingTweet3 = requiredTweet3.find(([, value]) => !value || looksPlaceholder(value));
-  if (missingTweet3) return { ok: false, reason: `${missingTweet3[0]} is missing for tweet 3` };
+  const missingTweet2 = requiredTweet2.find(([, value]) => !value || looksPlaceholder(value));
+  if (missingTweet2) return { ok: false, reason: `${missingTweet2[0]} is missing for tweet 2` };
 
   const postKey = `${targetDate}-mets-vs-${slugify(parts.opponent)}`;
   const existing = state.posts?.[postKey];
@@ -326,45 +287,72 @@ function validateGame(game, targetDate, state) {
   return { ok: true, postKey, parts };
 }
 
+function buildTweet2Variants(parts) {
+  const signoff = `Official Pick: Mets Moneyline ${parts.odds}`;
+  return [
+    cleanText([
+      "Why the Mets can win:",
+      "",
+      `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
+      `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
+      "",
+      "Bullpen:",
+      `Mets BP: ${parts.metsBullpenEra} ERA, ${parts.metsBullpenXFip} xFIP`,
+      `${parts.opponentShort} BP: ${parts.oppBullpenEra} ERA, ${parts.oppBullpenXFip} xFIP`,
+      "",
+      signoff
+    ].join("\n")),
+    cleanText([
+      "Why the Mets can win:",
+      "",
+      `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
+      `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
+      "",
+      `Bullpen: Mets ${parts.metsBullpenEra}/${parts.metsBullpenXFip} xFIP | ${parts.opponentShort} ${parts.oppBullpenEra}/${parts.oppBullpenXFip}`,
+      "",
+      signoff
+    ].join("\n")),
+    cleanText([
+      "Why the Mets can win:",
+      "",
+      `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
+      `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
+      "",
+      `Bullpen: Mets ${parts.metsBullpenEra}/${parts.metsBullpenXFip} | ${parts.opponentShort} ${parts.oppBullpenEra}/${parts.oppBullpenXFip}`,
+      "",
+      signoff
+    ].join("\n"))
+  ];
+}
+
 function buildThread(parts) {
-  const tweet1Lines = [
+  const tweet1 = cleanText([
     "MetsMoneyline Pregame Report",
     "",
     `Mets vs ${parts.opponentShort}`,
     parts.time,
     parts.venue,
     "",
-    `Pick: ${parts.pickWithOdds}`,
     `Key edge: ${parts.keyEdge}`,
     "",
     "Full breakdown:",
     `${SITE_URL} #LGM`
-  ];
+  ].join("\n"));
 
-  const tweet2Lines = [
-    "Why the Mets can win:",
-    "",
-    `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
-    `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
-    "",
-    "Regression:",
-    `xwOBA ${parts.metsXwoba} vs actual wOBA ${parts.metsActualWoba} - expected stats above actual production.`
-  ];
+  const tweet2 = buildTweet2Variants(parts).find((candidate) => candidate.length <= MAX_TWEET_LENGTH);
+  if (!tweet2) {
+    throw new Error("tweet 2 exceeds character limit even after bullpen shortening");
+  }
 
-  const tweet3Lines = [
-    "Bullpen:",
-    "",
-    `Mets BP: ${parts.metsBullpenEra} ERA, ${parts.metsBullpenXFip} xFIP`,
-    `${parts.opponentShort} BP: ${parts.oppBullpenEra} ERA, ${parts.oppBullpenXFip} xFIP`,
-    "",
-    "Where the risk is:",
-    parts.riskSummary
-  ];
-
-  return [tweet1Lines, tweet2Lines, tweet3Lines].map((lines) => cleanText(lines.join("\n").replace(/\n /g, "\n")));
+  return [tweet1, tweet2];
 }
 
-function validateThreadTexts(texts) {
+function validateThreadTexts(texts, parts) {
+  if (texts.length !== 2) {
+    return { ok: false, reason: `expected 2 tweets, got ${texts.length}` };
+  }
+
+  const expectedEnding = `Official Pick: Mets Moneyline ${parts.odds}`;
   for (let i = 0; i < texts.length; i += 1) {
     const text = texts[i];
     if (looksPlaceholder(text)) {
@@ -374,6 +362,14 @@ function validateThreadTexts(texts) {
       return { ok: false, reason: `tweet ${i + 1} exceeds ${MAX_TWEET_LENGTH} characters (${text.length})` };
     }
   }
+
+  if (!texts[0].includes(SITE_URL)) {
+    return { ok: false, reason: "tweet 1 is missing the website link" };
+  }
+  if (!texts[1].endsWith(expectedEnding)) {
+    return { ok: false, reason: "tweet 2 does not end with the required official pick sign-off" };
+  }
+
   return { ok: true };
 }
 
@@ -430,8 +426,15 @@ async function main() {
     return;
   }
 
-  const tweetTexts = buildThread(validation.parts);
-  const threadValidation = validateThreadTexts(tweetTexts);
+  let tweetTexts;
+  try {
+    tweetTexts = buildThread(validation.parts);
+  } catch (error) {
+    logSkip(error.message);
+    return;
+  }
+
+  const threadValidation = validateThreadTexts(tweetTexts, validation.parts);
   if (!threadValidation.ok) {
     logSkip(threadValidation.reason);
     return;
