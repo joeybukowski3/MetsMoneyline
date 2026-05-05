@@ -70,11 +70,16 @@ async function getPlayerGameLog(playerId) {
     opponent: s.opponent?.name || "",
     ab: s.stat?.atBats ?? 0,
     h: s.stat?.hits ?? 0,
+    doubles: s.stat?.doubles ?? 0,
+    triples: s.stat?.triples ?? 0,
     hr: s.stat?.homeRuns ?? 0,
     rbi: s.stat?.rbi ?? 0,
     bb: s.stat?.baseOnBalls ?? 0,
+    hbp: s.stat?.hitByPitch ?? 0,
+    sf: s.stat?.sacFlies ?? 0,
     pa: s.stat?.plateAppearances ?? 0,
     avg: parseFloat(s.stat?.avg) || 0,
+    obp: parseFloat(s.stat?.obp) || 0,
     ops: parseFloat(s.stat?.ops) || 0,
     slg: parseFloat(s.stat?.slg) || 0,
   }));
@@ -135,11 +140,25 @@ function buildWindowStats(gameLogs, savantData, windowSize) {
   if (games.length === 0) return null;
 
   const totals = games.reduce((acc, g) => {
-    acc.h += g.h; acc.ab += g.ab; acc.hr += g.hr; acc.pa += g.pa;
+    acc.h += g.h;
+    acc.ab += g.ab;
+    acc.doubles += g.doubles || 0;
+    acc.triples += g.triples || 0;
+    acc.hr += g.hr;
+    acc.bb += g.bb || 0;
+    acc.hbp += g.hbp || 0;
+    acc.sf += g.sf || 0;
+    acc.pa += g.pa;
     return acc;
-  }, { h: 0, ab: 0, hr: 0, pa: 0 });
+  }, { h: 0, ab: 0, doubles: 0, triples: 0, hr: 0, bb: 0, hbp: 0, sf: 0, pa: 0 });
 
   const ba = totals.ab > 0 ? totals.h / totals.ab : null;
+  const singles = Math.max(0, totals.h - totals.doubles - totals.triples - totals.hr);
+  const totalBases = singles + (2 * totals.doubles) + (3 * totals.triples) + (4 * totals.hr);
+  const slg = totals.ab > 0 ? totalBases / totals.ab : null;
+  const obpDenominator = totals.ab + totals.bb + totals.hbp + totals.sf;
+  const obp = obpDenominator > 0 ? (totals.h + totals.bb + totals.hbp) / obpDenominator : null;
+  const ops = obp != null && slg != null ? obp + slg : null;
   const rolling = computeRolling(games);
   // xBA is only available as a season-level stat from Savant
   const xba = savantData?.xba ?? null;
@@ -150,8 +169,8 @@ function buildWindowStats(gameLogs, savantData, windowSize) {
 
   return {
     ba, xba,
-    ops: games.length > 0 ? games.reduce((s, g) => s + g.ops, 0) / games.length : null,
-    slg: games.length > 0 ? games.reduce((s, g) => s + g.slg, 0) / games.length : null,
+    ops,
+    slg,
     hr: totals.hr,
     pa: totals.pa,
     games: games.length,
@@ -172,8 +191,10 @@ async function main() {
 
   // Fetch game logs for each hitter
   const playerResults = [];
+  const playerLogs = [];
   for (const hitter of hitters) {
     const logs = await getPlayerGameLog(hitter.mlbId);
+    playerLogs.push(logs);
     if (logs.length < 3) continue; // skip players with very few games
     const savant = savantMap[hitter.mlbId] || {};
 
@@ -188,18 +209,32 @@ async function main() {
   }
 
   // Build team-level aggregation
-  const allLogs = [];
-  for (const hitter of hitters) {
-    const logs = await getPlayerGameLog(hitter.mlbId);
-    allLogs.push(...logs);
-  }
+  const allLogs = playerLogs.flat();
   // Group by date for team-level rolling
   const byDate = {};
   allLogs.forEach(g => {
-    if (!byDate[g.date]) byDate[g.date] = { date: g.date, h: 0, ab: 0, hr: 0, pa: 0 };
+    if (!byDate[g.date]) {
+      byDate[g.date] = {
+        date: g.date,
+        h: 0,
+        ab: 0,
+        doubles: 0,
+        triples: 0,
+        hr: 0,
+        bb: 0,
+        hbp: 0,
+        sf: 0,
+        pa: 0,
+      };
+    }
     byDate[g.date].h += g.h;
     byDate[g.date].ab += g.ab;
+    byDate[g.date].doubles += g.doubles || 0;
+    byDate[g.date].triples += g.triples || 0;
     byDate[g.date].hr += g.hr;
+    byDate[g.date].bb += g.bb || 0;
+    byDate[g.date].hbp += g.hbp || 0;
+    byDate[g.date].sf += g.sf || 0;
     byDate[g.date].pa += g.pa;
   });
   const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
