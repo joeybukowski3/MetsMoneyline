@@ -1,10 +1,11 @@
 /**
  * build-prospects.js
- * Generates public/data/prospects.json with top 15 Mets prospect
- * rankings, live MiLB stats, and recent news.
+ * Generates public/data/prospects.json with Mets top prospect rankings,
+ * affiliate / MLB stats, MLB promotion flags, and placeholder-ready trend data.
  *
- * Rankings are hardcoded based on MLB Pipeline's preseason list.
- * Stats are pulled from the MLB Stats API using affiliate sportIds.
+ * Rankings remain based on the hardcoded prospect list, but season stats are
+ * fetched for every player on every affiliate roster so prospect cards can
+ * resolve against live roster movement and promotions.
  *
  * Usage: node bot/build-prospects.js
  */
@@ -23,13 +24,14 @@ const SPORT_LEVELS = {
   14: "A",
 };
 const LEVEL_SPORT_IDS = {
-  "MLB": 1,
-  "AAA": 11,
-  "AA": 12,
+  MLB: 1,
+  AAA: 11,
+  AA: 12,
   "High-A": 13,
   "A+": 13,
-  "A": 14,
+  A: 14,
   "Low-A": 14,
+  Rookie: null,
 };
 
 const PROSPECT_LIST = [
@@ -50,10 +52,6 @@ const PROSPECT_LIST = [
   { mlbId: 700710, name: "Ryan Lambert", position: "RHP", type: "Pitcher", age: 21, bats: "R", throws: "R", level: "A", eta: "2028" },
 ];
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 function normalizeName(value) {
   return String(value || "")
     .normalize("NFD")
@@ -61,6 +59,11 @@ function normalizeName(value) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+}
+
+function isPitcherPosition(position) {
+  const pos = String(position || "").toUpperCase();
+  return pos === "P" || pos === "SP" || pos === "RP" || pos.endsWith("HP");
 }
 
 async function fetchJson(url) {
@@ -85,109 +88,38 @@ async function getAffiliateTeams() {
   }));
 }
 
-async function getAffiliateRosters() {
-  const affiliates = await getAffiliateTeams();
+async function getTeamRoster(teamId, season, meta) {
+  const data = await fetchJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster/active?season=${season}`
+  );
+  return (data?.roster || []).map(player => ({
+    mlbId: player.person?.id || null,
+    name: player.person?.fullName || "",
+    position: player.position?.abbreviation || "",
+    jerseyNumber: player.jerseyNumber || "",
+    teamId,
+    teamName: meta.teamName,
+    sportId: meta.sportId,
+    level: meta.level,
+    type: isPitcherPosition(player.position?.abbreviation) ? "Pitcher" : "Hitter",
+  }));
+}
+
+function buildRosterMaps(players) {
   const byId = new Map();
   const byName = new Map();
-
-  for (const affiliate of affiliates) {
-    const data = await fetchJson(
-      `https://statsapi.mlb.com/api/v1/teams/${affiliate.teamId}/roster/active?season=${SEASON}`
-    );
-    const roster = data?.roster || [];
-    for (const player of roster) {
-      const entry = {
-        mlbId: player.person?.id || null,
-        name: player.person?.fullName || "",
-        position: player.position?.abbreviation || "",
-        jerseyNumber: player.jerseyNumber || "",
-        teamId: affiliate.teamId,
-        teamName: affiliate.teamName,
-        sportId: affiliate.sportId,
-        level: affiliate.level,
-      };
-      if (entry.mlbId) {
-        byId.set(entry.mlbId, entry);
-      }
-      const key = normalizeName(entry.name);
-      if (key && !byName.has(key)) {
-        byName.set(key, entry);
-      }
-    }
+  for (const player of players) {
+    if (player.mlbId && !byId.has(player.mlbId)) byId.set(player.mlbId, player);
+    const key = normalizeName(player.name);
+    if (key && !byName.has(key)) byName.set(key, player);
   }
-
   return { byId, byName };
 }
 
-function resolveProspectContext(prospect, rosterMaps) {
-  const byIdMatch = prospect.mlbId ? rosterMaps.byId.get(prospect.mlbId) : null;
-  const byNameMatch = rosterMaps.byName.get(normalizeName(prospect.name)) || null;
-  const match = byIdMatch || byNameMatch;
-  const fallbackSportId = LEVEL_SPORT_IDS[prospect.level] || null;
+function normalizeStats(playerType, stat) {
+  if (!stat) return null;
 
-  return {
-    ...prospect,
-    mlbId: prospect.mlbId || match?.mlbId || null,
-    position: match?.position || prospect.position,
-    level: match?.level || prospect.level,
-    sportId: match?.sportId || fallbackSportId,
-    affiliateTeamId: match?.teamId || null,
-    affiliateTeamName: match?.teamName || null,
-  };
-}
-
-async function fetchSeasonSplit(mlbId, group, sportId) {
-  if (!mlbId) return null;
-  const urls = [];
-  if (sportId != null) {
-    urls.push(
-      `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=season&season=${SEASON}&group=${group}&sportId=${sportId}`
-    );
-  }
-  urls.push(
-    `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=season&season=${SEASON}&group=${group}`
-  );
-
-  for (const url of urls) {
-    const data = await fetchJson(url);
-    const split = data?.stats?.[0]?.splits?.[0];
-    if (split?.stat) {
-      return split.stat;
-    }
-  }
-  return null;
-}
-
-async function fetchGameLogSplits(mlbId, group, sportId) {
-  if (!mlbId) return null;
-  const urls = [];
-  if (sportId != null) {
-    urls.push(
-      `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&season=${SEASON}&group=${group}&sportId=${sportId}`
-    );
-  }
-  urls.push(
-    `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&season=${SEASON}&group=${group}`
-  );
-
-  for (const url of urls) {
-    const data = await fetchJson(url);
-    const splits = data?.stats?.[0]?.splits;
-    if (Array.isArray(splits) && splits.length) {
-      return splits;
-    }
-  }
-  return null;
-}
-
-async function getPlayerStats(prospect) {
-  const group = prospect.type === "Pitcher" ? "pitching" : "hitting";
-  const stat = await fetchSeasonSplit(prospect.mlbId, group, prospect.sportId);
-  if (!stat) {
-    return null;
-  }
-
-  if (prospect.type === "Pitcher") {
+  if (playerType === "Pitcher") {
     return {
       era: stat.era || null,
       ip: stat.inningsPitched || null,
@@ -200,13 +132,13 @@ async function getPlayerStats(prospect) {
 
   return {
     avg: stat.avg || null,
+    obp: stat.obp || null,
+    slg: stat.slg || null,
     ops: stat.ops || null,
     hr: stat.homeRuns ?? null,
     rbi: stat.rbi ?? null,
     sb: stat.stolenBases ?? null,
     pa: stat.plateAppearances ?? null,
-    obp: stat.obp || null,
-    slg: stat.slg || null,
     h: stat.hits ?? null,
     ab: stat.atBats ?? null,
     k: stat.strikeOuts ?? null,
@@ -214,94 +146,145 @@ async function getPlayerStats(prospect) {
   };
 }
 
-async function getTrendData(prospect) {
-  const group = prospect.type === "Pitcher" ? "pitching" : "hitting";
-  const splits = await fetchGameLogSplits(prospect.mlbId, group, prospect.sportId);
-  if (!Array.isArray(splits) || splits.length < 2) {
-    return null;
-  }
-
-  const labels = [];
-  const values = [];
-
-  if (prospect.type === "Pitcher") {
-    let totalEarnedRuns = 0;
-    let totalOuts = 0;
-
-    for (const split of splits) {
-      const ipString = split.stat?.inningsPitched || "0";
-      const parts = String(ipString).split(".");
-      const wholeInnings = parseInt(parts[0] || "0", 10) || 0;
-      const partialOuts = parseInt(parts[1] || "0", 10) || 0;
-      totalOuts += (wholeInnings * 3) + partialOuts;
-      totalEarnedRuns += split.stat?.earnedRuns ?? 0;
-
-      const innings = totalOuts / 3;
-      const era = innings > 0 ? (totalEarnedRuns / innings) * 9 : null;
-      labels.push(split.date ? split.date.slice(5) : "");
-      values.push(era != null ? parseFloat(era.toFixed(2)) : null);
-    }
-  } else {
-    let totalHits = 0;
-    let totalAtBats = 0;
-
-    for (const split of splits) {
-      totalHits += split.stat?.hits ?? 0;
-      totalAtBats += split.stat?.atBats ?? 0;
-      const avg = totalAtBats > 0 ? totalHits / totalAtBats : null;
-      labels.push(split.date ? split.date.slice(5) : "");
-      values.push(avg != null ? parseFloat(avg.toFixed(3)) : null);
-    }
-  }
-
-  return { labels, values };
+async function fetchBulkSeasonStats(group, sportId) {
+  const url =
+    `https://statsapi.mlb.com/api/v1/stats` +
+    `?stats=season&season=${SEASON}&group=${group}&playerPool=ALL&sportIds=${sportId}&limit=2000`;
+  const data = await fetchJson(url);
+  const splits = data?.stats?.[0]?.splits;
+  return Array.isArray(splits) ? splits : [];
 }
 
-async function getProspectNews(name) {
-  const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
-  const feeds = [
-    "https://www.mlb.com/feeds/news/rss.xml?teamId=121",
-    "https://sny.tv/rss/mets",
-  ];
-  const lastName = name.split(" ").pop();
+async function buildBulkStatLookup(sportIds) {
+  const lookup = {};
+  for (const sportId of sportIds) {
+    lookup[sportId] = {
+      hitting: new Map(),
+      pitching: new Map(),
+    };
 
-  for (const feedUrl of feeds) {
-    try {
-      const { data } = await axios.get(RSS_PROXY + encodeURIComponent(feedUrl), { timeout: 8000 });
-      if (data.status !== "ok") continue;
-      const match = (data.items || []).find(item => {
-        const text = `${item.title || ""} ${item.description || ""}`;
-        return text.includes(lastName) || text.includes(name);
+    const [hittingSplits, pitchingSplits] = await Promise.all([
+      fetchBulkSeasonStats("hitting", sportId),
+      fetchBulkSeasonStats("pitching", sportId),
+    ]);
+
+    for (const split of hittingSplits) {
+      const playerId = Number(split?.player?.id);
+      if (!playerId || !split?.stat) continue;
+      lookup[sportId].hitting.set(playerId, {
+        stats: normalizeStats("Hitter", split.stat),
+        teamId: split?.team?.id || null,
       });
-      if (match) {
-        return {
-          title: (match.title || "").replace(/<[^>]*>/g, "").trim().slice(0, 120),
-          url: match.link || "#",
-          date: match.pubDate ? new Date(match.pubDate).toLocaleDateString() : "",
-        };
-      }
-    } catch {
-      // ignore RSS errors
+    }
+
+    for (const split of pitchingSplits) {
+      const playerId = Number(split?.player?.id);
+      if (!playerId || !split?.stat) continue;
+      lookup[sportId].pitching.set(playerId, {
+        stats: normalizeStats("Pitcher", split.stat),
+        teamId: split?.team?.id || null,
+      });
     }
   }
+  return lookup;
+}
 
-  return null;
+function resolveProspectContext(prospect, affiliateMaps, mlbMaps) {
+  const nameKey = normalizeName(prospect.name);
+  const mlbNameMatch = mlbMaps.byName.get(nameKey) || null;
+  const affiliateNameMatch = affiliateMaps.byName.get(nameKey) || null;
+  const mlbIdMatch = prospect.mlbId ? (mlbMaps.byId.get(prospect.mlbId) || null) : null;
+  const affiliateIdMatch = prospect.mlbId ? (affiliateMaps.byId.get(prospect.mlbId) || null) : null;
+  const idMatch = prospect.mlbId
+    ? (affiliateIdMatch || mlbIdMatch || null)
+    : null;
+  const match = mlbNameMatch || affiliateNameMatch || idMatch;
+  const mlbStatus = mlbNameMatch ? "MLB Active" : null;
+
+  return {
+    ...prospect,
+    mlbId: match?.mlbId || prospect.mlbId || null,
+    position: match?.position || prospect.position,
+    level: mlbStatus ? "MLB" : (match?.level || prospect.level),
+    sportId: mlbStatus ? 1 : (match?.sportId || LEVEL_SPORT_IDS[prospect.level] || null),
+    affiliateTeamId: match?.teamId || null,
+    affiliateTeamName: match?.teamName || null,
+    type: match?.type || prospect.type,
+    mlbStatus,
+  };
+}
+
+function buildStatsLookup(allPlayers, statsCache) {
+  const byId = new Map();
+  const byName = new Map();
+  for (const player of allPlayers) {
+    const statsEntry = statsCache.get(player.mlbId);
+    if (!statsEntry) continue;
+    if (player.mlbId && !byId.has(player.mlbId)) byId.set(player.mlbId, statsEntry);
+    const key = normalizeName(player.name);
+    if (key && !byName.has(key)) byName.set(key, statsEntry);
+  }
+  return { byId, byName };
 }
 
 async function main() {
   console.log("[prospects] Starting build...");
-  const rosterMaps = await getAffiliateRosters();
+
+  const affiliates = await getAffiliateTeams();
+  const affiliateRosterArrays = await Promise.all(
+    affiliates.map(affiliate => getTeamRoster(affiliate.teamId, SEASON, affiliate))
+  );
+  const affiliatePlayers = affiliateRosterArrays.flat();
+  const mlbPlayers = await getTeamRoster(ORG_ID, SEASON, { teamName: "New York Mets", sportId: 1, level: "MLB" });
+
+  const affiliateMaps = buildRosterMaps(affiliatePlayers);
+  const mlbMaps = buildRosterMaps(mlbPlayers);
+  const allPlayers = [...affiliatePlayers, ...mlbPlayers.filter(player => !affiliateMaps.byId.has(player.mlbId))];
+  const bulkStats = await buildBulkStatLookup([1, 11, 12, 13, 14]);
+
+  const statsCache = new Map();
+  const processedByLevel = {};
+
+  for (const player of allPlayers) {
+    const level = player.level || "Unknown";
+    if (!processedByLevel[level]) {
+      processedByLevel[level] = { processed: 0, withStats: 0, withoutStats: 0 };
+    }
+    processedByLevel[level].processed += 1;
+    const groupKey = player.type === "Pitcher" ? "pitching" : "hitting";
+    const primarySportId = player.sportId || null;
+    const primaryEntry = primarySportId != null
+      ? bulkStats[primarySportId]?.[groupKey]?.get(player.mlbId) || null
+      : null;
+    const fallbackEntry = primarySportId !== 1
+      ? bulkStats[1]?.[groupKey]?.get(player.mlbId) || null
+      : null;
+    const matchedEntry = primaryEntry || fallbackEntry || null;
+    const normalized = matchedEntry?.stats || null;
+
+    if (!normalized) {
+      console.warn(`[prospects] no season stats found for player ${player.mlbId} (${player.name}) group=${groupKey} primarySportId=${primarySportId ?? "n/a"}`);
+    }
+
+    statsCache.set(player.mlbId, {
+      stats: normalized,
+      sportIdUsed: primaryEntry ? primarySportId : (fallbackEntry ? 1 : null),
+      sourceLevel: player.level,
+      type: player.type,
+    });
+    if (normalized) processedByLevel[level].withStats += 1;
+    else processedByLevel[level].withoutStats += 1;
+  }
+
+  const statsLookup = buildStatsLookup(allPlayers, statsCache);
+  const mlbActiveIds = new Set(mlbPlayers.map(player => player.mlbId).filter(Boolean));
+
   const prospects = [];
-
   for (const rawProspect of PROSPECT_LIST) {
-    const prospect = resolveProspectContext(rawProspect, rosterMaps);
-    console.log(`  Fetching ${prospect.name} (${prospect.sportId || "n/a"})...`);
-
-    const [stats, trendData, news] = await Promise.all([
-      getPlayerStats(prospect),
-      getTrendData(prospect),
-      getProspectNews(prospect.name),
-    ]);
+    const prospect = resolveProspectContext(rawProspect, affiliateMaps, mlbMaps);
+    const statsEntry = (prospect.mlbId && statsLookup.byId.get(prospect.mlbId))
+      || statsLookup.byName.get(normalizeName(prospect.name))
+      || null;
 
     prospects.push({
       mlbId: prospect.mlbId,
@@ -313,12 +296,11 @@ async function main() {
       throws: prospect.throws,
       level: prospect.level,
       eta: prospect.eta,
-      stats: stats || null,
-      trendData: trendData || null,
-      news: news || null,
+      mlbStatus: mlbActiveIds.has(prospect.mlbId) ? "MLB Active" : null,
+      stats: statsEntry?.stats || null,
+      trendData: null,
+      news: null,
     });
-
-    await sleep(150);
   }
 
   const output = {
@@ -330,6 +312,16 @@ async function main() {
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+
+  console.log("[prospects] Processed roster stats by level:");
+  for (const [level, summary] of Object.entries(processedByLevel)) {
+    console.log(`  ${level}: processed=${summary.processed} withStats=${summary.withStats} withoutStats=${summary.withoutStats}`);
+  }
+  const prospectWithStats = prospects.filter(p => p.stats != null).length;
+  const prospectWithoutStats = prospects.length - prospectWithStats;
+  const mlbActiveProspects = prospects.filter(p => p.mlbStatus === "MLB Active").map(p => p.name);
+  console.log(`[prospects] Top-15 stats summary: withStats=${prospectWithStats} withoutStats=${prospectWithoutStats}`);
+  console.log(`[prospects] MLB Active prospects: ${mlbActiveProspects.length ? mlbActiveProspects.join(", ") : "none"}`);
   console.log(`[prospects] Wrote ${OUTPUT_PATH} (${prospects.length} prospects)`);
 }
 
