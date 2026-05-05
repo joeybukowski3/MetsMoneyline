@@ -53,23 +53,22 @@ body {
 /* =====================
    NAV
    ===================== */
-header {
+body > header {
   position: sticky;
   top: 0;
   z-index: 100;
   background: #fff;
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-bottom: 1px solid #e5e7eb;
 }
 
-nav {
-  max-width: 1400px;
+body > header .site-nav {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 60px;
+  min-height: 60px;
   position: relative;
 }
 
@@ -81,35 +80,94 @@ nav {
   font-size: 1.3rem;
   font-weight: 900;
   letter-spacing: -0.5px;
+  flex-shrink: 0;
 }
 
 .brand-mets { color: var(--orange); }
 .brand-mono { color: var(--navy); }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
 .nav-links {
   list-style: none;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .nav-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: center;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 600;
-  padding: 0.45rem 1rem;
+  padding: 8px 14px;
   border-radius: 999px;
   transition: color 0.15s, background 0.15s;
 }
 
-.nav-link svg { flex-shrink: 0; }
 .nav-link:hover { color: var(--navy); background: var(--bg); }
 .nav-link.active { color: #fff; background: var(--orange); }
 .nav-link.active:hover { background: #e04a05; }
+
+.nav-more {
+  position: relative;
+}
+
+.nav-more-trigger {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.nav-more-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+}
+
+.nav-more.open .nav-more-menu {
+  display: flex;
+}
+
+.nav-dropdown-link {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-dropdown-link:hover {
+  color: var(--navy);
+  background: var(--bg);
+}
+
+.nav-dropdown-link.active {
+  color: #fff;
+  background: var(--orange);
+}
 
 /* Hamburger */
 .nav-hamburger {
@@ -142,25 +200,61 @@ nav {
 .nav-hamburger.open span:nth-child(2) { opacity: 0; }
 .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-@media (max-width: 640px) {
+/* Mobile panel */
+.nav-mobile-panel {
+  display: none;
+}
+
+.nav-mobile-link {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: color 0.15s, background 0.15s;
+}
+
+.nav-mobile-link:hover {
+  color: var(--navy);
+  background: var(--bg);
+}
+
+.nav-mobile-link.active {
+  color: #fff;
+  background: var(--orange);
+}
+
+@media (max-width: 1260px) {
+  .nav-link,
+  .nav-dropdown-link {
+    padding: 10px 10px;
+  }
+}
+
+@media (max-width: 768px) {
   .nav-hamburger { display: flex; }
 
   .nav-links {
     display: none;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
-    position: absolute;
-    top: 60px; left: 0; right: 0;
-    background: #fff;
-    border-bottom: 2px solid var(--border);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
-    padding: 0.75rem 1rem;
-    z-index: 200;
   }
 
-  .nav-links.open { display: flex; }
-  .nav-link { border-radius: 8px; padding: 0.65rem 1rem; font-size: 0.95rem; }
+  .nav-mobile-panel {
+    display: none;
+    padding: 0 24px 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .nav-mobile-panel.open {
+    display: grid;
+    gap: 4px;
+  }
+
+  .nav-more-menu {
+    display: none !important;
+  }
 }
 
 /* =====================
@@ -2053,7 +2147,8 @@ footer {
   .pitching-col-mid  { border-left: none; border-right: none; border-top: 1px solid var(--border); text-align: left; padding-left: 1.5rem; }
   .pitching-section-divider { padding-left: 1.5rem; }
   .glossary dl       { grid-template-columns: 1fr; }
-  nav                { padding: 0 1rem; }
+  header .site-nav   { padding: 0 16px; }
+  .nav-mobile-panel  { padding: 0 16px 16px; }
   main, .page-content { padding: 1.5rem 1rem 3rem; }
   .email-form, .signup-form { flex-direction: column; }
   .email-form input, .signup-form input,
