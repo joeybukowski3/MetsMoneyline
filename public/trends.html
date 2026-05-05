@@ -168,48 +168,46 @@
 
     function createChart(canvasId, labels, rollingBa, perGameBa, xba) {
       if (charts[canvasId]) { charts[canvasId].destroy(); }
-      const ctx = document.getElementById(canvasId);
-      if (!ctx) return;
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) { console.warn('Canvas not found:', canvasId); return; }
       const safeLabels = Array.isArray(labels) ? labels : [];
       const safeRollingBa = Array.isArray(rollingBa) ? rollingBa : [];
-      const safePerGameBa = Array.isArray(perGameBa) ? perGameBa : [];
+      const safePerGameBa = Array.isArray(perGameBa)
+        ? perGameBa.map(v => (typeof v === 'number' && v > 0) ? v : null)
+        : [];
       if (!safeLabels.length || !safeRollingBa.length) return;
 
-      // Compute Y-axis bounds from data
       const allVals = [...safeRollingBa, ...safePerGameBa].filter(v => v != null && v > 0);
       if (xba != null) allVals.push(xba);
       const dataMin = allVals.length ? Math.min(...allVals) : 0.100;
       const dataMax = allVals.length ? Math.max(...allVals) : 0.400;
-      const padding = Math.max(0.030, (dataMax - dataMin) * 0.2);
-      const yMin = Math.max(0, Math.floor((dataMin - padding) * 100) / 100);
-      const yMax = Math.ceil((dataMax + padding) * 100) / 100;
+      const pad = Math.max(0.030, (dataMax - dataMin) * 0.25);
+      const yMin = Math.max(0, parseFloat((dataMin - pad).toFixed(3)));
+      const yMax = parseFloat((dataMax + pad).toFixed(3));
 
       const datasets = [
-        // Per-game BA dots (background scatter)
         {
           label: 'Game BA', data: safePerGameBa,
           type: 'bar',
-          backgroundColor: 'rgba(0,45,114,0.10)',
-          borderColor: 'rgba(0,45,114,0.20)',
-          borderWidth: 1, borderRadius: 3,
-          barPercentage: 0.6, categoryPercentage: 0.8,
+          backgroundColor: 'rgba(0,45,114,0.12)',
+          borderColor: 'rgba(0,45,114,0.25)',
+          borderWidth: 1, borderRadius: 2,
+          barPercentage: 0.5, categoryPercentage: 0.8,
           order: 3,
         },
-        // 5-game rolling BA (main line)
         {
           label: '5-Game Rolling BA', data: safeRollingBa,
           type: 'line',
-          borderColor: '#002d72', backgroundColor: 'rgba(0,45,114,0.06)',
+          borderColor: '#002d72', backgroundColor: 'transparent',
           borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5,
-          tension: 0.35, fill: false, order: 1,
+          tension: 0.3, fill: false, order: 1,
         },
       ];
 
-      // xBA reference line (flat)
       if (xba != null) {
         datasets.push({
-          label: `Season xBA (${fmtBa(xba)})`,
-          data: safeLabels.map(() => xba),
+          label: 'Season xBA (' + fmtBa(xba) + ')',
+          data: safeLabels.map(function() { return xba; }),
           type: 'line',
           borderColor: '#ff5910', backgroundColor: 'transparent',
           borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 0,
@@ -217,9 +215,9 @@
         });
       }
 
-      charts[canvasId] = new Chart(ctx.getContext('2d'), {
-        type: 'bar', // base type for mixed chart
-        data: { labels: safeLabels, datasets },
+      charts[canvasId] = new Chart(canvas, {
+        type: 'bar',
+        data: { labels: safeLabels, datasets: datasets },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -232,10 +230,10 @@
               bodyFont: { family: 'Inter', size: 11 },
               padding: 10, cornerRadius: 8, displayColors: true, boxPadding: 4,
               callbacks: {
-                label: function(ctx) {
-                  const v = ctx.parsed.y;
+                label: function(tipCtx) {
+                  var v = tipCtx.parsed.y;
                   if (v == null) return null;
-                  return `${ctx.dataset.label}: ${fmtBa(v)}`;
+                  return tipCtx.dataset.label + ': ' + fmtBa(v);
                 }
               }
             }
@@ -253,7 +251,7 @@
               grid: { color: 'rgba(0,0,0,0.04)' },
               ticks: {
                 font: { family: 'Inter', size: 10 }, color: '#9099b0',
-                callback: v => fmtBa(v),
+                callback: function(v) { return fmtBa(v); },
                 stepSize: 0.050,
               }
             }
@@ -333,8 +331,12 @@
       teamSection.innerHTML = renderTeamCard(trendsData.team, windowKey);
       const teamW = trendsData.team[windowKey] || trendsData.team.season;
       if (teamW?.rolling) {
-        const { labels, rollingBa, perGameBa, xba } = normalizeRolling(teamW);
-        createChart('chart-team', labels, rollingBa, perGameBa, xba);
+        try {
+          const { labels, rollingBa, perGameBa, xba } = normalizeRolling(teamW);
+          createChart('chart-team', labels, rollingBa, perGameBa, xba);
+        } catch (e) {
+          console.error('Team chart error:', e);
+        }
       }
 
       // Player cards sorted by PA
@@ -351,8 +353,12 @@
       players.forEach((player, idx) => {
         const w = player[windowKey] || player.season;
         if (w?.rolling) {
-          const { labels, rollingBa, perGameBa, xba } = normalizeRolling(w);
-          createChart(`chart-player-${idx}`, labels, rollingBa, perGameBa, xba);
+          try {
+            const { labels, rollingBa, perGameBa, xba } = normalizeRolling(w);
+            createChart(`chart-player-${idx}`, labels, rollingBa, perGameBa, xba);
+          } catch (e) {
+            console.error(`Player ${idx} chart error:`, e);
+          }
         }
       });
     }
