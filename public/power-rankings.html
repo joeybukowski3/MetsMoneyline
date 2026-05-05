@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MLB Power Rankings 2026 — Composite Stat Rankings | MetsMoneyline</title>
+  <meta name="description" content="Data-driven MLB power rankings for 2026. Every team ranked by a composite of OPS+, rotation xERA, bullpen xFIP, and run differential. Where do the Mets stack up?">
+  <meta name="keywords" content="MLB power rankings 2026, Mets power ranking, MLB team rankings, MLB OPS+, MLB xERA rankings">
+  <link rel="canonical" href="https://www.metsmoneyline.com/power-rankings.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/power-rankings.html">
+  <meta property="og:title" content="MLB Power Rankings 2026 | MetsMoneyline">
+  <meta property="og:description" content="All 30 teams ranked by OPS+, rotation xERA, bullpen rating, and run differential. Where do the Mets land?">
+  <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MLB Power Rankings 2026 | MetsMoneyline">
+  <meta name="twitter:description" content="All 30 teams ranked by composite score — OPS+, xERA, bullpen, run diff.">
+  <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="/favicon.jpg">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebPage","name":"MLB Power Rankings 2026","url":"https://www.metsmoneyline.com/power-rankings.html","isPartOf":{"@type":"WebSite","name":"Mets Moneyline","url":"https://www.metsmoneyline.com"}}
+  </script>
+  <style>
+    .pr-shell { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+    .pr-header { padding: 2rem 0 1.25rem; text-align: center; }
+    .pr-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
+    .pr-header p { color: var(--text-muted); font-size: 0.9rem; }
+
+    .pr-method {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 14px;
+      padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;
+    }
+    .pr-method strong { color: var(--navy); }
+
+    .pr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 18px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+    .pr-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #fff; }
+    .pr-table thead th {
+      position: sticky; top: 0; background: var(--navy); color: #fff; padding: 0.75rem 0.6rem;
+      font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: center; white-space: nowrap; cursor: pointer; user-select: none;
+    }
+    .pr-table thead th:hover { background: #003d8f; }
+    .pr-table thead th:first-child { text-align: center; width: 42px; }
+    .pr-table thead th:nth-child(2) { text-align: left; min-width: 160px; }
+    .pr-table thead th .sort-arrow { font-size: 0.6rem; margin-left: 3px; opacity: 0.5; }
+    .pr-table thead th.sorted .sort-arrow { opacity: 1; }
+
+    .pr-table tbody td { padding: 0.6rem; text-align: center; border-bottom: 1px solid #f0f2f6; font-weight: 600; }
+    .pr-table tbody td:first-child { font-weight: 900; color: var(--navy); font-size: 0.9rem; }
+    .pr-table tbody td:nth-child(2) { text-align: left; }
+
+    .pr-table tbody tr.is-mets { background: rgba(255,89,16,0.06); }
+    .pr-table tbody tr.is-mets td { font-weight: 800; }
+    .pr-table tbody tr.is-mets td:first-child { color: var(--orange); }
+    .pr-table tbody tr:hover { background: #f8fafc; }
+    .pr-table tbody tr.is-mets:hover { background: rgba(255,89,16,0.1); }
+
+    .team-cell { display: flex; align-items: center; gap: 0.5rem; }
+    .team-cell img { width: 24px; height: 24px; flex-shrink: 0; }
+    .team-cell .team-name { font-weight: 700; color: var(--text-main); white-space: nowrap; }
+    .team-cell .team-record { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; }
+
+    .score-pill {
+      display: inline-block; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.78rem; font-weight: 800;
+    }
+    .score-top { background: rgba(22,163,74,0.12); color: #15803d; }
+    .score-mid { background: rgba(245,158,11,0.12); color: #b45309; }
+    .score-bot { background: rgba(220,38,38,0.1); color: #dc2626; }
+
+    .rank-badge { font-size: 0.65rem; color: var(--text-muted); font-weight: 500; }
+
+    .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; }
+
+    @media (max-width: 768px) {
+      .pr-shell { padding: 0 0.5rem 2rem; }
+      .pr-table { font-size: 0.78rem; }
+      .pr-table thead th { padding: 0.6rem 0.4rem; font-size: 0.62rem; }
+      .pr-table tbody td { padding: 0.5rem 0.35rem; }
+      .team-cell img { width: 20px; height: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
+  <header></header>
+
+  <main>
+    <div class="pr-shell">
+      <div class="pr-header">
+        <h1>MLB Power Rankings</h1>
+        <p>All 30 teams ranked by composite score. Updated daily from live MLB data.</p>
+      </div>
+
+      <div class="pr-method">
+        <strong>How it works:</strong> Each team gets a composite score (0–100) built from four equally-weighted categories:
+        <strong>OPS+</strong> (team offense), <strong>Starter xERA</strong> (rotation quality),
+        <strong>Bullpen xFIP</strong> (relief quality), and <strong>Run Differential</strong> (overall results).
+        Higher is better. Click any column header to re-sort.
+      </div>
+
+      <div id="pr-container">
+        <div class="loading-msg">Loading power rankings&hellip;</div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span></div>
+    <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
+    <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+    <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
+  </footer>
+
+  <script defer src="/js/site-header.js"></script>
+  <script>
+    let prData = null;
+    let sortCol = 'composite';
+    let sortAsc = false;
+
+    const COLUMNS = [
+      { key: 'rank', label: '#', sortable: false },
+      { key: 'team', label: 'Team', sortable: false },
+      { key: 'record', label: 'Record', sortable: false },
+      { key: 'composite', label: 'Score' },
+      { key: 'opsPlus', label: 'OPS+' },
+      { key: 'starterXera', label: 'SP xERA' },
+      { key: 'bullpenXfip', label: 'BP xFIP' },
+      { key: 'runDiff', label: 'Run Diff' },
+    ];
+
+    function scoreTier(score, total) {
+      const pct = score / total;
+      if (pct >= 0.7) return 'score-top';
+      if (pct >= 0.4) return 'score-mid';
+      return 'score-bot';
+    }
+
+    function pitchTier(val, isInverse) {
+      // For pitching stats, lower is better
+      if (isInverse) {
+        if (val <= 3.5) return 'score-top';
+        if (val <= 4.2) return 'score-mid';
+        return 'score-bot';
+      }
+      if (val >= 102) return 'score-top';
+      if (val >= 95) return 'score-mid';
+      return 'score-bot';
+    }
+
+    function renderTable(teams) {
+      // Assign ranks based on current sort
+      const ranked = [...teams].sort((a, b) => b.composite - a.composite);
+      ranked.forEach((t, i) => t.rank = i + 1);
+
+      // Now sort by active column
+      const sorted = [...ranked];
+      if (sortCol && sortCol !== 'rank') {
+        sorted.sort((a, b) => {
+          let va = a[sortCol], vb = b[sortCol];
+          if (typeof va === 'string') return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+          // For pitching stats (lower is better), flip sort
+          if (sortCol === 'starterXera' || sortCol === 'bullpenXfip') {
+            return sortAsc ? vb - va : va - vb;
+          }
+          return sortAsc ? va - vb : vb - va;
+        });
+      } else {
+        sorted.sort((a, b) => a.rank - b.rank);
+      }
+
+      const headerHtml = COLUMNS.map(c => {
+        const isSorted = c.key === sortCol;
+        const arrow = c.sortable === false ? '' : `<span class="sort-arrow">${isSorted ? (sortAsc ? '▲' : '▼') : '↕'}</span>`;
+        return `<th class="${isSorted ? 'sorted' : ''}" data-col="${c.key}">${c.label}${arrow}</th>`;
+      }).join('');
+
+      const bodyHtml = sorted.map((t, displayIdx) => {
+        const isMets = t.teamId === 121;
+        const logoUrl = `https://www.mlbstatic.com/team-logos/${t.teamId}.svg`;
+        const rdSign = t.runDiff > 0 ? '+' : '';
+        return `<tr class="${isMets ? 'is-mets' : ''}">
+          <td>${t.rank}</td>
+          <td><div class="team-cell"><img src="${logoUrl}" alt="${t.team} logo" width="24" height="24" loading="lazy"><div><div class="team-name">${t.team}</div><div class="team-record">${t.record}</div></div></div></td>
+          <td>${t.record}</td>
+          <td><span class="score-pill ${scoreTier(t.composite, 100)}">${t.composite.toFixed(1)}</span></td>
+          <td><span class="score-pill ${pitchTier(t.opsPlus, false)}">${t.opsPlus}</span></td>
+          <td><span class="score-pill ${pitchTier(t.starterXera, true)}">${t.starterXera.toFixed(2)}</span></td>
+          <td><span class="score-pill ${pitchTier(t.bullpenXfip, true)}">${t.bullpenXfip.toFixed(2)}</span></td>
+          <td style="font-weight:800;color:${t.runDiff >= 0 ? '#16a34a' : '#dc2626'}">${rdSign}${t.runDiff}</td>
+        </tr>`;
+      }).join('');
+
+      document.getElementById('pr-container').innerHTML = `
+        <div class="pr-table-wrap">
+          <table class="pr-table">
+            <thead><tr>${headerHtml}</tr></thead>
+            <tbody>${bodyHtml}</tbody>
+          </table>
+        </div>`;
+
+      // Click-to-sort
+      document.querySelectorAll('.pr-table thead th[data-col]').forEach(th => {
+        th.addEventListener('click', () => {
+          const col = th.dataset.col;
+          if (col === 'rank' || col === 'team' || col === 'record') return;
+          if (sortCol === col) { sortAsc = !sortAsc; }
+          else { sortCol = col; sortAsc = false; }
+          renderTable(prData.teams);
+        });
+      });
+    }
+
+    fetch('/data/power-rankings.json')
+      .then(r => r.json())
+      .then(data => {
+        prData = data;
+        renderTable(data.teams);
+        if (data.generatedAt) {
+          document.getElementById('data-timestamp').textContent = `Data updated: ${new Date(data.generatedAt).toLocaleString()}`;
+        }
+      })
+      .catch(() => {
+        document.getElementById('pr-container').innerHTML = '<div class="loading-msg">Power rankings data not yet available. Run the build-power-rankings script to generate.</div>';
+      });
+  </script>
+</body>
+</html>
