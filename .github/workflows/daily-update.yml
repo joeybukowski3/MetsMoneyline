@@ -43,13 +43,19 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Refresh prospects data
+        run: node bot/build-prospects.js
+        env:
+          NODE_ENV: production
+
       - name: Commit and push updated odds artifacts
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add public/api/mlb/mets/odds.json \
                   public/data/odds-history.json \
-                  public/data/trends.json
+                  public/data/trends.json \
+                  public/data/prospects.json
           if git diff --staged --quiet; then
             echo "No odds updates to commit."
             exit 0
