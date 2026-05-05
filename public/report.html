@@ -68,7 +68,23 @@
   </head>
   <body>
     <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
-    <header></header>
+    <header>
+      <nav>
+        <a href="/" class="nav-brand">
+          <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
+        </a>
+        <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/" class="nav-link">Game Day</a></li>
+          <li><a href="report.html" class="nav-link active">Today's Report</a></li>
+          <li><a href="advanced-stats.html" class="nav-link">Stats &amp; Standings</a></li>
+          <li><a href="betting-history.html" class="nav-link">History</a></li>
+          <li><a href="news.html" class="nav-link">Team News</a></li>
+        </ul>
+      </nav>
+    </header>
     <main class="report-main" style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
       <section class="report-banner" style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
         <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
@@ -81,7 +97,7 @@
           </div>
         </div>
         <h1 style="margin:0.9rem 0 0.35rem;color:#111827;font-size:1.9rem;line-height:1.2;">Colorado Rockies at Mets Betting Breakdown</h1>
-        <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">May 5th | 8:40 PM ET | Coors Field | 36° | Snow | Wind 5 mph NNE</p>
+        <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">May 5th | 8:40 PM ET | Coors Field | 37° | Light drizzle | Wind 8 mph NNE</p>
       </section>
       
     <section style="background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);"><h2 style="margin:0 0 12px 0;font-size:18px;line-height:1.25;color:#111827;">Matchup Details</h2>
@@ -96,7 +112,7 @@
       <tbody>
         
           <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">-161</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Odds</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">+135</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">-166</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Odds</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">+140</td>
           </tr>
           <tr>
             <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">13-22</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Season Record</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">14-22</td>
@@ -1269,7 +1285,7 @@
       <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:12px 0 6px 0;">Where the risk is</div>
       <ul style="margin:8px 0 0 18px;padding:0;color:#111827;"><li style="margin:0 0 8px 0;">Overall lineup quality only: projected WAR 0.3 vs 2.3, projected lineup wRC+ 77.2 vs 97.1, xwOBA 0.307 vs 0.313.</li><li style="margin:0 0 8px 0;">Road/context splits lean against Mets. </li></ul>
       <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:12px 0 6px 0;">Bottom line</div>
-      <p style="margin:0;color:#374151;">Model leans Mets at -161. Primary edge: starting pitching.</p>
+      <p style="margin:0;color:#374151;">Model leans Mets at -166. Primary edge: starting pitching.</p>
     </section>
 
     <section style="background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);"><h2 style="margin:0 0 12px 0;font-size:18px;line-height:1.25;color:#111827;">Official MetsMoneyline Pick</h2>
@@ -1284,7 +1300,24 @@
       <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
       <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
     </footer>
-    <script defer src="js/site-header.js"></script>
+    <script>
+      const hamburger = document.querySelector('.nav-hamburger');
+      const navLinks = document.querySelector('.nav-links');
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+          const open = navLinks.classList.toggle('open');
+          hamburger.classList.toggle('open', open);
+          hamburger.setAttribute('aria-expanded', open);
+        });
+        navLinks.querySelectorAll('.nav-link').forEach((link) => {
+          link.addEventListener('click', () => {
+            navLinks.classList.remove('open');
+            hamburger.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+          });
+        });
+      }
+    </script>
     <script defer src="js/report-live-odds.js"></script>
   </body>
 </html>
