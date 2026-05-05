@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebPage","name":"Mets Batting Trends & xBA Analysis 2026","url":"https://www.metsmoneyline.com/trends.html","description":"Track 2026 New York Mets batting trends with BA vs xBA overlay charts.","isPartOf":{"@type":"WebSite","name":"Mets Moneyline","url":"https://www.metsmoneyline.com"}}
   </script>
@@ -142,6 +142,13 @@
     let trendsData = null;
     let activeWindow = 'season';
     const charts = {};
+
+    if (typeof Chart === 'undefined') {
+      document.addEventListener('DOMContentLoaded', function() {
+        var el = document.getElementById('trends-loading');
+        if (el) el.innerHTML = '<span style="color:red;">Chart.js failed to load. Check if the CDN URL is correct.</span>';
+      });
+    }
 
     /* ── Verdict badge ── */
     function verdictBadge(ba, xba) {
@@ -336,6 +343,8 @@
           createChart('chart-team', labels, rollingBa, perGameBa, xba);
         } catch (e) {
           console.error('Team chart error:', e);
+          var wrap = document.querySelector('#team-trend-section .trend-chart-wrap');
+          if (wrap) wrap.innerHTML = '<p style="color:red;font-size:12px;padding:1rem;">Chart error: ' + e.message + '</p>';
         }
       }
 
