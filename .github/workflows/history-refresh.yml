@@ -2,7 +2,7 @@ name: Postgame History Refresh
 
 on:
   schedule:
-    - cron: "0 4,5 * * *"
+    - cron: "0 4,5,6,7 * * *"
   workflow_dispatch:
 
 permissions:
@@ -16,11 +16,11 @@ jobs:
   refresh-history:
     runs-on: ubuntu-latest
     steps:
-      - name: Check midnight ET window
+      - name: Check overnight ET window
         id: gate
         run: |
-          ET_HOUR=$(TZ=America/New_York date +%H)
-          if [ "$ET_HOUR" != "00" ]; then
+          ET_HOUR=$((10#$(TZ=America/New_York date +%H)))
+          if [ "$ET_HOUR" -lt 0 ] || [ "$ET_HOUR" -gt 3 ]; then
             echo "Current America/New_York hour is ${ET_HOUR}; skipping."
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           else
