@@ -303,7 +303,7 @@
   </style>
 </head>
 <body>
-  <div class="alert-banner">All-time Mets depth chart mode - voting remains browser-local only</div>
+  <div class="alert-banner" id="dc-alert-banner">Shared fan voting mode - write-ins are reviewed before appearing publicly</div>
   <header></header>
 
   <main>
@@ -315,7 +315,7 @@
       </div>
 
       <div class="dc-disclaimer" id="dc-disclaimer">
-        Votes and write-ins are stored in this browser only. No shared backend or global leaderboard is implemented on MetsMoneyline yet.
+        Rankings start with MetsMoneyline's curated baseline scores. Fan voting is shared online and adjusts the rankings over time. To limit spam, each browser can vote once per position per day. Write-ins are reviewed before appearing publicly.
       </div>
 
       <div class="diamond-wrap" id="diamond">
@@ -323,7 +323,7 @@
         <div class="diamond-overlay"></div>
         <div class="diamond-title-bar">
           <h2>All-Time <span>New York Mets</span> Depth Chart</h2>
-          <p>Top voted player at each position - browser-local voting</p>
+          <p>Curated baseline scores + shared fan voting</p>
         </div>
       </div>
 
@@ -341,7 +341,7 @@
         <table class="dc-table" id="dc-table">
           <thead id="dc-thead"></thead>
           <tbody id="dc-tbody">
-            <tr><td colspan="10" style="padding:2rem;text-align:center;color:#6b7280;">Loading depth chart data...</td></tr>
+            <tr><td colspan="12" style="padding:2rem;text-align:center;color:#6b7280;">Loading depth chart data...</td></tr>
           </tbody>
         </table>
       </div>
@@ -353,11 +353,11 @@
           <select class="dc-select" id="writein-pos" aria-label="Write-in player position"></select>
           <button class="dc-writein-submit" id="writein-submit" type="button">Add</button>
         </div>
-        <div class="dc-writein-note">One write-in per position per browser. Duplicate names at the same position are blocked.</div>
+        <div class="dc-writein-note" id="dc-writein-note">Write-ins are submitted for review before appearing publicly. Duplicate names at the same position are blocked.</div>
         <div class="dc-status" id="dc-status" aria-live="polite"></div>
       </div>
 
-      <div class="dc-vote-info">Votes are limited to one per position per day in this browser. Weekly rebuilds refresh the static player list and timestamps only.</div>
+      <div class="dc-vote-info" id="dc-vote-info">Displayed scores include MetsMoneyline baseline ranking points plus live fan votes.</div>
     </div>
   </main>
 
@@ -367,441 +367,9 @@
     <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
   </footer>
 
+  <script defer src="js/depth-chart-config.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="js/site-header.js"></script>
-  <script>
-    const DEPTH_CHART_URL = "data/depth-chart.json";
-    const STORAGE_KEYS = {
-      votes: "dc_votes_v1",
-      userVotes: "dc_user_votes_v1",
-      writeIns: "dc_writeins_v1"
-    };
-    const POS_LABELS = {
-      C: "Catcher",
-      "1B": "First Base",
-      "2B": "Second Base",
-      "3B": "Third Base",
-      SS: "Shortstop",
-      LF: "Left Field",
-      CF: "Center Field",
-      RF: "Right Field",
-      DH: "Designated Hitter",
-      SP: "Starting Pitcher",
-      RP: "Relief Pitcher"
-    };
-    const BATTING_COLS = ["G", "AB", "H", "HR", "AVG", "OPS"];
-    const SP_COLS = ["IP", "W", "L", "ERA", "K"];
-    const RP_COLS = ["IP", "SV", "W", "L", "K"];
-
-    let storageAvailable = true;
-    let memoryStore = {};
-    let basePlayers = [];
-    let positions = [];
-    let currentPos = "ALL";
-    let currentMode = "position";
-
-    function safeStorageGet(key, fallback) {
-      if (!storageAvailable) return key in memoryStore ? memoryStore[key] : fallback;
-      try {
-        const raw = window.localStorage.getItem(key);
-        return raw ? JSON.parse(raw) : fallback;
-      } catch {
-        storageAvailable = false;
-        return key in memoryStore ? memoryStore[key] : fallback;
-      }
-    }
-
-    function safeStorageSet(key, value) {
-      if (!storageAvailable) {
-        memoryStore[key] = value;
-        return;
-      }
-      try {
-        window.localStorage.setItem(key, JSON.stringify(value));
-      } catch {
-        storageAvailable = false;
-        memoryStore[key] = value;
-      }
-    }
-
-    function escapeHtml(value) {
-      return String(value || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    function sanitizeName(value) {
-      return String(value || "")
-        .replace(/[<>]/g, "")
-        .replace(/\s+/g, " ")
-        .trim();
-    }
-
-    function slugify(value) {
-      return sanitizeName(value)
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, "_")
-        .replace(/^_+|_+$/g, "");
-    }
-
-    function initials(name) {
-      return sanitizeName(name).split(" ").slice(0, 2).map((part) => part.charAt(0).toUpperCase()).join("") || "NY";
-    }
-
-    function headshotUrl(mlbId, name) {
-      if (!mlbId) return fallbackHeadshot(name);
-      return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + mlbId + "/headshot/67/current";
-    }
-
-    function fallbackHeadshot(name) {
-      const label = encodeURIComponent(initials(name));
-      const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%' height='100%' fill='%23e9f3ff'/><text x='50%' y='54%' font-family='Inter,Arial,sans-serif' font-size='42' font-weight='800' text-anchor='middle' fill='%23002d72'>" + label + "</text></svg>";
-      return "data:image/svg+xml;charset=UTF-8," + svg;
-    }
-
-    function showStatus(message, type) {
-      const el = document.getElementById("dc-status");
-      el.textContent = message || "";
-      el.className = "dc-status" + (type ? " " + type : "");
-    }
-
-    function todayKey() {
-      return new Date().toISOString().slice(0, 10);
-    }
-
-    function getVotes() {
-      return safeStorageGet(STORAGE_KEYS.votes, {});
-    }
-
-    function saveVotes(votes) {
-      safeStorageSet(STORAGE_KEYS.votes, votes);
-    }
-
-    function getUserVoteLog() {
-      return safeStorageGet(STORAGE_KEYS.userVotes, {});
-    }
-
-    function saveUserVoteLog(log) {
-      safeStorageSet(STORAGE_KEYS.userVotes, log);
-    }
-
-    function getWriteIns() {
-      return safeStorageGet(STORAGE_KEYS.writeIns, []);
-    }
-
-    function saveWriteIns(writeIns) {
-      safeStorageSet(STORAGE_KEYS.writeIns, writeIns);
-    }
-
-    function getScore(playerId) {
-      const votes = getVotes();
-      const value = votes[playerId];
-      return Number.isFinite(value) ? value : 0;
-    }
-
-    function canVote(pos) {
-      const log = getUserVoteLog();
-      return !log[pos + "_" + todayKey()];
-    }
-
-    function recordVote(playerId, pos, direction) {
-      if (!canVote(pos)) {
-        showStatus("You already voted for " + POS_LABELS[pos] + " today in this browser.", "error");
-        return;
-      }
-
-      const votes = getVotes();
-      votes[playerId] = (Number(votes[playerId]) || 0) + direction;
-      saveVotes(votes);
-
-      const log = getUserVoteLog();
-      log[pos + "_" + todayKey()] = playerId;
-      saveUserVoteLog(log);
-
-      showStatus("Vote saved locally in this browser.", "success");
-      render();
-    }
-
-    function getAllPlayers() {
-      return basePlayers.concat(getWriteIns());
-    }
-
-    function comparePlayers(a, b) {
-      if (b.score !== a.score) return b.score - a.score;
-      const aPosRank = Number.isFinite(Number(a.posRank)) ? Number(a.posRank) : Number.MAX_SAFE_INTEGER;
-      const bPosRank = Number.isFinite(Number(b.posRank)) ? Number(b.posRank) : Number.MAX_SAFE_INTEGER;
-      if (a.pos === b.pos && aPosRank !== bPosRank) return aPosRank - bPosRank;
-      const aSourceOrder = Number.isFinite(Number(a.sourceOrder)) ? Number(a.sourceOrder) : Number.MAX_SAFE_INTEGER;
-      const bSourceOrder = Number.isFinite(Number(b.sourceOrder)) ? Number(b.sourceOrder) : Number.MAX_SAFE_INTEGER;
-      if (aSourceOrder !== bSourceOrder) return aSourceOrder - bSourceOrder;
-      return a.name.localeCompare(b.name);
-    }
-
-    function getPlayersAtPos(pos) {
-      return getAllPlayers()
-        .filter((player) => player.pos === pos)
-        .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
-        .sort(comparePlayers);
-    }
-
-    function getTop10() {
-      return getAllPlayers()
-        .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
-        .sort(comparePlayers)
-        .slice(0, 10);
-    }
-
-    function statColumnsForPos(pos) {
-      if (pos === "SP") return SP_COLS;
-      if (pos === "RP") return RP_COLS;
-      return BATTING_COLS;
-    }
-
-    function statDisplay(value) {
-      if (value == null || value === "" || String(value).toLowerCase() === "nan") return "&mdash;";
-      return escapeHtml(value);
-    }
-
-    function renderDiamond() {
-      const diamond = document.getElementById("diamond");
-      diamond.querySelectorAll(".pos-spot").forEach((node) => node.remove());
-
-      positions.forEach((pos) => {
-        const players = getPlayersAtPos(pos);
-        const top = players[0];
-        if (!top) return;
-
-        const spot = document.createElement("button");
-        spot.type = "button";
-        spot.className = "pos-spot" + (currentPos === pos && currentMode === "position" ? " active" : "");
-        spot.dataset.pos = pos;
-        spot.setAttribute("aria-label", "Show " + POS_LABELS[pos] + " rankings");
-        spot.addEventListener("click", function() {
-          currentPos = pos;
-          currentMode = "position";
-          render();
-        });
-
-        const img = document.createElement("img");
-        img.className = "pos-photo";
-        img.src = headshotUrl(top.mlbId, top.name);
-        img.alt = top.name + " headshot";
-        img.loading = "lazy";
-        img.addEventListener("error", function() {
-          img.src = fallbackHeadshot(top.name);
-        });
-
-        const label = document.createElement("span");
-        label.className = "pos-label";
-        label.textContent = pos;
-
-        const name = document.createElement("span");
-        name.className = "pos-name";
-        name.textContent = top.name;
-
-        const pills = document.createElement("div");
-        pills.className = "pos-rank-pills";
-        players.slice(1, 3).forEach((player, index) => {
-          const pill = document.createElement("span");
-          pill.className = "pos-rank-pill";
-          pill.textContent = (index + 2) + ". " + player.name.split(" ").slice(-1)[0];
-          pills.appendChild(pill);
-        });
-
-        spot.appendChild(label);
-        spot.appendChild(img);
-        spot.appendChild(name);
-        spot.appendChild(pills);
-        diamond.appendChild(spot);
-      });
-    }
-
-    function renderPlayerCell(player) {
-      const imgSrc = headshotUrl(player.mlbId, player.name);
-      return [
-        "<div class=\"player-cell\">",
-        "<img src=\"" + imgSrc + "\" alt=\"" + escapeHtml(player.name) + " headshot\" loading=\"lazy\" onerror=\"this.onerror=null;this.src='" + fallbackHeadshot(player.name) + "';\">",
-        "<div><div class=\"p-name\">" + escapeHtml(player.name) + "</div><div class=\"p-pos\">" + escapeHtml(POS_LABELS[player.pos] || player.pos) + "</div></div>",
-        "</div>"
-      ].join("");
-    }
-
-    function renderTable() {
-      const thead = document.getElementById("dc-thead");
-      const tbody = document.getElementById("dc-tbody");
-      const label = document.getElementById("showing-label");
-
-      let players;
-      let statCols;
-      if (currentMode === "top10") {
-        players = getTop10();
-        statCols = BATTING_COLS;
-        label.textContent = "Showing: Overall Top 10";
-      } else if (currentPos === "ALL") {
-        players = getAllPlayers()
-          .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
-          .sort(comparePlayers);
-        statCols = BATTING_COLS;
-        label.textContent = "Showing: All Positions";
-      } else {
-        players = getPlayersAtPos(currentPos);
-        statCols = statColumnsForPos(currentPos);
-        label.textContent = "Showing: " + POS_LABELS[currentPos] + " (" + currentPos + ")";
-      }
-
-      thead.innerHTML = "<tr><th style=\"width:40px\">#</th><th>Player</th><th style=\"width:110px\">Vote</th>" +
-        statCols.map((col) => "<th>" + escapeHtml(col) + "</th>").join("") + "</tr>";
-
-      tbody.innerHTML = players.map((player, index) => {
-        const rank = index + 1;
-        const rankClass = rank === 1 ? "rank-1" : rank === 2 ? "rank-2" : rank === 3 ? "rank-3" : "rank-other";
-        const scoreClass = player.score > 0 ? "positive" : player.score < 0 ? "negative" : "";
-        const voted = !canVote(player.pos);
-        const todayVote = getUserVoteLog()[player.pos + "_" + todayKey()];
-        const upVoted = todayVote === player.id;
-        const stats = statCols.map((col) => "<td>" + statDisplay(player.stats && player.stats[col]) + "</td>").join("");
-
-        return "<tr class=\"" + (rank === 1 && currentMode !== "top10" ? "is-top1" : "") + "\">" +
-          "<td><span class=\"rank-badge " + rankClass + "\">" + rank + "</span></td>" +
-          "<td>" + renderPlayerCell(player) + "</td>" +
-          "<td><div class=\"vote-cell\">" +
-          "<button class=\"vote-btn up" + (upVoted ? " voted" : "") + "\" type=\"button\" aria-label=\"Upvote " + escapeHtml(player.name) + "\" onclick=\"recordVote('" + escapeHtml(player.id) + "','" + escapeHtml(player.pos) + "',1)\"" + (voted ? " disabled" : "") + ">▲</button>" +
-          "<span class=\"vote-score " + scoreClass + "\">" + player.score + "</span>" +
-          "<button class=\"vote-btn down\" type=\"button\" aria-label=\"Downvote " + escapeHtml(player.name) + "\" onclick=\"recordVote('" + escapeHtml(player.id) + "','" + escapeHtml(player.pos) + "',-1)\"" + (voted ? " disabled" : "") + ">▼</button>" +
-          "</div></td>" +
-          stats +
-          "</tr>";
-      }).join("");
-
-      document.getElementById("pos-filter").value = currentMode === "top10" ? "ALL" : currentPos;
-      document.getElementById("btn-position").classList.toggle("active", currentMode === "position");
-      document.getElementById("btn-top10").classList.toggle("active", currentMode === "top10");
-      document.getElementById("writein-section").style.display = currentMode === "top10" || currentPos === "ALL" ? "none" : "block";
-      document.getElementById("writein-pos").value = currentPos === "ALL" ? positions[0] : currentPos;
-    }
-
-    function render() {
-      renderDiamond();
-      renderTable();
-    }
-
-    function submitWriteIn() {
-      const nameInput = document.getElementById("writein-name");
-      const posInput = document.getElementById("writein-pos");
-      const name = sanitizeName(nameInput.value);
-      const pos = posInput.value;
-
-      if (!name) {
-        showStatus("Enter a player name.", "error");
-        return;
-      }
-      if (!positions.includes(pos)) {
-        showStatus("Select a valid position.", "error");
-        return;
-      }
-
-      const normalizedName = name.toLowerCase();
-      const existing = getAllPlayers().find((player) => player.pos === pos && sanitizeName(player.name).toLowerCase() === normalizedName);
-      if (existing) {
-        showStatus(name + " is already listed at " + pos + ".", "error");
-        return;
-      }
-
-      const writeIns = getWriteIns();
-      if (writeIns.some((player) => player.pos === pos)) {
-        showStatus("You already added a write-in for " + POS_LABELS[pos] + " in this browser.", "error");
-        return;
-      }
-
-      writeIns.push({
-        id: "wi_" + pos.toLowerCase() + "_" + slugify(name),
-        name: name,
-        pos: pos,
-        mlbId: null,
-        stats: {},
-        isWriteIn: true
-      });
-      saveWriteIns(writeIns);
-      nameInput.value = "";
-      showStatus("Write-in added locally for this browser.", "success");
-      render();
-    }
-
-    function bindControls() {
-      document.getElementById("btn-position").addEventListener("click", function() {
-        currentMode = "position";
-        render();
-      });
-      document.getElementById("btn-top10").addEventListener("click", function() {
-        currentMode = "top10";
-        currentPos = "ALL";
-        render();
-      });
-      document.getElementById("pos-filter").addEventListener("change", function(event) {
-        currentPos = event.target.value;
-        currentMode = "position";
-        render();
-      });
-      document.getElementById("writein-submit").addEventListener("click", submitWriteIn);
-    }
-
-    function populatePositionSelectors() {
-      const filter = document.getElementById("pos-filter");
-      const writeInPos = document.getElementById("writein-pos");
-
-      positions.forEach((pos) => {
-        const option = document.createElement("option");
-        option.value = pos;
-        option.textContent = POS_LABELS[pos] + " (" + pos + ")";
-        filter.appendChild(option);
-      });
-
-      positions.forEach((pos) => {
-        const option = document.createElement("option");
-        option.value = pos;
-        option.textContent = pos;
-        writeInPos.appendChild(option);
-      });
-    }
-
-    async function initDepthChart() {
-      try {
-        const response = await fetch(DEPTH_CHART_URL);
-        if (!response.ok) throw new Error("Depth chart data request failed.");
-        const data = await response.json();
-
-        positions = Array.isArray(data.positions) ? data.positions : [];
-        basePlayers = Array.isArray(data.players) ? data.players : [];
-
-        if (!positions.length || !basePlayers.length) {
-          throw new Error("Depth chart data is empty.");
-        }
-
-        const metaNotes = (data.meta && Array.isArray(data.meta.notes)) ? data.meta.notes.join(" ") : "";
-        if (metaNotes) {
-          document.getElementById("dc-disclaimer").textContent = metaNotes;
-        }
-        if (data.generatedAt) {
-          document.getElementById("dc-updated").textContent = "Updated: " + new Date(data.generatedAt).toLocaleString();
-        }
-
-        populatePositionSelectors();
-        bindControls();
-        render();
-
-        if (!storageAvailable) {
-          showStatus("localStorage is unavailable here. Votes and write-ins are temporary for this session only.", "error");
-        }
-      } catch (error) {
-        document.getElementById("dc-disclaimer").textContent = "Depth chart data is temporarily unavailable.";
-        document.getElementById("dc-tbody").innerHTML = "<tr><td colspan=\"10\" style=\"padding:2rem;text-align:center;color:#b91c1c;\">Depth chart failed to load.</td></tr>";
-        showStatus(error.message, "error");
-      }
-    }
-
-    initDepthChart();
-  </script>
+  <script defer src="js/depth-chart-live-voting.js"></script>
 </body>
 </html>
