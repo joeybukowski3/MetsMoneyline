@@ -38,6 +38,10 @@ const SITE_NAV_ITEMS = [
   {
     href: "/depth-chart.html",
     label: "Mets Depth Chart"
+  },
+  {
+    href: "/social-pulse.html",
+    label: "Social Pulse"
   }
 ];
 

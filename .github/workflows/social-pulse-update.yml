@@ -1,0 +1,55 @@
+name: Social Pulse Update
+
+on:
+  schedule:
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-social-pulse:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Install bot dependencies
+        working-directory: ./bot
+        run: npm ci
+
+      - name: Update social pulse data
+        env:
+          ENABLE_X_SOCIAL_PULSE: ${{ vars.ENABLE_X_SOCIAL_PULSE }}
+          X_SOCIAL_POST_LIMIT: ${{ vars.X_SOCIAL_POST_LIMIT }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: node bot/update-social-pulse.js
+
+      - name: Commit updated social pulse data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/social-pulse.json
+          if git diff --staged --quiet; then
+            echo "No social pulse updates to commit."
+            exit 0
+          fi
+          git commit -m "update social media pulse data"
+          git stash
+          git pull --rebase origin main
+          git stash pop || true
+          git push origin main
