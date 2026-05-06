@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mets Depth Chart & Fan Rankings | MetsMoneyline</title>
+  <meta name="description" content="Vote on the Mets depth chart, compare top players by position, and view fan-ranked Mets lineups with career stats.">
+  <meta name="keywords" content="Mets depth chart, Mets fan rankings, all-time Mets lineup, Mets player voting, New York Mets roster history">
+  <link rel="canonical" href="https://www.metsmoneyline.com/depth-chart.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/depth-chart.html">
+  <meta property="og:title" content="Mets Depth Chart & Fan Rankings | MetsMoneyline">
+  <meta property="og:description" content="Vote on the Mets depth chart, compare top players by position, and view fan-ranked Mets lineups with career stats.">
+  <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mets Depth Chart & Fan Rankings | MetsMoneyline">
+  <meta name="twitter:description" content="Vote on the Mets depth chart, compare top players by position, and view fan-ranked Mets lineups with career stats.">
+  <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
+  <link rel="stylesheet" href="css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-VV13077MN0");
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Mets Depth Chart & Fan Rankings",
+      "url": "https://www.metsmoneyline.com/depth-chart.html",
+      "description": "Vote on the Mets depth chart, compare top players by position, and view fan-ranked Mets lineups with career stats.",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "MetsMoneyline",
+        "url": "https://www.metsmoneyline.com"
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --dc-navy: #002d72;
+      --dc-orange: #ff5910;
+      --dc-blue-light: #e9f3ff;
+      --dc-orange-light: #fff3ec;
+      --dc-green: #16a34a;
+      --dc-red: #dc2626;
+      --dc-field: #2d6e2b;
+      --dc-dirt: #c4a46c;
+      --dc-grass: #3a8c38;
+    }
+
+    .dc-shell { max-width: 1120px; margin: 0 auto; padding: 0 1rem 3rem; }
+    .dc-page-header { text-align: center; padding: 1.5rem 0 0.75rem; }
+    .dc-page-header h1 { font-family: "Oswald", sans-serif; font-size: clamp(1.85rem, 4vw, 2.5rem); font-weight: 700; color: var(--dc-navy); text-transform: uppercase; letter-spacing: 0.04em; margin: 0; }
+    .dc-page-header h1 span { color: var(--dc-orange); }
+    .dc-page-header p { color: var(--text-muted); font-size: 0.92rem; max-width: 720px; margin: 0.35rem auto 0; line-height: 1.6; }
+    .dc-page-header .dc-updated { font-size: 0.74rem; color: #9099b0; margin-top: 0.45rem; }
+    .dc-disclaimer {
+      margin: 0 auto 1rem;
+      max-width: 900px;
+      background: #f8fafc;
+      border: 1px solid #d6dde8;
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      color: #475569;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .diamond-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto 1.5rem;
+      aspect-ratio: 16 / 11;
+      border-radius: 20px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #1a4d1a 0%, #2d6e2b 30%, #3a8c38 100%);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      border: 3px solid var(--dc-navy);
+    }
+    .diamond-field { position: absolute; inset: 0; }
+    .diamond-infield { position: absolute; width: 36%; height: 52%; top: 35%; left: 32%; transform: rotate(45deg); background: var(--dc-dirt); border: 2px solid rgba(255,255,255,0.15); border-radius: 4px; opacity: 0.5; }
+    .diamond-grass-circle { position: absolute; width: 28%; height: 40%; top: 38%; left: 36%; border-radius: 50%; background: var(--dc-grass); opacity: 0.4; transform: rotate(45deg); }
+    .outfield-arc { position: absolute; width: 90%; height: 70%; top: -5%; left: 5%; border-radius: 50% 50% 0 0; border: 2px solid rgba(255,255,255,0.08); border-bottom: none; }
+    .foul-line { position: absolute; width: 1px; background: rgba(255,255,255,0.12); height: 70%; top: 15%; }
+    .foul-line.left { left: 12%; transform: rotate(-25deg); transform-origin: bottom center; }
+    .foul-line.right { right: 12%; transform: rotate(25deg); transform-origin: bottom center; }
+    .diamond-title { position: absolute; top: 8px; left: 0; right: 0; text-align: center; font-family: "Oswald", sans-serif; font-size: clamp(0.76rem, 2vw, 1.12rem); font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.08em; text-shadow: 0 2px 8px rgba(0,0,0,0.5); z-index: 10; }
+    .diamond-subtitle { position: absolute; top: clamp(24px, 4vw, 40px); left: 0; right: 0; text-align: center; font-size: clamp(0.5rem, 1.2vw, 0.66rem); color: rgba(255,255,255,0.72); letter-spacing: 0.06em; font-weight: 600; text-transform: uppercase; z-index: 10; }
+
+    .pos-spot { position: absolute; display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 5; transition: transform 0.15s, filter 0.15s; }
+    .pos-spot:hover { transform: scale(1.08); filter: drop-shadow(0 0 12px rgba(255,89,16,0.6)); }
+    .pos-spot.active { filter: drop-shadow(0 0 16px rgba(255,89,16,0.9)); }
+    .pos-label { font-family: "Oswald", sans-serif; font-size: clamp(0.5rem, 1.3vw, 0.72rem); font-weight: 700; color: var(--dc-orange); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.7); }
+    .pos-photo { width: clamp(38px, 7vw, 74px); height: clamp(38px, 7vw, 74px); border-radius: 50%; border: 2px solid #fff; object-fit: cover; background: #1a3a6b; box-shadow: 0 3px 10px rgba(0,0,0,0.4); }
+    .pos-spot.active .pos-photo { border-color: var(--dc-orange); border-width: 3px; }
+    .pos-name { font-size: clamp(0.42rem, 1.08vw, 0.65rem); color: #fff; font-weight: 700; margin-top: 2px; text-shadow: 0 1px 4px rgba(0,0,0,0.7); white-space: nowrap; text-align: center; max-width: clamp(50px, 10vw, 104px); overflow: hidden; text-overflow: ellipsis; }
+    .pos-rank-pills { display: flex; gap: 2px; margin-top: 1px; flex-wrap: wrap; justify-content: center; }
+    .pos-rank-pill { font-size: clamp(0.35rem, 0.8vw, 0.5rem); background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); padding: 0 4px; border-radius: 3px; white-space: nowrap; }
+    .pos-spot[data-pos="C"] { bottom: 6%; left: 50%; transform: translateX(-50%); }
+    .pos-spot[data-pos="1B"] { bottom: 30%; right: 20%; }
+    .pos-spot[data-pos="2B"] { top: 38%; right: 28%; }
+    .pos-spot[data-pos="SS"] { top: 38%; left: 24%; }
+    .pos-spot[data-pos="3B"] { bottom: 30%; left: 16%; }
+    .pos-spot[data-pos="LF"] { top: 18%; left: 10%; }
+    .pos-spot[data-pos="CF"] { top: 6%; left: 50%; transform: translateX(-50%); }
+    .pos-spot[data-pos="RF"] { top: 18%; right: 10%; }
+    .pos-spot[data-pos="SP"] { bottom: 42%; left: 50%; transform: translateX(-50%); }
+    .pos-spot[data-pos="RP"] { bottom: 34%; left: 38%; }
+    .pos-spot[data-pos="DH"] { bottom: 12%; right: 8%; }
+    .pos-spot[data-pos="C"]:hover, .pos-spot[data-pos="CF"]:hover, .pos-spot[data-pos="SP"]:hover { transform: translateX(-50%) scale(1.08); }
+
+    .dc-controls { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.75rem 1rem; background: var(--dc-blue-light); border: 1px solid #c7d8f0; border-radius: 14px; }
+    .dc-filter-label { font-size: 0.72rem; font-weight: 700; color: var(--dc-navy); text-transform: uppercase; letter-spacing: 0.06em; }
+    .dc-select { border: 1px solid #c7d8f0; border-radius: 8px; padding: 0.45rem 0.6rem; font-size: 0.82rem; font-weight: 600; color: var(--dc-navy); background: #fff; cursor: pointer; }
+    .dc-mode-btn { border: 2px solid var(--dc-navy); border-radius: 999px; padding: 0.4rem 1rem; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; background: #fff; color: var(--dc-navy); }
+    .dc-mode-btn.active { background: var(--dc-navy); color: #fff; }
+    .dc-mode-btn:hover:not(.active) { background: #e9f3ff; }
+    .dc-showing { margin-left: auto; font-size: 0.82rem; font-weight: 700; color: var(--dc-orange); }
+
+    .dc-table-wrap { border-radius: 16px; border: 1px solid #d6dde8; overflow-x: auto; overflow-y: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); background: #fff; }
+    .dc-table { width: 100%; min-width: 760px; border-collapse: collapse; font-size: 0.82rem; }
+    .dc-table thead th { background: var(--dc-navy); color: #fff; padding: 0.65rem 0.5rem; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; text-align: center; white-space: nowrap; }
+    .dc-table thead th:nth-child(2) { text-align: left; }
+    .dc-table tbody td { padding: 0.55rem 0.5rem; border-bottom: 1px solid #f0f2f6; text-align: center; font-weight: 600; }
+    .dc-table tbody td:nth-child(2) { text-align: left; }
+    .dc-table tbody tr:hover { background: #f8fafc; }
+    .dc-table tbody tr.is-top1 { background: var(--dc-orange-light); }
+    .player-cell { display: flex; align-items: center; gap: 0.5rem; min-width: 220px; }
+    .player-cell img, .player-fallback { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #d6dde8; object-fit: cover; background: #e9f3ff; flex-shrink: 0; }
+    .player-fallback { display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 800; color: var(--dc-navy); }
+    .player-cell .p-name { font-weight: 800; color: var(--dc-navy); }
+    .player-cell .p-pos { font-size: 0.65rem; color: #6b7280; font-weight: 600; }
+    .vote-cell { display: flex; align-items: center; gap: 0.3rem; justify-content: center; }
+    .vote-btn { width: 28px; height: 28px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
+    .vote-btn.up { background: #e8f5e9; color: var(--dc-green); }
+    .vote-btn.up:hover:not(:disabled), .vote-btn.up.voted { background: var(--dc-green); color: #fff; }
+    .vote-btn.down { background: #fce4ec; color: var(--dc-red); }
+    .vote-btn.down:hover:not(:disabled), .vote-btn.down.voted { background: var(--dc-red); color: #fff; }
+    .vote-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .vote-score { font-size: 0.95rem; font-weight: 900; color: var(--dc-navy); min-width: 28px; text-align: center; }
+    .vote-score.positive { color: var(--dc-green); }
+    .vote-score.negative { color: var(--dc-red); }
+    .rank-badge { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.8rem; }
+    .rank-1 { background: #fbbf24; color: #78350f; }
+    .rank-2 { background: #d1d5db; color: #374151; }
+    .rank-3 { background: #d97706; color: #fff; }
+    .rank-other { background: #f3f4f6; color: #6b7280; }
+
+    .dc-writein { margin-top: 1rem; padding: 1rem 1.25rem; background: #f8fafc; border: 1px solid #d6dde8; border-radius: 14px; }
+    .dc-writein-title { font-size: 0.72rem; font-weight: 700; color: var(--dc-navy); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    .dc-writein-row { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .dc-writein-input { flex: 1 1 220px; border: 1px solid #c7d8f0; border-radius: 8px; padding: 0.55rem 0.75rem; font-size: 0.85rem; font-family: inherit; }
+    .dc-writein-submit { border: none; border-radius: 8px; background: var(--dc-orange); color: #fff; font-weight: 800; padding: 0.55rem 1.2rem; font-size: 0.8rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.04em; }
+    .dc-writein-submit:hover { background: #e04e0e; }
+    .dc-writein-note, .dc-vote-info, .dc-status { font-size: 0.74rem; color: #9099b0; margin-top: 0.35rem; }
+    .dc-status { min-height: 1.2rem; }
+    .dc-status.error { color: #b91c1c; }
+    .dc-status.success { color: #15803d; }
+
+    @media (max-width: 900px) {
+      .diamond-wrap { aspect-ratio: 4 / 3.2; }
+      .dc-controls { align-items: stretch; }
+      .dc-showing { margin-left: 0; width: 100%; text-align: center; }
+    }
+
+    @media (max-width: 640px) {
+      .dc-shell { padding: 0 0.75rem 2.5rem; }
+      .diamond-wrap { aspect-ratio: 4 / 3.6; border-radius: 14px; }
+      .pos-name { display: none; }
+      .player-cell { min-width: 180px; }
+      .dc-table { min-width: 680px; }
+      .dc-writein-row { flex-direction: column; }
+      .dc-writein-submit, .dc-writein-input, .dc-writein select { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="alert-banner">All-time Mets depth chart mode - voting remains browser-local only</div>
+  <header></header>
+
+  <main>
+    <div class="dc-shell">
+      <div class="dc-page-header">
+        <h1>All-Time <span>Mets</span> Depth Chart</h1>
+        <p>Vote on the best Mets by position, compare the top names on the diamond, and switch between position view and the overall top 10.</p>
+        <p class="dc-updated" id="dc-updated"></p>
+      </div>
+
+      <div class="dc-disclaimer" id="dc-disclaimer">
+        Votes and write-ins are stored in this browser only. No shared backend or global leaderboard is implemented on MetsMoneyline yet.
+      </div>
+
+      <div class="diamond-wrap" id="diamond">
+        <div class="diamond-field">
+          <div class="outfield-arc"></div>
+          <div class="foul-line left"></div>
+          <div class="foul-line right"></div>
+          <div class="diamond-infield"></div>
+          <div class="diamond-grass-circle"></div>
+        </div>
+        <div class="diamond-title">All-Time New York Mets Depth Chart</div>
+        <div class="diamond-subtitle">Top voted player at each position - browser-local voting</div>
+      </div>
+
+      <div class="dc-controls">
+        <span class="dc-filter-label">Position:</span>
+        <select class="dc-select" id="pos-filter" aria-label="Filter depth chart by position">
+          <option value="ALL">All Positions</option>
+        </select>
+        <button class="dc-mode-btn active" id="btn-position" type="button">Position View</button>
+        <button class="dc-mode-btn" id="btn-top10" type="button">Overall Top 10</button>
+        <span class="dc-showing" id="showing-label">Showing: All Positions</span>
+      </div>
+
+      <div class="dc-table-wrap">
+        <table class="dc-table" id="dc-table">
+          <thead id="dc-thead"></thead>
+          <tbody id="dc-tbody">
+            <tr><td colspan="10" style="padding:2rem;text-align:center;color:#6b7280;">Loading depth chart data...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dc-writein" id="writein-section">
+        <div class="dc-writein-title">Write-In a Player</div>
+        <div class="dc-writein-row">
+          <input type="text" class="dc-writein-input" id="writein-name" placeholder="Player name (for example: Rusty Staub)" aria-label="Write-in player name">
+          <select class="dc-select" id="writein-pos" aria-label="Write-in player position"></select>
+          <button class="dc-writein-submit" id="writein-submit" type="button">Add</button>
+        </div>
+        <div class="dc-writein-note">One write-in per position per browser. Duplicate names at the same position are blocked.</div>
+        <div class="dc-status" id="dc-status" aria-live="polite"></div>
+      </div>
+
+      <div class="dc-vote-info">Votes are limited to one per position per day in this browser. Weekly rebuilds refresh the static player list and timestamps only.</div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span></div>
+    <p class="footer-disclaimer">For entertainment purposes only.</p>
+    <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+  </footer>
+
+  <script defer src="js/site-header.js"></script>
+  <script>
+    const DEPTH_CHART_URL = "data/depth-chart.json";
+    const STORAGE_KEYS = {
+      votes: "dc_votes_v1",
+      userVotes: "dc_user_votes_v1",
+      writeIns: "dc_writeins_v1"
+    };
+    const POS_LABELS = {
+      C: "Catcher",
+      "1B": "First Base",
+      "2B": "Second Base",
+      "3B": "Third Base",
+      SS: "Shortstop",
+      LF: "Left Field",
+      CF: "Center Field",
+      RF: "Right Field",
+      DH: "Designated Hitter",
+      SP: "Starting Pitcher",
+      RP: "Relief Pitcher"
+    };
+    const BATTING_COLS = ["G", "AB", "H", "HR", "AVG", "OPS"];
+    const SP_COLS = ["IP", "W", "L", "ERA", "K"];
+    const RP_COLS = ["IP", "SV", "W", "L", "K"];
+
+    let storageAvailable = true;
+    let memoryStore = {};
+    let basePlayers = [];
+    let positions = [];
+    let currentPos = "ALL";
+    let currentMode = "position";
+
+    function safeStorageGet(key, fallback) {
+      if (!storageAvailable) return key in memoryStore ? memoryStore[key] : fallback;
+      try {
+        const raw = window.localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        storageAvailable = false;
+        return key in memoryStore ? memoryStore[key] : fallback;
+      }
+    }
+
+    function safeStorageSet(key, value) {
+      if (!storageAvailable) {
+        memoryStore[key] = value;
+        return;
+      }
+      try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+      } catch {
+        storageAvailable = false;
+        memoryStore[key] = value;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function sanitizeName(value) {
+      return String(value || "")
+        .replace(/[<>]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function slugify(value) {
+      return sanitizeName(value)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+    }
+
+    function initials(name) {
+      return sanitizeName(name).split(" ").slice(0, 2).map((part) => part.charAt(0).toUpperCase()).join("") || "NY";
+    }
+
+    function headshotUrl(mlbId, name) {
+      if (!mlbId) return fallbackHeadshot(name);
+      return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + mlbId + "/headshot/67/current";
+    }
+
+    function fallbackHeadshot(name) {
+      const label = encodeURIComponent(initials(name));
+      const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><rect width='100%' height='100%' fill='%23e9f3ff'/><text x='50%' y='54%' font-family='Inter,Arial,sans-serif' font-size='42' font-weight='800' text-anchor='middle' fill='%23002d72'>" + label + "</text></svg>";
+      return "data:image/svg+xml;charset=UTF-8," + svg;
+    }
+
+    function showStatus(message, type) {
+      const el = document.getElementById("dc-status");
+      el.textContent = message || "";
+      el.className = "dc-status" + (type ? " " + type : "");
+    }
+
+    function todayKey() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function getVotes() {
+      return safeStorageGet(STORAGE_KEYS.votes, {});
+    }
+
+    function saveVotes(votes) {
+      safeStorageSet(STORAGE_KEYS.votes, votes);
+    }
+
+    function getUserVoteLog() {
+      return safeStorageGet(STORAGE_KEYS.userVotes, {});
+    }
+
+    function saveUserVoteLog(log) {
+      safeStorageSet(STORAGE_KEYS.userVotes, log);
+    }
+
+    function getWriteIns() {
+      return safeStorageGet(STORAGE_KEYS.writeIns, []);
+    }
+
+    function saveWriteIns(writeIns) {
+      safeStorageSet(STORAGE_KEYS.writeIns, writeIns);
+    }
+
+    function getScore(playerId) {
+      const votes = getVotes();
+      const value = votes[playerId];
+      return Number.isFinite(value) ? value : 0;
+    }
+
+    function canVote(pos) {
+      const log = getUserVoteLog();
+      return !log[pos + "_" + todayKey()];
+    }
+
+    function recordVote(playerId, pos, direction) {
+      if (!canVote(pos)) {
+        showStatus("You already voted for " + POS_LABELS[pos] + " today in this browser.", "error");
+        return;
+      }
+
+      const votes = getVotes();
+      votes[playerId] = (Number(votes[playerId]) || 0) + direction;
+      saveVotes(votes);
+
+      const log = getUserVoteLog();
+      log[pos + "_" + todayKey()] = playerId;
+      saveUserVoteLog(log);
+
+      showStatus("Vote saved locally in this browser.", "success");
+      render();
+    }
+
+    function getAllPlayers() {
+      return basePlayers.concat(getWriteIns());
+    }
+
+    function getPlayersAtPos(pos) {
+      return getAllPlayers()
+        .filter((player) => player.pos === pos)
+        .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.name.localeCompare(b.name);
+        });
+    }
+
+    function getTop10() {
+      return getAllPlayers()
+        .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
+        .sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return a.name.localeCompare(b.name);
+        })
+        .slice(0, 10);
+    }
+
+    function statColumnsForPos(pos) {
+      if (pos === "SP") return SP_COLS;
+      if (pos === "RP") return RP_COLS;
+      return BATTING_COLS;
+    }
+
+    function statDisplay(value) {
+      if (value == null || value === "" || String(value).toLowerCase() === "nan") return "&mdash;";
+      return escapeHtml(value);
+    }
+
+    function renderDiamond() {
+      const diamond = document.getElementById("diamond");
+      diamond.querySelectorAll(".pos-spot").forEach((node) => node.remove());
+
+      positions.forEach((pos) => {
+        const players = getPlayersAtPos(pos);
+        const top = players[0];
+        if (!top) return;
+
+        const spot = document.createElement("button");
+        spot.type = "button";
+        spot.className = "pos-spot" + (currentPos === pos && currentMode === "position" ? " active" : "");
+        spot.dataset.pos = pos;
+        spot.setAttribute("aria-label", "Show " + POS_LABELS[pos] + " rankings");
+        spot.addEventListener("click", function() {
+          currentPos = pos;
+          currentMode = "position";
+          render();
+        });
+
+        const img = document.createElement("img");
+        img.className = "pos-photo";
+        img.src = headshotUrl(top.mlbId, top.name);
+        img.alt = top.name + " headshot";
+        img.loading = "lazy";
+        img.addEventListener("error", function() {
+          img.src = fallbackHeadshot(top.name);
+        });
+
+        const label = document.createElement("span");
+        label.className = "pos-label";
+        label.textContent = pos;
+
+        const name = document.createElement("span");
+        name.className = "pos-name";
+        name.textContent = top.name;
+
+        const pills = document.createElement("div");
+        pills.className = "pos-rank-pills";
+        players.slice(1, 3).forEach((player, index) => {
+          const pill = document.createElement("span");
+          pill.className = "pos-rank-pill";
+          pill.textContent = (index + 2) + ". " + player.name.split(" ").slice(-1)[0];
+          pills.appendChild(pill);
+        });
+
+        spot.appendChild(label);
+        spot.appendChild(img);
+        spot.appendChild(name);
+        spot.appendChild(pills);
+        diamond.appendChild(spot);
+      });
+    }
+
+    function renderPlayerCell(player) {
+      const imgSrc = headshotUrl(player.mlbId, player.name);
+      return [
+        "<div class=\"player-cell\">",
+        "<img src=\"" + imgSrc + "\" alt=\"" + escapeHtml(player.name) + " headshot\" loading=\"lazy\" onerror=\"this.onerror=null;this.src='" + fallbackHeadshot(player.name) + "';\">",
+        "<div><div class=\"p-name\">" + escapeHtml(player.name) + "</div><div class=\"p-pos\">" + escapeHtml(POS_LABELS[player.pos] || player.pos) + "</div></div>",
+        "</div>"
+      ].join("");
+    }
+
+    function renderTable() {
+      const thead = document.getElementById("dc-thead");
+      const tbody = document.getElementById("dc-tbody");
+      const label = document.getElementById("showing-label");
+
+      let players;
+      let statCols;
+      if (currentMode === "top10") {
+        players = getTop10();
+        statCols = BATTING_COLS;
+        label.textContent = "Showing: Overall Top 10";
+      } else if (currentPos === "ALL") {
+        players = getAllPlayers()
+          .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
+          .sort((a, b) => {
+            if (b.score !== a.score) return b.score - a.score;
+            return a.name.localeCompare(b.name);
+          });
+        statCols = BATTING_COLS;
+        label.textContent = "Showing: All Positions";
+      } else {
+        players = getPlayersAtPos(currentPos);
+        statCols = statColumnsForPos(currentPos);
+        label.textContent = "Showing: " + POS_LABELS[currentPos] + " (" + currentPos + ")";
+      }
+
+      thead.innerHTML = "<tr><th style=\"width:40px\">#</th><th>Player</th><th style=\"width:110px\">Vote</th>" +
+        statCols.map((col) => "<th>" + escapeHtml(col) + "</th>").join("") + "</tr>";
+
+      tbody.innerHTML = players.map((player, index) => {
+        const rank = index + 1;
+        const rankClass = rank === 1 ? "rank-1" : rank === 2 ? "rank-2" : rank === 3 ? "rank-3" : "rank-other";
+        const scoreClass = player.score > 0 ? "positive" : player.score < 0 ? "negative" : "";
+        const voted = !canVote(player.pos);
+        const todayVote = getUserVoteLog()[player.pos + "_" + todayKey()];
+        const upVoted = todayVote === player.id;
+        const stats = statCols.map((col) => "<td>" + statDisplay(player.stats && player.stats[col]) + "</td>").join("");
+
+        return "<tr class=\"" + (rank === 1 && currentMode !== "top10" ? "is-top1" : "") + "\">" +
+          "<td><span class=\"rank-badge " + rankClass + "\">" + rank + "</span></td>" +
+          "<td>" + renderPlayerCell(player) + "</td>" +
+          "<td><div class=\"vote-cell\">" +
+          "<button class=\"vote-btn up" + (upVoted ? " voted" : "") + "\" type=\"button\" aria-label=\"Upvote " + escapeHtml(player.name) + "\" onclick=\"recordVote('" + escapeHtml(player.id) + "','" + escapeHtml(player.pos) + "',1)\"" + (voted ? " disabled" : "") + ">▲</button>" +
+          "<span class=\"vote-score " + scoreClass + "\">" + player.score + "</span>" +
+          "<button class=\"vote-btn down\" type=\"button\" aria-label=\"Downvote " + escapeHtml(player.name) + "\" onclick=\"recordVote('" + escapeHtml(player.id) + "','" + escapeHtml(player.pos) + "',-1)\"" + (voted ? " disabled" : "") + ">▼</button>" +
+          "</div></td>" +
+          stats +
+          "</tr>";
+      }).join("");
+
+      document.getElementById("pos-filter").value = currentMode === "top10" ? "ALL" : currentPos;
+      document.getElementById("btn-position").classList.toggle("active", currentMode === "position");
+      document.getElementById("btn-top10").classList.toggle("active", currentMode === "top10");
+      document.getElementById("writein-section").style.display = currentMode === "top10" || currentPos === "ALL" ? "none" : "block";
+      document.getElementById("writein-pos").value = currentPos === "ALL" ? positions[0] : currentPos;
+    }
+
+    function render() {
+      renderDiamond();
+      renderTable();
+    }
+
+    function submitWriteIn() {
+      const nameInput = document.getElementById("writein-name");
+      const posInput = document.getElementById("writein-pos");
+      const name = sanitizeName(nameInput.value);
+      const pos = posInput.value;
+
+      if (!name) {
+        showStatus("Enter a player name.", "error");
+        return;
+      }
+      if (!positions.includes(pos)) {
+        showStatus("Select a valid position.", "error");
+        return;
+      }
+
+      const normalizedName = name.toLowerCase();
+      const existing = getAllPlayers().find((player) => player.pos === pos && sanitizeName(player.name).toLowerCase() === normalizedName);
+      if (existing) {
+        showStatus(name + " is already listed at " + pos + ".", "error");
+        return;
+      }
+
+      const writeIns = getWriteIns();
+      if (writeIns.some((player) => player.pos === pos)) {
+        showStatus("You already added a write-in for " + POS_LABELS[pos] + " in this browser.", "error");
+        return;
+      }
+
+      writeIns.push({
+        id: "wi_" + pos.toLowerCase() + "_" + slugify(name),
+        name: name,
+        pos: pos,
+        mlbId: null,
+        stats: {},
+        isWriteIn: true
+      });
+      saveWriteIns(writeIns);
+      nameInput.value = "";
+      showStatus("Write-in added locally for this browser.", "success");
+      render();
+    }
+
+    function bindControls() {
+      document.getElementById("btn-position").addEventListener("click", function() {
+        currentMode = "position";
+        render();
+      });
+      document.getElementById("btn-top10").addEventListener("click", function() {
+        currentMode = "top10";
+        currentPos = "ALL";
+        render();
+      });
+      document.getElementById("pos-filter").addEventListener("change", function(event) {
+        currentPos = event.target.value;
+        currentMode = "position";
+        render();
+      });
+      document.getElementById("writein-submit").addEventListener("click", submitWriteIn);
+    }
+
+    function populatePositionSelectors() {
+      const filter = document.getElementById("pos-filter");
+      const writeInPos = document.getElementById("writein-pos");
+
+      positions.forEach((pos) => {
+        const option = document.createElement("option");
+        option.value = pos;
+        option.textContent = POS_LABELS[pos] + " (" + pos + ")";
+        filter.appendChild(option);
+      });
+
+      positions.forEach((pos) => {
+        const option = document.createElement("option");
+        option.value = pos;
+        option.textContent = pos;
+        writeInPos.appendChild(option);
+      });
+    }
+
+    async function initDepthChart() {
+      try {
+        const response = await fetch(DEPTH_CHART_URL);
+        if (!response.ok) throw new Error("Depth chart data request failed.");
+        const data = await response.json();
+
+        positions = Array.isArray(data.positions) ? data.positions : [];
+        basePlayers = Array.isArray(data.players) ? data.players : [];
+
+        if (!positions.length || !basePlayers.length) {
+          throw new Error("Depth chart data is empty.");
+        }
+
+        const metaNotes = (data.meta && Array.isArray(data.meta.notes)) ? data.meta.notes.join(" ") : "";
+        if (metaNotes) {
+          document.getElementById("dc-disclaimer").textContent = metaNotes;
+        }
+        if (data.generatedAt) {
+          document.getElementById("dc-updated").textContent = "Updated: " + new Date(data.generatedAt).toLocaleString();
+        }
+
+        populatePositionSelectors();
+        bindControls();
+        render();
+
+        if (!storageAvailable) {
+          showStatus("localStorage is unavailable here. Votes and write-ins are temporary for this session only.", "error");
+        }
+      } catch (error) {
+        document.getElementById("dc-disclaimer").textContent = "Depth chart data is temporarily unavailable.";
+        document.getElementById("dc-tbody").innerHTML = "<tr><td colspan=\"10\" style=\"padding:2rem;text-align:center;color:#b91c1c;\">Depth chart failed to load.</td></tr>";
+        showStatus(error.message, "error");
+      }
+    }
+
+    initDepthChart();
+  </script>
+</body>
+</html>

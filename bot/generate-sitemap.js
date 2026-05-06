@@ -54,6 +54,12 @@ function generateSitemap() {
       lastmod: new Date().toISOString().slice(0, 10),
       changefreq: "daily",
       priority: "0.5"
+    },
+    {
+      loc: `${SITE_ORIGIN}/depth-chart.html`,
+      lastmod: new Date().toISOString().slice(0, 10),
+      changefreq: "weekly",
+      priority: "0.7"
     }
   ];
 

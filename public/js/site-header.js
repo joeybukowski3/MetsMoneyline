@@ -34,6 +34,10 @@ const SITE_NAV_ITEMS = [
   {
     href: "/news.html",
     label: "Team News"
+  },
+  {
+    href: "/depth-chart.html",
+    label: "Mets Depth Chart"
   }
 ];
 

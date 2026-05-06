@@ -1,0 +1,44 @@
+name: Depth Chart Update
+
+on:
+  schedule:
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild-depth-chart:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Rebuild depth chart data
+        run: node bot/update-depth-chart.js
+
+      - name: Regenerate sitemap
+        run: node bot/generate-sitemap.js
+
+      - name: Commit refreshed depth chart artifacts
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/depth-chart.json public/sitemap.xml
+          if git diff --staged --quiet; then
+            echo "No depth chart changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: refresh depth chart artifacts [skip ci]"
+          git stash
+          git pull --rebase origin main
+          git stash pop || true
+          git push origin main
