@@ -2,11 +2,10 @@
   "meta": {
     "title": "Mets Depth Chart & Fan Rankings",
     "description": "Vote on the Mets depth chart, compare top players by position, and view fan-ranked Mets lineups with career stats.",
-    "votingMode": "browser-local",
     "notes": [
-      "Votes are stored in the current browser only.",
-      "Weekly rebuild validates the player list and refreshes generated timestamps.",
-      "No shared backend or global vote totals are implemented in the current repo."
+      "The base player list is rebuilt weekly from this source file.",
+      "Shared vote totals depend on the public Supabase configuration loaded by the page.",
+      "Write-ins require approval before appearing publicly."
     ]
   },
   "positions": [
