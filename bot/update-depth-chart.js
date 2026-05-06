@@ -26,7 +26,7 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-function normalizePlayer(player, positionsSet, seenIds) {
+function normalizePlayer(player, positionsSet, seenIds, sourceOrder, posRank) {
   const id = sanitizeText(player.id) || slugify(player.name);
   const name = sanitizeText(player.name);
   const pos = sanitizeText(player.pos).toUpperCase();
@@ -48,6 +48,8 @@ function normalizePlayer(player, positionsSet, seenIds) {
     id,
     name,
     pos,
+    sourceOrder,
+    posRank,
     mlbId: Number.isFinite(Number(player.mlbId)) ? Number(player.mlbId) : null,
     stats: normalizedStats
   };
@@ -58,14 +60,15 @@ function buildDepthChartData() {
   const positions = Array.isArray(source.positions) ? source.positions.map((pos) => sanitizeText(pos).toUpperCase()) : [];
   const positionsSet = new Set(positions);
   const seenIds = new Set();
+  const posCounts = new Map();
   const players = Array.isArray(source.players)
-    ? source.players.map((player) => normalizePlayer(player, positionsSet, seenIds))
+    ? source.players.map((player, index) => {
+        const pos = sanitizeText(player.pos).toUpperCase();
+        const nextRank = (posCounts.get(pos) || 0) + 1;
+        posCounts.set(pos, nextRank);
+        return normalizePlayer(player, positionsSet, seenIds, index + 1, nextRank);
+      })
     : [];
-
-  players.sort((a, b) => {
-    if (a.pos !== b.pos) return positions.indexOf(a.pos) - positions.indexOf(b.pos);
-    return a.name.localeCompare(b.name);
-  });
 
   return {
     generatedAt: new Date().toISOString(),

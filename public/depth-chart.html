@@ -528,23 +528,28 @@
       return basePlayers.concat(getWriteIns());
     }
 
+    function comparePlayers(a, b) {
+      if (b.score !== a.score) return b.score - a.score;
+      const aPosRank = Number.isFinite(Number(a.posRank)) ? Number(a.posRank) : Number.MAX_SAFE_INTEGER;
+      const bPosRank = Number.isFinite(Number(b.posRank)) ? Number(b.posRank) : Number.MAX_SAFE_INTEGER;
+      if (a.pos === b.pos && aPosRank !== bPosRank) return aPosRank - bPosRank;
+      const aSourceOrder = Number.isFinite(Number(a.sourceOrder)) ? Number(a.sourceOrder) : Number.MAX_SAFE_INTEGER;
+      const bSourceOrder = Number.isFinite(Number(b.sourceOrder)) ? Number(b.sourceOrder) : Number.MAX_SAFE_INTEGER;
+      if (aSourceOrder !== bSourceOrder) return aSourceOrder - bSourceOrder;
+      return a.name.localeCompare(b.name);
+    }
+
     function getPlayersAtPos(pos) {
       return getAllPlayers()
         .filter((player) => player.pos === pos)
         .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
-        .sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score;
-          return a.name.localeCompare(b.name);
-        });
+        .sort(comparePlayers);
     }
 
     function getTop10() {
       return getAllPlayers()
         .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
-        .sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score;
-          return a.name.localeCompare(b.name);
-        })
+        .sort(comparePlayers)
         .slice(0, 10);
     }
 
@@ -637,10 +642,7 @@
       } else if (currentPos === "ALL") {
         players = getAllPlayers()
           .map((player) => Object.assign({}, player, { score: getScore(player.id) }))
-          .sort((a, b) => {
-            if (b.score !== a.score) return b.score - a.score;
-            return a.name.localeCompare(b.name);
-          });
+          .sort(comparePlayers);
         statCols = BATTING_COLS;
         label.textContent = "Showing: All Positions";
       } else {
