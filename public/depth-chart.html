@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mets Depth Chart & Fan Rankings | MetsMoneyline</title>
+  <meta name="impact-site-verification" value="e6068632-7155-4486-9cae-080414cd8d3b">
+  <title>All-Time Depth Chart | MetsMoneyline</title>
   <meta name="description" content="Vote on the Mets depth chart, compare top players by position, and view fan-ranked Mets lineups with career stats.">
   <meta name="keywords" content="Mets depth chart, Mets fan rankings, all-time Mets lineup, Mets player voting, New York Mets roster history">
   <link rel="canonical" href="https://www.metsmoneyline.com/depth-chart.html">
@@ -71,11 +72,18 @@
       text-align: center;
     }
 
+    .dc-stage {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.9fr);
+      gap: 1rem;
+      align-items: stretch;
+      margin-bottom: 1.5rem;
+    }
     .diamond-wrap {
       position: relative;
       width: 100%;
-      max-width: 1000px;
-      margin: 0 auto 1.5rem;
+      max-width: 100%;
+      margin: 0;
       aspect-ratio: 14 / 9;
       border-radius: 18px;
       overflow: hidden;
@@ -144,6 +152,7 @@
       background: transparent;
       padding: 0;
       font: inherit;
+      width: clamp(62px, 8.2vw, 88px);
     }
     .pos-spot:hover { transform: translate(-50%, -50%) scale(1.1); filter: drop-shadow(0 0 14px rgba(255,89,16,0.7)); }
     .pos-spot.active { filter: drop-shadow(0 0 18px rgba(255,89,16,0.95)); }
@@ -165,8 +174,8 @@
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
     .pos-photo {
-      width: clamp(34px, 6.4vw, 68px);
-      height: clamp(34px, 6.4vw, 68px);
+      width: clamp(32px, 5.2vw, 58px);
+      height: clamp(32px, 5.2vw, 58px);
       border-radius: 50%;
       border: 2.5px solid #fff;
       object-fit: cover;
@@ -174,47 +183,112 @@
       box-shadow: 0 3px 12px rgba(0,0,0,0.5);
     }
     .pos-name {
-      font-size: clamp(0.4rem, 1vw, 0.62rem);
+      font-size: clamp(0.38rem, 0.92vw, 0.58rem);
       color: #fff;
       font-weight: 700;
-      margin-top: 1px;
+      margin-top: 2px;
       text-shadow: 0 1px 4px rgba(0,0,0,0.84);
       background: rgba(0,0,0,0.52);
-      padding: 0 4px;
+      padding: 2px 4px;
       border-radius: 4px;
-      white-space: nowrap;
+      white-space: normal;
       text-align: center;
-      max-width: clamp(50px, 10vw, 102px);
+      line-height: 1.05;
+      max-width: clamp(58px, 8vw, 82px);
+      min-height: 1.9em;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .pos-rank-pills {
+    .dc-lineup-panel {
+      border-radius: 18px;
+      border: 1px solid #d6dde8;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+      padding: 1.1rem 1rem;
       display: flex;
-      gap: 2px;
-      margin-top: 1px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .dc-lineup-panel h3 {
+      margin: 0;
+      font-family: "Oswald", sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--dc-navy);
+    }
+    .dc-lineup-panel p {
+      margin: 0.25rem 0 0;
+      font-size: 0.76rem;
+      color: #64748b;
+      line-height: 1.5;
+    }
+    .dc-lineup-list {
+      list-style: none;
+      margin: 1rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .dc-lineup-item {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 0.55rem;
+      align-items: start;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #edf2f7;
+    }
+    .dc-lineup-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .dc-lineup-slot {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      background: var(--dc-blue-light);
+      color: var(--dc-navy);
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      max-width: 120px;
+      margin-top: 1px;
     }
-    .pos-rank-pill {
-      font-size: clamp(0.32rem, 0.72vw, 0.45rem);
-      background: rgba(0,45,114,0.82);
-      color: rgba(255,255,255,0.94);
-      padding: 0 3px;
-      border-radius: 3px;
-      white-space: nowrap;
+    .dc-lineup-name {
+      font-size: 0.87rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.35;
     }
-    .pos-spot[data-pos="C"]  { top: 82%; left: 50%; }
-    .pos-spot[data-pos="SP"] { top: 66%; left: 50%; }
-    .pos-spot[data-pos="1B"] { top: 71%; left: 61%; }
-    .pos-spot[data-pos="2B"] { top: 58%; left: 56%; }
-    .pos-spot[data-pos="SS"] { top: 60%; left: 43%; }
-    .pos-spot[data-pos="3B"] { top: 71%; left: 39%; }
-    .pos-spot[data-pos="LF"] { top: 41%; left: 27%; }
-    .pos-spot[data-pos="CF"] { top: 29%; left: 50%; }
-    .pos-spot[data-pos="RF"] { top: 41%; left: 73%; }
-    .pos-spot[data-pos="RP"] { top: 78%; left: 28%; }
-    .pos-spot[data-pos="DH"] { top: 78%; left: 72%; }
+    .dc-lineup-meta {
+      font-size: 0.72rem;
+      color: #64748b;
+      margin-top: 0.12rem;
+      line-height: 1.35;
+    }
+    .dc-lineup-sp {
+      margin-top: 1rem;
+      padding-top: 0.9rem;
+      border-top: 1px solid #d6dde8;
+    }
+    .dc-lineup-sp-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--dc-orange);
+      margin-bottom: 0.35rem;
+    }
+    .pos-spot[data-pos="C"]  { top: 84%; left: 50%; }
+    .pos-spot[data-pos="SP"] { top: 64%; left: 50%; }
+    .pos-spot[data-pos="1B"] { top: 73%; left: 66%; }
+    .pos-spot[data-pos="2B"] { top: 57%; left: 59%; }
+    .pos-spot[data-pos="SS"] { top: 57%; left: 41%; }
+    .pos-spot[data-pos="3B"] { top: 73%; left: 34%; }
+    .pos-spot[data-pos="LF"] { top: 40%; left: 22%; }
+    .pos-spot[data-pos="CF"] { top: 27%; left: 50%; }
+    .pos-spot[data-pos="RF"] { top: 40%; left: 78%; }
+    .pos-spot[data-pos="RP"] { top: 83%; left: 17%; }
+    .pos-spot[data-pos="DH"] { top: 83%; left: 83%; }
 
     .dc-controls { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; padding: 0.75rem 1rem; background: var(--dc-blue-light); border: 1px solid #c7d8f0; border-radius: 14px; }
     .dc-filter-label { font-size: 0.72rem; font-weight: 700; color: var(--dc-navy); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -265,40 +339,48 @@
     .dc-status.success { color: #15803d; }
 
     @media (max-width: 900px) {
+      .dc-stage { grid-template-columns: 1fr; }
       .diamond-wrap { aspect-ratio: 4 / 3.15; }
       .dc-controls { align-items: stretch; }
       .dc-showing { margin-left: 0; width: 100%; text-align: center; }
-      .pos-spot[data-pos="LF"] { top: 42%; left: 25%; }
-      .pos-spot[data-pos="CF"] { top: 31%; left: 50%; }
-      .pos-spot[data-pos="RF"] { top: 42%; left: 75%; }
-      .pos-spot[data-pos="RP"] { top: 79%; left: 24%; }
-      .pos-spot[data-pos="DH"] { top: 79%; left: 76%; }
+      .pos-spot { width: clamp(58px, 12vw, 76px); }
+      .pos-spot[data-pos="C"]  { top: 83%; left: 50%; }
+      .pos-spot[data-pos="SP"] { top: 64%; left: 50%; }
+      .pos-spot[data-pos="1B"] { top: 72%; left: 65%; }
+      .pos-spot[data-pos="2B"] { top: 58%; left: 58%; }
+      .pos-spot[data-pos="SS"] { top: 58%; left: 42%; }
+      .pos-spot[data-pos="3B"] { top: 72%; left: 35%; }
+      .pos-spot[data-pos="LF"] { top: 42%; left: 22%; }
+      .pos-spot[data-pos="CF"] { top: 30%; left: 50%; }
+      .pos-spot[data-pos="RF"] { top: 42%; left: 78%; }
+      .pos-spot[data-pos="RP"] { top: 82%; left: 17%; }
+      .pos-spot[data-pos="DH"] { top: 82%; left: 83%; }
     }
 
     @media (max-width: 640px) {
       .dc-shell { padding: 0 0.75rem 2.5rem; }
       .diamond-wrap { aspect-ratio: 4 / 3.95; border-radius: 14px; }
       .diamond-title-bar { padding: 0.65rem 0.6rem 1.8rem; }
+      .pos-spot { width: clamp(52px, 14vw, 68px); }
       .pos-name { display: none; }
-      .pos-photo { width: clamp(30px, 10vw, 48px); height: clamp(30px, 10vw, 48px); }
+      .pos-photo { width: clamp(28px, 9vw, 42px); height: clamp(28px, 9vw, 42px); }
       .pos-label { font-size: clamp(0.42rem, 1.8vw, 0.58rem); }
-      .pos-rank-pills { gap: 1px; max-width: 72px; }
-      .pos-rank-pill { font-size: 0.32rem; padding: 0 2px; }
-      .pos-spot[data-pos="C"]  { top: 81%; left: 50%; }
-      .pos-spot[data-pos="SP"] { top: 66%; left: 50%; }
-      .pos-spot[data-pos="1B"] { top: 72%; left: 61.5%; }
-      .pos-spot[data-pos="2B"] { top: 59%; left: 56%; }
-      .pos-spot[data-pos="SS"] { top: 61%; left: 42.5%; }
-      .pos-spot[data-pos="3B"] { top: 72%; left: 38.5%; }
-      .pos-spot[data-pos="LF"] { top: 44%; left: 22%; }
+      .pos-spot[data-pos="C"]  { top: 84%; left: 50%; }
+      .pos-spot[data-pos="SP"] { top: 65%; left: 50%; }
+      .pos-spot[data-pos="1B"] { top: 73%; left: 66%; }
+      .pos-spot[data-pos="2B"] { top: 58%; left: 59%; }
+      .pos-spot[data-pos="SS"] { top: 58%; left: 41%; }
+      .pos-spot[data-pos="3B"] { top: 73%; left: 34%; }
+      .pos-spot[data-pos="LF"] { top: 45%; left: 20%; }
       .pos-spot[data-pos="CF"] { top: 33%; left: 50%; }
-      .pos-spot[data-pos="RF"] { top: 44%; left: 78%; }
-      .pos-spot[data-pos="RP"] { top: 80%; left: 18%; }
-      .pos-spot[data-pos="DH"] { top: 80%; left: 82%; }
+      .pos-spot[data-pos="RF"] { top: 45%; left: 80%; }
+      .pos-spot[data-pos="RP"] { top: 83%; left: 14%; }
+      .pos-spot[data-pos="DH"] { top: 83%; left: 86%; }
       .player-cell { min-width: 180px; }
       .dc-table { min-width: 680px; }
       .dc-writein-row { flex-direction: column; }
       .dc-writein-submit, .dc-writein-input, .dc-writein select { width: 100%; }
+      .dc-lineup-panel { padding: 0.9rem 0.85rem; }
     }
   </style>
 </head>
@@ -315,16 +397,26 @@
       </div>
 
       <div class="dc-disclaimer" id="dc-disclaimer">
-        Rankings start with MetsMoneyline's curated baseline scores. Fan voting is shared online and adjusts the rankings over time. To limit spam, each browser can vote once per position per day. Write-ins are reviewed before appearing publicly.
+        Rankings start with MetsMoneyline's curated baseline scores. Fan voting is shared online and adjusts the rankings over time. To limit spam, each browser can vote once per player per day. Write-ins are reviewed before appearing publicly.
       </div>
 
-      <div class="diamond-wrap" id="diamond">
-        <img class="diamond-bg" src="img/citi-field.jpg" alt="Citi Field aerial view">
-        <div class="diamond-overlay"></div>
-        <div class="diamond-title-bar">
-          <h2>All-Time <span>New York Mets</span> Depth Chart</h2>
-          <p>Curated baseline scores + shared fan voting</p>
+      <div class="dc-stage">
+        <div class="diamond-wrap" id="diamond">
+          <img class="diamond-bg" src="img/citi-field.jpg" alt="Citi Field aerial view">
+          <div class="diamond-overlay"></div>
+          <div class="diamond-title-bar">
+            <h2>All-Time <span>New York Mets</span> Depth Chart</h2>
+            <p>Curated baseline scores + shared fan voting</p>
+          </div>
         </div>
+        <aside class="dc-lineup-panel" aria-labelledby="fan-lineup-title">
+          <h3 id="fan-lineup-title">MetsMoneyline Fan Lineup</h3>
+          <p id="fan-lineup-note">Built from the top offensive players by displayed upvotes. Starting pitcher shown below.</p>
+          <ol class="dc-lineup-list" id="fan-lineup-list">
+            <li class="dc-lineup-item"><span class="dc-lineup-slot">1</span><div><div class="dc-lineup-name">Loading lineup...</div></div></li>
+          </ol>
+          <div class="dc-lineup-sp" id="fan-lineup-sp"></div>
+        </aside>
       </div>
 
       <div class="dc-controls">
@@ -357,7 +449,7 @@
         <div class="dc-status" id="dc-status" aria-live="polite"></div>
       </div>
 
-      <div class="dc-vote-info" id="dc-vote-info">Displayed scores include MetsMoneyline baseline ranking points plus live fan votes.</div>
+      <div class="dc-vote-info" id="dc-vote-info">Displayed scores include MetsMoneyline baseline ranking points plus live fan votes. You can add, switch, or remove one vote per player each day.</div>
     </div>
   </main>
 

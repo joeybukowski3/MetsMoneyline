@@ -97,6 +97,7 @@ function normalizePlayer(player, positionsSet, seenIds, sourceOrder, posRank) {
     seedDownvotes,
     seedNetVotes,
     mlbId: Number.isFinite(Number(player.mlbId)) ? Number(player.mlbId) : null,
+    imageUrl: sanitizeText(player.imageUrl),
     stats: normalizedStats
   };
 }

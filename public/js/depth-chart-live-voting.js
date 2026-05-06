@@ -2,7 +2,7 @@
   const DEPTH_CHART_URL = "data/depth-chart.json";
   const STORAGE_KEYS = {
     voterSeed: "dc_voter_seed_v1",
-    userVotes: "dc_live_user_votes_v1",
+    userVotes: "dc_live_user_votes_v2",
     submittedWriteIns: "dc_submitted_writeins_v1"
   };
   const POS_LABELS = {
@@ -18,10 +18,11 @@
     SP: "Starting Pitcher",
     RP: "Relief Pitcher"
   };
+  const OFFENSIVE_POSITIONS = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH"];
   const BATTING_COLS = ["G", "AB", "H", "HR", "AVG", "OPS"];
   const SP_COLS = ["IP", "W", "L", "ERA", "K"];
   const RP_COLS = ["IP", "SV", "W", "L", "K"];
-  const LIVE_COPY = "Rankings start with MetsMoneyline's curated baseline scores. Fan voting is shared online and adjusts the rankings over time. To limit spam, each browser can vote once per position per day. Write-ins are reviewed before appearing publicly.";
+  const LIVE_COPY = "Rankings start with MetsMoneyline's curated baseline scores. Fan voting is shared online and adjusts the rankings over time. To limit spam, each browser can vote once per player per day. Write-ins are reviewed before appearing publicly.";
   const FALLBACK_COPY = "Live voting is temporarily unavailable. You can still view the depth chart.";
   const LIVE_ALERT = "Shared fan voting is live - displayed scores include MetsMoneyline baseline points plus fan votes";
   const FALLBACK_ALERT = "Live voting is temporarily unavailable - rankings are showing MetsMoneyline baseline points only";
@@ -37,10 +38,11 @@
   let liveVotingEnabled = false;
   let liveVotingMessage = "";
   let voterHashPromise = null;
-  let pendingVotePositions = new Set();
   let pendingWriteIn = false;
   let controlBindingsApplied = false;
   const voteTotalsByPlayerId = new Map();
+  const currentUserVotes = new Map();
+  const pendingVoteKeys = new Set();
 
   function safeStorageGet(key, fallback) {
     if (!storageAvailable) return key in memoryStore ? memoryStore[key] : fallback;
@@ -95,13 +97,27 @@
     return String(pos || "").toUpperCase() + ":" + slugify(name);
   }
 
-  function initials(name) {
-    return sanitizeName(name).split(" ").slice(0, 2).map((part) => part.charAt(0).toUpperCase()).join("") || "NY";
+  function voteKey(pos, playerId, day) {
+    return (day || todayKey()) + "|" + String(pos || "").toUpperCase() + "|" + sanitizeName(playerId);
   }
 
-  function headshotUrl(mlbId, name) {
-    if (!mlbId) return fallbackHeadshot(name);
-    return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + mlbId + "/headshot/67/current";
+  function initials(name) {
+    return sanitizeName(name).split(" ").slice(0, 2).map(function (part) {
+      return part.charAt(0).toUpperCase();
+    }).join("") || "NY";
+  }
+
+  function headshotUrl(player) {
+    if (player && player.imageUrl) return player.imageUrl;
+    if (!player || !player.mlbId) return fallbackHeadshot(player && player.name);
+    return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + player.mlbId + "/headshot/67/current";
+  }
+
+  function imageFallbackUrl(player) {
+    if (player && player.imageUrl && player.mlbId) {
+      return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + player.mlbId + "/headshot/67/current";
+    }
+    return fallbackHeadshot(player && player.name);
   }
 
   function fallbackHeadshot(name) {
@@ -141,22 +157,47 @@
     return new Date().toISOString().slice(0, 10);
   }
 
-  function getUserVoteLog() {
-    return safeStorageGet(STORAGE_KEYS.userVotes, {});
+  function getStoredVoteLog() {
+    const raw = safeStorageGet(STORAGE_KEYS.userVotes, {});
+    return raw && typeof raw === "object" ? raw : {};
   }
 
-  function saveUserVoteLog(log) {
+  function saveStoredVoteLog(log) {
     safeStorageSet(STORAGE_KEYS.userVotes, log);
   }
 
-  function markPositionVoted(pos, playerId) {
-    const log = getUserVoteLog();
-    log[pos + "_" + todayKey()] = playerId;
-    saveUserVoteLog(log);
+  function hydrateVotesFromStorage() {
+    currentUserVotes.clear();
+    const log = getStoredVoteLog();
+    const today = todayKey();
+    Object.keys(log).forEach(function (key) {
+      if (!key.startsWith(today + "|")) return;
+      const value = Number(log[key]);
+      if (value === 1 || value === -1) currentUserVotes.set(key, value);
+    });
   }
 
-  function hasVotedToday(pos) {
-    return Boolean(getUserVoteLog()[pos + "_" + todayKey()]);
+  function persistCurrentVotes() {
+    const log = getStoredVoteLog();
+    const today = todayKey();
+    Object.keys(log).forEach(function (key) {
+      if (key.startsWith(today + "|")) delete log[key];
+    });
+    currentUserVotes.forEach(function (value, key) {
+      log[key] = value;
+    });
+    saveStoredVoteLog(log);
+  }
+
+  function currentVoteValue(playerId, pos) {
+    return Number(currentUserVotes.get(voteKey(pos, playerId))) || 0;
+  }
+
+  function setCurrentVote(playerId, pos, value) {
+    const key = voteKey(pos, playerId);
+    if (value === 1 || value === -1) currentUserVotes.set(key, value);
+    else currentUserVotes.delete(key);
+    persistCurrentVotes();
   }
 
   function getSubmittedWriteIns() {
@@ -174,7 +215,9 @@
     if (window.crypto && window.crypto.getRandomValues) {
       const bytes = new Uint8Array(16);
       window.crypto.getRandomValues(bytes);
-      seed = Array.from(bytes).map((value) => value.toString(16).padStart(2, "0")).join("");
+      seed = Array.from(bytes).map(function (value) {
+        return value.toString(16).padStart(2, "0");
+      }).join("");
     } else {
       seed = "fallback-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
     }
@@ -190,7 +233,9 @@
       if (window.crypto && window.crypto.subtle && window.TextEncoder) {
         const encoded = new window.TextEncoder().encode(seed);
         const digest = await window.crypto.subtle.digest("SHA-256", encoded);
-        return Array.from(new Uint8Array(digest)).map((value) => value.toString(16).padStart(2, "0")).join("");
+        return Array.from(new Uint8Array(digest)).map(function (value) {
+          return value.toString(16).padStart(2, "0");
+        }).join("");
       }
       return "raw-" + seed;
     })();
@@ -208,14 +253,14 @@
     const url = normalizeSupabaseUrl(config.url);
     const anonKey = typeof config.anonKey === "string" ? config.anonKey.trim() : "";
     if (!url || !anonKey) return null;
-    return { url, anonKey };
+    return { url: url, anonKey: anonKey };
   }
 
   function updateLiveCopy() {
     if (liveVotingEnabled) {
       setAlert(LIVE_ALERT);
       setDisclaimer(LIVE_COPY);
-      setVoteInfo("Displayed scores include MetsMoneyline baseline ranking points plus live fan votes. Vote once per position per day from this browser.");
+      setVoteInfo("Displayed scores include MetsMoneyline baseline ranking points plus live fan votes. You can add, switch, or remove one vote per player each day.");
       setWriteInNote("Write-ins are submitted for review before appearing publicly. Duplicate names at the same position are blocked.");
       return;
     }
@@ -234,17 +279,18 @@
 
     return {
       id: sanitizeName(rawPlayer.id) || playerId,
-      playerId,
-      name,
-      pos,
+      playerId: playerId,
+      name: name,
+      pos: pos,
       sourceOrder: Number.isFinite(Number(rawPlayer.sourceOrder)) ? Number(rawPlayer.sourceOrder) : sourceOrder,
       posRank: Number.isFinite(Number(rawPlayer.posRank)) ? Number(rawPlayer.posRank) : posRank,
       mlbId: Number.isFinite(Number(rawPlayer.mlbId)) ? Number(rawPlayer.mlbId) : null,
+      imageUrl: sanitizeName(rawPlayer.imageUrl),
       seedLabel: sanitizeName(rawPlayer.seedLabel) || "Seeded ranking points",
       seedUpvotes: Number.isFinite(Number(rawPlayer.seedUpvotes)) ? Number(rawPlayer.seedUpvotes) : 0,
       seedDownvotes: Number.isFinite(Number(rawPlayer.seedDownvotes)) ? Number(rawPlayer.seedDownvotes) : 0,
       seedNetVotes: Number.isFinite(Number(rawPlayer.seedNetVotes)) ? Number(rawPlayer.seedNetVotes) : 0,
-      stats,
+      stats: stats,
       liveUpvotes: 0,
       liveDownvotes: 0,
       liveNetVotes: 0,
@@ -269,6 +315,15 @@
     return a.name.localeCompare(b.name);
   }
 
+  function compareLineupPlayers(a, b) {
+    if (b.upvotes !== a.upvotes) return b.upvotes - a.upvotes;
+    if (b.netVotes !== a.netVotes) return b.netVotes - a.netVotes;
+    const aSourceOrder = Number.isFinite(Number(a.sourceOrder)) ? Number(a.sourceOrder) : Number.MAX_SAFE_INTEGER;
+    const bSourceOrder = Number.isFinite(Number(b.sourceOrder)) ? Number(b.sourceOrder) : Number.MAX_SAFE_INTEGER;
+    if (aSourceOrder !== bSourceOrder) return aSourceOrder - bSourceOrder;
+    return a.name.localeCompare(b.name);
+  }
+
   function applyVoteTotals(player) {
     const totals = voteTotalsByPlayerId.get(player.playerId);
     const liveUpvotes = totals ? Number(totals.upvotes) || 0 : 0;
@@ -277,28 +332,29 @@
     const seedUpvotes = Number(player.seedUpvotes) || 0;
     const seedDownvotes = Number(player.seedDownvotes) || 0;
     const seedNetVotes = Number(player.seedNetVotes) || 0;
+
     return Object.assign({}, player, {
-      liveUpvotes,
-      liveDownvotes,
-      liveNetVotes,
+      liveUpvotes: liveUpvotes,
+      liveDownvotes: liveDownvotes,
+      liveNetVotes: liveNetVotes,
       upvotes: seedUpvotes + liveUpvotes,
       downvotes: seedDownvotes + liveDownvotes,
       netVotes: seedNetVotes + liveNetVotes
     });
   }
 
+  function getDisplayedPlayers() {
+    return getAllPlayers().map(applyVoteTotals);
+  }
+
   function getPlayersAtPos(pos) {
-    return getAllPlayers()
-      .filter((player) => player.pos === pos)
-      .map(applyVoteTotals)
+    return getDisplayedPlayers()
+      .filter(function (player) { return player.pos === pos; })
       .sort(comparePlayers);
   }
 
   function getTop10() {
-    return getAllPlayers()
-      .map(applyVoteTotals)
-      .sort(comparePlayers)
-      .slice(0, 10);
+    return getDisplayedPlayers().sort(comparePlayers).slice(0, 10);
   }
 
   function statColumnsForPos(pos) {
@@ -312,15 +368,19 @@
     return escapeHtml(value);
   }
 
-  function canVote(pos) {
-    return liveVotingEnabled && !pendingVotePositions.has(pos) && !hasVotedToday(pos);
+  function isVotePending(playerId, pos) {
+    return pendingVoteKeys.has(voteKey(pos, playerId));
+  }
+
+  function canVote(playerId, pos) {
+    return liveVotingEnabled && !isVotePending(playerId, pos);
   }
 
   function renderDiamond() {
     const diamond = document.getElementById("diamond");
-    diamond.querySelectorAll(".pos-spot").forEach((node) => node.remove());
+    diamond.querySelectorAll(".pos-spot").forEach(function (node) { node.remove(); });
 
-    positions.forEach((pos) => {
+    positions.forEach(function (pos) {
       const players = getPlayersAtPos(pos);
       const top = players[0];
       if (!top) return;
@@ -338,11 +398,14 @@
 
       const img = document.createElement("img");
       img.className = "pos-photo";
-      img.src = headshotUrl(top.mlbId, top.name);
+      img.src = headshotUrl(top);
       img.alt = top.name + " headshot";
       img.loading = "lazy";
       img.addEventListener("error", function () {
-        img.src = fallbackHeadshot(top.name);
+        img.onerror = function () {
+          img.src = fallbackHeadshot(top.name);
+        };
+        img.src = imageFallbackUrl(top);
       });
 
       const label = document.createElement("span");
@@ -353,28 +416,64 @@
       name.className = "pos-name";
       name.textContent = top.name;
 
-      const pills = document.createElement("div");
-      pills.className = "pos-rank-pills";
-      players.slice(1, 3).forEach((player, index) => {
-        const pill = document.createElement("span");
-        pill.className = "pos-rank-pill";
-        pill.textContent = (index + 2) + ". " + player.name.split(" ").slice(-1)[0];
-        pills.appendChild(pill);
-      });
-
       spot.appendChild(label);
       spot.appendChild(img);
       spot.appendChild(name);
-      spot.appendChild(pills);
       diamond.appendChild(spot);
     });
   }
 
+  function renderLineupPanel() {
+    const list = document.getElementById("fan-lineup-list");
+    const spPanel = document.getElementById("fan-lineup-sp");
+    if (!list || !spPanel) return;
+
+    const allPlayers = getDisplayedPlayers();
+    const uniqueOffense = [];
+    const seenNames = new Set();
+
+    allPlayers
+      .filter(function (player) { return OFFENSIVE_POSITIONS.includes(player.pos); })
+      .sort(compareLineupPlayers)
+      .forEach(function (player) {
+        const nameKey = sanitizeName(player.name).toLowerCase();
+        if (seenNames.has(nameKey)) return;
+        seenNames.add(nameKey);
+        uniqueOffense.push(player);
+      });
+
+    const lineup = uniqueOffense.slice(0, 9);
+    if (!lineup.length) {
+      list.innerHTML = "<li class=\"dc-lineup-item\"><span class=\"dc-lineup-slot\">1</span><div><div class=\"dc-lineup-name\">No lineup data available.</div></div></li>";
+    } else {
+      list.innerHTML = lineup.map(function (player, index) {
+        return "<li class=\"dc-lineup-item\">" +
+          "<span class=\"dc-lineup-slot\">" + (index + 1) + "</span>" +
+          "<div><div class=\"dc-lineup-name\">" + escapeHtml(player.name) + "</div><div class=\"dc-lineup-meta\">" + escapeHtml(POS_LABELS[player.pos] || player.pos) + " — " + player.upvotes + " upvotes</div></div>" +
+          "</li>";
+      }).join("");
+    }
+
+    const topSp = allPlayers
+      .filter(function (player) { return player.pos === "SP"; })
+      .sort(compareLineupPlayers)[0];
+
+    if (!topSp) {
+      spPanel.innerHTML = "<div class=\"dc-lineup-sp-label\">Starting Pitcher</div><div class=\"dc-lineup-name\">No starting pitcher available.</div>";
+      return;
+    }
+
+    spPanel.innerHTML = "<div class=\"dc-lineup-sp-label\">Starting Pitcher</div>" +
+      "<div class=\"dc-lineup-name\">SP: " + escapeHtml(topSp.name) + "</div>" +
+      "<div class=\"dc-lineup-meta\">" + topSp.upvotes + " upvotes</div>";
+  }
+
   function renderPlayerCell(player) {
-    const imgSrc = headshotUrl(player.mlbId, player.name);
+    const imgSrc = headshotUrl(player);
+    const backupSrc = imageFallbackUrl(player);
     return [
       "<div class=\"player-cell\">",
-      "<img src=\"" + imgSrc + "\" alt=\"" + escapeHtml(player.name) + " headshot\" loading=\"lazy\" onerror=\"this.onerror=null;this.src='" + fallbackHeadshot(player.name) + "';\">",
+      "<img src=\"" + imgSrc + "\" alt=\"" + escapeHtml(player.name) + " headshot\" loading=\"lazy\" onerror=\"this.onerror=null;this.src='" + backupSrc + "';this.onerror=function(){this.onerror=null;this.src='" + fallbackHeadshot(player.name) + "';};\">",
       "<div><div class=\"p-name\">" + escapeHtml(player.name) + "</div><div class=\"p-pos\">" + escapeHtml(POS_LABELS[player.pos] || player.pos) + "</div></div>",
       "</div>"
     ].join("");
@@ -392,7 +491,7 @@
       statCols = BATTING_COLS;
       label.textContent = "Showing: Overall Top 10";
     } else if (currentPos === "ALL") {
-      players = getAllPlayers().map(applyVoteTotals).sort(comparePlayers);
+      players = getDisplayedPlayers().sort(comparePlayers);
       statCols = BATTING_COLS;
       label.textContent = "Showing: All Positions";
     } else {
@@ -402,23 +501,24 @@
     }
 
     thead.innerHTML = "<tr><th style=\"width:40px\">#</th><th>Player</th><th style=\"width:100px\">Vote</th><th style=\"width:70px\" title=\"Includes MetsMoneyline baseline ranking points plus live fan votes\">Score</th><th style=\"width:70px\" title=\"Includes MetsMoneyline baseline ranking points plus live fan votes\">Up</th><th style=\"width:70px\" title=\"Includes MetsMoneyline baseline ranking points plus live fan votes\">Down</th>" +
-      statCols.map((col) => "<th>" + escapeHtml(col) + "</th>").join("") + "</tr>";
+      statCols.map(function (col) { return "<th>" + escapeHtml(col) + "</th>"; }).join("") + "</tr>";
 
-    tbody.innerHTML = players.map((player, index) => {
+    tbody.innerHTML = players.map(function (player, index) {
       const rank = index + 1;
       const rankClass = rank === 1 ? "rank-1" : rank === 2 ? "rank-2" : rank === 3 ? "rank-3" : "rank-other";
       const scoreClass = player.netVotes > 0 ? "positive" : player.netVotes < 0 ? "negative" : "";
-      const voted = !canVote(player.pos);
-      const todayVote = getUserVoteLog()[player.pos + "_" + todayKey()];
-      const upVoted = todayVote === player.playerId;
-      const stats = statCols.map((col) => "<td>" + statDisplay(player.stats && player.stats[col]) + "</td>").join("");
+      const activeVote = currentVoteValue(player.playerId, player.pos);
+      const canClick = canVote(player.playerId, player.pos);
+      const stats = statCols.map(function (col) {
+        return "<td>" + statDisplay(player.stats && player.stats[col]) + "</td>";
+      }).join("");
 
       return "<tr class=\"" + (rank === 1 && currentMode !== "top10" ? "is-top1" : "") + "\">" +
         "<td><span class=\"rank-badge " + rankClass + "\">" + rank + "</span></td>" +
         "<td>" + renderPlayerCell(player) + "</td>" +
         "<td><div class=\"vote-cell\">" +
-        "<button class=\"vote-btn up" + (upVoted ? " voted" : "") + "\" type=\"button\" aria-label=\"Upvote " + escapeHtml(player.name) + "\" onclick=\"window.recordDepthChartVote('" + escapeHtml(player.playerId) + "','" + escapeHtml(player.pos) + "',1)\"" + (voted ? " disabled" : "") + ">&#9650;</button>" +
-        "<button class=\"vote-btn down\" type=\"button\" aria-label=\"Downvote " + escapeHtml(player.name) + "\" onclick=\"window.recordDepthChartVote('" + escapeHtml(player.playerId) + "','" + escapeHtml(player.pos) + "',-1)\"" + (voted ? " disabled" : "") + ">&#9660;</button>" +
+        "<button class=\"vote-btn up" + (activeVote === 1 ? " voted" : "") + "\" type=\"button\" aria-label=\"Upvote " + escapeHtml(player.name) + "\" onclick=\"window.recordDepthChartVote('" + escapeHtml(player.playerId) + "','" + escapeHtml(player.pos) + "',1)\"" + (canClick ? "" : " disabled") + ">&#9650;</button>" +
+        "<button class=\"vote-btn down" + (activeVote === -1 ? " voted" : "") + "\" type=\"button\" aria-label=\"Downvote " + escapeHtml(player.name) + "\" onclick=\"window.recordDepthChartVote('" + escapeHtml(player.playerId) + "','" + escapeHtml(player.pos) + "',-1)\"" + (canClick ? "" : " disabled") + ">&#9660;</button>" +
         "</div></td>" +
         "<td><span class=\"vote-score " + scoreClass + "\">" + player.netVotes + "</span></td>" +
         "<td>" + player.upvotes + "</td>" +
@@ -437,6 +537,7 @@
 
   function render() {
     renderDiamond();
+    renderLineupPanel();
     renderTable();
   }
 
@@ -476,7 +577,7 @@
 
     if (result.error) throw result.error;
 
-    (result.data || []).forEach((row) => {
+    (result.data || []).forEach(function (row) {
       const playerId = sanitizeName(row.player_id);
       if (!playerId) return;
       voteTotalsByPlayerId.set(playerId, {
@@ -486,6 +587,31 @@
         netVotes: Number(row.net_votes) || 0
       });
     });
+  }
+
+  async function loadCurrentUserVotes() {
+    currentUserVotes.clear();
+    if (!liveVotingEnabled || !supabaseClient) {
+      persistCurrentVotes();
+      return;
+    }
+
+    const voterHash = await getVoterHash();
+    const result = await supabaseClient.rpc("depth_chart_get_voter_votes", {
+      p_voter_hash: voterHash,
+      p_vote_day: todayKey()
+    });
+
+    if (result.error) throw result.error;
+
+    (result.data || []).forEach(function (row) {
+      const pos = String(row.vote_position || row.player_position || row.position || "").toUpperCase();
+      const playerId = sanitizeName(row.player_id);
+      const voteValue = Number(row.vote_value);
+      if (!playerId || (voteValue !== 1 && voteValue !== -1)) return;
+      currentUserVotes.set(voteKey(pos, playerId), voteValue);
+    });
+    persistCurrentVotes();
   }
 
   async function loadApprovedWriteIns() {
@@ -501,12 +627,12 @@
     if (result.error) throw result.error;
 
     const baseCountByPos = {};
-    basePlayers.forEach((player) => {
+    basePlayers.forEach(function (player) {
       baseCountByPos[player.pos] = (baseCountByPos[player.pos] || 0) + 1;
     });
     const approvedCountByPos = {};
 
-    approvedWriteIns = (result.data || []).map((row, index) => {
+    approvedWriteIns = (result.data || []).map(function (row, index) {
       const pos = String(row.position || "").toUpperCase();
       const nextRank = (baseCountByPos[pos] || 0) + ((approvedCountByPos[pos] || 0) + 1);
       approvedCountByPos[pos] = (approvedCountByPos[pos] || 0) + 1;
@@ -514,7 +640,7 @@
         id: "approved-" + sanitizeName(row.player_id),
         playerId: sanitizeName(row.player_id),
         name: sanitizeName(row.player_name),
-        pos,
+        pos: pos,
         stats: {}
       }, 100000 + index + 1, nextRank);
     });
@@ -547,7 +673,7 @@
     filter.innerHTML = "<option value=\"ALL\">All Positions</option>";
     writeInPos.innerHTML = "";
 
-    positions.forEach((pos) => {
+    positions.forEach(function (pos) {
       const filterOption = document.createElement("option");
       filterOption.value = pos;
       filterOption.textContent = POS_LABELS[pos] + " (" + pos + ")";
@@ -561,16 +687,19 @@
   }
 
   function findPlayerByIdAndPos(playerId, pos) {
-    return getAllPlayers().find((player) => player.playerId === playerId && player.pos === pos);
+    return getAllPlayers().find(function (player) {
+      return player.playerId === playerId && player.pos === pos;
+    });
   }
 
-  function isDuplicateVoteError(error) {
+  function isDuplicateWriteInError(error) {
     const message = String(error && (error.message || error.details || error.hint || error.code) || "").toLowerCase();
     return String(error && error.code || "") === "23505" || message.includes("duplicate") || message.includes("unique");
   }
 
-  function isDuplicateWriteInError(error) {
-    return isDuplicateVoteError(error);
+  function isMissingToggleSetup(error) {
+    const text = String(error && (error.message || error.details || error.hint || error.code) || "").toLowerCase();
+    return text.includes("depth_chart_toggle_vote") || text.includes("depth_chart_get_voter_votes") || text.includes("pgrst");
   }
 
   async function recordVote(playerId, pos, direction) {
@@ -592,40 +721,45 @@
       showStatus("That player is not available for voting.", "error");
       return;
     }
-    if (hasVotedToday(pos)) {
-      showStatus("You already voted for this position today.", "error");
-      render();
-      return;
-    }
 
-    pendingVotePositions.add(pos);
+    const key = voteKey(pos, playerId);
+    if (pendingVoteKeys.has(key)) return;
+    pendingVoteKeys.add(key);
     render();
 
     try {
       const voterHash = await getVoterHash();
-      const result = await supabaseClient
-        .from("depth_chart_votes")
-        .insert({
-          position: pos,
-          player_id: playerId,
-          vote_value: direction,
-          voter_hash: voterHash
-        });
+      const currentValue = currentVoteValue(playerId, pos);
+      const result = await supabaseClient.rpc("depth_chart_toggle_vote", {
+        p_position: pos,
+        p_player_id: playerId,
+        p_vote_value: direction,
+        p_voter_hash: voterHash
+      });
 
       if (result.error) throw result.error;
 
-      markPositionVoted(pos, playerId);
-      await loadVoteTotals();
-      showStatus("Vote recorded and shared online.", "success");
+      const action = sanitizeName(result.data && result.data.action).toLowerCase();
+      if (action === "removed") {
+        setCurrentVote(playerId, pos, 0);
+        showStatus("Vote removed.", "success");
+      } else if (action === "changed" || (currentValue !== 0 && currentValue !== direction)) {
+        setCurrentVote(playerId, pos, direction);
+        showStatus("Vote changed.", "success");
+      } else {
+        setCurrentVote(playerId, pos, direction);
+        showStatus("Vote added.", "success");
+      }
+
+      await Promise.all([loadVoteTotals(), loadCurrentUserVotes()]);
     } catch (error) {
-      if (isDuplicateVoteError(error)) {
-        markPositionVoted(pos, playerId);
-        showStatus("You already voted for this position today.", "error");
+      if (isMissingToggleSetup(error)) {
+        showStatus("Live voting needs the latest Supabase setup before votes can be changed here.", "error");
       } else {
         showStatus("Live voting is temporarily unavailable. Please try again later.", "error");
       }
     } finally {
-      pendingVotePositions.delete(pos);
+      pendingVoteKeys.delete(key);
       render();
     }
   }
@@ -651,7 +785,9 @@
     }
 
     const normalizedName = name.toLowerCase();
-    const duplicatePlayer = getAllPlayers().find((player) => player.pos === pos && sanitizeName(player.name).toLowerCase() === normalizedName);
+    const duplicatePlayer = getAllPlayers().find(function (player) {
+      return player.pos === pos && sanitizeName(player.name).toLowerCase() === normalizedName;
+    });
     if (duplicatePlayer) {
       showStatus("This player is already listed at " + pos + ".", "error");
       return;
@@ -707,13 +843,15 @@
 
   async function initDepthChart() {
     try {
+      hydrateVotesFromStorage();
+
       const response = await fetch(DEPTH_CHART_URL);
       if (!response.ok) throw new Error("Depth chart data request failed.");
       const data = await response.json();
 
       positions = Array.isArray(data.positions) ? data.positions : [];
       const posCounts = {};
-      basePlayers = Array.isArray(data.players) ? data.players.map((player, index) => {
+      basePlayers = Array.isArray(data.players) ? data.players.map(function (player, index) {
         const pos = String(player.pos || "").toUpperCase();
         posCounts[pos] = (posCounts[pos] || 0) + 1;
         return normalizePlayer(player, index + 1, posCounts[pos]);
@@ -733,10 +871,11 @@
       const liveReady = await initializeSupabase();
       if (liveReady) {
         try {
-          await loadVoteTotals();
-          await loadApprovedWriteIns();
+          await Promise.all([loadVoteTotals(), loadApprovedWriteIns(), loadCurrentUserVotes()]);
         } catch (error) {
-          applyFallbackState(FALLBACK_COPY);
+          applyFallbackState(isMissingToggleSetup(error)
+            ? "Live voting needs the latest Supabase setup. Rankings are showing baseline points only."
+            : FALLBACK_COPY);
         }
       } else {
         updateLiveCopy();
@@ -745,7 +884,7 @@
       render();
 
       if (!storageAvailable) {
-        showStatus("localStorage is unavailable here. Vote limiting will only persist for this session.", "error");
+        showStatus("localStorage is unavailable here. Vote highlighting will only persist for this session.", "error");
       }
     } catch (error) {
       setDisclaimer("Depth chart data is temporarily unavailable.");
