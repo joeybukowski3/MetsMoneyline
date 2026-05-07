@@ -227,6 +227,100 @@ function buildStatsLookup(allPlayers, statsCache) {
   return { byId, byName };
 }
 
+/* ── Fetch game log for sparkline trend data ── */
+async function getGameLogTrend(mlbId, type, sportId) {
+  if (!mlbId) return null;
+  const group = type === "Pitcher" ? "pitching" : "hitting";
+  // Try the player's current sport level first, fall back to MLB
+  const sids = sportId && sportId !== 1 ? [sportId, 1] : [1];
+  for (const sid of sids) {
+    const data = await fetchJson(
+      `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&season=${SEASON}&group=${group}&sportId=${sid}`
+    );
+    const splits = data?.stats?.[0]?.splits;
+    if (!Array.isArray(splits) || splits.length < 3) continue;
+
+    const labels = [];
+    const values = [];
+
+    if (type === "Pitcher") {
+      let totalER = 0, totalIP = 0;
+      for (const s of splits) {
+        const ip = parseFloat(s.stat?.inningsPitched) || 0;
+        const er = s.stat?.earnedRuns ?? 0;
+        totalER += er;
+        totalIP += ip;
+        const era = totalIP > 0 ? (totalER / totalIP) * 9 : 0;
+        labels.push(s.date ? s.date.slice(5) : "");
+        values.push(parseFloat(era.toFixed(2)));
+      }
+    } else {
+      let totalH = 0, totalAB = 0;
+      for (const s of splits) {
+        totalH += s.stat?.hits ?? 0;
+        totalAB += s.stat?.atBats ?? 0;
+        const avg = totalAB > 0 ? totalH / totalAB : 0;
+        labels.push(s.date ? s.date.slice(5) : "");
+        values.push(parseFloat(avg.toFixed(3)));
+      }
+    }
+
+    if (labels.length >= 3) return { labels, values };
+  }
+  return null;
+}
+
+/* ── Fetch recent news for a prospect by name ── */
+async function getProspectNews(name) {
+  const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
+  const feeds = [
+    "https://www.mlb.com/feeds/news/rss.xml?teamId=121",
+    "https://sny.tv/rss/mets",
+    "https://www.amazinavenue.com/rss/current",
+  ];
+
+  const lastName = normalizeName(name.split(" ").pop());
+  const fullName = normalizeName(name);
+
+  for (const feedUrl of feeds) {
+    try {
+      const { data } = await axios.get(RSS_PROXY + encodeURIComponent(feedUrl), { timeout: 8000 });
+      if (data.status !== "ok" || !data.items) continue;
+      const match = data.items.find(item => {
+        const text = normalizeName((item.title || "") + " " + (item.description || ""));
+        return text.includes(fullName) || text.includes(lastName);
+      });
+      if (match) {
+        return {
+          title: String(match.title || "").replace(/<[^>]*>/g, "").trim().slice(0, 140),
+          url: match.link || "#",
+          date: match.pubDate ? new Date(match.pubDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "",
+        };
+      }
+    } catch { /* skip failed feeds */ }
+  }
+
+  const googleQuery = `https://news.google.com/rss/search?q=${encodeURIComponent('"' + name + '" Mets')}&hl=en-US&gl=US&ceid=US:en`;
+  try {
+    const { data } = await axios.get(RSS_PROXY + encodeURIComponent(googleQuery), { timeout: 8000 });
+    if (data.status === "ok" && Array.isArray(data.items) && data.items.length) {
+      const match = data.items.find(item => {
+        const text = normalizeName((item.title || "") + " " + (item.description || ""));
+        return text.includes(fullName) || text.includes(lastName);
+      }) || data.items[0];
+      if (match) {
+        return {
+          title: String(match.title || "").replace(/<[^>]*>/g, "").trim().slice(0, 140),
+          url: match.link || "#",
+          date: match.pubDate ? new Date(match.pubDate).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "",
+        };
+      }
+    }
+  } catch { /* skip failed feeds */ }
+
+  return null;
+}
+
 async function main() {
   console.log("[prospects] Starting build...");
 
@@ -286,6 +380,12 @@ async function main() {
       || statsLookup.byName.get(normalizeName(prospect.name))
       || null;
 
+    // Fetch trend data and news in parallel
+    const [trendData, news] = await Promise.all([
+      getGameLogTrend(prospect.mlbId, prospect.type, prospect.sportId),
+      getProspectNews(prospect.name),
+    ]);
+
     prospects.push({
       mlbId: prospect.mlbId,
       name: prospect.name,
@@ -298,8 +398,8 @@ async function main() {
       eta: prospect.eta,
       mlbStatus: mlbActiveIds.has(prospect.mlbId) ? "MLB Active" : null,
       stats: statsEntry?.stats || null,
-      trendData: null,
-      news: null,
+      trendData,
+      news,
     });
   }
 
@@ -319,8 +419,11 @@ async function main() {
   }
   const prospectWithStats = prospects.filter(p => p.stats != null).length;
   const prospectWithoutStats = prospects.length - prospectWithStats;
+  const prospectWithTrendData = prospects.filter(p => p.trendData != null).length;
+  const prospectWithNews = prospects.filter(p => p.news != null).length;
   const mlbActiveProspects = prospects.filter(p => p.mlbStatus === "MLB Active").map(p => p.name);
   console.log(`[prospects] Top-15 stats summary: withStats=${prospectWithStats} withoutStats=${prospectWithoutStats}`);
+  console.log(`[prospects] Trend/news summary: trendData=${prospectWithTrendData} news=${prospectWithNews}`);
   console.log(`[prospects] MLB Active prospects: ${mlbActiveProspects.length ? mlbActiveProspects.join(", ") : "none"}`);
   console.log(`[prospects] Wrote ${OUTPUT_PATH} (${prospects.length} prospects)`);
 }

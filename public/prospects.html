@@ -151,6 +151,44 @@
       `;
     }
 
+    function buildSparklineSvg(trendData, type) {
+      if (!trendData || !trendData.values || trendData.values.length < 3) {
+        return '<div style="text-align:center;padding:12px 8px;font-size:11px;color:#9ca3af;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;margin:8px 0;">Not enough games for trend line</div>';
+      }
+      var values = trendData.values;
+      var w = 280, h = 50, padX = 4, padY = 4;
+      var min = Math.min.apply(null, values);
+      var max = Math.max.apply(null, values);
+      var range = max - min || 0.001;
+      var stepX = (w - padX * 2) / (values.length - 1);
+      var points = values.map(function(v, i) {
+        var x = padX + i * stepX;
+        var y = padY + (1 - (v - min) / range) * (h - padY * 2);
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      }).join(' ');
+      var color = type === 'Pitcher' ? '#ff5910' : '#002d72';
+      var fillColor = type === 'Pitcher' ? 'rgba(255,89,16,0.08)' : 'rgba(0,45,114,0.08)';
+      var lastVal = values[values.length - 1];
+      var firstVal = values[0];
+      var label = type === 'Pitcher'
+        ? 'ERA: ' + lastVal.toFixed(2)
+        : 'AVG: ' + lastVal.toFixed(3);
+      var trendDir = lastVal < firstVal ? (type === 'Pitcher' ? '↓ improving' : '↓ declining') : (type === 'Pitcher' ? '↑ rising' : '↑ improving');
+      var trendColor = type === 'Pitcher'
+        ? (lastVal < firstVal ? '#16a34a' : '#dc2626')
+        : (lastVal > firstVal ? '#16a34a' : '#dc2626');
+      var fillPoints = padX.toFixed(1) + ',' + (h - padY).toFixed(1) + ' ' + points + ' ' + (padX + (values.length - 1) * stepX).toFixed(1) + ',' + (h - padY).toFixed(1);
+      return '<div style="margin:8px 0;">' +
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" style="display:block;">' +
+        '<polygon points="' + fillPoints + '" fill="' + fillColor + '"/>' +
+        '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</svg>' +
+        '<div style="display:flex;justify-content:space-between;font-size:0.65rem;color:#6b7280;margin-top:2px;padding:0 4px;">' +
+        '<span>' + label + '</span>' +
+        '<span style="color:' + trendColor + ';font-weight:700;">' + trendDir + '</span>' +
+        '</div></div>';
+    }
+
     function renderCard(prospect, idx) {
       const rank = idx + 1;
       const isTop3 = rank <= 3;
@@ -159,7 +197,7 @@
         ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${prospect.mlbId}/headshot/67/current`
         : '';
       const stats = isPitcher ? renderPitcherStats(prospect.stats) : renderHitterStats(prospect.stats);
-      const trendHtml = `<div style="text-align:center; padding:16px 8px; font-size:12px; color:#9ca3af; background:#f9fafb; border-radius:8px; border:1px dashed #e5e7eb; margin:8px 0;">Trend line coming soon</div>`;
+      const trendHtml = buildSparklineSvg(prospect.trendData, prospect.type);
       const newsHtml = prospect.news ? `
         <div class="prospect-news">
           <a href="${prospect.news.url || '#'}" target="_blank" rel="noopener">${prospect.news.title}</a>
