@@ -60,13 +60,61 @@
       line-height: 1.55;
       text-align: center;
     }
-    .sp-overview {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.9fr);
-      gap: 1rem;
-      margin-bottom: 1rem;
+    .sp-hero {
+      background: linear-gradient(135deg, rgba(22,163,74,0.06) 0%, rgba(0,45,114,0.04) 100%);
+      border: 1px solid #d6dde8;
+      border-radius: 20px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
     }
-    .sp-score-card,
+    .sp-hero.positive {
+      background: linear-gradient(135deg, rgba(22,163,74,0.09) 0%, rgba(0,45,114,0.04) 100%);
+    }
+    .sp-hero.mixed {
+      background: linear-gradient(135deg, rgba(245,158,11,0.1) 0%, rgba(0,45,114,0.04) 100%);
+    }
+    .sp-hero.negative {
+      background: linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(0,45,114,0.03) 100%);
+    }
+    .sp-hero-kicker {
+      font-size: 0.73rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.45rem;
+    }
+    .sp-gauge-wrap { margin: 0 auto 0.35rem; max-width: 320px; }
+    .sp-hero-score {
+      font-family: "Oswald", sans-serif;
+      font-size: clamp(2.6rem, 6vw, 4rem);
+      line-height: 0.95;
+      color: var(--navy);
+      margin: -0.55rem 0 0;
+    }
+    .sp-hero-mood {
+      margin: 0.4rem 0 0;
+      font-family: "Oswald", sans-serif;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .sp-hero-summary {
+      max-width: 760px;
+      margin: 0.55rem auto 0;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-size: 0.96rem;
+    }
+    .sp-panels-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
     .sp-panel,
     .sp-posts-panel {
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
@@ -74,37 +122,6 @@
       border-radius: 18px;
       box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
     }
-    .sp-score-card {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr);
-      gap: 1rem;
-      align-items: center;
-      padding: 1.3rem 1.4rem;
-    }
-    .sp-score-ring {
-      width: 132px;
-      height: 132px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 8px solid rgba(0, 45, 114, 0.14);
-      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.95), rgba(236, 242, 255, 0.92));
-      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
-    }
-    .sp-score-ring.very-positive,
-    .sp-score-ring.positive { border-color: rgba(22, 163, 74, 0.28); }
-    .sp-score-ring.mixed { border-color: rgba(245, 158, 11, 0.24); }
-    .sp-score-ring.negative,
-    .sp-score-ring.very-negative { border-color: rgba(220, 38, 38, 0.26); }
-    .sp-score-value { font-family: "Oswald", sans-serif; font-size: 3rem; line-height: 1; color: var(--navy); }
-    .sp-score-copy h1 { margin: 0 0 0.35rem; font-size: clamp(1.25rem, 2.6vw, 1.8rem); color: var(--navy); }
-    .sp-score-mood { font-size: 0.84rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.55rem; }
-    .sp-score-mood.very-positive, .sp-score-mood.positive { color: #15803d; }
-    .sp-score-mood.mixed { color: #b45309; }
-    .sp-score-mood.negative, .sp-score-mood.very-negative { color: #b91c1c; }
-    .sp-score-summary { color: var(--text-muted); line-height: 1.65; }
-    .sp-side-stack { display: grid; gap: 1rem; }
     .sp-panel { padding: 1rem 1.05rem; }
     .sp-panel h2,
     .sp-posts-panel h2 {
@@ -115,21 +132,40 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    .sp-sources-grid,
-    .sp-trend-grid {
-      display: grid;
-      gap: 0.9rem;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    .sp-source-list { display: grid; gap: 0.15rem; }
+    .sp-source-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f2f6;
     }
-    .sp-source-card {
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 0.9rem 0.95rem;
-      background: #fff;
+    .sp-source-bar:last-child { border-bottom: none; }
+    .sp-source-name { font-weight: 700; color: var(--navy); min-width: 90px; font-size: 0.85rem; }
+    .sp-source-fill {
+      flex: 1;
+      height: 24px;
+      background: #f0f2f6;
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
     }
-    .sp-source-card h3 { margin: 0 0 0.2rem; color: var(--navy); text-transform: capitalize; font-size: 0.98rem; }
-    .sp-source-card p { margin: 0 0 0.5rem; color: var(--text-muted); font-size: 0.84rem; }
-    .sp-source-badge,
+    .sp-source-fill-inner {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.6s ease;
+    }
+    .sp-source-fill-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 0.55rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: rgba(15, 23, 42, 0.7);
+    }
+    .sp-source-count { font-size: 0.78rem; font-weight: 700; color: #6b7280; min-width: 60px; text-align: right; }
     .sp-platform-badge,
     .sp-sentiment {
       display: inline-flex;
@@ -142,14 +178,11 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    .sp-platform-badge { background: #e9f3ff; color: var(--navy); }
-    .sp-source-badge.positive,
+    .sp-platform-badge { background: #e9f3ff; color: var(--navy); gap: 0.35rem; }
     .sp-sentiment.positive { background: rgba(22, 163, 74, 0.1); color: #15803d; }
-    .sp-source-badge.mixed,
     .sp-sentiment.mixed { background: rgba(245, 158, 11, 0.12); color: #b45309; }
-    .sp-source-badge.negative,
     .sp-sentiment.negative { background: rgba(220, 38, 38, 0.1); color: #b91c1c; }
-    .sp-pill-wrap { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+    .sp-pill-wrap { display: flex; flex-wrap: wrap; gap: 0.65rem; align-items: flex-start; }
     .sp-pill {
       display: inline-flex;
       flex-direction: column;
@@ -165,23 +198,92 @@
     .sp-pill.positive { border-color: rgba(22, 163, 74, 0.22); background: rgba(22, 163, 74, 0.05); }
     .sp-pill.mixed { border-color: rgba(245, 158, 11, 0.22); background: rgba(245, 158, 11, 0.05); }
     .sp-pill.negative { border-color: rgba(220, 38, 38, 0.2); background: rgba(220, 38, 38, 0.05); }
+    .sp-player-card {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.5rem 0.7rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      background: #fff;
+      min-width: 160px;
+      flex: 1 1 180px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+    .sp-player-card img {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #e5e7eb;
+      object-fit: cover;
+      background: #f8fafc;
+      flex: 0 0 auto;
+    }
+    .sp-player-fallback {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--navy);
+      background: #f8fafc;
+      flex: 0 0 auto;
+    }
+    .sp-player-name { font-weight: 700; color: var(--navy); font-size: 0.82rem; }
+    .sp-player-mentions { font-size: 0.68rem; color: #6b7280; }
+    .sp-player-meta {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.68rem;
+      color: #64748b;
+      white-space: nowrap;
+    }
+    .sp-player-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.9);
+    }
+    .sp-player-dot.positive { background: #22c55e; }
+    .sp-player-dot.mixed { background: #f59e0b; }
+    .sp-player-dot.negative { background: #ef4444; }
     .sp-posts-panel { padding: 1rem 1.05rem; }
     .sp-post-grid { display: grid; gap: 0.95rem; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
     .sp-post-card {
       background: #fff;
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      border-left: 4px solid #d6dde8;
+      border-radius: 0 14px 14px 0;
       padding: 0.95rem 1rem;
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
+      box-shadow: 0 6px 22px rgba(15, 23, 42, 0.05);
     }
+    .sp-post-card.sentiment-positive { border-left-color: #22c55e; }
+    .sp-post-card.sentiment-mixed { border-left-color: #f59e0b; }
+    .sp-post-card.sentiment-negative { border-left-color: #ef4444; }
     .sp-post-head { display: flex; gap: 0.8rem; justify-content: space-between; align-items: flex-start; }
     .sp-post-head h3 { margin: 0; color: var(--navy); font-size: 0.95rem; }
     .sp-post-head p { margin: 0.15rem 0 0; color: var(--text-muted); font-size: 0.78rem; }
     .sp-post-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.3rem; }
     .sp-time { color: #94a3b8; font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.05em; }
-    .sp-post-text { color: var(--text-main); line-height: 1.65; }
+    .sp-post-text {
+      color: var(--text-main);
+      line-height: 1.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .sp-post-foot { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
     .sp-post-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; }
     .sp-post-tags span {
@@ -209,17 +311,17 @@
       background: #fff;
     }
     @media (max-width: 900px) {
-      .sp-overview { grid-template-columns: 1fr; }
-      .sp-score-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+      .sp-panels-row { grid-template-columns: 1fr; }
       .sp-post-meta { align-items: flex-start; }
     }
     @media (max-width: 640px) {
       .sp-shell { padding: 0 0.8rem 2rem; }
-      .sp-post-grid,
-      .sp-trend-grid,
-      .sp-sources-grid { grid-template-columns: 1fr; }
-      .sp-score-ring { width: 116px; height: 116px; }
-      .sp-score-value { font-size: 2.5rem; }
+      .sp-post-grid { grid-template-columns: 1fr; }
+      .sp-source-bar { flex-wrap: wrap; }
+      .sp-source-name,
+      .sp-source-count { min-width: 0; }
+      .sp-player-card { min-width: 100%; }
+      .sp-hero { padding: 1.5rem 0.9rem; }
     }
   </style>
 </head>
@@ -232,32 +334,31 @@
       <section class="sp-header">
         <h1>Social Media Pulse</h1>
         <p>Track how public Mets discussion is trending right now, from overall mood to the players and topics driving the conversation.</p>
-        <div class="sp-updated" id="sp-updated">Waiting for the latest pulse update…</div>
+        <div class="sp-updated" id="sp-updated">Waiting for the latest pulse update...</div>
       </section>
 
       <div class="sp-disclaimer">
         This is an unofficial social sentiment snapshot based on recent public Mets-related posts from supported sources. It is not a scientific poll.
       </div>
 
-      <section class="sp-overview">
-        <div class="sp-score-card" id="sp-score-card">
-          <div class="sp-empty-state" id="sp-loading">Loading social pulse data…</div>
+      <div class="sp-hero" id="sp-hero">
+        <div id="sp-loading" class="sp-empty-state">Loading social pulse data...</div>
+      </div>
+
+      <div class="sp-panels-row">
+        <div class="sp-panel">
+          <h2>Source Breakdown</h2>
+          <div id="sp-sources"></div>
         </div>
-        <div class="sp-side-stack">
-          <div class="sp-panel">
-            <h2>Source Breakdown</h2>
-            <div class="sp-sources-grid" id="sp-sources"></div>
-          </div>
-          <div class="sp-panel">
-            <h2>Trending Topics</h2>
-            <div class="sp-pill-wrap" id="sp-topics"></div>
-          </div>
-          <div class="sp-panel">
-            <h2>Trending Players</h2>
-            <div class="sp-pill-wrap" id="sp-players"></div>
-          </div>
+        <div class="sp-panel">
+          <h2>Trending Topics</h2>
+          <div class="sp-pill-wrap" id="sp-topics"></div>
         </div>
-      </section>
+        <div class="sp-panel">
+          <h2>Trending Players</h2>
+          <div class="sp-pill-wrap" id="sp-players"></div>
+        </div>
+      </div>
 
       <section class="sp-posts-panel">
         <h2>Recent Posts</h2>
