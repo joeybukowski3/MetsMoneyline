@@ -33,9 +33,9 @@
     .prospects-header p { color: var(--text-muted); font-size: 0.9rem; }
 
     .prospect-card {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px;
-      padding: 1.25rem 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow);
-      display: grid; grid-template-columns: 48px 1fr; gap: 1rem; align-items: start;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1rem 1.25rem; margin-bottom: 0.75rem; box-shadow: var(--shadow);
+      display: grid; grid-template-columns: 48px 1fr; gap: 0.75rem; align-items: start;
     }
     .prospect-rank {
       width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center;
@@ -49,7 +49,7 @@
     .prospect-name-row h3 { font-size: 1rem; font-weight: 800; color: var(--navy); }
     .prospect-name-row img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); }
     .prospect-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
-    .prospect-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.4rem; }
+    .prospect-tags { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.3rem; }
     .prospect-tag {
       font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px;
       text-transform: uppercase; letter-spacing: 0.04em;
@@ -63,16 +63,16 @@
     .tag-pitcher { background: rgba(255,89,16,0.06); color: #b93d00; }
 
     .prospect-stats {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
-      gap: 0.4rem; margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--border);
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
+      gap: 0.25rem; margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border);
     }
     .p-stat { text-align: center; }
-    .p-stat .val { font-size: 0.95rem; font-weight: 800; color: var(--navy); }
-    .p-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .p-stat .val { font-size: 0.88rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
+    .p-stat .lbl { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; margin-top: 1px; }
 
     .prospect-news {
-      margin-top: 0.6rem; padding: 0.6rem 0.8rem; background: #f8fafc; border-radius: 10px;
-      border-left: 3px solid var(--orange); font-size: 0.8rem; color: var(--text-main);
+      margin-top: 0.4rem; padding: 0.5rem 0.75rem; background: #f8fafc; border-radius: 8px;
+      border-left: 3px solid var(--orange); font-size: 0.78rem; color: var(--text-main); line-height: 1.4;
     }
     .prospect-news a { color: var(--navy); font-weight: 600; text-decoration: none; }
     .prospect-news a:hover { text-decoration: underline; }
@@ -85,7 +85,7 @@
       .prospects-shell { padding: 0 0.75rem 2rem; }
       .prospect-card { grid-template-columns: 40px 1fr; gap: 0.75rem; padding: 1rem; }
       .prospect-rank { width: 40px; height: 40px; font-size: 1rem; }
-      .prospect-stats { grid-template-columns: repeat(3, 1fr); }
+      .prospect-stats { grid-template-columns: repeat(3, 1fr); gap: 0.2rem; }
     }
   </style>
 </head>
@@ -156,7 +156,7 @@
         return '<div style="text-align:center;padding:12px 8px;font-size:11px;color:#9ca3af;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;margin:8px 0;">Not enough games for trend line</div>';
       }
       var values = trendData.values;
-      var w = 280, h = 50, padX = 4, padY = 4;
+      var w = 400, h = 60, padX = 6, padY = 6;
       var min = Math.min.apply(null, values);
       var max = Math.max.apply(null, values);
       var range = max - min || 0.001;
@@ -178,14 +178,14 @@
         ? (lastVal < firstVal ? '#16a34a' : '#dc2626')
         : (lastVal > firstVal ? '#16a34a' : '#dc2626');
       var fillPoints = padX.toFixed(1) + ',' + (h - padY).toFixed(1) + ' ' + points + ' ' + (padX + (values.length - 1) * stepX).toFixed(1) + ',' + (h - padY).toFixed(1);
-      return '<div style="margin:8px 0;">' +
-        '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" style="display:block;">' +
+      return '<div style="margin:0.5rem 0 0.25rem;padding:0.5rem 0.6rem;background:#f9fafb;border-radius:10px;border:1px solid #f0f2f6;">' +
+        '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" style="display:block;" preserveAspectRatio="none">' +
         '<polygon points="' + fillPoints + '" fill="' + fillColor + '"/>' +
         '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
         '</svg>' +
-        '<div style="display:flex;justify-content:space-between;font-size:0.65rem;color:#6b7280;margin-top:2px;padding:0 4px;">' +
-        '<span>' + label + '</span>' +
-        '<span style="color:' + trendColor + ';font-weight:700;">' + trendDir + '</span>' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.68rem;color:#6b7280;margin-top:4px;">' +
+        '<span style="font-weight:600;">' + label + '</span>' +
+        '<span style="font-weight:700;color:' + trendColor + ';">' + trendDir + '</span>' +
         '</div></div>';
     }
 
