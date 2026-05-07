@@ -42,31 +42,22 @@ function generateSitemap() {
   const sampleGame = readJson(SAMPLE_GAME_PATH);
   const pickHistory = readJson(PICK_HISTORY_PATH);
 
+  const today = new Date().toISOString().slice(0, 10);
+
   const urls = [
-    {
-      loc: `${SITE_ORIGIN}/`,
-      lastmod: new Date().toISOString().slice(0, 10),
-      changefreq: "daily",
-      priority: "1.0"
-    },
-    {
-      loc: `${SITE_ORIGIN}/advanced-stats.html`,
-      lastmod: new Date().toISOString().slice(0, 10),
-      changefreq: "daily",
-      priority: "0.5"
-    },
-    {
-      loc: `${SITE_ORIGIN}/depth-chart.html`,
-      lastmod: new Date().toISOString().slice(0, 10),
-      changefreq: "weekly",
-      priority: "0.7"
-    },
-    {
-      loc: `${SITE_ORIGIN}/betting.html`,
-      lastmod: new Date().toISOString().slice(0, 10),
-      changefreq: "weekly",
-      priority: "0.7"
-    }
+    { loc: `${SITE_ORIGIN}/`, lastmod: today, changefreq: "daily", priority: "1.0" },
+    { loc: `${SITE_ORIGIN}/report.html`, lastmod: today, changefreq: "daily", priority: "0.9" },
+    { loc: `${SITE_ORIGIN}/trends.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/advanced-stats.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/power-rankings.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/prospects.html`, lastmod: today, changefreq: "weekly", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/betting-history.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/depth-chart.html`, lastmod: today, changefreq: "weekly", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/news.html`, lastmod: today, changefreq: "daily", priority: "0.6" },
+    { loc: `${SITE_ORIGIN}/on-this-day.html`, lastmod: today, changefreq: "daily", priority: "0.5" },
+    { loc: `${SITE_ORIGIN}/social-pulse.html`, lastmod: today, changefreq: "daily", priority: "0.5" },
+    { loc: `${SITE_ORIGIN}/betting.html`, lastmod: today, changefreq: "weekly", priority: "0.6" },
+    { loc: `${SITE_ORIGIN}/gear.html`, lastmod: today, changefreq: "monthly", priority: "0.4" },
   ];
 
   for (const game of Array.isArray(sampleGame?.games) ? sampleGame.games : []) {

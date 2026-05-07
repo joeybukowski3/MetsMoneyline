@@ -50,7 +50,7 @@
         <h1 class="hero-matchup-line" id="hero-game-matchup"></h1>
       </div>
       <p class="hero-subtitle">The most thorough game analysis for the 2026 New York Mets.<br>One email every game day. No spam, no picks for other teams.</p>
-      <form class="email-form" action="YOUR_BUTTONDOWN_URL" method="post" target="_blank">
+      <form class="email-form" action="https://buttondown.com/api/emails/embed-subscribe/MetsMoneyline" method="post" target="_blank">
         <input type="email" name="email" placeholder="Enter your email address" required>
         <button type="submit">Get the Game Report</button>
       </form>
@@ -70,6 +70,50 @@
         <section class="section-card recent-section">
           <div class="section-title">Recent Breakdowns</div>
           <div class="recent-games" id="recent-games-container"></div>
+        </section>
+
+        <!-- Content Hub -->
+        <section class="section-card" style="margin-top:1rem;">
+          <div class="section-title">Explore MetsMoneyline</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.75rem;margin-top:0.75rem;">
+
+            <a href="depth-chart.html" style="display:block;text-decoration:none;background:linear-gradient(135deg,#002d72,#003d8f);border-radius:14px;padding:1.1rem 1.25rem;color:#fff;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(0,45,114,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.3rem;">Fan Vote</div>
+              <div style="font-size:1.05rem;font-weight:800;line-height:1.2;">All-Time Mets Depth Chart</div>
+              <div style="font-size:0.75rem;opacity:0.8;margin-top:0.25rem;">Vote for the greatest Met at every position</div>
+            </a>
+
+            <a href="power-rankings.html" style="display:block;text-decoration:none;background:linear-gradient(135deg,#ff5910,#e04e0e);border-radius:14px;padding:1.1rem 1.25rem;color:#fff;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(255,89,16,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.3rem;">MLB Rankings</div>
+              <div style="font-size:1.05rem;font-weight:800;line-height:1.2;">Power Rankings</div>
+              <div style="font-size:0.75rem;opacity:0.8;margin-top:0.25rem;">All 30 teams ranked by composite score</div>
+            </a>
+
+            <a href="prospects.html" style="display:block;text-decoration:none;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:14px;padding:1.1rem 1.25rem;color:#fff;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(22,163,74,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.3rem;">Farm System</div>
+              <div style="font-size:1.05rem;font-weight:800;line-height:1.2;">Top 15 Prospect Rankings</div>
+              <div style="font-size:0.75rem;opacity:0.8;margin-top:0.25rem;">Live MiLB stats for Mets prospects</div>
+            </a>
+
+            <a href="trends.html" style="display:block;text-decoration:none;background:linear-gradient(135deg,#7c3aed,#6d28d9);border-radius:14px;padding:1.1rem 1.25rem;color:#fff;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(124,58,234,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.3rem;">Statcast</div>
+              <div style="font-size:1.05rem;font-weight:800;line-height:1.2;">Batting Trends & xBA</div>
+              <div style="font-size:0.75rem;opacity:0.8;margin-top:0.25rem;">Who's running hot, cold, or on track</div>
+            </a>
+
+            <a href="social-pulse.html" style="display:block;text-decoration:none;background:linear-gradient(135deg,#0ea5e9,#0284c7);border-radius:14px;padding:1.1rem 1.25rem;color:#fff;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(14,165,233,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.3rem;">Fan Sentiment</div>
+              <div style="font-size:1.05rem;font-weight:800;line-height:1.2;">Social Media Pulse</div>
+              <div style="font-size:0.75rem;opacity:0.8;margin-top:0.25rem;">What Mets fans are talking about</div>
+            </a>
+
+            <a href="betting.html" style="display:block;text-decoration:none;background:linear-gradient(135deg,#374151,#1f2937);border-radius:14px;padding:1.1rem 1.25rem;color:#fff;transition:transform 0.15s,box-shadow 0.15s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(55,65,81,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+              <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.75;margin-bottom:0.3rem;">Lines & Odds</div>
+              <div style="font-size:1.05rem;font-weight:800;line-height:1.2;">Betting Hub</div>
+              <div style="font-size:0.75rem;opacity:0.8;margin-top:0.25rem;">Sportsbook lines, props & offers</div>
+            </a>
+
+          </div>
         </section>
       </div>
 
