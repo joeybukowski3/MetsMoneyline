@@ -23,6 +23,10 @@ No secret key or `service_role` key is used in the frontend.
    - `public.depth_chart_votes`
    - `public.depth_chart_write_ins`
    - `public.depth_chart_vote_totals`
+   - `public.depth_chart_toggle_vote`
+   - `public.depth_chart_get_voter_votes`
+5. Note:
+   - `depth_chart_get_voter_votes` returns `vote_position` instead of `position` to avoid SQL parser conflicts in Supabase.
 
 ## Public frontend config
 
@@ -54,17 +58,24 @@ If your copied Supabase URL includes `/rest/v1/`, that is okay. The depth chart 
 2. Open:
    - `http://127.0.0.1:8123/depth-chart.html`
 3. Confirm the page loads normally.
-4. Click an upvote or downvote on one position.
-5. Confirm the table updates and the success message appears.
-6. Try to vote again on the same position from the same browser on the same day.
-7. Confirm the page shows:
-   - `You already voted for this position today.`
+4. Click an upvote on one player.
+5. Confirm the score increases by 1 and the page shows:
+   - `Vote added.`
+6. Click the same upvote again.
+7. Confirm the score drops back and the page shows:
+   - `Vote removed.`
+8. Click the downvote for the same player.
+9. Confirm the score changes by -1 and the page shows:
+   - `Vote changed.`
+10. Vote for another player at the same position.
+11. Confirm it is allowed.
 
 ## How to test shared totals
 
 1. Vote from browser/device A.
 2. Open the same page from browser/device B.
 3. Confirm the net/up/down totals reflect the first vote after refresh.
+4. Confirm the field leader and mock lineup update after vote totals change.
 
 ## How write-ins work
 
@@ -93,6 +104,10 @@ In Supabase:
    select * from public.depth_chart_vote_totals order by position, net_votes desc, player_id asc;
    ```
 3. Confirm rows exist for voted players.
+4. To inspect one browser hash for the current day:
+   ```sql
+   select * from public.depth_chart_get_voter_votes('YOUR_HASH_HERE', current_date);
+   ```
 
 ## Troubleshooting
 
@@ -106,25 +121,29 @@ If `public/js/depth-chart-config.js` is missing or invalid:
 - the page shows:
   - `Live voting is temporarily unavailable. You can still view the depth chart.`
 
-### RLS errors
+### RLS errors or missing RPC functions
 
-If inserts/selects fail with RLS-related errors:
+If vote toggles fail with RLS-related or RPC-related errors:
 
 1. Re-run `docs/depth-chart-supabase-setup.sql`
 2. Confirm RLS is enabled on both tables
-3. Confirm the anon policies and grants exist
+3. Confirm these functions exist:
+   - `public.depth_chart_toggle_vote`
+   - `public.depth_chart_get_voter_votes`
+4. Confirm the anon grants exist for those functions
 
-### Duplicate vote errors
+### Duplicate vote behavior
 
 The unique index on:
 
-- `(position, voter_hash, vote_day)`
+- `(position, player_id, voter_hash, vote_day)`
 
-allows one vote per position per browser hash per day.
+allows one vote per player per browser hash per day.
 
-The page converts duplicate insert failures into:
-
-- `You already voted for this position today.`
+The toggle function uses that unique row to:
+- add a vote
+- change it from upvote to downvote or vice versa
+- remove it when the same vote is clicked again
 
 ### Duplicate write-in errors
 
@@ -143,9 +162,11 @@ The page converts duplicate insert failures into:
 If Supabase is down or unreachable:
 
 - the page still loads the base player list from `public/data/depth-chart.json`
-- live vote totals fall back to the base order
+- live vote totals fall back to the seeded baseline order
 - voting and write-ins are disabled
 - no fake shared totals are shown
+- the field graphic still shows the current #1 baseline leader at each position
+- the mock lineup still renders from displayed baseline upvotes
 
 ## Rebuilds
 
