@@ -42,6 +42,10 @@ const SITE_NAV_ITEMS = [
   {
     href: "/social-pulse.html",
     label: "Social Pulse"
+  },
+  {
+    href: "/betting.html",
+    label: "Betting"
   }
 ];
 

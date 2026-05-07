@@ -60,6 +60,12 @@ function generateSitemap() {
       lastmod: new Date().toISOString().slice(0, 10),
       changefreq: "weekly",
       priority: "0.7"
+    },
+    {
+      loc: `${SITE_ORIGIN}/betting.html`,
+      lastmod: new Date().toISOString().slice(0, 10),
+      changefreq: "weekly",
+      priority: "0.7"
     }
   ];
 
