@@ -14,6 +14,8 @@ const fs = require("fs");
 const axios = require("axios");
 const OpenAI = require("openai");
 const { parse } = require("csv-parse/sync");
+const generateSitemap = require("./generate-sitemap");
+const generateRss = require("./generate-rss");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -23,8 +25,7 @@ const TIME_ZONE = "America/New_York";
 const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
-const PICK_HISTORY_SEED_PATH = path.join(__dirname, "../public/data/pick-history-seed.json");
-const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds");
+const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds.json");
 const REPORT_HTML_PATH = path.join(__dirname, "../public/report.html");
 
 const TEAM_IDS = {
@@ -601,7 +602,11 @@ function dedupeHistoryEntries(entries = []) {
     });
   }
 
-  return [...map.values()].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  return [...map.values()].sort((a, b) => {
+    const dateCmp = String(b.date).localeCompare(String(a.date));
+    if (dateCmp !== 0) return dateCmp;
+    return (Number(b.sourceGamePk) || 0) - (Number(a.sourceGamePk) || 0);
+  });
 }
 
 function loadPickHistory() {
@@ -621,61 +626,6 @@ function loadPickHistory() {
   } catch {
     return { updatedAt: null, generatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
   }
-}
-
-function loadPickHistorySeed() {
-  try {
-    const parsed = JSON.parse(fs.readFileSync(PICK_HISTORY_SEED_PATH, "utf8"));
-    const entries = Array.isArray(parsed?.entries) ? parsed.entries : [];
-    return {
-      updatedAt: parsed?.updatedAt || null,
-      generatedAt: parsed?.generatedAt || null,
-      record: parsed?.record || { wins: 0, losses: 0, profit: 0 },
-      entries: dedupeHistoryEntries(entries)
-    };
-  } catch {
-    return { updatedAt: null, generatedAt: null, record: { wins: 0, losses: 0, profit: 0 }, entries: [] };
-  }
-}
-
-function writePickHistory(entries = []) {
-  const existingHistory = loadPickHistory();
-  const seededHistory = loadPickHistorySeed();
-  const normalizedEntries = dedupeHistoryEntries([
-    ...seededHistory.entries,
-    ...existingHistory.entries,
-    ...entries
-  ]);
-  const normalizedSummary = normalizedEntries.reduce((acc, entry) => {
-    if (entry?.status === "final") {
-      if (entry?.result === "W") acc.wins += 1;
-      if (entry?.result === "L") acc.losses += 1;
-      if (typeof entry?.profit === "number") acc.profit += entry.profit;
-    }
-    if (typeof entry?.stake === "number") acc.totalWagered += entry.stake;
-    acc.totalBets += 1;
-    return acc;
-  }, { wins: 0, losses: 0, profit: 0, totalBets: 0, totalWagered: 0 });
-
-  const output = {
-    updatedAt: new Date().toISOString(),
-    generatedAt: new Date().toISOString(),
-    record: {
-      wins: normalizedSummary.wins,
-      losses: normalizedSummary.losses,
-      profit: Number(normalizedSummary.profit.toFixed(2)),
-      totalBets: normalizedSummary.totalBets,
-      totalWagered: Number(normalizedSummary.totalWagered.toFixed(2)),
-      roi: normalizedSummary.totalWagered > 0
-        ? Number(((normalizedSummary.profit / normalizedSummary.totalWagered) * 100).toFixed(2))
-        : 0
-    },
-    entries: normalizedEntries,
-    recentBreakdowns: normalizedEntries
-  };
-
-  fs.writeFileSync(PICK_HISTORY_PATH, JSON.stringify(output, null, 2));
-  return output;
 }
 
 async function loadSavantPitcherLeaderboard() {
@@ -729,6 +679,170 @@ async function loadSavantExpectedPitchers() {
 
   cachedSavantExpectedPitchers = merged;
   return cachedSavantExpectedPitchers;
+}
+
+async function fetchPitcherContactAllowed(mlbId, season) {
+  if (!mlbId) return { exitVelo: null, launchAngle: null };
+  // leaderboard/statcast has avg_hit_speed and avg_hit_angle
+  // leaderboard/custom does NOT return those columns regardless of &selections=
+  const seasonsToTry = [season, season - 1];
+  for (const year of seasonsToTry) {
+    const url =
+      `https://baseballsavant.mlb.com/leaderboard/statcast?type=pitcher&year=${year}` +
+      `&position=&team=&min=0&csv=true`;
+    const csv = await safeGetText(url, `savant statcast leaderboard pitcher ${year}`);
+    if (!csv) continue;
+    try {
+      const rows = parse(csv, { columns: true, skip_empty_lines: true, relax_quotes: true });
+      const row = rows.find((r) => String(r.player_id) === String(mlbId));
+      if (!row) continue;
+      const exitVelo = parseFloat(row.avg_hit_speed || "") || null;
+      const launchAngle = parseFloat(row.avg_hit_angle || "") || null;
+      if (exitVelo !== null || launchAngle !== null) {
+        console.log(`[savant] pitcher ${mlbId} contact (${year}): exitVelo=${exitVelo}, launchAngle=${launchAngle}`);
+        return { exitVelo, launchAngle };
+      }
+    } catch (e) {
+      console.warn(`[savant] pitcher contact fetch failed for ${mlbId} ${year}:`, e.message);
+    }
+  }
+  return { exitVelo: null, launchAngle: null };
+}
+
+async function fetchPitcherVsRoster(pitcherMlbId, batterMlbIds = []) {
+  if (!pitcherMlbId || !batterMlbIds.length) return null;
+  // Savant statcast_search with pitchers_lookup filter returns empty results for
+  // programmatic requests — MLB Stats API vsPlayerTotal is reliable
+  const results = await Promise.all(
+    batterMlbIds.map((batterId) =>
+      safeGetJson(
+        `https://statsapi.mlb.com/api/v1/people/${pitcherMlbId}/stats` +
+          `?stats=vsPlayerTotal&group=pitching&opposingPlayerId=${batterId}`,
+        `vsPlayer ${pitcherMlbId} vs ${batterId}`
+      )
+    )
+  );
+
+  let totalPA = 0, totalHits = 0, totalK = 0, totalBB = 0, totalHR = 0, totalAB = 0;
+  for (const data of results) {
+    const stat = data?.stats?.[0]?.splits?.[0]?.stat;
+    if (!stat || !Number(stat.battersFaced)) continue;
+    totalPA += Number(stat.battersFaced || 0);
+    totalHits += Number(stat.hits || 0);
+    totalK += Number(stat.strikeOuts || 0);
+    totalBB += Number(stat.baseOnBalls || 0);
+    totalHR += Number(stat.homeRuns || 0);
+    totalAB += Number(stat.atBats || 0);
+  }
+
+  if (!totalPA) {
+    console.log(`[mlb] pitcher ${pitcherMlbId} vs roster: no career matchup data found`);
+    return null;
+  }
+
+  const avg = totalAB > 0 ? (totalHits / totalAB).toFixed(3) : null;
+  const kPct = totalPA > 0 ? totalK / totalPA : null;
+  const bbPct = totalPA > 0 ? totalBB / totalPA : null;
+
+  console.log(
+    `[mlb] pitcher ${pitcherMlbId} vs ${batterMlbIds.length} roster batters: ` +
+    `${totalPA} PA, AVG ${avg}, K% ${kPct?.toFixed(3)}`
+  );
+
+  return { PA: totalPA, kPct, bbPct, AVG: avg, HR: totalHR };
+}
+
+function toNumericOrNull(value) {
+  if (value == null || value === "") return null;
+  const parsed = Number.parseFloat(String(value).replace(/%/g, "").trim());
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function buildPitcherVsRosterSnapshot(lineup = [], pitcherSavant = {}) {
+  const hitters = Array.isArray(lineup)
+    ? lineup.filter((player) => player && player.primaryPosition?.abbreviation !== "P")
+    : [];
+  if (!hitters.length) return null;
+
+  let weightedPa = 0;
+  let weightedK = 0;
+  let weightedBB = 0;
+  let weightedAvgTotal = 0;
+  let weightedWobaTotal = 0;
+  let weightedXwobaTotal = 0;
+  let weightedXbaTotal = 0;
+  let weightedXslgTotal = 0;
+  let avgWeight = 0;
+  let wobaWeight = 0;
+  let xwobaWeight = 0;
+  let xbaWeight = 0;
+  let xslgWeight = 0;
+
+  for (const player of hitters) {
+    const rawPa = Number(player?.savant?.pa ?? player?.stats?.plateAppearances ?? 0);
+    const pa = Number.isFinite(rawPa) && rawPa > 0 ? rawPa : 1;
+    weightedPa += pa;
+
+    const kPct = toNumericOrNull(player?.savant?.kPct);
+    if (kPct != null) weightedK += (kPct / 100) * pa;
+
+    const bbPct = toNumericOrNull(player?.savant?.bbPct);
+    if (bbPct != null) weightedBB += (bbPct / 100) * pa;
+
+    const avg = toNumericOrNull(player?.seasonAVG);
+    if (avg != null) {
+      weightedAvgTotal += avg * pa;
+      avgWeight += pa;
+    }
+
+    const woba = toNumericOrNull(player?.fangraphs?.wOBA);
+    if (woba != null) {
+      weightedWobaTotal += woba * pa;
+      wobaWeight += pa;
+    }
+
+    const xwoba = toNumericOrNull(player?.savant?.xwOBA);
+    if (xwoba != null) {
+      weightedXwobaTotal += xwoba * pa;
+      xwobaWeight += pa;
+    }
+
+    const xba = toNumericOrNull(player?.savant?.xBA);
+    if (xba != null) {
+      weightedXbaTotal += xba * pa;
+      xbaWeight += pa;
+    }
+
+    const xslg = toNumericOrNull(player?.savant?.xSLG);
+    if (xslg != null) {
+      weightedXslgTotal += xslg * pa;
+      xslgWeight += pa;
+    }
+  }
+
+  const formatWeightedRate = (total, weight) => (weight > 0 ? (total / weight).toFixed(3) : null);
+
+  return {
+    PA: weightedPa || hitters.length,
+    kPct: weightedPa > 0 ? weightedK / weightedPa : null,
+    bbPct: weightedPa > 0 ? weightedBB / weightedPa : null,
+    AVG: formatWeightedRate(weightedAvgTotal, avgWeight),
+    wOBA: formatWeightedRate(weightedWobaTotal, wobaWeight),
+    xwOBA: formatWeightedRate(weightedXwobaTotal, xwobaWeight),
+    exitVelo: toNumericOrNull(pitcherSavant?.exitVeloAllowed),
+    launchAngle: toNumericOrNull(pitcherSavant?.launchAngleAllowed),
+    xBA: formatWeightedRate(weightedXbaTotal, xbaWeight),
+    xSLG: formatWeightedRate(weightedXslgTotal, xslgWeight)
+  };
+}
+
+function mergeNonNullRosterMetrics(fallbackSnapshot, preferredSnapshot) {
+  if (!fallbackSnapshot && !preferredSnapshot) return null;
+  const merged = { ...(fallbackSnapshot || {}) };
+  for (const [key, value] of Object.entries(preferredSnapshot || {})) {
+    if (value != null) merged[key] = value;
+  }
+  return merged;
 }
 
 async function loadSavantBatterLeaderboard() {
@@ -1008,31 +1122,14 @@ async function getPlayerSeasonStats(personId, group, season) {
   return data?.stats?.[0]?.splits?.[0]?.stat || null;
 }
 
-async function getPitcherGameLog(personId, season) {
-  if (!personId) return [];
-  const url =
-    `https://statsapi.mlb.com/api/v1/people/${personId}/stats` +
-    `?stats=gameLog&group=pitching&season=${season}`;
-  const data = await safeGetJson(url, `pitching game log ${personId} ${season}`);
-  return Array.isArray(data?.stats?.[0]?.splits) ? data.stats[0].splits : [];
+function formatPitcherSeasonDecisionRecord(stat = null) {
+  const wins = Number(stat?.wins);
+  const losses = Number(stat?.losses);
+  if (!Number.isFinite(wins) || !Number.isFinite(losses)) return null;
+  return `${wins}-${losses}`;
 }
 
-function derivePitcherRecordFromGameLog(gameLogSplits = [], beforeDate) {
-  const completedStarts = gameLogSplits.filter((split) => split?.date && split.date < beforeDate);
-  if (!completedStarts.length) return null;
-
-  const totals = completedStarts.reduce((acc, split) => {
-    const won = split?.isWin === true || Number(split?.stat?.wins || 0) > 0;
-    const lost = split?.isLoss === true || Number(split?.stat?.losses || 0) > 0;
-    if (won) acc.wins += 1;
-    if (lost) acc.losses += 1;
-    return acc;
-  }, { wins: 0, losses: 0 });
-
-  return `${totals.wins}-${totals.losses}`;
-}
-
-async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDate = getTodayEasternISO()) {
+async function getPitcherFacts(personId, fallbackName, teamName = null) {
   if (!personId) {
     return {
       name: fallbackName || "TBD",
@@ -1054,31 +1151,44 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
 
   const season = String(new Date().getFullYear());
   const previousSeason = String(Number(season) - 1);
-  const [person, currentStats, previousStats, currentGameLog, savantRows, expectedRows, fangraphsTeam] = await Promise.all([
+  const [person, currentStats, previousStats, savantRows, expectedRows, fangraphsTeam, contactAllowed] = await Promise.all([
     getPersonInfo(personId),
     getPlayerSeasonStats(personId, "pitching", season),
     getPlayerSeasonStats(personId, "pitching", previousSeason),
-    getPitcherGameLog(personId, season),
     loadSavantPitcherLeaderboard(),
     loadSavantExpectedPitchers(),
-    teamName ? loadFangraphsTeamData(teamName) : null
+    teamName ? loadFangraphsTeamData(teamName) : null,
+    fetchPitcherContactAllowed(personId, Number(season))
   ]);
   const percentileMaps = await loadPitcherPercentileMaps();
 
   const stat = currentStats || previousStats;
   const statSeason = currentStats ? season : previousStats ? previousSeason : null;
-  const currentSeasonRecord = derivePitcherRecordFromGameLog(currentGameLog, beforeDate)
-    || (currentStats?.wins != null && currentStats?.losses != null ? `${currentStats.wins}-${currentStats.losses}` : null);
+  const currentSeasonRecord = formatPitcherSeasonDecisionRecord(currentStats);
   const savant = getSavantRow(savantRows, personId);
   const expected = getSavantRow(expectedRows, personId);
   const pitcherName = person?.fullName || fallbackName || "TBD";
   const fangraphsPitcher = fangraphsTeam?.pitchingByName?.[normalizePersonName(pitcherName)] || null;
+  const exitVeloAllowed = contactAllowed?.exitVelo ?? (savant?.avg_hit_speed ? Number(savant.avg_hit_speed) : null);
+  const launchAngleAllowed = contactAllowed?.launchAngle ?? (savant?.avg_hit_angle ? Number(savant.avg_hit_angle) : null);
+  console.log(`[savant] ${pitcherName} exitVelo: ${exitVeloAllowed}, launchAngle: ${launchAngleAllowed}`);
+
+  const pitcherGeneratedAt = new Date().toISOString();
+  const statsSources = {
+    era: stat?.era ? "mlb" : fangraphsPitcher?.ERA ? "fangraphs" : null,
+    fip: stat?.fip ? "mlb" : fangraphsPitcher?.FIP ? "fangraphs" : computeApproxFip(stat) ? "computed" : null,
+    savant: savant ? "savant" : null,
+    statSeason: statSeason || null
+  };
+  console.log(`[pitcher] ${pitcherName}: era=${stat?.era ?? null} fip=${stat?.fip ?? null} savant=${Boolean(savant)} statSeason=${statSeason} generatedAt=${pitcherGeneratedAt}`);
 
   return {
     name: pitcherName,
     mlbId: personId,
     announced: true,
     hand: person?.pitchHand?.code || null,
+    generatedAt: pitcherGeneratedAt,
+    statsSources,
     seasonLine: formatPitcherSeasonLine(stat, currentSeasonRecord),
     seasonRecord: currentSeasonRecord,
     seasonERA: stat?.era || fangraphsPitcher?.ERA || null,
@@ -1105,8 +1215,8 @@ async function getPitcherFacts(personId, fallbackName, teamName = null, beforeDa
       kPct: savant.k_percent ? `${savant.k_percent}%` : null,
       bbPct: savant.bb_percent ? `${savant.bb_percent}%` : null,
       gbPct: savant.gb_percent ? `${savant.gb_percent}%` : null,
-      exitVeloAllowed: savant.avg_hit_speed || null,
-      launchAngleAllowed: savant.avg_hit_angle || null,
+      exitVeloAllowed,
+      launchAngleAllowed,
       percentiles: {
         barrelPct: percentileMaps?.barrelPct?.[personId] ?? null,
         hardHitPct: percentileMaps?.hardHitPct?.[personId] ?? null,
@@ -1751,6 +1861,7 @@ async function getHeadToHead(teamId, oppTeamId, season) {
 
   let wins = 0;
   let losses = 0;
+  const recentGames = [];
   for (const dateEntry of data?.dates || []) {
     for (const game of dateEntry.games || []) {
       const state = game?.status?.detailedState || "";
@@ -1758,12 +1869,25 @@ async function getHeadToHead(teamId, oppTeamId, season) {
       const isHome = game?.teams?.home?.team?.id === teamId;
       const teamScore = isHome ? game?.teams?.home?.score : game?.teams?.away?.score;
       const oppScore = isHome ? game?.teams?.away?.score : game?.teams?.home?.score;
+      const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
+      const result = Number(teamScore) > Number(oppScore) ? "W" : "L";
       if (Number(teamScore) > Number(oppScore)) wins += 1;
       else losses += 1;
+      recentGames.push({
+        date: dateEntry.date,
+        opponent: oppTeam?.name || "Opponent TBD",
+        homeAway: isHome ? "home" : "road",
+        result,
+        score: `${teamScore}-${oppScore}`
+      });
     }
   }
 
-  return { wins, losses };
+  return {
+    wins,
+    losses,
+    recentGames: recentGames.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5)
+  };
 }
 
 async function getPitcherRecentStarts(mlbId, beforeDate, n = 4) {
@@ -1871,6 +1995,7 @@ async function buildLastMeetingSummary(teamId, oppTeamId, beforeDate) {
     gamePk: game.gamePk,
     date: game.officialDate,
     ballpark: game?.venue?.name || "Venue TBD",
+    homeAway: metsAreHome ? "home" : "road",
     metsScore: metsSide?.score ?? null,
     oppScore: oppSide?.score ?? null,
     result: Number(metsSide?.score) > Number(oppSide?.score) ? "win" : "loss",
@@ -1883,7 +2008,37 @@ async function buildLastMeetingSummary(teamId, oppTeamId, beforeDate) {
 
 async function getOddsFacts(game) {
   try {
-    const cachedOdds = JSON.parse(fs.readFileSync(API_ODDS_PATH, "utf8"));
+    if (!fs.existsSync(API_ODDS_PATH)) {
+      console.warn(`[odds] Cache file not found at ${API_ODDS_PATH} — odds will be null`);
+      return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
+    }
+    const raw = fs.readFileSync(API_ODDS_PATH, "utf8");
+    const cachedOdds = JSON.parse(raw);
+    console.log(`[odds] Cache loaded — provider: ${cachedOdds?.provider || "unknown"}, markets: ${Array.isArray(cachedOdds?.markets) ? cachedOdds.markets.length : 0}`);
+    if (!cachedOdds || (!Array.isArray(cachedOdds.markets) && !Array.isArray(cachedOdds?.consensus?.markets))) {
+      console.warn(`[odds] Cache file exists but has no markets — odds will be null`);
+      return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
+    }
+
+    const targetHomeTeam = game?.teams?.home?.team?.name || "";
+    const targetAwayTeam = game?.teams?.away?.team?.name || "";
+    const cachedHomeTeam = cachedOdds?.raw?.home_team || "";
+    const cachedAwayTeam = cachedOdds?.raw?.away_team || "";
+    const cachedGameDateEt = cachedOdds?.raw?.commence_time
+      ? new Date(cachedOdds.raw.commence_time).toLocaleDateString("en-CA", { timeZone: TIME_ZONE })
+      : null;
+    const targetGameDate = game?.officialDate || null;
+    const teamsMatch = cachedHomeTeam === targetHomeTeam && cachedAwayTeam === targetAwayTeam;
+    const dateMatches = cachedGameDateEt === targetGameDate;
+
+    if (cachedHomeTeam && cachedAwayTeam && (!teamsMatch || !dateMatches)) {
+      console.warn(
+        `[odds] Cache mismatch — cached ${cachedAwayTeam} @ ${cachedHomeTeam} on ${cachedGameDateEt || "unknown-date"}, `
+        + `target ${targetAwayTeam} @ ${targetHomeTeam} on ${targetGameDate || "unknown-date"}`
+      );
+      return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
+    }
+
     const market = Array.isArray(cachedOdds?.markets)
       ? cachedOdds.markets.find((entry) => /moneyline|h2h/i.test(entry.label || entry.key || ""))
       : null;
@@ -1907,6 +2062,14 @@ async function getOddsFacts(game) {
       ? totalMarket.outcomes.find((outcome) => /over/i.test(outcome.name || ""))
       : null;
 
+    if (!moneylineMarket) {
+      console.warn(`[odds] No moneyline market found in cache`);
+    } else if (!metsOutcome) {
+      console.warn(`[odds] Moneyline market found but no Mets outcome (team name: "${TEAM_NAME}")`);
+    } else {
+      console.log(`[odds] Mets ML: ${metsOutcome.price}, Opp ML: ${oppOutcome?.price ?? "null"}`);
+    }
+
     return {
       metsMoneyline: typeof metsOutcome?.price === "number" ? metsOutcome.price : null,
       oppMoneyline: typeof oppOutcome?.price === "number" ? oppOutcome.price : null,
@@ -1920,7 +2083,7 @@ async function getOddsFacts(game) {
       total: typeof overOutcome?.point === "number" ? overOutcome.point : null
     };
   } catch (error) {
-    console.warn(`[warn] API-SPORTS odds cache read failed: ${error.message}`);
+    console.warn(`[odds] Cache read failed: ${error.message}`);
     return {
       metsMoneyline: null,
       oppMoneyline: null,
@@ -1970,6 +2133,23 @@ async function buildGameFacts(targetDate) {
     getOddsFacts(game),
     buildLastMeetingSummary(TEAM_ID, oppTeam.id, resolvedDate)
   ]);
+
+  // Fetch career pitcher vs current roster matchup data (Savant statcast search)
+  // Must run after both pitching and lineups are resolved so we have pitcher IDs + batter IDs
+  const metsBatterIds = (lineups.mets || []).map((p) => p.playerId).filter(Boolean);
+  const oppBatterIds = (lineups.opp || []).map((p) => p.playerId).filter(Boolean);
+  const [metsVsRoster, oppVsRoster] = await Promise.all([
+    fetchPitcherVsRoster(pitching.mets.mlbId, oppBatterIds),
+    fetchPitcherVsRoster(pitching.opp.mlbId, metsBatterIds)
+  ]);
+  pitching.mets.vsRoster = mergeNonNullRosterMetrics(
+    buildPitcherVsRosterSnapshot(lineups.opp, pitching.mets.savant),
+    metsVsRoster
+  );
+  pitching.opp.vsRoster = mergeNonNullRosterMetrics(
+    buildPitcherVsRosterSnapshot(lineups.mets, pitching.opp.savant),
+    oppVsRoster
+  );
 
   const metsTeamRow = null;
   const oppTeamRow = null;
@@ -2758,50 +2938,299 @@ function buildProjectedLineupEdgeSummary(edgeScoring) {
 function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
   const whyMetsHaveCase = [];
   const whereRiskIs = [];
+  const mp = gameFacts.pitching?.mets || {};
+  const op = gameFacts.pitching?.opp || {};
+  const ta = gameFacts.advanced?.teamAdvanced || {};
+  const metsTA = ta.mets || {};
+  const oppTA = ta.opp || {};
+  const metsBp = gameFacts.pitching?.metsBullpen || {};
+  const oppBp = gameFacts.pitching?.oppBullpen || {};
 
   for (const edge of metsAngles.slice(0, 3)) {
     if (/overall lineup quality|lineup vs handedness/i.test(edge.category)) {
-      whyMetsHaveCase.push("The clearest Mets path is the projected lineup carrying the better overall offensive shape and expected contact quality.");
+      const parts = [];
+      if (metsTA.wrcPlus) parts.push(`wRC+ ${metsTA.wrcPlus} vs ${oppTA.wrcPlus || "N/A"}`);
+      if (metsTA.xwoba) parts.push(`xwOBA ${metsTA.xwoba} vs ${oppTA.xwoba || "N/A"}`);
+      whyMetsHaveCase.push(`Lineup: ${parts.length ? parts.join(", ") : "Mets grade higher in overall offensive quality"}.`);
     } else if (edge.category === "Starting Pitching") {
-      whyMetsHaveCase.push(`${gameFacts.pitching.mets.name} gives New York the cleaner run-prevention case in the underlying metrics that are actually available.`);
+      const parts = [];
+      if (mp.seasonERA) parts.push(`${mp.name}: ${mp.seasonERA} ERA`);
+      if (mp.savant?.kPct) parts.push(`${mp.savant.kPct}% K rate`);
+      if (mp.seasonFIP) parts.push(`${mp.seasonFIP} FIP`);
+      if (op.seasonERA) parts.push(`vs ${op.name}: ${op.seasonERA} ERA`);
+      if (op.seasonFIP) parts.push(`${op.seasonFIP} FIP`);
+      whyMetsHaveCase.push(parts.length ? parts.join(", ") + "." : `${mp.name || "Mets SP"} has the better underlying pitching profile.`);
     } else if (edge.category === "Bullpen") {
-      whyMetsHaveCase.push("There is still a workable bullpen path if the game reaches the middle innings in a tie or with a narrow Mets lead.");
+      const parts = [];
+      if (metsBp.seasonERA) parts.push(`Mets BP: ${metsBp.seasonERA} ERA`);
+      if (metsBp.seasonXFIP) parts.push(`${metsBp.seasonXFIP} xFIP`);
+      if (oppBp.seasonERA) parts.push(`Opp BP: ${oppBp.seasonERA} ERA`);
+      if (oppBp.seasonXFIP) parts.push(`${oppBp.seasonXFIP} xFIP`);
+      whyMetsHaveCase.push(parts.length ? `Bullpen: ${parts.join(", ")}.` : "Mets bullpen holds a seasonal edge in ERA and xFIP.");
     } else if (edge.category === "Regression Signals") {
-      whyMetsHaveCase.push("There is at least a plausible positive-regression case if the Mets' quality of contact finally turns into actual runs.");
+      const parts = [];
+      if (metsTA.xwoba && metsTA.woba) parts.push(`xwOBA ${metsTA.xwoba} vs actual wOBA ${metsTA.woba}`);
+      whyMetsHaveCase.push(parts.length
+        ? `Regression: ${parts.join(", ")} — expected stats above actual production.`
+        : "Mets contact-quality metrics (xBA, xwOBA) are running ahead of actual results.");
     }
   }
 
   if (!whyMetsHaveCase.length) {
-    whyMetsHaveCase.push("The best Mets argument is still lineup quality, but it is narrower than a true all-green matchup.");
+    whyMetsHaveCase.push("No single dominant Mets edge. Lineup quality is the primary case.");
   }
 
   for (const edge of riskAngles.slice(0, 2)) {
     if (edge.category === "Regression Signals") {
-      whereRiskIs.push("The offense is still asking the model to trust expected results more than actual production.");
+      whereRiskIs.push("Expected stats haven't converted to runs yet — production lags contact quality.");
     } else if (edge.category === "Starting Pitching") {
-      whereRiskIs.push(`${gameFacts.pitching.opp.name} owns the better strike-throwing profile, so the mound edge does not sit with New York.`);
+      const parts = [];
+      if (op.savant?.kPct && mp.savant?.kPct) parts.push(`K% ${op.savant.kPct} vs ${mp.savant.kPct}`);
+      if (op.seasonFIP && mp.seasonFIP) parts.push(`FIP ${op.seasonFIP} vs ${mp.seasonFIP}`);
+      whereRiskIs.push(parts.length
+        ? `${op.name || "Opp SP"} has the better pitching profile: ${parts.join(", ")}.`
+        : `${op.name || "Opponent starter"} owns the better underlying pitching numbers.`);
     } else if (edge.category === "Bullpen") {
-      whereRiskIs.push("Bullpen support is not a clean Mets edge, especially with both relief groups carrying recent workload.");
+      whereRiskIs.push(`Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: ${metsBp.taxLevel || "N/A"}, Opp: ${oppBp.taxLevel || "N/A"}).`);
+    } else if (edge.category === "Home/Away Split" || edge.category === "Context") {
+      whereRiskIs.push(`Road/context splits lean against Mets. ${gameFacts.meta.homeAway === "away" ? "Away game." : ""}`);
     } else {
-      whereRiskIs.push("The softer context inputs lean slightly away from New York, and several of those inputs are still incomplete.");
+      whereRiskIs.push(edge.explanation || "Contextual factors slightly favor the opponent.");
     }
   }
 
   if (!whereRiskIs.length) {
-    whereRiskIs.push("The missing-data load is the biggest reason this read stays conservative.");
+    whereRiskIs.push("No standout risk factor. Missing-data load is the main concern.");
   }
 
-  const bottomLine = pick.analyticalLean === "Mets"
-    ? "The board still leans Mets, but the strongest case is narrow enough that the writeup should stay disciplined."
-    : pick.analyticalLean === "Slight Mets edge"
-      ? "New York has a live case, but the margin is thin and the read is more measured than emphatic."
-      : pick.analyticalLean === "Opponent"
-        ? "The honest board leans the other way, so the Mets case is more about the clearest plausible path than a full-model endorsement."
-        : pick.analyticalLean === "Slight opponent edge"
-          ? "The board gives the other side a small edge, which keeps the Mets case narrow and conditional."
-          : "The board is mixed enough that the Mets case needs to stay focused on the cleanest supporting angles.";
+  const ml = gameFacts.money?.metsMoneyline;
+  const mlStr = ml != null ? (ml > 0 ? `+${ml}` : `${ml}`) : null;
+  const leanStr = pick.analyticalLean || "Mixed";
+
+  let bottomLine;
+  if (leanStr === "Mets" || leanStr === "Slight Mets edge") {
+    const topEdge = metsAngles[0]?.category || "lineup quality";
+    bottomLine = `Model leans Mets${mlStr ? ` at ${mlStr}` : ""}. Primary edge: ${topEdge.toLowerCase()}.`;
+  } else if (leanStr === "Opponent" || leanStr === "Slight opponent edge") {
+    bottomLine = `Model leans opponent, but Mets ML is still the play based on the best available angle${mlStr ? ` at ${mlStr}` : ""}.`;
+  } else {
+    bottomLine = `Mixed board${mlStr ? `, Mets at ${mlStr}` : ""}. Pick based on strongest individual matchup edge.`;
+  }
 
   return { whyMetsHaveCase, whereRiskIs, bottomLine };
+}
+
+function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
+  const metsPitcher  = gameFacts.pitching?.mets?.name  || "the Mets starter";
+  const oppPitcher   = gameFacts.pitching?.opp?.name   || "the opposing starter";
+  const opponent     = gameFacts.game?.opponent         || "the opponent";
+  const ml           = gameFacts.money?.metsMoneyline;
+  const mlStr        = ml != null ? (ml > 0 ? `+${ml}` : `${ml}`) : null;
+
+  // Deterministic variation seed (prevents same opener every day)
+  function hashPick(salt) {
+    const key = `${gameFacts.meta?.date || ""}${metsPitcher}${salt}`;
+    let h = 5381;
+    for (let i = 0; i < key.length; i++) h = ((h << 5) + h) ^ key.charCodeAt(i);
+    return Math.abs(h);
+  }
+
+  // --- PART 1: HOOK (recent streak context) ---
+  const recentGames = gameFacts.gameContext?.metsRecentGames || [];
+  const lastFive    = recentGames.slice(0, 5);
+  const wins        = lastFive.filter(g => g.result === "W").length;
+  const losses      = lastFive.filter(g => g.result === "L").length;
+
+  let hook = "";
+  if (lastFive.length >= 4 && wins >= 4) {
+    const hookOpts = [
+      `The Mets have won ${wins} of their last ${lastFive.length}, carrying some genuine momentum into today.`,
+      `New York has been playing its best ball lately — ${wins}-${losses} over the last ${lastFive.length} games.`,
+      `On a ${wins}-${losses} run over the last ${lastFive.length}, the Mets are in a good spot heading into this one.`
+    ];
+    hook = hookOpts[hashPick("hook") % hookOpts.length];
+  } else if (lastFive.length >= 4 && losses >= 4) {
+    const hookOpts = [
+      `The Mets are ${wins}-${losses} over their last ${lastFive.length}, but the board still finds a workable path today.`,
+      `New York has been grinding through a tough stretch — ${wins}-${losses} in the last ${lastFive.length} — which makes the price more interesting than the record suggests.`,
+      `Coming in at ${wins}-${losses} over the last ${lastFive.length}, the Mets haven't found a rhythm lately, but the underlying case here isn't built on results.`
+    ];
+    hook = hookOpts[hashPick("hook") % hookOpts.length];
+  } else if (lastFive.length >= 3) {
+    const hookOpts = [
+      `The Mets enter this one at ${wins}-${losses} over their last ${lastFive.length}, a mixed run that makes today more about the matchup than the streak.`,
+      `New York is ${wins}-${losses} in their last ${lastFive.length}, which is about as split as it gets — so this one comes down to the specific read.`,
+      `At ${wins}-${losses} over their last ${lastFive.length} games, the Mets are neither riding momentum nor running from a slump.`
+    ];
+    hook = hookOpts[hashPick("hook") % hookOpts.length];
+  }
+
+  // --- PART 2: PITCHER CASE (most specific stat available) ---
+  const mp    = gameFacts.pitching?.mets || {};
+  const op    = gameFacts.pitching?.opp  || {};
+  const mFIP  = mp.seasonFIP  != null ? parseFloat(mp.seasonFIP)  : null;
+  const oFIP  = op.seasonFIP  != null ? parseFloat(op.seasonFIP)  : null;
+  const mXERA = mp.savant?.xERA != null ? parseFloat(mp.savant.xERA) : (mp.seasonXERA != null ? parseFloat(mp.seasonXERA) : null);
+  const oXERA = op.savant?.xERA != null ? parseFloat(op.savant.xERA) : (op.seasonXERA != null ? parseFloat(op.seasonXERA) : null);
+  const mWHIP = mp.seasonWHIP != null ? parseFloat(mp.seasonWHIP) : null;
+  const oWHIP = op.seasonWHIP != null ? parseFloat(op.seasonWHIP) : null;
+  const mKPct = mp.savant?.kPct != null ? parseFloat(mp.savant.kPct) : null;
+  const oKPct = op.savant?.kPct != null ? parseFloat(op.savant.kPct) : null;
+  const vsRoster = mp.vsRoster || {};
+
+  let pitcherCase = "";
+
+  if (mFIP != null && oFIP != null && (oFIP - mFIP) >= 1.0) {
+    // Large FIP gap favoring Mets
+    const gap = (oFIP - mFIP).toFixed(2);
+    const opts = [
+      `${metsPitcher} comes in with a ${mFIP.toFixed(2)} FIP against ${oppPitcher}'s ${oFIP.toFixed(2)} — a ${gap}-run gap that's the clearest edge on this board today.`,
+      `The starting pitching split is hard to ignore: ${metsPitcher} at ${mFIP.toFixed(2)} FIP, ${oppPitcher} at ${oFIP.toFixed(2)}, a ${gap}-point advantage that anchors the Mets case.`,
+      `On pure process numbers, ${metsPitcher} (${mFIP.toFixed(2)} FIP) has a ${gap}-run edge over ${oppPitcher} (${oFIP.toFixed(2)} FIP) — the kind of gap that shows up in outcomes over time.`
+    ];
+    pitcherCase = opts[hashPick("fip") % opts.length];
+  } else if (mXERA != null && oXERA != null && (oXERA - mXERA) >= 0.4) {
+    // xERA gap favoring Mets
+    const gap = (oXERA - mXERA).toFixed(2);
+    const opts = [
+      `The xERA read splits in New York's favor: ${metsPitcher} at ${mXERA.toFixed(2)} versus ${oppPitcher}'s ${oXERA.toFixed(2)}, a ${gap}-run edge on contact-quality projection.`,
+      `Statcast's expected ERA gives ${metsPitcher} (${mXERA.toFixed(2)}) a ${gap}-point edge over ${oppPitcher} (${oXERA.toFixed(2)}), which is real separation at the contact quality level.`,
+      `${metsPitcher}'s ${mXERA.toFixed(2)} xERA stacks up favorably against ${oppPitcher}'s ${oXERA.toFixed(2)} — a ${gap}-run Statcast gap that's more signal than surface stat.`
+    ];
+    pitcherCase = opts[hashPick("xera") % opts.length];
+  } else if (mWHIP != null && oWHIP != null && (oWHIP - mWHIP) >= 0.15) {
+    // WHIP gap favoring Mets
+    const opts = [
+      `${metsPitcher} (${mWHIP.toFixed(2)} WHIP) has been cleaner than ${oppPitcher} (${oWHIP.toFixed(2)}) in terms of base traffic — fewer threats, fewer leverage situations for New York's opponents.`,
+      `The WHIP gap — ${metsPitcher} at ${mWHIP.toFixed(2)}, ${oppPitcher} at ${oWHIP.toFixed(2)} — tells you who's been limiting baserunners, and that edge sits with the Mets.`
+    ];
+    pitcherCase = opts[hashPick("whip") % opts.length];
+  } else if (mKPct != null && oKPct != null && (mKPct - oKPct) >= 3.0) {
+    // K% gap favoring Mets pitcher
+    const opts = [
+      `${metsPitcher} owns a ${mKPct.toFixed(1)}% strikeout rate versus ${oppPitcher}'s ${oKPct.toFixed(1)}% — a real swing-and-miss gap that limits the damage any single hit can do.`,
+      `The whiff profile favors New York: ${metsPitcher} at ${mKPct.toFixed(1)}% K-rate compared to ${oppPitcher}'s ${oKPct.toFixed(1)}% gives the Mets a legitimate strikeout edge today.`
+    ];
+    pitcherCase = opts[hashPick("kpct") % opts.length];
+  } else if (vsRoster?.PA >= 30 && vsRoster?.AVG != null) {
+    // Career vs roster data
+    const avg = parseFloat(vsRoster.AVG).toFixed(3);
+    const kRate = vsRoster.kPct != null ? ` with a ${parseFloat(vsRoster.kPct).toFixed(1)}% K-rate` : "";
+    const opts = [
+      `${metsPitcher} has a real track record against this ${opponent} roster — holding them to a ${avg} average${kRate} across ${vsRoster.PA} plate appearances — which adds some substance beyond the seasonal line.`,
+      `The history matters here: ${metsPitcher} against the active ${opponent} roster is a ${avg} average${kRate} over ${vsRoster.PA} PAs, a sample large enough to say something real.`
+    ];
+    pitcherCase = opts[hashPick("vs") % opts.length];
+  } else if (mFIP != null && oFIP != null) {
+    // Small FIP gap or either direction — generic
+    const metsAdv = mFIP < oFIP;
+    if (metsAdv) {
+      const opts = [
+        `${metsPitcher} (${mFIP.toFixed(2)} FIP) edges out ${oppPitcher} (${oFIP.toFixed(2)}) on process numbers — not a massive split, but the advantage is real.`,
+        `On underlying pitching metrics, ${metsPitcher}'s ${mFIP.toFixed(2)} FIP gives New York the marginal edge over ${oppPitcher} at ${oFIP.toFixed(2)}.`
+      ];
+      pitcherCase = opts[hashPick("fipsmall") % opts.length];
+    } else {
+      const opts = [
+        `The pitching numbers actually lean toward ${oppPitcher} (${oFIP.toFixed(2)} FIP vs ${metsPitcher}'s ${mFIP.toFixed(2)}), which is the honest read — the Mets case has to come from elsewhere today.`,
+        `${oppPitcher} holds the underlying pitching edge at ${oFIP.toFixed(2)} FIP compared to ${metsPitcher}'s ${mFIP.toFixed(2)}, so New York needs the offense to carry this one.`
+      ];
+      pitcherCase = opts[hashPick("fipbad") % opts.length];
+    }
+  } else {
+    pitcherCase = `${metsPitcher} takes the ball today for New York against ${oppPitcher}, and while full underlying splits aren't available yet, the matchup shapes up as workable.`;
+  }
+
+  // --- PART 3: SUPPORT ANGLE ---
+  const ta        = gameFacts.advanced?.teamAdvanced || {};
+  const metsTA    = ta.mets || {};
+  const rotRank   = metsTA.leagueRanks?.rotFip;
+  const wrcRank   = metsTA.leagueRanks?.wrcPlus;
+  const wrcPlus   = metsTA.wrcPlus;
+
+  // Check regression signals from edgeScoring
+  const hasRegressionEdge = edgeScoring.categories
+    .some(e => e.category === "Regression Signals" && e.edge === "Mets edge");
+  const hasBullpenEdge = edgeScoring.categories
+    .some(e => e.category === "Bullpen" && e.edge === "Mets edge");
+
+  let supportAngle = "";
+  if (rotRank != null && rotRank <= 12) {
+    const opts = [
+      `The supporting case sits in the rotation: New York ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff.`,
+      `Context worth noting: the Mets' rotation ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in the league by FIP, putting this lineup behind one of the better pitching groups in baseball right now.`
+    ];
+    supportAngle = opts[hashPick("rotrank") % opts.length];
+  } else if (hasRegressionEdge && wrcPlus != null && wrcRank != null) {
+    const opts = [
+      `The supporting angle is offense: New York's ${wrcPlus} wRC+ ranks ${ordinalSuffix(wrcRank)} in MLB, and the underlying contact quality suggests the production hasn't fully caught up to the expected output yet.`,
+      `On the offensive side, the Mets are ${ordinalSuffix(wrcRank)} in wRC+ at ${wrcPlus}, and Statcast-based metrics show a team that should be generating more damage than the results have shown — a positive-regression setup.`
+    ];
+    supportAngle = opts[hashPick("wrc") % opts.length];
+  } else if (hasBullpenEdge) {
+    const opts = [
+      `The secondary angle is the bullpen: New York's relief group has a real seasonal edge in the underlying numbers, which matters most if the game reaches the middle innings close.`,
+      `If the game stays tight, New York's bullpen is a live secondary advantage — the relief numbers have held up better than the opponent's this season.`
+    ];
+    supportAngle = opts[hashPick("bp") % opts.length];
+  } else if (wrcPlus != null && wrcRank != null && wrcRank <= 15) {
+    const opts = [
+      `The offensive support is real: a ${wrcPlus} wRC+ ranking ${ordinalSuffix(wrcRank)} in MLB means the Mets lineup is genuinely above average at generating expected run value.`,
+      `New York's offense ranks ${ordinalSuffix(wrcRank)} in wRC+ at ${wrcPlus} — a legitimate offensive group that gives today's starter a real margin to work with.`
+    ];
+    supportAngle = opts[hashPick("wrcgood") % opts.length];
+  } else {
+    supportAngle = "The supporting case is more about process than a clean secondary edge — the model isn't finding a dominant secondary angle, which is part of why the pick stays measured.";
+  }
+
+  // --- PART 4: CLOSE (calibrated to analyticalLean) ---
+  const lean = pick?.analyticalLean || "Mixed";
+  let close = "";
+
+  if (lean === "Mets") {
+    const opts = [
+      mlStr
+        ? `New York at ${mlStr} is the play — the board has the cleaner shape on the Mets side and the price still offers value for the matchup.`
+        : `The board has the cleaner shape on the Mets side, and that's the play.`,
+      `This is one of the cleaner Mets ML spots of the week — the process is pointing in the right direction and the price is workable.`,
+      `Taking the Mets here. The analytical lean is unambiguous and the matchup structure supports it.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  } else if (lean === "Slight Mets edge") {
+    const opts = [
+      mlStr
+        ? `The board gives New York a slim edge, and ${mlStr} is where the value is — tight, but still the right side.`
+        : `The board gives New York a slim edge — the pick is Mets ML, though with measured conviction.`,
+      `This isn't a slam-dunk spot, but the Mets have the marginal lean and the matchup supports taking it at this price.`,
+      `Mets ML, but held loosely — the edge is real, just not overwhelming.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  } else if (lean === "Opponent" || lean === "Slight opponent edge") {
+    const opts = [
+      `The honest read is that today's case is thinner than a full-model endorsement, but the clearest Mets path is still playable${mlStr ? ` at ${mlStr}` : ""} — this is a lean, not a conviction bet.`,
+      `The model doesn't love this spot, but the Mets' best-case path is real enough to back at this price — just not with heavy confidence.`,
+      `Taking the Mets here as the best available path, not a strong analytical endorsement — the board leans the other way, but the price and the case hold up.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  } else {
+    // Mixed
+    const opts = [
+      `The board is split, so today's pick leans on the clearest specific angle rather than overall model conviction${mlStr ? ` — Mets ML at ${mlStr}` : ""}.`,
+      `Mixed board, but the Mets still get the pick — the strongest individual angle tips it in New York's direction even without a clean all-green read.`,
+      `On a board this balanced, the bet comes down to which specific edge you trust most${mlStr ? `, and at ${mlStr}` : ""} the Mets case is the one worth backing.`
+    ];
+    close = opts[hashPick("close") % opts.length];
+  }
+
+  // Assemble paragraph — filter empty parts
+  const parts = [hook, pitcherCase, supportAngle, close].filter(s => s && s.trim().length > 0);
+  return parts.join(" ");
+}
+
+function ordinalSuffix(n) {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
 }
 
 function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics = []) {
@@ -2838,34 +3267,34 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
   const whyMets = metsAngles.length
     ? metsAngles.slice(0, 2).map((edge) => {
         if (/overall lineup quality|lineup vs handedness/i.test(edge.category)) {
-          return `The best Mets case is lineup quality: the projected group carries a small WAR edge and the stronger expected contact profile, even without true handedness-split data.`;
+          return `Lineup: Mets project higher in offensive quality (WAR, xwOBA) against ${gameFacts.pitching.opp.name || "this opponent"}.`;
         }
         if (edge.category === "Starting Pitching") {
-          return `The pitching case is that ${gameFacts.pitching.mets.name} has the cleaner underlying run-prevention profile in the categories we can actually measure today.`;
+          return `${gameFacts.pitching.mets.name}: better run-prevention profile in ERA, FIP, and/or xERA.`;
         }
         if (edge.category === "Bullpen") {
-          return `There is at least a modest bullpen path if New York can get to the middle innings without trailing, because the season-long gap is close and usage is heavy on both sides.`;
+          return `Bullpen: Mets hold a seasonal ERA/xFIP edge in relief.`;
         }
         return edge.explanation;
       }).join(" ")
-    : "There is no strong supported Mets angle beyond a modest overall lineup-quality edge, which is why the read stays conservative.";
+    : "Primary case: Mets lineup quality edge. No other dominant angle.";
   const whereRisk = riskAngles.length
     ? riskAngles.slice(0, 2).map((edge) => {
         if (edge.category === "Regression Signals") {
-          return `The main concern is that the Mets' contact-quality indicators still have not converted into actual production, so the offense is more projection than payoff right now.`;
+          return `Regression risk: expected offensive stats (xBA, xwOBA) running ahead of actual production.`;
         }
         if (edge.category === "Starting Pitching") {
-          return `${gameFacts.pitching.opp.name} still owns the better K-BB profile, so the strike-throwing edge is on the other side even if the surface numbers are not.`;
+          return `${gameFacts.pitching.opp.name} has the better K-BB% profile.`;
         }
         if (edge.category === "Bullpen") {
-          return `Bullpen support is not a clean Mets advantage, especially with both clubs carrying heavy recent workloads and no verified top-arm availability feed.`;
+          return `Bullpen edge is unclear — both sides carrying recent workload.`;
         }
         if (edge.category === "Home/Away Split" || edge.category === "Context") {
-          return `Context also leans slightly against New York because this is a road spot and the split data behind that angle is still incomplete.`;
+          return `Road/context splits lean slightly against Mets.`;
         }
         return edge.explanation;
       }).join(" ")
-    : "There is no single red-flag risk angle, but the missing data keeps the overall conviction down.";
+    : "No standout risk. Limited data keeps conviction measured.";
   const analyticalLeanBody = pick.analyticalLean === "Mets"
     ? "The weighted board comes in on the Mets side."
     : pick.analyticalLean === "Slight Mets edge"
@@ -2878,26 +3307,27 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
   const officialPickSummaryParts = [];
   if (proMetsOfficialAngles[0]) {
     if (/overall lineup quality|lineup vs handedness/i.test(proMetsOfficialAngles[0].category)) {
-      officialPickSummaryParts.push("The clearest case for backing the Mets is that the projected lineup still grades better overall, especially in expected offensive quality.");
+      officialPickSummaryParts.push("Main case: projected lineup grades higher in xwOBA and WAR.");
     } else if (proMetsOfficialAngles[0].category === "Starting Pitching") {
-      officialPickSummaryParts.push(`The best path starts with ${gameFacts.pitching.mets.name} giving New York the steadier underlying pitching line.`);
+      officialPickSummaryParts.push(`Primary edge: ${gameFacts.pitching.mets.name}'s run-prevention metrics.`);
     } else if (proMetsOfficialAngles[0].category === "Bullpen") {
-      officialPickSummaryParts.push("There is still a workable bullpen path for New York if the game stays close into the middle innings.");
+      officialPickSummaryParts.push("Secondary edge: Mets bullpen holds a seasonal metrics advantage.");
     } else {
       officialPickSummaryParts.push(proMetsOfficialAngles[0].explanation);
     }
   }
   if (proMetsOfficialAngles[1]) {
     if (proMetsOfficialAngles[1].category === "Regression Signals") {
-      officialPickSummaryParts.push("There is also a reasonable positive-regression case if the Mets' contact quality finally cashes in.");
+      officialPickSummaryParts.push("Supporting factor: contact quality metrics suggest positive regression ahead.");
     } else {
       officialPickSummaryParts.push(proMetsOfficialAngles[1].explanation);
     }
   }
   if (pick.analyticalLean === "Opponent" || pick.analyticalLean === "Slight opponent edge" || pick.analyticalLean === "Mixed") {
-    officialPickSummaryParts.push("That said, this is one of the more self-aware Mets ML spots: the analytical read is not fully on their side, so the brand pick is leaning on the best plausible New York path rather than a clean all-in edge.");
+    officialPickSummaryParts.push("Note: model does not fully favor Mets. Pick is based on the best supported individual angle.");
   }
   const pickSummary = officialPickSummaryParts.filter(Boolean).slice(0, 3).join(" ");
+  const pickNarrative = buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject);
   const quickRead = buildQuickRead(edgeScoring, pick);
   const edgeSummary = buildEdgeSummary(edgeScoring, pick);
   const gameDetails = buildGameDetailsSummary(gameFacts, analysisObject);
@@ -2962,6 +3392,7 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
       { heading: "9. Official MetsMoneyline Pick", body: pickSummary }
     ],
     pickSummary,
+    pickNarrative,
     officialPick: "Official Pick: Mets ML"
   };
 }
@@ -3522,6 +3953,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       gameAnalysis: writeup.gameAnalysis || null,
       sections,
       pickSummary: writeup.pickSummary,
+      pickNarrative: writeup.pickNarrative || null,
       officialPick,
       edgeTable: writeup.edgeTable || [],
       keyAngles: writeup.keyAngles || [],
@@ -3636,9 +4068,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </tbody>
     </table>`;
   const renderContextNote = (value, kind = "rank") => {
-    if (!value) return `<span style="display:block;min-height:14px;"></span>`;
+    if (!value) return ``;
     const label = kind === "percentile" ? `${ordinalSuffix(value)} %ile` : `#${value} MLB`;
-    return `<span style="display:block;min-height:14px;font-size:11px;line-height:1.15;color:#6b7280;font-weight:700;white-space:nowrap;">${label}</span>`;
+    return `<span style="display:block;font-size:11px;line-height:1.15;color:#6b7280;font-weight:700;white-space:nowrap;">${label}</span>`;
   };
   const renderMetricStack = (label, value, contextValue = null, contextKind = "rank", align = "center") => `
     <div style="text-align:${align === "flex-start" ? "left" : align === "flex-end" ? "right" : "center"};padding:4px 0;">
@@ -3706,15 +4138,44 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     const pitcherImageSrc = card?.image || card?.photoUrl || card?.headshot
       || (card?.mlbId ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current` : null);
     const photoHtml = pitcherImageSrc
-      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)}" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
+      ? `<img src="${pitcherImageSrc}" alt="${valueCell(card.name)} headshot for Mets betting report" width="96" height="96" loading="lazy" decoding="async" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;">`
       : `<div style="width:96px;height:96px;border-radius:16px;border:1px solid #d6dde8;background:#f3f4f6;color:#94a3b8;text-align:center;line-height:96px;font-size:32px;margin:0 auto;">&#9918;</div>`;
-    const statTile = (label, value) => `
-      <td valign="top" style="width:50%;padding:0 4px 8px 4px;">
-        <div style="border:1px solid #d6dde8;border-radius:10px;background:#f8fafc;padding:8px 9px;">
-          <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${label}</div>
-          <div>${heatCell(label, value)}</div>
-        </div>
-      </td>`;
+    const emailStatBar = (label, value) => {
+      const pct = reportMetricPct(label, value);
+      const shown = valueCell(value);
+      if (pct == null) return `
+        <tr>
+          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 4px 0;white-space:nowrap;vertical-align:middle;">${label}</td>
+          <td style="padding:4px 0;vertical-align:middle;"><span style="font-size:12px;font-weight:700;color:#111827;">${shown}</span></td>
+        </tr>`;
+
+      const color = reportPctlColor(pct);
+      const avg = ADVCELL_MLB_AVG[label];
+      const barTotalPx = 120;
+      const fillPx = Math.round((pct / 100) * barTotalPx);
+      const emptyPx = barTotalPx - fillPx;
+
+      return `
+        <tr>
+          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 8px 0;white-space:nowrap;vertical-align:top;">${label}</td>
+          <td style="padding:4px 0 8px 0;vertical-align:top;">
+            <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px;">${shown}</div>
+            <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
+              <tr>
+                <td style="width:${fillPx}px;height:10px;background:${color};border-radius:3px 0 0 3px;font-size:0;line-height:0;">&nbsp;</td>
+                ${avg ? `
+                  <td style="width:2px;height:10px;background:#374151;font-size:0;line-height:0;">&nbsp;</td>
+                  <td style="width:${Math.max(0, barTotalPx - fillPx - 2)}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
+                ` : `
+                  <td style="width:${emptyPx}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
+                `}
+              </tr>
+            </table>
+            ${avg ? `<div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: ${avg.label}</div>` : ''}
+            <div style="font-size:10px;color:#9099b0;font-weight:600;">${pct}th %ile</div>
+          </td>
+        </tr>`;
+    };
     return `
       <div class="email-pitcher-card" style="margin-bottom:18px;border:1px solid #d9e1ee;border-radius:18px;background:#ffffff;padding:16px;">
         <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
@@ -3730,20 +4191,103 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         </table>
         <div style="margin-top:14px;">
           <div style="${smallLabel}margin-bottom:8px;color:#6b7280;">Traditional Stats</div>
-          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-            <tr>
-              ${statTile("ERA", card.stats?.era)}
-              ${statTile("WHIP", card.stats?.whip)}
-            </tr>
-            <tr>
-              ${statTile("K%", card.stats?.kPct)}
-              ${statTile("BB%", card.stats?.bbPct)}
-            </tr>
+          <table role="presentation" style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:10px;">
+            <tbody>
+              ${emailStatBar("ERA",  card.stats?.era)}
+              ${emailStatBar("WHIP", card.stats?.whip)}
+              ${emailStatBar("K%",   card.stats?.kPct)}
+              ${emailStatBar("BB%",  card.stats?.bbPct)}
+            </tbody>
           </table>
         </div>
         ${tables.map((table) => renderEmailAdvancedBlock(table)).join("")}
         ${renderEmailRecentStarts(card.recentStarts)}
       </div>`;
+  };
+  const ADVCELL_MLB_AVG = {
+    'ERA':        { pctPos: 54, label: '4.20' },
+    'FIP':        { pctPos: 53, label: '4.10' },
+    'xERA':       { pctPos: 52, label: '4.05' },
+    'WHIP':       { pctPos: 51, label: '1.28' },
+    'K%':         { pctPos: 47, label: '22.5%' },
+    'BB%':        { pctPos: 51, label: '8.2%' },
+    'Barrel %':   { pctPos: 50, label: '7.5%' },
+    'Barrel%':    { pctPos: 50, label: '7.5%' },
+    'xBA':        { pctPos: 48, label: '0.248' },
+    'Hard Hit %': { pctPos: 50, label: '37%' },
+    'Hard-Hit%':  { pctPos: 50, label: '37%' },
+    'xSLG %':     { pctPos: 49, label: '0.400' },
+    'xSLG':       { pctPos: 49, label: '0.400' },
+    'xwOBA':      { pctPos: 48, label: '0.310' },
+    'wRC+':       { pctPos: 47, label: '100' },
+    'WAR':        { pctPos: 43, label: '0.5' },
+  };
+  const renderAdvancedBar = (label, value, contextValue = null, contextKind = 'rank', align = 'left') => {
+    const pct = reportMetricPct(label, value);
+    const shown = valueCell(value);
+    const textAlign = align === 'right' ? 'right' : 'left';
+    const ctxText = contextValue != null
+      ? (contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`)
+      : '';
+    if (pct == null) {
+      return `<div style="min-height:72px;display:flex;flex-direction:column;justify-content:center;padding:4px 0;">
+        <span style="font-weight:700;font-size:13px;color:#111827;text-align:${textAlign};display:block;">${shown}</span>
+        ${ctxText ? `<span style="font-size:12px;color:#6b7280;font-weight:600;display:block;margin-top:3px;text-align:${textAlign};">${ctxText}</span>` : ''}
+      </div>`;
+    }
+    const color = reportPctlColor(pct);
+    const avg = ADVCELL_MLB_AVG[label];
+    const avgMarker = avg
+      ? `<div style="position:absolute;top:0;left:${avg.pctPos}%;height:100%;width:2px;background:#374151;transform:translateX(-50%);z-index:2;border-radius:1px;"></div>`
+      : '';
+    const avgLabel = avg
+      ? `<span style="position:absolute;top:100%;left:${avg.pctPos}%;transform:translateX(-50%);font-size:10px;color:#6b7280;font-weight:700;white-space:nowrap;margin-top:2px;">${avg.label}</span>`
+      : '';
+    return `<div style="min-height:72px;display:flex;flex-direction:column;justify-content:center;padding:4px 0 20px 0;">
+      <div style="font-size:14px;font-weight:800;color:#111827;margin-bottom:5px;text-align:${textAlign};">${shown}</div>
+      <div style="position:relative;height:12px;background:#e9ecf3;border-radius:3px;overflow:visible;">
+        <div style="height:100%;width:${pct}%;background:${color};border-radius:3px;position:relative;"></div>
+        ${avgMarker}
+        ${avgLabel}
+      </div>
+      ${ctxText ? `<span style="font-size:12px;color:#6b7280;font-weight:700;display:block;margin-top:14px;text-align:${textAlign};">${ctxText}</span>` : ''}
+    </div>`;
+  };
+  const renderEmailAdvBar = (label, value, contextValue = null, contextKind = 'rank') => {
+    const pct = reportMetricPct(label, value);
+    const shown = valueCell(value);
+
+    if (pct == null) {
+      const ctx = contextValue != null
+        ? (contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`)
+        : '';
+      return `<div style="padding:4px 0;">
+        <span style="font-size:13px;font-weight:700;color:#111827;">${shown}</span>
+        ${ctx ? `<div style="font-size:10px;color:#9099b0;font-weight:600;margin-top:2px;">${ctx}</div>` : ''}
+      </div>`;
+    }
+
+    const color = reportPctlColor(pct);
+    const avg = ADVCELL_MLB_AVG[label];
+    const barTotalPx = 100;
+    const fillPx = Math.round((pct / 100) * barTotalPx);
+    const ctx = contextValue != null
+      ? (contextKind === 'percentile' ? `${ordinalSuffix(contextValue)} %ile` : `#${contextValue} MLB`)
+      : '';
+
+    return `<div style="padding:4px 0 12px 0;">
+      <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:4px;">${shown}</div>
+      <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
+        <tr>
+          <td style="width:${fillPx}px;height:10px;background:${color};border-radius:3px 0 0 3px;font-size:0;">&nbsp;</td>
+          ${avg ? `<td style="width:2px;height:10px;background:#374151;font-size:0;">&nbsp;</td>
+                   <td style="width:${Math.max(0, barTotalPx - fillPx - 2)}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;">&nbsp;</td>`
+                 : `<td style="width:${barTotalPx - fillPx}px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;">&nbsp;</td>`}
+        </tr>
+      </table>
+      ${avg ? `<div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: ${avg.label}</div>` : ''}
+      ${ctx ? `<div style="font-size:11px;color:#6b7280;font-weight:700;margin-top:2px;">${ctx}</div>` : ''}
+    </div>`;
   };
   const renderAdvancedSheetTable = (table) => {
     if (mode === "email") {
@@ -3762,8 +4306,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
                 <div class="email-adv-label" style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f8fafc;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">${valueCell(row.label)}</div>
                 <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
                   <tr>
-                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
-                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderEmailAdvBar(row.label, row.left, row.leftPercentile ?? null, "percentile")}</td>
+                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderEmailAdvBar(row.label, row.right, resolvedRank, "rank")}</td>
                   </tr>
                 </table>
               </div>
@@ -3772,7 +4316,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         </div>`;
     }
     return `
-      <div class="report-sheet-table-wrap" style="width:100%;overflow:hidden;-webkit-overflow-scrolling:touch;">
+      <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <table class="report-sheet-table report-advanced-table" style="width:100%;border-collapse:collapse;font-size:13px;border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
         <thead>
           <tr>
@@ -3786,9 +4330,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
             <tr>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderMetricStack(row.label, row.left, row.leftPercentile ?? null, "percentile", "flex-start")}</td>
-              <td style="width:34%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;">${valueCell(row.label)}</td>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:middle;">${renderMetricStack(row.label, row.right, resolvedRank, "rank", "flex-end")}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.left, row.leftPercentile ?? null, 'percentile', 'left')}</td>
+              <td style="width:34%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;height:88px;">${valueCell(row.label)}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.right, resolvedRank, 'rank', 'right')}</td>
             </tr>
           `;}).join("")}
         </tbody>
@@ -3796,7 +4340,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </div>`;
   };
   const renderSummarySheetTable = (rows, headers = null) => `
-    <div class="report-sheet-table-wrap" style="width:100%;overflow:${mode === "site" ? "hidden" : "auto"};-webkit-overflow-scrolling:touch;">
+    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
     <table class="report-sheet-table report-summary-table" style="width:100%;height:100%;border-collapse:collapse;font-size:${mode === "site" ? "14px" : "13px"};border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
       ${headers ? `
         <thead>
@@ -3851,12 +4395,12 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
               </thead>
               <tbody>
                 ${players.map((p, i) => `
-                  <tr>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;color:#6b7280;font-weight:700;">${valueCell(p.order ?? i + 1)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};font-weight:700;color:#111827;">${valueCell(p.name)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("xBA", p.savant?.xBA || null)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;background:${bgRow};text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null)}</td>
+                  <tr style="background:${i % 2 === 0 ? '#ffffff' : '#f9fafb'};">
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">${valueCell(p.order ?? i + 1)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">${valueCell(p.name)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("xBA", p.savant?.xBA || null)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null)}</td>
                   </tr>`).join("")}
               </tbody>
             </table>
@@ -3869,13 +4413,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const pid = player?.playerId || player?.id || player?.mlbId || 0;
       if (!pid) return "";
       const photoSize = mode === "site" ? 30 : 24;
-      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)}" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
+      return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" alt="${valueCell(player?.name)} headshot for ${valueCell(report?.header?.oppTeamLabel || "Mets report")} lineup analysis" width="${photoSize}" height="${photoSize}" loading="lazy" decoding="async" style="width:${photoSize}px;height:${photoSize}px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid #d6dde8;background:#ffffff;">`;
     };
     const lineupNameCell = (player, side) => {
       if (mode === "email") return `<span style="font-weight:700;">${valueCell(player?.name)}</span>`;
       return `<div style="display:flex;align-items:center;gap:8px;min-width:0;">
         ${lineupHeadshot(player)}
-        <span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${valueCell(player?.name)}</span>
+        <span style="font-weight:700;white-space:normal;line-height:1.25;">${valueCell(player?.name)}</span>
       </div>`;
     };
     const maxRows = Math.max(mets.length, opp.length, 9);
@@ -3885,13 +4429,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const o = opp[i] || {};
       rows.push(`
         <tr>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;text-align:left;white-space:nowrap;">${lineupNameCell(m, "mets")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;text-align:left;">${lineupNameCell(m, "mets")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("xBA", m.savant?.xBA || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("K%", m.savant?.kPct || m.fangraphs?.kPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("Hard Hit %", m.savant?.hardHitPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("WAR", m.fangraphs?.war || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:800;">${valueCell(m.order ?? o.order ?? i + 1)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:left;white-space:nowrap;">${lineupNameCell(o, "opp")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:left;">${lineupNameCell(o, "opp")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("xBA", o.savant?.xBA || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("K%", o.savant?.kPct || o.fangraphs?.kPct || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("Hard Hit %", o.savant?.hardHitPct || null)}</td>
@@ -3940,17 +4484,17 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
               <th colspan="5" style="padding:10px 8px;text-align:left;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;${smallLabel}">${oppLabel}</th>
             </tr>
             <tr>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:left;">Mets Player</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">xBA</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">K%</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">Hard Hit %</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">WAR</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;${smallLabel}text-align:center;">Order</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:left;">Opponent Player</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">xBA</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">K%</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">Hard Hit %</th>
-              <th style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">WAR</th>
+              <th style="width:18%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:left;">Mets Player</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">xBA</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">K%</th>
+              <th style="width:9%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">Hard Hit %</th>
+              <th style="width:6%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;${smallLabel}text-align:center;">WAR</th>
+              <th style="width:5%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;${smallLabel}text-align:center;">Order</th>
+              <th style="width:18%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:left;">Opponent Player</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">xBA</th>
+              <th style="width:7%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">K%</th>
+              <th style="width:9%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">Hard Hit %</th>
+              <th style="width:6%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;${smallLabel}text-align:center;">WAR</th>
             </tr>
           </thead>
           <tbody>${rows.join("")}</tbody>
@@ -3966,15 +4510,32 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           : `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${card.mlbId}/headshot/67/current`)
       : null;
     const photoHtml = pitcherImageSrc
-      ? `<img class="pitcher-photo-sm" src="${pitcherImageSrc}" alt="${card.name}">`
+      ? `<img class="pitcher-photo-sm" src="${pitcherImageSrc}" alt="${card.name} pitching matchup photo" width="360" height="360" loading="lazy" decoding="async">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
+    const MLB_AVG_VALUES = {
+      'ERA': 4.20, 'WHIP': 1.28, 'K%': 22.5, 'BB%': 8.2, 'FIP': 4.10, 'xERA': 4.05
+    };
     const statBar = (label, value) => {
       const pct = reportMetricPct(label, value);
       const color = pct == null ? "#d1d5db" : reportPctlColor(pct);
       const shown = valueCell(value);
+      const avgVal = MLB_AVG_VALUES[label];
+      const pctileLabel = pct != null ? `${pct}th %ile` : '';
+      const avgMarker = avgVal != null
+        ? `<div class="sbar-avg-marker" style="left:50%;">
+             <div class="sbar-avg-line"></div>
+             <span class="sbar-avg-label">Avg: ${avgVal}</span>
+           </div>`
+        : '';
       return `<div class="sbar-row">
         <span class="sbar-label">${label}</span>
-        <div class="sbar-track"><div class="sbar-fill" style="width:${pct == null ? 0 : pct}%;background:${color}"><span class="sbar-pct">${pct == null ? "" : pct}</span></div></div>
+        <div class="sbar-track-wrap">
+          <div class="sbar-track">
+            <div class="sbar-fill" style="width:${pct == null ? 0 : pct}%;background:${color};"></div>
+            ${avgMarker}
+          </div>
+          ${pctileLabel ? `<span class="sbar-pctile">${pctileLabel}</span>` : ''}
+        </div>
         <span class="sbar-val">${shown}</span>
       </div>`;
     };
@@ -4106,6 +4667,10 @@ function buildEmailHtml(game) {
                 </div>
                 ${game.writeup?.preliminaryMeta?.enabled ? `<div style="margin:0 0 18px 0;padding:14px 16px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:12px;font-size:14px;font-weight:600;">${game.writeup.preliminaryMeta.note || "This is a preliminary report. A final updated report will be sent when official lineups are confirmed."}</div>` : ""}
                 ${reportMarkup}
+                <div style="margin-top:20px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
+                  <p style="margin:0 0 8px 0;font-size:13px;color:#475569;">See the full interactive breakdown with charts and lineup stats</p>
+                  <a href="https://www.metsmoneyline.com/report.html" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+                </div>
               </td>
             </tr>
           </table>
@@ -4122,12 +4687,36 @@ function buildSiteReportHtml(game) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${report.header?.title || "MetsMoneyline Report"}</title>
+    <meta name="impact-site-verification" value="e6068632-7155-4486-9cae-080414cd8d3b">
+    <title>Mets Moneyline | Daily NY Mets Game Analysis</title>
+    <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
+    <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
+    <link rel="canonical" href="https://www.metsmoneyline.com/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://statsapi.mlb.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.metsmoneyline.com/">
+    <meta property="og:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+    <meta property="og:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+    <meta property="og:image" content="https://www.metsmoneyline.com/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
+    <meta name="twitter:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
+    <meta name="twitter:image" content="https://www.metsmoneyline.com/og-image.png">
+    <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Mets Moneyline",
+        "url": "https://www.metsmoneyline.com",
+        "description": "Daily NY Mets game analysis, moneyline value, and betting insights."
+      }
+    </script>
     <style>
       html, body { max-width:100%; overflow-x:hidden; }
       @media (max-width: 980px) {
@@ -4143,8 +4732,9 @@ function buildSiteReportHtml(game) {
         .report-banner > div:first-child { gap:12px !important; }
         .report-banner > div:first-child > div { min-width:0 !important; }
         .report-banner p { font-size:0.88rem !important; line-height:1.45 !important; word-break:break-word; }
-        .report-sheet-table-wrap, .report-lineup-wrap { margin:0; width:100%; overflow:hidden !important; }
-        .report-sheet-table { width:100% !important; table-layout:fixed !important; }
+        .report-sheet-table-wrap { margin:0; width:100%; overflow-x:auto !important; -webkit-overflow-scrolling:touch !important; }
+        .report-lineup-wrap { margin:0; width:100%; overflow:hidden !important; }
+        .report-sheet-table { width:100% !important; }
         .report-summary-table th, .report-summary-table td { padding:8px 6px !important; font-size:12px !important; word-break:break-word; }
         .report-advanced-table th, .report-advanced-table td { padding:6px 5px !important; font-size:11px !important; word-break:break-word; }
         .report-heat-pill { min-width:0 !important; width:100%; padding:5px 4px !important; font-size:11px !important; text-align:center; }
@@ -4163,35 +4753,20 @@ function buildSiteReportHtml(game) {
   </head>
   <body>
     <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
-    <header>
-      <nav>
-        <a href="/" class="nav-brand">
-          <span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span>
-        </a>
-        <button class="nav-hamburger" aria-label="Toggle menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-        <ul class="nav-links">
-          <li><a href="/" class="nav-link">Game Day</a></li>
-          <li><a href="report.html" class="nav-link active">Today's Report</a></li>
-          <li><a href="advanced-stats.html" class="nav-link">Stats &amp; Standings</a></li>
-          <li><a href="betting-history.html" class="nav-link">History</a></li>
-          <li><a href="news.html" class="nav-link">Team News</a></li>
-        </ul>
-      </nav>
-    </header>
+    <header></header>
     <main class="report-main" style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
       <section class="report-banner" style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
         <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
-            <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets" style="width:112px;height:112px;object-fit:contain;">
+            <img class="report-banner-logo" src="${report.header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg"}" alt="New York Mets team logo" width="112" height="112" decoding="async" style="width:112px;height:112px;object-fit:contain;">
           </div>
           <div style="font-size:1.45rem;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</div>
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">
-            <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"}" style="width:112px;height:112px;object-fit:contain;">
+            <img class="report-banner-logo" src="${report.header?.oppLogoUrl || ""}" alt="${game.opponent || "Opponent"} team logo" width="112" height="112" decoding="async" style="width:112px;height:112px;object-fit:contain;">
           </div>
         </div>
-        <p style="margin:0.9rem 0 0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
+        <h1 style="margin:0.9rem 0 0.35rem;color:#111827;font-size:1.9rem;line-height:1.2;">${game.homeAway === "away" ? `Mets at ${game.opponent}` : `${game.opponent} at Mets`}</h1>
+        <p style="margin:0;color:#5b6477;font-size:0.96rem;line-height:1.5;">${report.header?.metadataLine || [report.header?.date || game.date, report.header?.time || game.time, report.header?.ballpark || game.ballpark, report.meta?.weatherSummary].filter(Boolean).join(" | ")}</p>
       </section>
       ${reportMarkup}
     </main>
@@ -4202,24 +4777,8 @@ function buildSiteReportHtml(game) {
       <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
       <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
     </footer>
-    <script>
-      const hamburger = document.querySelector('.nav-hamburger');
-      const navLinks = document.querySelector('.nav-links');
-      if (hamburger && navLinks) {
-        hamburger.addEventListener('click', () => {
-          const open = navLinks.classList.toggle('open');
-          hamburger.classList.toggle('open', open);
-          hamburger.setAttribute('aria-expanded', open);
-        });
-        navLinks.querySelectorAll('.nav-link').forEach((link) => {
-          link.addEventListener('click', () => {
-            navLinks.classList.remove('open');
-            hamburger.classList.remove('open');
-            hamburger.setAttribute('aria-expanded', 'false');
-          });
-        });
-      }
-    </script>
+    <script defer src="js/site-header.js"></script>
+    <script defer src="js/report-live-odds.js"></script>
   </body>
 </html>`;
 }
@@ -4399,79 +4958,251 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
 }
 
 function buildCondensedEmailHtml(game) {
-  const report = game?.writeup?.report;
+  const report = game?.writeup?.report || buildPresentationReport(game);
   const header = report?.header;
   const pick = report?.officialPick;
   const meta = header?.metadataLine || "";
-  const matchup = `${header?.metsTeamLabel || "New York Mets"} vs ${header?.oppTeamLabel || game?.opponent || "Opponent"}`;
-  const weather = header?.weatherLine || "";
+  const opponent = game?.opponent || "Opponent";
   const metsLogo = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
   const oppLogo = header?.oppLogoUrl || "";
-  const oddsHome = report?.header?.oddsHomeLabel || "";
-  const oddsAway = report?.header?.oddsAwayLabel || "";
+  const metsCard = report?.startingPitchersComparison?.metsCard;
+  const oppCard = report?.startingPitchersComparison?.oppCard;
+  const metsLineup = report?.projectedLineupComparison?.mets || [];
+  const oppLineup = report?.projectedLineupComparison?.opp || [];
+  const edgeRows = report?.edgeTable || [];
+  const analysis = report?.analysis;
 
-  return `
-  <div style="max-width:640px;margin:0 auto;padding:16px 14px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:#0b1120;color:#e5e7eb;">
-    <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Today's Report</div>
+  const valueCell = (v) => v == null || v === "" ? "—" : v;
+  const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;";
 
-    <table role="presentation" style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+  const heatPill = (label, value) => {
+    const pct = reportMetricPct(label, value);
+    const style = pct == null
+      ? "background:#f3f4f6;color:#374151;"
+      : reportCellToneStyle(pct);
+    return `<span style="display:inline-block;min-width:48px;padding:4px 7px;text-align:center;border-radius:6px;font-size:12px;font-weight:700;${style}">${valueCell(value)}</span>`;
+  };
+
+  const recentStartsBlock = (starts, name) => {
+    if (!Array.isArray(starts) || !starts.length) return "";
+    const rows = starts.slice(0, 3).map(s => `
       <tr>
-        <td style="width:64px;padding:0 8px 0 0;vertical-align:middle;">
-          <img src="${metsLogo}" alt="Mets" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:12px;background:#020617;">
-        </td>
-        <td style="text-align:center;vertical-align:middle;font-size:13px;color:#9ca3af;">vs</td>
-        <td style="width:64px;padding:0 0 0 8px;vertical-align:middle;text-align:right;">
-          ${oppLogo ? `<img src="${oppLogo}" alt="Opponent" style="display:block;width:52px;height:52px;object-fit:contain;border-radius:12px;background:#020617;">` : ""}
-        </td>
-      </tr>
-    </table>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;color:#6b7280;font-size:11px;">${String(s.date || "").slice(5)}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;font-size:11px;font-weight:600;">${valueCell(s.opponent)}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.ip)}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.er ?? "-")}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.k ?? "-")}</td>
+        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${s.result || ""}</td>
+      </tr>`).join("");
+    return `
+      <div style="margin-top:10px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:6px;">Recent Starts — ${name}</div>
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #e5e7eb;border-radius:8px;">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th style="padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Date</th>
+              <th style="padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Opp</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">IP</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">ER</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">K</th>
+              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Dec</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  };
 
-    <h1 style="margin:0 0 6px 0;font-size:20px;line-height:1.25;color:#f9fafb;">${matchup}</h1>
-    <div style="font-size:13px;color:#9ca3af;margin-bottom:6px;">${meta}</div>
-    ${weather ? `<div style="font-size:13px;color:#9ca3af;margin-bottom:10px;">${weather}</div>` : ""}
+  const pitcherComparisonBlock = () => {
+    if (!metsCard && !oppCard) return "";
+    const metsPhoto = metsCard?.mlbId
+      ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${metsCard.mlbId}/headshot/67/current" alt="${metsCard.name}" width="48" height="48" style="border-radius:50%;border:2px solid #d6dde8;">`
+      : "";
+    const oppPhoto = oppCard?.mlbId
+      ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${oppCard.mlbId}/headshot/67/current" alt="${oppCard.name}" width="48" height="48" style="border-radius:50%;border:2px solid #d6dde8;">`
+      : "";
+    const metrics = ["ERA", "WHIP", "K%", "BB%"];
+    const metsStats = metsCard?.stats || {};
+    const oppStats = oppCard?.stats || {};
+    const statsMap = { "ERA": "era", "WHIP": "whip", "K%": "kPct", "BB%": "bbPct" };
 
-    ${(oddsHome || oddsAway) ? `
-      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 14px 0;font-size:12px;color:#e5e7eb;">
-        <tr style="background:#020617;border-radius:10px;">
-          <td style="padding:8px 8px 8px 10px;border:1px solid #1f2937;border-right:none;border-radius:10px 0 0 10px;">
-            <div style="font-weight:600;color:#9ca3af;font-size:11px;margin-bottom:2px;">Mets</div>
-            <div style="font-weight:700;">${oddsHome || ""}</div>
-          </td>
-          <td style="padding:8px;border:1px solid #1f2937;border-left:none;border-radius:0 10px 10px 0;text-align:right;">
-            <div style="font-weight:600;color:#9ca3af;font-size:11px;margin-bottom:2px;">Opponent</div>
-            <div style="font-weight:700;">${oddsAway || ""}</div>
-          </td>
-        </tr>
-      </table>` : ""}
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Starting Pitchers</div>
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d6dde8;border-radius:12px;overflow:hidden;font-size:12px;">
+          <thead>
+            <tr>
+              <th style="width:30%;padding:10px 8px;background:#e9f3ff;color:#0f172a;text-align:left;${smallLabel}">
+                ${metsPhoto} <div style="margin-top:4px;">${valueCell(metsCard?.name)}</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:500;text-transform:none;letter-spacing:0;">${valueCell(metsCard?.teamLabel)}${metsCard?.hand ? ` · ${metsCard.hand}` : ""}${metsCard?.record ? ` · ${metsCard.record}` : ""}</div>
+              </th>
+              <th style="width:14%;padding:10px 4px;background:#f8fafc;text-align:center;${smallLabel}color:#475569;">Stat</th>
+              <th style="width:30%;padding:10px 8px;background:#fdf1e5;color:#7c2d12;text-align:right;${smallLabel}">
+                ${oppPhoto} <div style="margin-top:4px;">${valueCell(oppCard?.name)}</div>
+                <div style="font-size:10px;color:#6b7280;font-weight:500;text-transform:none;letter-spacing:0;">${valueCell(oppCard?.teamLabel)}${oppCard?.hand ? ` · ${oppCard.hand}` : ""}${oppCard?.record ? ` · ${oppCard.record}` : ""}</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            ${metrics.map(m => `
+              <tr>
+                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;text-align:center;">${heatPill(m, metsStats[statsMap[m]])}</td>
+                <td style="padding:7px 4px;border-bottom:1px solid #f0f2f5;text-align:center;font-weight:700;color:#475569;font-size:11px;">${m}</td>
+                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;text-align:center;">${heatPill(m, oppStats[statsMap[m]])}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        ${recentStartsBlock(metsCard?.recentStarts, metsCard?.name || "Mets SP")}
+        ${recentStartsBlock(oppCard?.recentStarts, oppCard?.name || "Opp SP")}
+      </div>`;
+  };
 
-    <div style="padding:12px 12px;border-radius:12px;background:linear-gradient(135deg,#0f766e,#22c55e);color:#ecfdf5;margin-bottom:14px;">
-      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;opacity:0.9;">Official Pick</div>
-      <div style="margin-top:4px;font-size:18px;font-weight:800;">${pick?.label || "See full report"}</div>
-      ${pick?.confidence != null ? `<div style="margin-top:4px;font-size:12px;opacity:0.9;">Confidence: ${pick.confidence}/10</div>` : ""}
-      ${report?.analyticalLean ? `<div style="margin-top:6px;font-size:13px;line-height:1.5;">${report.analyticalLean}</div>` : ""}
-    </div>
+  const lineupBlock = () => {
+    if (!metsLineup.length && !oppLineup.length) return "";
+    const renderSide = (players, label, bgHeader) => {
+      if (!players.length) return "";
+      return `
+        <div style="margin-bottom:12px;">
+          <div style="padding:7px 10px;background:${bgHeader};${smallLabel}color:#0f172a;border-radius:8px 8px 0 0;border:1px solid #d6dde8;">${label}</div>
+          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d6dde8;border-top:none;">
+            <thead>
+              <tr style="background:#f8fafc;">
+                <th style="width:6%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">#</th>
+                <th style="width:34%;padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">Player</th>
+                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">xBA</th>
+                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">K%</th>
+                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">Hard Hit</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${players.map((p, i) => `
+                <tr style="background:${i % 2 === 0 ? '#fff' : '#f9fafb'};">
+                  <td style="padding:5px 4px;text-align:center;color:#6b7280;font-weight:700;border-bottom:1px solid #f0f2f5;">${p.order ?? i + 1}</td>
+                  <td style="padding:5px 6px;font-weight:700;color:#111827;border-bottom:1px solid #f0f2f5;">${valueCell(p.name)}</td>
+                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("xBA", p.savant?.xBA)}</td>
+                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("K%", p.savant?.kPct || p.fangraphs?.kPct)}</td>
+                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("Hard Hit %", p.savant?.hardHitPct)}</td>
+                </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>`;
+    };
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Projected Lineups</div>
+        ${renderSide(metsLineup, "New York Mets", "#e9f3ff")}
+        ${renderSide(oppLineup, opponent, "#fdf1e5")}
+      </div>`;
+  };
 
-    ${report?.quickRead ? `
-      <div style="margin-bottom:14px;padding:10px 12px;border-radius:10px;background:#020617;border:1px solid #1f2937;">
-        <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:4px;">Why this angle?</div>
-        <div style="font-size:13px;line-height:1.6;color:#e5e7eb;">${report.quickRead}</div>
-      </div>` : ""}
+  const edgeBlock = () => {
+    if (!edgeRows.length) return "";
+    const edgeColor = (edge) => {
+      if (/mets/i.test(edge)) return "#16a34a";
+      if (/opponent/i.test(edge)) return "#dc2626";
+      return "#6b7280";
+    };
+    const strengthDot = (str) => {
+      if (str === "strong") return "●●●";
+      if (str === "moderate") return "●●○";
+      if (str === "slight") return "●○○";
+      return "—";
+    };
+    return `
+      <div style="margin-bottom:16px;">
+        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Edge Summary</div>
+        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;border-radius:10px;overflow:hidden;">
+          <thead>
+            <tr style="background:#f8fafc;">
+              <th style="padding:8px 8px;text-align:left;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Category</th>
+              <th style="padding:8px 6px;text-align:center;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Edge</th>
+              <th style="padding:8px 6px;text-align:center;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Strength</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${edgeRows.map(row => `
+              <tr>
+                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;font-weight:600;color:#374151;">${row.category}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-weight:700;color:${edgeColor(row.edge)};font-size:11px;">${row.edge}</td>
+                <td style="padding:7px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:10px;letter-spacing:1px;">${strengthDot(row.strength)}</td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+      </div>`;
+  };
 
-    <div style="margin-bottom:10px;">
-      <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:4px;">Edge snapshot</div>
-      <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#e5e7eb;">
-        ${report?.pitchingEdgeSummary ? `<li>${report.pitchingEdgeSummary}</li>` : ""}
-        ${report?.projectedLineupEdgeSummary ? `<li>${report.projectedLineupEdgeSummary}</li>` : ""}
-        ${report?.edgeSummary ? `<li>${report.edgeSummary}</li>` : ""}
-      </ul>
-    </div>
+  const analysisBlock = () => {
+    if (!analysis) return "";
+    const bulletStyle = "margin:0 0 6px 0;padding-left:14px;text-indent:-14px;font-size:13px;line-height:1.5;color:#374151;";
+    const sectionLabel = (text) => `<div style="${smallLabel}color:#6b7280;margin:12px 0 6px 0;">${text}</div>`;
+    const bullets = (items) => (items || []).map(b => `<p style="${bulletStyle}">→ ${b}</p>`).join("");
+    return `
+      <div style="margin-bottom:16px;padding:14px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e5e7eb;">
+        ${sectionLabel("Key angles — Mets case")}
+        ${bullets(analysis.whyMetsHaveACase)}
+        ${sectionLabel("Key angles — Risk")}
+        ${bullets(analysis.whereTheRiskIs)}
+        ${sectionLabel("Bottom line")}
+        <p style="margin:0;font-size:13px;line-height:1.5;color:#111827;font-weight:600;">${valueCell(analysis.bottomLine)}</p>
+      </div>`;
+  };
 
-    <div style="margin-top:18px;font-size:12px;color:#94a3b8;">
-      View the full report with matchup tables and charts:
-      <a href="https://metsmoneyline.com/report" style="color:#38bdf8;text-decoration:none;">Open Today&rsquo;s Report</a>
-    </div>
-  </div>
-  `;
+  return `<style>
+    @media only screen and (max-width: 620px) {
+      .email-shell { width:100% !important; }
+      .email-pad { padding:14px !important; }
+    }
+  </style>
+  <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#111827;line-height:1.55;">
+    <tr>
+      <td align="center" style="padding:16px 8px;">
+        <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;border-collapse:collapse;background:#ffffff;border:1px solid #dde4ef;border-radius:16px;overflow:hidden;">
+          <tr>
+            <td class="email-pad" style="padding:20px 22px;">
+              <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:0 0 12px 0;">MetsMoneyline · Today's Report</p>
+              <div style="margin:0 0 16px 0;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:16px;padding:16px 14px;text-align:center;">
+                <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+                  <tr>
+                    <td align="center" style="width:35%;padding:0 4px;">
+                      <img src="${metsLogo}" alt="New York Mets" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin:0 auto;">
+                    </td>
+                    <td align="center" style="width:30%;font-size:18px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
+                    <td align="center" style="width:35%;padding:0 4px;">
+                      ${oppLogo ? `<img src="${oppLogo}" alt="${opponent}" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin:0 auto;">` : ""}
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:10px 0 0 0;color:#5b6477;font-size:13px;line-height:1.45;">${meta}</p>
+              </div>
+              ${game.writeup?.preliminaryMeta?.enabled ? `<div style="margin:0 0 14px 0;padding:10px 14px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:10px;font-size:12px;font-weight:600;">${game.writeup.preliminaryMeta.note || "Preliminary report — final update when lineups are confirmed."}</div>` : ""}
+              <div style="margin:0 0 16px 0;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#002d72,#003d8f);color:#ffffff;text-align:center;">
+                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;opacity:0.8;">Official Pick</div>
+                <div style="margin-top:6px;font-size:20px;font-weight:900;">${valueCell(pick?.label)}</div>
+                ${pick?.confidence != null ? `<div style="margin-top:4px;font-size:12px;opacity:0.85;">Confidence: ${pick.confidence}/10</div>` : ""}
+              </div>
+              ${pitcherComparisonBlock()}
+              ${lineupBlock()}
+              ${edgeBlock()}
+              ${analysisBlock()}
+              <div style="margin-top:18px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
+                <p style="margin:0 0 8px 0;font-size:12px;color:#475569;">Full interactive breakdown with charts and advanced matchup data</p>
+                <a href="https://www.metsmoneyline.com/report.html" style="display:inline-block;background:#ff5910;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <table role="presentation" width="100%" style="width:100%;max-width:600px;border-collapse:collapse;">
+          <tr>
+            <td style="padding:14px 20px;text-align:center;font-size:11px;color:#9099b0;line-height:1.5;">
+              For entertainment purposes only. Always gamble responsibly.<br>
+              &copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>`;
 }
 
 async function createButtondownDraft(output) {
@@ -4607,6 +5338,7 @@ function logDebugAnalysis(writeup) {
       sections: writeup.sections || [],
       analyticalLean: writeup.analyticalLean || null,
       pickSummary: writeup.pickSummary || null,
+      pickNarrative: writeup.pickNarrative || null,
       officialPick: writeup.officialPick || null,
       confidence: writeup.confidence || null
     },
@@ -4657,9 +5389,9 @@ function persistGeneratedOutput(output, { referenceDate = getTodayEasternISO() }
     fs.writeFileSync(REPORT_HTML_PATH, buildSiteReportHtml(featuredGame));
     console.log(`Wrote ${REPORT_HTML_PATH}`);
   }
-  const pickHistoryOutput = writePickHistory(Array.isArray(output.recentBreakdowns) ? output.recentBreakdowns : []);
-  console.log(`Wrote ${PICK_HISTORY_PATH} with ${pickHistoryOutput.entries.length} entr${pickHistoryOutput.entries.length === 1 ? "y" : "ies"}`);
-  return pickHistoryOutput;
+  generateSitemap();
+  generateRss();
+  return { sampleJsonPath: SAMPLE_JSON_PATH, reportHtmlPath: featuredGame ? REPORT_HTML_PATH : null };
 }
 
 async function run() {
@@ -4714,7 +5446,6 @@ module.exports = {
   buildSiteReportHtml,
   loadPreviousOutput,
   loadPickHistory,
-  writePickHistory,
   generateOutputPackage,
   persistGeneratedOutput,
   formatButtondownSubject,

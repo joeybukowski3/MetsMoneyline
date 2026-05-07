@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mets Top 15 Prospect Rankings 2026 | MetsMoneyline</title>
+  <meta name="description" content="Live-updating 2026 New York Mets top 15 prospect rankings with MiLB stats, trend lines, and recent news for Tong, Ewing, Clifford, McLean, and more.">
+  <meta name="keywords" content="Mets prospects 2026, Jonah Tong stats, AJ Ewing stats, Mets farm system, Mets minor league, Nolan McLean prospect">
+  <link rel="canonical" href="https://www.metsmoneyline.com/prospects.html">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/prospects.html">
+  <meta property="og:title" content="Mets Top 15 Prospect Rankings 2026 | MetsMoneyline">
+  <meta property="og:description" content="Live MiLB stats and trend lines for the top 15 Mets prospects.">
+  <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mets Top 15 Prospect Rankings 2026 | MetsMoneyline">
+  <meta name="twitter:description" content="Live MiLB stats and trend lines for the top 15 Mets prospects.">
+  <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="/favicon.jpg">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebPage","name":"Mets Top 15 Prospect Rankings 2026","url":"https://www.metsmoneyline.com/prospects.html","isPartOf":{"@type":"WebSite","name":"Mets Moneyline","url":"https://www.metsmoneyline.com"}}
+  </script>
+  <style>
+    .prospects-shell { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+    .prospects-header { padding: 2rem 0 1.25rem; text-align: center; }
+    .prospects-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
+    .prospects-header p { color: var(--text-muted); font-size: 0.9rem; }
+
+    .prospect-card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px;
+      padding: 1.25rem 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow);
+      display: grid; grid-template-columns: 48px 1fr; gap: 1rem; align-items: start;
+    }
+    .prospect-rank {
+      width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.2rem; font-weight: 900; color: #fff;
+      background: var(--navy); flex-shrink: 0;
+    }
+    .prospect-rank.top3 { background: var(--orange); }
+
+    .prospect-body { min-width: 0; }
+    .prospect-name-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .prospect-name-row h3 { font-size: 1rem; font-weight: 800; color: var(--navy); }
+    .prospect-name-row img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); }
+    .prospect-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .prospect-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.4rem; }
+    .prospect-tag {
+      font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .tag-mlb { background: rgba(0,45,114,0.1); color: var(--navy); }
+    .tag-aaa { background: rgba(255,89,16,0.1); color: #b93d00; }
+    .tag-aa { background: rgba(22,163,74,0.1); color: #15803d; }
+    .tag-higha { background: rgba(147,51,234,0.1); color: #7c3aed; }
+    .tag-lowa { background: rgba(107,114,128,0.1); color: #4b5563; }
+    .tag-hitter { background: rgba(0,45,114,0.06); color: var(--navy); }
+    .tag-pitcher { background: rgba(255,89,16,0.06); color: #b93d00; }
+
+    .prospect-stats {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr));
+      gap: 0.4rem; margin-top: 0.75rem; padding-top: 0.6rem; border-top: 1px solid var(--border);
+    }
+    .p-stat { text-align: center; }
+    .p-stat .val { font-size: 0.95rem; font-weight: 800; color: var(--navy); }
+    .p-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+    .prospect-news {
+      margin-top: 0.6rem; padding: 0.6rem 0.8rem; background: #f8fafc; border-radius: 10px;
+      border-left: 3px solid var(--orange); font-size: 0.8rem; color: var(--text-main);
+    }
+    .prospect-news a { color: var(--navy); font-weight: 600; text-decoration: none; }
+    .prospect-news a:hover { text-decoration: underline; }
+    .prospect-news .news-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+    .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; }
+    .source-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; }
+
+    @media (max-width: 640px) {
+      .prospects-shell { padding: 0 0.75rem 2rem; }
+      .prospect-card { grid-template-columns: 40px 1fr; gap: 0.75rem; padding: 1rem; }
+      .prospect-rank { width: 40px; height: 40px; font-size: 1rem; }
+      .prospect-stats { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
+  <header></header>
+
+  <main>
+    <div class="prospects-shell">
+      <div class="prospects-header">
+        <h1>Mets Top 15 Prospect Rankings</h1>
+        <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
+        <p>2026 rankings based on MLB Pipeline. Stats auto-update from the MiLB Stats API.</p>
+      </div>
+      <div id="prospects-container">
+        <div class="loading-msg">Loading prospect data&hellip;</div>
+      </div>
+      <div class="source-note" id="prospect-source"></div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span></div>
+    <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
+    <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
+    <p id="data-timestamp" style="font-size:0.72rem;color:#9099b0;margin-top:0.25rem;"></p>
+  </footer>
+
+  <script defer src="/js/site-header.js"></script>
+  <script>
+    function renderMissingStats(labels) {
+      return labels.map((label) => `
+        <div class="p-stat"><div class="val">&mdash;</div><div class="lbl">${label}</div></div>
+      `).join('');
+    }
+
+    function levelTag(level) {
+      const map = { 'MLB': 'tag-mlb', 'AAA': 'tag-aaa', 'AA': 'tag-aa', 'High-A': 'tag-higha', 'A': 'tag-lowa', 'Low-A': 'tag-lowa', 'Rookie': 'tag-lowa' };
+      return map[level] || 'tag-lowa';
+    }
+
+    function renderHitterStats(s) {
+      if (!s) return renderMissingStats(['AVG', 'OPS', 'HR', 'RBI', 'SB', 'PA']);
+      return `
+        <div class="p-stat"><div class="val">${s.avg ?? '—'}</div><div class="lbl">AVG</div></div>
+        <div class="p-stat"><div class="val">${s.ops ?? '—'}</div><div class="lbl">OPS</div></div>
+        <div class="p-stat"><div class="val">${s.hr ?? '—'}</div><div class="lbl">HR</div></div>
+        <div class="p-stat"><div class="val">${s.rbi ?? '—'}</div><div class="lbl">RBI</div></div>
+        <div class="p-stat"><div class="val">${s.sb ?? '—'}</div><div class="lbl">SB</div></div>
+        <div class="p-stat"><div class="val">${s.pa ?? '—'}</div><div class="lbl">PA</div></div>
+      `;
+    }
+
+    function renderPitcherStats(s) {
+      if (!s) return renderMissingStats(['ERA', 'IP', 'K', 'WHIP', 'BB', 'K/9']);
+      return `
+        <div class="p-stat"><div class="val">${s.era ?? '—'}</div><div class="lbl">ERA</div></div>
+        <div class="p-stat"><div class="val">${s.ip ?? '—'}</div><div class="lbl">IP</div></div>
+        <div class="p-stat"><div class="val">${s.k ?? '—'}</div><div class="lbl">K</div></div>
+        <div class="p-stat"><div class="val">${s.whip ?? '—'}</div><div class="lbl">WHIP</div></div>
+        <div class="p-stat"><div class="val">${s.bb ?? '—'}</div><div class="lbl">BB</div></div>
+        <div class="p-stat"><div class="val">${s.kPer9 ?? '—'}</div><div class="lbl">K/9</div></div>
+      `;
+    }
+
+    function renderCard(prospect, idx) {
+      const rank = idx + 1;
+      const isTop3 = rank <= 3;
+      const isPitcher = prospect.type === 'Pitcher';
+      const headshotUrl = prospect.mlbId
+        ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${prospect.mlbId}/headshot/67/current`
+        : '';
+      const stats = isPitcher ? renderPitcherStats(prospect.stats) : renderHitterStats(prospect.stats);
+      const trendHtml = `<div style="text-align:center; padding:16px 8px; font-size:12px; color:#9ca3af; background:#f9fafb; border-radius:8px; border:1px dashed #e5e7eb; margin:8px 0;">Trend line coming soon</div>`;
+      const newsHtml = prospect.news ? `
+        <div class="prospect-news">
+          <a href="${prospect.news.url || '#'}" target="_blank" rel="noopener">${prospect.news.title}</a>
+          <div class="news-date">${prospect.news.date || ''}</div>
+        </div>` : '';
+
+      return `
+        <div class="prospect-card">
+          <div class="prospect-rank ${isTop3 ? 'top3' : ''}">${rank}</div>
+          <div class="prospect-body">
+            <div class="prospect-name-row">
+              ${headshotUrl ? `<img src="${headshotUrl}" alt="${prospect.name}" width="36" height="36" loading="lazy">` : ''}
+              <h3>${prospect.name}</h3>
+              ${prospect.mlbStatus === 'MLB Active' ? `<span style="display:inline-block; background:#002d72; color:#ffffff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:0.05em; margin-left:6px;">MLB</span>` : ''}
+            </div>
+            <div class="prospect-meta">${prospect.position || ''} · Age ${prospect.age || '?'} · ${prospect.bats || ''}/${prospect.throws || ''}</div>
+            <div class="prospect-tags">
+              <span class="prospect-tag ${levelTag(prospect.level)}">${prospect.level || '?'}</span>
+              <span class="prospect-tag ${isPitcher ? 'tag-pitcher' : 'tag-hitter'}">${isPitcher ? 'Pitcher' : 'Hitter'}</span>
+              ${prospect.eta ? `<span class="prospect-tag tag-mlb">ETA ${prospect.eta}</span>` : ''}
+            </div>
+            <div class="prospect-stats">${stats}</div>
+            ${trendHtml}
+            ${newsHtml}
+          </div>
+        </div>`;
+    }
+
+    fetch('/data/prospects.json')
+      .then(res => {
+        if (!res.ok) throw new Error('Data failed to load');
+        return res.json();
+      })
+      .then(data => {
+        const container = document.getElementById('prospects-container');
+        container.innerHTML = data.prospects.map((p, i) => renderCard(p, i)).join('');
+        if (data.generatedAt) {
+          document.getElementById('last-updated').innerText = new Date(data.generatedAt).toLocaleString();
+          document.getElementById('data-timestamp').textContent = `Data updated: ${new Date(data.generatedAt).toLocaleString()}`;
+        }
+        if (data.source) {
+          document.getElementById('prospect-source').textContent = `Rankings source: ${data.source}`;
+        }
+      })
+      .catch(() => {
+        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
+      });
+  </script>
+</body>
+</html>

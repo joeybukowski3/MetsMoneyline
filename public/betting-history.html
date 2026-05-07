@@ -2,13 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>History - MetsMoneyline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="impact-site-verification" value="e6068632-7155-4486-9cae-080414cd8d3b">
+  <title>Mets Moneyline Betting History & Pick Record 2026 | MetsMoneyline</title>
+  <meta name="description" content="Full log of every MetsMoneyline pick for 2026 — date, opponent, odds, result, and running P&L tracker for the New York Mets season.">
+  <meta name="keywords" content="Mets betting history, Mets moneyline record, MLB betting picks, Mets picks 2026, New York Mets odds">
+  <link rel="canonical" href="https://www.metsmoneyline.com/betting-history.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://statsapi.mlb.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="favicon.jpg">
   <link rel="stylesheet" href="css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VV13077MN0');
+  </script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/betting-history.html">
+  <meta property="og:title" content="Mets Moneyline Betting History 2026 | MetsMoneyline">
+  <meta property="og:description" content="Season-long Mets betting history with every pick, result, and cumulative profit-loss record.">
+  <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Mets Moneyline Betting History 2026 | MetsMoneyline">
+  <meta name="twitter:description" content="Season-long Mets betting history with every pick, result, and cumulative profit-loss record.">
+  <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Mets Moneyline Betting History 2026",
+      "url": "https://www.metsmoneyline.com/betting-history.html",
+      "description": "Full log of every MetsMoneyline pick for the 2026 season with running P&L tracker.",
+      "isPartOf": { "@type": "WebSite", "name": "Mets Moneyline", "url": "https://www.metsmoneyline.com" }
+    }
+  </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -19,8 +51,8 @@
 
   <main>
     <div class="page-header">
-      <h2>Pick History</h2>
-      <p>Season-long Mets moneyline tracker with persistent pending and final rows.</p>
+      <h1>Mets Moneyline Pick History</h1>
+      <p>Season-long Mets moneyline betting history for completed games only.</p>
     </div>
 
     <div class="section-card">
@@ -31,17 +63,16 @@
         <span>Total Wagered: <strong id="wagered-display">&mdash;</strong></span>
         <span>Cumulative P/L: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
         <span>ROI: <strong id="roi-display">&mdash;</strong></span>
-        <span class="disclaimer">Estimated rows are backfilled</span>
+        <span class="disclaimer">Completed games only.</span>
       </div>
       <div class="table-wrap">
-        <table>
+        <table class="history-table">
           <thead>
             <tr>
               <th>Date</th>
               <th>Opponent</th>
               <th>Home/Away</th>
               <th>Mets ML</th>
-              <th>Estimated</th>
               <th>Result</th>
               <th>Final Score</th>
               <th>Stake</th>
@@ -65,19 +96,38 @@
   </footer>
 
   <script>
-    const ESPN_LOGO = {
-      "St. Louis Cardinals": "stl",
-      "Atlanta Braves": "atl",
-      "Washington Nationals": "wsh",
-      "Philadelphia Phillies": "phi",
-      "Miami Marlins": "mia",
-      "Chicago Cubs": "chc",
-      "Milwaukee Brewers": "mil",
-      "Cincinnati Reds": "cin",
-      "Pittsburgh Pirates": "pit",
-      "San Francisco Giants": "sf",
-      "Los Angeles Dodgers": "lad",
-      "San Diego Padres": "sd"
+    const TEAM_MLB_ID = {
+      "Arizona Diamondbacks": 109,
+      "Atlanta Braves": 144,
+      "Baltimore Orioles": 110,
+      "Boston Red Sox": 111,
+      "Chicago Cubs": 112,
+      "Chicago White Sox": 145,
+      "Cincinnati Reds": 113,
+      "Cleveland Guardians": 114,
+      "Colorado Rockies": 115,
+      "Detroit Tigers": 116,
+      "Houston Astros": 117,
+      "Kansas City Royals": 118,
+      "Los Angeles Angels": 108,
+      "Los Angeles Dodgers": 119,
+      "Miami Marlins": 146,
+      "Milwaukee Brewers": 158,
+      "Minnesota Twins": 142,
+      "New York Mets": 121,
+      "New York Yankees": 147,
+      "Athletics": 133,
+      "Oakland Athletics": 133,
+      "Philadelphia Phillies": 143,
+      "Pittsburgh Pirates": 134,
+      "San Diego Padres": 135,
+      "San Francisco Giants": 137,
+      "Seattle Mariners": 136,
+      "St. Louis Cardinals": 138,
+      "Tampa Bay Rays": 139,
+      "Texas Rangers": 140,
+      "Toronto Blue Jays": 141,
+      "Washington Nationals": 120
     };
 
     function formatDate(dateStr) {
@@ -89,8 +139,8 @@
     }
 
     function getTeamLogoUrl(teamName) {
-      const slug = ESPN_LOGO[teamName];
-      return slug ? `https://a.espncdn.com/i/teamlogos/mlb/500/${slug}.png` : "";
+      const id = TEAM_MLB_ID[teamName];
+      return id ? `https://www.mlbstatic.com/team-logos/${id}.svg` : "";
     }
 
     function formatCurrency(value) {
@@ -103,6 +153,10 @@
       return odds > 0 ? `+${odds}` : `${odds}`;
     }
 
+    function getStake(entry) {
+      return typeof entry?.stake === "number" && Number.isFinite(entry.stake) ? entry.stake : 100;
+    }
+
     function normalizeEntries(data) {
       const sourceEntries = Array.isArray(data?.entries)
         ? data.entries
@@ -111,49 +165,92 @@
           : [];
 
       return sourceEntries
-        .filter((entry) => entry?.date && entry?.opponent);
+        .filter((entry) => entry?.date && entry?.opponent && entry?.status === "final");
     }
 
     function isSettledEntry(entry) {
       return entry?.status === "final" && (entry?.result === "W" || entry?.result === "L");
     }
 
+    function calculateGameProfit(entry) {
+      if (!isSettledEntry(entry)) return null;
+      if (typeof entry?.odds !== "number" || !Number.isFinite(entry.odds)) return null;
+
+      const stake = getStake(entry);
+      if (entry.result === "L") return Number((-stake).toFixed(2));
+      if (entry.odds > 0) return Number((stake * (entry.odds / 100)).toFixed(2));
+      return Number((stake * (100 / Math.abs(entry.odds))).toFixed(2));
+    }
+
+    // Primary sort: date; secondary: sourceGamePk (lower = earlier game on same day)
+    function chronologicalAsc(a, b) {
+      const dateCmp = String(a.date).localeCompare(String(b.date));
+      if (dateCmp !== 0) return dateCmp;
+      return (Number(a.sourceGamePk) || 0) - (Number(b.sourceGamePk) || 0);
+    }
+
     function buildDisplayEntries(entries) {
-      const chronological = [...entries].sort((a, b) => String(a.date).localeCompare(String(b.date)));
+      const chronological = [...entries].sort(chronologicalAsc);
       let runningProfit = 0;
+      let wins = 0;
+      let losses = 0;
+      let totalBets = 0;
+      let gradedBets = 0;
+      let totalWagered = 0;
 
       const withCumulative = chronological.map((entry) => {
         const settled = isSettledEntry(entry);
-        const profit = typeof entry?.profit === "number" ? entry.profit : null;
-        if (settled && profit != null) {
+        const profit = calculateGameProfit(entry);
+        const graded = settled && profit != null;
+
+        if (settled) {
+          totalBets += 1;
+          if (entry.result === "W") wins += 1;
+          if (entry.result === "L") losses += 1;
+        }
+
+        if (graded) {
+          gradedBets += 1;
+          totalWagered += getStake(entry);
           runningProfit += profit;
         }
+
         return {
           ...entry,
-          cumulativeProfit: settled && profit != null ? runningProfit : null,
-          settled
+          profit,
+          cumulativeProfit: graded ? Number(runningProfit.toFixed(2)) : null,
+          settled,
+          graded
         };
       });
 
       return {
-        displayEntries: [...withCumulative].sort((a, b) => String(b.date).localeCompare(String(a.date))),
-        seasonProfit: runningProfit
+        displayEntries: [...withCumulative].sort((a, b) => -chronologicalAsc(a, b)),
+        summary: {
+          wins,
+          losses,
+          totalBets,
+          gradedBets,
+          totalWagered: Number(totalWagered.toFixed(2)),
+          profit: Number(runningProfit.toFixed(2)),
+          roi: totalWagered > 0 ? Number(((runningProfit / totalWagered) * 100).toFixed(2)) : 0
+        }
       };
     }
 
     function renderHistory(data) {
       const historyData = normalizeEntries(data);
-      const { displayEntries, seasonProfit } = buildDisplayEntries(historyData);
+      const { displayEntries, summary } = buildDisplayEntries(historyData);
 
       const rows = displayEntries.map((entry) => {
-        const isFinal = entry.settled;
-        const hasProfit = typeof entry?.profit === "number";
+        const isFinal = true;
+        const hasProfit = typeof entry?.profit === "number" && entry.graded;
 
         const cumulative = entry.cumulativeProfit;
         const resultClass = isFinal
           ? (entry.result === "W" ? "badge badge-win" : "badge badge-loss")
           : "badge";
-        const resultLabel = isFinal ? entry.result : "Pending";
+        const resultLabel = entry.result;
         const plClass = hasProfit ? (entry.profit >= 0 ? "text-profit" : "text-loss") : "";
         const cumulativeClass = typeof cumulative === "number"
           ? (cumulative >= 0 ? "text-profit" : "text-loss")
@@ -165,44 +262,38 @@
             : "&mdash;";
         const logoUrl = getTeamLogoUrl(entry.opponent);
         const opponentCell = logoUrl
-          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent}"><span>${entry.opponent}</span></div>`
+          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent} team logo for Mets betting history" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
           : `${entry.opponent}`;
 
-        return `<tr><td>${formatDate(entry.date)}</td><td>${opponentCell}</td><td>${homeAwayDisplay}</td><td>${formatOdds(entry.odds)}</td><td>${entry.estimated ? '<span class="badge">Backfilled</span>' : '&mdash;'}</td><td><span class="${resultClass}">${resultLabel}</span></td><td>${entry.finalScore || "&mdash;"}</td><td>${typeof entry.stake === "number" ? `$${entry.stake.toFixed(2)}` : "$100.00"}</td><td class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td><td class="${cumulativeClass}">${formatCurrency(cumulative)}</td></tr>`;
+        return `<tr>
+          <td data-label="Date">${formatDate(entry.date)}</td>
+          <td data-label="Opponent">${opponentCell}</td>
+          <td data-label="H/A">${homeAwayDisplay}</td>
+          <td data-label="Mets ML">${formatOdds(entry.odds)}</td>
+          <td data-label="Result"><span class="${resultClass}">${resultLabel}</span></td>
+          <td data-label="Score">${entry.finalScore || "&mdash;"}</td>
+          <td data-label="Stake">$${getStake(entry).toFixed(2)}</td>
+          <td data-label="Game P/L" class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td>
+          <td data-label="Cumulative" class="${cumulativeClass}">${formatCurrency(cumulative)}</td>
+        </tr>`;
       });
 
       document.getElementById("history-body").innerHTML = rows.length
         ? rows.join("")
-        : `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
+        : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
 
-      const summary = data?.record || {};
-      const wins = typeof summary.wins === "number"
-        ? summary.wins
-        : historyData.filter((entry) => isSettledEntry(entry) && entry?.result === "W").length;
-      const losses = typeof summary.losses === "number"
-        ? summary.losses
-        : historyData.filter((entry) => isSettledEntry(entry) && entry?.result === "L").length;
-      const totalBets = typeof summary.totalBets === "number" ? summary.totalBets : historyData.length;
-      const totalWagered = typeof summary.totalWagered === "number"
-        ? summary.totalWagered
-          : historyData.reduce((sum, entry) => sum + (typeof entry?.stake === "number" ? entry.stake : 100), 0);
-      const cumulativeProfit = typeof summary.profit === "number" ? summary.profit : seasonProfit;
-      const roi = typeof summary.roi === "number"
-        ? summary.roi
-        : (totalWagered > 0 ? Number(((cumulativeProfit / totalWagered) * 100).toFixed(2)) : 0);
-
-      document.getElementById("total-bets-display").textContent = String(totalBets);
-      document.getElementById("wins-display").textContent = String(wins);
-      document.getElementById("losses-display").textContent = String(losses);
-      document.getElementById("wagered-display").textContent = `$${Number(totalWagered).toFixed(2)}`;
+      document.getElementById("total-bets-display").textContent = String(summary.totalBets);
+      document.getElementById("wins-display").textContent = String(summary.wins);
+      document.getElementById("losses-display").textContent = String(summary.losses);
+      document.getElementById("wagered-display").textContent = `$${summary.totalWagered.toFixed(2)}`;
 
       const plDisplay = document.getElementById("pl-display");
-      plDisplay.textContent = `${cumulativeProfit >= 0 ? "+$" : "-$"}${Math.abs(cumulativeProfit).toFixed(2)}`;
-      plDisplay.className = cumulativeProfit >= 0 ? "text-profit" : "text-loss";
+      plDisplay.textContent = `${summary.profit >= 0 ? "+$" : "-$"}${Math.abs(summary.profit).toFixed(2)}`;
+      plDisplay.className = summary.profit >= 0 ? "text-profit" : "text-loss";
 
       const roiDisplay = document.getElementById("roi-display");
-      roiDisplay.textContent = `${roi >= 0 ? "+" : ""}${roi.toFixed(2)}%`;
-      roiDisplay.className = roi >= 0 ? "text-profit" : "text-loss";
+      roiDisplay.textContent = `${summary.roi >= 0 ? "+" : ""}${summary.roi.toFixed(2)}%`;
+      roiDisplay.className = summary.roi >= 0 ? "text-profit" : "text-loss";
 
       if (data?.generatedAt || data?.updatedAt) {
         const timestamp = data.generatedAt || data.updatedAt;
@@ -228,6 +319,6 @@
         document.getElementById("history-body").innerHTML = `<tr><td colspan="10" style="color:#9099b0;padding:1rem;text-align:center">History unavailable.</td></tr>`;
       });
   </script>
-  <script src="js/site-header.js"></script>
+  <script defer src="js/site-header.js"></script>
 </body>
 </html>

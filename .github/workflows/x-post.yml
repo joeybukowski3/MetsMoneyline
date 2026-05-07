@@ -1,0 +1,59 @@
+name: X Post
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode"
+        required: true
+        default: "dry-run"
+        type: choice
+        options:
+          - dry-run
+          - post
+
+permissions:
+  contents: write
+
+jobs:
+  x-post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Install bot dependencies
+        working-directory: ./bot
+        run: npm ci
+
+      - name: Run X post bot
+        working-directory: ./bot
+        env:
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: node x-post-mets-report.js --${{ inputs.mode }}
+
+      - name: Commit X post state
+        if: inputs.mode == 'post'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add bot/x-post-state.json
+          if git diff --cached --quiet; then
+            echo "No X post state changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: record X post state [skip ci]"
+          git stash
+          git pull --rebase origin main
+          git stash pop || true
+          git push origin main

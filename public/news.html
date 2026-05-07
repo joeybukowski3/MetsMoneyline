@@ -2,13 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team News | MetsMoneyline</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NY Mets News & Injury Updates | MetsMoneyline</title>
+  <meta name="description" content="Latest New York Mets coverage from ESPN, MLB.com, NY Post, SNY, and Amazin Avenue — filtered by offense, pitching, and minor leagues.">
+  <meta name="keywords" content="Mets news, NY Mets injury updates, Mets roster moves, Mets trade rumors, New York Mets coverage">
+  <link rel="canonical" href="https://www.metsmoneyline.com/news.html">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://statsapi.mlb.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="favicon.jpg">
   <link rel="stylesheet" href="css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VV13077MN0');
+  </script>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/news.html">
+  <meta property="og:title" content="Latest NY Mets News & Injury Updates | MetsMoneyline">
+  <meta property="og:description" content="Aggregated Mets news from top sources — injury reports, trade rumors, roster moves, and game coverage.">
+  <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Latest NY Mets News & Injury Updates | MetsMoneyline">
+  <meta name="twitter:description" content="Aggregated Mets news from top sources — injury reports, trade rumors, roster moves, and game coverage.">
+  <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "NY Mets News & Injury Updates",
+      "url": "https://www.metsmoneyline.com/news.html",
+      "description": "Latest New York Mets coverage aggregated from ESPN, MLB.com, NY Post, SNY, and Amazin Avenue.",
+      "isPartOf": { "@type": "WebSite", "name": "Mets Moneyline", "url": "https://www.metsmoneyline.com" }
+    }
+  </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
   <style>
     /* ── Page shell ── */
@@ -254,7 +285,7 @@
 
   <main class="news-page-shell">
     <div class="news-page-header">
-      <h1>Team News</h1>
+      <h1>New York Mets News</h1>
       <p>Latest Mets coverage from ESPN, MLB.com, NY Post, SNY, and Amazin Avenue.</p>
     </div>
 
@@ -399,7 +430,7 @@
     function thumbHtml(article) {
       if (article.thumbnail) {
         return `<div class="news-thumb-wrap">
-          <img src="${article.thumbnail}" alt="" loading="lazy"
+          <img src="${article.thumbnail}" alt="${article.title} article thumbnail" width="640" height="360" loading="lazy" decoding="async"
                onerror="this.parentElement.innerHTML='<div class=\\'news-thumb-placeholder\\'>⚾</div>'">
         </div>`;
       }
@@ -503,6 +534,6 @@
     fetchAllFeeds();
   </script>
 
-  <script src="js/site-header.js"></script>
+  <script defer src="js/site-header.js"></script>
 </body>
 </html>

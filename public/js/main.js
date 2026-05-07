@@ -20,6 +20,19 @@ function formatGameTimeET(dateTime) {
   });
 }
 
+function formatTimestampET(value) {
+  if (!value) return "";
+  return new Date(value).toLocaleString("en-US", {
+    timeZone: EASTERN_TIME_ZONE,
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short"
+  });
+}
+
 function createFallbackPitching(probables = {}) {
   return {
     mets: {
@@ -86,6 +99,39 @@ function mergeLiveGame(staticGame, liveGame) {
   };
 
   const pickPreferred = (primary, fallback) => (hasMeaningfulValue(primary) ? primary : fallback);
+  const mergeHeadToHead = (liveHeadToHead, staticHeadToHead) => {
+    const live = liveHeadToHead || {};
+    const fallback = staticHeadToHead || {};
+    const liveRecent = Array.isArray(live.recentGames) ? live.recentGames : [];
+    const fallbackRecent = Array.isArray(fallback.recentGames) ? fallback.recentGames : [];
+    const liveTotal = Number(live.wins || 0) + Number(live.losses || 0) + liveRecent.length;
+    const fallbackTotal = Number(fallback.wins || 0) + Number(fallback.losses || 0) + fallbackRecent.length;
+    const preferred = liveTotal > 0 ? live : fallback;
+    const secondary = preferred === live ? fallback : live;
+
+    return {
+      wins: Number.isFinite(Number(preferred?.wins)) ? Number(preferred.wins) : Number(secondary?.wins || 0),
+      losses: Number.isFinite(Number(preferred?.losses)) ? Number(preferred.losses) : Number(secondary?.losses || 0),
+      recentGames: pickPreferred(preferred?.recentGames, secondary?.recentGames) || []
+    };
+  };
+  const mergeGameContext = (liveContext, staticContext) => {
+    if (!hasMeaningfulValue(liveContext)) return staticContext;
+    if (!hasMeaningfulValue(staticContext)) return liveContext;
+
+    return {
+      ...(staticContext || {}),
+      ...(liveContext || {}),
+      metsRecentGames: pickPreferred(liveContext?.metsRecentGames, staticContext?.metsRecentGames),
+      oppRecentGames: pickPreferred(liveContext?.oppRecentGames, staticContext?.oppRecentGames),
+      metsInjuries: pickPreferred(liveContext?.metsInjuries, staticContext?.metsInjuries),
+      oppInjuries: pickPreferred(liveContext?.oppInjuries, staticContext?.oppInjuries),
+      headToHead: mergeHeadToHead(liveContext?.headToHead, staticContext?.headToHead),
+      lastMeeting: pickPreferred(liveContext?.lastMeeting, staticContext?.lastMeeting),
+      metsPitcherLog: pickPreferred(liveContext?.metsPitcherLog, staticContext?.metsPitcherLog),
+      oppPitcherLog: pickPreferred(liveContext?.oppPitcherLog, staticContext?.oppPitcherLog)
+    };
+  };
 
   const mergeMoneyline = (liveMoneyline, staticMoneyline) => {
     if (!liveMoneyline && !staticMoneyline) return null;
@@ -106,7 +152,7 @@ function mergeLiveGame(staticGame, liveGame) {
     pitching: pickPreferred(liveGame.pitching, staticGame.pitching),
     advancedMatchup: pickPreferred(liveGame.advancedMatchup, staticGame.advancedMatchup),
     teamAdvanced: pickPreferred(liveGame.teamAdvanced, staticGame.teamAdvanced),
-    gameContext: pickPreferred(liveGame.gameContext, staticGame.gameContext),
+    gameContext: mergeGameContext(liveGame.gameContext, staticGame.gameContext),
     // Keep trends and weather favoring live when available
     trends: pickPreferred(liveGame.trends, staticGame.trends),
     weather: pickPreferred(liveGame.weather, staticGame.weather),
@@ -132,21 +178,20 @@ function buildRecentLogRows(recentGames = []) {
 }
 
 function mapOddsSummaryToMoneyline(odds, game) {
-  const consensus = odds?.consensus || {};
-  const markets = Array.isArray(consensus.markets) ? consensus.markets : Array.isArray(odds?.markets) ? odds.markets : [];
-  const moneylineMarket = markets.find((market) => /moneyline|h2h/i.test(market.label || market.key || ""));
+  const markets = Array.isArray(odds?.markets) ? odds.markets : [];
+  const moneylineMarket = markets.find((market) => String(market?.key || "").toLowerCase() === "h2h");
   if (!moneylineMarket) return { mets: null, opp: null };
 
-  const opponentName = game.opponent;
+  const opponentName = String(game?.opponent || "");
   const getPrice = (teamName) => {
     const outcome = Array.isArray(moneylineMarket.outcomes)
-      ? moneylineMarket.outcomes.find((entry) => String(entry.name || "").toLowerCase().includes(String(teamName).toLowerCase()))
+      ? moneylineMarket.outcomes.find((entry) => String(entry?.name || "") === teamName)
       : null;
-    return typeof outcome?.price === "number" ? outcome.price : null;
+    return typeof outcome?.price === "number" && Number.isFinite(outcome.price) ? outcome.price : null;
   };
 
   return {
-    mets: getPrice("Mets"),
+    mets: getPrice("New York Mets"),
     opp: getPrice(opponentName)
   };
 }
@@ -173,6 +218,7 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
     metsRecord: metsStanding ? `${metsStanding.wins}-${metsStanding.losses}` : "0-0",
     oppRecord: oppStanding ? `${oppStanding.wins}-${oppStanding.losses}` : "0-0",
     moneyline: mapOddsSummaryToMoneyline(odds, { opponent: opponentTeam?.name || "" }),
+    oddsUpdatedAt: odds?.meta?.generatedAt || null,
     runLine: null,
     total: null,
     overUnder: null,
@@ -190,7 +236,7 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
       oppRecentGames: [],
       metsInjuries: [],
       oppInjuries: [],
-      headToHead: { wins: 0, losses: 0 },
+      headToHead: { wins: 0, losses: 0, recentGames: [] },
       metsPitcherLog: [],
       oppPitcherLog: []
     },
@@ -235,7 +281,7 @@ async function loadGameData() {
     fetchInternalJson("api/mlb/mets/live-game").catch(() => null),
     fetchInternalJson("api/mlb/mets/standings").catch(() => null),
     fetchInternalJson("api/mlb/mets/recent-games").catch(() => null),
-    fetchInternalJson("api/mlb/mets/odds").catch(() => null)
+    fetchInternalJson("api/mlb/mets/odds.json").catch(() => null)
   ]);
 
   try {
@@ -255,10 +301,21 @@ async function loadGameData() {
       } else {
         games.unshift(normalizedGame);
       }
+    } else if (games.length > 0 && odds) {
+      const fallbackMoneyline = mapOddsSummaryToMoneyline(odds, { opponent: games[0]?.opponent || "" });
+      games[0] = {
+        ...games[0],
+        moneyline: {
+          ...(games[0]?.moneyline || {}),
+          mets: fallbackMoneyline.mets ?? games[0]?.moneyline?.mets ?? null,
+          opp: fallbackMoneyline.opp ?? games[0]?.moneyline?.opp ?? null
+        },
+        oddsUpdatedAt: odds?.meta?.generatedAt || games[0]?.oddsUpdatedAt || null
+      };
     }
     data.games = games;
-    if (endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt) {
-      data.generatedAt = endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || new Date().toISOString();
+    if (endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt) {
+      data.generatedAt = endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt || new Date().toISOString();
     }
   } catch (err) {
     console.warn("Unable to refresh internal Mets data endpoints.", err);
@@ -474,6 +531,9 @@ function buildMatchupStrip(game) {
   const ouItem = total != null
     ? `<span class="mb-meta-item"><span>&#x2197;</span> O/U ${total}</span>`
     : "";
+  const oddsUpdatedItem = game.oddsUpdatedAt
+    ? `<span class="mb-meta-item">Odds updated ${formatTimestampET(game.oddsUpdatedAt)}</span>`
+    : "";
 
   const oppLogoUrl = getTeamLogoUrl({
     canonicalKey: game.oppCanonicalKey,
@@ -482,7 +542,7 @@ function buildMatchupStrip(game) {
   });
 
   const oppLogoHtml = oppLogoUrl
-    ? `<img src="${oppLogoUrl}" alt="${game.opponent}">`
+    ? `<img src="${oppLogoUrl}" alt="${game.opponent} team logo" width="40" height="40" decoding="async">`
     : `<span style="width:36px;height:36px;display:inline-block;"></span>`;
   const metsRecord = getMetsRecord(game);
   const oppRecord = getOppRecord(game);
@@ -491,7 +551,7 @@ function buildMatchupStrip(game) {
     <div class="matchup-bar-compact">
       <div class="mb-teams">
         <div class="mb-team">
-          <img src="${getTeamLogoUrl(METS_TEAM_ID)}" alt="NYM">
+          <img src="${getTeamLogoUrl(METS_TEAM_ID)}" alt="New York Mets team logo" width="40" height="40" decoding="async">
           <div>
             <div class="mb-team-name">New York Mets</div>
             <span class="mb-record">${metsRecord}</span>
@@ -515,6 +575,7 @@ function buildMatchupStrip(game) {
         <span class="mb-meta-item">&#x1F4CD; ${game.ballpark}</span>
         ${metsML != null && oppML != null ? `<span class="mb-meta-item">$ <span class="mb-ml-nym">NYM ${metsML}</span> / OPP ${oppML}</span>` : ""}
         ${ouItem}
+        ${oddsUpdatedItem}
       </div>
     </div>`;
 }
@@ -758,7 +819,7 @@ function buildPitchingCard(game) {
     if (!id) return `<div class="pitcher-photo-placeholder">&#9918;</div>`;
     return `<img
       src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current"
-      class="pitcher-photo" alt="${name}"
+      class="pitcher-photo" alt="${name} headshot for Mets pitching matchup analysis" width="200" height="200" loading="lazy" decoding="async"
       onerror="this.outerHTML='<div class=&quot;pitcher-photo-placeholder&quot;>&#9918;</div>'">`;
   };
 
@@ -836,7 +897,8 @@ function buildPitchingCard(game) {
     const photoHtml = id
       ? `<img class="pitcher-photo-sm"
            src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:action:hero:current.png/w_360,q_auto:best/v1/people/${id}/action/hero/current"
-           alt="${pitcher.name}"
+           alt="${pitcher.name} pitching matchup photo"
+           width="360" height="360" loading="lazy" decoding="async"
            onerror="this.src='https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/${id}/headshot/67/current'">`
       : `<div class="pitcher-photo-placeholder">&#9918;</div>`;
 
@@ -884,7 +946,11 @@ function buildPitchingCard(game) {
 
   const mergeVsRoster = (fallbackSnapshot, explicitSnapshot) => {
     if (!fallbackSnapshot && !explicitSnapshot) return null;
-    return { ...(fallbackSnapshot || {}), ...(explicitSnapshot || {}) };
+    const merged = { ...(fallbackSnapshot || {}) };
+    Object.entries(explicitSnapshot || {}).forEach(([key, value]) => {
+      if (value != null) merged[key] = value;
+    });
+    return merged;
   };
 
   const metsVsRoster = mergeVsRoster(aggregateLineupSnapshot(game.lineups?.opp, p.mets.savant), p.mets.vsRoster);
@@ -937,6 +1003,35 @@ function buildPitchingCard(game) {
       </table>
     </div>` : "";
 
+  const statcastMobileSection = (p.mets.savant || p.opp.savant) ? (() => {
+    const mobileCard = (pitcher, savant, isMets) => {
+      const stats = [
+        { label: "xERA",      val: savant?.xERA },
+        { label: "Barrel%",   val: savant?.barrelPct },
+        { label: "Hard-Hit%", val: savant?.hardHitPct },
+        { label: "Whiff%",    val: savant?.whiffPct },
+        { label: "Chase%",    val: savant?.chasePct },
+        { label: "K%",        val: savant?.kPct },
+        { label: "BB%",       val: savant?.bbPct },
+      ];
+      const cells = stats.map(s => `
+        <div class="statcast-mobile-cell">
+          <div class="statcast-mobile-label">${s.label}</div>
+          ${statcastCell(s.label, s.val).replace(/<\/?td>/g, "")}
+        </div>`).join("");
+      return `
+        <div class="statcast-mobile-pitcher">
+          <div class="statcast-mobile-pitcher-name ${isMets ? "statcast-pitcher-mets" : ""}">${pitcher}</div>
+          <div class="statcast-mobile-grid">${cells}</div>
+        </div>`;
+    };
+    return `
+      <div class="statcast-mobile-cards">
+        ${mobileCard(p.mets.name, p.mets.savant, true)}
+        ${mobileCard(p.opp.name, p.opp.savant, false)}
+      </div>`;
+  })() : "";
+
   return `
     <div class="section-floating-label">Starting Pitching</div>
     <div class="pitcher-two-col">
@@ -944,7 +1039,7 @@ function buildPitchingCard(game) {
       ${oppCard}
     </div>
     ${vsRosterSection}
-    ${statcastSection ? `<div class="card full-card statcast-card">${statcastSection}</div>` : ""}
+    ${(statcastSection || statcastMobileSection) ? `<div class="card full-card statcast-card">${statcastSection}${statcastMobileSection}</div>` : ""}
 
     <div class="section-floating-label">Bullpen</div>
     <div class="pitcher-two-col">
@@ -969,6 +1064,7 @@ function buildPitchingCard(game) {
 
 /* ── ROW 3: Lineups + Advanced Metrics ── */
 function buildRow3(game) {
+  const ta = game.teamAdvanced;
   const l = game.lineups || {};
   const metsLineup = (Array.isArray(l.mets) && l.mets.length > 0) ? l.mets : [];
   const oppLineup  = Array.isArray(l.opp) ? l.opp : [];
@@ -991,7 +1087,7 @@ function buildRow3(game) {
 
   const headshotImg = (p) => {
     const pid = p.playerId || p.id || 0;
-    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name}" onerror="this.style.display='none'">`;
+    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name} headshot for Mets lineup analysis" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
   };
 
   const statCell = (label, value) => `<td class="metric-cell ${metricValueClass(label, value)}">${value ?? "N/A"}</td>`;
@@ -1041,6 +1137,18 @@ function buildRow3(game) {
   // Advanced metrics - individual cards with progress bars (matching Lovable design)
   const resolvedMetrics = resolveAdvancedMatchup(game);
   const edgeLabel = computeAdvancedEdgeLabel(resolvedMetrics, oppAbbr);
+  const METRIC_RANK_KEY = {
+    "Offense vs SP Hand - wRC+": "wrcPlus",
+    "Hard-Hit %":                "hardHit",
+    "Barrel %":                  "barrelPct",
+    "Walk Rate (BB%)":           "bbPct",
+    "Strikeout Rate (K%)":       "kPct",
+  };
+  const rankBadge = (rank) => {
+    if (rank == null) return "";
+    const rankColor = rank <= 10 ? "#15803d" : rank <= 20 ? "#92400e" : "#b91c1c";
+    return `<div style="font-size:0.68rem;font-weight:700;color:${rankColor};margin-top:1px;">#${rank} MLB</div>`;
+  };
   const advCards = resolvedMetrics.map(r => {
     const nymRaw = parseMetricNumber(r.mets);
     const oppRaw = parseMetricNumber(r.opp);
@@ -1050,19 +1158,28 @@ function buildRow3(game) {
     const maxVal = comparable ? Math.max(nymRaw, oppRaw, 0.001) : 1;
     const nymPct = comparable ? (Math.min((nymRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
     const oppPct = comparable ? (Math.min((oppRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
+    const rankKey = METRIC_RANK_KEY[r.category];
+    const metsRank = rankKey ? ta?.mets?.leagueRanks?.[rankKey] : null;
+    const oppRank  = rankKey ? ta?.opp?.leagueRanks?.[rankKey]  : null;
     return `
       <div class="adv-metric-card">
         <div class="amc-label">${r.category}</div>
         <div class="amc-row">
           <span class="amc-abbr ${nymWins ? "winner" : ""}">NYM</span>
-          <span class="amc-val ${nymWins ? "winner" : ""}">${r.mets}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;">
+            <span class="amc-val ${nymWins ? "winner" : ""}">${r.mets}</span>
+            ${rankBadge(metsRank)}
+          </div>
         </div>
         <div class="amc-bar-track">
           <div class="amc-bar-fill ${nymWins ? "win" : "lose"}" style="width:${nymPct.toFixed(1)}%"></div>
         </div>
         <div class="amc-row" style="margin-top:0.5rem">
           <span class="amc-abbr ${comparable && !nymWins ? "winner" : ""}">${oppAbbr}</span>
-          <span class="amc-val ${comparable && !nymWins ? "winner" : ""}">${r.opp}</span>
+          <div style="display:flex;flex-direction:column;align-items:flex-start;">
+            <span class="amc-val ${comparable && !nymWins ? "winner" : ""}">${r.opp}</span>
+            ${rankBadge(oppRank)}
+          </div>
         </div>
         <div class="amc-bar-track">
           <div class="amc-bar-fill ${comparable && !nymWins ? "win" : "lose"}" style="width:${oppPct.toFixed(1)}%"></div>
@@ -1175,7 +1292,7 @@ function buildPickSection(game) {
   const sections = game.writeup.sections ?? [];
   // Find pick/today section by heading keyword
   const pickSection = sections.find(s => /today|pick|final|bottom line/i.test(s.heading));
-  const summary = cleanSectionBody(pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "");
+  const summary = cleanSectionBody(game.writeup?.pickNarrative || pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "");
 
   const metsML  = game.moneyline?.mets;
   const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
@@ -1256,10 +1373,31 @@ function buildGameContextCard(game) {
   if (!gc || !Object.keys(gc).length) return "";
 
   const oppAbbr = getTeamAbbr(game.opponent);
+  const formatGameDate = (value) => value
+    ? new Date(`${value}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    : "--";
+  const getSiteMeta = (homeAway, teamLabel = "team") => {
+    const normalized = String(homeAway || "").toLowerCase();
+    if (normalized === "home") return { label: "Home", opponentPrefix: "vs" };
+    if (normalized === "road" || normalized === "away") return { label: "Away", opponentPrefix: "at" };
+    return { label: `${teamLabel} site TBD`, opponentPrefix: "vs" };
+  };
+  const getResultLabel = (result, isHeadToHead = false) => {
+    if (result === "W") return isHeadToHead ? "Mets Win" : "Win";
+    if (result === "L") return isHeadToHead ? "Mets Loss" : "Loss";
+    if (result === "P") return "Push";
+    return result || "Pending";
+  };
 
   // Recent results log
   const resultLog = (games, label) => {
-    if (!games?.length) return `<span style="color:#9099b0;font-size:0.82rem;">No data</span>`;
+    if (!games?.length) {
+      return `
+        <div class="gc-panel">
+          <div class="gc-subheading">${label}</div>
+          <div class="gc-empty-state">No data</div>
+        </div>`;
+    }
     const streak = (() => {
       let s = 0, last = null;
       for (const g of games) {
@@ -1267,87 +1405,125 @@ function buildGameContextCard(game) {
         else if (g.result === last) s++;
         else break;
       }
-      const bg = last === "W" ? "#dcfce7" : "#fee2e2";
-      const co = last === "W" ? "#15803d" : "#b91c1c";
-      return `<span style="background:${bg};color:${co};font-size:0.72rem;font-weight:800;padding:1px 7px;border-radius:4px;margin-left:6px;">${last}${s}</span>`;
+      const streakClass = last === "W" ? "gc-pill-win" : "gc-pill-loss";
+      return `<span class="gc-inline-pill ${streakClass}">${last}${s}</span>`;
     })();
 
     const rows = games.slice(0, 5).map(g => {
-      const resultWord = g.result === "W" ? "Win" : g.result === "L" ? "Loss" : (g.result || "-");
-      const badgeBg = g.result === "W" ? "#dcfce7" : "#fee2e2";
-      const badgeColor = g.result === "W" ? "#15803d" : "#b91c1c";
-      const dateText = g.date
-        ? new Date(`${g.date}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-        : "--";
-      const isMetsLog = label.toLowerCase().includes("mets");
-      const teamName = isMetsLog ? "New York Mets" : game.opponent;
-      const teamLogo = getTeamLogoUrl(isMetsLog ? METS_TEAM_ID : {
-        canonicalKey: game.oppCanonicalKey,
-        mlbStatsTeamId: game.oppTeamId,
-        name: game.opponent
-      });
-      const oppLogo = getTeamLogoUrl(g.opponent);
-      const [rawLeftScore, rawRightScore] = String(g.score || "-").split("-").map(part => (part || "-").trim());
-      const teamScore = isMetsLog ? rawLeftScore : rawRightScore;
-      const oppScore = isMetsLog ? rawRightScore : rawLeftScore;
+      const resultWord = getResultLabel(g.result);
+      const site = getSiteMeta(g.homeAway, label);
+      const resultClass = g.result === "W" ? "gc-pill-win" : g.result === "L" ? "gc-pill-loss" : "gc-pill-neutral";
+      const matchupPrefix = site.opponentPrefix;
+      const opponentLogo = getTeamLogoUrl(g.opponent);
       return `
-        <div style="display:grid;grid-template-columns:70px auto 1fr;gap:0.75rem;align-items:center;padding:0.45rem 0;border-bottom:1px solid #eef2f7;">
-          <div style="font-size:0.78rem;color:#64748b;font-weight:600;">${dateText}</div>
-          <div style="background:${badgeBg};color:${badgeColor};font-size:0.72rem;font-weight:800;padding:2px 8px;border-radius:999px;">${resultWord}</div>
-          <div style="display:flex;align-items:center;gap:0.55rem;min-width:0;flex-wrap:wrap;">
-            ${teamLogo ? `<img src="${teamLogo}" alt="${teamName}" style="width:18px;height:18px;object-fit:contain;">` : ""}
-            <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${teamScore}</span>
-            ${oppLogo ? `<img src="${oppLogo}" alt="${g.opponent}" style="width:18px;height:18px;object-fit:contain;">` : ""}
-            <span style="font-size:0.9rem;font-weight:800;color:var(--ink);min-width:18px;">${oppScore}</span>
+        <div class="gc-log-row">
+          <div class="gc-log-meta">
+            <span class="gc-log-date">${formatGameDate(g.date)}</span>
+            <span class="gc-inline-pill gc-site-pill">${site.label}</span>
+            <span class="gc-inline-pill ${resultClass}">${resultWord}</span>
+          </div>
+          <div class="gc-log-main">
+            <span class="gc-log-score">${g.score || "--"}</span>
+            <span class="gc-log-opponent">${matchupPrefix} ${g.opponent || "Opponent TBD"}${opponentLogo ? ` <img src="${opponentLogo}" alt="${g.opponent || "Opponent TBD"} logo" class="gc-log-team-logo" width="15" height="15" loading="lazy" decoding="async">` : ""}</span>
           </div>
         </div>`;
     }).join("");
 
-    return `<div><div style="margin-bottom:0.45rem;font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label}${streak}</div><div>${rows}</div></div>`;
+    return `
+      <div class="gc-panel">
+        <div class="gc-subheading-row">
+          <div class="gc-subheading">${label}</div>
+          ${streak}
+        </div>
+        <div class="gc-log-list">${rows}</div>
+      </div>`;
   };
 
   // Injury chips
   const injuryChips = (injuries, label) => {
-    if (!injuries?.length) return `<div style="color:#9099b0;font-size:0.82rem;">${label}: None reported</div>`;
+    if (!injuries?.length) {
+      return `
+        <div class="gc-panel">
+          <div class="gc-subheading">${label} IL</div>
+          <div class="gc-empty-state">None reported</div>
+        </div>`;
+    }
     const chips = injuries.slice(0, 5).map(i =>
-      `<span title="${i.description || ""}" style="display:inline-block;background:#fef3c7;color:#92400e;font-size:0.72rem;font-weight:600;padding:2px 8px;border-radius:4px;margin:2px 3px 2px 0;cursor:default;">${i.name} <em style="font-weight:400">${i.status}</em></span>`
+      `<span title="${i.description || ""}" class="gc-injury-chip">${i.name} <em>${i.status}</em></span>`
     ).join("");
-    return `<div style="margin-bottom:0.3rem;font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;">${label} IL</div><div>${chips}</div>`;
+    return `
+      <div class="gc-panel">
+        <div class="gc-subheading">${label} IL</div>
+        <div class="gc-chip-wrap">${chips}</div>
+      </div>`;
   };
 
-  // H2H badge
   const h2h = gc.headToHead;
-  const h2hHtml = (h2h && (h2h.wins + h2h.losses) > 0)
-    ? `<span style="background:#dbeafe;color:#1d4ed8;font-size:0.75rem;font-weight:700;padding:3px 10px;border-radius:5px;">Season Series: Mets ${h2h.wins}-${h2h.losses} vs ${oppAbbr}</span>`
-    : `<span style="background:#f1f5f9;color:#64748b;font-size:0.75rem;font-weight:600;padding:3px 10px;border-radius:5px;">No prior matchups this season</span>`;
+  const h2hGames = Array.isArray(h2h?.recentGames) && h2h.recentGames.length
+    ? h2h.recentGames.slice(0, 5)
+    : gc.lastMeeting
+      ? [{
+          date: gc.lastMeeting.date,
+          opponent: game.opponent,
+          homeAway: gc.lastMeeting.homeAway || game.homeAway,
+          result: gc.lastMeeting.result === "win" ? "W" : gc.lastMeeting.result === "loss" ? "L" : null,
+          score: gc.lastMeeting.metsScore != null && gc.lastMeeting.oppScore != null
+            ? `${gc.lastMeeting.metsScore}-${gc.lastMeeting.oppScore}`
+            : null
+        }]
+      : [];
+  const h2hSummary = (h2h && (Number(h2h.wins || 0) + Number(h2h.losses || 0)) > 0)
+    ? `<span class="gc-inline-pill gc-summary-pill">Season Series: Mets ${h2h.wins}-${h2h.losses} vs ${oppAbbr}</span>`
+    : `<span class="gc-inline-pill gc-summary-pill gc-summary-pill-muted">No prior matchups this season</span>`;
+  const h2hRows = h2hGames.length
+    ? h2hGames.map((meeting) => {
+        const site = getSiteMeta(meeting.homeAway, "Mets");
+        const resultClass = meeting.result === "W" ? "gc-pill-win" : meeting.result === "L" ? "gc-pill-loss" : "gc-pill-neutral";
+        const opponentLogo = getTeamLogoUrl(meeting.opponent || game.opponent);
+        return `
+          <div class="gc-log-row gc-h2h-row">
+            <div class="gc-log-meta">
+              <span class="gc-log-date">${formatGameDate(meeting.date)}</span>
+              <span class="gc-inline-pill gc-site-pill">${site.label}</span>
+              <span class="gc-inline-pill ${resultClass}">${getResultLabel(meeting.result, true)}</span>
+            </div>
+            <div class="gc-log-main">
+              <span class="gc-log-score">${meeting.score || "--"}</span>
+              <span class="gc-log-opponent">${site.opponentPrefix} ${meeting.opponent || game.opponent}${opponentLogo ? ` <img src="${opponentLogo}" alt="${meeting.opponent || game.opponent} logo" class="gc-log-team-logo" width="15" height="15" loading="lazy" decoding="async">` : ""}</span>
+            </div>
+          </div>`;
+      }).join("")
+    : `<div class="gc-empty-state">No prior Mets vs ${game.opponent} results available yet.</div>`;
 
   return `
     <div class="section-floating-label">Game Context</div>
-    <div class="card full-card" style="padding:1.25rem">
+    <div class="card full-card game-context-card">
 
-      <!-- Recent form row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
-        <div>
-          ${resultLog(gc.metsRecentGames, "Mets Last 5")}
-        </div>
-        <div>
-          ${resultLog(gc.oppRecentGames, `${oppAbbr} Last 5`)}
-        </div>
+      <div class="gc-two-col">
+        ${resultLog(gc.metsRecentGames, "Mets Last 5")}
+        ${resultLog(gc.oppRecentGames, `${oppAbbr} Last 5`)}
       </div>
 
-      <!-- Head to head -->
-      <div style="margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
-        <div style="font-size:0.72rem;font-weight:700;color:#9099b0;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.4rem">Head-to-Head</div>
-        ${h2hHtml}
+      <div class="gc-panel gc-head-to-head">
+        <div class="gc-subheading-row">
+          <div class="gc-subheading">Head-to-Head</div>
+          ${h2hSummary}
+        </div>
+        <div class="gc-log-list">${h2hRows}</div>
       </div>
 
-      <!-- Injury report -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">
-        <div>${injuryChips(gc.metsInjuries, "Mets")}</div>
-        <div>${injuryChips(gc.oppInjuries, oppAbbr)}</div>
+      <div class="gc-two-col">
+        ${injuryChips(gc.metsInjuries, "Mets")}
+        ${injuryChips(gc.oppInjuries, oppAbbr)}
       </div>
 
     </div>`;
+}
+
+function ordinalSuffix(n) {
+  const s = ["th","st","nd","rd"];
+  const v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
 }
 
 /* ── Team Advanced Stats Card ── */
@@ -1367,19 +1543,19 @@ function buildTeamAdvancedCard(game) {
     mlbStatsTeamId: game.oppTeamId,
     name: game.opponent
   });
-  const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label}">` : ""}<span>${label}</span></span>`;
+  const teamHeader = (label, logoUrl) => `<span class="team-metric-header">${logoUrl ? `<img src="${logoUrl}" alt="${label} team logo" width="18" height="18" loading="lazy" decoding="async">` : ""}<span>${label}</span></span>`;
 
   const rows = [
-    { label: "wRC+",         mVal: ta.mets.wrcPlus,   oVal: ta.opp.wrcPlus,   higherBetter: true  },
-    { label: "wOBA",         mVal: ta.mets.woba,      oVal: ta.opp.woba,      higherBetter: true  },
-    { label: "ISO",          mVal: ta.mets.iso,       oVal: ta.opp.iso,       higherBetter: true  },
-    { label: "xBA",          mVal: ta.mets.xba,       oVal: ta.opp.xba,       higherBetter: true  },
-    { label: "xSLG",         mVal: ta.mets.xslg,      oVal: ta.opp.xslg,      higherBetter: true  },
-    { label: "xwOBA",        mVal: ta.mets.xwoba,     oVal: ta.opp.xwoba,     higherBetter: true  },
-    { label: "OPS",          mVal: ta.mets.ops,       oVal: ta.opp.ops,       higherBetter: true  },
-    { label: "BB%",          mVal: ta.mets.bbPct,     oVal: ta.opp.bbPct,     higherBetter: true  },
-    { label: "K%",           mVal: ta.mets.kPct,      oVal: ta.opp.kPct,      higherBetter: false },
-    { label: "Rotation xFIP",mVal: ta.mets.rotXfip || ta.mets.rotFip, oVal: ta.opp.rotXfip || ta.opp.rotFip, higherBetter: false },
+    { label: "wRC+",          mVal: ta.mets.wrcPlus,                     oVal: ta.opp.wrcPlus,                     higherBetter: true,  rankKey: "wrcPlus" },
+    { label: "wOBA",          mVal: ta.mets.woba,                        oVal: ta.opp.woba,                        higherBetter: true,  rankKey: "woba"    },
+    { label: "ISO",           mVal: ta.mets.iso,                         oVal: ta.opp.iso,                         higherBetter: true,  rankKey: "iso"     },
+    { label: "xBA",           mVal: ta.mets.xba,                         oVal: ta.opp.xba,                         higherBetter: true,  rankKey: "xba"     },
+    { label: "xSLG",          mVal: ta.mets.xslg,                        oVal: ta.opp.xslg,                        higherBetter: true,  rankKey: "xslg"    },
+    { label: "xwOBA",         mVal: ta.mets.xwoba,                       oVal: ta.opp.xwoba,                       higherBetter: true,  rankKey: "xwoba"   },
+    { label: "OPS",           mVal: ta.mets.ops,                         oVal: ta.opp.ops,                         higherBetter: true,  rankKey: "ops"     },
+    { label: "BB%",           mVal: ta.mets.bbPct,                       oVal: ta.opp.bbPct,                       higherBetter: true,  rankKey: "bbPct"   },
+    { label: "K%",            mVal: ta.mets.kPct,                        oVal: ta.opp.kPct,                        higherBetter: false, rankKey: "kPct"    },
+    { label: "Rotation xFIP", mVal: ta.mets.rotXfip || ta.mets.rotFip,  oVal: ta.opp.rotXfip || ta.opp.rotFip,   higherBetter: false, rankKey: "rotFip"  },
   ].map(r => {
     const fmt = v => (v == null || v === "") ? "-" : String(v);
     const mNum = parseMetricNumber(r.mVal);
@@ -1389,6 +1565,14 @@ function buildTeamAdvancedCard(game) {
     const oppLeads  = hasComparison && !metsLeads && mNum !== oNum;
     const mStyle = metsLeads ? "font-weight:700;color:#15803d" : "";
     const oStyle = oppLeads  ? "font-weight:700;color:#b91c1c" : "";
+    const mRank = ta.mets.leagueRanks?.[r.rankKey];
+    const oRank = ta.opp.leagueRanks?.[r.rankKey];
+    const fmtCell = (val, rank, isLeading) => {
+      const statStr = fmt(val);
+      if (rank == null) return `<span style="${isLeading ? "font-weight:700;" : ""}">${statStr}</span>`;
+      const rankColor = rank <= 10 ? "#15803d" : rank <= 20 ? "#92400e" : "#b91c1c";
+      return `<div style="line-height:1.3;"><span style="font-size:1rem;font-weight:800;color:${rankColor};">${ordinalSuffix(rank)}</span><span style="font-size:0.72rem;color:#6b7280;font-weight:500;margin-left:3px;">— ${statStr}</span></div>`;
+    };
     const edgeBadge = metsLeads
       ? `${teamHeader("Mets", metsLogo)} <span class="team-edge-badge team-edge-badge-mets">edge</span>`
       : oppLeads
@@ -1396,8 +1580,8 @@ function buildTeamAdvancedCard(game) {
         : "-";
     return `<tr>
       <td>${r.label}</td>
-      <td style="${mStyle}">${fmt(r.mVal)}</td>
-      <td style="${oStyle}">${fmt(r.oVal)}</td>
+      <td style="${mStyle}">${fmtCell(r.mVal, mRank, metsLeads)}</td>
+      <td style="${oStyle}">${fmtCell(r.oVal, oRank, oppLeads)}</td>
       <td>${edgeBadge}</td>
     </tr>`;
   }).join("");
@@ -1487,6 +1671,14 @@ async function init() {
         timeZone: "America/New_York", month: "short", day: "numeric",
         hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short"
       });
+    }
+    const ageHours = (Date.now() - new Date(generatedAt).getTime()) / 36e5;
+    if (ageHours > 12) {
+      const staleEl = document.getElementById("stale-data-banner");
+      if (staleEl) {
+        staleEl.style.display = "block";
+        staleEl.textContent = `⚠ Pitcher data may be outdated — last refreshed ${Math.round(ageHours)} hours ago. Check back soon.`;
+      }
     }
   }
 }

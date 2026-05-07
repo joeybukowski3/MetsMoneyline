@@ -19,6 +19,19 @@ async function fetchJson(url) {
   return response.json();
 }
 
+async function fetchJsonWithRetry(url, attempts = 2) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fetchJson(url);
+    } catch (error) {
+      lastError = error;
+      console.warn(`[advanced-stats] fetch attempt ${attempt}/${attempts} failed for ${url}: ${error.message}`);
+    }
+  }
+  throw lastError || new Error(`Request failed: ${url}`);
+}
+
 async function fetchJsonWithFallback(primary, fallback) {
   try {
     return await fetchJson(primary);
@@ -32,6 +45,59 @@ async function fetchJsonWithFallback(primary, fallback) {
       throw primaryError;
     }
   }
+}
+
+function validateCachedStandingsPayload(data, season) {
+  const provider = String(data?.meta?.provider || "").toLowerCase();
+  const teams = Array.isArray(data?.teams) ? data.teams : [];
+
+  if (!isValidSeasonValue(data?.season, season)) {
+    throw new Error(`Cached standings season mismatch: expected ${season}, got ${data?.season ?? "unknown"}`);
+  }
+  if (provider.includes("fallback-2025")) {
+    throw new Error("Cached standings are a previous-season fallback");
+  }
+  if (!teams.length) {
+    throw new Error("Cached standings are empty");
+  }
+
+  const divisions = new Map();
+  for (const team of teams) {
+    const divisionName = team.division || data?.division || "NL East";
+    if (!divisions.has(divisionName)) divisions.set(divisionName, []);
+    divisions.get(divisionName).push({
+      team: team.team,
+      wins: team.wins,
+      losses: team.losses,
+      pct: team.pct,
+      gamesBack: team.gamesBack,
+      home: team.home,
+      road: team.road,
+      last10: team.last10,
+      streak: team.streak
+    });
+  }
+
+  const nlFull = [...divisions.entries()].map(([divisionName, divisionTeams]) => ({
+    divisionName,
+    teams: divisionTeams
+  }));
+  const nlEast = nlFull.find((division) => /east/i.test(division.divisionName))?.teams || [];
+  const metsRaw = teams.find((team) => String(team.teamId) === String(TEAM_ID) || team.team === "New York Mets") || null;
+
+  if (!nlEast.length || !nlFull.length) {
+    throw new Error("Cached standings payload is incomplete");
+  }
+
+  console.info(`[advanced-stats] cached standings accepted from ${provider || "unknown-provider"} with ${teams.length} teams`);
+
+  return {
+    season,
+    source: "api-cache",
+    mets: metsRaw ? buildMetsStanding(metsRaw) : null,
+    nlEast,
+    nlFull
+  };
 }
 
 function isValidSeasonValue(value, season) {
@@ -211,6 +277,20 @@ async function loadEspnStandings(season) {
 }
 
 async function loadStandings(season) {
+  const cacheUrls = [
+    "api/mlb/mets/standings",
+    "api/mlb/mets/standings.json"
+  ];
+
+  for (const url of cacheUrls) {
+    try {
+      const data = await fetchJsonWithRetry(url, 2);
+      return validateCachedStandingsPayload(data, season);
+    } catch (cacheErr) {
+      console.warn(`[advanced-stats] cached standings rejected (${url}): ${cacheErr.message}`);
+    }
+  }
+
   try {
     const espn = await loadEspnStandings(season);
     if (!isValidSeasonValue(espn?.season, season)) {
@@ -219,68 +299,13 @@ async function loadStandings(season) {
     if (!espn.nlEast.length || !espn.nlFull.length) {
       throw new Error("ESPN returned an incomplete NL standings table");
     }
+    console.info(`[advanced-stats] ESPN standings accepted for season ${season}`);
     return espn;
   } catch (espnErr) {
     console.warn(`[advanced-stats] ESPN standings failed: ${espnErr.message}`);
   }
 
-  try {
-    const data = await fetchJsonWithFallback(
-      "api/mlb/mets/standings",
-      "api/mlb/mets/standings.json"
-    );
-    const provider = String(data?.meta?.provider || "").toLowerCase();
-    const teams = Array.isArray(data?.teams) ? data.teams : [];
-
-    if (!isValidSeasonValue(data?.season, season)) {
-      throw new Error(`Cached standings season mismatch: expected ${season}, got ${data?.season ?? "unknown"}`);
-    }
-    if (provider.includes("fallback-2025")) {
-      throw new Error("Cached standings are a previous-season fallback");
-    }
-    if (!teams.length) {
-      throw new Error("Cached standings are empty");
-    }
-
-    const divisions = new Map();
-    for (const team of teams) {
-      const divisionName = team.division || data?.division || "NL East";
-      if (!divisions.has(divisionName)) divisions.set(divisionName, []);
-      divisions.get(divisionName).push({
-        team: team.team,
-        wins: team.wins,
-        losses: team.losses,
-        pct: team.pct,
-        gamesBack: team.gamesBack,
-        home: team.home,
-        road: team.road,
-        last10: team.last10,
-        streak: team.streak
-      });
-    }
-
-    const nlFull = [...divisions.entries()].map(([divisionName, divisionTeams]) => ({
-      divisionName,
-      teams: divisionTeams
-    }));
-    const nlEast = nlFull.find((division) => /east/i.test(division.divisionName))?.teams || [];
-    const metsRaw = teams.find((team) => String(team.teamId) === String(TEAM_ID) || team.team === "New York Mets") || null;
-
-    if (!nlEast.length || !nlFull.length) {
-      throw new Error("Cached standings payload is incomplete");
-    }
-
-    return {
-      season,
-      source: "api-cache",
-      mets: metsRaw ? buildMetsStanding(metsRaw) : null,
-      nlEast,
-      nlFull
-    };
-  } catch (cacheErr) {
-    console.warn(`[advanced-stats] cached standings rejected: ${cacheErr.message}`);
-    return emptyStandingsState(season, "2026 standings are unavailable from the current sources.");
-  }
+  return emptyStandingsState(season, `${season} standings are unavailable from the current sources.`);
 }
 
 // ── League averages ──────────────────────────────────────────────────────────
@@ -804,7 +829,7 @@ function renderHitters(players, season) {
     const kPct = playerRateBase(player, "strikeOuts", "plateAppearances");
     return `
       <tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name}" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
+        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name} headshot for Mets active roster stats" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
         <td>${player.position || "-"}</td>
         ${buildPlayerCell(formatPct(s.avg), s.avg, baselines.avg, true)}
         ${buildPlayerCell(formatPct(s.obp), s.obp, baselines.obp, true)}
@@ -851,7 +876,7 @@ function renderPitchers(players, season) {
     const s = player.stats || {};
     return `
       <tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name}" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
+        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name} headshot for Mets rotation stats" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
         <td>${s.gamesStarted ?? 0}</td>
         <td>${s.inningsPitched || "0.0"}</td>
         ${buildPlayerCell(formatDecimal(s.era), s.era, starterBaselines.era, false)}
@@ -867,7 +892,7 @@ function renderPitchers(players, season) {
     const s = player.stats || {};
     return `
       <tr>
-        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name}" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
+        <td><div class="player-name-td"><img src="${headshotUrl(player.id)}" class="player-row-headshot" alt="${player.name} headshot for Mets bullpen stats" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'"><strong>${player.name}</strong></div></td>
         <td>${s.gamesPitched ?? 0}</td>
         <td>${s.inningsPitched || "0.0"}</td>
         ${buildPlayerCell(formatDecimal(s.era), s.era, relieverBaselines.era, false)}
@@ -898,7 +923,7 @@ function renderStandings(standings) {
     return `
       <tr class="${isMets ? "mets-row" : ""}">
         <td><div class="standings-team-cell">
-          <img src="${logo}" class="standings-logo" alt="${team.team}" onerror="this.style.display='none'">
+          <img src="${logo}" class="standings-logo" alt="${team.team} team logo in NL East standings" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
           <span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ""}>${team.team}</span>
         </div></td>
         <td>${team.wins}</td>
@@ -921,7 +946,7 @@ function renderStandings(standings) {
       return `
         <tr class="${isMets ? "mets-row" : ""}">
           <td><div class="standings-team-cell">
-            <img src="${logo}" class="standings-logo" alt="${team.team}" onerror="this.style.display='none'">
+            <img src="${logo}" class="standings-logo" alt="${team.team} team logo in National League standings" width="22" height="22" loading="lazy" decoding="async" onerror="this.style.display='none'">
             <span${isMets ? ' style="font-weight:700;color:var(--navy)"' : ""}>${team.team}</span>
           </div></td>
           <td>${team.wins}</td>

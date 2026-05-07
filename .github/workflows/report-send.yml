@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Queue with history-refresh — both write pick-history.json
+concurrency:
+  group: site-data-write
+  cancel-in-progress: false
+
 jobs:
   send-report:
     runs-on: ubuntu-latest
@@ -24,7 +29,7 @@ jobs:
 
       - name: Install bot dependencies
         working-directory: ./bot
-        run: npm install
+        run: npm ci
 
       - name: Refresh API cache
         working-directory: ./bot
@@ -55,12 +60,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bot/report-send-state.json public/data/sample-game.json public/data/pick-history.json public/report.html public/api/mlb/mets/odds public/api/mlb/mets/standings.json public/api/mlb/mets/overview.json
+          git add bot/report-send-state.json public/data/sample-game.json public/report.html
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
             git commit -m "chore: report send state update [skip ci]"
-            git push
+            git stash
+            git pull --rebase origin main
+            git stash pop || true
+            git push origin main
           fi
 
       - name: Fail workflow if send step failed
