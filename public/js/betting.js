@@ -1,4 +1,23 @@
 (function () {
+  var BRAND = {
+    'Fanatics': { color: '#000000', bg: '#000', text: '#fff', accent: '#e8380d', abbr: 'FAN' },
+    'DraftKings': { color: '#53d337', bg: '#0b0e12', text: '#53d337', accent: '#53d337', abbr: 'DK' },
+    'FanDuel': { color: '#1493ff', bg: '#0f1923', text: '#1493ff', accent: '#1493ff', abbr: 'FD' },
+    'BetMGM': { color: '#c5a44e', bg: '#1a1a2e', text: '#c5a44e', accent: '#c5a44e', abbr: 'MGM' },
+    'Caesars': { color: '#1b6b4a', bg: '#1b3c2a', text: '#c5a44e', accent: '#1b6b4a', abbr: 'CZR' },
+  };
+
+  function getBrand(name) {
+    return BRAND[name] || { color: '#002d72', bg: '#002d72', text: '#fff', accent: '#ff5910', abbr: (name||'').slice(0,3).toUpperCase() };
+  }
+
+  function buildLogoSvg(name) {
+    var b = getBrand(name);
+    return '<div style="width:100%;height:56px;background:' + b.bg + ';border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.6rem;">' +
+      '<span style="font-family:Oswald,sans-serif;font-size:1.3rem;font-weight:700;color:' + b.text + ';letter-spacing:0.03em;text-transform:uppercase;">' + escapeHtml(name) + '</span>' +
+      '</div>';
+  }
+
   const OFFERS_URL = "data/betting-offers.json";
   const ODDS_URL = "api/mlb/mets/odds.json";
   const SAMPLE_GAME_URL = "data/sample-game.json";
@@ -78,26 +97,28 @@
       const hasLink = !!String(book.referralUrl || "").trim();
       const markets = Array.isArray(book.markets) ? book.markets : [];
       const tags = Array.isArray(book.tags) ? book.tags : [];
-      return `<article class="book-card">
+      var brand = getBrand(book.name);
+      return `<article class="book-card" style="border-top:4px solid ${brand.color};">
+        ${buildLogoSvg(book.name)}
         <div class="book-card-head">
           <div>
-            <span class="book-kicker">${escapeHtml(book.category || "Sportsbook")}</span>
+            <span class="book-kicker" style="color:${brand.color};">${escapeHtml(book.category || "Sportsbook")}</span>
             <h3>${escapeHtml(book.name || "Sportsbook")}</h3>
           </div>
           <span class="book-bestfor">${escapeHtml(book.bestFor || "")}</span>
         </div>
-        <p class="book-offer">${escapeHtml(book.offerText || "Offer details coming soon. Confirm all terms with the sportsbook.")}</p>
+        <p class="book-offer">${escapeHtml(book.offerText || "Offer details coming soon.")}</p>
         <div class="book-block">
           <strong>Markets</strong>
           <div class="book-pill-wrap">
-            ${markets.map((market) => `<span class="book-pill">${escapeHtml(market)}</span>`).join("")}
+            ${markets.map((market) => '<span class="book-pill">' + escapeHtml(market) + '</span>').join("")}
           </div>
         </div>
-        ${tags.length ? `<div class="book-block"><strong>Best fit</strong><div class="book-pill-wrap">${tags.map((tag) => `<span class="book-pill muted">${escapeHtml(tag)}</span>`).join("")}</div></div>` : ""}
-        ${book.stateNote ? `<p class="book-note">${escapeHtml(book.stateNote)}</p>` : ""}
+        ${tags.length ? '<div class="book-block"><strong>Best fit</strong><div class="book-pill-wrap">' + tags.map((tag) => '<span class="book-pill muted">' + escapeHtml(tag) + '</span>').join("") + '</div></div>' : ""}
+        ${book.stateNote ? '<p class="book-note">' + escapeHtml(book.stateNote) + '</p>' : ""}
         ${hasLink
-          ? `<a class="book-cta" href="${escapeHtml(book.referralUrl)}" target="_blank" rel="sponsored nofollow noopener noreferrer">View Offer</a>`
-          : `<button class="book-cta disabled" type="button" disabled>Link coming soon</button>`}
+          ? '<a class="book-cta" href="' + escapeHtml(book.referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer" style="background:' + brand.color + ';">View Offer</a>'
+          : '<button class="book-cta disabled" type="button" disabled>Link coming soon</button>'}
       </article>`;
     }).join("");
   }
@@ -155,6 +176,10 @@
     const updated = oddsData?.meta?.generatedAt || oddsData?.generatedAt;
 
     card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
+        <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="Mets" width="32" height="32" style="flex-shrink:0;">
+        <div><div style="font-weight:800;color:#002d72;font-size:0.95rem;">New York Mets</div>
+        <div style="font-size:0.72rem;color:#6b7280;">Today's betting lines</div></div></div>
       <div class="lines-header">
         <div>
           <h3>Today's Mets Lines</h3>
