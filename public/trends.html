@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="css/styles.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
   <script type="application/ld+json">
     {"@context":"https://schema.org","@type":"WebPage","name":"Mets Batting Trends & xBA Analysis 2026","url":"https://www.metsmoneyline.com/trends.html","description":"Track 2026 New York Mets batting trends with BA vs xBA overlay charts.","isPartOf":{"@type":"WebSite","name":"Mets Moneyline","url":"https://www.metsmoneyline.com"}}
   </script>
@@ -174,97 +174,133 @@
     }
 
     function createChart(canvasId, labels, rollingBa, perGameBa, xba) {
-      if (charts[canvasId]) { charts[canvasId].destroy(); }
-      const canvas = document.getElementById(canvasId);
+      if (charts[canvasId]) { charts[canvasId].destroy(); delete charts[canvasId]; }
+      var canvas = document.getElementById(canvasId);
       if (!canvas) { console.warn('Canvas not found:', canvasId); return; }
-      const safeLabels = Array.isArray(labels) ? labels : [];
-      const safeRollingBa = Array.isArray(rollingBa) ? rollingBa : [];
-      const safePerGameBa = Array.isArray(perGameBa)
-        ? perGameBa.map(v => (typeof v === 'number' && v > 0) ? v : null)
+
+      // Validate data
+      if (!Array.isArray(labels) || !labels.length) return;
+      if (!Array.isArray(rollingBa) || !rollingBa.length) return;
+
+      // Clean per-game data: convert 0s to null
+      var cleanGame = Array.isArray(perGameBa)
+        ? perGameBa.map(function(v) { return (typeof v === 'number' && v > 0) ? v : null; })
         : [];
-      if (!safeLabels.length || !safeRollingBa.length) return;
 
-      const allVals = [...safeRollingBa, ...safePerGameBa].filter(v => v != null && v > 0);
-      if (xba != null) allVals.push(xba);
-      const dataMin = allVals.length ? Math.min(...allVals) : 0.100;
-      const dataMax = allVals.length ? Math.max(...allVals) : 0.400;
-      const pad = Math.max(0.030, (dataMax - dataMin) * 0.25);
-      const yMin = Math.max(0, parseFloat((dataMin - pad).toFixed(3)));
-      const yMax = parseFloat((dataMax + pad).toFixed(3));
+      // Y-axis bounds from all non-null positive values
+      var allNums = rollingBa.concat(cleanGame).filter(function(v) { return v != null && v > 0; });
+      if (xba != null && xba > 0) allNums.push(xba);
+      if (!allNums.length) allNums = [0.200, 0.300]; // fallback
+      var lo = Math.min.apply(null, allNums);
+      var hi = Math.max.apply(null, allNums);
+      var pad = Math.max(0.030, (hi - lo) * 0.25);
+      var yMin = Math.max(0, Math.round((lo - pad) * 1000) / 1000);
+      var yMax = Math.round((hi + pad) * 1000) / 1000;
 
-      const datasets = [
-        {
-          label: 'Game BA', data: safePerGameBa,
-          type: 'bar',
-          backgroundColor: 'rgba(0,45,114,0.12)',
-          borderColor: 'rgba(0,45,114,0.25)',
-          borderWidth: 1, borderRadius: 2,
-          barPercentage: 0.5, categoryPercentage: 0.8,
-          order: 3,
-        },
-        {
-          label: '5-Game Rolling BA', data: safeRollingBa,
-          type: 'line',
-          borderColor: '#002d72', backgroundColor: 'transparent',
-          borderWidth: 2.5, pointRadius: 0, pointHoverRadius: 5,
-          tension: 0.3, fill: false, order: 1,
-        },
-      ];
+      // Build datasets — ALL line type (no mixed bar charts)
+      var datasets = [];
 
-      if (xba != null) {
+      // Per-game dots (scatter-style line with no connecting line)
+      if (cleanGame.length) {
         datasets.push({
-          label: 'Season xBA (' + fmtBa(xba) + ')',
-          data: safeLabels.map(function() { return xba; }),
-          type: 'line',
-          borderColor: '#ff5910', backgroundColor: 'transparent',
-          borderWidth: 1.5, pointRadius: 0, pointHoverRadius: 0,
-          borderDash: [6, 4], fill: false, order: 2,
+          label: 'Game BA',
+          data: cleanGame,
+          borderColor: 'rgba(0,45,114,0.25)',
+          backgroundColor: 'rgba(0,45,114,0.25)',
+          borderWidth: 0,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          pointStyle: 'circle',
+          showLine: false,
+          order: 3
         });
       }
 
-      charts[canvasId] = new Chart(canvas, {
-        type: 'bar',
-        data: { labels: safeLabels, datasets: datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#1a1a2e',
-              titleFont: { family: 'Inter', size: 11, weight: '600' },
-              bodyFont: { family: 'Inter', size: 11 },
-              padding: 10, cornerRadius: 8, displayColors: true, boxPadding: 4,
-              callbacks: {
-                label: function(tipCtx) {
-                  var v = tipCtx.parsed.y;
-                  if (v == null) return null;
-                  return tipCtx.dataset.label + ': ' + fmtBa(v);
+      // Rolling BA line
+      datasets.push({
+        label: '5-Game Rolling BA',
+        data: rollingBa,
+        borderColor: '#002d72',
+        backgroundColor: 'rgba(0,45,114,0.05)',
+        borderWidth: 2.5,
+        pointRadius: 0,
+        pointHoverRadius: 5,
+        tension: 0.3,
+        fill: true,
+        order: 1
+      });
+
+      // xBA reference line
+      if (xba != null) {
+        datasets.push({
+          label: 'Season xBA (' + fmtBa(xba) + ')',
+          data: labels.map(function() { return xba; }),
+          borderColor: '#ff5910',
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          borderDash: [6, 4],
+          fill: false,
+          order: 2
+        });
+      }
+
+      try {
+        charts[canvasId] = new Chart(canvas, {
+          type: 'line',
+          data: { labels: labels, datasets: datasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: '#1a1a2e',
+                titleFont: { family: 'Inter', size: 11, weight: '600' },
+                bodyFont: { family: 'Inter', size: 11 },
+                padding: 10,
+                cornerRadius: 8,
+                displayColors: true,
+                boxPadding: 4,
+                filter: function(item) { return item.parsed.y != null; },
+                callbacks: {
+                  label: function(tipItem) {
+                    if (tipItem.parsed.y == null) return null;
+                    return tipItem.dataset.label + ': ' + fmtBa(tipItem.parsed.y);
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: {
+                  font: { family: 'Inter', size: 10 },
+                  color: '#9099b0',
+                  maxRotation: 0,
+                  autoSkipPadding: 16
+                }
+              },
+              y: {
+                min: yMin,
+                max: yMax,
+                grid: { color: 'rgba(0,0,0,0.04)' },
+                ticks: {
+                  font: { family: 'Inter', size: 10 },
+                  color: '#9099b0',
+                  callback: function(val) { return fmtBa(val); },
+                  stepSize: 0.050
                 }
               }
             }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: {
-                font: { family: 'Inter', size: 10 }, color: '#9099b0',
-                maxRotation: 0, autoSkipPadding: 16,
-              }
-            },
-            y: {
-              min: yMin, max: yMax,
-              grid: { color: 'rgba(0,0,0,0.04)' },
-              ticks: {
-                font: { family: 'Inter', size: 10 }, color: '#9099b0',
-                callback: function(v) { return fmtBa(v); },
-                stepSize: 0.050,
-              }
-            }
           }
-        }
-      });
+        });
+      } catch (chartErr) {
+        console.error('Chart.js construction failed for ' + canvasId + ':', chartErr);
+        canvas.parentElement.innerHTML = '<div style="color:#dc2626;font-size:12px;padding:1rem;text-align:center;">Chart failed: ' + chartErr.message + '</div>';
+      }
     }
 
     /* ── Render cards ── */
@@ -344,7 +380,7 @@
         } catch (e) {
           console.error('Team chart error:', e);
           var wrap = document.querySelector('#team-trend-section .trend-chart-wrap');
-          if (wrap) wrap.innerHTML = '<p style="color:red;font-size:12px;padding:1rem;">Chart error: ' + e.message + '</p>';
+          if (wrap) wrap.innerHTML = '<div style="color:#dc2626;font-size:12px;padding:1rem;text-align:center;">Chart error: ' + e.message + '</div>';
         }
       }
 

@@ -4688,10 +4688,10 @@ function buildSiteReportHtml(game) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="impact-site-verification" value="e6068632-7155-4486-9cae-080414cd8d3b">
-    <title>Mets Moneyline | Daily NY Mets Game Analysis</title>
-    <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
-    <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
-    <link rel="canonical" href="https://www.metsmoneyline.com/">
+    <title>Today's Mets Betting Report & Game Breakdown | MetsMoneyline</title>
+    <meta name="description" content="Full betting breakdown for today's Mets game — starting pitcher analysis, lineup matchups, bullpen metrics, weather, and the official MetsMoneyline pick.">
+    <meta name="keywords" content="Mets moneyline, Mets game prediction, Mets betting picks, MLB moneyline picks, Mets starting pitcher odds">
+    <link rel="canonical" href="https://www.metsmoneyline.com/report.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://statsapi.mlb.com">
@@ -4699,22 +4699,23 @@ function buildSiteReportHtml(game) {
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.metsmoneyline.com/">
-    <meta property="og:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
-    <meta property="og:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
-    <meta property="og:image" content="https://www.metsmoneyline.com/og-image.png">
+    <meta property="og:url" content="https://www.metsmoneyline.com/report.html">
+    <meta property="og:title" content="Today's Mets Betting Report | MetsMoneyline">
+    <meta property="og:description" content="Starting pitcher breakdown, lineup analysis, bullpen metrics, and the official Mets moneyline pick for today's game.">
+    <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Mets Moneyline | Daily NY Mets Game Analysis">
-    <meta name="twitter:description" content="Daily NY Mets game analysis, moneyline value, and betting insights.">
-    <meta name="twitter:image" content="https://www.metsmoneyline.com/og-image.png">
+    <meta name="twitter:title" content="Today's Mets Betting Report | MetsMoneyline">
+    <meta name="twitter:description" content="Starting pitcher breakdown, lineup analysis, bullpen metrics, and the official Mets moneyline pick for today's game.">
+    <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
     <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Mets Moneyline",
-        "url": "https://www.metsmoneyline.com",
-        "description": "Daily NY Mets game analysis, moneyline value, and betting insights."
+        "@type": "WebPage",
+        "name": "Today's Mets Betting Report",
+        "url": "https://www.metsmoneyline.com/report.html",
+        "description": "Full betting breakdown for today's Mets game with pitching matchups, lineup analysis, and the official MetsMoneyline pick.",
+        "isPartOf": { "@type": "WebSite", "name": "Mets Moneyline", "url": "https://www.metsmoneyline.com" }
       }
     </script>
     <style>
@@ -4750,6 +4751,8 @@ function buildSiteReportHtml(game) {
       }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
   </head>
   <body>
     <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
