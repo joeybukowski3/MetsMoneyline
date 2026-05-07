@@ -117,77 +117,107 @@
         </section>
       </div>
 
-      <aside class="news-sidebar card">
-        <div class="section-title">Latest News</div>
-        <div id="sidebar-news"><span style="color:#9099b0;font-size:0.85rem;">Loading&hellip;</span></div>
-        <a href="news.html" style="display:block;margin-top:0.75rem;font-size:0.8rem;font-weight:600;color:var(--navy);text-align:center;">All Mets News &rarr;</a>
+      <aside class="news-sidebar" style="display:flex;flex-direction:column;gap:0.75rem;">
 
-        <!-- Sidebar Preview Cards -->
-        <div style="margin-top:1.25rem;display:flex;flex-direction:column;gap:0.75rem;">
+        <!-- NEWS TILE -->
+        <div class="card" style="padding:0;overflow:hidden;border-radius:14px;">
+          <div style="background:var(--navy);padding:0.55rem 0.9rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.9rem;"></span>
+            <span style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Latest News</span>
+          </div>
+          <div style="padding:0.75rem 0.9rem;">
+            <div id="sidebar-news"><span style="color:#9099b0;font-size:0.85rem;">Loading…</span></div>
+            <a href="news.html" style="display:block;margin-top:0.6rem;font-size:0.78rem;font-weight:700;color:var(--navy);text-align:center;text-decoration:none;">All Mets News →</a>
+          </div>
+        </div>
 
-          <!-- Top Prospect -->
-          <a href="prospects.html" id="sb-prospect" style="display:flex;align-items:center;gap:0.65rem;padding:0.7rem;border-radius:12px;border:1px solid var(--border);background:#fff;text-decoration:none;transition:background 0.12s,box-shadow 0.12s;" onmouseover="this.style.background='#f0f7ff';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'" onmouseout="this.style.background='#fff';this.style.boxShadow=''">
-            <div id="sb-prospect-img" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#002d72,#003d8f);flex-shrink:0;overflow:hidden;border:2px solid #d6dde8;"></div>
+        <!-- PROSPECTS TILE -->
+        <a href="prospects.html" class="card" id="sb-prospect-tile" style="padding:0;overflow:hidden;border-radius:14px;text-decoration:none;display:block;transition:box-shadow 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="background:#16a34a;padding:0.55rem 0.9rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.9rem;">⭐</span>
+            <span style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Top Prospect</span>
+            <span style="margin-left:auto;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.7);">VIEW ALL →</span>
+          </div>
+          <div style="padding:0.75rem 0.9rem;display:flex;align-items:center;gap:0.65rem;">
+            <div id="sb-prospect-img" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#002d72,#003d8f);flex-shrink:0;overflow:hidden;border:2px solid #d6dde8;"></div>
             <div style="min-width:0;">
-              <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#16a34a;">#1 Prospect</div>
-              <div id="sb-prospect-name" style="font-size:0.85rem;font-weight:800;color:#002d72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Loading...</div>
-              <div id="sb-prospect-stat" style="font-size:0.7rem;color:#6b7280;"></div>
+              <div id="sb-prospect-name" style="font-size:0.9rem;font-weight:800;color:#002d72;">Loading...</div>
+              <div id="sb-prospect-stat" style="font-size:0.72rem;color:#6b7280;margin-top:1px;"></div>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <!-- All-Time #1 Player -->
-          <a href="depth-chart.html" id="sb-alltime" style="display:flex;align-items:center;gap:0.65rem;padding:0.7rem;border-radius:12px;border:1px solid var(--border);background:#fff;text-decoration:none;transition:background 0.12s,box-shadow 0.12s;" onmouseover="this.style.background='#fff7ed';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'" onmouseout="this.style.background='#fff';this.style.boxShadow=''">
-            <div id="sb-alltime-img" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#ff5910,#e04e0e);flex-shrink:0;overflow:hidden;border:2px solid #d6dde8;"></div>
+        <!-- ALL-TIME DEPTH CHART TILE -->
+        <a href="depth-chart.html" class="card" id="sb-alltime-tile" style="padding:0;overflow:hidden;border-radius:14px;text-decoration:none;display:block;transition:box-shadow 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="background:#ff5910;padding:0.55rem 0.9rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.9rem;"></span>
+            <span style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">All-Time #1 Player</span>
+            <span style="margin-left:auto;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.7);">VOTE →</span>
+          </div>
+          <div style="padding:0.75rem 0.9rem;display:flex;align-items:center;gap:0.65rem;">
+            <div id="sb-alltime-img" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#ff5910,#e04e0e);flex-shrink:0;overflow:hidden;border:2px solid #d6dde8;"></div>
             <div style="min-width:0;">
-              <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ff5910;">All-Time #1</div>
-              <div id="sb-alltime-name" style="font-size:0.85rem;font-weight:800;color:#002d72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Loading...</div>
-              <div id="sb-alltime-stat" style="font-size:0.7rem;color:#6b7280;"></div>
+              <div id="sb-alltime-name" style="font-size:0.9rem;font-weight:800;color:#002d72;">Loading...</div>
+              <div id="sb-alltime-stat" style="font-size:0.72rem;color:#6b7280;margin-top:1px;"></div>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <!-- Power Rankings -->
-          <a href="power-rankings.html" id="sb-rankings" style="display:flex;align-items:center;gap:0.65rem;padding:0.7rem;border-radius:12px;border:1px solid var(--border);background:#fff;text-decoration:none;transition:background 0.12s,box-shadow 0.12s;" onmouseover="this.style.background='#f0f7ff';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'" onmouseout="this.style.background='#fff';this.style.boxShadow=''">
-            <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#002d72,#003d8f);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-              <span id="sb-rank-number" style="font-family:'Oswald',sans-serif;font-size:1.3rem;font-weight:700;color:#fff;">&mdash;</span>
+        <!-- POWER RANKINGS TILE -->
+        <a href="power-rankings.html" class="card" id="sb-rankings-tile" style="padding:0;overflow:hidden;border-radius:14px;text-decoration:none;display:block;transition:box-shadow 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="background:#002d72;padding:0.55rem 0.9rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.9rem;"></span>
+            <span style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">MLB Power Ranking</span>
+            <span style="margin-left:auto;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.7);">ALL 30 →</span>
+          </div>
+          <div style="padding:0.75rem 0.9rem;display:flex;align-items:center;gap:0.65rem;">
+            <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#002d72,#003d8f);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+              <span id="sb-rank-number" style="font-family:'Oswald',sans-serif;font-size:1.4rem;font-weight:700;color:#fff;">—</span>
             </div>
             <div style="min-width:0;">
-              <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#002d72;">MLB Power Ranking</div>
-              <div style="font-size:0.85rem;font-weight:800;color:#002d72;">Mets Rank: <span id="sb-rank-label" style="color:#ff5910;">#&mdash;</span></div>
-              <div id="sb-rank-record" style="font-size:0.7rem;color:#6b7280;"></div>
+              <div style="font-size:0.9rem;font-weight:800;color:#002d72;">Mets Rank: <span id="sb-rank-label" style="color:#ff5910;">#—</span></div>
+              <div id="sb-rank-record" style="font-size:0.72rem;color:#6b7280;margin-top:1px;"></div>
             </div>
-          </a>
+          </div>
+        </a>
 
-          <!-- Sportsbooks -->
-          <a href="betting.html" style="display:flex;align-items:center;gap:0.65rem;padding:0.7rem;border-radius:12px;border:1px solid var(--border);background:#fff;text-decoration:none;transition:background 0.12s,box-shadow 0.12s;" onmouseover="this.style.background='#f8fafc';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'" onmouseout="this.style.background='#fff';this.style.boxShadow=''">
-            <div style="width:44px;height:44px;border-radius:12px;background:#1a1a2e;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
-              <span style="font-size:1.1rem;"></span>
+        <!-- SPORTSBOOKS TILE -->
+        <a href="betting.html" class="card" style="padding:0;overflow:hidden;border-radius:14px;text-decoration:none;display:block;transition:box-shadow 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="background:#1a1a2e;padding:0.55rem 0.9rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.9rem;"></span>
+            <span style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Betting Hub</span>
+            <span style="margin-left:auto;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.7);">COMPARE →</span>
+          </div>
+          <div style="padding:0.75rem 0.9rem;">
+            <div style="font-size:0.85rem;font-weight:800;color:#002d72;margin-bottom:0.4rem;">Compare Sportsbooks</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;">
+              <span style="font-size:0.62rem;font-weight:800;background:#53d337;color:#1a1a2e;padding:3px 8px;border-radius:5px;">DraftKings</span>
+              <span style="font-size:0.62rem;font-weight:800;background:#1493ff;color:#fff;padding:3px 8px;border-radius:5px;">FanDuel</span>
+              <span style="font-size:0.62rem;font-weight:800;background:#c5a44e;color:#1a1a2e;padding:3px 8px;border-radius:5px;">BetMGM</span>
+              <span style="font-size:0.62rem;font-weight:800;background:#1b3c5a;color:#fff;padding:3px 8px;border-radius:5px;">Caesars</span>
+              <span style="font-size:0.62rem;font-weight:800;background:#000;color:#fff;padding:3px 8px;border-radius:5px;">Fanatics</span>
             </div>
-            <div style="min-width:0;">
-              <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ff5910;">Betting Hub</div>
-              <div style="font-size:0.85rem;font-weight:800;color:#002d72;">Compare Sportsbooks</div>
-              <div style="display:flex;gap:3px;margin-top:2px;flex-wrap:wrap;">
-                <span style="font-size:0.55rem;font-weight:800;background:#53d337;color:#1a1a2e;padding:1px 5px;border-radius:4px;">DK</span>
-                <span style="font-size:0.55rem;font-weight:800;background:#1493ff;color:#fff;padding:1px 5px;border-radius:4px;">FD</span>
-                <span style="font-size:0.55rem;font-weight:800;background:#c5a44e;color:#1a1a2e;padding:1px 5px;border-radius:4px;">MGM</span>
-                <span style="font-size:0.55rem;font-weight:800;background:#1b3c5a;color:#fff;padding:1px 5px;border-radius:4px;">CZR</span>
-                <span style="font-size:0.55rem;font-weight:800;background:#000;color:#fff;padding:1px 5px;border-radius:4px;">FAN</span>
-              </div>
-            </div>
-          </a>
+          </div>
+        </a>
 
-          <!-- Gear -->
-          <a href="gear.html" style="display:flex;align-items:center;gap:0.65rem;padding:0.7rem;border-radius:12px;border:1px solid var(--border);background:#fff;text-decoration:none;transition:background 0.12s,box-shadow 0.12s;" onmouseover="this.style.background='#fff7ed';this.style.boxShadow='0 2px 8px rgba(0,0,0,0.06)'" onmouseout="this.style.background='#fff';this.style.boxShadow=''">
-            <div style="width:44px;height:44px;border-radius:12px;background:#f0f2f6;flex-shrink:0;overflow:hidden;">
+        <!-- GEAR TILE -->
+        <a href="gear.html" class="card" style="padding:0;overflow:hidden;border-radius:14px;text-decoration:none;display:block;transition:box-shadow 0.12s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow=''">
+          <div style="background:#ff5910;padding:0.55rem 0.9rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.9rem;"></span>
+            <span style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#fff;">Official Gear</span>
+            <span style="margin-left:auto;font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.7);">SHOP →</span>
+          </div>
+          <div style="padding:0.75rem 0.9rem;display:flex;align-items:center;gap:0.65rem;">
+            <div style="width:48px;height:48px;border-radius:10px;background:#f0f2f6;flex-shrink:0;overflow:hidden;">
               <img src="/images/MoneylineJersey.jpg" alt="Moneyline Jersey" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
             </div>
             <div style="min-width:0;">
-              <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#ff5910;">Official Gear</div>
-              <div style="font-size:0.85rem;font-weight:800;color:#002d72;">Moneyline #1 Jersey</div>
-              <div style="font-size:0.7rem;color:#6b7280;">Shop at Fanatics &rarr;</div>
+              <div style="font-size:0.9rem;font-weight:800;color:#002d72;">Moneyline #1 Jersey</div>
+              <div style="font-size:0.72rem;color:#6b7280;margin-top:1px;">Nike Home Pinstripe · Fanatics</div>
             </div>
-          </a>
+          </div>
+        </a>
 
-        </div>
       </aside>
     </div>
   </main>
@@ -333,8 +363,8 @@
 
     loadSidebarNews();
 
-    // Sidebar preview cards
-    (async function loadSidebarCards() {
+    // Sidebar preview tiles
+    (async function loadSidebarTiles() {
       // Top non-MLB prospect
       try {
         var r1 = await fetch('data/prospects.json');
@@ -346,9 +376,9 @@
           }
           document.getElementById('sb-prospect-name').textContent = top.name;
           var stat = top.type === 'Pitcher'
-            ? (top.stats ? top.stats.era + ' ERA · ' + (top.stats.k || 0) + ' K' : top.level || '')
-            : (top.stats ? top.stats.avg + ' AVG · ' + (top.stats.hr || 0) + ' HR' : top.level || '');
-          document.getElementById('sb-prospect-stat').textContent = top.position + ' · ' + top.level + ' · ' + stat;
+            ? (top.stats ? top.stats.era + ' ERA \u00B7 ' + (top.stats.k||0) + ' K \u00B7 ' + (top.stats.ip||'') + ' IP' : '')
+            : (top.stats ? top.stats.avg + ' AVG \u00B7 ' + (top.stats.hr||0) + ' HR \u00B7 ' + (top.stats.ops||'') + ' OPS' : '');
+          document.getElementById('sb-prospect-stat').textContent = top.position + ' \u00B7 ' + top.level + ' \u00B7 ' + stat;
         }
       } catch(e) { console.warn('sidebar prospect:', e); }
 
@@ -365,7 +395,7 @@
           }
           document.getElementById('sb-alltime-name').textContent = best.name;
           var s = best.stats || {};
-          document.getElementById('sb-alltime-stat').textContent = (best.pos || '') + ' · ' + (s.AVG || '') + ' AVG · ' + (s.HR || 0) + ' HR';
+          document.getElementById('sb-alltime-stat').textContent = (best.pos||'') + ' \u00B7 ' + (s.AVG||'') + ' AVG \u00B7 ' + (s.HR||0) + ' HR \u00B7 ' + (s.OPS||'') + ' OPS';
         }
       } catch(e) { console.warn('sidebar alltime:', e); }
 
@@ -382,7 +412,7 @@
         if (mets) {
           document.getElementById('sb-rank-number').textContent = metsRank;
           document.getElementById('sb-rank-label').textContent = '#' + metsRank;
-          document.getElementById('sb-rank-record').textContent = mets.record + ' · Score: ' + (mets.composite || 0).toFixed(1);
+          document.getElementById('sb-rank-record').textContent = mets.record + ' \u00B7 Composite: ' + (mets.composite||0).toFixed(1) + '/100';
         }
       } catch(e) { console.warn('sidebar rankings:', e); }
     })();
