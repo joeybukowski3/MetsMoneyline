@@ -46,6 +46,10 @@ const SITE_NAV_ITEMS = [
   {
     href: "/betting.html",
     label: "Betting"
+  },
+  {
+    href: "/gear.html",
+    label: "Gear"
   }
 ];
 
@@ -149,3 +153,4 @@ if (document.readyState === 'loading') {
 } else {
   buildSiteHeader();
 }
+
