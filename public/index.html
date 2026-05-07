@@ -32,6 +32,11 @@
   <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
+  <style>
+    .news-sidebar::-webkit-scrollbar { width: 4px; }
+    .news-sidebar::-webkit-scrollbar-thumb { background: #d6dde8; border-radius: 4px; }
+    .news-sidebar { scrollbar-width: thin; scrollbar-color: #d6dde8 transparent; }
+  </style>
 </head>
 <body>
 
@@ -117,7 +122,7 @@
         </section>
       </div>
 
-      <aside class="news-sidebar" style="display:flex;flex-direction:column;gap:0.75rem;">
+      <aside class="news-sidebar" style="display:flex;flex-direction:column;gap:0.75rem;position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;align-self:start;">
 
         <!-- NEWS TILE -->
         <div class="card" style="padding:0;overflow:hidden;border-radius:14px;">
