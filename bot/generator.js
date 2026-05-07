@@ -4687,6 +4687,7 @@ function buildSiteReportHtml(game) {
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="impact-site-verification" value="e6068632-7155-4486-9cae-080414cd8d3b">
     <title>Mets Moneyline | Daily NY Mets Game Analysis</title>
     <meta name="description" content="Daily NY Mets game analysis, starting pitcher breakdowns, moneyline value, and betting insights. Your edge for every Mets game.">
     <meta name="keywords" content="NY Mets betting, Mets moneyline, Mets game analysis, MLB picks today, Mets starting pitcher odds">
