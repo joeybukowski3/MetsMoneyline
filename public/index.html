@@ -395,8 +395,12 @@
         players.sort(function(a, b) { return (b.seedNetVotes || 0) - (a.seedNetVotes || 0); });
         var best = players[0];
         if (best) {
-          if (best.mlbId) {
-            document.getElementById('sb-alltime-img').innerHTML = '<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_100,q_auto:best/v1/people/' + best.mlbId + '/headshot/67/current" alt="' + best.name + '" style="width:100%;height:100%;object-fit:cover;">';
+          var bestImage = best.imageUrl || '';
+          if (!bestImage && best.mlbId) {
+            bestImage = 'https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_100,q_auto:best/v1/people/' + best.mlbId + '/headshot/67/current';
+          }
+          if (bestImage) {
+            document.getElementById('sb-alltime-img').innerHTML = '<img src="' + bestImage + '" alt="' + best.name + '" style="width:100%;height:100%;object-fit:cover;">';
           }
           document.getElementById('sb-alltime-name').textContent = best.name;
           var s = best.stats || {};

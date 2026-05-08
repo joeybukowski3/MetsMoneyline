@@ -1,41 +1,26 @@
 (function () {
   var BRAND = {
-    'Fanatics': { color: '#000000', bg: '#000', text: '#fff', accent: '#e8380d', abbr: 'FAN' },
-    'DraftKings': { color: '#53d337', bg: '#0b0e12', text: '#53d337', accent: '#53d337', abbr: 'DK' },
-    'FanDuel': { color: '#1493ff', bg: '#0f1923', text: '#1493ff', accent: '#1493ff', abbr: 'FD' },
-    'BetMGM': { color: '#c5a44e', bg: '#1a1a2e', text: '#c5a44e', accent: '#c5a44e', abbr: 'MGM' },
-    'Caesars': { color: '#1b6b4a', bg: '#1b3c2a', text: '#c5a44e', accent: '#1b6b4a', abbr: 'CZR' },
+    Fanatics: { bg: "#111827", text: "#ffffff", accent: "#ff5910", abbr: "FAN" },
+    DraftKings: { bg: "#0b0e12", text: "#53d337", accent: "#53d337", abbr: "DK" },
+    FanDuel: { bg: "#0f1923", text: "#1493ff", accent: "#1493ff", abbr: "FD" },
+    BetMGM: { bg: "#1a1a2e", text: "#c5a44e", accent: "#c5a44e", abbr: "MGM" },
+    Caesars: { bg: "#1b3c2a", text: "#c5a44e", accent: "#c5a44e", abbr: "CZR" }
   };
 
-  function getBrand(name) {
-    return BRAND[name] || { color: '#002d72', bg: '#002d72', text: '#fff', accent: '#ff5910', abbr: (name||'').slice(0,3).toUpperCase() };
-  }
+  var SPORTSBOOK_ORDER = ["Fanatics", "DraftKings", "FanDuel", "BetMGM", "Caesars"];
+  var BOOK_ALIASES = {
+    Fanatics: ["fanatics"],
+    DraftKings: ["draftkings"],
+    FanDuel: ["fanduel"],
+    BetMGM: ["betmgm"],
+    Caesars: ["caesars", "williamhill", "william hill"]
+  };
 
-  function buildLogoSvg(name) {
-    var b = getBrand(name);
-    return '<div style="width:100%;height:56px;background:' + b.bg + ';border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:0.6rem;">' +
-      '<span style="font-family:Oswald,sans-serif;font-size:1.3rem;font-weight:700;color:' + b.text + ';letter-spacing:0.03em;text-transform:uppercase;">' + escapeHtml(name) + '</span>' +
-      '</div>';
-  }
+  var OFFERS_URL = "data/betting-offers.json";
+  var ODDS_URL = "api/mlb/mets/odds.json";
+  var SAMPLE_GAME_URL = "data/sample-game.json";
 
-  const OFFERS_URL = "data/betting-offers.json";
-  const ODDS_URL = "api/mlb/mets/odds.json";
-  const SAMPLE_GAME_URL = "data/sample-game.json";
-  const FILTERS = ["All", "Game Lines", "Player Props", "Futures", "Promos", "Beginner Friendly"];
-  const MARKET_SECTIONS = [
-    "Today's Mets Game",
-    "Moneyline",
-    "Run Line",
-    "Total",
-    "Player Home Runs",
-    "Pitcher Strikeouts",
-    "Hits/RBI Props",
-    "Futures",
-    "Promos/Boosts"
-  ];
-
-  let offersData = null;
-  let activeFilter = "All";
+  var offersData = null;
 
   function escapeHtml(value) {
     return String(value || "")
@@ -47,197 +32,309 @@
   }
 
   function formatTimestamp(value) {
-    const ts = Date.parse(value);
+    var ts = Date.parse(value);
     if (!Number.isFinite(ts)) return "Updated recently";
-    return `Updated ${new Date(ts).toLocaleString()}`;
+    return "Updated " + new Date(ts).toLocaleString();
   }
 
   function formatOdds(value) {
-    const num = Number(value);
-    if (!Number.isFinite(num)) return "—";
-    return num > 0 ? `+${num}` : `${num}`;
+    var num = Number(value);
+    if (!Number.isFinite(num)) return "&mdash;";
+    return num > 0 ? "+" + num : String(num);
   }
 
-  function renderFilterButtons() {
-    const wrap = document.getElementById("betting-filters");
-    if (!wrap) return;
-    wrap.innerHTML = FILTERS.map((filter) => {
-      const active = filter === activeFilter ? " active" : "";
-      return `<button class="bet-filter${active}" type="button" data-filter="${escapeHtml(filter)}">${escapeHtml(filter)}</button>`;
-    }).join("");
-
-    wrap.querySelectorAll(".bet-filter").forEach((button) => {
-      button.addEventListener("click", () => {
-        activeFilter = button.getAttribute("data-filter") || "All";
-        renderSportsbookCards();
-        renderFilterButtons();
-      });
-    });
+  function formatPoint(value) {
+    var num = Number(value);
+    if (!Number.isFinite(num)) return "&mdash;";
+    return (num > 0 ? "+" : "") + num;
   }
 
-  function sportsbookMatchesFilter(book) {
-    if (activeFilter === "All") return true;
-    const tags = Array.isArray(book.tags) ? book.tags : [];
-    return tags.includes(activeFilter);
+  function formatDecimal(value) {
+    var num = Number(value);
+    if (!Number.isFinite(num)) return "&mdash;";
+    return num % 1 === 0 ? String(num) : String(num);
   }
 
-  function renderSportsbookCards() {
-    const grid = document.getElementById("sportsbook-grid");
-    if (!grid) return;
+  function getBrand(name) {
+    return BRAND[name] || { bg: "#002d72", text: "#ffffff", accent: "#ff5910", abbr: String(name || "").slice(0, 3).toUpperCase() };
+  }
 
-    const books = Array.isArray(offersData?.sportsbooks) ? offersData.sportsbooks.filter((book) => book?.enabled !== false) : [];
-    const filtered = books.filter(sportsbookMatchesFilter);
+  function getEnabledBooks() {
+    var source = Array.isArray(offersData && offersData.sportsbooks) ? offersData.sportsbooks : [];
+    return SPORTSBOOK_ORDER.map(function (name) {
+      return source.find(function (book) {
+        return book && book.enabled !== false && book.name === name;
+      }) || null;
+    }).filter(Boolean);
+  }
 
-    if (!filtered.length) {
-      grid.innerHTML = '<div class="bet-empty">No sportsbook offers match this filter yet.</div>';
+  function renderBadgeRow() {
+    var row = document.getElementById("sportsbook-badge-row");
+    if (!row) return;
+
+    var books = getEnabledBooks();
+    if (!books.length) {
+      row.innerHTML = '<div class="bet-empty">Sportsbook links are not available yet.</div>';
       return;
     }
 
-    grid.innerHTML = filtered.map((book) => {
-      const hasLink = !!String(book.referralUrl || "").trim();
-      const markets = Array.isArray(book.markets) ? book.markets : [];
-      const tags = Array.isArray(book.tags) ? book.tags : [];
+    row.innerHTML = books.map(function (book) {
       var brand = getBrand(book.name);
-      return `<article class="book-card" style="border-top:4px solid ${brand.color};">
-        ${buildLogoSvg(book.name)}
-        <div class="book-card-head">
-          <div>
-            <span class="book-kicker" style="color:${brand.color};">${escapeHtml(book.category || "Sportsbook")}</span>
-            <h3>${escapeHtml(book.name || "Sportsbook")}</h3>
-          </div>
-          <span class="book-bestfor">${escapeHtml(book.bestFor || "")}</span>
-        </div>
-        <p class="book-offer">${escapeHtml(book.offerText || "Offer details coming soon.")}</p>
-        <div class="book-block">
-          <strong>Markets</strong>
-          <div class="book-pill-wrap">
-            ${markets.map((market) => '<span class="book-pill">' + escapeHtml(market) + '</span>').join("")}
-          </div>
-        </div>
-        ${tags.length ? '<div class="book-block"><strong>Best fit</strong><div class="book-pill-wrap">' + tags.map((tag) => '<span class="book-pill muted">' + escapeHtml(tag) + '</span>').join("") + '</div></div>' : ""}
-        ${book.stateNote ? '<p class="book-note">' + escapeHtml(book.stateNote) + '</p>' : ""}
-        ${hasLink
-          ? '<a class="book-cta" href="' + escapeHtml(book.referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer" style="background:' + brand.color + ';">View Offer</a>'
-          : '<button class="book-cta disabled" type="button" disabled>Link coming soon</button>'}
-      </article>`;
+      var referralUrl = String(book.referralUrl || "").trim();
+      var openAttrs = referralUrl
+        ? ' href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer"'
+        : "";
+      return (
+        '<a class="book-badge"' + openAttrs + ">" +
+          '<div class="book-badge-logo" style="background:' + brand.bg + ';">' +
+            '<span style="color:' + brand.text + ';">' + escapeHtml(book.name) + "</span>" +
+          "</div>" +
+          '<div class="book-badge-copy">' +
+            "<span>Open book</span>" +
+            '<em style="color:' + brand.accent + ';">' + escapeHtml(brand.abbr) + "</em>" +
+          "</div>" +
+        "</a>"
+      );
     }).join("");
   }
 
-  function renderMarkets() {
-    const wrap = document.getElementById("markets-grid");
-    if (!wrap) return;
-    wrap.innerHTML = MARKET_SECTIONS.map((label) => {
-      const copy = label === "Today's Mets Game"
-        ? "Start with the current Mets side, total, and run line before shopping books."
-        : label === "Moneyline"
-          ? "Track straight-up Mets prices and compare consensus vs book-specific numbers."
-          : label === "Run Line"
-            ? "Watch alternate spreads and standard -1.5/+1.5 pricing for the Mets matchup."
-            : label === "Total"
-              ? "Compare over/under movement and book-to-book totals for today's game."
-              : label === "Player Home Runs"
-                ? "Use this section for power props tied to Mets hitters and opposing sluggers."
-                : label === "Pitcher Strikeouts"
-                  ? "Monitor strikeout ladders and standard K props for today's starters."
-                  : label === "Hits/RBI Props"
-                    ? "Check hit, total bases, RBI, and combo props once books post the card."
-                    : label === "Futures"
-                      ? "Track Mets division, pennant, World Series, and season award prices."
-                      : "Use boosts carefully and always confirm the exact house terms before placing a bet.";
-      return `<div class="market-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(copy)}</p></div>`;
-    }).join("");
+  function getTodayEt() {
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date());
+  }
+
+  function getEtDateFromIso(value) {
+    var ts = Date.parse(value);
+    if (!Number.isFinite(ts)) return "";
+    return new Intl.DateTimeFormat("en-CA", {
+      timeZone: "America/New_York",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date(ts));
+  }
+
+  function findTodayGame(sampleGame) {
+    var todayEt = getTodayEt();
+    var games = Array.isArray(sampleGame && sampleGame.games) ? sampleGame.games : [];
+    return games.find(function (game) {
+      if (!game || game.date !== todayEt) return false;
+      var status = String(game.status || "").toLowerCase();
+      return status !== "final" && status !== "postponed" && status !== "cancelled";
+    }) || null;
+  }
+
+  function oddsMatchGame(oddsData, todayGame) {
+    if (!oddsData || !todayGame) return false;
+    var raw = oddsData.raw || {};
+    var teams = [raw.home_team, raw.away_team].filter(Boolean);
+    if (!teams.includes("New York Mets")) return false;
+    if (todayGame.opponent && !teams.includes(todayGame.opponent)) return false;
+    var oddsDate = getEtDateFromIso(raw.commence_time || oddsData.startTime || "");
+    return !oddsDate || oddsDate === todayGame.date;
+  }
+
+  function normalizeBookKey(value) {
+    return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+  }
+
+  function findBookmaker(bookmakers, bookName) {
+    var aliases = BOOK_ALIASES[bookName] || [bookName];
+    return (Array.isArray(bookmakers) ? bookmakers : []).find(function (bookmaker) {
+      var key = normalizeBookKey(bookmaker && bookmaker.key);
+      var title = normalizeBookKey(bookmaker && bookmaker.title);
+      return aliases.some(function (alias) {
+        var normalized = normalizeBookKey(alias);
+        return key.indexOf(normalized) !== -1 || title.indexOf(normalized) !== -1;
+      });
+    }) || null;
   }
 
   function findMarket(markets, key) {
-    return Array.isArray(markets) ? markets.find((market) => String(market?.key || "").toLowerCase() === key) : null;
+    return Array.isArray(markets) ? markets.find(function (market) {
+      return String(market && market.key || "").toLowerCase() === key;
+    }) : null;
   }
 
-  function renderLinesCard(sampleGame, oddsData) {
-    const card = document.getElementById("today-lines-card");
-    if (!card) return;
+  function findOutcome(outcomes, name) {
+    return Array.isArray(outcomes) ? outcomes.find(function (outcome) {
+      return outcome && outcome.name === name;
+    }) : null;
+  }
 
-    const markets = Array.isArray(oddsData?.markets) ? oddsData.markets : [];
-    const h2h = findMarket(markets, "h2h");
-    const spreads = findMarket(markets, "spreads");
-    const totals = findMarket(markets, "totals");
-    const opponent = sampleGame?.games?.find((game) => game?.date === sampleGame?.generatedAt?.slice?.(0, 10))?.opponent
-      || sampleGame?.games?.[0]?.opponent
-      || "Opponent";
+  function buildBookRow(book, oddsData) {
+    var bookmaker = findBookmaker(oddsData && oddsData.bookmakers, book.name);
+    var h2h = findMarket(bookmaker && bookmaker.markets, "h2h");
+    var spreads = findMarket(bookmaker && bookmaker.markets, "spreads");
+    var totals = findMarket(bookmaker && bookmaker.markets, "totals");
+    var metsMl = findOutcome(h2h && h2h.outcomes, "New York Mets");
+    var metsRunLine = findOutcome(spreads && spreads.outcomes, "New York Mets");
+    var totalOver = findOutcome(totals && totals.outcomes, "Over");
+    var totalUnder = findOutcome(totals && totals.outcomes, "Under");
 
-    if (!h2h && !spreads && !totals) {
-      card.innerHTML = '<div class="bet-empty">Live Mets odds can be connected here from the existing odds feed.</div>';
+    return {
+      name: book.name,
+      referralUrl: String(book.referralUrl || "").trim(),
+      metsMlPrice: metsMl && Number.isFinite(Number(metsMl.price)) ? Number(metsMl.price) : null,
+      runLinePrice: metsRunLine && Number.isFinite(Number(metsRunLine.price)) ? Number(metsRunLine.price) : null,
+      runLinePoint: metsRunLine && Number.isFinite(Number(metsRunLine.point)) ? Number(metsRunLine.point) : null,
+      overPrice: totalOver && Number.isFinite(Number(totalOver.price)) ? Number(totalOver.price) : null,
+      underPrice: totalUnder && Number.isFinite(Number(totalUnder.price)) ? Number(totalUnder.price) : null,
+      totalPoint: totalOver && Number.isFinite(Number(totalOver.point)) ? Number(totalOver.point) : (
+        totalUnder && Number.isFinite(Number(totalUnder.point)) ? Number(totalUnder.point) : null
+      )
+    };
+  }
+
+  function getBestValues(rows) {
+    function maxNumeric(values) {
+      var nums = values.filter(function (value) {
+        return Number.isFinite(value);
+      });
+      return nums.length ? Math.max.apply(null, nums) : null;
+    }
+
+    var bestMl = maxNumeric(rows.map(function (row) { return row.metsMlPrice; }));
+    var bestRunLine = maxNumeric(rows.map(function (row) { return row.runLinePrice; }));
+    var bestTotalScore = null;
+
+    rows.forEach(function (row) {
+      if (!Number.isFinite(row.totalPoint) || !Number.isFinite(row.overPrice)) return;
+      var score = (row.totalPoint * 1000) + row.overPrice;
+      if (bestTotalScore == null || score > bestTotalScore) bestTotalScore = score;
+    });
+
+    return {
+      bestMl: bestMl,
+      bestRunLine: bestRunLine,
+      bestTotalScore: bestTotalScore
+    };
+  }
+
+  function renderLinkedCell(labelHtml, referralUrl, isBest) {
+    var content = isBest
+      ? '<span class="best-odds">' + labelHtml + '<span class="best-flag">Best</span></span>'
+      : '<span class="odds-cell">' + labelHtml + "</span>";
+    if (!referralUrl) return content;
+    return '<a href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">' + content + "</a>";
+  }
+
+  function renderOddsTable(todayGame, oddsData) {
+    var state = document.getElementById("odds-comparison-state");
+    var subtitle = document.getElementById("odds-panel-subtitle");
+    var updated = document.getElementById("odds-panel-updated");
+    if (!state) return;
+
+    if (!todayGame) {
+      if (subtitle) subtitle.textContent = "The sportsbook links stay live even when the Mets are off.";
+      if (updated) updated.textContent = "No game scheduled today";
+      state.innerHTML = '<div class="no-game-state">No Mets game today &mdash; check back tomorrow</div>';
       return;
     }
 
-    const metsMl = h2h?.outcomes?.find((outcome) => outcome?.name === "New York Mets")?.price;
-    const oppMl = h2h?.outcomes?.find((outcome) => outcome?.name && outcome.name !== "New York Mets")?.price;
-    const metsSpread = spreads?.outcomes?.find((outcome) => outcome?.name === "New York Mets");
-    const totalOver = totals?.outcomes?.find((outcome) => outcome?.name === "Over");
-    const updated = oddsData?.meta?.generatedAt || oddsData?.generatedAt;
+    if (subtitle) {
+      subtitle.textContent = "New York Mets at " + todayGame.opponent + " • " + todayGame.time;
+    }
+    if (updated) {
+      updated.textContent = formatTimestamp((oddsData && oddsData.meta && oddsData.meta.generatedAt) || (offersData && offersData.lastUpdated) || todayGame.date);
+    }
 
-    card.innerHTML = `
-      <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
-        <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="Mets" width="32" height="32" style="flex-shrink:0;">
-        <div><div style="font-weight:800;color:#002d72;font-size:0.95rem;">New York Mets</div>
-        <div style="font-size:0.72rem;color:#6b7280;">Today's betting lines</div></div></div>
-      <div class="lines-header">
-        <div>
-          <h3>Today's Mets Lines</h3>
-          <p>${escapeHtml(opponent)} vs Mets from the existing odds cache.</p>
-        </div>
-        <span class="lines-updated">${escapeHtml(formatTimestamp(updated))}</span>
-      </div>
-      <div class="lines-grid">
-        <div class="line-tile">
-          <span class="line-label">Moneyline</span>
-          <strong>Mets ${escapeHtml(formatOdds(metsMl))}</strong>
-          <small>${escapeHtml(opponent)} ${escapeHtml(formatOdds(oppMl))}</small>
-        </div>
-        <div class="line-tile">
-          <span class="line-label">Run Line</span>
-          <strong>${metsSpread ? `Mets ${formatOdds(metsSpread.price)} (${metsSpread.point > 0 ? "+" : ""}${metsSpread.point})` : "—"}</strong>
-          <small>Standard spread from the current feed</small>
-        </div>
-        <div class="line-tile">
-          <span class="line-label">Total</span>
-          <strong>${totalOver ? `${totalOver.point}` : "—"}</strong>
-          <small>${totalOver ? `Over ${formatOdds(totalOver.price)}` : "Market not available"}</small>
-        </div>
-      </div>
-    `;
+    var books = getEnabledBooks();
+    var hasMatchingOdds = oddsMatchGame(oddsData, todayGame);
+    var rows = books.map(function (book) {
+      return hasMatchingOdds ? buildBookRow(book, oddsData) : {
+        name: book.name,
+        referralUrl: String(book.referralUrl || "").trim(),
+        metsMlPrice: null,
+        runLinePrice: null,
+        runLinePoint: null,
+        overPrice: null,
+        underPrice: null,
+        totalPoint: null
+      };
+    });
+
+    var best = getBestValues(rows);
+    var body = rows.map(function (row) {
+      var totalScore = Number.isFinite(row.totalPoint) && Number.isFinite(row.overPrice)
+        ? (row.totalPoint * 1000) + row.overPrice
+        : null;
+      var mlHtml = row.metsMlPrice == null ? '<span class="odds-muted">&mdash;</span>' : escapeHtml(formatOdds(row.metsMlPrice));
+      var runLineHtml = row.runLinePrice == null || row.runLinePoint == null
+        ? '<span class="odds-muted">&mdash;</span>'
+        : escapeHtml(formatPoint(row.runLinePoint)) + " (" + escapeHtml(formatOdds(row.runLinePrice)) + ")";
+      var totalHtml = row.totalPoint == null || row.overPrice == null || row.underPrice == null
+        ? '<span class="odds-muted">&mdash;</span>'
+        : "O " + escapeHtml(formatDecimal(row.totalPoint)) + " (" + escapeHtml(formatOdds(row.overPrice)) + ") / U " + escapeHtml(formatDecimal(row.totalPoint)) + " (" + escapeHtml(formatOdds(row.underPrice)) + ")";
+      var bookLink = row.referralUrl
+        ? '<a class="sportsbook-link" href="' + escapeHtml(row.referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">' + escapeHtml(row.name) + "</a>"
+        : '<span class="sportsbook-link">' + escapeHtml(row.name) + "</span>";
+
+      return (
+        "<tr>" +
+          "<td>" + bookLink + "</td>" +
+          "<td>" + renderLinkedCell(mlHtml, row.referralUrl, row.metsMlPrice != null && row.metsMlPrice === best.bestMl) + "</td>" +
+          "<td>" + renderLinkedCell(runLineHtml, row.referralUrl, row.runLinePrice != null && row.runLinePrice === best.bestRunLine) + "</td>" +
+          "<td>" + renderLinkedCell(totalHtml, row.referralUrl, totalScore != null && totalScore === best.bestTotalScore) + "</td>" +
+        "</tr>"
+      );
+    }).join("");
+
+    state.innerHTML =
+      '<div class="odds-table-wrap">' +
+        '<table class="odds-table">' +
+          "<thead><tr><th>Sportsbook</th><th>Mets ML</th><th>Mets Run Line</th><th>Over/Under</th></tr></thead>" +
+          "<tbody>" + body + "</tbody>" +
+        "</table>" +
+      "</div>" +
+      '<div class="odds-note">' +
+        (hasMatchingOdds
+          ? "Best cells are highlighted in green. Books without a live price in the current feed are shown as —."
+          : "Today's Mets game is scheduled, but the live per-book odds feed is not synced yet. Referral links remain available.") +
+      "</div>";
   }
 
   async function init() {
-    renderMarkets();
     try {
-      const [offersResponse, oddsResponse, sampleResponse] = await Promise.all([
+      var responses = await Promise.all([
         fetch(OFFERS_URL, { cache: "no-store" }),
-        fetch(ODDS_URL, { cache: "no-store" }).catch(() => null),
-        fetch(SAMPLE_GAME_URL, { cache: "no-store" }).catch(() => null)
+        fetch(ODDS_URL, { cache: "no-store" }).catch(function () { return null; }),
+        fetch(SAMPLE_GAME_URL, { cache: "no-store" }).catch(function () { return null; })
       ]);
 
-      if (!offersResponse.ok) throw new Error(`Betting offers request failed with ${offersResponse.status}`);
+      var offersResponse = responses[0];
+      var oddsResponse = responses[1];
+      var sampleResponse = responses[2];
+
+      if (!offersResponse.ok) {
+        throw new Error("Betting offers request failed with " + offersResponse.status);
+      }
+
       offersData = await offersResponse.json();
-      const oddsData = oddsResponse && oddsResponse.ok ? await oddsResponse.json() : null;
-      const sampleGame = sampleResponse && sampleResponse.ok ? await sampleResponse.json() : null;
+      var oddsData = oddsResponse && oddsResponse.ok ? await oddsResponse.json() : null;
+      var sampleGame = sampleResponse && sampleResponse.ok ? await sampleResponse.json() : null;
+      var todayGame = findTodayGame(sampleGame);
 
-      const disclosure = document.getElementById("affiliate-disclosure");
-      const responsible = document.getElementById("responsible-gaming");
-      const updated = document.getElementById("betting-updated");
+      var disclosure = document.getElementById("affiliate-disclosure");
+      var responsible = document.getElementById("responsible-gaming");
+      var updated = document.getElementById("betting-updated");
 
-      if (disclosure) disclosure.textContent = offersData?.affiliateDisclosure || "";
-      if (responsible) responsible.textContent = `${offersData?.responsibleGaming || ""} Users are responsible for confirming eligibility, location restrictions, and sportsbook terms.`;
-      if (updated) updated.textContent = formatTimestamp(offersData?.lastUpdated);
+      if (disclosure) disclosure.textContent = offersData.affiliateDisclosure || "";
+      if (responsible) responsible.textContent = (offersData.responsibleGaming || "") + " Users are responsible for confirming eligibility, location restrictions, and sportsbook terms.";
+      if (updated) updated.textContent = formatTimestamp((oddsData && oddsData.meta && oddsData.meta.generatedAt) || offersData.lastUpdated);
 
-      renderFilterButtons();
-      renderSportsbookCards();
-      renderLinesCard(sampleGame, oddsData);
+      renderBadgeRow();
+      renderOddsTable(todayGame, oddsData);
     } catch (error) {
       console.error("Failed to load betting hub data:", error);
-      const grid = document.getElementById("sportsbook-grid");
-      if (grid) grid.innerHTML = '<div class="bet-empty">Betting offers are not available yet.</div>';
-      const lines = document.getElementById("today-lines-card");
-      if (lines) lines.innerHTML = '<div class="bet-empty">Live Mets odds can be connected here from the existing odds feed.</div>';
+      var badgeRow = document.getElementById("sportsbook-badge-row");
+      var oddsState = document.getElementById("odds-comparison-state");
+      if (badgeRow) badgeRow.innerHTML = '<div class="bet-empty">Sportsbook links are not available yet.</div>';
+      if (oddsState) oddsState.innerHTML = '<div class="bet-empty">Live Mets odds are not available right now.</div>';
     }
   }
 
