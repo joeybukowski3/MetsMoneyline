@@ -115,9 +115,9 @@ async function getSavantExpectedStats() {
 }
 
 /**
- * Compute a true N-game rolling BA.
- * Each point = sum(hits in last N games) / sum(AB in last N games).
- * Also returns per-game BA for scatter dots.
+ * Compute chart arrays from a full season game log.
+ * Keeps the existing rolling/per-game fields and adds cumulative series
+ * used by the trends page charts.
  */
 function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
   const labels = [];
@@ -125,6 +125,17 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
   const perGameBa = [];
   const perGameOps = [];
   const perGameHr = [];
+  const cumulativeBa = [];
+  const cumulativeOps = [];
+  const cumulativeHr = [];
+  let totalH = 0;
+  let totalAB = 0;
+  let total2B = 0;
+  let total3B = 0;
+  let totalHR = 0;
+  let totalBB = 0;
+  let totalHBP = 0;
+  let totalSF = 0;
 
   gameLogs.forEach((g, i) => {
     labels.push(g.date ? g.date.slice(5) : `G${i + 1}`);
@@ -134,6 +145,26 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
     perGameBa.push(gameBa != null ? parseFloat(gameBa.toFixed(3)) : null);
     perGameOps.push(typeof g.ops === "number" ? parseFloat(g.ops.toFixed(3)) : null);
     perGameHr.push(typeof g.hr === "number" ? g.hr : 0);
+
+    totalH += g.h || 0;
+    totalAB += g.ab || 0;
+    total2B += g.doubles || 0;
+    total3B += g.triples || 0;
+    totalHR += g.hr || 0;
+    totalBB += g.bb || 0;
+    totalHBP += g.hbp || 0;
+    totalSF += g.sf || 0;
+
+    const cumBa = totalAB > 0 ? totalH / totalAB : null;
+    const cumSingles = Math.max(0, totalH - total2B - total3B - totalHR);
+    const cumTotalBases = cumSingles + 2 * total2B + 3 * total3B + 4 * totalHR;
+    const cumSlg = totalAB > 0 ? cumTotalBases / totalAB : null;
+    const cumObpDen = totalAB + totalBB + totalHBP + totalSF;
+    const cumObp = cumObpDen > 0 ? (totalH + totalBB + totalHBP) / cumObpDen : null;
+    const cumOps = cumObp != null && cumSlg != null ? cumObp + cumSlg : null;
+    cumulativeBa.push(cumBa != null ? parseFloat(cumBa.toFixed(3)) : null);
+    cumulativeOps.push(cumOps != null ? parseFloat(cumOps.toFixed(3)) : null);
+    cumulativeHr.push(totalHR);
 
     // Rolling: use the last N games up to and including this one
     const windowStart = Math.max(0, i + 1 - rollingN);
@@ -150,10 +181,13 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
     game: perGameBa,
     ops: perGameOps,
     hr: perGameHr,
+    cumulativeBa,
+    cumulativeOps,
+    cumulativeHr,
   };
 }
 
-function buildWindowStats(gameLogs, savantData, windowSize) {
+function buildWindowStats(gameLogs, savantData, windowSize, chartSourceLogs = null) {
   const games = windowSize ? gameLogs.slice(-windowSize) : gameLogs;
   if (games.length === 0) return null;
 
@@ -173,7 +207,7 @@ function buildWindowStats(gameLogs, savantData, windowSize) {
   const obp = obpD > 0 ? parseFloat(((totals.h + totals.bb + totals.hbp) / obpD).toFixed(3)) : null;
   const ops = obp != null && slg != null ? parseFloat((obp + slg).toFixed(3)) : null;
 
-  const rolling = computeRolling(games);
+  const rolling = computeRolling(chartSourceLogs || games);
   const xba = savantData?.xba != null ? parseFloat(savantData.xba.toFixed(3)) : null;
 
   return {
@@ -256,9 +290,9 @@ async function main() {
       name: hitter.name,
       mlbId: hitter.mlbId,
       position: hitter.position,
-      season: buildWindowStats(logs, savant, null),
-      last20: buildWindowStats(logs, savant, 20),
-      last10: buildWindowStats(logs, savant, 10),
+      season: buildWindowStats(logs, savant, null, logs),
+      last20: buildWindowStats(logs, savant, 20, logs),
+      last10: buildWindowStats(logs, savant, 10, logs),
     });
   }
 
@@ -310,9 +344,9 @@ async function main() {
     rollingWindow: ROLLING_WINDOW,
     leagueAvg,
     team: {
-      season: buildWindowStats(teamLogs, teamSavant, null),
-      last20: buildWindowStats(teamLogs, teamSavant, 20),
-      last10: buildWindowStats(teamLogs, teamSavant, 10),
+      season: buildWindowStats(teamLogs, teamSavant, null, teamLogs),
+      last20: buildWindowStats(teamLogs, teamSavant, 20, teamLogs),
+      last10: buildWindowStats(teamLogs, teamSavant, 10, teamLogs),
     },
     players: playerResults.sort((a, b) => (b.season?.pa || 0) - (a.season?.pa || 0)),
   };

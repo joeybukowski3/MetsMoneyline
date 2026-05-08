@@ -202,7 +202,7 @@
     <div class="trends-shell">
       <div class="trends-header">
         <h1>Mets Batting Trends &amp; xBA Analysis</h1>
-        <p class="sub">Switch between BA, xBA, BA minus xBA, OPS, and HR. Full Season, Last 20 Games, and Last 10 Games still control the window for every chart and stat summary.</p>
+        <p class="sub">Switch between cumulative BA, cumulative OPS, and cumulative HR. Full Season, Last 20 Games, and Last 10 Games zoom the same season-to-date line into a tighter visible window while the stat rows still reflect the selected summary window.</p>
         <p class="updated" id="last-updated"></p>
       </div>
 
@@ -307,18 +307,40 @@
         perGameBa: perGameBa,
         perGameOps: perGameOps,
         perGameHr: perGameHr,
+        cumulativeBa: Array.isArray(rolling.cumulativeBa) ? rolling.cumulativeBa : rollingBa,
+        cumulativeOps: Array.isArray(rolling.cumulativeOps) ? rolling.cumulativeOps : perGameOps,
+        cumulativeHr: Array.isArray(rolling.cumulativeHr) ? rolling.cumulativeHr : perGameHr,
         xba: windowData ? windowData.xba : null
       };
+    }
+
+    function getVisiblePointCount() {
+      if (activeWindow === 'last10') return 10;
+      if (activeWindow === 'last20') return 20;
+      return null;
+    }
+
+    function sliceVisibleSeries(values, count) {
+      if (!Array.isArray(values)) return [];
+      return count ? values.slice(-count) : values.slice();
     }
 
     function getVisibleHrMax() {
       if (!trendsData) return 1;
       const values = [];
-      const teamWindow = trendsData.team && (trendsData.team[activeWindow] || trendsData.team.season);
-      if (teamWindow && typeof teamWindow.hr === 'number') values.push(teamWindow.hr);
+      const count = getVisiblePointCount();
+      const teamSeason = trendsData.team && trendsData.team.season;
+      if (teamSeason && teamSeason.rolling) {
+        const teamRolling = normalizeRolling(teamSeason);
+        const teamVisibleHr = sliceVisibleSeries(teamRolling.cumulativeHr, count);
+        if (teamVisibleHr.length) values.push(Math.max.apply(null, teamVisibleHr));
+      }
       (trendsData.players || []).forEach(function(player) {
-        const windowData = player[activeWindow] || player.season;
-        if (windowData && typeof windowData.hr === 'number') values.push(windowData.hr);
+        const seasonData = player.season;
+        if (!seasonData || !seasonData.rolling) return;
+        const rolling = normalizeRolling(seasonData);
+        const visibleHr = sliceVisibleSeries(rolling.cumulativeHr, count);
+        if (visibleHr.length) values.push(Math.max.apply(null, visibleHr));
       });
       return Math.max(1, Math.max.apply(null, values.length ? values : [1]));
     }
@@ -332,33 +354,32 @@
       if (!legend) return;
       const items = {
         ba: [
-          '<div class="lg-item"><div class="lg-line navy"></div> 5-Game Rolling BA</div>',
+          '<div class="lg-item"><div class="lg-line navy"></div> Cumulative BA</div>',
           '<div class="lg-item"><div class="lg-line dashed-orange"></div> Season xBA</div>',
-          '<div class="lg-item"><div class="lg-dot"></div> Single-Game BA</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg</div>'
         ],
         ops: [
-          '<div class="lg-item"><div class="lg-line navy"></div> Game OPS</div>',
+          '<div class="lg-item"><div class="lg-line navy"></div> Cumulative OPS</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg OPS</div>'
         ],
         hr: [
-          '<div class="lg-item"><div class="lg-line orange"></div> Game HR</div>',
+          '<div class="lg-item"><div class="lg-line orange"></div> Cumulative HR</div>',
           '<div class="lg-item">Scale resets with each time window</div>'
         ]
       };
       legend.innerHTML = (items[statKey] || items.ba).join('');
     }
 
-    function buildChartSpec(windowData, statKey) {
-      const normalized = normalizeRolling(windowData || {});
-      const labels = normalized.labels;
+    function buildChartSpec(chartWindowData, statKey) {
+      const normalized = normalizeRolling(chartWindowData || {});
+      const count = getVisiblePointCount();
+      const labels = sliceVisibleSeries(normalized.labels, count);
       if (!labels.length) return null;
 
       const xba = normalized.xba;
-      const rollingBa = normalized.rollingBa;
-      const perGameBa = normalized.perGameBa;
-      const perGameOps = normalized.perGameOps;
-      const perGameHr = normalized.perGameHr;
+      const cumulativeBa = sliceVisibleSeries(normalized.cumulativeBa, count);
+      const cumulativeOps = sliceVisibleSeries(normalized.cumulativeOps, count);
+      const cumulativeHr = sliceVisibleSeries(normalized.cumulativeHr, count);
       const datasets = [];
       let yMin = 0;
       let yMax = 1;
@@ -366,24 +387,9 @@
       let stepSize = null;
 
       if (statKey === 'ba') {
-        const cleanGame = perGameBa.map(function(v) { return typeof v === 'number' && v > 0 ? v : null; });
-        if (cleanGame.some(function(v) { return v != null; })) {
-          datasets.push({
-            label: 'Game BA',
-            data: cleanGame,
-            borderColor: 'rgba(0,45,114,0.25)',
-            backgroundColor: 'rgba(0,45,114,0.25)',
-            borderWidth: 0,
-            pointRadius: 3,
-            pointHoverRadius: 5,
-            pointStyle: 'circle',
-            showLine: false,
-            order: 3
-          });
-        }
         datasets.push({
-          label: '5-Game Rolling BA',
-          data: rollingBa,
+          label: 'Cumulative BA',
+          data: cumulativeBa,
           borderColor: '#002d72',
           backgroundColor: 'rgba(0,45,114,0.05)',
           borderWidth: 2.5,
@@ -422,18 +428,18 @@
         yMin = 0.1;
         yMax = 0.75;
       } else if (statKey === 'ops') {
-        const cleanOps = perGameOps.map(function(v) { return typeof v === 'number' ? round3(v) : null; });
+        const cleanOps = cumulativeOps.map(function(v) { return typeof v === 'number' ? round3(v) : null; });
         const opsValues = cleanOps.filter(function(v) { return v != null; });
         const opsMin = Math.min.apply(null, opsValues.concat([LEAGUE_AVG.ops]));
         const opsMax = Math.max.apply(null, opsValues.concat([LEAGUE_AVG.ops]));
         const opsPad = Math.max(0.04, (opsMax - opsMin) * 0.35);
         datasets.push({
-          label: 'Game OPS',
+          label: 'Cumulative OPS',
           data: cleanOps,
           borderColor: '#002d72',
           backgroundColor: 'rgba(0,45,114,0.05)',
           borderWidth: 2.5,
-          pointRadius: 2,
+          pointRadius: 0,
           pointHoverRadius: 4,
           tension: 0.25,
           fill: false,
@@ -454,14 +460,14 @@
         yMin = Math.max(0, round3(opsMin - opsPad));
         yMax = round3(opsMax + opsPad);
       } else if (statKey === 'hr') {
-        const cleanHr = perGameHr.map(function(v) { return typeof v === 'number' ? v : 0; });
+        const cleanHr = cumulativeHr.map(function(v) { return typeof v === 'number' ? v : 0; });
         datasets.push({
-          label: 'Game HR',
+          label: 'Cumulative HR',
           data: cleanHr,
           borderColor: '#ff5910',
           backgroundColor: 'rgba(255,89,16,0.08)',
           borderWidth: 2.5,
-          pointRadius: 2,
+          pointRadius: 0,
           pointHoverRadius: 4,
           tension: 0.2,
           fill: false,
@@ -683,7 +689,7 @@
     function updateCardChart(cardId) {
       const card = renderedCards[cardId];
       if (!card) return;
-      const spec = buildChartSpec(card.windowData, resolveCardStat(cardId));
+      const spec = buildChartSpec(card.chartData, resolveCardStat(cardId));
       createChart(card.canvasId, spec);
       updateButtonStates();
     }
@@ -703,12 +709,14 @@
       const teamWindow = trendsData.team[windowKey] || trendsData.team.season;
       renderedCards.team = {
         canvasId: 'chart-team',
-        windowData: teamWindow
+        windowData: teamWindow,
+        chartData: trendsData.team.season
       };
       players.forEach(function(player, idx) {
         renderedCards['player-' + idx] = {
           canvasId: 'chart-player-' + idx,
-          windowData: player[windowKey] || player.season
+          windowData: player[windowKey] || player.season,
+          chartData: player.season
         };
       });
 
