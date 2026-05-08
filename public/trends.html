@@ -419,6 +419,8 @@
       const labels = Array.isArray(rolling.labels) ? rolling.labels : [];
       return {
         labels: labels,
+        gameBa: Array.isArray(rolling.game) ? rolling.game : labels.map(function() { return null; }),
+        gameOps: Array.isArray(rolling.ops) ? rolling.ops : labels.map(function() { return null; }),
         cumulativeBa: Array.isArray(rolling.cumulativeBa) ? rolling.cumulativeBa : [],
         cumulativeXba: Array.isArray(rolling.cumulativeXba) ? rolling.cumulativeXba : labels.map(function() { return null; }),
         cumulativeOps: Array.isArray(rolling.cumulativeOps) ? rolling.cumulativeOps : [],
@@ -468,16 +470,17 @@
       if (!legend) return;
       const items = {
         ba: [
-          '<div class="lg-item"><div class="lg-line navy"></div> Cumulative BA</div>',
+          '<div class="lg-item"><div class="lg-box navy"></div> Mets BA</div>',
           '<div class="lg-item"><div class="lg-line dashed-orange"></div> Window xBA</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg BA</div>'
         ],
         xba: [
-          '<div class="lg-item"><div class="lg-line orange"></div> Cumulative xBA</div>',
+          '<div class="lg-item"><div class="lg-box navy"></div> Mets xBA</div>',
+          '<div class="lg-item"><div class="lg-line orange"></div> Mets BA</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg xBA</div>'
         ],
         ops: [
-          '<div class="lg-item"><div class="lg-line navy"></div> Cumulative OPS</div>',
+          '<div class="lg-item"><div class="lg-box navy"></div> Mets OPS</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg OPS</div>'
         ]
       };
@@ -499,14 +502,15 @@
       }
       const baseItems = [];
       if (statKey === "ba") {
-        baseItems.push('<div class="lg-item"><div class="lg-line navy"></div> Mets BA</div>');
+        baseItems.push('<div class="lg-item"><div class="lg-box navy"></div> Mets BA</div>');
         baseItems.push('<div class="lg-item"><div class="lg-line dashed-orange"></div> Mets xBA</div>');
         baseItems.push('<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg BA</div>');
       } else if (statKey === "xba") {
-        baseItems.push('<div class="lg-item"><div class="lg-line orange"></div> Mets xBA</div>');
+        baseItems.push('<div class="lg-item"><div class="lg-box navy"></div> Mets xBA</div>');
+        baseItems.push('<div class="lg-item"><div class="lg-line orange"></div> Mets BA</div>');
         baseItems.push('<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg xBA</div>');
       } else if (statKey === "ops") {
-        baseItems.push('<div class="lg-item"><div class="lg-line navy"></div> Mets OPS</div>');
+        baseItems.push('<div class="lg-item"><div class="lg-box navy"></div> Mets OPS</div>');
         baseItems.push('<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg OPS</div>');
       }
       if (statKey === "ba" || statKey === "ops") {
@@ -521,6 +525,8 @@
       const labels = sliceVisibleSeries(normalized.labels, getVisiblePointCount());
       if (!labels.length) return null;
 
+      const gameBa = sliceVisibleSeries(normalized.gameBa, getVisiblePointCount());
+      const gameOps = sliceVisibleSeries(normalized.gameOps, getVisiblePointCount());
       const cumulativeBa = sliceVisibleSeries(normalized.cumulativeBa, getVisiblePointCount());
       const cumulativeXba = sliceVisibleSeries(normalized.cumulativeXba, getVisiblePointCount());
       const cumulativeOps = sliceVisibleSeries(normalized.cumulativeOps, getVisiblePointCount());
@@ -532,24 +538,44 @@
       let yMax = 0.4;
       let tickFormatter = fmtDecimal;
       let stepSize = null;
+      const teamBarBase = {
+        type: "bar",
+        backgroundColor: "rgba(0,45,114,0.85)",
+        hoverBackgroundColor: "#f97316",
+        borderColor: "rgba(0,45,114,0.95)",
+        borderWidth: 0,
+        borderRadius: 2,
+        categoryPercentage: 0.7,
+        barPercentage: 0.7,
+        order: 1
+      };
 
       if (statKey === "ba") {
-        datasets.push({
-          label: "Cumulative BA",
-          data: cumulativeBa,
-          borderColor: "#002d72",
-          backgroundColor: "rgba(0,45,114,0.05)",
-          borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          tension: 0.3,
-          fill: true,
-          order: 1
-        });
+        if (isTeam) {
+          datasets.push({
+            label: "Mets BA",
+            data: gameBa,
+            ...teamBarBase
+          });
+        } else {
+          datasets.push({
+            label: "Cumulative BA",
+            data: cumulativeBa,
+            borderColor: "#002d72",
+            backgroundColor: "rgba(0,45,114,0.05)",
+            borderWidth: 2.5,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.3,
+            fill: true,
+            order: 1
+          });
+        }
         if (chartWindowData.xba != null) {
           datasets.push({
             label: "Window xBA",
             data: labels.map(function() { return chartWindowData.xba; }),
+            type: "line",
             borderColor: "#ff5910",
             backgroundColor: "transparent",
             borderWidth: 1.5,
@@ -563,6 +589,7 @@
         datasets.push({
           label: "MLB Avg BA",
           data: labels.map(function() { return LEAGUE_AVG.ba; }),
+          type: "line",
           borderColor: "#9ca3af",
           backgroundColor: "transparent",
           borderWidth: 1,
@@ -578,6 +605,7 @@
             datasets.push({
               label: benchmarks.best.abbr + " BA",
               data: labels.map(function() { return benchmarks.best.value; }),
+              type: "line",
               borderColor: "#0f766e",
               backgroundColor: "transparent",
               borderWidth: 1.2,
@@ -591,6 +619,7 @@
             datasets.push({
               label: benchmarks.worst.abbr + " BA",
               data: labels.map(function() { return benchmarks.worst.value; }),
+              type: "line",
               borderColor: "#dc2626",
               backgroundColor: "transparent",
               borderWidth: 1.2,
@@ -604,21 +633,43 @@
         yMin = 0.175;
         yMax = 0.4;
       } else if (statKey === "xba") {
-        datasets.push({
-          label: "Cumulative xBA",
-          data: cumulativeXba,
-          borderColor: "#ff5910",
-          backgroundColor: "rgba(255,89,16,0.07)",
-          borderWidth: 2.4,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          tension: 0.3,
-          fill: true,
-          order: 1
-        });
+        if (isTeam) {
+          datasets.push({
+            label: "Mets xBA",
+            data: cumulativeXba,
+            ...teamBarBase
+          });
+          datasets.push({
+            label: "Mets BA",
+            data: cumulativeBa,
+            type: "line",
+            borderColor: "#ff5910",
+            backgroundColor: "transparent",
+            borderWidth: 2,
+            pointRadius: 0,
+            pointHoverRadius: 0,
+            tension: 0.3,
+            fill: false,
+            order: 2
+          });
+        } else {
+          datasets.push({
+            label: "Cumulative xBA",
+            data: cumulativeXba,
+            borderColor: "#ff5910",
+            backgroundColor: "rgba(255,89,16,0.07)",
+            borderWidth: 2.4,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.3,
+            fill: true,
+            order: 1
+          });
+        }
         datasets.push({
           label: "MLB Avg xBA",
           data: labels.map(function() { return LEAGUE_AVG.xba; }),
+          type: "line",
           borderColor: "#9ca3af",
           backgroundColor: "transparent",
           borderWidth: 1,
@@ -631,21 +682,30 @@
         yMin = 0.175;
         yMax = 0.4;
       } else if (statKey === "ops") {
-        datasets.push({
-          label: "Cumulative OPS",
-          data: cumulativeOps,
-          borderColor: "#002d72",
-          backgroundColor: "rgba(0,45,114,0.05)",
-          borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          tension: 0.25,
-          fill: false,
-          order: 1
-        });
+        if (isTeam) {
+          datasets.push({
+            label: "Mets OPS",
+            data: gameOps,
+            ...teamBarBase
+          });
+        } else {
+          datasets.push({
+            label: "Cumulative OPS",
+            data: cumulativeOps,
+            borderColor: "#002d72",
+            backgroundColor: "rgba(0,45,114,0.05)",
+            borderWidth: 2.5,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.25,
+            fill: false,
+            order: 1
+          });
+        }
         datasets.push({
           label: "MLB Avg OPS",
           data: labels.map(function() { return LEAGUE_AVG.ops; }),
+          type: "line",
           borderColor: "#9ca3af",
           backgroundColor: "transparent",
           borderWidth: 1,
@@ -661,6 +721,7 @@
             datasets.push({
               label: benchmarks.best.abbr + " OPS",
               data: labels.map(function() { return benchmarks.best.value; }),
+              type: "line",
               borderColor: "#0f766e",
               backgroundColor: "transparent",
               borderWidth: 1.2,
@@ -674,6 +735,7 @@
             datasets.push({
               label: benchmarks.worst.abbr + " OPS",
               data: labels.map(function() { return benchmarks.worst.value; }),
+              type: "line",
               borderColor: "#dc2626",
               backgroundColor: "transparent",
               borderWidth: 1.2,
@@ -727,7 +789,7 @@
       }
 
       return {
-        type: type,
+        type: isTeam && (statKey === "ba" || statKey === "xba" || statKey === "ops") ? "bar" : type,
         labels: labels,
         datasets: datasets,
         yMin: yMin,
