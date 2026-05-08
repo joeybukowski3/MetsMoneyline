@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mets Batting Trends & xBA Analysis 2026 | MetsMoneyline</title>
-  <meta name="description" content="Track 2026 New York Mets batting trends — BA vs xBA overlay charts for the team and individual players. Season, last 20, and last 10 game windows.">
+  <meta name="description" content="Track 2026 New York Mets batting trends &mdash; BA vs xBA overlay charts for the team and individual players. Season, last 20, and last 10 game windows.">
   <meta name="keywords" content="Mets xBA, Mets batting average, Mets Statcast, New York Mets hitting trends, Mets expected batting average">
   <link rel="canonical" href="https://www.metsmoneyline.com/trends.html">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.metsmoneyline.com/trends.html">
   <meta property="og:title" content="Mets Batting Trends & xBA Analysis 2026 | MetsMoneyline">
-  <meta property="og:description" content="BA vs xBA overlay charts for every Mets hitter — are they running hot or due for a breakout?">
+  <meta property="og:description" content="BA vs xBA overlay charts for every Mets hitter &mdash; are they running hot or due for a breakout?">
   <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Mets Batting Trends & xBA Analysis 2026 | MetsMoneyline">
-  <meta name="twitter:description" content="BA vs xBA overlay charts for every Mets hitter — are they running hot or due for a breakout?">
+  <meta name="twitter:description" content="BA vs xBA overlay charts for every Mets hitter &mdash; are they running hot or due for a breakout?">
   <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,8 +55,14 @@
     .window-tab:hover:not(.active) { background: #d4dae6; }
 
     .trend-card {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 18px;
-      padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; box-shadow: var(--shadow);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1rem 1.1rem; box-shadow: var(--shadow);
+    }
+    .players-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.75rem;
     }
     .trend-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
     .trend-card-header img {
@@ -74,7 +80,7 @@
     .verdict-cold { background: rgba(37,99,235,0.1); color: #2563eb; }
     .verdict-track { background: rgba(22,163,74,0.1); color: #16a34a; }
 
-    .trend-chart-wrap { position: relative; height: 200px; }
+    .trend-chart-wrap { position: relative; height: 160px; }
 
     .trend-stats-row {
       display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem;
@@ -83,10 +89,22 @@
     .trend-stat { text-align: center; flex: 1; min-width: 55px; }
     .trend-stat .val { font-size: 1rem; font-weight: 800; color: var(--navy); }
     .trend-stat .lbl { font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+    .vs-lg {
+      font-size: 0.58rem;
+      font-weight: 700;
+      margin-top: 1px;
+      letter-spacing: 0.02em;
+    }
+    .vs-above { color: #16a34a; }
+    .vs-below { color: #dc2626; }
     .diff-positive { color: #dc2626 !important; }
     .diff-negative { color: #2563eb !important; }
 
     .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; font-size: 0.9rem; }
+
+    @media (max-width: 900px) {
+      .players-grid { grid-template-columns: 1fr; }
+    }
 
     @media (max-width: 640px) {
       .trends-shell { padding: 0 0.75rem 2rem; }
@@ -94,6 +112,7 @@
       .trend-card { padding: 1rem; }
       .trend-stats-row { gap: 0.5rem; }
       .trend-stat .val { font-size: 0.9rem; }
+      .players-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -113,6 +132,7 @@
         <div class="lg-item"><div class="lg-line ba"></div> 5-Game Rolling BA</div>
         <div class="lg-item"><div class="lg-line xba"></div> Season xBA</div>
         <div class="lg-item"><div class="lg-dot"></div> Single-Game BA</div>
+        <div class="lg-item"><div class="lg-line" style="border-top:1px dashed #9ca3af;height:0;background:none;"></div> MLB Avg</div>
       </div>
 
       <div class="window-tabs">
@@ -139,6 +159,7 @@
   <script defer src="js/site-header.js"></script>
   <script>
     const TRENDS_DATA_URL = 'data/trends.json';
+    var LEAGUE_AVG = { ba: 0.243, obp: 0.310, slg: 0.389, ops: 0.699, xba: 0.243 };
     let trendsData = null;
     let activeWindow = 'season';
     const charts = {};
@@ -150,7 +171,7 @@
       });
     }
 
-    /* ── Verdict badge ── */
+    /* Verdict badge */
     function verdictBadge(ba, xba) {
       if (ba == null || xba == null) return '';
       const diff = ba - xba;
@@ -161,7 +182,7 @@
 
     function fmtBa(v) { return v != null ? v.toFixed(3).replace(/^0/, '') : '—'; }
 
-    /* ── Chart creation ── */
+    /* Chart creation */
     function normalizeRolling(windowData) {
       const rolling = windowData?.rolling || {};
       const labels = Array.isArray(rolling.labels) ? rolling.labels : [];
@@ -178,29 +199,25 @@
       var canvas = document.getElementById(canvasId);
       if (!canvas) { console.warn('Canvas not found:', canvasId); return; }
 
-      // Validate data
       if (!Array.isArray(labels) || !labels.length) return;
       if (!Array.isArray(rollingBa) || !rollingBa.length) return;
 
-      // Clean per-game data: convert 0s to null
       var cleanGame = Array.isArray(perGameBa)
         ? perGameBa.map(function(v) { return (typeof v === 'number' && v > 0) ? v : null; })
         : [];
 
-      // Y-axis bounds from all non-null positive values
       var allNums = rollingBa.concat(cleanGame).filter(function(v) { return v != null && v > 0; });
       if (xba != null && xba > 0) allNums.push(xba);
-      if (!allNums.length) allNums = [0.200, 0.300]; // fallback
+      if (LEAGUE_AVG.ba != null && LEAGUE_AVG.ba > 0) allNums.push(LEAGUE_AVG.ba);
+      if (!allNums.length) allNums = [0.200, 0.300];
       var lo = Math.min.apply(null, allNums);
       var hi = Math.max.apply(null, allNums);
       var pad = Math.max(0.030, (hi - lo) * 0.25);
       var yMin = Math.max(0, Math.round((lo - pad) * 1000) / 1000);
       var yMax = Math.round((hi + pad) * 1000) / 1000;
 
-      // Build datasets — ALL line type (no mixed bar charts)
       var datasets = [];
 
-      // Per-game dots (scatter-style line with no connecting line)
       if (cleanGame.length) {
         datasets.push({
           label: 'Game BA',
@@ -216,7 +233,6 @@
         });
       }
 
-      // Rolling BA line
       datasets.push({
         label: '5-Game Rolling BA',
         data: rollingBa,
@@ -230,7 +246,6 @@
         order: 1
       });
 
-      // xBA reference line
       if (xba != null) {
         datasets.push({
           label: 'Season xBA (' + fmtBa(xba) + ')',
@@ -245,6 +260,19 @@
           order: 2
         });
       }
+
+      datasets.push({
+        label: 'MLB Avg (' + fmtBa(LEAGUE_AVG.ba) + ')',
+        data: labels.map(function() { return LEAGUE_AVG.ba; }),
+        borderColor: '#9ca3af',
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        borderDash: [3, 3],
+        fill: false,
+        order: 4
+      });
 
       try {
         charts[canvasId] = new Chart(canvas, {
@@ -303,7 +331,7 @@
       }
     }
 
-    /* ── Render cards ── */
+    /* Render cards */
     function renderTeamCard(team, windowKey) {
       const w = team[windowKey] || team.season;
       if (!w) return '';
@@ -323,12 +351,34 @@
           </div>
           <div class="trend-chart-wrap"><canvas id="chart-team"></canvas></div>
           <div class="trend-stats-row">
-            <div class="trend-stat"><div class="val">${fmtBa(w.ba)}</div><div class="lbl">BA</div></div>
-            <div class="trend-stat"><div class="val">${fmtBa(w.xba)}</div><div class="lbl">xBA</div></div>
-            <div class="trend-stat"><div class="val ${diffCls}">${diffStr}</div><div class="lbl">BA − xBA</div></div>
-            <div class="trend-stat"><div class="val">${fmtBa(w.ops)}</div><div class="lbl">OPS</div></div>
-            <div class="trend-stat"><div class="val">${fmtBa(w.slg)}</div><div class="lbl">SLG</div></div>
-            <div class="trend-stat"><div class="val">${fmtBa(w.obp)}</div><div class="lbl">OBP</div></div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.ba)}</div>
+              <div class="lbl">BA</div>
+              <div class="vs-lg ${w.ba != null && w.ba > LEAGUE_AVG.ba ? 'vs-above' : 'vs-below'}">${w.ba != null ? 'vs .243' : ''}</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.xba)}</div>
+              <div class="lbl">xBA</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val ${diffCls}">${diffStr}</div>
+              <div class="lbl">BA − xBA</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.ops)}</div>
+              <div class="lbl">OPS</div>
+              <div class="vs-lg ${w.ops != null && w.ops > LEAGUE_AVG.ops ? 'vs-above' : 'vs-below'}">${w.ops != null ? (w.ops > LEAGUE_AVG.ops ? '+' : '') + (w.ops - LEAGUE_AVG.ops).toFixed(3) : ''}</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.slg)}</div>
+              <div class="lbl">SLG</div>
+              <div class="vs-lg ${w.slg != null && w.slg > LEAGUE_AVG.slg ? 'vs-above' : 'vs-below'}">${w.slg != null ? (w.slg > LEAGUE_AVG.slg ? '+' : '') + (w.slg - LEAGUE_AVG.slg).toFixed(3) : ''}</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.obp)}</div>
+              <div class="lbl">OBP</div>
+              <div class="vs-lg ${w.obp != null && w.obp > LEAGUE_AVG.obp ? 'vs-above' : 'vs-below'}">${w.obp != null ? (w.obp > LEAGUE_AVG.obp ? '+' : '') + (w.obp - LEAGUE_AVG.obp).toFixed(3) : ''}</div>
+            </div>
           </div>
         </div>`;
     }
@@ -355,22 +405,39 @@
           </div>
           <div class="trend-chart-wrap"><canvas id="${canvasId}"></canvas></div>
           <div class="trend-stats-row">
-            <div class="trend-stat"><div class="val">${fmtBa(w.ba)}</div><div class="lbl">BA</div></div>
-            <div class="trend-stat"><div class="val">${fmtBa(w.xba)}</div><div class="lbl">xBA</div></div>
-            <div class="trend-stat"><div class="val ${diffCls}">${diffStr}</div><div class="lbl">Diff</div></div>
-            <div class="trend-stat"><div class="val">${fmtBa(w.ops)}</div><div class="lbl">OPS</div></div>
-            <div class="trend-stat"><div class="val">${w.hr ?? '—'}</div><div class="lbl">HR</div></div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.ba)}</div>
+              <div class="lbl">BA</div>
+              <div class="vs-lg ${w.ba != null && w.ba > LEAGUE_AVG.ba ? 'vs-above' : 'vs-below'}">${w.ba != null ? (w.ba > LEAGUE_AVG.ba ? '+' : '') + (w.ba - LEAGUE_AVG.ba).toFixed(3) : ''}</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.xba)}</div>
+              <div class="lbl">xBA</div>
+              <div class="vs-lg ${w.xba != null && w.xba > LEAGUE_AVG.xba ? 'vs-above' : 'vs-below'}">${w.xba != null ? (w.xba > LEAGUE_AVG.xba ? '+' : '') + (w.xba - LEAGUE_AVG.xba).toFixed(3) : ''}</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val ${diffCls}">${diffStr}</div>
+              <div class="lbl">Diff</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${fmtBa(w.ops)}</div>
+              <div class="lbl">OPS</div>
+              <div class="vs-lg ${w.ops != null && w.ops > LEAGUE_AVG.ops ? 'vs-above' : 'vs-below'}">${w.ops != null ? (w.ops > LEAGUE_AVG.ops ? '+' : '') + (w.ops - LEAGUE_AVG.ops).toFixed(3) : ''}</div>
+            </div>
+            <div class="trend-stat">
+              <div class="val">${w.hr ?? '—'}</div>
+              <div class="lbl">HR</div>
+            </div>
           </div>
         </div>`;
     }
 
-    /* ── Main render ── */
+    /* Main render */
     function renderAll(windowKey) {
       if (!trendsData) return;
       const teamSection = document.getElementById('team-trend-section');
       const playerSection = document.getElementById('player-trend-section');
 
-      // Team card
       teamSection.innerHTML = renderTeamCard(trendsData.team, windowKey);
       const teamW = trendsData.team[windowKey] || trendsData.team.season;
       if (teamW?.rolling) {
@@ -384,7 +451,6 @@
         }
       }
 
-      // Player cards sorted by PA
       const players = [...(trendsData.players || [])].sort((a, b) => {
         const paA = (a[windowKey] || a.season)?.pa || 0;
         const paB = (b[windowKey] || b.season)?.pa || 0;
@@ -392,9 +458,8 @@
       });
 
       document.getElementById('players-heading').style.display = players.length ? 'block' : 'none';
-      playerSection.innerHTML = players.map((p, i) => renderPlayerCard(p, windowKey, i)).join('');
+      playerSection.innerHTML = '<div class="players-grid">' + players.map((p, i) => renderPlayerCard(p, windowKey, i)).join('') + '</div>';
 
-      // Render player charts
       players.forEach((player, idx) => {
         const w = player[windowKey] || player.season;
         if (w?.rolling) {
@@ -408,7 +473,6 @@
       });
     }
 
-    // Tab switching
     document.querySelector('.window-tabs').addEventListener('click', (e) => {
       if (!e.target.matches('.window-tab')) return;
       document.querySelectorAll('.window-tab').forEach(t => t.classList.remove('active'));
@@ -417,11 +481,14 @@
       renderAll(activeWindow);
     });
 
-    // Load data
     fetch(TRENDS_DATA_URL)
       .then(r => r.json())
       .then(data => {
         trendsData = data;
+        if (data.leagueAvg) {
+          LEAGUE_AVG = data.leagueAvg;
+          if (!LEAGUE_AVG.xba) LEAGUE_AVG.xba = LEAGUE_AVG.ba;
+        }
         document.getElementById('trends-loading').style.display = 'none';
         if (data.generatedAt) {
           document.getElementById('last-updated').textContent = `Updated: ${new Date(data.generatedAt).toLocaleString()}`;
