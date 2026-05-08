@@ -516,16 +516,20 @@ function computeTeamComparisons(teams, logsByTeamId, expectedHitsByTeamId, leagu
     }).filter((row) => row.stats);
   });
 
-  const seasonRows = statsByWindow.season;
-
-  function bestWorstFor(statKey) {
-    const valid = seasonRows
+  function benchmarkForRows(rows, statKey) {
+    const valid = rows
       .filter((row) => Number.isFinite(row.stats[statKey]))
       .sort((a, b) => {
         if (a.stats[statKey] !== b.stats[statKey]) return a.stats[statKey] - b.stats[statKey];
         return a.teamId - b.teamId;
       });
+    const avg = valid.length
+      ? (statKey === "hr"
+        ? parseFloat((valid.reduce((sum, row) => sum + row.stats[statKey], 0) / valid.length).toFixed(1))
+        : parseFloat((valid.reduce((sum, row) => sum + row.stats[statKey], 0) / valid.length).toFixed(3)))
+      : statKey === "hr" ? 0 : null;
     return {
+      avg,
       worst: valid.length ? formatBenchmarkTeam({
         teamId: valid[0].teamId,
         abbr: valid[0].abbr,
@@ -541,32 +545,22 @@ function computeTeamComparisons(teams, logsByTeamId, expectedHitsByTeamId, leagu
     };
   }
 
-  const hrRows = seasonRows.filter((row) => Number.isFinite(row.stats.hr));
-  const hrAvg = hrRows.length
-    ? parseFloat((hrRows.reduce((sum, row) => sum + row.stats.hr, 0) / hrRows.length).toFixed(1))
-    : 0;
-
   const metsRanks = {};
+  const teamBenchmarks = {};
   windows.forEach((window) => {
     const rows = statsByWindow[window.key];
     metsRanks[window.key] = {};
+    teamBenchmarks[window.key] = {};
     ["ba", "xba", "ops", "hr"].forEach((statKey) => {
       const ranked = rankTeamsByStat(rows, statKey);
       const metsRank = ranked.find((row) => row.teamId === TEAM_ID);
       metsRanks[window.key][statKey] = metsRank ? metsRank.rank : null;
+      teamBenchmarks[window.key][statKey] = benchmarkForRows(rows, statKey);
     });
   });
 
   return {
-    teamBenchmarks: {
-      ba: bestWorstFor("ba"),
-      xba: bestWorstFor("xba"),
-      ops: bestWorstFor("ops"),
-      hr: {
-        ...bestWorstFor("hr"),
-        avg: hrAvg,
-      },
-    },
+    teamBenchmarks,
     metsRanks,
   };
 }

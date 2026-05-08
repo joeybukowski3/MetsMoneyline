@@ -199,6 +199,20 @@
     }
     .ranking-table td .main { display: block; font-weight: 700; color: #002d72; }
     .ranking-table td .sub { display: block; margin-top: 0.12rem; color: var(--text-muted); }
+    .ranking-player {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+    .ranking-player img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #d8e0ea;
+      background: #f8fafc;
+      flex: 0 0 32px;
+    }
     .ranking-empty {
       padding: 0.9rem 0.95rem 1rem;
       color: var(--text-muted);
@@ -346,7 +360,7 @@
     <div class="trends-shell">
       <div class="trends-header">
         <h1>Mets Batting Trends &amp; xBA Analysis</h1>
-        <p class="sub">Full Season, Last 20 Games, and Last 10 Games still zoom the player trend lines. The team card now compares the Mets directly against MLB-wide baselines for the selected stat and window.</p>
+        <p class="sub">The team card compares Full Season, Last 20 Games, and Last 10 Games side by side for each stat, while the player controls below still zoom the individual trend lines.</p>
         <p class="updated" id="last-updated"></p>
       </div>
 
@@ -472,8 +486,10 @@
       return '<span class="trend-label-line">' + STAT_META[statKey].label + (changeHtml || "") + "</span>";
     }
 
-    function getTeamBenchmarksFor(statKey) {
-      return trendsData && trendsData.teamBenchmarks ? trendsData.teamBenchmarks[statKey] : null;
+    function getTeamBenchmarksFor(windowKey, statKey) {
+      return trendsData && trendsData.teamBenchmarks && trendsData.teamBenchmarks[windowKey]
+        ? trendsData.teamBenchmarks[windowKey][statKey]
+        : null;
     }
 
     function buildPageLegend() {
@@ -487,15 +503,14 @@
       ].join("");
     }
 
-    function buildTeamLegend(statKey) {
+    function buildTeamLegend() {
       const legend = document.getElementById("team-chart-legend");
       if (!legend) return;
-      const benchmarks = getTeamBenchmarksFor(statKey) || {};
       legend.innerHTML = [
         '<div class="lg-item"><div class="lg-box navy"></div> Mets</div>',
         '<div class="lg-item"><div class="lg-box gray"></div> MLB Avg</div>',
-        '<div class="lg-item"><div class="lg-box teal"></div> Best: ' + (benchmarks.best ? benchmarks.best.abbr : "MLB") + "</div>",
-        '<div class="lg-item"><div class="lg-box red"></div> Worst: ' + (benchmarks.worst ? benchmarks.worst.abbr : "MLB") + "</div>"
+        '<div class="lg-item"><div class="lg-box teal"></div> Best Team</div>',
+        '<div class="lg-item"><div class="lg-box red"></div> Worst Team</div>'
       ].join("");
     }
 
@@ -504,25 +519,27 @@
       afterDatasetsDraw: function(chart, args, pluginOptions) {
         if (!pluginOptions || !pluginOptions.enabled) return;
         const ctx = chart.ctx;
-        const datasetMeta = chart.getDatasetMeta(0);
-        const labels = pluginOptions.labels || [];
         const formatter = pluginOptions.formatter || fmtDecimal;
         ctx.save();
-        datasetMeta.data.forEach(function(bar, index) {
-          const value = pluginOptions.values[index];
-          if (value == null || !bar) return;
-          const x = bar.x;
-          const topY = bar.y;
-          const rankLabel = labels[index] || "";
-          ctx.textAlign = "center";
-          ctx.fillStyle = "#0f172a";
-          ctx.font = "700 11px Inter";
-          ctx.fillText(String(formatter(value)).replace(/&mdash;/g, "—"), x, topY - 10);
-          if (rankLabel) {
-            ctx.fillStyle = "#002d72";
-            ctx.font = "800 10px Inter";
-            ctx.fillText(rankLabel, x, topY - 24);
-          }
+        (pluginOptions.series || []).forEach(function(series) {
+          const datasetMeta = chart.getDatasetMeta(series.datasetIndex);
+          if (!datasetMeta || !datasetMeta.data) return;
+          datasetMeta.data.forEach(function(bar, index) {
+            const value = series.values[index];
+            if (value == null || !bar) return;
+            const x = bar.x;
+            const topY = bar.y;
+            const seriesLabel = (series.labels || [])[index] || "";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "#0f172a";
+            ctx.font = "700 11px Inter";
+            ctx.fillText(String(formatter(value)).replace(/&mdash;/g, "—"), x, topY - 10);
+            if (seriesLabel) {
+              ctx.fillStyle = series.datasetIndex === 0 ? "#002d72" : "#475569";
+              ctx.font = series.datasetIndex === 0 ? "800 10px Inter" : "700 10px Inter";
+              ctx.fillText(seriesLabel, x, topY - 24);
+            }
+          });
         });
         ctx.restore();
       }
@@ -598,14 +615,37 @@
       };
     }
 
-    function buildTeamChartSpec(windowData, statKey) {
-      const benchmarks = getTeamBenchmarksFor(statKey) || {};
-      const bestValue = benchmarks.best ? benchmarks.best.value : 0;
-      const worstValue = benchmarks.worst ? benchmarks.worst.value : 0;
-      const avgValue = statKey === "hr" ? (benchmarks.avg || 0) : (LEAGUE_AVG[statKey] || 0);
-      const metsValue = windowData && Number.isFinite(windowData[statKey]) ? windowData[statKey] : 0;
-      const values = [metsValue, avgValue, bestValue, worstValue];
-      const rank = windowData && windowData.ranks ? windowData.ranks[statKey] : null;
+    function buildTeamChartSpec(teamData, statKey) {
+      const windowKeys = ["season", "last20", "last10"];
+      const windowLabels = ["Full Season", "Last 20 Games", "Last 10 Games"];
+      const metsValues = windowKeys.map(function(windowKey) {
+        const windowData = teamData[windowKey] || {};
+        return Number.isFinite(windowData[statKey]) ? windowData[statKey] : 0;
+      });
+      const avgValues = windowKeys.map(function(windowKey) {
+        const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
+        return Number.isFinite(benchmarks.avg) ? benchmarks.avg : 0;
+      });
+      const bestValues = windowKeys.map(function(windowKey) {
+        const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
+        return benchmarks.best && Number.isFinite(benchmarks.best.value) ? benchmarks.best.value : 0;
+      });
+      const worstValues = windowKeys.map(function(windowKey) {
+        const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
+        return benchmarks.worst && Number.isFinite(benchmarks.worst.value) ? benchmarks.worst.value : 0;
+      });
+      const rankLabels = windowKeys.map(function(windowKey) {
+        const windowData = teamData[windowKey] || {};
+        return windowData.ranks && windowData.ranks[statKey] ? "#" + windowData.ranks[statKey] + " in MLB" : "";
+      });
+      const bestLabels = windowKeys.map(function(windowKey) {
+        const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
+        return benchmarks.best ? benchmarks.best.abbr : "";
+      });
+      const worstLabels = windowKeys.map(function(windowKey) {
+        const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
+        return benchmarks.worst ? benchmarks.worst.abbr : "";
+      });
       let yMin = 0.175;
       let yMax = 0.4;
       let tickFormatter = fmtDecimal;
@@ -615,7 +655,7 @@
         yMin = 0.5;
         yMax = 0.95;
       } else if (statKey === "hr") {
-        const highest = Math.max.apply(null, values.concat([1]));
+        const highest = Math.max.apply(null, metsValues.concat(avgValues, bestValues, worstValues, [1]));
         yMin = 0;
         yMax = Math.ceil(highest * 1.1);
         tickFormatter = fmtInteger;
@@ -624,32 +664,65 @@
 
       return {
         type: "bar",
-        labels: [
-          "Mets",
-          "MLB Avg",
-          benchmarks.best ? benchmarks.best.abbr : "Best",
-          benchmarks.worst ? benchmarks.worst.abbr : "Worst"
+        labels: windowLabels,
+        datasets: [
+          {
+            label: "Mets",
+            data: metsValues,
+            backgroundColor: "#002d72",
+            hoverBackgroundColor: "#143e86",
+            borderColor: "#001f4f",
+            borderWidth: 1.2,
+            borderRadius: 6,
+            categoryPercentage: 0.68,
+            barPercentage: 0.82
+          },
+          {
+            label: "MLB Avg",
+            data: avgValues,
+            backgroundColor: "#9ca3af",
+            hoverBackgroundColor: "#7f8998",
+            borderColor: "#7b8794",
+            borderWidth: 1.2,
+            borderRadius: 6,
+            categoryPercentage: 0.68,
+            barPercentage: 0.82
+          },
+          {
+            label: "Best Team",
+            data: bestValues,
+            backgroundColor: "#22c55e",
+            hoverBackgroundColor: "#16a34a",
+            borderColor: "#15803d",
+            borderWidth: 1.2,
+            borderRadius: 6,
+            categoryPercentage: 0.68,
+            barPercentage: 0.82
+          },
+          {
+            label: "Worst Team",
+            data: worstValues,
+            backgroundColor: "#ef4444",
+            hoverBackgroundColor: "#dc2626",
+            borderColor: "#b91c1c",
+            borderWidth: 1.2,
+            borderRadius: 6,
+            categoryPercentage: 0.68,
+            barPercentage: 0.82
+          }
         ],
-        datasets: [{
-          label: "Team Comparison",
-          data: values,
-          backgroundColor: ["#002d72", "#9ca3af", "#22c55e", "#ef4444"],
-          hoverBackgroundColor: ["#143e86", "#7f8998", "#16a34a", "#dc2626"],
-          borderColor: ["#001f4f", "#7b8794", "#15803d", "#b91c1c"],
-          borderWidth: 1.2,
-          borderRadius: 6,
-          categoryPercentage: 0.68,
-          barPercentage: 0.82
-        }],
         yMin: yMin,
         yMax: yMax,
         tickFormatter: tickFormatter,
         stepSize: stepSize,
         teamBarLabels: {
           enabled: true,
-          values: values,
           formatter: tickFormatter,
-          labels: [rank ? "#" + rank + " in MLB" : "", "", "", ""]
+          series: [
+            { datasetIndex: 0, values: metsValues, labels: rankLabels },
+            { datasetIndex: 2, values: bestValues, labels: bestLabels },
+            { datasetIndex: 3, values: worstValues, labels: worstLabels }
+          ]
         }
       };
     }
@@ -772,17 +845,16 @@
       }).join("");
     }
 
-    function renderTeamCard(team, windowKey) {
-      const w = team[windowKey] || team.season;
+    function renderTeamCard(team) {
+      const w = team.season;
       if (!w) return "";
-      const windowLabel = windowKey === "season" ? "Full 2026 Season" : windowKey === "last20" ? "Last 20 Games" : "Last 10 Games";
       return (
         '<div class="trend-card" data-card-id="team">' +
           '<div class="trend-card-header">' +
             '<img src="https://www.mlbstatic.com/team-logos/121.svg" alt="New York Mets logo" width="40" height="40">' +
             '<div class="player-info">' +
               "<h3>New York Mets - Team</h3>" +
-              "<span>" + windowLabel + " · " + (w.games || 0) + " games</span>" +
+              "<span>Full season and recent window comparison</span>" +
             "</div>" +
             verdictBadge(w.ba, w.xba) +
           "</div>" +
@@ -845,9 +917,13 @@
     function renderRankings(players, windowKey) {
       const panel = document.getElementById("trends-side-panel");
       if (!panel) return;
+      function headshotUrl(playerId) {
+        return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + playerId + "/headshot/67/current";
+      }
       const rows = players.map(function(player) {
         return {
           name: player.name,
+          mlbId: player.mlbId,
           data: player[windowKey] || player.season
         };
       }).filter(function(row) {
@@ -875,9 +951,13 @@
         const body = tableRows.map(function(row) {
           const xbaDiff = row.data.xba != null ? round3(row.data.xba - LEAGUE_AVG.xba) : null;
           const opsDiff = row.data.ops != null ? round3(row.data.ops - LEAGUE_AVG.ops) : null;
+          const photo = row.mlbId ? headshotUrl(row.mlbId) : "";
           return (
             "<tr>" +
-              "<td><span class=\"main\">" + row.name + "</span></td>" +
+              "<td><div class=\"ranking-player\">" +
+                (photo ? "<img src=\"" + photo + "\" alt=\"" + row.name + "\" loading=\"lazy\" onerror=\"this.onerror=null;this.src='" + headshotUrl(0) + "';\">" : "") +
+                "<span class=\"main\">" + row.name + "</span>" +
+              "</div></td>" +
               "<td><span class=\"main\">" + fmtDecimal(row.data.xba) + "</span><span class=\"sub " + getVsClass(row.data.xba, LEAGUE_AVG.xba) + "\">" + fmtSignedDecimal(xbaDiff) + "</span></td>" +
               "<td><span class=\"main\">" + fmtDecimal(row.data.ops) + "</span><span class=\"sub " + getVsClass(row.data.ops, LEAGUE_AVG.ops) + "\">" + fmtSignedDecimal(opsDiff) + "</span></td>" +
             "</tr>"
@@ -918,10 +998,10 @@
       if (!card) return;
       const statKey = resolveCardStat(cardId);
       const spec = cardId === "team"
-        ? buildTeamChartSpec(card.windowData, statKey)
+        ? buildTeamChartSpec(card.chartData, statKey)
         : buildPlayerChartSpec(card.chartData, statKey);
       createChart(card.canvasId, spec);
-      if (cardId === "team") buildTeamLegend(statKey);
+      if (cardId === "team") buildTeamLegend();
       updateButtonStates();
     }
 
@@ -939,8 +1019,8 @@
       renderedCards = {
         team: {
           canvasId: "chart-team",
-          windowData: trendsData.team[windowKey] || trendsData.team.season,
-          chartData: trendsData.team[windowKey] || trendsData.team.season
+          windowData: trendsData.team.season,
+          chartData: trendsData.team
         }
       };
 
@@ -952,7 +1032,7 @@
         };
       });
 
-      teamSection.innerHTML = renderTeamCard(trendsData.team, windowKey);
+      teamSection.innerHTML = renderTeamCard(trendsData.team);
       document.getElementById("players-heading").style.display = players.length ? "block" : "none";
       playerSection.innerHTML = '<div class="players-grid">' + players.map(function(player, idx) {
         return renderPlayerCard(player, windowKey, idx);
