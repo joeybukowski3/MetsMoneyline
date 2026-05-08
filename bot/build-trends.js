@@ -1,16 +1,10 @@
 /**
  * build-trends.js
- * Generates public/data/trends.json with BA vs xBA trend data
- * for the Mets team and individual hitters.
+ * Generates public/data/trends.json for the trends page.
  *
  * Data sources:
- *   - MLB Stats API: game logs for BA/OPS/SLG per game
- *   - Baseball Savant: expected stats (xBA) from CSV leaderboards
- *
- * CHART DATA MODEL:
- *   - rolling.ba    = 5-game rolling batting average (H in last 5 / AB in last 5)
- *   - rolling.game  = per-game BA for each game (scatter dots)
- *   - xba           = single season-level value (horizontal reference line)
+ *   - MLB Stats API: player game logs, league averages, team benchmarks
+ *   - Baseball Savant: expected batting average leaderboard and statcast event data
  *
  * Usage: node bot/build-trends.js
  */
@@ -21,13 +15,14 @@ const axios = require("axios");
 const { parse } = require("csv-parse/sync");
 
 const TEAM_ID = 121;
+const TEAM_ABBR = "NYM";
 const SEASON = new Date().getFullYear();
-const ROLLING_WINDOW = 5; // 5-game rolling average
+const ROLLING_WINDOW = 5;
 const OUTPUT_PATH = path.join(__dirname, "../public/data/trends.json");
 
 async function fetchJson(url) {
   try {
-    const { data } = await axios.get(url, { timeout: 15000 });
+    const { data } = await axios.get(url, { timeout: 20000 });
     return data;
   } catch (e) {
     console.warn(`[trends] fetch failed: ${url}`, e.message);
@@ -37,12 +32,47 @@ async function fetchJson(url) {
 
 async function fetchText(url) {
   try {
-    const { data } = await axios.get(url, { timeout: 15000, responseType: "text" });
+    const { data } = await axios.get(url, { timeout: 30000, responseType: "text" });
     return data;
   } catch (e) {
     console.warn(`[trends] text fetch failed: ${url}`, e.message);
     return null;
   }
+}
+
+function parseRate(value) {
+  if (value == null || value === "") return null;
+  const num = parseFloat(String(value).replace(/^0(?=\.)/, "0"));
+  return Number.isFinite(num) ? num : null;
+}
+
+function toDateKey(value) {
+  return value ? String(value).slice(0, 10) : "";
+}
+
+function ensureDateMapValue(map, dateKey) {
+  if (!map[dateKey]) map[dateKey] = 0;
+  return map[dateKey];
+}
+
+function upsertNestedDateValue(container, id, dateKey, amount) {
+  if (!container[id]) container[id] = {};
+  if (!container[id][dateKey]) container[id][dateKey] = 0;
+  container[id][dateKey] += amount;
+}
+
+function weightedAverage(entries, valueKey, weightKey) {
+  let weighted = 0;
+  let weight = 0;
+  entries.forEach((entry) => {
+    const value = entry[valueKey];
+    const w = entry[weightKey];
+    if (Number.isFinite(value) && Number.isFinite(w) && w > 0) {
+      weighted += value * w;
+      weight += w;
+    }
+  });
+  return weight > 0 ? parseFloat((weighted / weight).toFixed(3)) : null;
 }
 
 async function getActiveHitters() {
@@ -51,8 +81,8 @@ async function getActiveHitters() {
   );
   if (!data || !data.roster) return [];
   return data.roster
-    .filter(p => p.position?.type !== "Pitcher")
-    .map(p => ({
+    .filter((p) => p.position?.type !== "Pitcher")
+    .map((p) => ({
       mlbId: p.person.id,
       name: p.person.fullName,
       position: p.position?.abbreviation || "",
@@ -65,7 +95,7 @@ async function getPlayerGameLog(playerId) {
   );
   const splits = data?.stats?.[0]?.splits;
   if (!Array.isArray(splits)) return [];
-  return splits.map(s => ({
+  return splits.map((s) => ({
     date: s.date,
     opponent: s.opponent?.name || "",
     ab: s.stat?.atBats ?? 0,
@@ -78,54 +108,221 @@ async function getPlayerGameLog(playerId) {
     hbp: s.stat?.hitByPitch ?? 0,
     sf: s.stat?.sacFlies ?? 0,
     pa: s.stat?.plateAppearances ?? 0,
-    avg: parseFloat(s.stat?.avg) || 0,
-    obp: parseFloat(s.stat?.obp) || 0,
-    ops: parseFloat(s.stat?.ops) || 0,
-    slg: parseFloat(s.stat?.slg) || 0,
+    avg: parseRate(s.stat?.avg) || 0,
+    obp: parseRate(s.stat?.obp) || 0,
+    ops: parseRate(s.stat?.ops) || 0,
+    slg: parseRate(s.stat?.slg) || 0,
   }));
 }
 
-async function getSavantExpectedStats() {
+async function getExpectedStatsLeaderboard(teamId = null) {
+  const teamParam = teamId ? `&team=${teamId}` : "";
   const url =
     `https://baseballsavant.mlb.com/leaderboard/expected_statistics` +
-    `?type=batter&year=${SEASON}&position=&team=${TEAM_ID}` +
+    `?type=batter&year=${SEASON}&position=${teamParam ? "" : ""}${teamParam}` +
     `&min=1&csv=true`;
   const csv = await fetchText(url);
-  if (!csv) return {};
+  if (!csv) return { entries: [], byPlayerId: {} };
+
   try {
-    const rows = parse(csv, { columns: true, skip_empty_lines: true });
-    const map = {};
-    for (const row of rows) {
-      const id = parseInt(row.player_id, 10);
-      if (id) {
-        map[id] = {
-          xba: parseFloat(row.est_ba) || null,
-          xslg: parseFloat(row.est_slg) || null,
-          xwoba: parseFloat(row.est_woba) || null,
-          ba: parseFloat(row.ba) || null,
-          pa: parseInt(row.pa, 10) || 0,
-        };
-      }
-    }
-    return map;
+    const rows = parse(csv, { columns: true, skip_empty_lines: true, bom: true });
+    const entries = [];
+    const byPlayerId = {};
+    rows.forEach((row) => {
+      const playerId = parseInt(row.player_id, 10);
+      if (!playerId) return;
+      const entry = {
+        playerId,
+        pa: parseInt(row.pa, 10) || 0,
+        xba: parseRate(row.est_ba),
+      };
+      entries.push(entry);
+      byPlayerId[playerId] = entry;
+    });
+    return { entries, byPlayerId };
   } catch (e) {
-    console.warn("[trends] savant CSV parse failed:", e.message);
-    return {};
+    console.warn("[trends] expected stats CSV parse failed:", e.message);
+    return { entries: [], byPlayerId: {} };
   }
 }
 
-/**
- * Compute chart arrays from a full season game log.
- * Keeps the existing rolling/per-game fields and adds cumulative series
- * used by the trends page charts.
- */
-function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
+function buildStatcastSearchUrl(startDate, endDate, teamAbbr) {
+  const params = new URLSearchParams();
+  [
+    ["all", "true"],
+    ["hfPT", ""],
+    ["hfAB", ""],
+    ["hfBBT", ""],
+    ["hfPR", ""],
+    ["hfZ", ""],
+    ["stadium", ""],
+    ["hfBBL", ""],
+    ["hfNewZones", ""],
+    ["hfGT", "R|PO|S|"],
+    ["hfC", ""],
+    ["hfSea", `${SEASON}|`],
+    ["hfSit", ""],
+    ["hfOuts", ""],
+    ["opponent", ""],
+    ["pitcher_throws", ""],
+    ["batter_stands", ""],
+    ["hfSA", ""],
+    ["player_type", "batter"],
+    ["hfInfield", ""],
+    ["team", teamAbbr],
+    ["position", ""],
+    ["hfOutfield", ""],
+    ["hfRO", ""],
+    ["home_road", ""],
+    ["game_date_gt", startDate],
+    ["game_date_lt", endDate],
+    ["hfFlag", ""],
+    ["hfPull", ""],
+    ["metric_1", ""],
+    ["hfInn", ""],
+    ["min_pitches", "0"],
+    ["min_results", "0"],
+    ["group_by", "name"],
+    ["sort_col", "pitches"],
+    ["player_event_sort", "h_launch_speed"],
+    ["sort_order", "desc"],
+    ["min_abs", "0"],
+    ["type", "details"],
+  ].forEach(([key, value]) => params.append(key, value));
+
+  return `https://baseballsavant.mlb.com/statcast_search/csv?${params.toString()}`;
+}
+
+async function getMetsStatcastExpectedHits(activeHitters) {
+  const activeIds = new Set(activeHitters.map((h) => String(h.mlbId)));
+  const seasonStart = `${SEASON}-03-01`;
+  const seasonEnd = new Date().toISOString().slice(0, 10);
+  const csv = await fetchText(buildStatcastSearchUrl(seasonStart, seasonEnd, TEAM_ABBR));
+  const byPlayerDate = {};
+  const teamByDate = {};
+  if (!csv) return { byPlayerDate, teamByDate };
+
+  try {
+    const rows = parse(csv, { columns: true, skip_empty_lines: true, bom: true });
+    const seen = new Set();
+    const hitEvents = new Set(["single", "double", "triple", "home_run"]);
+
+    rows.forEach((row) => {
+      if (!row.events) return;
+      const batterId = String(row.batter || "");
+      if (!activeIds.has(batterId)) return;
+      const dateKey = toDateKey(row.game_date);
+      if (!dateKey) return;
+
+      const eventKey = [batterId, row.game_pk || "", row.at_bat_number || "", row.events].join("|");
+      if (seen.has(eventKey)) return;
+      seen.add(eventKey);
+
+      const estimated = parseRate(row.estimated_ba_using_speedangle);
+      const expectedHit = estimated != null
+        ? estimated
+        : hitEvents.has(row.events) ? 1 : 0;
+
+      upsertNestedDateValue(byPlayerDate, batterId, dateKey, expectedHit);
+      ensureDateMapValue(teamByDate, dateKey);
+      teamByDate[dateKey] += expectedHit;
+    });
+  } catch (e) {
+    console.warn("[trends] statcast CSV parse failed:", e.message);
+  }
+
+  return { byPlayerDate, teamByDate };
+}
+
+async function getTeamBenchmarks() {
+  const [teamMeta, teamStats] = await Promise.all([
+    fetchJson(`https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${SEASON}`),
+    fetchJson(`https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1`),
+  ]);
+
+  const teamsById = {};
+  (teamMeta?.teams || []).forEach((team) => {
+    teamsById[team.id] = {
+      id: team.id,
+      name: team.teamName || team.name || "",
+      abbr: team.abbreviation || team.fileCode?.toUpperCase() || "",
+    };
+  });
+
+  const rows = (teamStats?.stats?.[0]?.splits || []).map((split) => {
+    const stat = split.stat || {};
+    const teamId = split.team?.id;
+    const meta = teamsById[teamId] || {};
+    return {
+      teamId,
+      abbr: meta.abbr || split.team?.name || "",
+      name: meta.name || split.team?.name || "",
+      ba: parseRate(stat.avg),
+      ops: parseRate(stat.ops),
+      hr: stat.homeRuns ?? 0,
+    };
+  }).filter((row) => row.teamId);
+
+  function bestWorstFor(statKey) {
+    const valid = rows.filter((row) => Number.isFinite(row[statKey]));
+    const sorted = valid.slice().sort((a, b) => a[statKey] - b[statKey]);
+    return {
+      worst: sorted[0] ? {
+        teamId: sorted[0].teamId,
+        abbr: sorted[0].abbr,
+        name: sorted[0].name,
+        value: parseFloat(sorted[0][statKey].toFixed(3)),
+      } : null,
+      best: sorted.length ? {
+        teamId: sorted[sorted.length - 1].teamId,
+        abbr: sorted[sorted.length - 1].abbr,
+        name: sorted[sorted.length - 1].name,
+        value: parseFloat(sorted[sorted.length - 1][statKey].toFixed(3)),
+      } : null,
+    };
+  }
+
+  const hrRows = rows.filter((row) => Number.isFinite(row.hr));
+  const hrAvg = hrRows.length
+    ? parseFloat((hrRows.reduce((sum, row) => sum + row.hr, 0) / hrRows.length).toFixed(1))
+    : 0;
+
+  return {
+    ba: bestWorstFor("ba"),
+    ops: bestWorstFor("ops"),
+    hr: {
+      ...bestWorstFor("hr"),
+      avg: hrAvg,
+    },
+  };
+}
+
+function getExpectedHitsForGame(gameLog, expectedHitsByDate, xbaFallback) {
+  const dateKey = toDateKey(gameLog.date);
+  const actual = expectedHitsByDate && Number.isFinite(expectedHitsByDate[dateKey])
+    ? expectedHitsByDate[dateKey]
+    : null;
+  if (actual != null) return actual;
+  if (Number.isFinite(xbaFallback) && gameLog.ab > 0) {
+    return xbaFallback * gameLog.ab;
+  }
+  return 0;
+}
+
+function computeRolling(gameLogs, options = {}) {
+  const {
+    rollingN = ROLLING_WINDOW,
+    expectedHitsByDate = {},
+    xbaFallback = null,
+  } = options;
+
   const labels = [];
   const rollingBa = [];
   const perGameBa = [];
   const perGameOps = [];
   const perGameHr = [];
   const cumulativeBa = [];
+  const cumulativeXba = [];
   const cumulativeOps = [];
   const cumulativeHr = [];
   let totalH = 0;
@@ -136,15 +333,15 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
   let totalBB = 0;
   let totalHBP = 0;
   let totalSF = 0;
+  let totalExpectedHits = 0;
 
   gameLogs.forEach((g, i) => {
     labels.push(g.date ? g.date.slice(5) : `G${i + 1}`);
 
-    // Per-game BA
     const gameBa = g.ab > 0 ? g.h / g.ab : null;
     perGameBa.push(gameBa != null ? parseFloat(gameBa.toFixed(3)) : null);
-    perGameOps.push(typeof g.ops === "number" ? parseFloat(g.ops.toFixed(3)) : null);
-    perGameHr.push(typeof g.hr === "number" ? g.hr : 0);
+    perGameOps.push(Number.isFinite(g.ops) ? parseFloat(g.ops.toFixed(3)) : null);
+    perGameHr.push(Number.isFinite(g.hr) ? g.hr : 0);
 
     totalH += g.h || 0;
     totalAB += g.ab || 0;
@@ -154,23 +351,26 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
     totalBB += g.bb || 0;
     totalHBP += g.hbp || 0;
     totalSF += g.sf || 0;
+    totalExpectedHits += getExpectedHitsForGame(g, expectedHitsByDate, xbaFallback);
 
     const cumBa = totalAB > 0 ? totalH / totalAB : null;
+    const cumXba = totalAB > 0 ? totalExpectedHits / totalAB : null;
     const cumSingles = Math.max(0, totalH - total2B - total3B - totalHR);
     const cumTotalBases = cumSingles + 2 * total2B + 3 * total3B + 4 * totalHR;
     const cumSlg = totalAB > 0 ? cumTotalBases / totalAB : null;
     const cumObpDen = totalAB + totalBB + totalHBP + totalSF;
     const cumObp = cumObpDen > 0 ? (totalH + totalBB + totalHBP) / cumObpDen : null;
     const cumOps = cumObp != null && cumSlg != null ? cumObp + cumSlg : null;
+
     cumulativeBa.push(cumBa != null ? parseFloat(cumBa.toFixed(3)) : null);
+    cumulativeXba.push(cumXba != null ? parseFloat(cumXba.toFixed(3)) : null);
     cumulativeOps.push(cumOps != null ? parseFloat(cumOps.toFixed(3)) : null);
     cumulativeHr.push(totalHR);
 
-    // Rolling: use the last N games up to and including this one
     const windowStart = Math.max(0, i + 1 - rollingN);
     const window = gameLogs.slice(windowStart, i + 1);
-    const wH = window.reduce((s, w) => s + w.h, 0);
-    const wAB = window.reduce((s, w) => s + w.ab, 0);
+    const wH = window.reduce((sum, item) => sum + item.h, 0);
+    const wAB = window.reduce((sum, item) => sum + item.ab, 0);
     const rba = wAB > 0 ? wH / wAB : null;
     rollingBa.push(rba != null ? parseFloat(rba.toFixed(3)) : null);
   });
@@ -182,124 +382,173 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
     ops: perGameOps,
     hr: perGameHr,
     cumulativeBa,
+    cumulativeXba,
     cumulativeOps,
     cumulativeHr,
   };
 }
 
-function buildWindowStats(gameLogs, savantData, windowSize, chartSourceLogs = null) {
+function buildWindowStats(gameLogs, options = {}) {
+  const {
+    windowSize = null,
+    chartSourceLogs = null,
+    expectedHitsByDate = {},
+    xbaFallback = null,
+  } = options;
+
   const games = windowSize ? gameLogs.slice(-windowSize) : gameLogs;
-  if (games.length === 0) return null;
+  if (!games.length) return null;
 
   const totals = games.reduce((acc, g) => {
-    acc.h += g.h; acc.ab += g.ab;
-    acc.doubles += g.doubles || 0; acc.triples += g.triples || 0;
-    acc.hr += g.hr; acc.bb += g.bb || 0;
-    acc.hbp += g.hbp || 0; acc.sf += g.sf || 0; acc.pa += g.pa;
+    acc.h += g.h;
+    acc.ab += g.ab;
+    acc.doubles += g.doubles || 0;
+    acc.triples += g.triples || 0;
+    acc.hr += g.hr || 0;
+    acc.bb += g.bb || 0;
+    acc.hbp += g.hbp || 0;
+    acc.sf += g.sf || 0;
+    acc.pa += g.pa || 0;
+    acc.expectedHits += getExpectedHitsForGame(g, expectedHitsByDate, xbaFallback);
     return acc;
-  }, { h: 0, ab: 0, doubles: 0, triples: 0, hr: 0, bb: 0, hbp: 0, sf: 0, pa: 0 });
+  }, {
+    h: 0,
+    ab: 0,
+    doubles: 0,
+    triples: 0,
+    hr: 0,
+    bb: 0,
+    hbp: 0,
+    sf: 0,
+    pa: 0,
+    expectedHits: 0,
+  });
 
   const ba = totals.ab > 0 ? parseFloat((totals.h / totals.ab).toFixed(3)) : null;
+  const xba = totals.ab > 0 ? parseFloat((totals.expectedHits / totals.ab).toFixed(3)) : xbaFallback;
   const singles = Math.max(0, totals.h - totals.doubles - totals.triples - totals.hr);
   const totalBases = singles + 2 * totals.doubles + 3 * totals.triples + 4 * totals.hr;
   const slg = totals.ab > 0 ? parseFloat((totalBases / totals.ab).toFixed(3)) : null;
-  const obpD = totals.ab + totals.bb + totals.hbp + totals.sf;
-  const obp = obpD > 0 ? parseFloat(((totals.h + totals.bb + totals.hbp) / obpD).toFixed(3)) : null;
+  const obpDen = totals.ab + totals.bb + totals.hbp + totals.sf;
+  const obp = obpDen > 0
+    ? parseFloat(((totals.h + totals.bb + totals.hbp) / obpDen).toFixed(3))
+    : null;
   const ops = obp != null && slg != null ? parseFloat((obp + slg).toFixed(3)) : null;
 
-  const rolling = computeRolling(chartSourceLogs || games);
-  const xba = savantData?.xba != null ? parseFloat(savantData.xba.toFixed(3)) : null;
+  const rolling = computeRolling(chartSourceLogs || games, {
+    rollingN: ROLLING_WINDOW,
+    expectedHitsByDate,
+    xbaFallback,
+  });
 
   return {
-    ba, xba, ops, slg, obp,
-    hr: totals.hr, pa: totals.pa, games: games.length,
-    rolling, // { labels, ba (5-game rolling), game (per-game) }
+    ba,
+    xba: Number.isFinite(xba) ? xba : null,
+    ops,
+    slg,
+    obp,
+    hr: totals.hr,
+    pa: totals.pa,
+    games: games.length,
+    rolling,
   };
 }
 
-/* ── MLB league-wide batting averages for the current season ── */
-async function getLeagueAverages() {
-  // This endpoint returns aggregate MLB hitting stats for the season
+async function getLeagueAverages(leagueExpectedStats) {
   const data = await fetchJson(
     `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1`
   );
   const splits = data?.stats?.[0]?.splits;
   if (!Array.isArray(splits) || !splits.length) {
     console.warn("[trends] Could not fetch league averages, using fallbacks");
-    return { ba: 0.243, obp: 0.310, slg: 0.389, ops: 0.699 };
+    return { ba: 0.243, obp: 0.310, slg: 0.389, ops: 0.699, xba: 0.243 };
   }
 
-  // Average across all 30 teams
-  let totalAB = 0, totalH = 0, totalBB = 0, totalHBP = 0, totalSF = 0, totalPA = 0;
+  let totalAB = 0;
+  let totalH = 0;
   let totalTB = 0;
   const opsValues = [];
   const obpValues = [];
 
-  for (const s of splits) {
-    const stat = s.stat || {};
+  splits.forEach((split) => {
+    const stat = split.stat || {};
     const ab = stat.atBats || 0;
-    const h = stat.hits || 0;
     totalAB += ab;
-    totalH += h;
-    totalBB += stat.baseOnBalls || 0;
-    totalHBP += stat.hitByPitch || 0;
-    totalSF += stat.sacFlies || 0;
-    totalPA += stat.plateAppearances || 0;
+    totalH += stat.hits || 0;
     if (stat.ops) opsValues.push(parseFloat(stat.ops));
     if (stat.obp) obpValues.push(parseFloat(stat.obp));
-    if (stat.slg) {
-      totalTB += parseFloat(stat.slg) * ab;
-    }
-  }
+    if (stat.slg) totalTB += parseFloat(stat.slg) * ab;
+  });
 
   const ba = totalAB > 0 ? parseFloat((totalH / totalAB).toFixed(3)) : 0.243;
-  const obp = obpValues.length > 0
-    ? parseFloat((obpValues.reduce((a, b) => a + b, 0) / obpValues.length).toFixed(3))
+  const obp = obpValues.length
+    ? parseFloat((obpValues.reduce((sum, value) => sum + value, 0) / obpValues.length).toFixed(3))
     : 0.310;
-  const slg = totalAB > 0
-    ? parseFloat((totalTB / totalAB).toFixed(3))
-    : 0.389;
-  const ops = opsValues.length > 0
-    ? parseFloat((opsValues.reduce((a, b) => a + b, 0) / opsValues.length).toFixed(3))
+  const slg = totalAB > 0 ? parseFloat((totalTB / totalAB).toFixed(3)) : 0.389;
+  const ops = opsValues.length
+    ? parseFloat((opsValues.reduce((sum, value) => sum + value, 0) / opsValues.length).toFixed(3))
     : 0.699;
+  const xba = weightedAverage(leagueExpectedStats.entries, "xba", "pa") || ba;
 
-  console.log(`[trends] League averages: BA=${ba}, OBP=${obp}, SLG=${slg}, OPS=${ops}`);
-  return { ba, obp, slg, ops };
+  console.log(`[trends] League averages: BA=${ba}, xBA=${xba}, OBP=${obp}, SLG=${slg}, OPS=${ops}`);
+  return { ba, xba, obp, slg, ops };
 }
 
 async function main() {
   console.log("[trends] Starting build...");
 
-  const [hitters, savantMap, leagueAvg] = await Promise.all([
-    getActiveHitters(),
-    getSavantExpectedStats(),
-    getLeagueAverages(),
+  const hitters = await getActiveHitters();
+  const [metsExpectedStats, leagueExpectedStats, teamBenchmarks, statcastExpected] = await Promise.all([
+    getExpectedStatsLeaderboard(TEAM_ID),
+    getExpectedStatsLeaderboard(null),
+    getTeamBenchmarks(),
+    getMetsStatcastExpectedHits(hitters),
   ]);
+  const leagueAvg = await getLeagueAverages(leagueExpectedStats);
 
-  console.log(`[trends] Found ${hitters.length} active hitters, ${Object.keys(savantMap).length} savant entries`);
+  console.log(
+    `[trends] Found ${hitters.length} active hitters, ` +
+    `${Object.keys(metsExpectedStats.byPlayerId).length} expected-stat entries`
+  );
 
   const playerResults = [];
   const playerLogs = [];
+
   for (const hitter of hitters) {
     const logs = await getPlayerGameLog(hitter.mlbId);
     playerLogs.push(logs);
     if (logs.length < 3) continue;
-    const savant = savantMap[hitter.mlbId] || {};
+
+    const fallbackXba = metsExpectedStats.byPlayerId[hitter.mlbId]?.xba ?? null;
+    const expectedHitsByDate = statcastExpected.byPlayerDate[String(hitter.mlbId)] || {};
 
     playerResults.push({
       name: hitter.name,
       mlbId: hitter.mlbId,
       position: hitter.position,
-      season: buildWindowStats(logs, savant, null, logs),
-      last20: buildWindowStats(logs, savant, 20, logs),
-      last10: buildWindowStats(logs, savant, 10, logs),
+      season: buildWindowStats(logs, {
+        chartSourceLogs: logs,
+        expectedHitsByDate,
+        xbaFallback: fallbackXba,
+      }),
+      last20: buildWindowStats(logs, {
+        windowSize: 20,
+        chartSourceLogs: logs,
+        expectedHitsByDate,
+        xbaFallback: fallbackXba,
+      }),
+      last10: buildWindowStats(logs, {
+        windowSize: 10,
+        chartSourceLogs: logs,
+        expectedHitsByDate,
+        xbaFallback: fallbackXba,
+      }),
     });
   }
 
-  // Team-level aggregation
   const allLogs = playerLogs.flat();
   const byDate = {};
-  allLogs.forEach(g => {
+  allLogs.forEach((g) => {
     if (!byDate[g.date]) {
       byDate[g.date] = {
         date: g.date,
@@ -316,11 +565,18 @@ async function main() {
       };
     }
     const d = byDate[g.date];
-    d.h += g.h; d.ab += g.ab; d.doubles += g.doubles || 0;
-    d.triples += g.triples || 0; d.hr += g.hr; d.bb += g.bb || 0;
-    d.hbp += g.hbp || 0; d.sf += g.sf || 0; d.pa += g.pa;
+    d.h += g.h;
+    d.ab += g.ab;
+    d.doubles += g.doubles || 0;
+    d.triples += g.triples || 0;
+    d.hr += g.hr || 0;
+    d.bb += g.bb || 0;
+    d.hbp += g.hbp || 0;
+    d.sf += g.sf || 0;
+    d.pa += g.pa || 0;
   });
-  Object.values(byDate).forEach(d => {
+
+  Object.values(byDate).forEach((d) => {
     const singles = Math.max(0, d.h - d.doubles - d.triples - d.hr);
     const totalBases = singles + 2 * d.doubles + 3 * d.triples + 4 * d.hr;
     const slg = d.ab > 0 ? totalBases / d.ab : null;
@@ -328,25 +584,35 @@ async function main() {
     const obp = obpDen > 0 ? (d.h + d.bb + d.hbp) / obpDen : null;
     d.ops = obp != null && slg != null ? parseFloat((obp + slg).toFixed(3)) : null;
   });
-  const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
 
-  // Team xBA: PA-weighted average from Savant
-  const savantEntries = Object.values(savantMap).filter(v => v.xba != null && v.pa > 0);
-  const totalPA = savantEntries.reduce((s, v) => s + v.pa, 0);
-  const teamXba = totalPA > 0
-    ? savantEntries.reduce((s, v) => s + v.xba * v.pa, 0) / totalPA
-    : null;
-  const teamSavant = { xba: teamXba };
+  const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+  const teamFallbackXba = weightedAverage(metsExpectedStats.entries, "xba", "pa") || leagueAvg.xba;
+  const teamExpectedHitsByDate = statcastExpected.teamByDate;
 
   const output = {
     generatedAt: new Date().toISOString(),
     season: SEASON,
     rollingWindow: ROLLING_WINDOW,
     leagueAvg,
+    teamBenchmarks,
     team: {
-      season: buildWindowStats(teamLogs, teamSavant, null, teamLogs),
-      last20: buildWindowStats(teamLogs, teamSavant, 20, teamLogs),
-      last10: buildWindowStats(teamLogs, teamSavant, 10, teamLogs),
+      season: buildWindowStats(teamLogs, {
+        chartSourceLogs: teamLogs,
+        expectedHitsByDate: teamExpectedHitsByDate,
+        xbaFallback: teamFallbackXba,
+      }),
+      last20: buildWindowStats(teamLogs, {
+        windowSize: 20,
+        chartSourceLogs: teamLogs,
+        expectedHitsByDate: teamExpectedHitsByDate,
+        xbaFallback: teamFallbackXba,
+      }),
+      last10: buildWindowStats(teamLogs, {
+        windowSize: 10,
+        chartSourceLogs: teamLogs,
+        expectedHitsByDate: teamExpectedHitsByDate,
+        xbaFallback: teamFallbackXba,
+      }),
     },
     players: playerResults.sort((a, b) => (b.season?.pa || 0) - (a.season?.pa || 0)),
   };
@@ -356,7 +622,7 @@ async function main() {
   console.log(`[trends] Wrote ${OUTPUT_PATH} (${playerResults.length} players)`);
 }
 
-main().catch(e => {
+main().catch((e) => {
   console.error("[trends] Fatal error:", e);
   process.exit(1);
 });
