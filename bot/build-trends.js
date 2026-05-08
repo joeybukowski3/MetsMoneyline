@@ -32,7 +32,7 @@ async function fetchJson(url) {
 
 async function fetchText(url) {
   try {
-    const { data } = await axios.get(url, { timeout: 30000, responseType: "text" });
+    const { data } = await axios.get(url, { timeout: 60000, responseType: "text" });
     return data;
   } catch (e) {
     console.warn(`[trends] text fetch failed: ${url}`, e.message);
@@ -89,9 +89,45 @@ async function getActiveHitters() {
     }));
 }
 
+async function getLeagueTeams() {
+  const data = await fetchJson(`https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${SEASON}`);
+  if (!Array.isArray(data?.teams)) return [];
+  return data.teams.map((team) => ({
+    id: team.id,
+    abbr: team.abbreviation || team.fileCode?.toUpperCase() || "",
+    name: team.teamName || team.name || "",
+  }));
+}
+
 async function getPlayerGameLog(playerId) {
   const data = await fetchJson(
     `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&season=${SEASON}&group=hitting`
+  );
+  const splits = data?.stats?.[0]?.splits;
+  if (!Array.isArray(splits)) return [];
+  return splits.map((s) => ({
+    date: s.date,
+    opponent: s.opponent?.name || "",
+    ab: s.stat?.atBats ?? 0,
+    h: s.stat?.hits ?? 0,
+    doubles: s.stat?.doubles ?? 0,
+    triples: s.stat?.triples ?? 0,
+    hr: s.stat?.homeRuns ?? 0,
+    rbi: s.stat?.rbi ?? 0,
+    bb: s.stat?.baseOnBalls ?? 0,
+    hbp: s.stat?.hitByPitch ?? 0,
+    sf: s.stat?.sacFlies ?? 0,
+    pa: s.stat?.plateAppearances ?? 0,
+    avg: parseRate(s.stat?.avg) || 0,
+    obp: parseRate(s.stat?.obp) || 0,
+    ops: parseRate(s.stat?.ops) || 0,
+    slg: parseRate(s.stat?.slg) || 0,
+  }));
+}
+
+async function getTeamGameLog(teamId) {
+  const data = await fetchJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=gameLog&season=${SEASON}&group=hitting`
   );
   const splits = data?.stats?.[0]?.splits;
   if (!Array.isArray(splits)) return [];
@@ -146,7 +182,7 @@ async function getExpectedStatsLeaderboard(teamId = null) {
   }
 }
 
-function buildStatcastSearchUrl(startDate, endDate, teamAbbr) {
+function buildStatcastSearchUrl(startDate, endDate, teamAbbr = "") {
   const params = new URLSearchParams();
   [
     ["all", "true"],
@@ -234,67 +270,40 @@ async function getMetsStatcastExpectedHits(activeHitters) {
   return { byPlayerDate, teamByDate };
 }
 
-async function getTeamBenchmarks() {
-  const [teamMeta, teamStats] = await Promise.all([
-    fetchJson(`https://statsapi.mlb.com/api/v1/teams?sportId=1&season=${SEASON}`),
-    fetchJson(`https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1`),
-  ]);
+async function getLeagueStatcastExpectedHits(teamsByAbbr) {
+  const seasonStart = `${SEASON}-03-01`;
+  const seasonEnd = new Date().toISOString().slice(0, 10);
+  const csv = await fetchText(buildStatcastSearchUrl(seasonStart, seasonEnd, ""));
+  const byTeamIdDate = {};
+  if (!csv) return byTeamIdDate;
 
-  const teamsById = {};
-  (teamMeta?.teams || []).forEach((team) => {
-    teamsById[team.id] = {
-      id: team.id,
-      name: team.teamName || team.name || "",
-      abbr: team.abbreviation || team.fileCode?.toUpperCase() || "",
-    };
-  });
+  try {
+    const rows = parse(csv, { columns: true, skip_empty_lines: true, bom: true });
+    const seen = new Set();
+    const hitEvents = new Set(["single", "double", "triple", "home_run"]);
 
-  const rows = (teamStats?.stats?.[0]?.splits || []).map((split) => {
-    const stat = split.stat || {};
-    const teamId = split.team?.id;
-    const meta = teamsById[teamId] || {};
-    return {
-      teamId,
-      abbr: meta.abbr || split.team?.name || "",
-      name: meta.name || split.team?.name || "",
-      ba: parseRate(stat.avg),
-      ops: parseRate(stat.ops),
-      hr: stat.homeRuns ?? 0,
-    };
-  }).filter((row) => row.teamId);
+    rows.forEach((row) => {
+      if (!row.events) return;
+      const dateKey = toDateKey(row.game_date);
+      if (!dateKey) return;
 
-  function bestWorstFor(statKey) {
-    const valid = rows.filter((row) => Number.isFinite(row[statKey]));
-    const sorted = valid.slice().sort((a, b) => a[statKey] - b[statKey]);
-    return {
-      worst: sorted[0] ? {
-        teamId: sorted[0].teamId,
-        abbr: sorted[0].abbr,
-        name: sorted[0].name,
-        value: parseFloat(sorted[0][statKey].toFixed(3)),
-      } : null,
-      best: sorted.length ? {
-        teamId: sorted[sorted.length - 1].teamId,
-        abbr: sorted[sorted.length - 1].abbr,
-        name: sorted[sorted.length - 1].name,
-        value: parseFloat(sorted[sorted.length - 1][statKey].toFixed(3)),
-      } : null,
-    };
+      const battingAbbr = row.inning_topbot === "Top" ? row.away_team : row.home_team;
+      const team = teamsByAbbr[battingAbbr];
+      if (!team) return;
+
+      const eventKey = [team.id, row.game_pk || "", row.at_bat_number || "", row.batter || "", row.events].join("|");
+      if (seen.has(eventKey)) return;
+      seen.add(eventKey);
+
+      const estimated = parseRate(row.estimated_ba_using_speedangle);
+      const expectedHit = estimated != null ? estimated : hitEvents.has(row.events) ? 1 : 0;
+      upsertNestedDateValue(byTeamIdDate, String(team.id), dateKey, expectedHit);
+    });
+  } catch (e) {
+    console.warn("[trends] league statcast CSV parse failed:", e.message);
   }
 
-  const hrRows = rows.filter((row) => Number.isFinite(row.hr));
-  const hrAvg = hrRows.length
-    ? parseFloat((hrRows.reduce((sum, row) => sum + row.hr, 0) / hrRows.length).toFixed(1))
-    : 0;
-
-  return {
-    ba: bestWorstFor("ba"),
-    ops: bestWorstFor("ops"),
-    hr: {
-      ...bestWorstFor("hr"),
-      avg: hrAvg,
-    },
-  };
+  return byTeamIdDate;
 }
 
 function getExpectedHitsForGame(gameLog, expectedHitsByDate, xbaFallback) {
@@ -454,6 +463,114 @@ function buildWindowStats(gameLogs, options = {}) {
   };
 }
 
+function formatBenchmarkTeam(row, statKey) {
+  if (!row) return null;
+  return {
+    teamId: row.teamId,
+    abbr: row.abbr,
+    name: row.name,
+    value: statKey === "hr" ? row[statKey] : parseFloat(row[statKey].toFixed(3)),
+  };
+}
+
+function rankTeamsByStat(rows, statKey) {
+  const valid = rows
+    .filter((row) => row.stats && Number.isFinite(row.stats[statKey]))
+    .sort((a, b) => {
+      if (b.stats[statKey] !== a.stats[statKey]) return b.stats[statKey] - a.stats[statKey];
+      return a.teamId - b.teamId;
+    });
+
+  return valid.map((row, index) => ({
+    teamId: row.teamId,
+    rank: index + 1,
+    value: row.stats[statKey],
+  }));
+}
+
+function computeTeamComparisons(teams, logsByTeamId, expectedHitsByTeamId, leagueAvg) {
+  const windows = [
+    { key: "season", windowSize: null },
+    { key: "last20", windowSize: 20 },
+    { key: "last10", windowSize: 10 },
+  ];
+  const statsByWindow = {};
+
+  windows.forEach((window) => {
+    statsByWindow[window.key] = teams.map((team) => {
+      const logs = logsByTeamId[String(team.id)] || [];
+      const stats = logs.length
+        ? buildWindowStats(logs, {
+            windowSize: window.windowSize,
+            chartSourceLogs: logs,
+            expectedHitsByDate: expectedHitsByTeamId[String(team.id)] || {},
+            xbaFallback: leagueAvg.xba,
+          })
+        : null;
+      return {
+        teamId: team.id,
+        abbr: team.abbr,
+        name: team.name,
+        stats,
+      };
+    }).filter((row) => row.stats);
+  });
+
+  const seasonRows = statsByWindow.season;
+
+  function bestWorstFor(statKey) {
+    const valid = seasonRows
+      .filter((row) => Number.isFinite(row.stats[statKey]))
+      .sort((a, b) => {
+        if (a.stats[statKey] !== b.stats[statKey]) return a.stats[statKey] - b.stats[statKey];
+        return a.teamId - b.teamId;
+      });
+    return {
+      worst: valid.length ? formatBenchmarkTeam({
+        teamId: valid[0].teamId,
+        abbr: valid[0].abbr,
+        name: valid[0].name,
+        [statKey]: valid[0].stats[statKey],
+      }, statKey) : null,
+      best: valid.length ? formatBenchmarkTeam({
+        teamId: valid[valid.length - 1].teamId,
+        abbr: valid[valid.length - 1].abbr,
+        name: valid[valid.length - 1].name,
+        [statKey]: valid[valid.length - 1].stats[statKey],
+      }, statKey) : null,
+    };
+  }
+
+  const hrRows = seasonRows.filter((row) => Number.isFinite(row.stats.hr));
+  const hrAvg = hrRows.length
+    ? parseFloat((hrRows.reduce((sum, row) => sum + row.stats.hr, 0) / hrRows.length).toFixed(1))
+    : 0;
+
+  const metsRanks = {};
+  windows.forEach((window) => {
+    const rows = statsByWindow[window.key];
+    metsRanks[window.key] = {};
+    ["ba", "xba", "ops", "hr"].forEach((statKey) => {
+      const ranked = rankTeamsByStat(rows, statKey);
+      const metsRank = ranked.find((row) => row.teamId === TEAM_ID);
+      metsRanks[window.key][statKey] = metsRank ? metsRank.rank : null;
+    });
+  });
+
+  return {
+    teamBenchmarks: {
+      ba: bestWorstFor("ba"),
+      xba: bestWorstFor("xba"),
+      ops: bestWorstFor("ops"),
+      hr: {
+        ...bestWorstFor("hr"),
+        avg: hrAvg,
+      },
+    },
+    metsRanks,
+  };
+}
+
 async function getLeagueAverages(leagueExpectedStats) {
   const data = await fetchJson(
     `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1`
@@ -497,14 +614,36 @@ async function getLeagueAverages(leagueExpectedStats) {
 async function main() {
   console.log("[trends] Starting build...");
 
-  const hitters = await getActiveHitters();
-  const [metsExpectedStats, leagueExpectedStats, teamBenchmarks, statcastExpected] = await Promise.all([
+  const [hitters, teams] = await Promise.all([
+    getActiveHitters(),
+    getLeagueTeams(),
+  ]);
+  const teamsByAbbr = teams.reduce((acc, team) => {
+    acc[team.abbr] = team;
+    return acc;
+  }, {});
+
+  const [metsExpectedStats, leagueExpectedStats, statcastExpected, leagueTeamExpectedHits, leagueTeamLogs] = await Promise.all([
     getExpectedStatsLeaderboard(TEAM_ID),
     getExpectedStatsLeaderboard(null),
-    getTeamBenchmarks(),
     getMetsStatcastExpectedHits(hitters),
+    getLeagueStatcastExpectedHits(teamsByAbbr),
+    Promise.all(teams.map(async (team) => ({
+      teamId: team.id,
+      logs: await getTeamGameLog(team.id),
+    }))),
   ]);
   const leagueAvg = await getLeagueAverages(leagueExpectedStats);
+  const logsByTeamId = leagueTeamLogs.reduce((acc, row) => {
+    acc[String(row.teamId)] = row.logs.sort((a, b) => a.date.localeCompare(b.date));
+    return acc;
+  }, {});
+  const { teamBenchmarks, metsRanks } = computeTeamComparisons(
+    teams,
+    logsByTeamId,
+    leagueTeamExpectedHits,
+    leagueAvg
+  );
 
   console.log(
     `[trends] Found ${hitters.length} active hitters, ` +
@@ -587,7 +726,7 @@ async function main() {
 
   const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
   const teamFallbackXba = weightedAverage(metsExpectedStats.entries, "xba", "pa") || leagueAvg.xba;
-  const teamExpectedHitsByDate = statcastExpected.teamByDate;
+  const teamExpectedHitsByDate = leagueTeamExpectedHits[String(TEAM_ID)] || statcastExpected.teamByDate;
 
   const output = {
     generatedAt: new Date().toISOString(),
@@ -596,23 +735,32 @@ async function main() {
     leagueAvg,
     teamBenchmarks,
     team: {
-      season: buildWindowStats(teamLogs, {
-        chartSourceLogs: teamLogs,
-        expectedHitsByDate: teamExpectedHitsByDate,
-        xbaFallback: teamFallbackXba,
-      }),
-      last20: buildWindowStats(teamLogs, {
-        windowSize: 20,
-        chartSourceLogs: teamLogs,
-        expectedHitsByDate: teamExpectedHitsByDate,
-        xbaFallback: teamFallbackXba,
-      }),
-      last10: buildWindowStats(teamLogs, {
-        windowSize: 10,
-        chartSourceLogs: teamLogs,
-        expectedHitsByDate: teamExpectedHitsByDate,
-        xbaFallback: teamFallbackXba,
-      }),
+      season: {
+        ...buildWindowStats(teamLogs, {
+          chartSourceLogs: teamLogs,
+          expectedHitsByDate: teamExpectedHitsByDate,
+          xbaFallback: teamFallbackXba,
+        }),
+        ranks: metsRanks.season,
+      },
+      last20: {
+        ...buildWindowStats(teamLogs, {
+          windowSize: 20,
+          chartSourceLogs: teamLogs,
+          expectedHitsByDate: teamExpectedHitsByDate,
+          xbaFallback: teamFallbackXba,
+        }),
+        ranks: metsRanks.last20,
+      },
+      last10: {
+        ...buildWindowStats(teamLogs, {
+          windowSize: 10,
+          chartSourceLogs: teamLogs,
+          expectedHitsByDate: teamExpectedHitsByDate,
+          xbaFallback: teamFallbackXba,
+        }),
+        ranks: metsRanks.last10,
+      },
     },
     players: playerResults.sort((a, b) => (b.season?.pa || 0) - (a.season?.pa || 0)),
   };

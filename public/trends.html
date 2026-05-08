@@ -48,24 +48,36 @@
       font-size: 0.72rem;
       color: var(--text-muted);
     }
-    .chart-legend-guide { margin: 0.75rem auto 1.25rem; max-width: 880px; }
+    .chart-legend-guide { margin: 0.75rem auto 1.1rem; max-width: 880px; }
     .team-chart-legend { margin-top: 0.65rem; justify-content: flex-start; }
     .chart-legend-guide .lg-item,
     .team-chart-legend .lg-item { display: flex; align-items: center; gap: 6px; }
-    .lg-line { width: 22px; height: 3px; border-radius: 2px; }
-    .lg-line.navy { background: #002d72; }
-    .lg-line.orange { background: #ff5910; }
-    .lg-line.teal { background: #0f766e; }
-    .lg-line.red { background: #dc2626; }
-    .lg-line.gray { background: #9ca3af; }
-    .lg-line.dashed-gray { background: none; height: 0; border-top: 1px dashed #9ca3af; border-radius: 0; }
-    .lg-line.dashed-orange { background: none; height: 0; border-top: 2px dashed #ff5910; border-radius: 0; }
     .lg-box { width: 14px; height: 10px; border-radius: 3px; }
     .lg-box.navy { background: #002d72; }
-    .lg-box.gray { background: #cbd5e1; }
-    .lg-box.teal { background: #7dd3c7; }
-    .lg-box.orange { background: #fdba74; }
+    .lg-box.gray { background: #9ca3af; }
+    .lg-box.teal { background: #22c55e; }
     .lg-box.red { background: #ef4444; }
+
+    .window-tabs {
+      display: flex;
+      gap: 0.4rem;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .window-tab {
+      border: none;
+      border-radius: 999px;
+      background: #e8ecf4;
+      color: var(--navy);
+      padding: 0.5rem 1.2rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .window-tab.active { background: var(--navy); color: #fff; }
+    .window-tab:hover:not(.active) { background: #d4dae6; }
 
     .trend-card {
       background: var(--card-bg);
@@ -75,56 +87,32 @@
       box-shadow: var(--shadow);
     }
     .trend-chart-wrap { position: relative; height: 170px; }
-    .team-comparison-wrap { margin-top: 0.65rem; }
-    .team-comparison-note {
-      margin-top: 0.45rem;
-      font-size: 0.68rem;
-      color: var(--text-muted);
+    .team-stat-tabs {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin: 0 0 0.75rem;
     }
-    .team-chart-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-top: 0.85rem;
-    }
-    .team-chart-panel {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
-      padding: 0.8rem 0.8rem 0.7rem;
-    }
-    .team-chart-title {
-      margin: 0 0 0.55rem;
-      font-size: 0.84rem;
+    .team-stat-tab {
+      border: 1px solid #d8e0ea;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: var(--navy);
+      padding: 0.38rem 0.8rem;
+      font-size: 0.76rem;
       font-weight: 800;
-      color: #002d72;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .team-chart-svg {
-      width: 100%;
-      height: 220px;
-      display: block;
+    .team-stat-tab:hover {
+      border-color: rgba(0, 45, 114, 0.28);
+      background: #eef3fa;
     }
-    .team-chart-axis,
-    .team-chart-baseline {
-      stroke: #cbd5e1;
-      stroke-width: 1;
-    }
-    .team-chart-gridline {
-      stroke: #e5e7eb;
-      stroke-width: 1;
-    }
-    .team-chart-label,
-    .team-chart-tick {
-      fill: #64748b;
-      font-size: 10px;
-      font-family: Inter, sans-serif;
-    }
-    .team-chart-group-label {
-      fill: #475569;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: Inter, sans-serif;
+    .team-stat-tab.active {
+      background: #002d72;
+      border-color: #002d72;
+      color: #fff;
     }
     .trend-card-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
     .trend-card-header img {
@@ -332,10 +320,6 @@
       .players-grid { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 768px) {
-      .team-chart-grid { grid-template-columns: 1fr; gap: 16px; }
-    }
-
     @media (max-width: 640px) {
       .trends-shell { padding: 0 0.75rem 2rem; }
       .trend-chart-wrap { height: 180px; }
@@ -362,11 +346,17 @@
     <div class="trends-shell">
       <div class="trends-header">
         <h1>Mets Batting Trends &amp; xBA Analysis</h1>
-        <p class="sub">Full Season, Last 20 Games, and Last 10 Games all zoom the same cumulative season line. The stat rows still switch to the selected window so you can compare current form against season-to-date baselines.</p>
+        <p class="sub">Full Season, Last 20 Games, and Last 10 Games still zoom the player trend lines. The team card now compares the Mets directly against MLB-wide baselines for the selected stat and window.</p>
         <p class="updated" id="last-updated"></p>
       </div>
 
       <div class="chart-legend-guide" id="chart-legend-guide"></div>
+
+      <div class="window-tabs" id="window-tabs">
+        <button class="window-tab active" data-window="season">Full Season</button>
+        <button class="window-tab" data-window="last20">Last 20 Games</button>
+        <button class="window-tab" data-window="last10">Last 10 Games</button>
+      </div>
 
       <div id="team-trend-section">
         <div class="loading-msg" id="trends-loading">Loading trend data...</div>
@@ -390,9 +380,8 @@
   <script>
     const TRENDS_DATA_URL = "data/trends.json";
     const DEFAULT_STAT = "ba";
-    const GLOBAL_STATS = ["ba", "xba", "ops"];
-    const PLAYER_CHART_STATS = ["ba", "xba", "ops"];
     const TEAM_CHART_STATS = ["ba", "xba", "ops", "hr"];
+    const PLAYER_CHART_STATS = ["ba", "xba", "ops"];
     const STAT_META = {
       ba: { label: "BA" },
       xba: { label: "XBA" },
@@ -434,10 +423,6 @@
       return '<span class="verdict-badge verdict-track">On track</span>';
     }
 
-    function getCardStats(cardId) {
-      return cardId === "team" ? TEAM_CHART_STATS : PLAYER_CHART_STATS;
-    }
-
     function resolveCardStat(cardId) {
       return cardStatOverrides[cardId] || globalStat;
     }
@@ -447,8 +432,6 @@
       const labels = Array.isArray(rolling.labels) ? rolling.labels : [];
       return {
         labels: labels,
-        gameBa: Array.isArray(rolling.game) ? rolling.game : labels.map(function() { return null; }),
-        gameOps: Array.isArray(rolling.ops) ? rolling.ops : labels.map(function() { return null; }),
         cumulativeBa: Array.isArray(rolling.cumulativeBa) ? rolling.cumulativeBa : [],
         cumulativeXba: Array.isArray(rolling.cumulativeXba) ? rolling.cumulativeXba : labels.map(function() { return null; }),
         cumulativeOps: Array.isArray(rolling.cumulativeOps) ? rolling.cumulativeOps : [],
@@ -493,175 +476,6 @@
       return trendsData && trendsData.teamBenchmarks ? trendsData.teamBenchmarks[statKey] : null;
     }
 
-    function escapeHtml(value) {
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-    }
-
-    function teamWindowRows(statKey) {
-      const benchmarks = getTeamBenchmarksFor(statKey) || {};
-      const fullSeasonRefs = statKey === "hr"
-        ? {
-            avg: benchmarks.avg,
-            best: benchmarks.best ? benchmarks.best.value : null,
-            worst: benchmarks.worst ? benchmarks.worst.value : null
-          }
-        : {
-            avg: LEAGUE_AVG[statKey],
-            best: benchmarks.best ? benchmarks.best.value : null,
-            worst: benchmarks.worst ? benchmarks.worst.value : null
-          };
-
-      return [
-        {
-          label: "Full Season",
-          mets: trendsData.team.season[statKey],
-          avg: fullSeasonRefs.avg,
-          best: fullSeasonRefs.best,
-          worst: fullSeasonRefs.worst
-        },
-        {
-          label: "Last 20",
-          mets: trendsData.team.last20[statKey],
-          avg: null,
-          best: null,
-          worst: null
-        },
-        {
-          label: "Last 10",
-          mets: trendsData.team.last10[statKey],
-          avg: null,
-          best: null,
-          worst: null
-        }
-      ];
-    }
-
-    function renderTeamGroupedSvgChart(config) {
-      const width = 520;
-      const height = 220;
-      const margin = { top: 16, right: 14, bottom: 42, left: 48 };
-      const plotWidth = width - margin.left - margin.right;
-      const plotHeight = height - margin.top - margin.bottom;
-      const ticks = config.ticks;
-      const groups = config.groups;
-      const series = [
-        { key: "mets", label: "Mets", color: "#002d72" },
-        { key: "avg", label: "MLB Avg", color: "#9ca3af" },
-        { key: "best", label: "Best Team", color: "#22c55e" },
-        { key: "worst", label: "Worst Team", color: "#ef4444" }
-      ];
-      const groupWidth = plotWidth / groups.length;
-      const innerGroupWidth = groupWidth * 0.72;
-      const barGap = innerGroupWidth * 0.06;
-      const barWidth = (innerGroupWidth - barGap * (series.length - 1)) / series.length;
-
-      function yScale(value) {
-        const clamped = Math.max(config.min, Math.min(config.max, value));
-        return margin.top + plotHeight - ((clamped - config.min) / (config.max - config.min)) * plotHeight;
-      }
-
-      const grid = ticks.map(function(tick) {
-        const y = yScale(tick);
-        return (
-          '<line class="team-chart-gridline" x1="' + margin.left + '" y1="' + y + '" x2="' + (width - margin.right) + '" y2="' + y + '"></line>' +
-          '<text class="team-chart-tick" x="' + (margin.left - 8) + '" y="' + (y + 3) + '" text-anchor="end">' + config.format(tick) + "</text>"
-        );
-      }).join("");
-
-      const bars = groups.map(function(group, groupIndex) {
-        const x0 = margin.left + groupWidth * groupIndex + (groupWidth - innerGroupWidth) / 2;
-        const labelX = margin.left + groupWidth * groupIndex + groupWidth / 2;
-        const rects = series.map(function(item, itemIndex) {
-          const value = group[item.key];
-          if (value == null || !Number.isFinite(value)) return "";
-          const x = x0 + itemIndex * (barWidth + barGap);
-          const y = yScale(value);
-          const rectHeight = margin.top + plotHeight - y;
-          return (
-            '<rect x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + rectHeight + '" rx="2" fill="' + item.color + '">' +
-              "<title>" + escapeHtml(item.label + " - " + group.label + ": " + config.tooltipFormat(value)) + "</title>" +
-            "</rect>"
-          );
-        }).join("");
-
-        return rects + '<text class="team-chart-group-label" x="' + labelX + '" y="' + (height - 12) + '" text-anchor="middle">' + group.label + "</text>";
-      }).join("");
-
-      return (
-        '<div class="team-chart-panel">' +
-          '<h4 class="team-chart-title">' + config.title + "</h4>" +
-          '<svg class="team-chart-svg" viewBox="0 0 ' + width + " " + height + '" role="img" aria-label="' + escapeHtml(config.title) + '">' +
-            grid +
-            '<line class="team-chart-axis" x1="' + margin.left + '" y1="' + margin.top + '" x2="' + margin.left + '" y2="' + (margin.top + plotHeight) + '"></line>' +
-            '<line class="team-chart-baseline" x1="' + margin.left + '" y1="' + (margin.top + plotHeight) + '" x2="' + (width - margin.right) + '" y2="' + (margin.top + plotHeight) + '"></line>' +
-            bars +
-          "</svg>" +
-        "</div>"
-      );
-    }
-
-    function renderTeamComparisonCharts() {
-      const note = '<div class="team-comparison-note">MLB comparison bars use full-season benchmark data only. Last 20 and Last 10 groups show Mets bars only.</div>';
-      const grid = [
-        {
-          title: "Batting Average (BA)",
-          key: "ba",
-          min: 0.175,
-          max: 0.4,
-          ticks: [0.175, 0.25, 0.325, 0.4],
-          format: fmtDecimal
-        },
-        {
-          title: "Expected BA (xBA)",
-          key: "xba",
-          min: 0.175,
-          max: 0.4,
-          ticks: [0.175, 0.25, 0.325, 0.4],
-          format: fmtDecimal
-        },
-        {
-          title: "OPS",
-          key: "ops",
-          min: 0.5,
-          max: 0.95,
-          ticks: [0.5, 0.65, 0.8, 0.95],
-          format: fmtDecimal
-        },
-        {
-          title: "Home Runs (HR)",
-          key: "hr",
-          min: 0,
-          max: Math.max(
-            trendsData.team.season.hr || 0,
-            trendsData.team.last20.hr || 0,
-            trendsData.team.last10.hr || 0,
-            (trendsData.teamBenchmarks && trendsData.teamBenchmarks.hr && trendsData.teamBenchmarks.hr.best ? trendsData.teamBenchmarks.hr.best.value : 0),
-            Math.ceil(trendsData.teamBenchmarks && trendsData.teamBenchmarks.hr ? trendsData.teamBenchmarks.hr.avg || 0 : 0)
-          ) + 10,
-          ticks: null,
-          format: fmtInteger
-        }
-      ].map(function(chart) {
-        const groups = teamWindowRows(chart.key);
-        const ticks = chart.ticks || [0, Math.round(chart.max / 3), Math.round((chart.max * 2) / 3), Math.round(chart.max)];
-        return renderTeamGroupedSvgChart({
-          title: chart.title,
-          min: chart.min,
-          max: chart.max,
-          ticks: ticks,
-          groups: groups,
-          format: chart.format,
-          tooltipFormat: chart.format
-        });
-      }).join("");
-
-      return '<div class="team-comparison-wrap"><div class="team-chart-grid">' + grid + "</div>" + note + "</div>";
-    }
-
     function buildPageLegend() {
       const legend = document.getElementById("chart-legend-guide");
       if (!legend) return;
@@ -673,282 +487,170 @@
       ].join("");
     }
 
-    function buildChartSpec(cardId, chartWindowData, statKey) {
-      const normalized = normalizeRolling(chartWindowData || {});
+    function buildTeamLegend(statKey) {
+      const legend = document.getElementById("team-chart-legend");
+      if (!legend) return;
+      const benchmarks = getTeamBenchmarksFor(statKey) || {};
+      legend.innerHTML = [
+        '<div class="lg-item"><div class="lg-box navy"></div> Mets</div>',
+        '<div class="lg-item"><div class="lg-box gray"></div> MLB Avg</div>',
+        '<div class="lg-item"><div class="lg-box teal"></div> Best: ' + (benchmarks.best ? benchmarks.best.abbr : "MLB") + "</div>",
+        '<div class="lg-item"><div class="lg-box red"></div> Worst: ' + (benchmarks.worst ? benchmarks.worst.abbr : "MLB") + "</div>"
+      ].join("");
+    }
+
+    const teamBarLabelsPlugin = {
+      id: "teamBarLabels",
+      afterDatasetsDraw: function(chart, args, pluginOptions) {
+        if (!pluginOptions || !pluginOptions.enabled) return;
+        const ctx = chart.ctx;
+        const datasetMeta = chart.getDatasetMeta(0);
+        const labels = pluginOptions.labels || [];
+        const formatter = pluginOptions.formatter || fmtDecimal;
+        ctx.save();
+        datasetMeta.data.forEach(function(bar, index) {
+          const value = pluginOptions.values[index];
+          if (value == null || !bar) return;
+          const x = bar.x;
+          const topY = bar.y;
+          const rankLabel = labels[index] || "";
+          ctx.textAlign = "center";
+          ctx.fillStyle = "#0f172a";
+          ctx.font = "700 11px Inter";
+          ctx.fillText(String(formatter(value)).replace(/&mdash;/g, "—"), x, topY - 10);
+          if (rankLabel) {
+            ctx.fillStyle = "#002d72";
+            ctx.font = "800 10px Inter";
+            ctx.fillText(rankLabel, x, topY - 24);
+          }
+        });
+        ctx.restore();
+      }
+    };
+
+    function buildPlayerChartSpec(windowData, statKey) {
+      const normalized = normalizeRolling(windowData || {});
       const labels = sliceVisibleSeries(normalized.labels, getVisiblePointCount());
       if (!labels.length) return null;
 
-      const gameBa = sliceVisibleSeries(normalized.gameBa, getVisiblePointCount());
-      const gameOps = sliceVisibleSeries(normalized.gameOps, getVisiblePointCount());
       const cumulativeBa = sliceVisibleSeries(normalized.cumulativeBa, getVisiblePointCount());
       const cumulativeXba = sliceVisibleSeries(normalized.cumulativeXba, getVisiblePointCount());
       const cumulativeOps = sliceVisibleSeries(normalized.cumulativeOps, getVisiblePointCount());
-      const cumulativeHr = sliceVisibleSeries(normalized.cumulativeHr, getVisiblePointCount());
-      const isTeam = cardId === "team";
       const datasets = [];
-      let type = "line";
       let yMin = 0.175;
       let yMax = 0.4;
       let tickFormatter = fmtDecimal;
-      let stepSize = null;
-      const teamBarBase = {
-        type: "bar",
-        backgroundColor: "rgba(0,45,114,0.85)",
-        hoverBackgroundColor: "#f97316",
-        borderColor: "rgba(0,45,114,0.95)",
-        borderWidth: 0,
-        borderRadius: 2,
-        categoryPercentage: 0.7,
-        barPercentage: 0.7,
-        order: 1
-      };
 
       if (statKey === "ba") {
-        if (isTeam) {
-          datasets.push({
-            label: "Mets BA",
-            data: gameBa,
-            ...teamBarBase
-          });
-        } else {
-          datasets.push({
-            label: "Cumulative BA",
-            data: cumulativeBa,
-            borderColor: "#002d72",
-            backgroundColor: "rgba(0,45,114,0.05)",
-            borderWidth: 2.5,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0.3,
-            fill: true,
-            order: 1
-          });
-        }
-        if (chartWindowData.xba != null) {
-          datasets.push({
-            label: "Window xBA",
-            data: labels.map(function() { return chartWindowData.xba; }),
-            type: "line",
-            borderColor: "#ff5910",
-            backgroundColor: "transparent",
-            borderWidth: 1.5,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            borderDash: [6, 4],
-            fill: false,
-            order: 2
-          });
-        }
         datasets.push({
-          label: "MLB Avg BA",
-          data: labels.map(function() { return LEAGUE_AVG.ba; }),
-          type: "line",
-          borderColor: "#9ca3af",
-          backgroundColor: "transparent",
-          borderWidth: 1,
+          label: "Cumulative BA",
+          data: cumulativeBa,
+          borderColor: "#002d72",
+          backgroundColor: "rgba(0,45,114,0.05)",
+          borderWidth: 2.5,
           pointRadius: 0,
-          pointHoverRadius: 0,
-          borderDash: [3, 3],
-          fill: false,
-          order: 3
+          pointHoverRadius: 4,
+          tension: 0.3,
+          fill: true,
+          order: 1
         });
-        if (isTeam) {
-          const benchmarks = getTeamBenchmarksFor("ba");
-          if (benchmarks && benchmarks.best) {
-            datasets.push({
-              label: benchmarks.best.abbr + " BA",
-              data: labels.map(function() { return benchmarks.best.value; }),
-              type: "line",
-              borderColor: "#0f766e",
-              backgroundColor: "transparent",
-              borderWidth: 1.2,
-              pointRadius: 0,
-              borderDash: [2, 3],
-              fill: false,
-              order: 4
-            });
-          }
-          if (benchmarks && benchmarks.worst) {
-            datasets.push({
-              label: benchmarks.worst.abbr + " BA",
-              data: labels.map(function() { return benchmarks.worst.value; }),
-              type: "line",
-              borderColor: "#dc2626",
-              backgroundColor: "transparent",
-              borderWidth: 1.2,
-              pointRadius: 0,
-              borderDash: [2, 3],
-              fill: false,
-              order: 5
-            });
-          }
-        }
         yMin = 0.175;
         yMax = 0.4;
       } else if (statKey === "xba") {
-        if (isTeam) {
-          datasets.push({
-            label: "Mets xBA",
-            data: cumulativeXba,
-            ...teamBarBase
-          });
-          datasets.push({
-            label: "Mets BA",
-            data: cumulativeBa,
-            type: "line",
-            borderColor: "#ff5910",
-            backgroundColor: "transparent",
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            tension: 0.3,
-            fill: false,
-            order: 2
-          });
-        } else {
-          datasets.push({
-            label: "Cumulative xBA",
-            data: cumulativeXba,
-            borderColor: "#ff5910",
-            backgroundColor: "rgba(255,89,16,0.07)",
-            borderWidth: 2.4,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0.3,
-            fill: true,
-            order: 1
-          });
-        }
         datasets.push({
-          label: "MLB Avg xBA",
-          data: labels.map(function() { return LEAGUE_AVG.xba; }),
-          type: "line",
-          borderColor: "#9ca3af",
-          backgroundColor: "transparent",
-          borderWidth: 1,
+          label: "Cumulative xBA",
+          data: cumulativeXba,
+          borderColor: "#ff5910",
+          backgroundColor: "rgba(255,89,16,0.07)",
+          borderWidth: 2.4,
           pointRadius: 0,
-          pointHoverRadius: 0,
-          borderDash: [3, 3],
-          fill: false,
-          order: 2
+          pointHoverRadius: 4,
+          tension: 0.3,
+          fill: true,
+          order: 1
         });
         yMin = 0.175;
         yMax = 0.4;
       } else if (statKey === "ops") {
-        if (isTeam) {
-          datasets.push({
-            label: "Mets OPS",
-            data: gameOps,
-            ...teamBarBase
-          });
-        } else {
-          datasets.push({
-            label: "Cumulative OPS",
-            data: cumulativeOps,
-            borderColor: "#002d72",
-            backgroundColor: "rgba(0,45,114,0.05)",
-            borderWidth: 2.5,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0.25,
-            fill: false,
-            order: 1
-          });
-        }
         datasets.push({
-          label: "MLB Avg OPS",
-          data: labels.map(function() { return LEAGUE_AVG.ops; }),
-          type: "line",
-          borderColor: "#9ca3af",
-          backgroundColor: "transparent",
-          borderWidth: 1,
+          label: "Cumulative OPS",
+          data: cumulativeOps,
+          borderColor: "#002d72",
+          backgroundColor: "rgba(0,45,114,0.05)",
+          borderWidth: 2.5,
           pointRadius: 0,
-          pointHoverRadius: 0,
-          borderDash: [3, 3],
+          pointHoverRadius: 4,
+          tension: 0.25,
           fill: false,
-          order: 2
+          order: 1
         });
-        if (isTeam) {
-          const benchmarks = getTeamBenchmarksFor("ops");
-          if (benchmarks && benchmarks.best) {
-            datasets.push({
-              label: benchmarks.best.abbr + " OPS",
-              data: labels.map(function() { return benchmarks.best.value; }),
-              type: "line",
-              borderColor: "#0f766e",
-              backgroundColor: "transparent",
-              borderWidth: 1.2,
-              pointRadius: 0,
-              borderDash: [2, 3],
-              fill: false,
-              order: 3
-            });
-          }
-          if (benchmarks && benchmarks.worst) {
-            datasets.push({
-              label: benchmarks.worst.abbr + " OPS",
-              data: labels.map(function() { return benchmarks.worst.value; }),
-              type: "line",
-              borderColor: "#dc2626",
-              backgroundColor: "transparent",
-              borderWidth: 1.2,
-              pointRadius: 0,
-              borderDash: [2, 3],
-              fill: false,
-              order: 4
-            });
-          }
-        }
         yMin = 0.5;
         yMax = 0.95;
-      } else if (statKey === "hr" && isTeam) {
-        const hrBenchmarks = getTeamBenchmarksFor("hr");
-        const metsHr = cumulativeHr.length ? cumulativeHr[cumulativeHr.length - 1] : 0;
-        type = "bar";
-        tickFormatter = fmtInteger;
-        stepSize = 10;
-        datasets.push({
-          label: "HR Totals",
-          data: [
-            metsHr,
-            hrBenchmarks && hrBenchmarks.worst ? hrBenchmarks.worst.value : 0,
-            hrBenchmarks ? hrBenchmarks.avg : 0,
-            hrBenchmarks && hrBenchmarks.best ? hrBenchmarks.best.value : 0
-          ],
-          backgroundColor: ["#002d72", "#7dd3c7", "#cbd5e1", "#fdba74"],
-          borderColor: ["#001f4f", "#0f766e", "#94a3b8", "#fb923c"],
-          borderWidth: 1.2,
-          borderRadius: 6,
-          barThickness: 34
-        });
-        return {
-          type: type,
-          labels: [
-            "Mets",
-            hrBenchmarks && hrBenchmarks.worst ? hrBenchmarks.worst.abbr : "Low",
-            "MLB Avg",
-            hrBenchmarks && hrBenchmarks.best ? hrBenchmarks.best.abbr : "High"
-          ],
-          datasets: datasets,
-          yMin: 0,
-          yMax: Math.max(
-            metsHr,
-            hrBenchmarks && hrBenchmarks.best ? hrBenchmarks.best.value : 0,
-            Math.ceil(hrBenchmarks ? hrBenchmarks.avg : 0)
-          ) + 10,
-          tickFormatter: tickFormatter,
-          stepSize: stepSize
-        };
       }
 
       return {
-        type: isTeam && (statKey === "ba" || statKey === "xba" || statKey === "ops") ? "bar" : type,
+        type: "line",
         labels: labels,
         datasets: datasets,
         yMin: yMin,
         yMax: yMax,
+        tickFormatter: tickFormatter
+      };
+    }
+
+    function buildTeamChartSpec(windowData, statKey) {
+      const benchmarks = getTeamBenchmarksFor(statKey) || {};
+      const bestValue = benchmarks.best ? benchmarks.best.value : 0;
+      const worstValue = benchmarks.worst ? benchmarks.worst.value : 0;
+      const avgValue = statKey === "hr" ? (benchmarks.avg || 0) : (LEAGUE_AVG[statKey] || 0);
+      const metsValue = windowData && Number.isFinite(windowData[statKey]) ? windowData[statKey] : 0;
+      const values = [metsValue, avgValue, bestValue, worstValue];
+      const rank = windowData && windowData.ranks ? windowData.ranks[statKey] : null;
+      let yMin = 0.175;
+      let yMax = 0.4;
+      let tickFormatter = fmtDecimal;
+      let stepSize;
+
+      if (statKey === "ops") {
+        yMin = 0.5;
+        yMax = 0.95;
+      } else if (statKey === "hr") {
+        const highest = Math.max.apply(null, values.concat([1]));
+        yMin = 0;
+        yMax = Math.ceil(highest * 1.1);
+        tickFormatter = fmtInteger;
+        stepSize = Math.max(1, Math.ceil(yMax / 5 / 5) * 5);
+      }
+
+      return {
+        type: "bar",
+        labels: [
+          "Mets",
+          "MLB Avg",
+          benchmarks.best ? benchmarks.best.abbr : "Best",
+          benchmarks.worst ? benchmarks.worst.abbr : "Worst"
+        ],
+        datasets: [{
+          label: "Team Comparison",
+          data: values,
+          backgroundColor: ["#002d72", "#9ca3af", "#22c55e", "#ef4444"],
+          hoverBackgroundColor: ["#143e86", "#7f8998", "#16a34a", "#dc2626"],
+          borderColor: ["#001f4f", "#7b8794", "#15803d", "#b91c1c"],
+          borderWidth: 1.2,
+          borderRadius: 6,
+          categoryPercentage: 0.68,
+          barPercentage: 0.82
+        }],
+        yMin: yMin,
+        yMax: yMax,
         tickFormatter: tickFormatter,
-        stepSize: stepSize
+        stepSize: stepSize,
+        teamBarLabels: {
+          enabled: true,
+          values: values,
+          formatter: tickFormatter,
+          labels: [rank ? "#" + rank + " in MLB" : "", "", "", ""]
+        }
       };
     }
 
@@ -973,6 +675,7 @@
           interaction: { mode: "index", intersect: false },
           plugins: {
             legend: { display: false },
+            teamBarLabels: spec.teamBarLabels || { enabled: false },
             tooltip: {
               backgroundColor: "#1a1a2e",
               titleFont: { family: "Inter", size: 11, weight: "600" },
@@ -985,7 +688,7 @@
               callbacks: {
                 label: function(tipItem) {
                   if (tipItem.parsed.y == null) return null;
-                  return tipItem.dataset.label + ": " + String((spec.tickFormatter || fmtDecimal)(tipItem.parsed.y)).replace(/&mdash;/g, "—");
+                  return tipItem.label + ": " + String((spec.tickFormatter || fmtDecimal)(tipItem.parsed.y)).replace(/&mdash;/g, "—");
                 }
               }
             }
@@ -1014,7 +717,8 @@
               }
             }
           }
-        }
+        },
+        plugins: [teamBarLabelsPlugin]
       });
     }
 
@@ -1082,7 +786,13 @@
             "</div>" +
             verdictBadge(w.ba, w.xba) +
           "</div>" +
-          renderTeamComparisonCharts() +
+          '<div class="team-stat-tabs">' +
+            TEAM_CHART_STATS.map(function(statKey) {
+              return '<button class="team-stat-tab' + (resolveCardStat("team") === statKey ? " active" : "") + '" data-card-id="team" data-stat="' + statKey + '">' + STAT_META[statKey].label + "</button>";
+            }).join("") +
+          "</div>" +
+          '<div class="trend-chart-wrap"><canvas id="chart-team"></canvas></div>' +
+          '<div class="team-chart-legend" id="team-chart-legend"></div>' +
           '<div class="trend-meta-row trend-stats-row">' +
             '<div class="trend-row-label">Stats</div>' +
             renderStatControl("team", "ba", w, "", false) +
@@ -1188,10 +898,16 @@
     }
 
     function updateButtonStates() {
+      document.querySelectorAll("#window-tabs .window-tab").forEach(function(btn) {
+        btn.classList.toggle("active", btn.dataset.window === activeWindow);
+      });
       Object.keys(renderedCards).forEach(function(cardId) {
         const card = document.querySelector('[data-card-id="' + cardId + '"]');
         if (!card) return;
         card.querySelectorAll(".trend-stat-tab").forEach(function(btn) {
+          btn.classList.toggle("active", btn.dataset.stat === resolveCardStat(cardId));
+        });
+        card.querySelectorAll(".team-stat-tab").forEach(function(btn) {
           btn.classList.toggle("active", btn.dataset.stat === resolveCardStat(cardId));
         });
       });
@@ -1201,8 +917,11 @@
       const card = renderedCards[cardId];
       if (!card) return;
       const statKey = resolveCardStat(cardId);
-      const spec = buildChartSpec(cardId, card.chartData, statKey);
+      const spec = cardId === "team"
+        ? buildTeamChartSpec(card.windowData, statKey)
+        : buildPlayerChartSpec(card.chartData, statKey);
       createChart(card.canvasId, spec);
+      if (cardId === "team") buildTeamLegend(statKey);
       updateButtonStates();
     }
 
@@ -1217,7 +936,14 @@
         return paB - paA;
       });
 
-      renderedCards = {};
+      renderedCards = {
+        team: {
+          canvasId: "chart-team",
+          windowData: trendsData.team[windowKey] || trendsData.team.season,
+          chartData: trendsData.team[windowKey] || trendsData.team.season
+        }
+      };
+
       players.forEach(function(player, idx) {
         renderedCards["player-" + idx] = {
           canvasId: "chart-player-" + idx,
@@ -1242,10 +968,27 @@
     }
 
     document.addEventListener("click", function(e) {
+      const windowButton = e.target.closest("#window-tabs .window-tab");
+      if (windowButton) {
+        activeWindow = windowButton.dataset.window;
+        renderAll(activeWindow);
+        return;
+      }
+
       const statTab = e.target.closest(".trend-stat-tab");
       if (statTab) {
         const cardId = statTab.dataset.cardId;
         const statKey = statTab.dataset.stat;
+        if (!cardId || !statKey) return;
+        cardStatOverrides[cardId] = statKey;
+        updateCardChart(cardId);
+        return;
+      }
+
+      const teamTab = e.target.closest(".team-stat-tab");
+      if (teamTab) {
+        const cardId = teamTab.dataset.cardId;
+        const statKey = teamTab.dataset.stat;
         if (!cardId || !statKey) return;
         cardStatOverrides[cardId] = statKey;
         updateCardChart(cardId);
