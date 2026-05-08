@@ -173,12 +173,63 @@ function buildWindowStats(gameLogs, savantData, windowSize) {
   };
 }
 
+/* ── MLB league-wide batting averages for the current season ── */
+async function getLeagueAverages() {
+  // This endpoint returns aggregate MLB hitting stats for the season
+  const data = await fetchJson(
+    `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1`
+  );
+  const splits = data?.stats?.[0]?.splits;
+  if (!Array.isArray(splits) || !splits.length) {
+    console.warn("[trends] Could not fetch league averages, using fallbacks");
+    return { ba: 0.243, obp: 0.310, slg: 0.389, ops: 0.699 };
+  }
+
+  // Average across all 30 teams
+  let totalAB = 0, totalH = 0, totalBB = 0, totalHBP = 0, totalSF = 0, totalPA = 0;
+  let totalTB = 0;
+  const opsValues = [];
+  const obpValues = [];
+
+  for (const s of splits) {
+    const stat = s.stat || {};
+    const ab = stat.atBats || 0;
+    const h = stat.hits || 0;
+    totalAB += ab;
+    totalH += h;
+    totalBB += stat.baseOnBalls || 0;
+    totalHBP += stat.hitByPitch || 0;
+    totalSF += stat.sacFlies || 0;
+    totalPA += stat.plateAppearances || 0;
+    if (stat.ops) opsValues.push(parseFloat(stat.ops));
+    if (stat.obp) obpValues.push(parseFloat(stat.obp));
+    if (stat.slg) {
+      totalTB += parseFloat(stat.slg) * ab;
+    }
+  }
+
+  const ba = totalAB > 0 ? parseFloat((totalH / totalAB).toFixed(3)) : 0.243;
+  const obp = obpValues.length > 0
+    ? parseFloat((obpValues.reduce((a, b) => a + b, 0) / obpValues.length).toFixed(3))
+    : 0.310;
+  const slg = totalAB > 0
+    ? parseFloat((totalTB / totalAB).toFixed(3))
+    : 0.389;
+  const ops = opsValues.length > 0
+    ? parseFloat((opsValues.reduce((a, b) => a + b, 0) / opsValues.length).toFixed(3))
+    : 0.699;
+
+  console.log(`[trends] League averages: BA=${ba}, OBP=${obp}, SLG=${slg}, OPS=${ops}`);
+  return { ba, obp, slg, ops };
+}
+
 async function main() {
   console.log("[trends] Starting build...");
 
-  const [hitters, savantMap] = await Promise.all([
+  const [hitters, savantMap, leagueAvg] = await Promise.all([
     getActiveHitters(),
     getSavantExpectedStats(),
+    getLeagueAverages(),
   ]);
 
   console.log(`[trends] Found ${hitters.length} active hitters, ${Object.keys(savantMap).length} savant entries`);
@@ -227,6 +278,7 @@ async function main() {
     generatedAt: new Date().toISOString(),
     season: SEASON,
     rollingWindow: ROLLING_WINDOW,
+    leagueAvg,
     team: {
       season: buildWindowStats(teamLogs, teamSavant, null),
       last20: buildWindowStats(teamLogs, teamSavant, 20),
