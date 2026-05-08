@@ -123,6 +123,8 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
   const labels = [];
   const rollingBa = [];
   const perGameBa = [];
+  const perGameOps = [];
+  const perGameHr = [];
 
   gameLogs.forEach((g, i) => {
     labels.push(g.date ? g.date.slice(5) : `G${i + 1}`);
@@ -130,6 +132,8 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
     // Per-game BA
     const gameBa = g.ab > 0 ? g.h / g.ab : null;
     perGameBa.push(gameBa != null ? parseFloat(gameBa.toFixed(3)) : null);
+    perGameOps.push(typeof g.ops === "number" ? parseFloat(g.ops.toFixed(3)) : null);
+    perGameHr.push(typeof g.hr === "number" ? g.hr : 0);
 
     // Rolling: use the last N games up to and including this one
     const windowStart = Math.max(0, i + 1 - rollingN);
@@ -140,7 +144,13 @@ function computeRolling(gameLogs, rollingN = ROLLING_WINDOW) {
     rollingBa.push(rba != null ? parseFloat(rba.toFixed(3)) : null);
   });
 
-  return { labels, ba: rollingBa, game: perGameBa };
+  return {
+    labels,
+    ba: rollingBa,
+    game: perGameBa,
+    ops: perGameOps,
+    hr: perGameHr,
+  };
 }
 
 function buildWindowStats(gameLogs, savantData, windowSize) {
@@ -257,12 +267,32 @@ async function main() {
   const byDate = {};
   allLogs.forEach(g => {
     if (!byDate[g.date]) {
-      byDate[g.date] = { date: g.date, h: 0, ab: 0, doubles: 0, triples: 0, hr: 0, bb: 0, hbp: 0, sf: 0, pa: 0 };
+      byDate[g.date] = {
+        date: g.date,
+        h: 0,
+        ab: 0,
+        doubles: 0,
+        triples: 0,
+        hr: 0,
+        bb: 0,
+        hbp: 0,
+        sf: 0,
+        pa: 0,
+        ops: null,
+      };
     }
     const d = byDate[g.date];
     d.h += g.h; d.ab += g.ab; d.doubles += g.doubles || 0;
     d.triples += g.triples || 0; d.hr += g.hr; d.bb += g.bb || 0;
     d.hbp += g.hbp || 0; d.sf += g.sf || 0; d.pa += g.pa;
+  });
+  Object.values(byDate).forEach(d => {
+    const singles = Math.max(0, d.h - d.doubles - d.triples - d.hr);
+    const totalBases = singles + 2 * d.doubles + 3 * d.triples + 4 * d.hr;
+    const slg = d.ab > 0 ? totalBases / d.ab : null;
+    const obpDen = d.ab + d.bb + d.hbp + d.sf;
+    const obp = obpDen > 0 ? (d.h + d.bb + d.hbp) / obpDen : null;
+    d.ops = obp != null && slg != null ? parseFloat((obp + slg).toFixed(3)) : null;
   });
   const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
 

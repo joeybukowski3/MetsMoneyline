@@ -216,8 +216,6 @@
 
       <div class="window-tabs stat-tabs-global" id="global-stat-tabs">
         <button class="window-tab active" data-global-stat="ba">BA</button>
-        <button class="window-tab" data-global-stat="xba">XBA</button>
-        <button class="window-tab" data-global-stat="diff">DIFF</button>
         <button class="window-tab" data-global-stat="ops">OPS</button>
         <button class="window-tab" data-global-stat="hr">HR</button>
       </div>
@@ -241,11 +239,10 @@
   <script>
     const TRENDS_DATA_URL = 'data/trends.json';
     const DEFAULT_STAT = 'ba';
-    const CARD_STATS = ['ba', 'xba', 'diff', 'ops', 'hr'];
+    const CARD_STATS = ['ba', 'ops', 'hr'];
     const STAT_META = {
       ba: { label: 'BA' },
       xba: { label: 'XBA' },
-      diff: { label: 'Diff' },
       ops: { label: 'OPS' },
       hr: { label: 'HR' }
     };
@@ -298,7 +295,20 @@
       const perGameBa = Array.isArray(rolling.game)
         ? rolling.game
         : rollingBa.map(function(v) { return typeof v === 'number' ? v : null; });
-      return { labels, rollingBa, perGameBa, xba: windowData ? windowData.xba : null };
+      const perGameOps = Array.isArray(rolling.ops)
+        ? rolling.ops
+        : labels.map(function() { return windowData && typeof windowData.ops === 'number' ? windowData.ops : null; });
+      const perGameHr = Array.isArray(rolling.hr)
+        ? rolling.hr
+        : labels.map(function() { return windowData && typeof windowData.hr === 'number' ? windowData.hr : 0; });
+      return {
+        labels: labels,
+        rollingBa: rollingBa,
+        perGameBa: perGameBa,
+        perGameOps: perGameOps,
+        perGameHr: perGameHr,
+        xba: windowData ? windowData.xba : null
+      };
     }
 
     function getVisibleHrMax() {
@@ -327,20 +337,12 @@
           '<div class="lg-item"><div class="lg-dot"></div> Single-Game BA</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg</div>'
         ],
-        xba: [
-          '<div class="lg-item"><div class="lg-line orange"></div> Season xBA</div>',
-          '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg xBA</div>'
-        ],
-        diff: [
-          '<div class="lg-item"><div class="lg-line orange"></div> Rolling BA minus xBA</div>',
-          '<div class="lg-item"><div class="lg-line dashed-gray"></div> Even at 0.000</div>'
-        ],
         ops: [
-          '<div class="lg-item"><div class="lg-line navy"></div> Window OPS</div>',
+          '<div class="lg-item"><div class="lg-line navy"></div> Game OPS</div>',
           '<div class="lg-item"><div class="lg-line dashed-gray"></div> MLB Avg OPS</div>'
         ],
         hr: [
-          '<div class="lg-item"><div class="lg-line orange"></div> Window HR Total</div>',
+          '<div class="lg-item"><div class="lg-line orange"></div> Game HR</div>',
           '<div class="lg-item">Scale resets with each time window</div>'
         ]
       };
@@ -355,6 +357,8 @@
       const xba = normalized.xba;
       const rollingBa = normalized.rollingBa;
       const perGameBa = normalized.perGameBa;
+      const perGameOps = normalized.perGameOps;
+      const perGameHr = normalized.perGameHr;
       const datasets = [];
       let yMin = 0;
       let yMax = 1;
@@ -415,85 +419,23 @@
           fill: false,
           order: 4
         });
-        yMin = 0;
-        yMax = 1;
-      } else if (statKey === 'xba') {
-        const xbaLine = xba != null ? labels.map(function() { return xba; }) : labels.map(function() { return null; });
-        datasets.push({
-          label: 'Season xBA',
-          data: xbaLine,
-          borderColor: '#ff5910',
-          backgroundColor: 'rgba(255,89,16,0.06)',
-          borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          tension: 0,
-          fill: false,
-          order: 1
-        });
-        datasets.push({
-          label: 'MLB Avg xBA (' + fmtDecimal(LEAGUE_AVG.xba) + ')',
-          data: labels.map(function() { return LEAGUE_AVG.xba; }),
-          borderColor: '#9ca3af',
-          backgroundColor: 'transparent',
-          borderWidth: 1,
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          borderDash: [3, 3],
-          fill: false,
-          order: 2
-        });
-        yMin = 0;
-        yMax = 1;
-      } else if (statKey === 'diff') {
-        const diffLine = rollingBa.map(function(v) {
-          return v != null && xba != null ? round3(v - xba) : null;
-        });
-        const absValues = diffLine.filter(function(v) { return v != null; }).map(function(v) { return Math.abs(v); });
-        const maxAbs = Math.max(0.03, absValues.length ? Math.max.apply(null, absValues) : 0.03);
-        const span = round3(maxAbs + 0.02);
-        datasets.push({
-          label: 'Rolling BA - xBA',
-          data: diffLine,
-          borderColor: '#ff5910',
-          backgroundColor: 'rgba(255,89,16,0.08)',
-          borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          tension: 0.25,
-          fill: true,
-          order: 1
-        });
-        datasets.push({
-          label: 'Even (0.000)',
-          data: labels.map(function() { return 0; }),
-          borderColor: '#9ca3af',
-          backgroundColor: 'transparent',
-          borderWidth: 1,
-          pointRadius: 0,
-          pointHoverRadius: 0,
-          borderDash: [3, 3],
-          fill: false,
-          order: 2
-        });
-        yMin = -span;
-        yMax = span;
-        tickFormatter = fmtSignedDecimal;
+        yMin = 0.1;
+        yMax = 0.75;
       } else if (statKey === 'ops') {
-        const opsValue = windowData && windowData.ops != null ? windowData.ops : null;
-        const opsSeries = labels.map(function() { return opsValue; });
-        const opsMin = Math.min.apply(null, [opsValue != null ? opsValue : LEAGUE_AVG.ops, LEAGUE_AVG.ops].filter(function(v) { return v != null; }));
-        const opsMax = Math.max.apply(null, [opsValue != null ? opsValue : LEAGUE_AVG.ops, LEAGUE_AVG.ops].filter(function(v) { return v != null; }));
+        const cleanOps = perGameOps.map(function(v) { return typeof v === 'number' ? round3(v) : null; });
+        const opsValues = cleanOps.filter(function(v) { return v != null; });
+        const opsMin = Math.min.apply(null, opsValues.concat([LEAGUE_AVG.ops]));
+        const opsMax = Math.max.apply(null, opsValues.concat([LEAGUE_AVG.ops]));
         const opsPad = Math.max(0.04, (opsMax - opsMin) * 0.35);
         datasets.push({
-          label: 'Window OPS',
-          data: opsSeries,
+          label: 'Game OPS',
+          data: cleanOps,
           borderColor: '#002d72',
           backgroundColor: 'rgba(0,45,114,0.05)',
           borderWidth: 2.5,
-          pointRadius: 0,
+          pointRadius: 2,
           pointHoverRadius: 4,
-          tension: 0,
+          tension: 0.25,
           fill: false,
           order: 1
         });
@@ -512,16 +454,16 @@
         yMin = Math.max(0, round3(opsMin - opsPad));
         yMax = round3(opsMax + opsPad);
       } else if (statKey === 'hr') {
-        const hrValue = windowData && typeof windowData.hr === 'number' ? windowData.hr : 0;
+        const cleanHr = perGameHr.map(function(v) { return typeof v === 'number' ? v : 0; });
         datasets.push({
-          label: 'Window HR Total',
-          data: labels.map(function() { return hrValue; }),
+          label: 'Game HR',
+          data: cleanHr,
           borderColor: '#ff5910',
           backgroundColor: 'rgba(255,89,16,0.08)',
           borderWidth: 2.5,
-          pointRadius: 0,
+          pointRadius: 2,
           pointHoverRadius: 4,
-          tension: 0,
+          tension: 0.2,
           fill: false,
           order: 1
         });
@@ -620,10 +562,7 @@
     }
 
     function renderStatValue(statKey, windowData) {
-      const diffVal = windowData && windowData.ba != null && windowData.xba != null ? round3(windowData.ba - windowData.xba) : null;
       if (statKey === 'ba') return fmtDecimal(windowData.ba);
-      if (statKey === 'xba') return fmtDecimal(windowData.xba);
-      if (statKey === 'diff') return diffVal != null ? fmtSignedDecimal(diffVal) : '&mdash;';
       if (statKey === 'ops') return fmtDecimal(windowData.ops);
       if (statKey === 'hr') return fmtInteger(windowData.hr);
       return '&mdash;';
@@ -632,20 +571,15 @@
     function renderVsValue(statKey, windowData) {
       if (statKey === 'ba') return { text: fmtSignedDecimal(windowData.ba != null ? round3(windowData.ba - LEAGUE_AVG.ba) : null), cls: getVsClass(windowData.ba, LEAGUE_AVG.ba) };
       if (statKey === 'xba') return { text: fmtSignedDecimal(windowData.xba != null ? round3(windowData.xba - LEAGUE_AVG.xba) : null), cls: getVsClass(windowData.xba, LEAGUE_AVG.xba) };
-      if (statKey === 'ops') return { text: fmtSignedDecimal(windowData.ops != null ? round3(windowData.ops - LEAGUE_AVG.ops) : null), cls: getVsClass(windowData.ops, LEAGUE_AVG.ops) };
       return { text: '&mdash;', cls: 'empty' };
     }
 
     function renderStatTabs(cardId, windowData) {
       return CARD_STATS.map(function(statKey) {
         const isActive = resolveCardStat(cardId) === statKey;
-        const diffVal = windowData && windowData.ba != null && windowData.xba != null ? round3(windowData.ba - windowData.xba) : null;
-        const valueClass = statKey === 'diff'
-          ? diffVal != null ? (diffVal > 0 ? 'diff-positive' : diffVal < 0 ? 'diff-negative' : '') : ''
-          : '';
         return (
           '<button class="trend-stat-tab' + (isActive ? ' active' : '') + '" data-card-id="' + cardId + '" data-stat="' + statKey + '">' +
-            '<span class="val ' + valueClass + '">' + renderStatValue(statKey, windowData) + '</span>' +
+            '<span class="val">' + renderStatValue(statKey, windowData) + '</span>' +
             '<span class="lbl">' + STAT_META[statKey].label + '</span>' +
           '</button>'
         );
@@ -653,7 +587,7 @@
     }
 
     function renderVsCells(windowData) {
-      return CARD_STATS.map(function(statKey) {
+      return ['ba', 'xba'].map(function(statKey) {
         const vs = renderVsValue(statKey, windowData);
         return (
           '<div class="trend-vs-cell' + (vs.cls ? ' ' + vs.cls : '') + '">' +
@@ -683,6 +617,10 @@
           '<div class="trend-meta-row trend-stats-row">' +
             '<div class="trend-row-label">Stats</div>' +
             renderStatTabs(cardId, w) +
+            '<div class="trend-vs-cell">' +
+              '<span class="val">' + fmtDecimal(w.xba) + '</span>' +
+              '<span class="lbl">XBA</span>' +
+            '</div>' +
           '</div>' +
           '<div class="trend-meta-row trend-compare-row">' +
             '<div class="trend-row-label">+/- to MLB Avg</div>' +
@@ -713,6 +651,10 @@
           '<div class="trend-meta-row trend-stats-row">' +
             '<div class="trend-row-label">Stats</div>' +
             renderStatTabs(cardId, w) +
+            '<div class="trend-vs-cell">' +
+              '<span class="val">' + fmtDecimal(w.xba) + '</span>' +
+              '<span class="lbl">XBA</span>' +
+            '</div>' +
           '</div>' +
           '<div class="trend-meta-row trend-compare-row">' +
             '<div class="trend-row-label">+/- to MLB Avg</div>' +
