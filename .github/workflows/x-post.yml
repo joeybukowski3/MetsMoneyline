@@ -1,8 +1,18 @@
 name: X Post
 
 on:
+  schedule:
+    - cron: "0 6 * * *"
   workflow_dispatch:
     inputs:
+      type:
+        description: "Post type"
+        required: true
+        default: "pregame"
+        type: choice
+        options:
+          - pregame
+          - postgame
       mode:
         description: "Run mode"
         required: true
@@ -11,6 +21,11 @@ on:
         options:
           - dry-run
           - post
+      date:
+        description: "Optional target date: blank, yesterday, or YYYY-MM-DD"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: write
@@ -33,6 +48,20 @@ jobs:
         working-directory: ./bot
         run: npm ci
 
+      - name: Resolve X post parameters
+        id: params
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "type=postgame" >> "$GITHUB_OUTPUT"
+            echo "mode=post" >> "$GITHUB_OUTPUT"
+            echo "date=" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=${{ inputs.type }}" >> "$GITHUB_OUTPUT"
+            echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
+            echo "date=${{ inputs.date }}" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run X post bot
         working-directory: ./bot
         env:
@@ -40,10 +69,16 @@ jobs:
           X_API_SECRET: ${{ secrets.X_API_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
-        run: node x-post-mets-report.js --${{ inputs.mode }}
+        shell: bash
+        run: |
+          DATE_ARG=""
+          if [ -n "${{ steps.params.outputs.date }}" ]; then
+            DATE_ARG=" --date=${{ steps.params.outputs.date }}"
+          fi
+          node x-post-mets-report.js --${{ steps.params.outputs.mode }} --type=${{ steps.params.outputs.type }}$DATE_ARG
 
       - name: Commit X post state
-        if: inputs.mode == 'post'
+        if: steps.params.outputs.mode == 'post'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
