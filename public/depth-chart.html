@@ -59,6 +59,19 @@
     .dc-page-header h1 span { color: var(--dc-orange); }
     .dc-page-header p { color: var(--text-muted); font-size: 0.92rem; max-width: 720px; margin: 0.35rem auto 0; line-height: 1.6; }
     .dc-page-header .dc-updated { font-size: 0.74rem; color: #9099b0; margin-top: 0.45rem; }
+    .dc-seo-summary {
+      margin: 0 auto 1rem;
+      max-width: 900px;
+      background: #f8fafc;
+      border: 1px solid #d6dde8;
+      border-radius: 12px;
+      padding: 0.85rem 1rem;
+      color: #475569;
+      font-size: 0.84rem;
+      line-height: 1.6;
+      text-align: center;
+    }
+    .dc-seo-summary p { margin: 0; }
     .dc-disclaimer {
       margin: 0 auto 1rem;
       max-width: 900px;
@@ -387,6 +400,11 @@
 <body>
   <div class="alert-banner" id="dc-alert-banner">Shared fan voting mode - write-ins are reviewed before appearing publicly</div>
   <header></header>
+  <noscript>
+    <section class="dc-seo-summary" style="margin:1rem auto;">
+      <p>The Mets depth chart page lets fans vote on the best all-time Mets lineup by position, compare leading candidates, and review vote totals. JavaScript is required for live voting and the interactive position cards.</p>
+    </section>
+  </noscript>
 
   <main>
     <div class="dc-shell">
@@ -395,6 +413,9 @@
         <p>Vote on the best Mets by position, compare the top names on the diamond, and switch between position view and the overall top 10.</p>
         <p class="dc-updated" id="dc-updated"></p>
       </div>
+      <section id="seo-content" class="dc-seo-summary">
+        <p>The all-time Mets depth chart lets fans vote for the best player at each position, compare vote totals, and browse leading candidates with career stats and awards.</p>
+      </section>
 
       <div class="dc-disclaimer" id="dc-disclaimer">
         Rankings start with MetsMoneyline's curated baseline scores. Fan voting is shared online and adjusts the rankings over time. To limit spam, each browser can vote once per player per day. Write-ins are reviewed before appearing publicly.

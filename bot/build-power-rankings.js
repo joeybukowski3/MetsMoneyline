@@ -18,9 +18,11 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { parse } = require("csv-parse/sync");
+const replaceHtmlBlock = require("./lib/replace-html-block");
 
 const SEASON = new Date().getFullYear();
 const OUTPUT_PATH = path.join(__dirname, "../public/data/power-rankings.json");
+const POWER_RANKINGS_HTML_PATH = path.join(__dirname, "../public/power-rankings.html");
 
 async function fetchJson(url) {
   try {
@@ -40,6 +42,23 @@ async function fetchText(url) {
     console.warn(`[rankings] text fetch failed: ${url}`, e.message);
     return null;
   }
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildPowerRankingsSeoSummary(teams) {
+  const metsRank = teams.findIndex((team) => team.teamId === 121) + 1;
+  const topThree = teams.slice(0, 3).map((team, index) => `${index + 1}. ${team.team}`).join("; ");
+  return `<p>The Mets currently rank #${escapeHtml(metsRank)} in these 2026 MLB power rankings. The top three teams are ${escapeHtml(topThree)}. Rankings blend OPS+, starter xERA, bullpen xFIP, and run differential into one composite score.</p>`;
 }
 
 function inningsToDecimal(value) {
@@ -235,6 +254,7 @@ async function main() {
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  replaceHtmlBlock(POWER_RANKINGS_HTML_PATH, "SEO_POWER_RANKINGS_SUMMARY", buildPowerRankingsSeoSummary(teams));
   console.log(`[rankings] Wrote ${OUTPUT_PATH}`);
 }
 

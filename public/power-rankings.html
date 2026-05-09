@@ -31,6 +31,18 @@
     .pr-header { padding: 2rem 0 1.25rem; text-align: center; }
     .pr-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
     .pr-header p { color: var(--text-muted); font-size: 0.9rem; }
+    .pr-seo-summary {
+      max-width: 960px;
+      margin: 0 auto 1rem;
+      padding: 0.9rem 1rem;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: #475569;
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+    .pr-seo-summary p { margin: 0; }
 
     .pr-method {
       background: #f8fafc; border: 1px solid var(--border); border-radius: 14px;
@@ -89,6 +101,11 @@
 <body>
   <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
   <header></header>
+  <noscript>
+    <section class="pr-seo-summary" style="margin:1rem auto;">
+      <p>The MLB power rankings page compares all 30 teams using offense, rotation quality, bullpen quality, and run differential. JavaScript is required for the sortable live rankings table.</p>
+    </section>
+  </noscript>
 
   <main>
     <div class="pr-shell">
@@ -97,6 +114,11 @@
         <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
         <p>All 30 teams ranked by composite score. Updated daily from live MLB data.</p>
       </div>
+      <section id="seo-content" class="pr-seo-summary">
+        <!-- SEO_POWER_RANKINGS_SUMMARY:START -->
+<p>The Mets currently rank #16 in these 2026 MLB power rankings. The top three teams are 1. Dodgers; 2. Yankees; 3. Braves. Rankings blend OPS+, starter xERA, bullpen xFIP, and run differential into one composite score.</p>
+<!-- SEO_POWER_RANKINGS_SUMMARY:END -->
+      </section>
 
       <div class="pr-method">
         <strong>How it works:</strong> Each team gets a composite score (0–100) built from four equally-weighted categories:

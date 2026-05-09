@@ -13,12 +13,14 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { parse } = require("csv-parse/sync");
+const replaceHtmlBlock = require("./lib/replace-html-block");
 
 const TEAM_ID = 121;
 const TEAM_ABBR = "NYM";
 const SEASON = new Date().getFullYear();
 const ROLLING_WINDOW = 5;
 const OUTPUT_PATH = path.join(__dirname, "../public/data/trends.json");
+const TRENDS_HTML_PATH = path.join(__dirname, "../public/trends.html");
 
 async function fetchJson(url) {
   try {
@@ -73,6 +75,41 @@ function weightedAverage(entries, valueKey, weightKey) {
     }
   });
   return weight > 0 ? parseFloat((weighted / weight).toFixed(3)) : null;
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatRate(value) {
+  return Number.isFinite(value) ? value.toFixed(3).replace(/^0/, "") : "—";
+}
+
+function buildTrendsSeoSummary(output) {
+  const team = output.team?.season || {};
+  const teamRank = team.ranks?.ba ? `${team.ranks.ba}th` : "unranked";
+  const eligiblePlayers = (output.players || []).filter((player) => (player.season?.pa || 0) >= 20);
+  const playerPool = eligiblePlayers.length ? eligiblePlayers : (output.players || []);
+  const topPerformer = playerPool
+    .slice()
+    .sort((a, b) => (b.season?.ops || 0) - (a.season?.ops || 0))[0];
+  const coldBat = playerPool
+    .slice()
+    .sort((a, b) => (a.season?.ba || 1) - (b.season?.ba || 1))[0];
+
+  return [
+    `<p>The 2026 New York Mets are batting ${formatRate(team.ba)} as a team, ranking ${escapeHtml(teamRank)} in MLB, with a ${formatRate(team.ops)} OPS. ` +
+      `Top performer: ${escapeHtml(topPerformer?.name || "N/A")} (${formatRate(topPerformer?.season?.ba)} BA, ${formatRate(topPerformer?.season?.ops)} OPS). ` +
+      `Running cold: ${escapeHtml(coldBat?.name || "N/A")} (${formatRate(coldBat?.season?.ba)} BA). ` +
+      `Individual hitter trends, xBA analysis, and team-vs-MLB comparisons update daily.</p>`,
+  ].join("");
 }
 
 async function getActiveHitters() {
@@ -761,6 +798,7 @@ async function main() {
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  replaceHtmlBlock(TRENDS_HTML_PATH, "SEO_TRENDS_SUMMARY", buildTrendsSeoSummary(output));
   console.log(`[trends] Wrote ${OUTPUT_PATH} (${playerResults.length} players)`);
 }
 

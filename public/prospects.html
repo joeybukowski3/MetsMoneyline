@@ -31,6 +31,18 @@
     .prospects-header { padding: 2rem 0 1.25rem; text-align: center; }
     .prospects-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
     .prospects-header p { color: var(--text-muted); font-size: 0.9rem; }
+    .prospect-seo-summary {
+      margin: 0 auto 1rem;
+      max-width: 960px;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+    .prospect-seo-summary p { margin: 0; }
 
     .prospect-card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
@@ -92,6 +104,11 @@
 <body>
   <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
   <header></header>
+  <noscript>
+    <section class="prospect-seo-summary" style="margin:1rem auto;">
+      <p>The Mets prospects page ranks the top farm-system names, shows current levels and positions, and summarizes live minor-league production. JavaScript is required for the full prospect cards and stat tables.</p>
+    </section>
+  </noscript>
 
   <main>
     <div class="prospects-shell">
@@ -100,6 +117,11 @@
         <p class="source-note">Last updated: <span id="last-updated">Loading...</span></p>
         <p>2026 rankings based on MLB Pipeline. Stats auto-update from the MiLB Stats API.</p>
       </div>
+      <section id="seo-content" class="prospect-seo-summary">
+        <!-- SEO_PROSPECTS_SUMMARY:START -->
+<p>The top five Mets prospects right now are 1. Nolan McLean (P, MLB); 2. Carson Benge (LF, MLB); 3. Jonah Tong (P, AAA); 4. A.J. Ewing (LF, AAA); 5. Ryan Clifford (1B, AAA). The full page tracks rankings, levels, recent news, and live minor-league stats for the Mets farm system.</p>
+<!-- SEO_PROSPECTS_SUMMARY:END -->
+      </section>
       <div id="prospects-container">
         <div class="loading-msg">Loading prospect data&hellip;</div>
       </div>

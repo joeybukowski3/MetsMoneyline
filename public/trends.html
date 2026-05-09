@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mets Batting Trends &amp; xBA Analysis 2026 | MetsMoneyline</title>
-  <meta name="description" content="Track 2026 New York Mets batting trends with cumulative BA, xBA, and OPS lines for the team and individual hitters.">
+  <meta name="description" content="Track 2026 Mets cumulative batting trends — BA, OPS, and xBA charts for the team and every hitter, with MLB comparisons and rankings.">
   <meta name="keywords" content="Mets xBA, Mets batting average, Mets Statcast, New York Mets hitting trends, Mets expected batting average">
   <link rel="canonical" href="https://www.metsmoneyline.com/trends.html">
   <meta property="og:type" content="website">
@@ -33,6 +33,18 @@
     .trends-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
     .trends-header .sub { color: var(--text-muted); font-size: 0.85rem; max-width: 760px; margin: 0 auto; line-height: 1.45; }
     .trends-header .updated { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; }
+    .seo-summary-card {
+      max-width: 960px;
+      margin: 0 auto 1rem;
+      padding: 0.9rem 1rem;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: #475569;
+      font-size: 0.85rem;
+      line-height: 1.65;
+    }
+    .seo-summary-card p { margin: 0; }
 
     .chart-legend-guide,
     .team-chart-legend {
@@ -406,6 +418,11 @@
 <body>
   <div class="alert-banner">Live 2026 season mode - stats and records are current-season only</div>
   <header></header>
+  <noscript>
+    <section class="seo-summary-card" style="max-width:960px;margin:1rem auto;padding:0.9rem 1rem;">
+      <p>The Mets trends page tracks 2026 team and hitter batting performance with BA, xBA, OPS, and HR comparisons against MLB averages. JavaScript is required for the interactive charts, filters, and player cards.</p>
+    </section>
+  </noscript>
 
   <main>
     <div class="trends-shell">
@@ -414,6 +431,11 @@
         <p class="sub">The team card compares Full Season, Last 20 Games, and Last 10 Games side by side for each stat, while the player controls below still zoom the individual trend lines.</p>
         <p class="updated" id="last-updated"></p>
       </div>
+      <section id="seo-content" class="seo-summary-card">
+        <!-- SEO_TRENDS_SUMMARY:START -->
+<p>The 2026 New York Mets are batting .227 as a team, ranking 28th in MLB, with a .637 OPS. Top performer: MJ Melendez (.295 BA, .912 OPS). Running cold: Andy Ibanez (.100 BA). Individual hitter trends, xBA analysis, and team-vs-MLB comparisons update daily.</p>
+<!-- SEO_TRENDS_SUMMARY:END -->
+      </section>
 
       <div class="chart-legend-guide" id="chart-legend-guide"></div>
 

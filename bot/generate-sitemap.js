@@ -2,13 +2,7 @@ const fs = require("fs");
 const path = require("path");
 
 const SITE_ORIGIN = "https://www.metsmoneyline.com";
-const SAMPLE_GAME_PATH = path.join(__dirname, "../public/data/sample-game.json");
-const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const OUTPUT_PATH = path.join(__dirname, "../public/sitemap.xml");
-
-function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
-}
 
 function escapeXml(value) {
   return String(value ?? "")
@@ -17,14 +11,6 @@ function escapeXml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
-}
-
-function slugifyOpponent(opponent) {
-  return String(opponent || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
 }
 
 function buildUrlNode(entry) {
@@ -39,9 +25,6 @@ function buildUrlNode(entry) {
 }
 
 function generateSitemap() {
-  const sampleGame = readJson(SAMPLE_GAME_PATH);
-  const pickHistory = readJson(PICK_HISTORY_PATH);
-
   const today = new Date().toISOString().slice(0, 10);
 
   const urls = [
@@ -58,28 +41,8 @@ function generateSitemap() {
     { loc: `${SITE_ORIGIN}/social-pulse.html`, lastmod: today, changefreq: "daily", priority: "0.5" },
     { loc: `${SITE_ORIGIN}/betting.html`, lastmod: today, changefreq: "weekly", priority: "0.6" },
     { loc: `${SITE_ORIGIN}/gear.html`, lastmod: today, changefreq: "monthly", priority: "0.4" },
+    { loc: `${SITE_ORIGIN}/support.html`, lastmod: today, changefreq: "monthly", priority: "0.4" },
   ];
-
-  for (const game of Array.isArray(sampleGame?.games) ? sampleGame.games : []) {
-    if (!game?.date || !game?.opponent) continue;
-    const slug = slugifyOpponent(game.opponent);
-    urls.push({
-      loc: `${SITE_ORIGIN}/game/mets-vs-${slug}-${game.date}`,
-      lastmod: game.date,
-      changefreq: "daily",
-      priority: "0.8"
-    });
-  }
-
-  for (const entry of Array.isArray(pickHistory?.entries) ? pickHistory.entries : []) {
-    if (!entry?.date) continue;
-    urls.push({
-      loc: `${SITE_ORIGIN}/picks/${entry.date}`,
-      lastmod: entry.date,
-      changefreq: "weekly",
-      priority: "0.6"
-    });
-  }
 
   const deduped = Array.from(new Map(urls.map((entry) => [entry.loc, entry])).values());
   const xml = [

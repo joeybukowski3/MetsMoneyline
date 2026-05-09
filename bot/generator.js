@@ -4682,14 +4682,19 @@ function buildEmailHtml(game) {
 function buildSiteReportHtml(game) {
   const report = game?.writeup?.report || buildPresentationReport(game);
   const reportMarkup = buildReportMarkup(report, { mode: "site" });
+  const seoOpponent = game?.opponent || "Opponent";
+  const seoDate = report.header?.date || game?.date || "today";
+  const seoTitle = `Mets vs ${seoOpponent} Picks - ${seoDate} | MetsMoneyline`;
+  const seoDescription = `Full breakdown of Mets vs ${seoOpponent} on ${seoDate}: starting pitchers, lineup splits, advanced Statcast stats, and today's official moneyline pick.`;
+  const seoSummary = `This MetsMoneyline report covers Mets vs ${seoOpponent} on ${seoDate}, including starting pitcher matchups, lineup splits, bullpen form, weather context, and the site's official Mets moneyline pick.`;
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="impact-site-verification" value="e6068632-7155-4486-9cae-080414cd8d3b">
-    <title>Today's Mets Betting Report & Game Breakdown | MetsMoneyline</title>
-    <meta name="description" content="Full betting breakdown for today's Mets game — starting pitcher analysis, lineup matchups, bullpen metrics, weather, and the official MetsMoneyline pick.">
+    <title>${seoTitle}</title>
+    <meta name="description" content="${seoDescription}">
     <meta name="keywords" content="Mets moneyline, Mets game prediction, Mets betting picks, MLB moneyline picks, Mets starting pitcher odds">
     <link rel="canonical" href="https://www.metsmoneyline.com/report.html">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -4700,21 +4705,21 @@ function buildSiteReportHtml(game) {
     <link rel="stylesheet" href="css/styles.css">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.metsmoneyline.com/report.html">
-    <meta property="og:title" content="Today's Mets Betting Report | MetsMoneyline">
-    <meta property="og:description" content="Starting pitcher breakdown, lineup analysis, bullpen metrics, and the official Mets moneyline pick for today's game.">
+    <meta property="og:title" content="${seoTitle}">
+    <meta property="og:description" content="${seoDescription}">
     <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Today's Mets Betting Report | MetsMoneyline">
-    <meta name="twitter:description" content="Starting pitcher breakdown, lineup analysis, bullpen metrics, and the official Mets moneyline pick for today's game.">
+    <meta name="twitter:title" content="${seoTitle}">
+    <meta name="twitter:description" content="${seoDescription}">
     <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
     <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": "Today's Mets Betting Report",
+        "name": "${seoTitle}",
         "url": "https://www.metsmoneyline.com/report.html",
-        "description": "Full betting breakdown for today's Mets game with pitching matchups, lineup analysis, and the official MetsMoneyline pick.",
+        "description": "${seoDescription}",
         "isPartOf": { "@type": "WebSite", "name": "Mets Moneyline", "url": "https://www.metsmoneyline.com" }
       }
     </script>
@@ -4757,7 +4762,15 @@ function buildSiteReportHtml(game) {
   <body>
     <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
     <header></header>
+    <noscript>
+      <section style="max-width:1100px;margin:1rem auto;padding:0.9rem 1rem;background:#f8fafc;border:1px solid #d6dde8;border-radius:12px;color:#475569;font-size:0.85rem;line-height:1.65;">
+        ${seoSummary} JavaScript is required for the live odds and interactive matchup tables.
+      </section>
+    </noscript>
     <main class="report-main" style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
+      <section id="seo-content" style="margin:0 0 1rem;background:#f8fafc;border:1px solid #d9e1ee;border-radius:14px;padding:0.95rem 1rem;color:#475569;font-size:0.9rem;line-height:1.65;">
+        <p style="margin:0;">${seoSummary}</p>
+      </section>
       <section class="report-banner" style="margin-bottom:1.75rem;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:22px;padding:1.6rem 1.25rem;box-shadow:0 10px 24px rgba(15,23,42,0.06);text-align:center;">
         <div style="display:flex;align-items:center;justify-content:center;gap:1.1rem;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;justify-content:center;min-width:140px;">

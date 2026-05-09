@@ -13,10 +13,12 @@
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
+const replaceHtmlBlock = require("./lib/replace-html-block");
 
 const ORG_ID = 121;
 const SEASON = new Date().getFullYear();
 const OUTPUT_PATH = path.join(__dirname, "../public/data/prospects.json");
+const PROSPECTS_HTML_PATH = path.join(__dirname, "../public/prospects.html");
 const SPORT_LEVELS = {
   11: "AAA",
   12: "AA",
@@ -51,6 +53,24 @@ const PROSPECT_LIST = [
   { mlbId: 695764, name: "Mitch Voit", position: "C/1B", type: "Hitter", age: 22, bats: "R", throws: "R", level: "High-A", eta: "2027" },
   { mlbId: 700710, name: "Ryan Lambert", position: "RHP", type: "Pitcher", age: 21, bats: "R", throws: "R", level: "A", eta: "2028" },
 ];
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function buildProspectsSeoSummary(prospects) {
+  const topFive = prospects.slice(0, 5).map((prospect, index) => (
+    `${index + 1}. ${prospect.name} (${prospect.position}, ${prospect.level || "MiLB"})`
+  ));
+  return `<p>The top five Mets prospects right now are ${escapeHtml(topFive.join("; "))}. The full page tracks rankings, levels, recent news, and live minor-league stats for the Mets farm system.</p>`;
+}
 
 function normalizeName(value) {
   return String(value || "")
@@ -412,6 +432,7 @@ async function main() {
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
   fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
+  replaceHtmlBlock(PROSPECTS_HTML_PATH, "SEO_PROSPECTS_SUMMARY", buildProspectsSeoSummary(prospects));
 
   console.log("[prospects] Processed roster stats by level:");
   for (const [level, summary] of Object.entries(processedByLevel)) {
