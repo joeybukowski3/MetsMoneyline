@@ -87,6 +87,54 @@
       box-shadow: var(--shadow);
     }
     .trend-chart-wrap { position: relative; height: 170px; }
+    .team-trend-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.6rem;
+      margin-top: 0.8rem;
+    }
+    .team-trend-tile {
+      border-radius: 12px;
+      border: 1px solid transparent;
+      padding: 0.72rem 0.75rem;
+      text-align: center;
+    }
+    .team-trend-tile.above {
+      background: #ffdddd;
+      border-color: rgba(220, 38, 38, 0.12);
+      color: #b91c1c;
+    }
+    .team-trend-tile.below {
+      background: #ddeeff;
+      border-color: rgba(0, 45, 114, 0.12);
+      color: #002d72;
+    }
+    .team-trend-tile.flat {
+      background: #f8fafc;
+      border-color: #d8e0ea;
+      color: #475569;
+    }
+    .team-trend-tile .tile-label {
+      display: block;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .team-trend-tile .tile-value {
+      display: block;
+      margin-top: 0.32rem;
+      font-size: 0.98rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .team-trend-tile .tile-diff {
+      display: block;
+      margin-top: 0.22rem;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
     .team-stat-tabs {
       display: flex;
       gap: 0.45rem;
@@ -349,6 +397,9 @@
       .trend-vs-cell {
         min-width: calc(50% - 0.3rem);
       }
+      .team-trend-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
@@ -410,6 +461,8 @@
     let renderedCards = {};
     const cardStatOverrides = {};
     const charts = {};
+    const BA_XBA_Y_MIN = 0.2;
+    const BA_XBA_Y_MAX = 0.35;
 
     function round3(v) {
       return typeof v === "number" ? Math.round(v * 1000) / 1000 : null;
@@ -486,6 +539,55 @@
       return '<span class="trend-label-line">' + STAT_META[statKey].label + (changeHtml || "") + "</span>";
     }
 
+    function formatTrendValue(statKey, value) {
+      if (value == null) return "&mdash;";
+      return statKey === "hr" ? fmtDecimal(value) : fmtDecimal(value);
+    }
+
+    function getTeamTrendTileData(team, statKey) {
+      if (activeWindow === "season") return null;
+      const seasonData = team && team.season ? team.season : null;
+      const windowData = team && team[activeWindow] ? team[activeWindow] : null;
+      if (!seasonData || !windowData) return null;
+
+      if (statKey === "hr") {
+        const seasonRate = seasonData.games ? seasonData.hr / seasonData.games : null;
+        const windowRate = windowData.games ? windowData.hr / windowData.games : null;
+        return {
+          label: "HR Rate",
+          value: windowRate,
+          diff: seasonRate != null && windowRate != null ? round3(windowRate - seasonRate) : null
+        };
+      }
+
+      return {
+        label: STAT_META[statKey].label,
+        value: windowData[statKey],
+        diff: seasonData[statKey] != null && windowData[statKey] != null
+          ? round3(windowData[statKey] - seasonData[statKey])
+          : null
+      };
+    }
+
+    function renderTeamTrendIndicators(team) {
+      if (activeWindow === "season") return "";
+      const tiles = ["ba", "xba", "ops", "hr"].map(function(statKey) {
+        const tile = getTeamTrendTileData(team, statKey);
+        if (!tile || tile.value == null || tile.diff == null) return "";
+        const stateClass = tile.diff > 0 ? "above" : tile.diff < 0 ? "below" : "flat";
+        const arrow = tile.diff > 0 ? "&uarr;" : tile.diff < 0 ? "&darr;" : "&rarr;";
+        return (
+          '<div class="team-trend-tile ' + stateClass + '">' +
+            '<span class="tile-label">' + tile.label + "</span>" +
+            '<span class="tile-value">' + formatTrendValue(statKey, tile.value) + "</span>" +
+            '<span class="tile-diff">' + arrow + " " + fmtSignedDecimal(tile.diff) + " vs season</span>" +
+          "</div>"
+        );
+      }).filter(Boolean);
+      if (!tiles.length) return "";
+      return '<div class="team-trend-strip">' + tiles.join("") + "</div>";
+    }
+
     function getTeamBenchmarksFor(windowKey, statKey) {
       return trendsData && trendsData.teamBenchmarks && trendsData.teamBenchmarks[windowKey]
         ? trendsData.teamBenchmarks[windowKey][statKey]
@@ -554,8 +656,8 @@
       const cumulativeXba = sliceVisibleSeries(normalized.cumulativeXba, getVisiblePointCount());
       const cumulativeOps = sliceVisibleSeries(normalized.cumulativeOps, getVisiblePointCount());
       const datasets = [];
-      let yMin = 0.175;
-      let yMax = 0.4;
+      let yMin = BA_XBA_Y_MIN;
+      let yMax = BA_XBA_Y_MAX;
       let tickFormatter = fmtDecimal;
 
       if (statKey === "ba") {
@@ -571,8 +673,8 @@
           fill: true,
           order: 1
         });
-        yMin = 0.175;
-        yMax = 0.4;
+        yMin = BA_XBA_Y_MIN;
+        yMax = BA_XBA_Y_MAX;
       } else if (statKey === "xba") {
         datasets.push({
           label: "Cumulative xBA",
@@ -586,8 +688,8 @@
           fill: true,
           order: 1
         });
-        yMin = 0.175;
-        yMax = 0.4;
+        yMin = BA_XBA_Y_MIN;
+        yMax = BA_XBA_Y_MAX;
       } else if (statKey === "ops") {
         datasets.push({
           label: "Cumulative OPS",
@@ -638,6 +740,9 @@
         const windowData = teamData[windowKey] || {};
         return windowData.ranks && windowData.ranks[statKey] ? "#" + windowData.ranks[statKey] + " in MLB" : "";
       });
+      const avgLabels = windowKeys.map(function() {
+        return "MLB Avg";
+      });
       const bestLabels = windowKeys.map(function(windowKey) {
         const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
         return benchmarks.best ? benchmarks.best.abbr : "";
@@ -646,8 +751,8 @@
         const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
         return benchmarks.worst ? benchmarks.worst.abbr : "";
       });
-      let yMin = 0.175;
-      let yMax = 0.4;
+      let yMin = BA_XBA_Y_MIN;
+      let yMax = BA_XBA_Y_MAX;
       let tickFormatter = fmtDecimal;
       let stepSize;
 
@@ -720,6 +825,7 @@
           formatter: tickFormatter,
           series: [
             { datasetIndex: 0, values: metsValues, labels: rankLabels },
+            { datasetIndex: 1, values: avgValues, labels: avgLabels },
             { datasetIndex: 2, values: bestValues, labels: bestLabels },
             { datasetIndex: 3, values: worstValues, labels: worstLabels }
           ]
@@ -865,6 +971,7 @@
           "</div>" +
           '<div class="trend-chart-wrap"><canvas id="chart-team"></canvas></div>' +
           '<div class="team-chart-legend" id="team-chart-legend"></div>' +
+          renderTeamTrendIndicators(team) +
           '<div class="trend-meta-row trend-stats-row">' +
             '<div class="trend-row-label">Stats</div>' +
             renderStatControl("team", "ba", w, "", false) +
