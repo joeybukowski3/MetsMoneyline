@@ -2025,6 +2025,24 @@ footer {
 
 .footer-brand .brand-mets { color: var(--orange); }
 .footer-brand .brand-mono { color: #fff; }
+.footer-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.8rem 1rem;
+  margin: 0 0 0.85rem;
+}
+.footer-links a {
+  color: rgba(255,255,255,0.82);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+.footer-links a:hover,
+.footer-links a:focus-visible {
+  color: #ffffff;
+  text-decoration: underline;
+}
 .footer-disclaimer { font-size: 0.82rem; margin-bottom: 0.3rem; color: rgba(255,255,255,0.55); }
 .footer-copy       { font-size: 0.78rem; color: rgba(255,255,255,0.35); }
 

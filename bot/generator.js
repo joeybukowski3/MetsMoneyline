@@ -5225,6 +5225,11 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
 
     ${wrapSection("Projected Lineup Comparison", renderLineupTable(report.projectedLineupComparison?.mets || [], report.projectedLineupComparison?.opp || []))}
 
+    ${wrapSection("How This Analysis Is Built", `
+      <p style="margin:0 0 10px 0;color:#374151;">MetsMoneyline builds each report from the game context already stored by the site: projected or confirmed lineups, starting pitcher indicators, bullpen form, recent team performance, and the available Mets market price. The goal is to show where the Mets may have a real edge, where the matchup is fragile, and why the official pick is framed the way it is.</p>
+      <p style="margin:0;color:#374151;">This analysis is informational and entertainment-focused only. It is not a guarantee of results, and it should be read as a transparent game breakdown rather than a promise of profit.</p>
+    `)}
+
     ${wrapSection("Game Analysis", `
       <div style="${smallLabel}margin-bottom:6px;">Why the Mets have a case</div>
       ${renderBulletList(report.analysis?.whyMetsHaveACase || [])}

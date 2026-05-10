@@ -34,6 +34,7 @@ function generateSitemap() {
     { loc: `${SITE_ORIGIN}/advanced-stats`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/rankings`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/prospects`, lastmod: today, changefreq: "weekly", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/about`, lastmod: today, changefreq: "monthly", priority: "0.4" },
     { loc: `${SITE_ORIGIN}/pick-history`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/depth-chart`, lastmod: today, changefreq: "weekly", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/news`, lastmod: today, changefreq: "daily", priority: "0.6" },
@@ -42,6 +43,10 @@ function generateSitemap() {
     { loc: `${SITE_ORIGIN}/betting`, lastmod: today, changefreq: "weekly", priority: "0.6" },
     { loc: `${SITE_ORIGIN}/gear`, lastmod: today, changefreq: "monthly", priority: "0.4" },
     { loc: `${SITE_ORIGIN}/support`, lastmod: today, changefreq: "monthly", priority: "0.4" },
+    { loc: `${SITE_ORIGIN}/privacy-policy`, lastmod: today, changefreq: "monthly", priority: "0.3" },
+    { loc: `${SITE_ORIGIN}/terms`, lastmod: today, changefreq: "monthly", priority: "0.3" },
+    { loc: `${SITE_ORIGIN}/editorial-policy`, lastmod: today, changefreq: "monthly", priority: "0.3" },
+    { loc: `${SITE_ORIGIN}/disclaimer`, lastmod: today, changefreq: "monthly", priority: "0.3" },
   ];
 
   const deduped = Array.from(new Map(urls.map((entry) => [entry.loc, entry])).values());
