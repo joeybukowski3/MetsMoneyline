@@ -30,18 +30,18 @@ function generateSitemap() {
   const urls = [
     { loc: `${SITE_ORIGIN}/`, lastmod: today, changefreq: "daily", priority: "1.0" },
     { loc: `${SITE_ORIGIN}/report`, lastmod: today, changefreq: "daily", priority: "0.9" },
-    { loc: `${SITE_ORIGIN}/trends.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
-    { loc: `${SITE_ORIGIN}/advanced-stats.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/trends`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/advanced-stats`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/rankings`, lastmod: today, changefreq: "daily", priority: "0.7" },
-    { loc: `${SITE_ORIGIN}/prospects.html`, lastmod: today, changefreq: "weekly", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/prospects`, lastmod: today, changefreq: "weekly", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/pick-history`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/depth-chart`, lastmod: today, changefreq: "weekly", priority: "0.7" },
-    { loc: `${SITE_ORIGIN}/news.html`, lastmod: today, changefreq: "daily", priority: "0.6" },
-    { loc: `${SITE_ORIGIN}/on-this-day.html`, lastmod: today, changefreq: "daily", priority: "0.5" },
+    { loc: `${SITE_ORIGIN}/news`, lastmod: today, changefreq: "daily", priority: "0.6" },
+    { loc: `${SITE_ORIGIN}/on-this-day`, lastmod: today, changefreq: "daily", priority: "0.5" },
     { loc: `${SITE_ORIGIN}/social`, lastmod: today, changefreq: "daily", priority: "0.5" },
     { loc: `${SITE_ORIGIN}/betting`, lastmod: today, changefreq: "weekly", priority: "0.6" },
     { loc: `${SITE_ORIGIN}/gear`, lastmod: today, changefreq: "monthly", priority: "0.4" },
-    { loc: `${SITE_ORIGIN}/support.html`, lastmod: today, changefreq: "monthly", priority: "0.4" },
+    { loc: `${SITE_ORIGIN}/support`, lastmod: today, changefreq: "monthly", priority: "0.4" },
   ];
 
   const deduped = Array.from(new Map(urls.map((entry) => [entry.loc, entry])).values());
