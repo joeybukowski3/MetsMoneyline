@@ -2,7 +2,7 @@
 Inputs:
 - MLB Stats API schedule, feed, player stats, injuries, and game content endpoints.
 - Baseball Savant pitcher/team leaderboards for lightweight advanced context.
-- OpenAI for a single JSON-only writeup generation call.
+- Optional xAI Grok call for the Today's Pick section, using only local structured game context.
 
 Output:
 - Writes public/data/sample-game.json in the shape consumed by the static frontend.
@@ -22,7 +22,7 @@ require("dotenv").config({ path: path.join(__dirname, "../.env") });
 const TEAM_ID = 121;
 const TEAM_NAME = "New York Mets";
 const TIME_ZONE = "America/New_York";
-const DEFAULT_MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
+const DEFAULT_GROK_MODEL = process.env.GROK_MODEL || "grok-4.3";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds.json");
@@ -202,9 +202,54 @@ const DEFAULT_METS_LINEUP = [
   { order: 9, playerId: 673357, name: "Luis Robert Jr.", pos: "RF", hand: "R" }
 ];
 
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+const grokClient = process.env.GROK_API_KEY
+  ? new OpenAI({ apiKey: process.env.GROK_API_KEY, baseURL: "https://api.x.ai/v1" })
   : null;
+
+const TODAY_PICK_CONFIDENCE_SCORE = {
+  Low: 4,
+  Lean: 5,
+  Standard: 6,
+  Strong: 8
+};
+
+const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are the Today's Pick writer for MetsMoneyline.com. You are a disciplined MLB betting analyst writing from the perspective of a Mets-focused betting site. You must use only the structured game data provided by the application. You may not browse the web, infer missing facts, invent stats, or mention anything not present in the provided context. Your job is to identify the most defensible Mets-side betting case using the provided matchup data. You must always make the official pick Mets ML, but the reasoning must remain objective, grounded, and honest. If the data is mixed or unfavorable, acknowledge the risks and explain the best realistic path for the Mets ML side. Never guarantee a win. Never use words like lock, free money, can't lose, or guaranteed. Return valid JSON only.";
+
+const GROK_TODAY_PICK_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    headline: { type: "string" },
+    summary: { type: "string" },
+    metsEdges: {
+      type: "array",
+      items: { type: "string" }
+    },
+    risks: {
+      type: "array",
+      items: { type: "string" }
+    },
+    bettingAngle: { type: "string" },
+    officialPick: { type: "string", const: "Mets ML" },
+    confidenceLabel: { type: "string", enum: ["Low", "Lean", "Standard", "Strong"] },
+    confidenceScore: { type: "number" }
+  },
+  required: [
+    "headline",
+    "summary",
+    "metsEdges",
+    "risks",
+    "bettingAngle",
+    "officialPick",
+    "confidenceLabel",
+    "confidenceScore"
+  ]
+};
+
+const GROK_JSON_REPAIR_PROMPT = "The previous response was invalid. Return only valid JSON matching the required schema. Do not add markdown, commentary, or extra keys.";
+const UNSUPPORTED_PICK_LANGUAGE = /\b(lock|guaranteed|guarantee|free money|can't lose|cant lose|sure thing|slam dunk)\b/gi;
+const TODAY_PICK_SCORE_MIN = 1;
+const TODAY_PICK_SCORE_MAX = 10;
 
 let cachedSavantPitchers = null;
 let cachedSavantBatters = null;
@@ -216,6 +261,302 @@ const cachedFangraphsLeaderboards = new Map();
 
 function getTodayEasternISO() {
   return new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
+}
+
+function clampNumber(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function safeTrimmedString(value, fallback = "") {
+  if (value == null) return fallback;
+  const normalized = String(value)
+    .replace(/\s+/g, " ")
+    .replace(/[“”]/g, "\"")
+    .replace(/[‘’]/g, "'")
+    .trim();
+  return normalized || fallback;
+}
+
+function stripUnsupportedPickLanguage(value) {
+  return safeTrimmedString(value).replace(UNSUPPORTED_PICK_LANGUAGE, "high-variance");
+}
+
+function mapDeterministicConfidenceToTodayPick(analyticalLean, confidence) {
+  if (confidence === "high" && (analyticalLean === "Mets" || analyticalLean === "Slight Mets edge")) return "Strong";
+  if (confidence === "medium" || analyticalLean === "Mets") return "Standard";
+  if (analyticalLean === "Opponent" || analyticalLean === "Slight opponent edge" || analyticalLean === "Mixed") return "Low";
+  return "Lean";
+}
+
+function normalizeTodayPickConfidence(label, score, fallbackLabel = "Lean") {
+  const validLabel = ["Low", "Lean", "Standard", "Strong"].includes(label) ? label : fallbackLabel;
+  const fallbackScore = TODAY_PICK_CONFIDENCE_SCORE[validLabel] || TODAY_PICK_CONFIDENCE_SCORE.Lean;
+  const numericScore = Number.isFinite(Number(score))
+    ? clampNumber(Math.round(Number(score)), TODAY_PICK_SCORE_MIN, TODAY_PICK_SCORE_MAX)
+    : fallbackScore;
+  return { confidenceLabel: validLabel, confidenceScore: numericScore };
+}
+
+function normalizeTodayPickList(items, limit, fallbackItems = []) {
+  const source = Array.isArray(items) ? items : fallbackItems;
+  const cleaned = source
+    .map((item) => stripUnsupportedPickLanguage(item))
+    .filter(Boolean)
+    .slice(0, limit);
+  return cleaned.length ? cleaned : fallbackItems.slice(0, limit);
+}
+
+function buildDeterministicTodayPick(gameFacts, writeup, analysisObject, edgeScoring) {
+  const pickSummary = stripUnsupportedPickLanguage(writeup?.pickSummary || "");
+  const pickNarrative = stripUnsupportedPickLanguage(writeup?.pickNarrative || "");
+  const metsEdges = (edgeScoring?.categories || [])
+    .filter((edge) => edge.edge === "Mets edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 3)
+    .map((edge) => stripUnsupportedPickLanguage(edge.explanation));
+  const risks = (edgeScoring?.categories || [])
+    .filter((edge) => edge.edge === "Opponent edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 2)
+    .map((edge) => stripUnsupportedPickLanguage(edge.explanation));
+  const confidenceLabel = mapDeterministicConfidenceToTodayPick(writeup?.analyticalLean, writeup?.confidence);
+  const confidenceScore = TODAY_PICK_CONFIDENCE_SCORE[confidenceLabel] || TODAY_PICK_CONFIDENCE_SCORE.Lean;
+  const summary = safeTrimmedString(
+    pickNarrative || pickSummary || `${TEAM_NAME} still has the cleaner moneyline path in the current matchup data.`
+  );
+  const bettingAngle = safeTrimmedString(
+    pickSummary || "The official side stays Mets ML because the best supported matchup angle still points to New York."
+  );
+
+  return {
+    headline: "Mets ML Pick",
+    summary,
+    metsEdges: metsEdges.length ? metsEdges : [
+      stripUnsupportedPickLanguage("The Mets still show the best available offensive or run-prevention edge in the local matchup data."),
+      stripUnsupportedPickLanguage("The bullpen and lineup context give New York a realistic path to control the late innings."),
+      stripUnsupportedPickLanguage("The current price keeps the Mets moneyline playable relative to the in-house model read.")
+    ],
+    risks: risks.length ? risks : [
+      stripUnsupportedPickLanguage("The overall board is not clean enough to remove volatility from the Mets side."),
+      stripUnsupportedPickLanguage("If the top Mets edge does not show up early, the game can flip into a coin-flip script.")
+    ],
+    bettingAngle,
+    officialPick: "Mets ML",
+    confidenceLabel,
+    confidenceScore
+  };
+}
+
+function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deterministicTodayPick) {
+  const topMetsEdges = (edgeScoring?.categories || [])
+    .filter((edge) => edge.edge === "Mets edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 4)
+    .map((edge) => ({
+      category: edge.category,
+      strength: edge.strength,
+      explanation: edge.explanation,
+      dataMode: edge.dataMode || null
+    }));
+  const topRisks = (edgeScoring?.categories || [])
+    .filter((edge) => edge.edge === "Opponent edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 3)
+    .map((edge) => ({
+      category: edge.category,
+      strength: edge.strength,
+      explanation: edge.explanation,
+      dataMode: edge.dataMode || null
+    }));
+
+  return {
+    sourcePolicy: "Use only the fields in this JSON context. Do not browse or add missing facts.",
+    game: {
+      date: gameFacts?.meta?.date || null,
+      time: gameFacts?.meta?.time || null,
+      opponent: gameFacts?.game?.opponent || null,
+      homeAway: gameFacts?.meta?.homeAway || null,
+      ballpark: gameFacts?.meta?.ballpark || null,
+      weather: gameFacts?.weather || null
+    },
+    market: {
+      metsMoneyline: gameFacts?.money?.metsMoneyline ?? null,
+      opponentMoneyline: gameFacts?.money?.oppMoneyline ?? null,
+      total: gameFacts?.money?.total ?? null,
+      runLine: gameFacts?.money?.runLine ?? null
+    },
+    startingPitchers: {
+      mets: {
+        name: gameFacts?.pitching?.mets?.name || null,
+        hand: gameFacts?.pitching?.mets?.hand || null,
+        seasonERA: gameFacts?.pitching?.mets?.seasonERA || null,
+        seasonWHIP: gameFacts?.pitching?.mets?.seasonWHIP || null,
+        note: gameFacts?.pitching?.mets?.note || null,
+        recentStarts: gameFacts?.pitching?.mets?.recentStarts || []
+      },
+      opponent: {
+        name: gameFacts?.pitching?.opp?.name || null,
+        hand: gameFacts?.pitching?.opp?.hand || null,
+        seasonERA: gameFacts?.pitching?.opp?.seasonERA || null,
+        seasonWHIP: gameFacts?.pitching?.opp?.seasonWHIP || null,
+        note: gameFacts?.pitching?.opp?.note || null,
+        recentStarts: gameFacts?.pitching?.opp?.recentStarts || []
+      }
+    },
+    bullpen: {
+      mets: gameFacts?.pitching?.metsBullpen || null,
+      opponent: gameFacts?.pitching?.oppBullpen || null
+    },
+    lineups: {
+      status: gameFacts?.lineups?.status || null,
+      mets: (gameFacts?.lineups?.mets || []).map((player) => ({
+        order: player.order,
+        name: player.name,
+        pos: player.pos,
+        hand: player.hand,
+        savant: player.savant ? {
+          ba: player.savant.ba ?? null,
+          xba: player.savant.xba ?? null,
+          xslg: player.savant.xslg ?? null,
+          xwoba: player.savant.xwoba ?? null,
+          pa: player.savant.pa ?? null
+        } : null
+      })),
+      opponent: (gameFacts?.lineups?.opp || []).map((player) => ({
+        order: player.order,
+        name: player.name,
+        pos: player.pos,
+        hand: player.hand,
+        savant: player.savant ? {
+          ba: player.savant.ba ?? null,
+          xba: player.savant.xba ?? null,
+          xslg: player.savant.xslg ?? null,
+          xwoba: player.savant.xwoba ?? null,
+          pa: player.savant.pa ?? null
+        } : null
+      }))
+    },
+    records: gameFacts?.records || null,
+    teamAdvanced: gameFacts?.advanced?.teamAdvanced || null,
+    model: {
+      analyticalLean: deterministicTodayPick?.confidenceLabel === "Strong"
+        ? "Mets"
+        : (analysisObject?.context?.analyticalLean || null),
+      projectedWinProbability: edgeScoring?.projectedWinProbability ?? null,
+      confidence: edgeScoring?.confidence || null,
+      topMetsEdges,
+      topRisks
+    },
+    deterministicFallback: deterministicTodayPick
+  };
+}
+
+function extractJsonObject(text) {
+  const raw = safeTrimmedString(text);
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch (_) {
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+    if (start !== -1 && end !== -1 && end > start) {
+      try {
+        return JSON.parse(raw.slice(start, end + 1));
+      } catch (_) {
+        return null;
+      }
+    }
+  }
+  return null;
+}
+
+function normalizeTodayPickPayload(payload, fallbackTodayPick) {
+  if (!payload || typeof payload !== "object") {
+    throw new Error("Today pick payload must be an object.");
+  }
+
+  const headline = stripUnsupportedPickLanguage(payload.headline || fallbackTodayPick.headline);
+  const summary = stripUnsupportedPickLanguage(payload.summary || fallbackTodayPick.summary);
+  const bettingAngle = stripUnsupportedPickLanguage(payload.bettingAngle || fallbackTodayPick.bettingAngle);
+  const metsEdges = normalizeTodayPickList(payload.metsEdges, 3, fallbackTodayPick.metsEdges);
+  const risks = normalizeTodayPickList(payload.risks, 2, fallbackTodayPick.risks);
+  const normalizedConfidence = normalizeTodayPickConfidence(
+    payload.confidenceLabel,
+    payload.confidenceScore,
+    fallbackTodayPick.confidenceLabel
+  );
+
+  return {
+    headline: headline || fallbackTodayPick.headline,
+    summary: summary || fallbackTodayPick.summary,
+    metsEdges,
+    risks,
+    bettingAngle: bettingAngle || fallbackTodayPick.bettingAngle,
+    officialPick: "Mets ML",
+    confidenceLabel: normalizedConfidence.confidenceLabel,
+    confidenceScore: normalizedConfidence.confidenceScore
+  };
+}
+
+function applyTodayPickToWriteup(writeup, todayPick) {
+  const normalized = normalizeTodayPickPayload(todayPick, todayPick);
+  const narrative = normalized.summary === normalized.bettingAngle
+    ? normalized.summary
+    : [normalized.summary, normalized.bettingAngle].filter(Boolean).join(" ");
+  return {
+    ...writeup,
+    todayPick: normalized,
+    pickSummary: normalized.bettingAngle,
+    pickNarrative: narrative,
+    confidence: normalized.confidenceLabel.toLowerCase()
+  };
+}
+
+async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
+  if (!grokClient) {
+    return fallbackTodayPick;
+  }
+
+  const userPrompt = [
+    "Write the Today's Pick section using only this provided game context.",
+    "",
+    "Required output:",
+    "- Valid JSON only",
+    "- No markdown",
+    "- No commentary outside JSON",
+    "- officialPick must be exactly \"Mets ML\"",
+    "- Do not include any stat, injury, lineup, odds, trend, or weather detail unless it appears in the provided context",
+    "",
+    `JSON schema:\n${JSON.stringify(GROK_TODAY_PICK_SCHEMA, null, 2)}`,
+    "",
+    `Game context:\n${JSON.stringify(gameContext, null, 2)}`
+  ].join("\n");
+
+  const requestMessages = [
+    { role: "system", content: GROK_TODAY_PICK_SYSTEM_PROMPT },
+    { role: "user", content: userPrompt }
+  ];
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const messages = attempt === 0
+      ? requestMessages
+      : [...requestMessages, { role: "user", content: GROK_JSON_REPAIR_PROMPT }];
+    const completion = await grokClient.chat.completions.create({
+      model: DEFAULT_GROK_MODEL,
+      response_format: { type: "json_object" },
+      temperature: 0.35,
+      messages
+    });
+    const text = completion?.choices?.[0]?.message?.content || "";
+    const parsed = extractJsonObject(text);
+    if (!parsed) {
+      if (attempt === 0) continue;
+      throw new Error("Grok returned invalid JSON.");
+    }
+    return normalizeTodayPickPayload(parsed, fallbackTodayPick);
+  }
+
+  return fallbackTodayPick;
 }
 
 function selectFeaturedGame(games, referenceDate = getTodayEasternISO()) {
@@ -267,12 +608,14 @@ function buildPlainTextEmail(game) {
   const date = report?.header?.metadataLine || game?.date || "";
   const matchup = `New York Mets vs ${game?.opponent || "Opponent"}`;
   const pick = report?.officialPick?.label || "See full report";
+  const pickSummary = report?.officialPick?.summary || report?.officialPick?.explanation || "";
   const isPreliminary = report?.preliminary?.enabled;
   return [
     `MetsMoneyline${isPreliminary ? " (Preliminary Report)" : ""}`,
     `${matchup}${date ? " | " + date : ""}`,
     "",
     `Today's Pick: ${pick}`,
+    pickSummary,
     "",
     "Read the full breakdown at metsmoneyline.com",
     "",
@@ -560,6 +903,84 @@ function loadPreviousOutput() {
   } catch {
     return null;
   }
+}
+
+function deepClone(value) {
+  return value == null ? value : JSON.parse(JSON.stringify(value));
+}
+
+function parseCachedEtTimeToIso(date, timeLabel) {
+  const match = String(timeLabel || "").match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!date || !match) return null;
+  let hour = Number(match[1]);
+  const minute = Number(match[2]);
+  const meridiem = match[3].toUpperCase();
+  if (meridiem === "PM" && hour !== 12) hour += 12;
+  if (meridiem === "AM" && hour === 12) hour = 0;
+  const hh = String(hour).padStart(2, "0");
+  const mm = String(minute).padStart(2, "0");
+  return `${date}T${hh}:${mm}:00-04:00`;
+}
+
+function buildLocalGameLabel(gameLike = {}) {
+  if (!gameLike?.opponent) return "Unknown Mets game";
+  return gameLike.homeAway === "road"
+    ? `Mets @ ${gameLike.opponent}`
+    : `${gameLike.opponent} @ Mets`;
+}
+
+function adaptCachedGameForTargetDate(cachedGame, targetDate, reason = "local/public-data") {
+  const cloned = deepClone(cachedGame);
+  if (!cloned) return null;
+  cloned.id = `${targetDate}-mets-vs-${slugify(cloned.opponent)}`;
+  cloned.date = targetDate;
+  cloned.status = "upcoming";
+  cloned.result = null;
+  cloned.finalScore = null;
+  if (cloned.writeup?.report?.header) {
+    cloned.writeup.report.header.date = targetDate;
+  }
+  return {
+    source: reason,
+    type: "cached-game",
+    requestedDate: targetDate,
+    resolvedDate: targetDate,
+    stale: true,
+    game: cloned
+  };
+}
+
+function loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation = true } = {}) {
+  const previousOutput = loadPreviousOutput();
+  const games = Array.isArray(previousOutput?.games) ? previousOutput.games : [];
+  const exactMatch = games.find((game) => game?.date === targetDate);
+  if (exactMatch) {
+    return {
+      source: "local/public-data",
+      type: "cached-game",
+      requestedDate: targetDate,
+      resolvedDate: targetDate,
+      stale: false,
+      game: deepClone(exactMatch)
+    };
+  }
+
+  if (!allowSeriesContinuation) return null;
+  const featured = selectFeaturedGame(games, targetDate);
+  const primary = games[0] || featured || null;
+  if (!primary?.date || !primary?.opponent) return null;
+  const dayGap = diffDays(targetDate, primary.date);
+  const inferredSeriesGameNumber = Number(primary?.gameContext?.seriesGameNumber || primary?.game?.seriesGameNumber || primary?.writeup?.analysisObject?.context?.seriesGameNumber || 0);
+  const sameBallpark = Boolean(primary.ballpark);
+  if (dayGap === 1 && primary.status === "upcoming" && inferredSeriesGameNumber > 0 && inferredSeriesGameNumber < 4 && sameBallpark) {
+    const adapted = adaptCachedGameForTargetDate(primary, targetDate, "local/public-data-series-continuation");
+    if (adapted?.game?.gameContext) {
+      adapted.game.gameContext.seriesGameNumber = inferredSeriesGameNumber + 1;
+    }
+    return adapted;
+  }
+
+  return null;
 }
 
 function buildHistoryKey(entry = {}) {
@@ -1344,10 +1765,65 @@ async function getGameForDate(targetDate) {
   return data?.dates?.[0]?.games?.[0] || null;
 }
 
-async function resolveTargetGame(targetDate) {
-  const exactGame = await getGameForDate(targetDate);
-  if (exactGame) {
-    return { requestedDate: targetDate, resolvedDate: targetDate, game: exactGame };
+async function fetchExactExternalGameForDate(targetDate) {
+  const url =
+    "https://statsapi.mlb.com/api/v1/schedule" +
+    `?sportId=1&teamId=${TEAM_ID}&date=${targetDate}` +
+    "&hydrate=team,venue,linescore,probablePitcher,seriesStatus";
+  const data = await safeGetJson(url, `schedule ${targetDate}`);
+  if (data == null) {
+    return { status: "unavailable", game: null };
+  }
+  const game = data?.dates?.[0]?.games?.[0] || null;
+  return { status: game ? "found" : "empty", game };
+}
+
+async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = true, allowFutureFallback = false, log = false } = {}) {
+  const messages = [];
+  const pushLog = (message) => {
+    messages.push(message);
+    if (log) console.log(message);
+  };
+
+  pushLog(`Resolving Mets game for ${targetDate}`);
+  const localResolution = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation });
+  if (localResolution) {
+    pushLog(`Local site schedule found: ${buildLocalGameLabel(localResolution.game)}`);
+    pushLog(`Resolved game source: ${localResolution.source}`);
+    return { ...localResolution, logs: messages };
+  }
+
+  const exactExternal = await fetchExactExternalGameForDate(targetDate);
+  if (exactExternal.status === "found" && exactExternal.game) {
+    const game = exactExternal.game;
+    const isHome = game?.teams?.home?.team?.id === TEAM_ID;
+    const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
+    pushLog(`External schedule found: ${isHome ? `${oppTeam?.name || "Opponent"} @ Mets` : `Mets @ ${oppTeam?.name || "Opponent"}`}`);
+    pushLog("Resolved game source: external/mlb-stats");
+    return {
+      source: "external/mlb-stats",
+      type: "mlb-schedule-game",
+      requestedDate: targetDate,
+      resolvedDate: targetDate,
+      stale: false,
+      game,
+      logs: messages
+    };
+  }
+
+  if (exactExternal.status === "unavailable") {
+    pushLog("External schedule fetch failed: unavailable; continuing with local data if present");
+    const staleLocal = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation: true });
+    if (staleLocal) {
+      pushLog(`Local cached game found after external failure: ${buildLocalGameLabel(staleLocal.game)}`);
+      pushLog(`Resolved game source: ${staleLocal.source}`);
+      return { ...staleLocal, logs: messages };
+    }
+  }
+
+  if (!allowFutureFallback) {
+    pushLog(`No Mets game found for ${targetDate} after checking local and external sources.`);
+    return null;
   }
 
   const startDate = targetDate;
@@ -1365,13 +1841,45 @@ async function resolveTargetGame(targetDate) {
     .sort((a, b) => new Date(a.gameDate) - new Date(b.gameDate))[0] || null;
 
   if (!nextGame) {
+    if (data == null) {
+      const staleLocal = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation: true });
+      if (staleLocal) {
+        pushLog(`External schedule fetch failed: unavailable; continuing with local data`);
+        pushLog(`Resolved game source: ${staleLocal.source}`);
+        return { ...staleLocal, logs: messages };
+      }
+    }
     throw new Error(`No Mets game found on or after ${targetDate}`);
   }
 
+  pushLog("Resolved game source: external/mlb-stats-window");
   return {
+    source: "external/mlb-stats-window",
+    type: "mlb-schedule-game",
     requestedDate: targetDate,
     resolvedDate: nextGame.officialDate || targetDate,
-    game: nextGame
+    stale: false,
+    game: nextGame,
+    logs: messages
+  };
+}
+
+async function resolveTargetGame(targetDate) {
+  const resolution = await resolveMetsGameForDate(targetDate, {
+    allowSeriesContinuation: true,
+    allowFutureFallback: true,
+    log: false
+  });
+  if (!resolution) {
+    throw new Error(`No Mets game found on or after ${targetDate}`);
+  }
+  return {
+    requestedDate: resolution.requestedDate,
+    resolvedDate: resolution.resolvedDate,
+    game: resolution.game,
+    source: resolution.source,
+    type: resolution.type,
+    stale: resolution.stale
   };
 }
 
@@ -2094,7 +2602,83 @@ async function getOddsFacts(game) {
 }
 
 async function buildGameFacts(targetDate) {
-  const { requestedDate, resolvedDate, game } = await resolveTargetGame(targetDate);
+  const { requestedDate, resolvedDate, game, source, type, stale } = await resolveTargetGame(targetDate);
+  if (type === "cached-game" && game?.opponent) {
+    const fallbackFacts = {
+      meta: {
+        requestedDate,
+        date: resolvedDate || targetDate,
+        gameDateTime: parseCachedEtTimeToIso(resolvedDate || targetDate, game.time),
+        time: game.time || "TBD",
+        ballpark: game.ballpark || "Venue TBD",
+        homeTeam: game.homeAway === "home" ? TEAM_NAME : game.opponent,
+        awayTeam: game.homeAway === "road" ? TEAM_NAME : game.opponent,
+        homeAway: game.homeAway === "away" ? "road" : (game.homeAway || "road")
+      },
+      records: {
+        metsRecord: game.metsRecord || null,
+        oppRecord: game.oppRecord || null,
+        metsLast10: game.trends?.find((trend) => trend.category === "Last 10 Games")?.mets?.replace(/^Last 10\s*/i, "") || null,
+        oppLast10: game.trends?.find((trend) => trend.category === "Last 10 Games")?.opp?.replace(/^Last 10\s*/i, "") || null,
+        metsHome: game.recordSplits?.metsHome || null,
+        metsRoad: game.recordSplits?.metsRoad || null,
+        oppHome: game.recordSplits?.oppHome || null,
+        oppRoad: game.recordSplits?.oppRoad || null
+      },
+      money: {
+        metsMoneyline: game.moneyline?.mets ?? null,
+        oppMoneyline: game.moneyline?.opp ?? null,
+        total: game.total ?? game.overUnder ?? null,
+        runLine: game.runLine
+          ? {
+              side: "mets",
+              spread: game.runLine.mets ?? null,
+              price: game.runLine.price ?? null
+            }
+          : null
+      },
+      pitching: {
+        mets: game.pitching?.mets || {},
+        opp: game.pitching?.opp || {},
+        metsBullpen: game.pitching?.metsBullpen || {},
+        oppBullpen: game.pitching?.oppBullpen || {}
+      },
+      lineups: {
+        mets: game.lineups?.mets || [],
+        opp: game.lineups?.opp || [],
+        status: game.lineups?.lineupStatus || "projected"
+      },
+      trends: game.trends || [],
+      editorial: game.editorial || {},
+      injuries: [
+        ...((game.gameContext?.metsInjuries || []).map((injury) => `Mets: ${injury.description || injury.name || injury}`)),
+        ...((game.gameContext?.oppInjuries || []).map((injury) => `${game.opponent}: ${injury.description || injury.name || injury}`))
+      ],
+      gameContext: game.gameContext || {},
+      advanced: {
+        cards: game.advancedMatchup || [],
+        savantTeam: { mets: null, opp: null },
+        teamAdvanced: game.teamAdvanced || {}
+      },
+      weather: game.weather || null,
+      game: {
+        gamePk: game.gamePk || game.sourceGamePk || null,
+        opponent: game.opponent,
+        oppTeamId: game.oppTeamId || TEAM_IDS[game.opponent] || null,
+        status: game.status || "upcoming",
+        finalScore: game.finalScore || null,
+        result: game.result || null,
+        seriesGameNumber: game.gameContext?.seriesGameNumber || game.writeup?.analysisObject?.context?.seriesGameNumber || 1
+      },
+      canonicalGameSource: {
+        source,
+        stale: Boolean(stale),
+        note: stale ? "Using local/cached game context because live schedule data was unavailable." : "Using local/cached game context."
+      }
+    };
+    ensureNoUndefinedStrings(sanitizeForModel(fallbackFacts));
+    return fallbackFacts;
+  }
   const isHome = game?.teams?.home?.team?.id === TEAM_ID;
   const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
   const previousOutput = loadPreviousOutput();
@@ -2225,6 +2809,11 @@ async function buildGameFacts(targetDate) {
       finalScore: isFinal ? { mets: metsScore ?? 0, opp: oppScore ?? 0 } : null,
       result: isFinal ? (Number(metsScore) > Number(oppScore) ? "win" : "loss") : null,
       seriesGameNumber: game?.seriesGameNumber || 1
+    },
+    canonicalGameSource: {
+      source: source || "external/mlb-stats",
+      stale: Boolean(stale),
+      note: source ? `Resolved via ${source}.` : "Resolved via external/mlb-stats."
     }
   };
 
@@ -3426,7 +4015,7 @@ function buildFallbackWriteup(gameFacts) {
     sourceLine
   ].filter(Boolean).join(" ");
 
-  return {
+  const fallbackWriteup = {
     raw: JSON.stringify({ fallback: true, generatedAt: new Date().toISOString() }),
     quickRead: {
       modelLean: "Mets",
@@ -3512,13 +4101,29 @@ function buildFallbackWriteup(gameFacts) {
     officialPick: "Official Pick: Mets ML",
     analyticalLean: "Mets"
   };
+  return applyTodayPickToWriteup(
+    fallbackWriteup,
+    buildDeterministicTodayPick(gameFacts, fallbackWriteup, null, null)
+  );
 }
 
 async function generateWriteupFromFacts(gameFacts) {
   const analysisObject = buildGameAnalysisObject(gameFacts);
   const missingMetrics = buildMissingMetricsList(analysisObject);
   const edgeScoring = buildEdgeScoring(analysisObject);
-  return buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics);
+  const baseWriteup = buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMetrics);
+  const fallbackTodayPick = buildDeterministicTodayPick(gameFacts, baseWriteup, analysisObject, edgeScoring);
+  const gameContext = buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, fallbackTodayPick);
+
+  try {
+    console.log(grokClient ? "Generating Today's Pick with Grok" : "Using deterministic fallback for Today's Pick (missing GROK_API_KEY)");
+    const todayPick = await requestGrokTodayPick(gameContext, fallbackTodayPick);
+    return applyTodayPickToWriteup(baseWriteup, todayPick);
+  } catch (error) {
+    console.warn(`[warn] Grok Today's Pick failed: ${error.message}`);
+    console.log("Using deterministic fallback for Today's Pick");
+    return applyTodayPickToWriteup(baseWriteup, fallbackTodayPick);
+  }
 }
 
 function buildTrendArray(gameFacts) {
@@ -3677,6 +4282,17 @@ function buildPresentationReport(game) {
   const teamAdvanced = game?.teamAdvanced || game?.advanced?.teamAdvanced || {};
   const headline = writeup.headline || `New York Mets vs ${game?.opponent || "Opponent"}`;
   const tagline = headline.includes(":") ? cleanText(headline.split(":").slice(1).join(":")) : headline;
+  const todayPickFallback = {
+    headline: "Mets ML Pick",
+    summary: stripUnsupportedPickLanguage(writeup.pickNarrative || writeup.pickSummary || "The official Mets side stays on the moneyline based on the current in-house matchup read."),
+    metsEdges: normalizeTodayPickList(writeup.analysis?.whyMetsHaveACase, 3, ["The current matchup data still leaves New York with a viable offensive or run-prevention edge."]),
+    risks: normalizeTodayPickList(writeup.analysis?.whereTheRiskIs, 2, ["The game script still carries enough volatility to keep confidence measured."]),
+    bettingAngle: stripUnsupportedPickLanguage(writeup.pickSummary || "The best supported path still points to Mets ML."),
+    officialPick: "Mets ML",
+    confidenceLabel: mapDeterministicConfidenceToTodayPick(writeup.analyticalLean, writeup.confidence),
+    confidenceScore: TODAY_PICK_CONFIDENCE_SCORE[mapDeterministicConfidenceToTodayPick(writeup.analyticalLean, writeup.confidence)] || TODAY_PICK_CONFIDENCE_SCORE.Lean
+  };
+  const todayPick = normalizeTodayPickPayload(writeup.todayPick || todayPickFallback, todayPickFallback);
   const preliminaryTitle = preliminaryMeta?.enabled
     ? `${preliminaryMeta.titlePrefix || "PRELIMINARY REPORT"} - ${headline}`
     : headline;
@@ -3873,9 +4489,17 @@ function buildPresentationReport(game) {
     },
     analysis: writeup.analysis || null,
     teamAdvanced,
+    todayPick,
     officialPick: {
       label: writeup.officialPick || "Official Pick: Mets ML",
-      explanation: writeup.pickSummary || null
+      explanation: todayPick.bettingAngle || writeup.pickSummary || null,
+      headline: todayPick.headline,
+      summary: todayPick.summary,
+      metsEdges: todayPick.metsEdges,
+      risks: todayPick.risks,
+      bettingAngle: todayPick.bettingAngle,
+      confidenceLabel: todayPick.confidenceLabel,
+      confidence: todayPick.confidenceScore
     },
     meta: {
       homeAwayLabel,
@@ -3954,6 +4578,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       sections,
       pickSummary: writeup.pickSummary,
       pickNarrative: writeup.pickNarrative || null,
+      todayPick: writeup.todayPick || null,
       officialPick,
       edgeTable: writeup.edgeTable || [],
       keyAngles: writeup.keyAngles || [],
@@ -4610,8 +5235,16 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     `)}
 
     ${wrapSection("Official MetsMoneyline Pick", `
-      <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">${valueCell(report.officialPick?.label)}</p>
-      <p style="margin:0;color:#374151;">${valueCell(report.officialPick?.explanation)}</p>
+      <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">${valueCell(report.officialPick?.headline || report.officialPick?.label)}</p>
+      <p style="margin:0 0 12px 0;color:#374151;">${valueCell(report.officialPick?.summary || report.officialPick?.explanation)}</p>
+      <div style="${smallLabel}margin-bottom:6px;">Mets Edges</div>
+      ${renderBulletList(report.officialPick?.metsEdges || [])}
+      <div style="${smallLabel}margin:12px 0 6px 0;">Risks / What Could Go Wrong</div>
+      ${renderBulletList(report.officialPick?.risks || [])}
+      <div style="${smallLabel}margin:12px 0 6px 0;">Betting Angle</div>
+      <p style="margin:0 0 12px 0;color:#374151;">${valueCell(report.officialPick?.bettingAngle || report.officialPick?.explanation)}</p>
+      <p style="margin:0 0 6px 0;font-weight:800;color:#111827;">Official Pick: Mets ML</p>
+      <p style="margin:0;color:#5b6477;">Confidence: ${valueCell(report.officialPick?.confidenceLabel)}${report.officialPick?.confidence != null ? ` (${valueCell(report.officialPick?.confidence)}/10)` : ""}</p>
     `)}`;
 }
 
@@ -5453,11 +6086,15 @@ module.exports = {
   getTodayEasternISO,
   selectFeaturedGame,
   getGameForDate,
+  resolveMetsGameForDate,
   buildGameFacts,
   generateWriteupFromFacts,
   buildFallbackWriteup,
   buildPresentationReport,
   buildGameJson,
+  buildDeterministicTodayPick,
+  normalizeTodayPickPayload,
+  applyTodayPickToWriteup,
   buildEmailHtml,
   buildSiteReportHtml,
   loadPreviousOutput,

@@ -5,7 +5,7 @@ const {
   TEAM_ID,
   getTodayEasternISO,
   selectFeaturedGame,
-  getGameForDate,
+  resolveMetsGameForDate,
   generateOutputPackage,
   persistGeneratedOutput,
   buildEmailHtml,
@@ -220,8 +220,12 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   console.log(`Checking Mets report send window for ${args.date}${args.dryRun ? " (dry run)" : ""}${args.skipWindow ? " (skip window)" : ""}${args.allowDuplicate ? " (allow duplicate)" : ""}${args.testSend ? " (test send)" : ""}${args.allowProjected ? " (allow projected)" : ""}...`);
 
-  const scheduledGame = await getGameForDate(args.date);
-  if (!scheduledGame) {
+  const resolvedGame = await resolveMetsGameForDate(args.date, {
+    allowSeriesContinuation: true,
+    allowFutureFallback: false,
+    log: true
+  });
+  if (!resolvedGame) {
     console.log(`No Mets game scheduled for ${args.date}.`);
     return;
   }
@@ -272,6 +276,7 @@ async function main() {
       });
 
   console.log(`Game: ${gameId}`);
+  console.log(`Resolved game source: ${gameFacts?.canonicalGameSource?.source || resolvedGame.source || "unknown"}`);
   console.log(`Minutes until first pitch: ${minutesUntilFirstPitch == null ? "unknown" : minutesUntilFirstPitch}`);
   console.log(`Lineups confirmed: ${lineupsConfirmed ? "yes" : "no"}`);
   console.log(`Starting pitchers announced: ${pitchersReady ? "yes" : "no"}`);
