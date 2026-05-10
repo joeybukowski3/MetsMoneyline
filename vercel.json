@@ -5,5 +5,29 @@
       "regions": ["iad1"],
       "maxDuration": 10
     }
-  }
+  },
+  "redirects": [
+    { "source": "/report.html", "destination": "/report", "permanent": true },
+    { "source": "/power-rankings.html", "destination": "/rankings", "permanent": true },
+    { "source": "/rankings.html", "destination": "/rankings", "permanent": true },
+    { "source": "/power-rankings", "destination": "/rankings", "permanent": true },
+    { "source": "/depth-chart.html", "destination": "/depth-chart", "permanent": true },
+    { "source": "/betting-history.html", "destination": "/pick-history", "permanent": true },
+    { "source": "/pick-history.html", "destination": "/pick-history", "permanent": true },
+    { "source": "/betting-history", "destination": "/pick-history", "permanent": true },
+    { "source": "/social-pulse.html", "destination": "/social", "permanent": true },
+    { "source": "/social.html", "destination": "/social", "permanent": true },
+    { "source": "/social-pulse", "destination": "/social", "permanent": true },
+    { "source": "/betting.html", "destination": "/betting", "permanent": true },
+    { "source": "/gear.html", "destination": "/gear", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/report", "destination": "/report.html" },
+    { "source": "/rankings", "destination": "/power-rankings.html" },
+    { "source": "/depth-chart", "destination": "/depth-chart.html" },
+    { "source": "/pick-history", "destination": "/betting-history.html" },
+    { "source": "/social", "destination": "/social-pulse.html" },
+    { "source": "/betting", "destination": "/betting.html" },
+    { "source": "/gear", "destination": "/gear.html" }
+  ]
 }

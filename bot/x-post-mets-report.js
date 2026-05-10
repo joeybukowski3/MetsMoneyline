@@ -7,7 +7,7 @@ const PICK_HISTORY_PATH = path.join(__dirname, "..", "public", "data", "pick-his
 const ODDS_CACHE_PATH = path.join(__dirname, "..", "public", "api", "mlb", "mets", "odds.json");
 const STATE_PATH = path.join(__dirname, "x-post-state.json");
 const SITE_URL = "https://www.metsmoneyline.com";
-const HISTORY_URL = "https://www.metsmoneyline.com/betting-history.html";
+const HISTORY_URL = "https://www.metsmoneyline.com/pick-history";
 const MAX_TWEET_LENGTH = 280;
 const DEFAULT_STAKE = 100;
 

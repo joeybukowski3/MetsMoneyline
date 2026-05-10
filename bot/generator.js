@@ -5302,7 +5302,7 @@ function buildEmailHtml(game) {
                 ${reportMarkup}
                 <div style="margin-top:20px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
                   <p style="margin:0 0 8px 0;font-size:13px;color:#475569;">See the full interactive breakdown with charts and lineup stats</p>
-                  <a href="https://www.metsmoneyline.com/report.html" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+                  <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
                 </div>
               </td>
             </tr>
@@ -5329,7 +5329,7 @@ function buildSiteReportHtml(game) {
     <title>${seoTitle}</title>
     <meta name="description" content="${seoDescription}">
     <meta name="keywords" content="Mets moneyline, Mets game prediction, Mets betting picks, MLB moneyline picks, Mets starting pitcher odds">
-    <link rel="canonical" href="https://www.metsmoneyline.com/report.html">
+    <link rel="canonical" href="https://www.metsmoneyline.com/report">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://statsapi.mlb.com">
@@ -5337,7 +5337,7 @@ function buildSiteReportHtml(game) {
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
     <link rel="stylesheet" href="css/styles.css">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.metsmoneyline.com/report.html">
+    <meta property="og:url" content="https://www.metsmoneyline.com/report">
     <meta property="og:title" content="${seoTitle}">
     <meta property="og:description" content="${seoDescription}">
     <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
@@ -5351,7 +5351,7 @@ function buildSiteReportHtml(game) {
         "@context": "https://schema.org",
         "@type": "WebPage",
         "name": "${seoTitle}",
-        "url": "https://www.metsmoneyline.com/report.html",
+        "url": "https://www.metsmoneyline.com/report",
         "description": "${seoDescription}",
         "isPartOf": { "@type": "WebSite", "name": "Mets Moneyline", "url": "https://www.metsmoneyline.com" }
       }
@@ -5836,7 +5836,7 @@ function buildCondensedEmailHtml(game) {
               ${analysisBlock()}
               <div style="margin-top:18px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
                 <p style="margin:0 0 8px 0;font-size:12px;color:#475569;">Full interactive breakdown with charts and advanced matchup data</p>
-                <a href="https://www.metsmoneyline.com/report.html" style="display:inline-block;background:#ff5910;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+                <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#ff5910;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
               </div>
             </td>
           </tr>

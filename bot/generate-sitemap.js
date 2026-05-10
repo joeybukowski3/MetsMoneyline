@@ -29,18 +29,18 @@ function generateSitemap() {
 
   const urls = [
     { loc: `${SITE_ORIGIN}/`, lastmod: today, changefreq: "daily", priority: "1.0" },
-    { loc: `${SITE_ORIGIN}/report.html`, lastmod: today, changefreq: "daily", priority: "0.9" },
+    { loc: `${SITE_ORIGIN}/report`, lastmod: today, changefreq: "daily", priority: "0.9" },
     { loc: `${SITE_ORIGIN}/trends.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/advanced-stats.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
-    { loc: `${SITE_ORIGIN}/power-rankings.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/rankings`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/prospects.html`, lastmod: today, changefreq: "weekly", priority: "0.7" },
-    { loc: `${SITE_ORIGIN}/betting-history.html`, lastmod: today, changefreq: "daily", priority: "0.7" },
-    { loc: `${SITE_ORIGIN}/depth-chart.html`, lastmod: today, changefreq: "weekly", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/pick-history`, lastmod: today, changefreq: "daily", priority: "0.7" },
+    { loc: `${SITE_ORIGIN}/depth-chart`, lastmod: today, changefreq: "weekly", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/news.html`, lastmod: today, changefreq: "daily", priority: "0.6" },
     { loc: `${SITE_ORIGIN}/on-this-day.html`, lastmod: today, changefreq: "daily", priority: "0.5" },
-    { loc: `${SITE_ORIGIN}/social-pulse.html`, lastmod: today, changefreq: "daily", priority: "0.5" },
-    { loc: `${SITE_ORIGIN}/betting.html`, lastmod: today, changefreq: "weekly", priority: "0.6" },
-    { loc: `${SITE_ORIGIN}/gear.html`, lastmod: today, changefreq: "monthly", priority: "0.4" },
+    { loc: `${SITE_ORIGIN}/social`, lastmod: today, changefreq: "daily", priority: "0.5" },
+    { loc: `${SITE_ORIGIN}/betting`, lastmod: today, changefreq: "weekly", priority: "0.6" },
+    { loc: `${SITE_ORIGIN}/gear`, lastmod: today, changefreq: "monthly", priority: "0.4" },
     { loc: `${SITE_ORIGIN}/support.html`, lastmod: today, changefreq: "monthly", priority: "0.4" },
   ];
 
