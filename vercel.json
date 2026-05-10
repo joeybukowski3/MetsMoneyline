@@ -18,6 +18,8 @@
       "destination": "https://www.metsmoneyline.com/:path*",
       "permanent": true
     },
+    { "source": "/picks/:date", "destination": "/pick-history", "permanent": true },
+    { "source": "/game/:slug", "destination": "/pick-history", "permanent": true },
     { "source": "/report.html", "destination": "/report", "permanent": true },
     { "source": "/trends.html", "destination": "/trends", "permanent": true },
     { "source": "/advanced-stats.html", "destination": "/advanced-stats", "permanent": true },
