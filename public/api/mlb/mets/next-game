@@ -1,17 +1,8 @@
 {
-  "gameId": 824363,
-  "startTime": "2026-05-04T21:40:00Z",
-  "status": "In Progress",
+  "gameId": 823632,
+  "startTime": "2026-05-12T23:10:00Z",
+  "status": "Scheduled",
   "homeTeam": {
-    "id": 115,
-    "canonicalKey": "rockies",
-    "mlbStatsTeamId": 115,
-    "apiSportsTeamId": 115,
-    "name": "Colorado Rockies",
-    "abbreviation": "COL",
-    "record": null
-  },
-  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -20,81 +11,104 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "isMetsHome": false,
-  "venue": "Coors Field",
-  "league": 1,
-  "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
-    "markets": [
-      {
-        "key": "h2h",
-        "label": "h2h",
-        "outcomes": [
-          {
-            "name": "Colorado Rockies",
-            "price": 340,
-            "point": null
-          },
-          {
-            "name": "New York Mets",
-            "price": -500,
-            "point": null
-          }
-        ]
-      },
-      {
-        "key": "spreads",
-        "label": "spreads",
-        "outcomes": [
-          {
-            "name": "Colorado Rockies",
-            "price": -138,
-            "point": 2.5
-          },
-          {
-            "name": "New York Mets",
-            "price": 104,
-            "point": -2.5
-          }
-        ]
-      },
-      {
-        "key": "totals",
-        "label": "totals",
-        "outcomes": [
-          {
-            "name": "Over",
-            "price": -106,
-            "point": 6.5
-          },
-          {
-            "name": "Under",
-            "price": -125,
-            "point": 6.5
-          }
-        ]
-      }
-    ]
+  "awayTeam": {
+    "id": 116,
+    "canonicalKey": "tigers",
+    "mlbStatsTeamId": 116,
+    "apiSportsTeamId": 116,
+    "name": "Detroit Tigers",
+    "abbreviation": "DET",
+    "record": null
   },
+  "isMetsHome": true,
+  "venue": "Citi Field",
+  "league": 1,
+  "sportsbookSummary": null,
   "raw": {
-    "gamePk": 824363,
-    "gameGuid": "8caa964e-9825-4caf-8b53-af1a3c3c921f",
-    "link": "/api/v1.1/game/824363/feed/live",
+    "gamePk": 823632,
+    "gameGuid": "8fcd49b9-e8c2-47ef-8fd2-551c5867a894",
+    "link": "/api/v1.1/game/823632/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-05-04T21:40:00Z",
-    "officialDate": "2026-05-04",
+    "gameDate": "2026-05-12T23:10:00Z",
+    "officialDate": "2026-05-12",
     "status": {
-      "abstractGameState": "Live",
-      "codedGameState": "I",
-      "detailedState": "In Progress",
-      "statusCode": "I",
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
       "startTimeTBD": false,
-      "abstractGameCode": "L"
+      "abstractGameCode": "P"
     },
     "teams": {
       "away": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 116,
+          "name": "Detroit Tigers",
+          "link": "/api/v1/teams/116",
+          "season": 2026,
+          "venue": {
+            "id": 2394,
+            "name": "Comerica Park",
+            "link": "/api/v1/venues/2394"
+          },
+          "springVenue": {
+            "id": 2511,
+            "link": "/api/v1/venues/2511"
+          },
+          "teamCode": "det",
+          "fileCode": "det",
+          "abbreviation": "DET",
+          "teamName": "Tigers",
+          "locationName": "Detroit",
+          "firstYearOfPlay": "1901",
+          "league": {
+            "id": 103,
+            "name": "American League",
+            "link": "/api/v1/league/103"
+          },
+          "division": {
+            "id": 202,
+            "name": "American League Central",
+            "link": "/api/v1/divisions/202"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Detroit",
+          "franchiseName": "Detroit",
+          "clubName": "Tigers",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 19,
+          "losses": 22,
+          "pct": ".463"
+        },
+        "probablePitcher": {
+          "id": 656427,
+          "fullName": "Jack Flaherty",
+          "link": "/api/v1/people/656427"
+        },
+        "splitSquad": false,
+        "seriesNumber": 14,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      },
+      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -143,330 +157,77 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 12,
-          "losses": 22,
-          "pct": ".353"
+          "wins": 15,
+          "losses": 25,
+          "pct": ".375"
         },
-        "score": 2,
+        "probablePitcher": {
+          "id": 642547,
+          "fullName": "Freddy Peralta",
+          "link": "/api/v1/people/642547"
+        },
         "splitSquad": false,
-        "seriesNumber": 12,
+        "seriesNumber": 14,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
           "link": "/api/v1/league/115",
           "abbreviation": "GL"
         }
-      },
-      "home": {
-        "team": {
-          "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
-          },
-          "allStarStatus": "N",
-          "id": 115,
-          "name": "Colorado Rockies",
-          "link": "/api/v1/teams/115",
-          "season": 2026,
-          "venue": {
-            "id": 19,
-            "name": "Coors Field",
-            "link": "/api/v1/venues/19"
-          },
-          "springVenue": {
-            "id": 4249,
-            "link": "/api/v1/venues/4249"
-          },
-          "teamCode": "col",
-          "fileCode": "col",
-          "abbreviation": "COL",
-          "teamName": "Rockies",
-          "locationName": "Denver",
-          "firstYearOfPlay": "1992",
-          "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
-          },
-          "division": {
-            "id": 203,
-            "name": "National League West",
-            "link": "/api/v1/divisions/203"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "Colorado",
-          "franchiseName": "Colorado",
-          "clubName": "Rockies",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 14,
-          "losses": 21,
-          "pct": ".400"
-        },
-        "score": 0,
-        "splitSquad": false,
-        "seriesNumber": 12,
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        }
       }
     },
     "linescore": {
-      "currentInning": 6,
-      "currentInningOrdinal": "6th",
-      "inningState": "Top",
-      "inningHalf": "Top",
-      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [
-        {
-          "num": 1,
-          "ordinalNum": "1st",
-          "home": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 1
-          },
-          "away": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        },
-        {
-          "num": 2,
-          "ordinalNum": "2nd",
-          "home": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        },
-        {
-          "num": 3,
-          "ordinalNum": "3rd",
-          "home": {
-            "runs": 0,
-            "hits": 1,
-            "errors": 0,
-            "leftOnBase": 1
-          },
-          "away": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        },
-        {
-          "num": 4,
-          "ordinalNum": "4th",
-          "home": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        },
-        {
-          "num": 5,
-          "ordinalNum": "5th",
-          "home": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "runs": 0,
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        },
-        {
-          "num": 6,
-          "ordinalNum": "6th",
-          "home": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "runs": 2,
-            "hits": 3,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        }
-      ],
+      "innings": [],
       "teams": {
-        "home": {
-          "runs": 0,
-          "hits": 1,
-          "errors": 0,
-          "leftOnBase": 2
-        },
-        "away": {
-          "runs": 2,
-          "hits": 3,
-          "errors": 0,
-          "leftOnBase": 0
-        }
+        "home": {},
+        "away": {}
       },
       "defense": {
-        "pitcher": {
-          "id": 677955,
-          "fullName": "Jaden Hill",
-          "link": "/api/v1/people/677955"
-        },
-        "catcher": {
-          "id": 696100,
-          "fullName": "Hunter Goodman",
-          "link": "/api/v1/people/696100"
-        },
-        "first": {
-          "id": 681198,
-          "fullName": "TJ Rumfield",
-          "link": "/api/v1/people/681198"
-        },
-        "second": {
-          "id": 650489,
-          "fullName": "Willi Castro",
-          "link": "/api/v1/people/650489"
-        },
-        "third": {
-          "id": 691720,
-          "fullName": "Kyle Karros",
-          "link": "/api/v1/people/691720"
-        },
-        "shortstop": {
-          "id": 678662,
-          "fullName": "Ezequiel Tovar",
-          "link": "/api/v1/people/678662"
-        },
-        "left": {
-          "id": 666160,
-          "fullName": "Mickey Moniak",
-          "link": "/api/v1/people/666160"
-        },
-        "center": {
-          "id": 686668,
-          "fullName": "Brenton Doyle",
-          "link": "/api/v1/people/686668"
-        },
-        "right": {
-          "id": 687597,
-          "fullName": "Jordan Beck",
-          "link": "/api/v1/people/687597"
-        },
-        "batter": {
-          "id": 686668,
-          "fullName": "Brenton Doyle",
-          "link": "/api/v1/people/686668"
-        },
-        "onDeck": {
-          "id": 666160,
-          "fullName": "Mickey Moniak",
-          "link": "/api/v1/people/666160"
-        },
-        "inHole": {
-          "id": 671289,
-          "fullName": "Tyler Freeman",
-          "link": "/api/v1/people/671289"
-        },
-        "battingOrder": 9,
-        "team": {
-          "id": 115,
-          "name": "Colorado Rockies",
-          "link": "/api/v1/teams/115"
-        }
-      },
-      "offense": {
-        "batter": {
-          "id": 668901,
-          "fullName": "Mark Vientos",
-          "link": "/api/v1/people/668901"
-        },
-        "onDeck": {
-          "id": 683146,
-          "fullName": "Brett Baty",
-          "link": "/api/v1/people/683146"
-        },
-        "inHole": {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760"
-        },
-        "second": {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742"
-        },
-        "third": {
-          "id": 620443,
-          "fullName": "Luis Torrens",
-          "link": "/api/v1/people/620443"
-        },
-        "pitcher": {
-          "id": 656849,
-          "fullName": "David Peterson",
-          "link": "/api/v1/people/656849"
-        },
-        "battingOrder": 4,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
       },
-      "balls": 1,
-      "strikes": 1,
-      "outs": 2
+      "offense": {
+        "team": {
+          "id": 116,
+          "name": "Detroit Tigers",
+          "link": "/api/v1/teams/116"
+        }
+      }
     },
     "venue": {
-      "id": 19,
-      "name": "Coors Field",
-      "link": "/api/v1/venues/19",
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/824363/content"
+      "link": "/api/v1/game/823632/content"
+    },
+    "seriesStatus": {
+      "gameNumber": 1,
+      "totalGames": 3,
+      "isTied": true,
+      "isOver": false,
+      "wins": 0,
+      "losses": 0,
+      "description": "Regular Season",
+      "shortDescription": "Season",
+      "shortName": "Season",
+      "abbreviation": "RS"
     },
     "gameNumber": 1,
     "publicFacing": true,
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-824363-2026-05-04",
+    "calendarEventID": "14-823632-2026-05-12",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
@@ -479,7 +240,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-04T22:57:24.344Z",
+    "generatedAt": "2026-05-11T16:33:13.162Z",
     "cacheHint": "schedule: 15-30 minutes"
   }
 }
