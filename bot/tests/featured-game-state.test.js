@@ -2,8 +2,14 @@ const assert = require("node:assert/strict");
 
 const {
   normalizeGameDate,
-  resolveFeaturedGameState
+  resolveFeaturedGameState,
+  shouldDiscardUntrustedCurrentDayCachedGame
 } = require("../../public/js/featured-game-state.js");
+const {
+  isExactLocalGameReusable,
+  resolveExternalGameDate,
+  isExternalGameExactMatch
+} = require("../generator");
 
 function buildGame({
   date,
@@ -157,6 +163,82 @@ const checks = [
       normalizeGameDate(buildGame({ date: null, startTime: "2026-05-13T23:10:00Z" })),
       "2026-05-13"
     );
+  },
+  function rejectsStaleLocalSeriesContinuationGamesAsExactMatches() {
+    assert.equal(isExactLocalGameReusable({
+      date: "2026-05-11",
+      opponent: "Diamondbacks",
+      canonicalGameSource: {
+        source: "local/public-data-series-continuation",
+        stale: true
+      }
+    }, "2026-05-11"), false);
+  },
+  function rejectsExactLocalGamesWithoutCanonicalSourceMetadata() {
+    assert.equal(isExactLocalGameReusable({
+      date: "2026-05-11",
+      opponent: "Diamondbacks"
+    }, "2026-05-11"), false);
+  },
+  function rejectsExactLocalGamesThatOnlyPointBackToLocalCache() {
+    assert.equal(isExactLocalGameReusable({
+      date: "2026-05-11",
+      opponent: "Diamondbacks",
+      canonicalGameSource: {
+        source: "local/public-data",
+        stale: false
+      }
+    }, "2026-05-11"), false);
+  },
+  function resolvesExternalGameDateFromOfficialDate() {
+    assert.equal(resolveExternalGameDate({
+      officialDate: "2026-05-12",
+      gameDate: "2026-05-13T00:10:00Z"
+    }), "2026-05-12");
+  },
+  function rejectsExternalGamesThatDoNotActuallyMatchTargetDate() {
+    assert.equal(isExternalGameExactMatch({
+      officialDate: "2026-05-10",
+      gameDate: "2026-05-11T00:10:00Z"
+    }, "2026-05-11"), false);
+  },
+  function discardsUntrustedCurrentDayCachedGameWhenEndpointPointsToTomorrow() {
+    assert.equal(shouldDiscardUntrustedCurrentDayCachedGame(
+      {
+        date: "2026-05-11",
+        opponent: "Diamondbacks",
+        status: "upcoming",
+        canonicalGameSource: {
+          source: "local/public-data",
+          stale: false
+        }
+      },
+      "2026-05-11",
+      {
+        date: "2026-05-12",
+        opponent: "Tigers",
+        status: "upcoming",
+        canonicalGameSource: {
+          source: "external/mlb-stats-window",
+          stale: false
+        }
+      }
+    ), true);
+  },
+  function preservesTrustedExternalCurrentDayGame() {
+    assert.equal(shouldDiscardUntrustedCurrentDayCachedGame(
+      {
+        date: "2026-05-11",
+        opponent: "Diamondbacks",
+        status: "upcoming",
+        canonicalGameSource: {
+          source: "external/mlb-stats",
+          stale: false
+        }
+      },
+      "2026-05-11",
+      null
+    ), false);
   }
 ];
 

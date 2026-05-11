@@ -8,7 +8,8 @@ const {
   isFinalGame,
   isPlayableScheduledGame,
   normalizeGameDate,
-  resolveFeaturedGameState
+  resolveFeaturedGameState,
+  shouldDiscardUntrustedCurrentDayCachedGame
 } = globalThis.MetsFeaturedGameState;
 
 function getTodayISO() {
@@ -317,38 +318,49 @@ async function loadGameData() {
     const endpointGame = liveGame?.gameId ? liveGame : nextGame;
     const normalizedGame = mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds);
     const games = Array.isArray(data?.games) ? [...data.games] : [];
+    const authoritativeUpcomingGame = normalizedGame && isEndpointGameCurrentOrUpcoming(normalizedGame, todayEt)
+      ? normalizedGame
+      : null;
+
+    const filteredGames = games.filter((game) => {
+      const discard = shouldDiscardUntrustedCurrentDayCachedGame(game, todayEt, authoritativeUpcomingGame);
+      if (discard) {
+        console.warn(`[home] Discarding untrusted cached current-day matchup ${game?.date} vs ${game?.opponent}`);
+      }
+      return !discard;
+    });
 
     if (normalizedGame && endpointGame) {
       normalizedGame.pitching = buildEndpointProbables(endpointGame);
     }
 
     if (normalizedGame && isEndpointGameCurrentOrUpcoming(normalizedGame, todayEt)) {
-      const liveIndex = games.findIndex(game =>
+      const liveIndex = filteredGames.findIndex(game =>
         game?.date === normalizedGame.date &&
         game?.opponent === normalizedGame.opponent &&
         game?.homeAway === normalizedGame.homeAway
       );
 
       if (liveIndex >= 0) {
-        games[liveIndex] = mergeLiveGame(games[liveIndex], normalizedGame);
+        filteredGames[liveIndex] = mergeLiveGame(filteredGames[liveIndex], normalizedGame);
       } else {
-        games.unshift(normalizedGame);
+        filteredGames.unshift(normalizedGame);
       }
     } else if (normalizedGame) {
       console.warn(`[home] Ignoring stale endpoint matchup ${normalizedGame.date} vs ${normalizedGame.opponent}`);
-    } else if (games.length > 0 && odds) {
-      const fallbackMoneyline = mapOddsSummaryToMoneyline(odds, { opponent: games[0]?.opponent || "" });
-      games[0] = {
-        ...games[0],
+    } else if (filteredGames.length > 0 && odds) {
+      const fallbackMoneyline = mapOddsSummaryToMoneyline(odds, { opponent: filteredGames[0]?.opponent || "" });
+      filteredGames[0] = {
+        ...filteredGames[0],
         moneyline: {
-          ...(games[0]?.moneyline || {}),
-          mets: fallbackMoneyline.mets ?? games[0]?.moneyline?.mets ?? null,
-          opp: fallbackMoneyline.opp ?? games[0]?.moneyline?.opp ?? null
+          ...(filteredGames[0]?.moneyline || {}),
+          mets: fallbackMoneyline.mets ?? filteredGames[0]?.moneyline?.mets ?? null,
+          opp: fallbackMoneyline.opp ?? filteredGames[0]?.moneyline?.opp ?? null
         },
-        oddsUpdatedAt: odds?.meta?.generatedAt || games[0]?.oddsUpdatedAt || null
+        oddsUpdatedAt: odds?.meta?.generatedAt || filteredGames[0]?.oddsUpdatedAt || null
       };
     }
-    data.games = games;
+    data.games = filteredGames;
     if (endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt) {
       data.generatedAt = endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt || new Date().toISOString();
     }

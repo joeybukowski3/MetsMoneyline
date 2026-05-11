@@ -101,6 +101,20 @@
     return Boolean(normalizeGameDate(game));
   }
 
+  function shouldDiscardUntrustedCurrentDayCachedGame(game, referenceDate, authoritativeUpcomingGame = null) {
+    const gameDate = normalizeGameDate(game);
+    if (!gameDate || gameDate !== referenceDate) return false;
+    if (!isPlayableScheduledGame(game)) return false;
+
+    const sourceName = String(game?.canonicalGameSource?.source || "").toLowerCase();
+    const sourceStale = Boolean(game?.canonicalGameSource?.stale);
+    const authoritativeDate = normalizeGameDate(authoritativeUpcomingGame);
+
+    if (sourceName.startsWith("external/") && !sourceStale) return false;
+    if (authoritativeDate && authoritativeDate !== referenceDate) return true;
+    return sourceStale || !sourceName || sourceName.startsWith("local/");
+  }
+
   function buildStateLogLines(state) {
     return [
       `Current site date/time: ${state.nowIso}`,
@@ -197,6 +211,7 @@
     isLiveGame,
     isPlayableScheduledGame,
     normalizeGameDate,
+    shouldDiscardUntrustedCurrentDayCachedGame,
     resolveFeaturedGameState,
     resolveGameTimestamp
   };

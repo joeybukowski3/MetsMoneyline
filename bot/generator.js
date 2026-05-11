@@ -951,10 +951,21 @@ function adaptCachedGameForTargetDate(cachedGame, targetDate, reason = "local/pu
   };
 }
 
+function isExactLocalGameReusable(cachedGame, targetDate) {
+  if (!cachedGame || cachedGame.date !== targetDate) return false;
+  const sourceMeta = cachedGame.canonicalGameSource || null;
+  if (!sourceMeta?.source) return false;
+  if (sourceMeta.stale) return false;
+  const sourceName = String(sourceMeta.source);
+  if (/series-continuation/i.test(sourceName)) return false;
+  if (!/^external\//i.test(sourceName)) return false;
+  return true;
+}
+
 function loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation = true } = {}) {
   const previousOutput = loadPreviousOutput();
   const games = Array.isArray(previousOutput?.games) ? previousOutput.games : [];
-  const exactMatch = games.find((game) => game?.date === targetDate);
+  const exactMatch = games.find((game) => isExactLocalGameReusable(game, targetDate));
   if (exactMatch) {
     return {
       source: "local/public-data",
@@ -1770,6 +1781,21 @@ async function getGameForDate(targetDate) {
   return data?.dates?.[0]?.games?.[0] || null;
 }
 
+function resolveExternalGameDate(game) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(String(game?.officialDate || ""))) {
+    return game.officialDate;
+  }
+  if (!game?.gameDate) return null;
+  const parsed = new Date(game.gameDate);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed.toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
+}
+
+function isExternalGameExactMatch(game, targetDate) {
+  if (!game || !targetDate) return false;
+  return resolveExternalGameDate(game) === targetDate;
+}
+
 async function fetchExactExternalGameForDate(targetDate) {
   const url =
     "https://statsapi.mlb.com/api/v1/schedule" +
@@ -1779,7 +1805,8 @@ async function fetchExactExternalGameForDate(targetDate) {
   if (data == null) {
     return { status: "unavailable", game: null };
   }
-  const game = data?.dates?.[0]?.games?.[0] || null;
+  const rawGame = data?.dates?.[0]?.games?.[0] || null;
+  const game = isExternalGameExactMatch(rawGame, targetDate) ? rawGame : null;
   return { status: game ? "found" : "empty", game };
 }
 
@@ -1871,7 +1898,7 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
 
 async function resolveTargetGame(targetDate) {
   const resolution = await resolveMetsGameForDate(targetDate, {
-    allowSeriesContinuation: true,
+    allowSeriesContinuation: false,
     allowFutureFallback: true,
     log: false
   });
@@ -4567,6 +4594,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     advancedMatchup: gameFacts.advanced.cards,
     teamAdvanced: gameFacts.advanced.teamAdvanced,
     gameContext: gameFacts.gameContext,
+    canonicalGameSource: gameFacts.canonicalGameSource || null,
     editorial: gameFacts.editorial,
     trends: buildTrendArray(gameFacts),
     writeup: {
@@ -6094,8 +6122,11 @@ module.exports = {
   API_ODDS_PATH,
   parseArgs,
   getTodayEasternISO,
+  isExactLocalGameReusable,
   selectFeaturedGame,
   getGameForDate,
+  resolveExternalGameDate,
+  isExternalGameExactMatch,
   resolveMetsGameForDate,
   buildGameFacts,
   generateWriteupFromFacts,
