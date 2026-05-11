@@ -1,6 +1,7 @@
 const { apiSportsGet, getApiSportsConfig } = require("./api-sports");
 const { buildUrl, fetchJsonWithRetry } = require("./http");
 const { normalizeTeamIdentity } = require("../../lib/mlb-team-identity");
+const { getEasternDateISO, resolveFeaturedGameState } = require("../../public/js/featured-game-state.js");
 const {
   extractApiSportsGames,
   normalizeLiveGame,
@@ -23,7 +24,7 @@ const MLB_DIVISION_NAMES = {
 };
 
 function getCurrentSeason() {
-  return Number(new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE }).slice(0, 4));
+  return Number(getEasternDateISO().slice(0, 4));
 }
 
 function sortByDateAsc(games) {
@@ -161,6 +162,55 @@ async function fetchMlbStatsStandings(season = getCurrentSeason()) {
   return normalizeMlbStandings(payload);
 }
 
+async function fetchMlbStatsUpcomingGame() {
+  const today = getEasternDateISO();
+  const endDate = new Date(`${today}T12:00:00Z`);
+  endDate.setUTCDate(endDate.getUTCDate() + 7);
+  const endDateIso = endDate.toISOString().slice(0, 10);
+  const payload = await fetchJsonWithRetry(
+    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${DEFAULT_MLB_STATS_TEAM_ID}&startDate=${today}&endDate=${endDateIso}&hydrate=team,venue,linescore,probablePitcher,seriesStatus`
+  );
+  const games = (payload?.dates || [])
+    .flatMap((dateEntry) => dateEntry.games || [])
+    .map((game) => ({
+      gameId: game?.gamePk || null,
+      leagueId: 1,
+      season: getCurrentSeason(),
+      date: normalizeDateTime(game?.gameDate),
+      status: {
+        short: String(game?.status?.codedGameState || "S"),
+        long: game?.status?.detailedState || game?.status?.abstractGameState || "Scheduled",
+        inning: null,
+        isLive: false,
+        isFinal: false
+      },
+      home: normalizeTeam(game?.teams?.home?.team || {}, {}),
+      away: normalizeTeam(game?.teams?.away?.team || {}, {}),
+      venue: game?.venue?.name || null,
+      raw: game
+    }))
+    .filter((game) => game?.date)
+    .sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+  return games[0] || null;
+}
+
+function mergeUpcomingGameDetails(primaryGame, fallbackGame) {
+  if (!primaryGame) return fallbackGame || null;
+  if (!fallbackGame) return primaryGame;
+
+  const sameMatchup =
+    String(primaryGame?.home?.mlbStatsTeamId || primaryGame?.home?.id || "") === String(fallbackGame?.home?.mlbStatsTeamId || fallbackGame?.home?.id || "")
+    && String(primaryGame?.away?.mlbStatsTeamId || primaryGame?.away?.id || "") === String(fallbackGame?.away?.mlbStatsTeamId || fallbackGame?.away?.id || "")
+    && String(primaryGame?.date || "").slice(0, 10) === String(fallbackGame?.date || "").slice(0, 10);
+
+  if (!sameMatchup) return primaryGame;
+
+  return {
+    ...primaryGame,
+    raw: fallbackGame.raw || primaryGame.raw
+  };
+}
+
 async function fetchStandingsWithFallback(config = getApiSportsConfig()) {
   const season = getCurrentSeason();
   try {
@@ -225,14 +275,23 @@ async function fetchApiSportsOdds(targetGameId, config = getApiSportsConfig(), s
 
 async function getGamesBundle(config = getApiSportsConfig(), season = getCurrentSeason()) {
   const games = sortByDateAsc(await fetchApiSportsGames(config, season));
+  const featuredState = resolveFeaturedGameState(games, {
+    referenceDate: getEasternDateISO(),
+    lookaheadDays: 7
+  });
   const liveGame = games.find(isLiveStatus) || null;
-  const nextGame = games.filter(isUpcomingStatus)[0] || null;
+  const mlbStatsUpcomingGame = await fetchMlbStatsUpcomingGame().catch(() => null);
+  const nextGame = mergeUpcomingGameDetails(
+    featuredState.todayGame || featuredState.nextUpcomingGame || games.filter(isUpcomingStatus)[0] || null,
+    mlbStatsUpcomingGame
+  ) || mlbStatsUpcomingGame || null;
   const recentGamesRaw = sortByDateDesc(games.filter(isFinalStatus)).slice(0, 10);
 
   return {
     config,
     season,
     games,
+    featuredState,
     liveGame,
     nextGame,
     recentGamesRaw

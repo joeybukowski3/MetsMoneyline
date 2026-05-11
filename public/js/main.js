@@ -1,10 +1,18 @@
 import { getTeamAbbr, getTeamLogoUrl } from "./team-logo-helper.js";
+import "./featured-game-state.js";
 
 const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
+const {
+  getEasternDateISO,
+  isFinalGame,
+  isPlayableScheduledGame,
+  normalizeGameDate,
+  resolveFeaturedGameState
+} = globalThis.MetsFeaturedGameState;
 
 function getTodayISO() {
-  return new Date().toISOString().slice(0, 10);
+  return getEasternDateISO();
 }
 
 function getTodayET() {
@@ -274,6 +282,26 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
   return mapped;
 }
 
+function buildEndpointProbables(endpointGame) {
+  const rawGame = endpointGame?.raw || {};
+  const isHome = Boolean(endpointGame?.isMetsHome);
+  const metsProbable = isHome ? rawGame?.teams?.home?.probablePitcher : rawGame?.teams?.away?.probablePitcher;
+  const oppProbable = isHome ? rawGame?.teams?.away?.probablePitcher : rawGame?.teams?.home?.probablePitcher;
+  return createFallbackPitching({
+    mets: metsProbable ? { id: metsProbable.id, fullName: metsProbable.fullName } : null,
+    opp: oppProbable ? { id: oppProbable.id, fullName: oppProbable.fullName } : null
+  });
+}
+
+function isEndpointGameCurrentOrUpcoming(normalizedGame, todayEt) {
+  if (!normalizedGame) return false;
+  const gameDate = normalizeGameDate(normalizedGame);
+  if (!gameDate) return false;
+  if (isPlayableScheduledGame(normalizedGame)) return gameDate >= todayEt;
+  if (normalizedGame.status === "live") return true;
+  return !isFinalGame(normalizedGame) && gameDate >= todayEt;
+}
+
 async function loadGameData() {
   const [data, nextGame, liveGame, standings, recentGames, odds] = await Promise.all([
     fetchInternalJson("data/sample-game.json").catch(() => ({ games: [], recentBreakdowns: [], generatedAt: null })),
@@ -285,11 +313,16 @@ async function loadGameData() {
   ]);
 
   try {
+    const todayEt = getTodayISO();
     const endpointGame = liveGame?.gameId ? liveGame : nextGame;
     const normalizedGame = mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds);
     const games = Array.isArray(data?.games) ? [...data.games] : [];
 
-    if (normalizedGame) {
+    if (normalizedGame && endpointGame) {
+      normalizedGame.pitching = buildEndpointProbables(endpointGame);
+    }
+
+    if (normalizedGame && isEndpointGameCurrentOrUpcoming(normalizedGame, todayEt)) {
       const liveIndex = games.findIndex(game =>
         game?.date === normalizedGame.date &&
         game?.opponent === normalizedGame.opponent &&
@@ -301,6 +334,8 @@ async function loadGameData() {
       } else {
         games.unshift(normalizedGame);
       }
+    } else if (normalizedGame) {
+      console.warn(`[home] Ignoring stale endpoint matchup ${normalizedGame.date} vs ${normalizedGame.opponent}`);
     } else if (games.length > 0 && odds) {
       const fallbackMoneyline = mapOddsSummaryToMoneyline(odds, { opponent: games[0]?.opponent || "" });
       games[0] = {
@@ -1600,47 +1635,66 @@ function buildTeamAdvancedCard(game) {
     </div>`;
 }
 
-function showNoGameTodayState() {
+function showNoGameTodayState(state = null) {
   const labelEl = document.getElementById("hero-game-label");
   const dateEl = document.getElementById("hero-game-date");
   const matchupEl = document.getElementById("hero-game-matchup");
   const container = document.getElementById("today-game-container");
+  const nextGame = state?.nextUpcomingGame || null;
+  const nextDate = nextGame?.date
+    ? new Date(`${nextGame.date}T12:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })
+    : null;
+  const nextLabel = state?.kind === "tomorrow" ? "Tomorrow's Game" : "Next Game";
 
-  if (labelEl) labelEl.textContent = "Today's Game";
+  if (labelEl) labelEl.textContent = state?.displayLabel || "No Mets game today";
   if (dateEl) {
-    dateEl.textContent = new Date(getTodayISO() + "T12:00:00")
+    dateEl.textContent = new Date((state?.referenceDate || getTodayISO()) + "T12:00:00")
       .toLocaleDateString("en-US", { month: "long", day: "numeric" });
   }
-  if (matchupEl) matchupEl.textContent = "No breakdown available yet";
+  if (matchupEl) {
+    matchupEl.textContent = nextGame
+      ? `No Mets game today • ${nextLabel}: New York Mets ${nextGame.homeAway === "away" ? "@" : "vs"} ${nextGame.opponent}`
+      : "No Mets game today";
+  }
   if (container) {
+    const upcomingMarkup = nextGame
+      ? `
+        <p style="margin:0 0 0.85rem 0;color:var(--ink);line-height:1.7">No Mets game is scheduled today. The next matchup is ${nextDate ? `${nextDate}` : "upcoming"} against ${nextGame.opponent}.</p>
+        ${buildMatchupStrip(nextGame)}
+        ${buildPitchingCard(nextGame)}
+      `
+      : `<p style="margin:0;color:var(--ink);line-height:1.7">No Mets game is scheduled today, and no upcoming matchup is available in the current data window yet. Check back soon.</p>`;
     container.innerHTML = `
-      <div class="card full-card" style="padding:1.5rem;text-align:center">
-        <p style="margin:0;color:var(--ink);line-height:1.7">No breakdown available yet for today's game. Check back soon.</p>
+      <div class="card full-card" style="padding:1.5rem">
+        <div style="font-size:0.76rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#9099b0;margin-bottom:0.85rem;">Off Day</div>
+        ${upcomingMarkup}
       </div>`;
   }
 }
 
 async function init() {
   const { games, generatedAt, recentBreakdowns } = await loadGameData();
-  const today = getTodayISO();
-  const sortedGames = [...games].sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
-  const todayGame = sortedGames.find(g => g.date === today);
-  const nextGame = sortedGames.find(g => g.date > today);
-  const latestGame = [...sortedGames].reverse().find(g => g.date < today);
-  const featuredGame = todayGame || nextGame || latestGame || null;
+  const featuredState = resolveFeaturedGameState(games, {
+    now: new Date(),
+    referenceDate: getTodayISO(),
+    lookaheadDays: 7
+  });
+  featuredState.logs.forEach((line) => console.log(`[home] ${line}`));
+  if (generatedAt) {
+    console.log(`[home] Cache age anchor: ${generatedAt}`);
+  }
+  const featuredGame = featuredState.featuredGame;
 
   // Update hero headline - three separate lines
   if (!featuredGame) {
-    showNoGameTodayState();
+    showNoGameTodayState(featuredState);
   } else {
-    const isToday = featuredGame.date === today;
-    const isFuture = featuredGame.date > today;
     const vsAt = featuredGame.homeAway === "away" ? "@" : "vs";
     const labelEl = document.getElementById("hero-game-label");
     const dateEl = document.getElementById("hero-game-date");
     const matchupEl = document.getElementById("hero-game-matchup");
     if (labelEl) {
-      labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
+      labelEl.textContent = featuredState.displayLabel;
     }
     if (dateEl && featuredGame.date) {
       dateEl.textContent = new Date(featuredGame.date + "T12:00:00")
@@ -1687,13 +1741,19 @@ init();
 
 async function refreshFeaturedGame() {
   const { games, generatedAt } = await loadGameData();
-  const today = getTodayISO();
-  const featuredGame = games.find(g => g.date === today) || games.find(g => g.date > today) || games[0] || null;
+  const featuredState = resolveFeaturedGameState(games, {
+    now: new Date(),
+    referenceDate: getTodayISO(),
+    lookaheadDays: 7
+  });
+  featuredState.logs.forEach((line) => console.log(`[home-refresh] ${line}`));
+  const featuredGame = featuredState.featuredGame;
 
-  if (!featuredGame) return;
+  if (!featuredGame) {
+    showNoGameTodayState(featuredState);
+    return;
+  }
 
-  const isToday = featuredGame.date === today;
-  const isFuture = featuredGame.date > today;
   const vsAt = featuredGame.homeAway === "away" ? "@" : "vs";
   const labelEl = document.getElementById("hero-game-label");
   const dateEl = document.getElementById("hero-game-date");
@@ -1701,7 +1761,7 @@ async function refreshFeaturedGame() {
   const container = document.getElementById("today-game-container");
 
   if (labelEl) {
-    labelEl.textContent = isToday ? "Today's Game" : isFuture ? "Next Game" : "Latest Game";
+    labelEl.textContent = featuredState.displayLabel;
   }
   if (dateEl && featuredGame.date) {
     dateEl.textContent = new Date(featuredGame.date + "T12:00:00")

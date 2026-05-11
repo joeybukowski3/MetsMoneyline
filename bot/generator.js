@@ -16,6 +16,7 @@ const OpenAI = require("openai");
 const { parse } = require("csv-parse/sync");
 const generateSitemap = require("./generate-sitemap");
 const generateRss = require("./generate-rss");
+const { resolveFeaturedGameState } = require("../public/js/featured-game-state.js");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -561,10 +562,10 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
 
 function selectFeaturedGame(games, referenceDate = getTodayEasternISO()) {
   if (!Array.isArray(games) || games.length === 0) return null;
-  return games.find((game) => game?.date === referenceDate)
-    || games.find((game) => game?.date > referenceDate)
-    || games[0]
-    || null;
+  return resolveFeaturedGameState(games, {
+    referenceDate,
+    lookaheadDays: 14
+  }).featuredGame || null;
 }
 
 function parseArgs(argv) {
@@ -981,6 +982,10 @@ function loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation = tr
   }
 
   return null;
+}
+
+function loadExactLocalResolvedGameForDate(targetDate) {
+  return loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation: false });
 }
 
 function buildHistoryKey(entry = {}) {
@@ -1786,7 +1791,7 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
   };
 
   pushLog(`Resolving Mets game for ${targetDate}`);
-  const localResolution = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation });
+  const localResolution = loadExactLocalResolvedGameForDate(targetDate);
   if (localResolution) {
     pushLog(`Local site schedule found: ${buildLocalGameLabel(localResolution.game)}`);
     pushLog(`Resolved game source: ${localResolution.source}`);
@@ -1813,7 +1818,7 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
 
   if (exactExternal.status === "unavailable") {
     pushLog("External schedule fetch failed: unavailable; continuing with local data if present");
-    const staleLocal = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation: true });
+    const staleLocal = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation });
     if (staleLocal) {
       pushLog(`Local cached game found after external failure: ${buildLocalGameLabel(staleLocal.game)}`);
       pushLog(`Resolved game source: ${staleLocal.source}`);

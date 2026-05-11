@@ -52,7 +52,12 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/api/mlb/mets/odds.json \
+          git add public/api/mlb/mets/next-game \
+                  public/api/mlb/mets/live-game \
+                  public/api/mlb/mets/standings \
+                  public/api/mlb/mets/recent-games \
+                  public/api/mlb/mets/overview \
+                  public/api/mlb/mets/odds.json \
                   public/data/odds-history.json \
                   public/data/trends.json \
                   public/data/prospects.json
