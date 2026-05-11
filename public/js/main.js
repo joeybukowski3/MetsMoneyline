@@ -303,6 +303,34 @@ function isEndpointGameCurrentOrUpcoming(normalizedGame, todayEt) {
   return !isFinalGame(normalizedGame) && gameDate >= todayEt;
 }
 
+function pickPreferredEndpointCandidate(candidates, todayEt) {
+  const usable = candidates.filter((candidate) =>
+    candidate?.normalizedGame && isEndpointGameCurrentOrUpcoming(candidate.normalizedGame, todayEt)
+  );
+  if (!usable.length) return null;
+  if (usable.length === 1) return usable[0];
+
+  const [first, second] = usable;
+  const firstGame = first.normalizedGame;
+  const secondGame = second.normalizedGame;
+  const firstDate = normalizeGameDate(firstGame);
+  const secondDate = normalizeGameDate(secondGame);
+  const sameMatchup =
+    firstDate === secondDate &&
+    firstGame?.opponent === secondGame?.opponent &&
+    firstGame?.homeAway === secondGame?.homeAway;
+
+  if (sameMatchup) {
+    return first.source === "live" ? first : second;
+  }
+  if (firstDate === todayEt && secondDate !== todayEt) return first;
+  if (secondDate === todayEt && firstDate !== todayEt) return second;
+
+  const firstTs = new Date(firstGame?.startTime || firstGame?.gameDateTime || `${firstDate}T12:00:00Z`).getTime();
+  const secondTs = new Date(secondGame?.startTime || secondGame?.gameDateTime || `${secondDate}T12:00:00Z`).getTime();
+  return firstTs <= secondTs ? first : second;
+}
+
 async function loadGameData() {
   const [data, nextGame, liveGame, standings, recentGames, odds] = await Promise.all([
     fetchInternalJson("data/sample-game.json").catch(() => ({ games: [], recentBreakdowns: [], generatedAt: null })),
@@ -315,12 +343,24 @@ async function loadGameData() {
 
   try {
     const todayEt = getTodayISO();
-    const endpointGame = liveGame?.gameId ? liveGame : nextGame;
-    const normalizedGame = mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds);
+    const endpointCandidates = [
+      { source: "live", endpointGame: liveGame, normalizedGame: mapInternalGameToSiteGame(liveGame, standings, recentGames, odds) },
+      { source: "next", endpointGame: nextGame, normalizedGame: mapInternalGameToSiteGame(nextGame, standings, recentGames, odds) }
+    ];
+    const endpointSelection = pickPreferredEndpointCandidate(endpointCandidates, todayEt);
+    const endpointGame = endpointSelection?.endpointGame || null;
+    const normalizedGame = endpointSelection?.normalizedGame || null;
     const games = Array.isArray(data?.games) ? [...data.games] : [];
     const authoritativeUpcomingGame = normalizedGame && isEndpointGameCurrentOrUpcoming(normalizedGame, todayEt)
       ? normalizedGame
       : null;
+
+    if (!normalizedGame && liveGame?.gameId && nextGame?.gameId) {
+      console.warn("[home] No usable endpoint game selected; stale live-game may be masking next-game data.");
+    }
+    if (endpointSelection?.source === "next" && liveGame?.gameId) {
+      console.warn("[home] Ignoring stale live-game payload in favor of next-game endpoint data.");
+    }
 
     const filteredGames = games.filter((game) => {
       const discard = shouldDiscardUntrustedCurrentDayCachedGame(game, todayEt, authoritativeUpcomingGame);
