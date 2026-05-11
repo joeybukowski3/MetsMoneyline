@@ -30,6 +30,70 @@ function normalizePath(pathname) {
   return pathname;
 }
 
+function getEasternDateISO(value = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(value);
+}
+
+function normalizeEndpointGameDate(endpointGame) {
+  const direct = endpointGame?.startTime || endpointGame?.gameDateTime || endpointGame?.raw?.gameDate || null;
+  if (!direct) return null;
+  const parsed = new Date(direct);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return getEasternDateISO(parsed);
+}
+
+function isUpcomingEndpointGame(endpointGame, todayEt) {
+  const gameDate = normalizeEndpointGameDate(endpointGame);
+  if (!gameDate) return false;
+  const status = String(endpointGame?.status || endpointGame?.statusText || endpointGame?.raw?.status?.detailedState || "").toLowerCase();
+  if (/final|completed|game over|postponed|suspended|cancelled|canceled|ppd/.test(status)) return false;
+  return gameDate >= todayEt;
+}
+
+function chooseReportNavCandidate(liveGame, nextGame, todayEt) {
+  const liveOkay = liveGame?.gameId && isUpcomingEndpointGame(liveGame, todayEt);
+  const nextOkay = nextGame?.gameId && isUpcomingEndpointGame(nextGame, todayEt);
+  if (liveOkay && !nextOkay) return liveGame;
+  if (!liveOkay && nextOkay) return nextGame;
+  if (!liveOkay && !nextOkay) return null;
+
+  const liveDate = normalizeEndpointGameDate(liveGame);
+  const nextDate = normalizeEndpointGameDate(nextGame);
+  const sameMatchup =
+    liveDate === nextDate &&
+    String(liveGame?.opponent || "") === String(nextGame?.opponent || "") &&
+    Boolean(liveGame?.isMetsHome) === Boolean(nextGame?.isMetsHome);
+
+  if (sameMatchup) return liveGame;
+  if (liveDate === todayEt && nextDate !== todayEt) return liveGame;
+  if (nextDate === todayEt && liveDate !== todayEt) return nextGame;
+  return String(liveGame?.startTime || "") <= String(nextGame?.startTime || "") ? liveGame : nextGame;
+}
+
+async function updateReportNavLabel() {
+  try {
+    const todayEt = getEasternDateISO();
+    const [liveGame, nextGame] = await Promise.all([
+      fetch("/api/mlb/mets/live-game").then((res) => res.ok ? res.json() : null).catch(() => null),
+      fetch("/api/mlb/mets/next-game").then((res) => res.ok ? res.json() : null).catch(() => null)
+    ]);
+    const selected = chooseReportNavCandidate(liveGame, nextGame, todayEt);
+    const selectedDate = normalizeEndpointGameDate(selected);
+    const label = selectedDate && selectedDate > todayEt ? "Next Game Preview" : "Today's Report";
+    document.querySelectorAll('a[href="/report"]').forEach((link) => {
+      link.textContent = label;
+      link.setAttribute("aria-label", label);
+    });
+  } catch (error) {
+    console.warn("[nav] Unable to update report nav label.", error);
+  }
+}
+
 function buildSiteHeader() {
   const header = document.querySelector("header");
   if (!header) return;
@@ -113,8 +177,12 @@ function buildSiteHeader() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', buildSiteHeader);
+  document.addEventListener('DOMContentLoaded', () => {
+    buildSiteHeader();
+    updateReportNavLabel();
+  });
 } else {
   buildSiteHeader();
+  updateReportNavLabel();
 }
 

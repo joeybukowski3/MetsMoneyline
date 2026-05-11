@@ -1692,21 +1692,29 @@ function showNoGameTodayState(state = null) {
   const dateEl = document.getElementById("hero-game-date");
   const matchupEl = document.getElementById("hero-game-matchup");
   const container = document.getElementById("today-game-container");
+  const reportLink = document.querySelector(".hero-report-link");
   const nextGame = state?.nextUpcomingGame || null;
   const nextDate = nextGame?.date
     ? new Date(`${nextGame.date}T12:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })
     : null;
   const nextLabel = state?.kind === "tomorrow" ? "Tomorrow's Game" : "Next Game";
 
-  if (labelEl) labelEl.textContent = state?.displayLabel || "No Mets game today";
+  if (labelEl) labelEl.textContent = nextGame ? "Next Game" : (state?.displayLabel || "No Mets game today");
   if (dateEl) {
-    dateEl.textContent = new Date((state?.referenceDate || getTodayISO()) + "T12:00:00")
+    dateEl.textContent = new Date((nextGame?.date || state?.referenceDate || getTodayISO()) + "T12:00:00")
       .toLocaleDateString("en-US", { month: "long", day: "numeric" });
   }
   if (matchupEl) {
     matchupEl.textContent = nextGame
       ? `No Mets game today • ${nextLabel}: New York Mets ${nextGame.homeAway === "away" ? "@" : "vs"} ${nextGame.opponent}`
       : "No Mets game today";
+  }
+  if (matchupEl && nextGame) {
+    matchupEl.textContent = `New York Mets ${nextGame.homeAway === "away" ? "@" : "vs"} ${nextGame.opponent}`;
+  }
+  if (reportLink) {
+    reportLink.textContent = nextGame ? "View Next Game Preview" : "View Today's Report";
+    reportLink.setAttribute("aria-label", nextGame ? "View Next Game Preview" : "View Today's Report");
   }
   if (container) {
     const upcomingMarkup = nextGame
@@ -1718,7 +1726,7 @@ function showNoGameTodayState(state = null) {
       : `<p style="margin:0;color:var(--ink);line-height:1.7">No Mets game is scheduled today, and no upcoming matchup is available in the current data window yet. Check back soon.</p>`;
     container.innerHTML = `
       <div class="card full-card" style="padding:1.5rem">
-        <div style="font-size:0.76rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#9099b0;margin-bottom:0.85rem;">Off Day</div>
+        <div style="font-size:0.76rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#9099b0;margin-bottom:0.85rem;">${nextGame ? "Next Game Preview" : "Off Day"}</div>
         ${upcomingMarkup}
       </div>`;
   }
@@ -1745,6 +1753,7 @@ async function init() {
     const labelEl = document.getElementById("hero-game-label");
     const dateEl = document.getElementById("hero-game-date");
     const matchupEl = document.getElementById("hero-game-matchup");
+    const reportLink = document.querySelector(".hero-report-link");
     if (labelEl) {
       labelEl.textContent = featuredState.displayLabel;
     }
@@ -1753,6 +1762,11 @@ async function init() {
         .toLocaleDateString("en-US", { month: "long", day: "numeric" });
     }
     if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${featuredGame.opponent}`;
+    if (reportLink) {
+      const isTodayGame = featuredState.kind === "today";
+      reportLink.textContent = isTodayGame ? "View Today's Report" : "View Next Game Preview";
+      reportLink.setAttribute("aria-label", isTodayGame ? "View Today's Report" : "View Next Game Preview");
+    }
 
   const container = document.getElementById("today-game-container");
   container.innerHTML =
@@ -1821,6 +1835,11 @@ async function refreshFeaturedGame() {
   }
   if (matchupEl) {
     matchupEl.textContent = `New York Mets ${vsAt} ${featuredGame.opponent}`;
+  }
+  if (reportLink) {
+    const isTodayGame = featuredState.kind === "today";
+    reportLink.textContent = isTodayGame ? "View Today's Report" : "View Next Game Preview";
+    reportLink.setAttribute("aria-label", isTodayGame ? "View Today's Report" : "View Next Game Preview");
   }
   if (container) {
     container.innerHTML =
