@@ -23,7 +23,60 @@
   "isMetsHome": true,
   "venue": "Citi Field",
   "league": 1,
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Detroit Tigers",
+            "price": 130,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -154,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Detroit Tigers",
+            "price": -166,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 138,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 100,
+            "point": 8
+          },
+          {
+            "name": "Under",
+            "price": -122,
+            "point": 8
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823632,
     "gameGuid": "8fcd49b9-e8c2-47ef-8fd2-551c5867a894",
@@ -240,7 +293,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-11T16:46:39.802Z",
+    "generatedAt": "2026-05-11T18:56:30.356Z",
     "cacheHint": "schedule: 15-30 minutes"
   }
 }
