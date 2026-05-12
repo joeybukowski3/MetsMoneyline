@@ -234,6 +234,8 @@ function normalizeNextGame(game, metsTeamId, odds = null) {
       String(game.home?.apiSportsTeamId) === String(metsIdentity.apiSportsTeamId),
     venue: game.venue,
     league: game.leagueId,
+    probablePitchers: game.probablePitchers || null,
+    lineups: game.lineups || { lineupStatus: "not_released", mets: [], opp: [] },
     sportsbookSummary: odds?.consensus || null,
     raw: game.raw
   };

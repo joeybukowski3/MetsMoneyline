@@ -8,6 +8,14 @@
   const EASTERN_TIME_ZONE = "America/New_York";
   const DAY_MS = 24 * 60 * 60 * 1000;
 
+  function padDatePart(value) {
+    return String(value).padStart(2, "0");
+  }
+
+  function formatDateIsoParts(year, month, day) {
+    return `${year}-${padDatePart(month)}-${padDatePart(day)}`;
+  }
+
   function getEasternDateISO(value = new Date()) {
     return new Intl.DateTimeFormat("en-CA", {
       timeZone: EASTERN_TIME_ZONE,
@@ -21,6 +29,21 @@
     if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateIso || ""))) return null;
     const parsed = new Date(`${dateIso}T12:00:00Z`);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  function addDaysToDateISO(dateIso, dayOffset) {
+    const parsed = parseDateOnlyToUtcMidday(dateIso);
+    if (!parsed || !Number.isFinite(Number(dayOffset))) return null;
+    parsed.setUTCDate(parsed.getUTCDate() + Number(dayOffset));
+    return formatDateIsoParts(parsed.getUTCFullYear(), parsed.getUTCMonth() + 1, parsed.getUTCDate());
+  }
+
+  function getEasternYear(value = new Date()) {
+    return Number(getEasternDateISO(value).slice(0, 4));
+  }
+
+  function buildDateScopedCacheKey(baseKey, referenceDate = getEasternDateISO()) {
+    return `${String(baseKey || "cache").trim() || "cache"}:${referenceDate}`;
   }
 
   function normalizeGameDate(game) {
@@ -202,9 +225,12 @@
   }
 
   return {
+    addDaysToDateISO,
+    buildDateScopedCacheKey,
     EASTERN_TIME_ZONE,
     compareGamesForDisplay,
     diffCalendarDays,
+    getEasternYear,
     getEasternDateISO,
     isCancelledLike,
     isFinalGame,

@@ -4,6 +4,7 @@ import "./featured-game-state.js";
 const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
 const {
+  buildDateScopedCacheKey,
   getEasternDateISO,
   isFinalGame,
   isPlayableScheduledGame,
@@ -18,6 +19,23 @@ function getTodayISO() {
 
 function getTodayET() {
   return new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
+}
+
+function buildDateScopedUrl(path, referenceDate = getTodayISO()) {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}date=${encodeURIComponent(referenceDate)}`;
+}
+
+function buildReportHref(referenceDate = getTodayISO()) {
+  return buildDateScopedUrl("/report", referenceDate);
+}
+
+function formatDateOnlyEastern(dateIso, options = {}) {
+  if (!dateIso) return "";
+  return new Date(`${dateIso}T12:00:00Z`).toLocaleDateString("en-US", {
+    timeZone: EASTERN_TIME_ZONE,
+    ...options
+  });
 }
 
 function formatGameTimeET(dateTime) {
@@ -47,12 +65,18 @@ function createFallbackPitching(probables = {}) {
     mets: {
       name: probables.mets?.fullName || "TBD",
       mlbId: probables.mets?.id ?? null,
-      announced: Boolean(probables.mets)
+      announced: Boolean(probables.mets),
+      seasonERA: probables.mets?.era ?? null,
+      seasonFIP: probables.mets?.fip ?? null,
+      seasonWHIP: probables.mets?.whip ?? null
     },
     opp: {
       name: probables.opp?.fullName || "TBD",
       mlbId: probables.opp?.id ?? null,
-      announced: Boolean(probables.opp)
+      announced: Boolean(probables.opp),
+      seasonERA: probables.opp?.era ?? null,
+      seasonFIP: probables.opp?.fip ?? null,
+      seasonWHIP: probables.opp?.whip ?? null
     },
     metsBullpen: {},
     oppBullpen: {}
@@ -236,8 +260,8 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
     result: endpointGame.homeScore != null && endpointGame.awayScore != null
       ? ((isHome ? endpointGame.homeScore : endpointGame.awayScore) > (isHome ? endpointGame.awayScore : endpointGame.homeScore) ? "W" : "L")
       : null,
-    lineups: { lineupStatus: "not_released", mets: [], opp: [] },
-    pitching: createFallbackPitching({}),
+    lineups: endpointGame.lineups || { lineupStatus: "not_released", mets: [], opp: [] },
+    pitching: createFallbackPitching(endpointGame.probablePitchers || {}),
     advancedMatchup: [],
     teamAdvanced: null,
     gameContext: {
@@ -284,6 +308,9 @@ function mapInternalGameToSiteGame(endpointGame, standings, recentGames, odds) {
 }
 
 function buildEndpointProbables(endpointGame) {
+  if (endpointGame?.probablePitchers) {
+    return createFallbackPitching(endpointGame.probablePitchers);
+  }
   const rawGame = endpointGame?.raw || {};
   const isHome = Boolean(endpointGame?.isMetsHome);
   const metsProbable = isHome ? rawGame?.teams?.home?.probablePitcher : rawGame?.teams?.away?.probablePitcher;
@@ -332,17 +359,17 @@ function pickPreferredEndpointCandidate(candidates, todayEt) {
 }
 
 async function loadGameData() {
+  const todayEt = getTodayISO();
   const [data, nextGame, liveGame, standings, recentGames, odds] = await Promise.all([
-    fetchInternalJson("data/sample-game.json").catch(() => ({ games: [], recentBreakdowns: [], generatedAt: null })),
-    fetchInternalJson("api/mlb/mets/next-game").catch(() => null),
-    fetchInternalJson("api/mlb/mets/live-game").catch(() => null),
-    fetchInternalJson("api/mlb/mets/standings").catch(() => null),
-    fetchInternalJson("api/mlb/mets/recent-games").catch(() => null),
-    fetchInternalJson("api/mlb/mets/odds.json").catch(() => null)
+    fetchInternalJson(buildDateScopedUrl("data/sample-game.json", todayEt)).catch(() => ({ games: [], recentBreakdowns: [], generatedAt: null })),
+    fetchInternalJson(buildDateScopedUrl("api/mlb/mets/next-game", todayEt)).catch(() => null),
+    fetchInternalJson(buildDateScopedUrl("api/mlb/mets/live-game", todayEt)).catch(() => null),
+    fetchInternalJson(buildDateScopedUrl("api/mlb/mets/standings", todayEt)).catch(() => null),
+    fetchInternalJson(buildDateScopedUrl("api/mlb/mets/recent-games", todayEt)).catch(() => null),
+    fetchInternalJson(buildDateScopedUrl("api/mlb/mets/odds.json", todayEt)).catch(() => null)
   ]);
 
   try {
-    const todayEt = getTodayISO();
     const endpointCandidates = [
       { source: "live", endpointGame: liveGame, normalizedGame: mapInternalGameToSiteGame(liveGame, standings, recentGames, odds) },
       { source: "next", endpointGame: nextGame, normalizedGame: mapInternalGameToSiteGame(nextGame, standings, recentGames, odds) }
@@ -401,6 +428,8 @@ async function loadGameData() {
       };
     }
     data.games = filteredGames;
+    data.referenceDate = todayEt;
+    data.cacheKey = buildDateScopedCacheKey("home-game-data", todayEt);
     if (endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt) {
       data.generatedAt = endpointGame?.meta?.generatedAt || standings?.meta?.generatedAt || odds?.meta?.generatedAt || new Date().toISOString();
     }
@@ -1691,30 +1720,30 @@ function showNoGameTodayState(state = null) {
   const labelEl = document.getElementById("hero-game-label");
   const dateEl = document.getElementById("hero-game-date");
   const matchupEl = document.getElementById("hero-game-matchup");
-  const container = document.getElementById("today-game-container");
   const reportLink = document.querySelector(".hero-report-link");
+  const container = document.getElementById("today-game-container");
   const nextGame = state?.nextUpcomingGame || null;
   const nextDate = nextGame?.date
-    ? new Date(`${nextGame.date}T12:00:00`).toLocaleDateString("en-US", { month: "long", day: "numeric" })
+    ? formatDateOnlyEastern(nextGame.date, { month: "long", day: "numeric" })
+    : null;
+  const nextFullDate = nextGame?.date
+    ? formatDateOnlyEastern(nextGame.date, { weekday: "long", month: "long", day: "numeric" })
     : null;
   const nextLabel = state?.kind === "tomorrow" ? "Tomorrow's Game" : "Next Game";
 
-  if (labelEl) labelEl.textContent = nextGame ? "Next Game" : (state?.displayLabel || "No Mets game today");
+  if (labelEl) labelEl.textContent = nextGame ? "Next Game" : (state?.displayLabel || "Off Day");
   if (dateEl) {
-    dateEl.textContent = new Date((nextGame?.date || state?.referenceDate || getTodayISO()) + "T12:00:00")
-      .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    dateEl.textContent = formatDateOnlyEastern(nextGame?.date || state?.referenceDate || getTodayISO(), { month: "long", day: "numeric" });
   }
   if (matchupEl) {
     matchupEl.textContent = nextGame
-      ? `No Mets game today • ${nextLabel}: New York Mets ${nextGame.homeAway === "away" ? "@" : "vs"} ${nextGame.opponent}`
-      : "No Mets game today";
-  }
-  if (matchupEl && nextGame) {
-    matchupEl.textContent = `New York Mets ${nextGame.homeAway === "away" ? "@" : "vs"} ${nextGame.opponent}`;
+      ? `Next Game: ${nextGame.opponent} — ${nextFullDate || nextDate || "Upcoming"}`
+      : "No Mets game scheduled today";
   }
   if (reportLink) {
-    reportLink.textContent = nextGame ? "View Next Game Preview" : "View Today's Report";
-    reportLink.setAttribute("aria-label", nextGame ? "View Next Game Preview" : "View Today's Report");
+    reportLink.textContent = nextGame ? "Preview Next Game" : "View Today's Report";
+    reportLink.setAttribute("aria-label", nextGame ? "Preview Next Game" : "View Today's Report");
+    reportLink.setAttribute("href", buildReportHref(state?.referenceDate || getTodayISO()));
   }
   if (container) {
     const upcomingMarkup = nextGame
@@ -1758,14 +1787,14 @@ async function init() {
       labelEl.textContent = featuredState.displayLabel;
     }
     if (dateEl && featuredGame.date) {
-      dateEl.textContent = new Date(featuredGame.date + "T12:00:00")
-        .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+      dateEl.textContent = formatDateOnlyEastern(featuredGame.date, { month: "long", day: "numeric" });
     }
     if (matchupEl) matchupEl.textContent = `New York Mets ${vsAt} ${featuredGame.opponent}`;
     if (reportLink) {
       const isTodayGame = featuredState.kind === "today";
-      reportLink.textContent = isTodayGame ? "View Today's Report" : "View Next Game Preview";
-      reportLink.setAttribute("aria-label", isTodayGame ? "View Today's Report" : "View Next Game Preview");
+      reportLink.textContent = isTodayGame ? "View Today's Report" : "Preview Next Game";
+      reportLink.setAttribute("aria-label", isTodayGame ? "View Today's Report" : "Preview Next Game");
+      reportLink.setAttribute("href", buildReportHref(featuredState.referenceDate || getTodayISO()));
     }
 
   const container = document.getElementById("today-game-container");
@@ -1830,16 +1859,16 @@ async function refreshFeaturedGame() {
     labelEl.textContent = featuredState.displayLabel;
   }
   if (dateEl && featuredGame.date) {
-    dateEl.textContent = new Date(featuredGame.date + "T12:00:00")
-      .toLocaleDateString("en-US", { month: "long", day: "numeric" });
+    dateEl.textContent = formatDateOnlyEastern(featuredGame.date, { month: "long", day: "numeric" });
   }
   if (matchupEl) {
     matchupEl.textContent = `New York Mets ${vsAt} ${featuredGame.opponent}`;
   }
   if (reportLink) {
     const isTodayGame = featuredState.kind === "today";
-    reportLink.textContent = isTodayGame ? "View Today's Report" : "View Next Game Preview";
-    reportLink.setAttribute("aria-label", isTodayGame ? "View Today's Report" : "View Next Game Preview");
+    reportLink.textContent = isTodayGame ? "View Today's Report" : "Preview Next Game";
+    reportLink.setAttribute("aria-label", isTodayGame ? "View Today's Report" : "Preview Next Game");
+    reportLink.setAttribute("href", buildReportHref(featuredState.referenceDate || getTodayISO()));
   }
   if (container) {
     container.innerHTML =

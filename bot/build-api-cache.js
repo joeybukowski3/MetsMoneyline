@@ -2,7 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
 const { normalizeTeamIdentity } = require("../lib/mlb-team-identity");
-const { getEasternDateISO, resolveFeaturedGameState } = require("../public/js/featured-game-state.js");
+const {
+  addDaysToDateISO,
+  buildDateScopedCacheKey,
+  getEasternDateISO,
+  getEasternYear,
+  resolveFeaturedGameState
+} = require("../public/js/featured-game-state.js");
 const { apiSportsGet, getApiSportsConfig } = require("./lib/api-sports-client");
 const {
   formatOddsValue,
@@ -38,7 +44,7 @@ const MLB_DIVISION_NAMES = {
 };
 
 function getCurrentSeason() {
-  return Number(getEasternDateISO().slice(0, 4));
+  return getEasternYear();
 }
 
 function ensureDir(dirPath) {
@@ -165,12 +171,10 @@ function normalizeMlbStandings(payload) {
 }
 
 async function fetchMlbStatsUpcomingGame() {
-  const today = new Date().toLocaleDateString("en-CA", { timeZone: EASTERN_TIME_ZONE });
-  const endDate = new Date(`${today}T12:00:00Z`);
-  endDate.setUTCDate(endDate.getUTCDate() + 7);
-  const endDateIso = endDate.toISOString().slice(0, 10);
+  const today = getEasternDateISO();
+  const endDateIso = addDaysToDateISO(today, 7);
   const payload = await fetchJsonOrNull(
-    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${MLB_STATS_METS_TEAM_ID}&startDate=${today}&endDate=${endDateIso}&hydrate=team,venue,linescore,probablePitcher,seriesStatus`
+    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${MLB_STATS_METS_TEAM_ID}&startDate=${today}&endDate=${endDateIso}&hydrate=team,venue,linescore,probablePitcher,lineups,seriesStatus`
   );
   const games = (payload?.dates || [])
     .flatMap((dateEntry) => dateEntry.games || [])
@@ -180,6 +184,45 @@ async function fetchMlbStatsUpcomingGame() {
   if (!game) return null;
   const homeIdentity = normalizeTeamIdentity(game?.teams?.home?.team || {}, null);
   const awayIdentity = normalizeTeamIdentity(game?.teams?.away?.team || {}, null);
+  const isMetsHome = Number(homeIdentity.mlbStatsTeamId ?? game?.teams?.home?.team?.id) === MLB_STATS_METS_TEAM_ID;
+  const extractLineupPlayers = (side) => {
+    const direct = game?.lineups?.[`${side}Players`]
+      || game?.lineups?.[side]?.players
+      || game?.teams?.[side]?.lineup
+      || [];
+    return Array.isArray(direct)
+      ? direct.map((player, index) => ({
+          order: player?.order ?? player?.battingOrder ?? index + 1,
+          playerId: player?.id ?? player?.playerId ?? player?.person?.id ?? null,
+          name: player?.fullName || player?.name || player?.person?.fullName || "Lineup TBD",
+          pos: player?.position?.abbreviation || player?.primaryPosition?.abbreviation || player?.pos || "TBD"
+        }))
+      : [];
+  };
+  const fetchPitcherStats = async (pitcherId) => {
+    if (!pitcherId) return null;
+    const people = await fetchJsonOrNull(
+      `https://statsapi.mlb.com/api/v1/people/${pitcherId}?hydrate=stats(group=[pitching],type=[season,seasonAdvanced],sportId=1)`
+    );
+    const player = people?.people?.[0];
+    const stats = Array.isArray(player?.stats) ? player.stats : [];
+    const findStat = (typeName, statKey) => {
+      const entry = stats.find((item) => (
+        String(item?.group?.displayName || item?.group?.name || "").toLowerCase() === "pitching"
+        && String(item?.type?.displayName || item?.type?.name || "").toLowerCase() === typeName
+      ));
+      return entry?.splits?.[0]?.stat?.[statKey] ?? null;
+    };
+    return {
+      era: findStat("season", "era"),
+      whip: findStat("season", "whip"),
+      fip: findStat("season advanced", "fip")
+    };
+  };
+  const [metsProbableStats, oppProbableStats] = await Promise.all([
+    fetchPitcherStats((isMetsHome ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher)?.id),
+    fetchPitcherStats((isMetsHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher)?.id)
+  ]);
   return {
     gameId: game?.gamePk || null,
     leagueId: 1,
@@ -211,6 +254,31 @@ async function fetchMlbStatsUpcomingGame() {
       record: null
     },
     venue: game?.venue?.name || null,
+    probablePitchers: {
+      mets: (isMetsHome ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher)
+        ? {
+            id: (isMetsHome ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher)?.id ?? null,
+            fullName: (isMetsHome ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher)?.fullName || "TBD",
+            era: metsProbableStats?.era ?? null,
+            fip: metsProbableStats?.fip ?? null,
+            whip: metsProbableStats?.whip ?? null
+          }
+        : null,
+      opp: (isMetsHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher)
+        ? {
+            id: (isMetsHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher)?.id ?? null,
+            fullName: (isMetsHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher)?.fullName || "TBD",
+            era: oppProbableStats?.era ?? null,
+            fip: oppProbableStats?.fip ?? null,
+            whip: oppProbableStats?.whip ?? null
+          }
+        : null
+    },
+    lineups: {
+      lineupStatus: extractLineupPlayers("home").length || extractLineupPlayers("away").length ? "confirmed" : "not_released",
+      mets: isMetsHome ? extractLineupPlayers("home") : extractLineupPlayers("away"),
+      opp: isMetsHome ? extractLineupPlayers("away") : extractLineupPlayers("home")
+    },
     raw: game
   };
 }
@@ -356,10 +424,12 @@ function mergeUpcomingGameDetails(primaryGame, fallbackGame) {
     && String(primaryGame?.away?.mlbStatsTeamId || primaryGame?.away?.id || "") === String(fallbackGame?.away?.mlbStatsTeamId || fallbackGame?.away?.id || "")
     && String(primaryGame?.date || "").slice(0, 10) === String(fallbackGame?.date || "").slice(0, 10);
 
-  if (!sameMatchup) return primaryGame;
+  if (!sameMatchup) return fallbackGame;
 
   return {
     ...primaryGame,
+    probablePitchers: fallbackGame.probablePitchers || primaryGame.probablePitchers || null,
+    lineups: fallbackGame.lineups || primaryGame.lineups || null,
     raw: fallbackGame.raw || primaryGame.raw
   };
 }
@@ -515,13 +585,14 @@ async function run() {
   const config = getApiSportsConfig();
   const metsIdentity = normalizeTeamIdentity({ mlbStatsTeamId: 121, apiSportsTeamId: config.metsTeamId, name: "New York Mets", abbreviation: "NYM" }, config.metsTeamId);
   const season = getCurrentSeason();
+  const referenceDate = getEasternDateISO();
   ensureDir(PUBLIC_API_ROOT);
   ensureDir(GAME_ROOT);
 
   // Confirm these IDs against your API-SPORTS account if their Baseball API uses different IDs.
   const games = sortByDateAsc(await fetchApiSportsGames(config, season));
   const featuredState = resolveFeaturedGameState(games, {
-    referenceDate: getEasternDateISO(),
+    referenceDate,
     lookaheadDays: 7
   });
   featuredState.logs.forEach((line) => console.log(`[cache] ${line}`));
@@ -548,7 +619,9 @@ async function run() {
     meta: {
       provider: nextGame ? "api-sports" : mlbStatsUpcomingGame ? "mlb-stats-api" : "api-sports",
       generatedAt: new Date().toISOString(),
-      cacheHint: "schedule: 15-30 minutes"
+      cacheHint: "schedule: 15-30 minutes",
+      referenceDate,
+      cacheKey: buildDateScopedCacheKey("next-game", referenceDate)
     }
   };
 
@@ -557,7 +630,9 @@ async function run() {
     meta: {
       provider: "api-sports",
       generatedAt: new Date().toISOString(),
-      cacheHint: liveGame ? "live: 15-30 seconds" : "schedule: 15-30 minutes"
+      cacheHint: liveGame ? "live: 15-30 seconds" : "schedule: 15-30 minutes",
+      referenceDate,
+      cacheKey: buildDateScopedCacheKey("live-game", referenceDate)
     }
   };
 

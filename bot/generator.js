@@ -16,7 +16,13 @@ const OpenAI = require("openai");
 const { parse } = require("csv-parse/sync");
 const generateSitemap = require("./generate-sitemap");
 const generateRss = require("./generate-rss");
-const { resolveFeaturedGameState } = require("../public/js/featured-game-state.js");
+const {
+  addDaysToDateISO,
+  buildDateScopedCacheKey,
+  getEasternDateISO,
+  getEasternYear,
+  resolveFeaturedGameState
+} = require("../public/js/featured-game-state.js");
 
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
@@ -261,7 +267,7 @@ const cachedFangraphsTeams = new Map();
 const cachedFangraphsLeaderboards = new Map();
 
 function getTodayEasternISO() {
-  return new Date().toLocaleDateString("en-CA", { timeZone: TIME_ZONE });
+  return getEasternDateISO();
 }
 
 function clampNumber(value, min, max) {
@@ -1068,7 +1074,7 @@ function loadPickHistory() {
 async function loadSavantPitcherLeaderboard() {
   if (cachedSavantPitchers) return cachedSavantPitchers;
 
-  const season = new Date().getFullYear();
+  const season = getEasternYear();
   const seasonsToTry = [season, season - 1];
   const merged = [];
   const seen = new Set();
@@ -1095,7 +1101,7 @@ async function loadSavantPitcherLeaderboard() {
 
 async function loadSavantExpectedPitchers() {
   if (cachedSavantExpectedPitchers) return cachedSavantExpectedPitchers;
-  const season = new Date().getFullYear();
+  const season = getEasternYear();
   const seasonsToTry = [season, season - 1];
   const merged = [];
   const seen = new Set();
@@ -1284,7 +1290,7 @@ function mergeNonNullRosterMetrics(fallbackSnapshot, preferredSnapshot) {
 
 async function loadSavantBatterLeaderboard() {
   if (cachedSavantBatters) return cachedSavantBatters;
-  const season = new Date().getFullYear();
+  const season = getEasternYear();
   const url =
     "https://baseballsavant.mlb.com/leaderboard/custom" +
     `?type=batter&year=${season}` +
@@ -1297,7 +1303,7 @@ async function loadSavantBatterLeaderboard() {
 
 async function loadSavantExpectedBatters() {
   if (cachedSavantExpectedBatters) return cachedSavantExpectedBatters;
-  const season = new Date().getFullYear();
+  const season = getEasternYear();
   const url =
     "https://baseballsavant.mlb.com/leaderboard/expected_statistics" +
     `?type=batter&year=${season}&position=&team=&min=0&csv=true`;
@@ -1399,7 +1405,7 @@ function extractFangraphsNextData(html) {
   }
 }
 
-async function loadFangraphsLeaderboard(stats, type, season = new Date().getFullYear()) {
+async function loadFangraphsLeaderboard(stats, type, season = getEasternYear()) {
   const key = `${stats}:${type}:${season}`;
   if (cachedFangraphsLeaderboards.has(key)) return cachedFangraphsLeaderboards.get(key);
 
@@ -1586,7 +1592,7 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
     };
   }
 
-  const season = String(new Date().getFullYear());
+  const season = String(getEasternYear());
   const previousSeason = String(Number(season) - 1);
   const [person, currentStats, previousStats, savantRows, expectedRows, fangraphsTeam, contactAllowed] = await Promise.all([
     getPersonInfo(personId),
@@ -1741,7 +1747,7 @@ function normalizeInjuryStatus(transaction) {
 }
 
 async function getTeamInjuries(teamId) {
-  const season = String(new Date().getFullYear());
+  const season = String(getEasternYear());
   const startDate = `${season}-02-15`;
   const today = getTodayEasternISO();
   const data = await safeGetJson(
@@ -1776,7 +1782,7 @@ async function getGameForDate(targetDate) {
   const url =
     "https://statsapi.mlb.com/api/v1/schedule" +
     `?sportId=1&teamId=${TEAM_ID}&date=${targetDate}` +
-    "&hydrate=team,venue,linescore,probablePitcher,seriesStatus";
+    "&hydrate=team,venue,linescore,probablePitcher,lineups,seriesStatus";
   const data = await safeGetJson(url, `schedule ${targetDate}`);
   return data?.dates?.[0]?.games?.[0] || null;
 }
@@ -1800,7 +1806,7 @@ async function fetchExactExternalGameForDate(targetDate) {
   const url =
     "https://statsapi.mlb.com/api/v1/schedule" +
     `?sportId=1&teamId=${TEAM_ID}&date=${targetDate}` +
-    "&hydrate=team,venue,linescore,probablePitcher,seriesStatus";
+    "&hydrate=team,venue,linescore,probablePitcher,lineups,seriesStatus";
   const data = await safeGetJson(url, `schedule ${targetDate}`);
   if (data == null) {
     return { status: "unavailable", game: null };
@@ -1859,14 +1865,12 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
   }
 
   const startDate = targetDate;
-  const endDateObj = new Date(`${targetDate}T12:00:00Z`);
-  endDateObj.setUTCDate(endDateObj.getUTCDate() + 14);
-  const endDate = endDateObj.toISOString().slice(0, 10);
+  const endDate = addDaysToDateISO(targetDate, 14);
 
   const url =
     "https://statsapi.mlb.com/api/v1/schedule" +
     `?sportId=1&teamId=${TEAM_ID}&startDate=${startDate}&endDate=${endDate}` +
-    "&hydrate=team,venue,linescore,probablePitcher,seriesStatus";
+    "&hydrate=team,venue,linescore,probablePitcher,lineups,seriesStatus";
   const data = await safeGetJson(url, `schedule window ${startDate} ${endDate}`);
   const nextGame = (data?.dates || [])
     .flatMap((dateEntry) => dateEntry.games || [])
@@ -1941,7 +1945,7 @@ function buildLineupFromBoxscore(boxscoreTeam) {
       seasonAVG: stat.avg || null,
       seasonOPS: stat.ops || null,
       seasonHR: stat.homeRuns != null ? Number(stat.homeRuns) : null,
-      statsSeason: stat.gamesPlayed != null ? String(new Date().getFullYear()) : null
+      statsSeason: stat.gamesPlayed != null ? String(getEasternYear()) : null
     };
   });
 }
@@ -1968,7 +1972,7 @@ function buildLineupFromRoster(roster = [], seasonStatsByPlayer = {}, savantBatt
         seasonAVG: avg,
         seasonOPS: ops,
         seasonHR: homeRuns != null ? Number(homeRuns) : null,
-        statsSeason: gamesPlayed > 0 ? String(new Date().getFullYear()) : null,
+        statsSeason: gamesPlayed > 0 ? String(getEasternYear()) : null,
         savant: {
           xBA: expected.est_ba || null,
           xSLG: expected.est_slg || null,
@@ -2055,7 +2059,7 @@ async function buildProjectedTeamLineup(teamId, isMets, beforeDate) {
   const recentLineup = await getMostRecentConfirmedLineup(teamId, beforeDate);
   if (recentLineup.length) return recentLineup;
 
-  const season = String(new Date().getFullYear());
+  const season = String(getEasternYear());
   const teamName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === teamId) || null;
   const [roster, savantBatters, savantExpectedBatters, fangraphsTeam] = await Promise.all([
     getTeamRoster(teamId, season),
@@ -2143,12 +2147,10 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
 }
 
 async function buildBullpenFacts(teamId, teamName, isMets) {
-  const season = String(new Date().getFullYear());
+  const season = String(getEasternYear());
   const today = getTodayEasternISO();
-  const last14Start = new Date(`${today}T12:00:00Z`);
-  last14Start.setUTCDate(last14Start.getUTCDate() - 14);
-  const last3Start = new Date(`${today}T12:00:00Z`);
-  last3Start.setUTCDate(last3Start.getUTCDate() - 3);
+  const last14Start = addDaysToDateISO(today, -14);
+  const last3Start = addDaysToDateISO(today, -3);
 
   const [current, fangraphsTeam, last14, last3] = await Promise.all([
     safeGetJson(
@@ -2157,11 +2159,11 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
     ),
     loadFangraphsTeamData(teamName),
     safeGetJson(
-      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last14Start.toISOString().slice(0, 10)}&endDate=${today}`,
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last14Start}&endDate=${today}`,
       `team pitching last14 ${teamId} ${season}`
     ),
     safeGetJson(
-      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last3Start.toISOString().slice(0, 10)}&endDate=${today}`,
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last3Start}&endDate=${today}`,
       `team pitching last3 ${teamId} ${season}`
     )
   ]);
@@ -2336,7 +2338,7 @@ function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantB
 }
 
 async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
-  const season = String(new Date().getFullYear());
+  const season = String(getEasternYear());
   const metsName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === metsTeamId) || TEAM_NAME;
   const oppName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === oppTeamId) || null;
   const [metsHitting, oppHitting, metsPitching, oppPitching, metsRoster, oppRoster, savantBatters, savantExpectedBatters, metsFg, oppFg, battingLeaderboard, pitchingLeaderboard] = await Promise.all([
@@ -2775,6 +2777,7 @@ async function buildGameFacts(targetDate) {
   const isFinal = ["Final", "Completed Early", "Game Over"].includes(finalState);
   const metsScore = isHome ? game?.teams?.home?.score : game?.teams?.away?.score;
   const oppScore = isHome ? game?.teams?.away?.score : game?.teams?.home?.score;
+  const isOffDayPreview = requestedDate !== resolvedDate;
 
   const facts = {
     meta: {
@@ -2808,7 +2811,13 @@ async function buildGameFacts(targetDate) {
     trends: previewBundle.facts,
     editorial: {
       previewSource: previewBundle.source,
-      recentSources: [previewBundle.source, lastMeeting?.source].filter(Boolean)
+      recentSources: [previewBundle.source, lastMeeting?.source].filter(Boolean),
+      previewMode: {
+        isOffDayPreview,
+        requestedDate,
+        resolvedDate,
+        bannerText: isOffDayPreview ? `OFF DAY — Previewing next game: ${oppTeam?.name || "Opponent TBD"} on ${resolvedDate}` : null
+      }
     },
     injuries: [
       ...metsInjuries.map((injury) => `Mets: ${injury}`),
@@ -4300,7 +4309,7 @@ function buildPresentationReport(game) {
   const gameContext = game?.gameContext || {};
   const weatherSummary = formatWeatherForecast(game?.weather || writeup.gameDetails?.weather || analysisObject?.gameInfo?.weather);
   const homeAwayLabel = game?.homeAway === "home" ? "Home" : game?.homeAway === "away" || game?.homeAway === "road" ? "Away" : game?.homeAway || "N/A";
-  const seasonLabel = String(game?.date || writeup.gameDetails?.date || "").slice(0, 4) || String(new Date().getFullYear());
+  const seasonLabel = String(game?.date || writeup.gameDetails?.date || "").slice(0, 4) || String(getEasternYear());
   const moneylineValue = typeof game?.moneyline?.mets === "number"
     ? (game.moneyline.mets > 0 ? `+${game.moneyline.mets}` : String(game.moneyline.mets))
     : (writeup.gameDetails?.moneyline || "N/A");
@@ -4668,6 +4677,8 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
 
   const output = {
     generatedAt: new Date().toISOString(),
+    referenceDate: gameFacts.meta.requestedDate || gameFacts.meta.date,
+    cacheKey: buildDateScopedCacheKey("sample-game", gameFacts.meta.requestedDate || gameFacts.meta.date),
     games,
     recentBreakdowns: mergeRecentBreakdowns(previousOutput, currentGame, Array.isArray(pickHistory?.entries) ? pickHistory.entries : [])
   };
@@ -5355,9 +5366,18 @@ function buildSiteReportHtml(game) {
   const reportMarkup = buildReportMarkup(report, { mode: "site" });
   const seoOpponent = game?.opponent || "Opponent";
   const seoDate = report.header?.date || game?.date || "today";
-  const seoTitle = `Mets vs ${seoOpponent} Picks - ${seoDate} | MetsMoneyline`;
-  const seoDescription = `Full breakdown of Mets vs ${seoOpponent} on ${seoDate}: starting pitchers, lineup splits, advanced Statcast stats, and today's official moneyline pick.`;
-  const seoSummary = `This MetsMoneyline report covers Mets vs ${seoOpponent} on ${seoDate}, including starting pitcher matchups, lineup splits, bullpen form, weather context, and the site's official Mets moneyline pick.`;
+  const offDayPreview = Boolean(game?.editorial?.previewMode?.isOffDayPreview);
+  const previewBannerText = game?.editorial?.previewMode?.bannerText
+    || (offDayPreview ? `OFF DAY — Previewing next game: ${seoOpponent} on ${seoDate}` : "");
+  const seoTitle = offDayPreview
+    ? `Mets vs ${seoOpponent} Preview - ${seoDate} | MetsMoneyline`
+    : `Mets vs ${seoOpponent} Picks - ${seoDate} | MetsMoneyline`;
+  const seoDescription = offDayPreview
+    ? `Next game preview for Mets vs ${seoOpponent} on ${seoDate}: probable pitchers, lineup status, advanced matchup context, and betting analysis.`
+    : `Full breakdown of Mets vs ${seoOpponent} on ${seoDate}: starting pitchers, lineup splits, advanced Statcast stats, and today's official moneyline pick.`;
+  const seoSummary = offDayPreview
+    ? `This MetsMoneyline preview covers the next Mets game against ${seoOpponent} on ${seoDate}, including probable pitchers, lineup status, bullpen form, weather context, and matchup analysis.`
+    : `This MetsMoneyline report covers Mets vs ${seoOpponent} on ${seoDate}, including starting pitcher matchups, lineup splits, bullpen form, weather context, and the site's official Mets moneyline pick.`;
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -5429,6 +5449,17 @@ function buildSiteReportHtml(game) {
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
     <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
+    <script>
+      (function () {
+        try {
+          var etDate = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+          var url = new URL(window.location.href);
+          if (url.searchParams.get('date') === etDate) return;
+          url.searchParams.set('date', etDate);
+          window.location.replace(url.toString());
+        } catch (_error) {}
+      })();
+    </script>
   </head>
   <body>
     <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
@@ -5439,6 +5470,7 @@ function buildSiteReportHtml(game) {
       </section>
     </noscript>
     <main class="report-main" style="width:min(96vw,1440px);max-width:1440px;margin:0 auto;padding:2.5rem 1.25rem 0;">
+      ${offDayPreview ? `<section style="margin:0 0 1rem;background:#fff7ed;border:1px solid #fdba74;border-radius:14px;padding:0.95rem 1rem;color:#9a3412;font-size:0.95rem;line-height:1.6;font-weight:800;">${previewBannerText}</section>` : ""}
       <section id="seo-content" style="margin:0 0 1rem;background:#f8fafc;border:1px solid #d9e1ee;border-radius:14px;padding:0.95rem 1rem;color:#475569;font-size:0.9rem;line-height:1.65;">
         <p style="margin:0;">${seoSummary}</p>
       </section>
