@@ -1,5 +1,7 @@
 {
-  "generatedAt": "2026-05-12T11:33:58.895Z",
+  "generatedAt": "2026-05-12T13:25:38.318Z",
+  "referenceDate": "2026-05-12",
+  "cacheKey": "sample-game:2026-05-12",
   "games": [
     {
       "id": "2026-05-12-mets-vs-detroit-tigers",
@@ -25,8 +27,8 @@
         "mets": -1.5,
         "price": 146
       },
-      "total": 8,
-      "overUnder": 8,
+      "total": 7.5,
+      "overUnder": 7.5,
       "status": "upcoming",
       "finalScore": null,
       "result": null,
@@ -36,7 +38,7 @@
           "mlbId": 642547,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-12T09:35:21.867Z",
+          "generatedAt": "2026-05-12T13:25:38.254Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -95,7 +97,7 @@
           "mlbId": 656427,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-12T09:35:21.875Z",
+          "generatedAt": "2026-05-12T13:25:38.244Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -127,7 +129,7 @@
             "exitVeloAllowed": 90.6,
             "launchAngleAllowed": 22.7,
             "percentiles": {
-              "barrelPct": 45,
+              "barrelPct": 44,
               "hardHitPct": 32,
               "kPct": 78,
               "bbPct": 14,
@@ -794,8 +796,8 @@
             "iso": 28,
             "ops": 30,
             "xba": 15,
-            "xslg": 16,
-            "xwoba": 24,
+            "xslg": 15,
+            "xwoba": 23,
             "hardHit": 7,
             "barrelPct": 14,
             "bbPct": 26,
@@ -830,7 +832,7 @@
             "woba": 10,
             "iso": 17,
             "ops": 10,
-            "xba": 5,
+            "xba": 4,
             "xslg": 4,
             "xwoba": 4,
             "hardHit": 22,
@@ -1050,13 +1052,19 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "local/public-data",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Using local/cached game context."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "previewSource": null,
-        "recentSources": []
+        "recentSources": [],
+        "previewMode": {
+          "isOffDayPreview": false,
+          "requestedDate": "2026-05-12",
+          "resolvedDate": "2026-05-12",
+          "bannerText": null
+        }
       },
       "trends": [
         {
@@ -1079,7 +1087,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-12T11:33:58.887Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-12\",\"opponent\":\"Detroit Tigers\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":58.6,\"temperatureDisplay\":\"59°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph SSE\",\"compact\":\"59° | Clear | Wind 11 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-12T23:00Z\"},\"metsMoneyline\":null,\"impliedProbability\":null},\"pitchers\":{\"mets\":{\"name\":\"Freddy Peralta\",\"handedness\":\"R\",\"era\":3.12,\"xERA\":3.81,\"fip\":3.72,\"whip\":1.2,\"kPct\":23.2,\"bbPct\":9.7,\"kMinusBbPct\":13.5,\"hardHitPct\":40.2,\"barrelPct\":4.1,\"xBAAllowed\":0.244,\"xSLGAllowed\":0.363,\"xwOBAAllowed\":0.31,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-06\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.0\",\"er\":0,\"k\":1,\"result\":\"W\"},{\"date\":\"2026-04-30\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-04-24\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.2\",\"er\":2,\"k\":8,\"result\":\"L\"},{\"date\":\"2026-04-18\",\"opponent\":\"Chicago Cubs\",\"ip\":\"5.2\",\"er\":3,\"k\":3,\"result\":\"L\"}],\"avgInnings\":5.58,\"avgEarnedRuns\":1.5,\"avgStrikeouts\":4.5,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.58,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Jack Flaherty\",\"handedness\":\"R\",\"era\":5.56,\"xERA\":4.74,\"fip\":5.29,\"whip\":1.65,\"kPct\":25.9,\"bbPct\":16,\"kMinusBbPct\":9.9,\"hardHitPct\":44.9,\"barrelPct\":9.1,\"xBAAllowed\":0.217,\"xSLGAllowed\":0.382,\"xwOBAAllowed\":0.342,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-06\",\"opponent\":\"Boston Red Sox\",\"ip\":\"5.0\",\"er\":2,\"k\":10,\"result\":\"L\"},{\"date\":\"2026-05-01\",\"opponent\":\"Texas Rangers\",\"ip\":\"3.2\",\"er\":4,\"k\":4,\"result\":\"-\"},{\"date\":\"2026-04-25\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"2.0\",\"er\":6,\"k\":4,\"result\":\"L\"},{\"date\":\"2026-04-20\",\"opponent\":\"Boston Red Sox\",\"ip\":\"3.1\",\"er\":0,\"k\":3,\"result\":\"-\"}],\"avgInnings\":3.5,\"avgEarnedRuns\":3,\"avgStrikeouts\":5.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":3.5,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":0.7,\"projectedLineupWRCPlus\":83.3,\"obp\":0.29,\"iso\":0.119,\"kPct\":21,\"bbPct\":8,\"xBA\":0.244,\"xSLG\":0.406,\"xwOBA\":0.31,\"hardHitPct\":40.9,\"barrelPct\":9,\"battingAverage\":0.226,\"wOBA\":0.287,\"lineup\":{\"totalWAR\":0.7,\"totalWRCPlus\":83.3,\"totalOBP\":0.29,\"totalISO\":0.121,\"totalKPct\":21.5,\"totalBBPct\":7.5,\"totalAVG\":0.226,\"totalWOBA\":0.287,\"totalXBA\":0.25,\"totalXSLG\":0.411,\"totalXWOBA\":0.315,\"totalHardHitPct\":42.4,\"totalBarrelPct\":8.6,\"regressionSignals\":{\"baMinusXba\":-0.024,\"wobaMinusXwoba\":-0.028}},\"regressionSignals\":{\"baMinusXba\":-0.024,\"wobaMinusXwoba\":-0.028},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":3.7,\"projectedLineupWRCPlus\":110.2,\"obp\":0.336,\"iso\":0.148,\"kPct\":22.1,\"bbPct\":10.2,\"xBA\":0.258,\"xSLG\":0.461,\"xwOBA\":0.348,\"hardHitPct\":44,\"barrelPct\":11.4,\"battingAverage\":0.253,\"wOBA\":0.334,\"lineup\":{\"totalWAR\":3.7,\"totalWRCPlus\":110.2,\"totalOBP\":0.336,\"totalISO\":0.155,\"totalKPct\":20.6,\"totalBBPct\":10.4,\"totalAVG\":0.253,\"totalWOBA\":0.334,\"totalXBA\":0.265,\"totalXSLG\":0.466,\"totalXWOBA\":0.355,\"totalHardHitPct\":44,\"totalBarrelPct\":11.1,\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.021}},\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.021},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":0.7,\"totalWRCPlus\":83.3,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":3.7,\"totalWRCPlus\":110.2,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"last3DaysIP\":16,\"availabilityTopArms\":null,\"whip\":1.26,\"kMinusBbPct\":15.5,\"xFIP\":3.63,\"taxLevel\":\"heavy\"},\"opp\":{\"last3DaysIP\":17,\"availabilityTopArms\":null,\"whip\":1.31,\"kMinusBbPct\":13.2,\"xFIP\":3.98,\"taxLevel\":\"heavy\"}},\"context\":{\"travel\":{\"mets\":\"road to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":1,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"heavy\",\"opp\":\"heavy\"},\"parkFactor\":null,\"weather\":{\"temperature\":58.6,\"temperatureDisplay\":\"59°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph SSE\",\"compact\":\"59° | Clear | Wind 11 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-12T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Freddy Peralta 3.81/3.72 vs Jack Flaherty 4.74/5.29; K-BB% 13.5 to 9.9.\",\"rawScore\":25.7,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 0.7 vs 3.7, projected lineup wRC+ 83.3 vs 110.2, xwOBA 0.310 vs 0.348.\",\"rawScore\":-7.07,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.63 vs 3.98, WHIP 1.26 vs 1.31, last 3-day usage 16.0 IP vs 17.0 IP.\",\"rawScore\":2.19,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.024 and wOBA-xwOBA -0.028; opponent starter overperformance signal 2.25.\",\"rawScore\":1.74,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 1 vs opponent 1 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to home, opponent travel road to road, bullpen tax heavy/heavy.\",\"rawScore\":1.2,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":26.7,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"valueEdge\":null,\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-12T13:25:38.310Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-12\",\"opponent\":\"Detroit Tigers\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":58.4,\"temperatureDisplay\":\"58°\",\"condition\":\"Clear\",\"wind\":\"Wind 12 mph S\",\"compact\":\"58° | Clear | Wind 12 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-12T23:00Z\"},\"metsMoneyline\":null,\"impliedProbability\":null},\"pitchers\":{\"mets\":{\"name\":\"Freddy Peralta\",\"handedness\":\"R\",\"era\":3.12,\"xERA\":3.81,\"fip\":3.72,\"whip\":1.2,\"kPct\":23.2,\"bbPct\":9.7,\"kMinusBbPct\":13.5,\"hardHitPct\":40.2,\"barrelPct\":4.1,\"xBAAllowed\":0.244,\"xSLGAllowed\":0.363,\"xwOBAAllowed\":0.31,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-06\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.0\",\"er\":0,\"k\":1,\"result\":\"W\"},{\"date\":\"2026-04-30\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-04-24\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.2\",\"er\":2,\"k\":8,\"result\":\"L\"},{\"date\":\"2026-04-18\",\"opponent\":\"Chicago Cubs\",\"ip\":\"5.2\",\"er\":3,\"k\":3,\"result\":\"L\"}],\"avgInnings\":5.58,\"avgEarnedRuns\":1.5,\"avgStrikeouts\":4.5,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.58,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Jack Flaherty\",\"handedness\":\"R\",\"era\":5.56,\"xERA\":4.74,\"fip\":5.29,\"whip\":1.65,\"kPct\":25.9,\"bbPct\":16,\"kMinusBbPct\":9.9,\"hardHitPct\":44.9,\"barrelPct\":9.1,\"xBAAllowed\":0.217,\"xSLGAllowed\":0.382,\"xwOBAAllowed\":0.342,\"splitsVsOpponentHandedness\":null,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-06\",\"opponent\":\"Boston Red Sox\",\"ip\":\"5.0\",\"er\":2,\"k\":10,\"result\":\"L\"},{\"date\":\"2026-05-01\",\"opponent\":\"Texas Rangers\",\"ip\":\"3.2\",\"er\":4,\"k\":4,\"result\":\"-\"},{\"date\":\"2026-04-25\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"2.0\",\"er\":6,\"k\":4,\"result\":\"L\"},{\"date\":\"2026-04-20\",\"opponent\":\"Boston Red Sox\",\"ip\":\"3.1\",\"er\":0,\"k\":3,\"result\":\"-\"}],\"avgInnings\":3.5,\"avgEarnedRuns\":3,\"avgStrikeouts\":5.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":3.5,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":0.7,\"projectedLineupWRCPlus\":83.3,\"obp\":0.29,\"iso\":0.119,\"kPct\":21,\"bbPct\":8,\"xBA\":0.244,\"xSLG\":0.406,\"xwOBA\":0.31,\"hardHitPct\":40.9,\"barrelPct\":9,\"battingAverage\":0.226,\"wOBA\":0.287,\"lineup\":{\"totalWAR\":0.7,\"totalWRCPlus\":83.3,\"totalOBP\":0.29,\"totalISO\":0.121,\"totalKPct\":21.5,\"totalBBPct\":7.5,\"totalAVG\":0.226,\"totalWOBA\":0.287,\"totalXBA\":0.25,\"totalXSLG\":0.411,\"totalXWOBA\":0.315,\"totalHardHitPct\":42.4,\"totalBarrelPct\":8.6,\"regressionSignals\":{\"baMinusXba\":-0.024,\"wobaMinusXwoba\":-0.028}},\"regressionSignals\":{\"baMinusXba\":-0.024,\"wobaMinusXwoba\":-0.028},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"teamWrcPlusVsHandedness\":null,\"projectedLineupWrcPlusVsHandedness\":null,\"homeAwayWrcPlus\":null,\"projectedLineupWAR\":3.7,\"projectedLineupWRCPlus\":110.2,\"obp\":0.336,\"iso\":0.148,\"kPct\":22.1,\"bbPct\":10.2,\"xBA\":0.258,\"xSLG\":0.461,\"xwOBA\":0.348,\"hardHitPct\":44,\"barrelPct\":11.4,\"battingAverage\":0.253,\"wOBA\":0.334,\"lineup\":{\"totalWAR\":3.7,\"totalWRCPlus\":110.2,\"totalOBP\":0.336,\"totalISO\":0.155,\"totalKPct\":20.6,\"totalBBPct\":10.4,\"totalAVG\":0.253,\"totalWOBA\":0.334,\"totalXBA\":0.265,\"totalXSLG\":0.466,\"totalXWOBA\":0.355,\"totalHardHitPct\":44,\"totalBarrelPct\":11.1,\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.021}},\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.021},\"missingKeyHitters\":null,\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":0.7,\"totalWRCPlus\":83.3,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":3.7,\"totalWRCPlus\":110.2,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"last3DaysIP\":16,\"availabilityTopArms\":null,\"whip\":1.26,\"kMinusBbPct\":15.5,\"xFIP\":3.63,\"taxLevel\":\"heavy\"},\"opp\":{\"last3DaysIP\":17,\"availabilityTopArms\":null,\"whip\":1.31,\"kMinusBbPct\":13.2,\"xFIP\":3.98,\"taxLevel\":\"heavy\"}},\"context\":{\"travel\":{\"mets\":\"road to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":1,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"heavy\",\"opp\":\"heavy\"},\"parkFactor\":null,\"weather\":{\"temperature\":58.4,\"temperatureDisplay\":\"58°\",\"condition\":\"Clear\",\"wind\":\"Wind 12 mph S\",\"compact\":\"58° | Clear | Wind 12 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-12T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Freddy Peralta 3.81/3.72 vs Jack Flaherty 4.74/5.29; K-BB% 13.5 to 9.9.\",\"rawScore\":25.7,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 0.7 vs 3.7, projected lineup wRC+ 83.3 vs 110.2, xwOBA 0.310 vs 0.348.\",\"rawScore\":-7.07,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.63 vs 3.98, WHIP 1.26 vs 1.31, last 3-day usage 16.0 IP vs 17.0 IP.\",\"rawScore\":2.19,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.024 and wOBA-xwOBA -0.028; opponent starter overperformance signal 2.25.\",\"rawScore\":1.74,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 1 vs opponent 1 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to home, opponent travel road to road, bullpen tax heavy/heavy.\",\"rawScore\":1.2,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":26.7,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"valueEdge\":null,\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Detroit Tigers: starting pitching is the clearest angle",
         "synopsis": "Freddy Peralta vs Jack Flaherty sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Freddy Peralta 3.81/3.72 vs Jack Flaherty 4.74/5.29; K-BB% 13.5 to 9.9. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1094,7 +1102,7 @@
           "opponent": "Detroit Tigers",
           "homeAway": "home",
           "ballpark": "Citi Field",
-          "weather": "59° | Clear | Wind 11 mph SSE",
+          "weather": "58° | Clear | Wind 12 mph S",
           "lineupStatus": "Projected",
           "moneyline": "-152"
         },
@@ -1344,11 +1352,11 @@
             "homeAway": "home",
             "ballpark": "Citi Field",
             "weather": {
-              "temperature": 58.6,
-              "temperatureDisplay": "59°",
+              "temperature": 58.4,
+              "temperatureDisplay": "58°",
               "condition": "Clear",
-              "wind": "Wind 11 mph SSE",
-              "compact": "59° | Clear | Wind 11 mph SSE",
+              "wind": "Wind 12 mph S",
+              "compact": "58° | Clear | Wind 12 mph S",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-05-12T23:00Z"
             },
@@ -1631,11 +1639,11 @@
             },
             "parkFactor": null,
             "weather": {
-              "temperature": 58.6,
-              "temperatureDisplay": "59°",
+              "temperature": 58.4,
+              "temperatureDisplay": "58°",
               "condition": "Clear",
-              "wind": "Wind 11 mph SSE",
-              "compact": "59° | Clear | Wind 11 mph SSE",
+              "wind": "Wind 12 mph S",
+              "compact": "58° | Clear | Wind 12 mph S",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-05-12T23:00Z"
             }
@@ -1786,7 +1794,7 @@
             "ballpark": "Citi Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/116.svg",
-            "metadataLine": "May 12th | 7:10 PM ET | Citi Field | 59° | Clear | Wind 11 mph SSE"
+            "metadataLine": "May 12th | 7:10 PM ET | Citi Field | 58° | Clear | Wind 12 mph S"
           },
           "preliminary": null,
           "quickRead": {
@@ -1801,7 +1809,7 @@
             "opponent": "Detroit Tigers",
             "homeAway": "home",
             "ballpark": "Citi Field",
-            "weather": "59° | Clear | Wind 11 mph SSE",
+            "weather": "58° | Clear | Wind 12 mph S",
             "lineupStatus": "Projected",
             "moneyline": "-152"
           },
@@ -1817,7 +1825,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "59° | Clear | Wind 11 mph SSE"
+                "value": "58° | Clear | Wind 12 mph S"
               },
               {
                 "label": "Mets ML Odds",
@@ -2083,7 +2091,7 @@
                   {
                     "label": "Barrel %",
                     "left": "9.1%",
-                    "leftPercentile": 45,
+                    "leftPercentile": 44,
                     "right": 9,
                     "rightRankKey": "barrelPct"
                   },
@@ -2915,8 +2923,8 @@
                 "iso": 28,
                 "ops": 30,
                 "xba": 15,
-                "xslg": 16,
-                "xwoba": 24,
+                "xslg": 15,
+                "xwoba": 23,
                 "hardHit": 7,
                 "barrelPct": 14,
                 "bbPct": 26,
@@ -2951,7 +2959,7 @@
                 "woba": 10,
                 "iso": 17,
                 "ops": 10,
-                "xba": 5,
+                "xba": 4,
                 "xslg": 4,
                 "xwoba": 4,
                 "hardHit": 22,
@@ -3008,7 +3016,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "59° | Clear | Wind 11 mph SSE"
+            "weatherSummary": "58° | Clear | Wind 12 mph S"
           }
         }
       },
@@ -3020,11 +3028,11 @@
         "profit": null
       },
       "weather": {
-        "temperature": 58.6,
-        "temperatureDisplay": "59°",
+        "temperature": 58.4,
+        "temperatureDisplay": "58°",
         "condition": "Clear",
-        "wind": "Wind 11 mph SSE",
-        "compact": "59° | Clear | Wind 11 mph SSE",
+        "wind": "Wind 12 mph S",
+        "compact": "58° | Clear | Wind 12 mph S",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-05-12T23:00Z"
       }
