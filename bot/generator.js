@@ -101,6 +101,39 @@ const TEAM_NAME_TO_ABBR = {
   "Washington Nationals": "WSN"
 };
 
+const TEAM_PRIMARY_COLORS = {
+  "Arizona Diamondbacks": "#A71930",
+  "Atlanta Braves": "#CE1141",
+  "Baltimore Orioles": "#DF4601",
+  "Boston Red Sox": "#BD3039",
+  "Chicago Cubs": "#0E3386",
+  "Chicago White Sox": "#27251F",
+  "Cincinnati Reds": "#C6011F",
+  "Cleveland Guardians": "#0C2340",
+  "Colorado Rockies": "#333366",
+  "Detroit Tigers": "#0C2340",
+  "Houston Astros": "#002D62",
+  "Kansas City Royals": "#004687",
+  "Los Angeles Angels": "#BA0021",
+  "Los Angeles Dodgers": "#005A9C",
+  "Miami Marlins": "#00A3E0",
+  "Milwaukee Brewers": "#12284B",
+  "Minnesota Twins": "#002B5C",
+  "New York Mets": "#002D72",
+  "New York Yankees": "#132448",
+  "Oakland Athletics": "#003831",
+  "Philadelphia Phillies": "#E81828",
+  "Pittsburgh Pirates": "#FDB827",
+  "San Diego Padres": "#2F241D",
+  "San Francisco Giants": "#FD5A1E",
+  "Seattle Mariners": "#005C5C",
+  "St. Louis Cardinals": "#C41E3A",
+  "Tampa Bay Rays": "#092C5C",
+  "Texas Rangers": "#003278",
+  "Toronto Blue Jays": "#134A8E",
+  "Washington Nationals": "#AB0003"
+};
+
 const BALLPARK_WEATHER_LOOKUP = {
   "Angel Stadium": { lat: 33.8003, lon: -117.8827 },
   "Busch Stadium": { lat: 38.6226, lon: -90.1928 },
@@ -268,6 +301,7 @@ const cachedFangraphsLeaderboards = new Map();
 const cachedGameFeeds = new Map();
 const cachedTeamScheduleGames = new Map();
 const cachedRecentTeamHittingStats = new Map();
+const cachedRecentPlayerHittingStats = new Map();
 
 function getTodayEasternISO() {
   return getEasternDateISO();
@@ -326,6 +360,10 @@ function formatSignedPercent(value, digits = 1) {
   if (!Number.isFinite(value)) return "N/A";
   const normalized = Number(value).toFixed(digits);
   return `${value > 0 ? "+" : ""}${normalized}%`;
+}
+
+function getTeamPrimaryColor(teamName) {
+  return TEAM_PRIMARY_COLORS[teamName] || "#6b7280";
 }
 
 function buildDeterministicTodayPick(gameFacts, writeup, analysisObject, edgeScoring) {
@@ -1482,6 +1520,7 @@ async function loadPitcherPercentileMaps() {
     hardHitPct: computePercentileMap(savantRows, "hard_hit_percent", { descending: false }),
     kPct: computePercentileMap(savantRows, "k_percent", { descending: true }),
     bbPct: computePercentileMap(savantRows, "bb_percent", { descending: false }),
+    xERA: computePercentileMap(expectedRows, "xera", { descending: false }),
     xBAAllowed: computePercentileMap(expectedRows, "est_ba", { descending: false }),
     xSLGAllowed: computePercentileMap(expectedRows, "est_slg", { descending: false })
   };
@@ -1680,6 +1719,7 @@ async function getPitcherFacts(personId, fallbackName, teamName = null) {
         hardHitPct: percentileMaps?.hardHitPct?.[personId] ?? null,
         kPct: percentileMaps?.kPct?.[personId] ?? null,
         bbPct: percentileMaps?.bbPct?.[personId] ?? null,
+        xERA: percentileMaps?.xERA?.[personId] ?? null,
         xBAAllowed: percentileMaps?.xBAAllowed?.[personId] ?? null,
         xSLGAllowed: percentileMaps?.xSLGAllowed?.[personId] ?? null
       }
@@ -2134,17 +2174,26 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
   const oppTeam = awayTeam?.team?.id === TEAM_ID ? homeTeam : awayTeam;
 
   const oppTeamName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === oppTeamId) || null;
-  const [savantBatters, savantExpectedBatters, metsFg, oppFg] = await Promise.all([
+  const recentEndDate = addDaysToDateISO(targetDate, -1);
+  const [savantBatters, savantExpectedBatters, metsFg, oppFg, metsRecentStatsByPlayer, oppRecentStatsByPlayer] = await Promise.all([
     loadSavantBatterLeaderboard(),
     loadSavantExpectedBatters(),
     loadFangraphsTeamData(TEAM_NAME),
-    oppTeamName ? loadFangraphsTeamData(oppTeamName) : null
+    oppTeamName ? loadFangraphsTeamData(oppTeamName) : null,
+    getTeamRecentHittingStatsByPlayer(TEAM_ID, recentEndDate, 20),
+    getTeamRecentHittingStatsByPlayer(oppTeamId, recentEndDate, 20)
   ]);
   const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
   const savantExpectedBattersByPlayer = Object.fromEntries(savantExpectedBatters.map((row) => [Number(row.player_id), row]));
 
-  const metsConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(metsTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg?.battingByName || {});
-  const oppConfirmed = enrichLineupWithSavant(buildLineupFromBoxscore(oppTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg?.battingByName || {});
+  const metsConfirmed = enrichLineupWithRecentStats(
+    enrichLineupWithSavant(buildLineupFromBoxscore(metsTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg?.battingByName || {}),
+    metsRecentStatsByPlayer
+  );
+  const oppConfirmed = enrichLineupWithRecentStats(
+    enrichLineupWithSavant(buildLineupFromBoxscore(oppTeam), savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg?.battingByName || {}),
+    oppRecentStatsByPlayer
+  );
 
   if (metsConfirmed.length && oppConfirmed.length) {
     return {
@@ -2155,8 +2204,12 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
   }
 
   return {
-    mets: metsConfirmed.length ? metsConfirmed : await buildProjectedTeamLineup(TEAM_ID, true, targetDate),
-    opp: oppConfirmed.length ? oppConfirmed : await buildProjectedTeamLineup(oppTeamId, false, targetDate),
+    mets: metsConfirmed.length
+      ? metsConfirmed
+      : enrichLineupWithRecentStats(await buildProjectedTeamLineup(TEAM_ID, true, targetDate), metsRecentStatsByPlayer),
+    opp: oppConfirmed.length
+      ? oppConfirmed
+      : enrichLineupWithRecentStats(await buildProjectedTeamLineup(oppTeamId, false, targetDate), oppRecentStatsByPlayer),
     status: "projected"
   };
 }
@@ -2167,7 +2220,7 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
   const last20Start = addDaysToDateISO(today, -20);
   const last7Start = addDaysToDateISO(today, -7);
 
-  const [current, fangraphsTeam, seasonRoster, last20Roster, gameLogRoster] = await Promise.all([
+  const [current, fangraphsTeam, seasonRoster, last20Roster, gameLogRoster, savantExpectedPitchers] = await Promise.all([
     safeGetJson(
       `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
       `team pitching ${teamId} ${season}`
@@ -2184,7 +2237,8 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
     safeGetJson(
       `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active&season=${season}&hydrate=person(stats(type=[gameLog],group=[pitching],season=${season}))`,
       `pitching roster game log ${teamId} ${season}`
-    )
+    ),
+    loadSavantExpectedPitchers()
   ]);
 
   const stat = current?.stats?.[0]?.splits?.[0]?.stat || null;
@@ -2204,9 +2258,11 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
   const last7Games = relieverGameLogRows.filter((row) => relieverIds.has(row.playerId) && row.date >= last7Start && row.date < today);
   const closer = buildCloserSnapshot(relieverSeasonRows, last7Games);
   const usage = buildBullpenUsage(last7Games, relieverIds.size);
+  const seasonXERAAverage = buildBullpenXeraAverage(relieverSeasonRows, savantExpectedPitchers);
 
   return {
     seasonERA: seasonAggregate.era ?? seasonEra,
+    seasonXERAAverage,
     seasonXFIP: seasonFip,
     last14ERA: null,
     last20ERA: last20Aggregate.era,
@@ -2299,6 +2355,16 @@ function aggregateBullpenRows(rows = []) {
     era: Number(((earnedRuns * 9) / innings).toFixed(2)),
     whip: Number(((hits + walks) / innings).toFixed(2))
   };
+}
+
+function buildBullpenXeraAverage(seasonRows = [], expectedRows = []) {
+  const expectedByPlayer = Object.fromEntries((expectedRows || []).map((row) => [String(row.player_id || ""), parseNumber(row.xera)]));
+  const values = seasonRows
+    .filter((row) => isRelieverStatLine(row?.stats))
+    .map((row) => expectedByPlayer[String(row.playerId || "")])
+    .filter((value) => Number.isFinite(value));
+  if (!values.length) return null;
+  return Number((values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(2));
 }
 
 function buildBullpenUsage(gameLogs = [], relieverCount = 0) {
@@ -2482,6 +2548,49 @@ async function getTeamRecentHittingStats(teamId, endDate, days = 20) {
   return promise;
 }
 
+async function getTeamRecentHittingStatsByPlayer(teamId, endDate, days = 20) {
+  const season = String(endDate).slice(0, 4);
+  const startDate = addDaysToDateISO(endDate, -days);
+  const cacheKey = `${teamId}:${startDate}:${endDate}:players`;
+  if (cachedRecentPlayerHittingStats.has(cacheKey)) return cachedRecentPlayerHittingStats.get(cacheKey);
+  const promise = safeGetJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active&season=${season}&hydrate=person(stats(type=[byDateRange],group=[hitting],startDate=${startDate},endDate=${endDate}))`,
+    `team hitting byDateRange roster ${teamId} ${startDate} ${endDate}`
+  ).then((data) => Object.fromEntries((data?.roster || []).map((entry) => {
+    const stat = entry?.person?.stats?.[0]?.splits?.find((split) => split?.sport?.id !== 0)?.stat
+      || entry?.person?.stats?.[0]?.splits?.[0]?.stat
+      || null;
+    return [
+      entry?.person?.id,
+      {
+        avg: parseNumber(stat?.avg),
+        ops: parseNumber(stat?.ops),
+        plateAppearances: Number(stat?.plateAppearances || 0),
+        atBats: Number(stat?.atBats || 0),
+        hits: Number(stat?.hits || 0)
+      }
+    ];
+  }).filter(([playerId]) => playerId)));
+  cachedRecentPlayerHittingStats.set(cacheKey, promise);
+  return promise;
+}
+
+function enrichLineupWithRecentStats(lineup = [], recentStatsByPlayer = {}) {
+  return (lineup || []).map((player) => {
+    const recent = recentStatsByPlayer?.[player.playerId] || null;
+    return {
+      ...player,
+      recent20: recent ? {
+        avg: recent.avg,
+        ops: recent.ops,
+        plateAppearances: recent.plateAppearances,
+        atBats: recent.atBats,
+        hits: recent.hits
+      } : null
+    };
+  });
+}
+
 function assignStatRanks(teamRows, statKey, { descending = true } = {}) {
   const ranked = teamRows
     .filter((row) => Number.isFinite(row?.stats?.[statKey]))
@@ -2560,6 +2669,32 @@ async function buildRecentFormFacts(targetDate, oppTeamId) {
     mets: buildTeamForm(TEAM_ID),
     opp: buildTeamForm(oppTeamId)
   };
+}
+
+function computeBattingAverageTrend(seasonAvg, recentAvg) {
+  if (!Number.isFinite(seasonAvg) || !Number.isFinite(recentAvg) || seasonAvg === 0) return null;
+  return Number((((recentAvg - seasonAvg) / seasonAvg) * 100).toFixed(1));
+}
+
+function buildHotColdAlert(lineup = []) {
+  const candidates = (lineup || [])
+    .map((player) => {
+      const seasonAvg = parseNumber(player?.seasonAVG);
+      const recentAvg = parseNumber(player?.recent20?.avg);
+      return {
+        playerId: player?.playerId || null,
+        name: player?.name || "Player",
+        seasonAvg,
+        recentAvg,
+        differencePct: computeBattingAverageTrend(seasonAvg, recentAvg)
+      };
+    })
+    .filter((player) => Number.isFinite(player.seasonAvg) && Number.isFinite(player.recentAvg) && Number.isFinite(player.differencePct));
+  if (!candidates.length) return { hot: null, cold: null };
+  const sorted = [...candidates].sort((left, right) => right.differencePct - left.differencePct);
+  const hot = sorted[0] || null;
+  const cold = [...sorted].reverse()[0] || null;
+  return { hot, cold };
 }
 
 function deriveApproxWrcPlus(hittingStat) {
@@ -2644,6 +2779,62 @@ async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
     mets: buildSingleTeamAdvanced(metsHitting, metsPitching, metsRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg, leagueRankMap.NYM || null),
     opp: buildSingleTeamAdvanced(oppHitting, oppPitching, oppRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg, leagueRankMap[normalizeTeamAbbr(TEAM_NAME_TO_ABBR[oppName] || oppName)] || null)
   };
+}
+
+async function getCompletedTeamScheduleGames(teamId, endDate) {
+  const season = String(endDate).slice(0, 4);
+  const startDate = `${season}-03-01`;
+  const cacheKey = `${teamId}:${startDate}:${endDate}`;
+  if (cachedTeamScheduleGames.has(cacheKey)) return cachedTeamScheduleGames.get(cacheKey);
+  const promise = safeGetJson(
+    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&sportId=1&gameType=R&startDate=${startDate}&endDate=${endDate}&hydrate=linescore,team`,
+    `schedule games ${teamId} ${startDate} ${endDate}`
+  ).then((data) => {
+    const games = [];
+    for (const dateEntry of data?.dates || []) {
+      for (const game of dateEntry.games || []) {
+        const state = game?.status?.detailedState || "";
+        if (!["Final", "Completed Early", "Game Over"].includes(state)) continue;
+        const isHome = game?.teams?.home?.team?.id === teamId;
+        const teamScore = Number(isHome ? game?.teams?.home?.score : game?.teams?.away?.score);
+        const oppScore = Number(isHome ? game?.teams?.away?.score : game?.teams?.home?.score);
+        games.push({
+          date: dateEntry.date,
+          homeAway: isHome ? "home" : "road",
+          teamScore,
+          oppScore
+        });
+      }
+    }
+    return games;
+  });
+  cachedTeamScheduleGames.set(cacheKey, promise);
+  return promise;
+}
+
+async function getTeamRunDifferential(teamId, endDate, homeAway) {
+  const games = await getCompletedTeamScheduleGames(teamId, endDate);
+  const filtered = (games || []).filter((game) => game.homeAway === homeAway);
+  if (!filtered.length) return null;
+  const runsFor = filtered.reduce((sum, game) => sum + Number(game.teamScore || 0), 0);
+  const runsAgainst = filtered.reduce((sum, game) => sum + Number(game.oppScore || 0), 0);
+  return {
+    homeAway,
+    games: filtered.length,
+    runsFor,
+    runsAgainst,
+    differential: runsFor - runsAgainst
+  };
+}
+
+async function buildHomeAwayEdgeFacts(targetDate, oppTeamId) {
+  const endDate = addDaysToDateISO(targetDate, -1);
+  const [metsHome, oppRoad] = await Promise.all([
+    getTeamRunDifferential(TEAM_ID, endDate, "home"),
+    getTeamRunDifferential(oppTeamId, endDate, "road")
+  ]);
+  if (!metsHome || !oppRoad) return null;
+  return { metsHome, oppRoad };
 }
 
 async function getTeamRecentGames(teamId, beforeDate, n = 5) {
@@ -3018,6 +3209,7 @@ async function buildGameFacts(targetDate) {
         teamAdvanced: game.teamAdvanced || {}
       },
       recentForm: game.recentForm || null,
+      emailData: game.emailData || null,
       weather: game.weather || null,
       game: {
         gamePk: game.gamePk || game.sourceGamePk || null,
@@ -3058,7 +3250,7 @@ async function buildGameFacts(targetDate) {
     opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
   };
 
-  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, recentForm, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
+  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, recentForm, homeAwayEdge, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
     Promise.all([
       getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME, resolvedDate),
       getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name, resolvedDate)
@@ -3068,6 +3260,7 @@ async function buildGameFacts(targetDate) {
     buildBullpenFacts(oppTeam.id, oppTeam.name, false),
     buildTeamAdvancedFacts(TEAM_ID, oppTeam.id),
     buildRecentFormFacts(resolvedDate, oppTeam.id),
+    buildHomeAwayEdgeFacts(resolvedDate, oppTeam.id),
     getTeamRecentGames(TEAM_ID, resolvedDate, 5),
     getTeamRecentGames(oppTeam.id, resolvedDate, 5),
     getHeadToHead(TEAM_ID, oppTeam.id, resolvedDate.slice(0, 4)),
@@ -3167,6 +3360,9 @@ async function buildGameFacts(targetDate) {
       teamAdvanced
     },
     recentForm,
+    emailData: {
+      homeAwayEdge: homeAwayEdge || null
+    },
     weather: weather || null,
     game: {
       gamePk: game.gamePk,
@@ -5026,6 +5222,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     advancedMatchup: gameFacts.advanced.cards,
     teamAdvanced: gameFacts.advanced.teamAdvanced,
     recentForm: gameFacts.recentForm || null,
+    emailData: gameFacts.emailData || null,
     gameContext: gameFacts.gameContext,
     canonicalGameSource: gameFacts.canonicalGameSource || null,
     editorial: gameFacts.editorial,
@@ -6221,235 +6418,331 @@ function buildCondensedEmailHtml(game) {
   const pick = report?.officialPick;
   const meta = header?.metadataLine || "";
   const opponent = game?.opponent || "Opponent";
+  const oppAbbr = TEAM_NAME_TO_ABBR[opponent] || opponent.split(" ").pop().toUpperCase().slice(0, 3);
   const metsLogo = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
   const oppLogo = header?.oppLogoUrl || "";
+
   const metsCard = report?.startingPitchersComparison?.metsCard;
   const oppCard = report?.startingPitchersComparison?.oppCard;
+  const metsBullpen = report?.bullpenReport?.mets;
+  const oppBullpen = report?.bullpenReport?.opp;
+  const metsRecentForm = report?.recentFormReport?.mets;
+  const oppRecentForm = report?.recentFormReport?.opp;
   const metsLineup = report?.projectedLineupComparison?.mets || [];
   const oppLineup = report?.projectedLineupComparison?.opp || [];
-  const edgeRows = report?.edgeTable || [];
-  const analysis = report?.analysis;
+  const homeAwayEdge = game?.emailData?.homeAwayEdge || null;
 
-  const valueCell = (v) => v == null || v === "" ? "—" : v;
-  const smallLabel = "font-size:11px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;";
+  const dash = (v) => v == null || v === "" ? "—" : v;
+  const fmt = (v, decimals = 2) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? n.toFixed(decimals) : "—";
+  };
+  const fmtPct = (v) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? `${n.toFixed(1)}%` : "—";
+  };
+  const smallLabel = "font-size:10px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;color:#6b7280;";
 
-  const heatPill = (label, value) => {
-    const pct = reportMetricPct(label, value);
-    const style = pct == null
-      ? "background:#f3f4f6;color:#374151;"
-      : reportCellToneStyle(pct);
-    return `<span style="display:inline-block;min-width:48px;padding:4px 7px;text-align:center;border-radius:6px;font-size:12px;font-weight:700;${style}">${valueCell(value)}</span>`;
+  // Edge badge helper
+  const edgeBadge = (winner) => {
+    const bgMap = { NYM: "#002d72", opp: "#6b2737", EVEN: "#6b7280" };
+    const labelMap = { NYM: "NYM", opp: oppAbbr, EVEN: "EVEN" };
+    const bg = bgMap[winner] || "#6b7280";
+    const label = labelMap[winner] || "EVEN";
+    return `<span style="display:inline-block;padding:3px 10px;border-radius:12px;background:${bg};color:#fff;font-size:11px;font-weight:700;letter-spacing:0.04em;">${label}</span>`;
   };
 
-  const recentStartsBlock = (starts, name) => {
-    if (!Array.isArray(starts) || !starts.length) return "";
-    const rows = starts.slice(0, 3).map(s => `
-      <tr>
-        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;color:#6b7280;font-size:11px;">${String(s.date || "").slice(5)}</td>
-        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;font-size:11px;font-weight:600;">${valueCell(s.opponent)}</td>
-        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.ip)}</td>
-        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.er ?? "-")}</td>
-        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${valueCell(s.k ?? "-")}</td>
-        <td style="padding:5px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:11px;">${s.result || ""}</td>
-      </tr>`).join("");
-    return `
-      <div style="margin-top:10px;">
-        <div style="${smallLabel}color:#6b7280;margin-bottom:6px;">Recent Starts — ${name}</div>
-        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #e5e7eb;border-radius:8px;">
-          <thead>
-            <tr style="background:#f8fafc;">
-              <th style="padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Date</th>
-              <th style="padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Opp</th>
-              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">IP</th>
-              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">ER</th>
-              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">K</th>
-              <th style="padding:5px 6px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #e5e7eb;">Dec</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
+  // Usage badge helper
+  const usageBadge = (label) => {
+    if (!label) return "";
+    const bgMap = { High: "#fee2e2", Medium: "#fef9c3", Low: "#dcfce7" };
+    const colorMap = { High: "#991b1b", Medium: "#92400e", Low: "#166534" };
+    return `<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;background:${bgMap[label] || "#f3f4f6"};color:${colorMap[label] || "#374151"};">${label} Usage</span>`;
   };
 
-  const pitcherComparisonBlock = () => {
-    if (!metsCard && !oppCard) return "";
-    const metsPhoto = metsCard?.mlbId
-      ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${metsCard.mlbId}/headshot/67/current" alt="${metsCard.name}" width="48" height="48" style="border-radius:50%;border:2px solid #d6dde8;">`
+  // ── SP xERA / ERA ──────────────────────────────────────────────────
+  const metsXERA = parseFloat(String(game?.pitching?.mets?.savant?.xERA ?? ""));
+  const oppXERA = parseFloat(String(game?.pitching?.opp?.savant?.xERA ?? ""));
+  const metsSpVal = Number.isFinite(metsXERA) ? metsXERA : parseFloat(String(metsCard?.stats?.era ?? ""));
+  const oppSpVal = Number.isFinite(oppXERA) ? oppXERA : parseFloat(String(oppCard?.stats?.era ?? ""));
+  const spEdge = Number.isFinite(metsSpVal) && Number.isFinite(oppSpVal)
+    ? (metsSpVal < oppSpVal - 0.01 ? "NYM" : oppSpVal < metsSpVal - 0.01 ? "opp" : "EVEN")
+    : "EVEN";
+  const metsSpLabel = Number.isFinite(metsXERA)
+    ? `${fmt(metsXERA)} xERA`
+    : (Number.isFinite(metsSpVal) ? `${fmt(metsSpVal)} ERA` : "—");
+  const oppSpLabel = Number.isFinite(oppXERA)
+    ? `${fmt(oppXERA)} xERA`
+    : (Number.isFinite(oppSpVal) ? `${fmt(oppSpVal)} ERA` : "—");
+
+  // ── Bullpen xERA / ERA ─────────────────────────────────────────────
+  const metsBpXERA = parseFloat(String(game?.pitching?.metsBullpen?.seasonXERAAverage ?? ""));
+  const oppBpXERA = parseFloat(String(game?.pitching?.oppBullpen?.seasonXERAAverage ?? ""));
+  const metsBpVal = Number.isFinite(metsBpXERA) ? metsBpXERA : parseFloat(String(metsBullpen?.statsRow?.seasonEra ?? ""));
+  const oppBpVal = Number.isFinite(oppBpXERA) ? oppBpXERA : parseFloat(String(oppBullpen?.statsRow?.seasonEra ?? ""));
+  const bpEdge = Number.isFinite(metsBpVal) && Number.isFinite(oppBpVal)
+    ? (metsBpVal < oppBpVal - 0.01 ? "NYM" : oppBpVal < metsBpVal - 0.01 ? "opp" : "EVEN")
+    : "EVEN";
+  const metsBpLabel = Number.isFinite(metsBpXERA)
+    ? `${fmt(metsBpXERA)} xERA`
+    : (Number.isFinite(metsBpVal) ? `${fmt(metsBpVal)} ERA` : "—");
+  const oppBpLabel = Number.isFinite(oppBpXERA)
+    ? `${fmt(oppBpXERA)} xERA`
+    : (Number.isFinite(oppBpVal) ? `${fmt(oppBpVal)} ERA` : "—");
+
+  // ── Closer ─────────────────────────────────────────────────────────
+  const metsCloser = metsBullpen?.closer || null;
+  const oppCloser = oppBullpen?.closer || null;
+  const metsConv = metsCloser?.saveConversionPct ?? null;
+  const oppConv = oppCloser?.saveConversionPct ?? null;
+  const closerEdge = metsConv != null && oppConv != null
+    ? (metsConv > oppConv + 0.5 ? "NYM" : oppConv > metsConv + 0.5 ? "opp" : "EVEN")
+    : "EVEN";
+  const metsCloserLabel = metsCloser
+    ? `${metsCloser.saves}/${metsCloser.saveOpportunities} SV · ${fmt(metsConv, 1)}%`
+    : "—";
+  const oppCloserLabel = oppCloser
+    ? `${oppCloser.saves}/${oppCloser.saveOpportunities} SV · ${fmt(oppConv, 1)}%`
+    : "—";
+
+  // ── Offense OPS last 20 days ────────────────────────────────────────
+  const metsOpsRow = metsRecentForm?.rows?.find(r => r.statKey === "ops");
+  const oppOpsRow = oppRecentForm?.rows?.find(r => r.statKey === "ops");
+  const metsOps = metsOpsRow?.recentValue ?? null;
+  const oppOps = oppOpsRow?.recentValue ?? null;
+  const offEdge = metsOps != null && oppOps != null
+    ? (metsOps > oppOps + 0.005 ? "NYM" : oppOps > metsOps + 0.005 ? "opp" : "EVEN")
+    : "EVEN";
+
+  // ── Home/Away run differential ──────────────────────────────────────
+  let homeAwayRow = "";
+  try {
+    const metsHA = homeAwayEdge?.metsHome;
+    const oppHA = homeAwayEdge?.oppRoad;
+    if (metsHA != null && oppHA != null) {
+      const metsDiff = Number(metsHA.differential);
+      const oppDiff = Number(oppHA.differential);
+      const haEdge = Math.abs(metsDiff - oppDiff) <= 5 ? "EVEN"
+        : (metsDiff > oppDiff ? "NYM" : "opp");
+      const sign = (n) => n >= 0 ? `+${n}` : String(n);
+      homeAwayRow = `
+        <tr>
+          <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;font-size:12px;">Home/Away</td>
+          <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:12px;color:#374151;">${sign(metsDiff)} runs</td>
+          <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:12px;color:#374151;">${sign(oppDiff)} runs</td>
+          <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;">${edgeBadge(haEdge)}</td>
+        </tr>`;
+    }
+  } catch (_) {}
+
+  // ── Hot / Cold alert ───────────────────────────────────────────────
+  const metsHotCold = buildHotColdAlert(metsLineup);
+  const oppHotCold = buildHotColdAlert(oppLineup);
+
+  const fmtBA = (v) => {
+    if (v == null || !Number.isFinite(v)) return null;
+    return `.${String(Math.round(v * 1000)).padStart(3, "0")}`;
+  };
+  const hotColdLine = (player, icon, label) => {
+    if (!player) return "";
+    const s = fmtBA(player.seasonAvg);
+    const r = fmtBA(player.recentAvg);
+    const d = player.differencePct != null
+      ? (player.differencePct >= 0 ? `+${player.differencePct.toFixed(1)}%` : `${player.differencePct.toFixed(1)}%`)
       : "";
-    const oppPhoto = oppCard?.mlbId
-      ? `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${oppCard.mlbId}/headshot/67/current" alt="${oppCard.name}" width="48" height="48" style="border-radius:50%;border:2px solid #d6dde8;">`
-      : "";
-    const metrics = ["ERA", "WHIP", "K%", "BB%"];
-    const metsStats = metsCard?.stats || {};
-    const oppStats = oppCard?.stats || {};
-    const statsMap = { "ERA": "era", "WHIP": "whip", "K%": "kPct", "BB%": "bbPct" };
-
-    return `
-      <div style="margin-bottom:16px;">
-        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Starting Pitchers</div>
-        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d6dde8;border-radius:12px;overflow:hidden;font-size:12px;">
-          <thead>
-            <tr>
-              <th style="width:30%;padding:10px 8px;background:#e9f3ff;color:#0f172a;text-align:left;${smallLabel}">
-                ${metsPhoto} <div style="margin-top:4px;">${valueCell(metsCard?.name)}</div>
-                <div style="font-size:10px;color:#6b7280;font-weight:500;text-transform:none;letter-spacing:0;">${valueCell(metsCard?.teamLabel)}${metsCard?.hand ? ` · ${metsCard.hand}` : ""}${metsCard?.record ? ` · ${metsCard.record}` : ""}</div>
-              </th>
-              <th style="width:14%;padding:10px 4px;background:#f8fafc;text-align:center;${smallLabel}color:#475569;">Stat</th>
-              <th style="width:30%;padding:10px 8px;background:#fdf1e5;color:#7c2d12;text-align:right;${smallLabel}">
-                ${oppPhoto} <div style="margin-top:4px;">${valueCell(oppCard?.name)}</div>
-                <div style="font-size:10px;color:#6b7280;font-weight:500;text-transform:none;letter-spacing:0;">${valueCell(oppCard?.teamLabel)}${oppCard?.hand ? ` · ${oppCard.hand}` : ""}${oppCard?.record ? ` · ${oppCard.record}` : ""}</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            ${metrics.map(m => `
-              <tr>
-                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;text-align:center;">${heatPill(m, metsStats[statsMap[m]])}</td>
-                <td style="padding:7px 4px;border-bottom:1px solid #f0f2f5;text-align:center;font-weight:700;color:#475569;font-size:11px;">${m}</td>
-                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;text-align:center;">${heatPill(m, oppStats[statsMap[m]])}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-        ${recentStartsBlock(metsCard?.recentStarts, metsCard?.name || "Mets SP")}
-        ${recentStartsBlock(oppCard?.recentStarts, oppCard?.name || "Opp SP")}
-      </div>`;
+    return `<div style="margin-bottom:5px;font-size:12px;color:#374151;">${icon} <strong>${label}</strong> — ${player.name}: ${s || "—"} season BA → ${r || "—"} last 20 days${d ? ` (${d})` : ""}</div>`;
   };
 
-  const lineupBlock = () => {
-    if (!metsLineup.length && !oppLineup.length) return "";
-    const renderSide = (players, label, bgHeader) => {
-      if (!players.length) return "";
-      return `
-        <div style="margin-bottom:12px;">
-          <div style="padding:7px 10px;background:${bgHeader};${smallLabel}color:#0f172a;border-radius:8px 8px 0 0;border:1px solid #d6dde8;">${label}</div>
-          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:11px;border:1px solid #d6dde8;border-top:none;">
-            <thead>
-              <tr style="background:#f8fafc;">
-                <th style="width:6%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">#</th>
-                <th style="width:34%;padding:5px 6px;text-align:left;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">Player</th>
-                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">xBA</th>
-                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">K%</th>
-                <th style="width:20%;padding:5px 4px;text-align:center;${smallLabel}color:#9099b0;border-bottom:1px solid #d6dde8;">Hard Hit</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${players.map((p, i) => `
-                <tr style="background:${i % 2 === 0 ? '#fff' : '#f9fafb'};">
-                  <td style="padding:5px 4px;text-align:center;color:#6b7280;font-weight:700;border-bottom:1px solid #f0f2f5;">${p.order ?? i + 1}</td>
-                  <td style="padding:5px 6px;font-weight:700;color:#111827;border-bottom:1px solid #f0f2f5;">${valueCell(p.name)}</td>
-                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("xBA", p.savant?.xBA)}</td>
-                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("K%", p.savant?.kPct || p.fangraphs?.kPct)}</td>
-                  <td style="padding:5px 4px;text-align:center;border-bottom:1px solid #f0f2f5;">${heatPill("Hard Hit %", p.savant?.hardHitPct)}</td>
-                </tr>`).join("")}
-            </tbody>
-          </table>
-        </div>`;
-    };
-    return `
-      <div style="margin-bottom:16px;">
-        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Projected Lineups</div>
-        ${renderSide(metsLineup, "New York Mets", "#e9f3ff")}
-        ${renderSide(oppLineup, opponent, "#fdf1e5")}
-      </div>`;
-  };
-
-  const edgeBlock = () => {
-    if (!edgeRows.length) return "";
-    const edgeColor = (edge) => {
-      if (/mets/i.test(edge)) return "#16a34a";
-      if (/opponent/i.test(edge)) return "#dc2626";
-      return "#6b7280";
-    };
-    const strengthDot = (str) => {
-      if (str === "strong") return "●●●";
-      if (str === "moderate") return "●●○";
-      if (str === "slight") return "●○○";
-      return "—";
-    };
-    return `
-      <div style="margin-bottom:16px;">
-        <div style="${smallLabel}color:#6b7280;margin-bottom:10px;">Edge Summary</div>
-        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:12px;border:1px solid #d6dde8;border-radius:10px;overflow:hidden;">
-          <thead>
-            <tr style="background:#f8fafc;">
-              <th style="padding:8px 8px;text-align:left;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Category</th>
-              <th style="padding:8px 6px;text-align:center;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Edge</th>
-              <th style="padding:8px 6px;text-align:center;${smallLabel}color:#6b7280;border-bottom:1px solid #d6dde8;">Strength</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${edgeRows.map(row => `
-              <tr>
-                <td style="padding:7px 8px;border-bottom:1px solid #f0f2f5;font-weight:600;color:#374151;">${row.category}</td>
-                <td style="padding:7px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-weight:700;color:${edgeColor(row.edge)};font-size:11px;">${row.edge}</td>
-                <td style="padding:7px 6px;border-bottom:1px solid #f0f2f5;text-align:center;font-size:10px;letter-spacing:1px;">${strengthDot(row.strength)}</td>
-              </tr>`).join("")}
-          </tbody>
-        </table>
-      </div>`;
-  };
-
-  const analysisBlock = () => {
-    if (!analysis) return "";
-    const bulletStyle = "margin:0 0 6px 0;padding-left:14px;text-indent:-14px;font-size:13px;line-height:1.5;color:#374151;";
-    const sectionLabel = (text) => `<div style="${smallLabel}color:#6b7280;margin:12px 0 6px 0;">${text}</div>`;
-    const bullets = (items) => (items || []).map(b => `<p style="${bulletStyle}">→ ${b}</p>`).join("");
-    return `
-      <div style="margin-bottom:16px;padding:14px 16px;background:#f8fafc;border-radius:12px;border:1px solid #e5e7eb;">
-        ${sectionLabel("Key angles — Mets case")}
-        ${bullets(analysis.whyMetsHaveACase)}
-        ${sectionLabel("Key angles — Risk")}
-        ${bullets(analysis.whereTheRiskIs)}
-        ${sectionLabel("Bottom line")}
-        <p style="margin:0;font-size:13px;line-height:1.5;color:#111827;font-weight:600;">${valueCell(analysis.bottomLine)}</p>
-      </div>`;
-  };
+  const hasHotCold = metsHotCold.hot || metsHotCold.cold || oppHotCold.hot || oppHotCold.cold;
 
   return `<style>
     @media only screen and (max-width: 620px) {
       .email-shell { width:100% !important; }
-      .email-pad { padding:14px !important; }
+      .email-pad { padding:12px !important; }
+      .sp-col, .bp-col { display:block !important; width:100% !important; padding:0 0 10px 0 !important; }
     }
   </style>
-  <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#111827;line-height:1.55;">
+  <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#111827;line-height:1.5;">
     <tr>
       <td align="center" style="padding:16px 8px;">
         <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;border-collapse:collapse;background:#ffffff;border:1px solid #dde4ef;border-radius:16px;overflow:hidden;">
+
+          <!-- SECTION 1: HEADER -->
+          <tr>
+            <td style="background:#002d72;padding:22px 20px;text-align:center;">
+              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+                <tr>
+                  <td align="right" style="width:40%;padding:0 8px;">
+                    <img src="${metsLogo}" alt="New York Mets" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin-left:auto;">
+                  </td>
+                  <td align="center" style="width:20%;font-size:15px;font-weight:900;color:#7a9fd4;letter-spacing:0.06em;">vs</td>
+                  <td align="left" style="width:40%;padding:0 8px;">
+                    ${oppLogo
+                      ? `<img src="${oppLogo}" alt="${opponent}" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;">`
+                      : `<div style="width:72px;height:72px;background:#1a4a9e;border-radius:50%;"></div>`}
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:12px 0 0 0;color:#a0bde8;font-size:12px;line-height:1.4;">${meta}</p>
+            </td>
+          </tr>
+
           <tr>
             <td class="email-pad" style="padding:20px 22px;">
-              <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:0 0 12px 0;">MetsMoneyline · Today's Report</p>
-              <div style="margin:0 0 16px 0;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:16px;padding:16px 14px;text-align:center;">
+
+              ${game.writeup?.preliminaryMeta?.enabled
+                ? `<div style="margin:0 0 14px 0;padding:10px 14px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:8px;font-size:12px;font-weight:600;">${game.writeup.preliminaryMeta.note || "Preliminary report — final update when lineups are confirmed."}</div>`
+                : ""}
+
+              <!-- SECTION 2: KEY EDGES -->
+              <div style="margin-bottom:20px;">
+                <div style="${smallLabel}margin-bottom:8px;">Key Edges</div>
+                <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;font-size:12px;">
+                  <thead>
+                    <tr style="background:#f8fafc;">
+                      <th style="padding:8px 10px;text-align:left;${smallLabel}border-bottom:1px solid #e5e7eb;">Category</th>
+                      <th style="padding:8px 8px;text-align:center;${smallLabel}border-bottom:1px solid #e5e7eb;">NYM</th>
+                      <th style="padding:8px 8px;text-align:center;${smallLabel}border-bottom:1px solid #e5e7eb;">${oppAbbr}</th>
+                      <th style="padding:8px 8px;text-align:center;${smallLabel}border-bottom:1px solid #e5e7eb;">Edge</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;">Starting Pitching</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${metsSpLabel}</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${oppSpLabel}</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;">${edgeBadge(spEdge)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;">Bullpen</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${metsBpLabel}</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${oppBpLabel}</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;">${edgeBadge(bpEdge)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;">Closer</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${metsCloserLabel}</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${oppCloserLabel}</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;">${edgeBadge(closerEdge)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding:8px 10px;border-bottom:1px solid #e5e7eb;font-weight:600;color:#374151;">Offense (L20)</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${metsOps != null ? fmt(metsOps, 3) : "—"} OPS</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;color:#374151;">${oppOps != null ? fmt(oppOps, 3) : "—"} OPS</td>
+                      <td style="padding:8px 8px;border-bottom:1px solid #e5e7eb;text-align:center;">${edgeBadge(offEdge)}</td>
+                    </tr>
+                    ${homeAwayRow}
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- SECTION 3: STARTING PITCHERS -->
+              <div style="margin-bottom:20px;">
+                <div style="${smallLabel}margin-bottom:8px;">Starting Pitchers</div>
                 <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
                   <tr>
-                    <td align="center" style="width:35%;padding:0 4px;">
-                      <img src="${metsLogo}" alt="New York Mets" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin:0 auto;">
+                    <td class="sp-col" style="width:49%;vertical-align:top;padding-right:8px;">
+                      <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f0f5ff;">
+                        <div style="font-weight:700;font-size:13px;color:#002d72;margin-bottom:2px;">${dash(metsCard?.name)}<span style="font-weight:400;font-size:11px;color:#6b7280;">${metsCard?.hand ? ` · ${metsCard.hand}HP` : ""}</span></div>
+                        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${metsCard?.record || ""}</div>
+                        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+                          <tr>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;width:20%;">ERA</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;width:30%;">${fmt(metsCard?.stats?.era)}</td>
+                            <td style="width:8%;"></td>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;width:22%;">WHIP</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmt(metsCard?.stats?.whip)}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;">K%</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmtPct(metsCard?.stats?.kPct)}</td>
+                            <td></td>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;">BB%</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmtPct(metsCard?.stats?.bbPct)}</td>
+                          </tr>
+                          ${Number.isFinite(metsXERA) ? `<tr><td style="padding:2px 0;font-size:11px;color:#6b7280;">xERA</td><td colspan="4" style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmt(metsXERA)}</td></tr>` : ""}
+                        </table>
+                      </div>
                     </td>
-                    <td align="center" style="width:30%;font-size:18px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
-                    <td align="center" style="width:35%;padding:0 4px;">
-                      ${oppLogo ? `<img src="${oppLogo}" alt="${opponent}" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin:0 auto;">` : ""}
+                    <td class="sp-col" style="width:49%;vertical-align:top;padding-left:8px;">
+                      <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#fff5f0;">
+                        <div style="font-weight:700;font-size:13px;color:#7c2d12;margin-bottom:2px;">${dash(oppCard?.name)}<span style="font-weight:400;font-size:11px;color:#6b7280;">${oppCard?.hand ? ` · ${oppCard.hand}HP` : ""}</span></div>
+                        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${oppCard?.record || ""}</div>
+                        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+                          <tr>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;width:20%;">ERA</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;width:30%;">${fmt(oppCard?.stats?.era)}</td>
+                            <td style="width:8%;"></td>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;width:22%;">WHIP</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmt(oppCard?.stats?.whip)}</td>
+                          </tr>
+                          <tr>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;">K%</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmtPct(oppCard?.stats?.kPct)}</td>
+                            <td></td>
+                            <td style="padding:2px 0;font-size:11px;color:#6b7280;">BB%</td>
+                            <td style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmtPct(oppCard?.stats?.bbPct)}</td>
+                          </tr>
+                          ${Number.isFinite(oppXERA) ? `<tr><td style="padding:2px 0;font-size:11px;color:#6b7280;">xERA</td><td colspan="4" style="padding:2px 0;font-size:12px;font-weight:700;text-align:right;">${fmt(oppXERA)}</td></tr>` : ""}
+                        </table>
+                      </div>
                     </td>
                   </tr>
                 </table>
-                <p style="margin:10px 0 0 0;color:#5b6477;font-size:13px;line-height:1.45;">${meta}</p>
               </div>
-              ${game.writeup?.preliminaryMeta?.enabled ? `<div style="margin:0 0 14px 0;padding:10px 14px;border:1px solid #f59e0b;background:#fff7ed;color:#7c2d12;border-radius:10px;font-size:12px;font-weight:600;">${game.writeup.preliminaryMeta.note || "Preliminary report — final update when lineups are confirmed."}</div>` : ""}
-              <div style="margin:0 0 16px 0;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,#002d72,#003d8f);color:#ffffff;text-align:center;">
-                <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;opacity:0.8;">Official Pick</div>
-                <div style="margin-top:6px;font-size:20px;font-weight:900;">${valueCell(pick?.label)}</div>
-                ${pick?.confidence != null ? `<div style="margin-top:4px;font-size:12px;opacity:0.85;">Confidence: ${pick.confidence}/10</div>` : ""}
+
+              <!-- SECTION 4: BULLPEN SNAPSHOT -->
+              <div style="margin-bottom:20px;">
+                <div style="${smallLabel}margin-bottom:8px;">Bullpen Snapshot</div>
+                <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+                  <tr>
+                    <td class="bp-col" style="width:49%;vertical-align:top;padding-right:8px;">
+                      <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f8fafc;">
+                        <div style="font-weight:700;font-size:12px;color:#002d72;margin-bottom:6px;">NYM Bullpen</div>
+                        ${usageBadge(metsBullpen?.usage?.label)}
+                        <div style="font-size:11px;color:#6b7280;margin-top:6px;">Season ERA: <strong style="color:#111;">${fmt(metsBullpen?.statsRow?.seasonEra)}</strong></div>
+                        <div style="font-size:11px;color:#6b7280;">L20 ERA: <strong style="color:#111;">${fmt(metsBullpen?.statsRow?.last20Era)}</strong></div>
+                      </div>
+                    </td>
+                    <td class="bp-col" style="width:49%;vertical-align:top;padding-left:8px;">
+                      <div style="border:1px solid #e5e7eb;border-radius:10px;padding:12px;background:#f8fafc;">
+                        <div style="font-weight:700;font-size:12px;color:#7c2d12;margin-bottom:6px;">${oppAbbr} Bullpen</div>
+                        ${usageBadge(oppBullpen?.usage?.label)}
+                        <div style="font-size:11px;color:#6b7280;margin-top:6px;">Season ERA: <strong style="color:#111;">${fmt(oppBullpen?.statsRow?.seasonEra)}</strong></div>
+                        <div style="font-size:11px;color:#6b7280;">L20 ERA: <strong style="color:#111;">${fmt(oppBullpen?.statsRow?.last20Era)}</strong></div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
               </div>
-              ${pitcherComparisonBlock()}
-              ${lineupBlock()}
-              ${edgeBlock()}
-              ${analysisBlock()}
-              <div style="margin-top:18px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
-                <p style="margin:0 0 8px 0;font-size:12px;color:#475569;">Full interactive breakdown with charts and advanced matchup data</p>
-                <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#ff5910;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+
+              <!-- SECTION 5: HOT/COLD ALERT -->
+              ${hasHotCold ? `
+              <div style="margin-bottom:20px;">
+                <div style="${smallLabel}margin-bottom:8px;">Hot / Cold Alert</div>
+                <div style="border:1px solid #e5e7eb;border-radius:10px;padding:14px;background:#f8fafc;">
+                  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#002d72;margin-bottom:6px;">NYM</div>
+                  ${hotColdLine(metsHotCold.hot, "🔥", "HOT")}
+                  ${hotColdLine(metsHotCold.cold, "❄️", "COLD")}
+                  ${(oppHotCold.hot || oppHotCold.cold) ? `<div style="margin-top:10px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7c2d12;margin-bottom:6px;">${oppAbbr}</div>` : ""}
+                  ${hotColdLine(oppHotCold.hot, "🔥", "HOT")}
+                  ${hotColdLine(oppHotCold.cold, "❄️", "COLD")}
+                </div>
+              </div>` : ""}
+
+              <!-- SECTION 6: THE PICK -->
+              <div style="padding:20px 16px;background:#ff5910;border-radius:12px;text-align:center;">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.85);margin-bottom:6px;">Tonight's Pick</div>
+                <div style="font-size:22px;font-weight:900;color:#ffffff;margin-bottom:8px;">${dash(pick?.label)}</div>
+                <p style="margin:0 0 14px 0;font-size:12px;color:rgba(255,255,255,0.9);">Full data and game breakdown → MetsMoneyline.com</p>
+                <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#ffffff;color:#ff5910;font-size:13px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
               </div>
+
             </td>
           </tr>
         </table>
+
+        <!-- FOOTER -->
         <table role="presentation" width="100%" style="width:100%;max-width:600px;border-collapse:collapse;">
           <tr>
             <td style="padding:14px 20px;text-align:center;font-size:11px;color:#9099b0;line-height:1.5;">
