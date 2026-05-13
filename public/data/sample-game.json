@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-13T21:45:28.346Z",
+  "generatedAt": "2026-05-13T23:03:18.274Z",
   "referenceDate": "2026-05-13",
   "cacheKey": "sample-game:2026-05-13",
   "games": [
@@ -20,12 +20,12 @@
         "oppRoad": "7-17"
       },
       "moneyline": {
-        "mets": -112,
-        "opp": -104
+        "mets": -116,
+        "opp": -102
       },
       "runLine": {
         "mets": 1.5,
-        "price": -194
+        "price": -200
       },
       "total": 8,
       "overUnder": 8,
@@ -36,7 +36,7 @@
           "mlbId": 681035,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-13T20:12:33.851Z",
+          "generatedAt": "2026-05-13T23:03:18.069Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -94,7 +94,7 @@
           "mlbId": 664285,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-05-13T20:12:33.856Z",
+          "generatedAt": "2026-05-13T23:03:18.076Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -1173,14 +1173,14 @@
             "description": "Ronny Mauricio (IL) - New York Mets placed SS Ronny Mauricio on the 10-day injured list. Left thumb fracture."
           },
           {
-            "name": "Luis Robert Jr.",
-            "status": "IL",
-            "description": "Luis Robert Jr. (IL) - New York Mets placed CF Luis Robert Jr. on the 10-day injured list retroactive to April 27, 2026. Lumbar spine disc herniation."
-          },
-          {
             "name": "Kodai Senga",
             "status": "IL",
             "description": "Kodai Senga (IL) - New York Mets placed RHP Kodai Senga on the 15-day injured list retroactive to April 27, 2026. Lumbar spine inflammation."
+          },
+          {
+            "name": "Luis Robert Jr.",
+            "status": "IL",
+            "description": "Luis Robert Jr. (IL) - New York Mets placed CF Luis Robert Jr. on the 10-day injured list retroactive to April 27, 2026. Lumbar spine disc herniation."
           },
           {
             "name": "Francisco Lindor",
@@ -1311,9 +1311,9 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "local/public-data",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Using local/cached game context."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [
@@ -1351,7 +1351,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-13T21:45:28.338Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":59.8,\"temperatureDisplay\":\"60°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 18 mph SSE\",\"compact\":\"60° | Cloudy | Wind 18 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-13T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":3.27,\"xERA\":3.3,\"fip\":4.03,\"whip\":1.18,\"kPct\":31.3,\"bbPct\":14.6,\"kMinusBbPct\":16.7,\"hardHitPct\":29.2,\"barrelPct\":4.2,\"xBAAllowed\":0.172,\"xSLGAllowed\":0.277,\"xwOBAAllowed\":0.29,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"4.2\",\"er\":1,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-05-01\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"5.0\",\"er\":2,\"k\":8,\"result\":\"W\"},{\"date\":\"2026-04-23\",\"opponent\":\"Minnesota Twins\",\"ip\":\"1.1\",\"er\":1,\"k\":1,\"result\":\"W\"}],\"avgInnings\":3.67,\"avgEarnedRuns\":1.33,\"avgStrikeouts\":5,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":3.67,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Framber Valdez\",\"handedness\":\"L\",\"era\":4.57,\"xERA\":4.32,\"fip\":4.32,\"whip\":1.41,\"kPct\":17.9,\"bbPct\":7.7,\"kMinusBbPct\":10.2,\"hardHitPct\":44.7,\"barrelPct\":6.5,\"xBAAllowed\":0.258,\"xSLGAllowed\":0.411,\"xwOBAAllowed\":0.328,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-05\",\"opponent\":\"Boston Red Sox\",\"ip\":\"3.0\",\"er\":7,\"k\":3,\"result\":\"L\"},{\"date\":\"2026-04-30\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":8,\"result\":\"W\"},{\"date\":\"2026-04-24\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"4.1\",\"er\":2,\"k\":4,\"result\":\"-\"},{\"date\":\"2026-04-19\",\"opponent\":\"Boston Red Sox\",\"ip\":\"6.0\",\"er\":1,\"k\":7,\"result\":\"W\"}],\"avgInnings\":4.83,\"avgEarnedRuns\":3,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":8},\"workload\":{\"inningsTrend\":4.83,\"daysSinceLastStart\":8},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":0.1,\"projectedLineupWRCPlus\":78.1,\"obp\":0.283,\"iso\":0.118,\"kPct\":20.9,\"bbPct\":8.2,\"xBA\":0.249,\"xSLG\":0.407,\"xwOBA\":0.312,\"hardHitPct\":41.6,\"barrelPct\":8.2,\"battingAverage\":0.227,\"wOBA\":0.279,\"lineup\":{\"totalWAR\":0.1,\"totalWRCPlus\":78.1,\"totalOBP\":0.283,\"totalISO\":0.112,\"totalKPct\":20.1,\"totalBBPct\":7.4,\"totalAVG\":0.227,\"totalWOBA\":0.279,\"totalXBA\":0.256,\"totalXSLG\":0.418,\"totalXWOBA\":0.317,\"totalHardHitPct\":41.7,\"totalBarrelPct\":7.9,\"regressionSignals\":{\"baMinusXba\":-0.029,\"wobaMinusXwoba\":-0.038}},\"regressionSignals\":{\"baMinusXba\":-0.029,\"wobaMinusXwoba\":-0.038},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":3.9,\"projectedLineupWRCPlus\":108.7,\"obp\":0.335,\"iso\":0.149,\"kPct\":22.2,\"bbPct\":10.1,\"xBA\":0.258,\"xSLG\":0.457,\"xwOBA\":0.346,\"hardHitPct\":43.2,\"barrelPct\":11.4,\"battingAverage\":0.25,\"wOBA\":0.331,\"lineup\":{\"totalWAR\":3.9,\"totalWRCPlus\":108.7,\"totalOBP\":0.335,\"totalISO\":0.152,\"totalKPct\":20.8,\"totalBBPct\":10.6,\"totalAVG\":0.25,\"totalWOBA\":0.331,\"totalXBA\":0.262,\"totalXSLG\":0.458,\"totalXWOBA\":0.351,\"totalHardHitPct\":43.3,\"totalBarrelPct\":10.8,\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.02}},\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.02},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"confirmed\",\"totalWAR\":0.1,\"totalWRCPlus\":78.1,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"confirmed\",\"totalWAR\":3.9,\"totalWRCPlus\":108.7,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.39,\"kMinusBbPct\":15.6,\"xFIP\":3.63,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.39,\"kMinusBbPct\":12.9,\"xFIP\":4.02,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":59.8,\"temperatureDisplay\":\"60°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 18 mph SSE\",\"compact\":\"60° | Cloudy | Wind 18 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-13T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Christian Scott 3.30/4.03 vs Framber Valdez 4.32/4.32; K-BB% 16.7 to 10.2.\",\"rawScore\":17.92,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346.\",\"rawScore\":-8.26,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.63 vs 4.02, WHIP 1.39 vs 1.39, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":2.04,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.029 and wOBA-xwOBA -0.038; opponent starter overperformance signal 1.50.\",\"rawScore\":4.6,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":21.5,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-13T23:03:18.268Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":61.5,\"temperatureDisplay\":\"62°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 17 mph S\",\"compact\":\"62° | Cloudy | Wind 17 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-13T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":3.27,\"xERA\":3.3,\"fip\":4.03,\"whip\":1.18,\"kPct\":31.3,\"bbPct\":14.6,\"kMinusBbPct\":16.7,\"hardHitPct\":29.2,\"barrelPct\":4.2,\"xBAAllowed\":0.172,\"xSLGAllowed\":0.277,\"xwOBAAllowed\":0.29,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"4.2\",\"er\":1,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-05-01\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"5.0\",\"er\":2,\"k\":8,\"result\":\"W\"},{\"date\":\"2026-04-23\",\"opponent\":\"Minnesota Twins\",\"ip\":\"1.1\",\"er\":1,\"k\":1,\"result\":\"W\"}],\"avgInnings\":3.67,\"avgEarnedRuns\":1.33,\"avgStrikeouts\":5,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":3.67,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Framber Valdez\",\"handedness\":\"L\",\"era\":4.57,\"xERA\":4.32,\"fip\":4.32,\"whip\":1.41,\"kPct\":17.9,\"bbPct\":7.7,\"kMinusBbPct\":10.2,\"hardHitPct\":44.7,\"barrelPct\":6.5,\"xBAAllowed\":0.258,\"xSLGAllowed\":0.411,\"xwOBAAllowed\":0.328,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-05\",\"opponent\":\"Boston Red Sox\",\"ip\":\"3.0\",\"er\":7,\"k\":3,\"result\":\"L\"},{\"date\":\"2026-04-30\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":8,\"result\":\"W\"},{\"date\":\"2026-04-24\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"4.1\",\"er\":2,\"k\":4,\"result\":\"-\"},{\"date\":\"2026-04-19\",\"opponent\":\"Boston Red Sox\",\"ip\":\"6.0\",\"er\":1,\"k\":7,\"result\":\"W\"}],\"avgInnings\":4.83,\"avgEarnedRuns\":3,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":8},\"workload\":{\"inningsTrend\":4.83,\"daysSinceLastStart\":8},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":0.1,\"projectedLineupWRCPlus\":78.1,\"obp\":0.283,\"iso\":0.118,\"kPct\":20.9,\"bbPct\":8.2,\"xBA\":0.249,\"xSLG\":0.407,\"xwOBA\":0.312,\"hardHitPct\":41.6,\"barrelPct\":8.2,\"battingAverage\":0.227,\"wOBA\":0.279,\"lineup\":{\"totalWAR\":0.1,\"totalWRCPlus\":78.1,\"totalOBP\":0.283,\"totalISO\":0.112,\"totalKPct\":20.1,\"totalBBPct\":7.4,\"totalAVG\":0.227,\"totalWOBA\":0.279,\"totalXBA\":0.256,\"totalXSLG\":0.418,\"totalXWOBA\":0.317,\"totalHardHitPct\":41.7,\"totalBarrelPct\":7.9,\"regressionSignals\":{\"baMinusXba\":-0.029,\"wobaMinusXwoba\":-0.038}},\"regressionSignals\":{\"baMinusXba\":-0.029,\"wobaMinusXwoba\":-0.038},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":3.9,\"projectedLineupWRCPlus\":108.7,\"obp\":0.335,\"iso\":0.149,\"kPct\":22.2,\"bbPct\":10.1,\"xBA\":0.258,\"xSLG\":0.457,\"xwOBA\":0.346,\"hardHitPct\":43.2,\"barrelPct\":11.4,\"battingAverage\":0.25,\"wOBA\":0.331,\"lineup\":{\"totalWAR\":3.9,\"totalWRCPlus\":108.7,\"totalOBP\":0.335,\"totalISO\":0.152,\"totalKPct\":20.8,\"totalBBPct\":10.6,\"totalAVG\":0.25,\"totalWOBA\":0.331,\"totalXBA\":0.262,\"totalXSLG\":0.458,\"totalXWOBA\":0.351,\"totalHardHitPct\":43.3,\"totalBarrelPct\":10.8,\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.02}},\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.02},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"confirmed\",\"totalWAR\":0.1,\"totalWRCPlus\":78.1,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"confirmed\",\"totalWAR\":3.9,\"totalWRCPlus\":108.7,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.39,\"kMinusBbPct\":15.6,\"xFIP\":3.63,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.39,\"kMinusBbPct\":12.9,\"xFIP\":4.02,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":61.5,\"temperatureDisplay\":\"62°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 17 mph S\",\"compact\":\"62° | Cloudy | Wind 17 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-13T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Christian Scott 3.30/4.03 vs Framber Valdez 4.32/4.32; K-BB% 16.7 to 10.2.\",\"rawScore\":17.92,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346.\",\"rawScore\":-8.26,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.63 vs 4.02, WHIP 1.39 vs 1.39, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":2.04,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.029 and wOBA-xwOBA -0.038; opponent starter overperformance signal 1.50.\",\"rawScore\":4.6,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":21.5,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Detroit Tigers: starting pitching is the clearest angle",
         "synopsis": "Christian Scott vs Framber Valdez sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Christian Scott 3.30/4.03 vs Framber Valdez 4.32/4.32; K-BB% 16.7 to 10.2. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1366,9 +1366,9 @@
           "opponent": "Detroit Tigers",
           "homeAway": "home",
           "ballpark": "Citi Field",
-          "weather": "60° | Cloudy | Wind 18 mph SSE",
+          "weather": "62° | Cloudy | Wind 17 mph S",
           "lineupStatus": "Confirmed",
-          "moneyline": "-112"
+          "moneyline": "-116"
         },
         "edgeSummary": {
           "startingPitching": {
@@ -1464,7 +1464,7 @@
           "whereTheRiskIs": [
             "Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346."
           ],
-          "bottomLine": "Model leans Mets at -112. Primary edge: starting pitching."
+          "bottomLine": "Model leans Mets at -116. Primary edge: starting pitching."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
@@ -1475,7 +1475,7 @@
           "whereRiskIs": [
             "Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346."
           ],
-          "bottomLine": "Model leans Mets at -112. Primary edge: starting pitching."
+          "bottomLine": "Model leans Mets at -116. Primary edge: starting pitching."
         },
         "sections": [
           {
@@ -1484,7 +1484,7 @@
           },
           {
             "heading": "2. Game Details",
-            "body": "2026-05-13 | 7:10 PM ET | Citi Field. Mets home game. Lineups: Confirmed. Mets ML: -112."
+            "body": "2026-05-13 | 7:10 PM ET | Citi Field. Mets home game. Lineups: Confirmed. Mets ML: -116."
           },
           {
             "heading": "3. Edge Summary",
@@ -1508,7 +1508,7 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Christian Scott: 3.27 ERA, 31.3%% K rate, 4.03 FIP, vs Framber Valdez: 4.57 ERA, 4.32 FIP.\n• Regression: xwOBA 0.312 vs actual wOBA .286 — expected stats above actual production.\n• Bullpen: Mets BP: 4.36 ERA, 3.63 xFIP, Opp BP: 4.08 ERA, 4.02 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346. Bottom line\nModel leans Mets at -112. Primary edge: starting pitching."
+            "body": "Why the Mets have a case\n• Christian Scott: 3.27 ERA, 31.3%% K rate, 4.03 FIP, vs Framber Valdez: 4.57 ERA, 4.32 FIP.\n• Regression: xwOBA 0.312 vs actual wOBA .286 — expected stats above actual production.\n• Bullpen: Mets BP: 4.36 ERA, 3.63 xFIP, Opp BP: 4.08 ERA, 4.02 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346. Bottom line\nModel leans Mets at -116. Primary edge: starting pitching."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
@@ -1616,11 +1616,11 @@
             "homeAway": "home",
             "ballpark": "Citi Field",
             "weather": {
-              "temperature": 59.8,
-              "temperatureDisplay": "60°",
+              "temperature": 61.5,
+              "temperatureDisplay": "62°",
               "condition": "Cloudy",
-              "wind": "Wind 18 mph SSE",
-              "compact": "60° | Cloudy | Wind 18 mph SSE",
+              "wind": "Wind 17 mph S",
+              "compact": "62° | Cloudy | Wind 17 mph S",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-05-13T23:00Z"
             }
@@ -1878,11 +1878,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 59.8,
-              "temperatureDisplay": "60°",
+              "temperature": 61.5,
+              "temperatureDisplay": "62°",
               "condition": "Cloudy",
-              "wind": "Wind 18 mph SSE",
-              "compact": "60° | Cloudy | Wind 18 mph SSE",
+              "wind": "Wind 17 mph S",
+              "compact": "62° | Cloudy | Wind 17 mph S",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-05-13T23:00Z"
             }
@@ -2033,7 +2033,7 @@
             "ballpark": "Citi Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/116.svg",
-            "metadataLine": "May 13th | 7:10 PM ET | Citi Field | 60° | Cloudy | Wind 18 mph SSE"
+            "metadataLine": "May 13th | 7:10 PM ET | Citi Field | 62° | Cloudy | Wind 17 mph S"
           },
           "quickRead": {
             "modelLean": "Mets",
@@ -2047,9 +2047,9 @@
             "opponent": "Detroit Tigers",
             "homeAway": "home",
             "ballpark": "Citi Field",
-            "weather": "60° | Cloudy | Wind 18 mph SSE",
+            "weather": "62° | Cloudy | Wind 17 mph S",
             "lineupStatus": "Confirmed",
-            "moneyline": "-112"
+            "moneyline": "-116"
           },
           "gameDetailsTable": {
             "rows": [
@@ -2063,11 +2063,11 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "60° | Cloudy | Wind 18 mph SSE"
+                "value": "62° | Cloudy | Wind 17 mph S"
               },
               {
                 "label": "Mets ML Odds",
-                "value": "-112"
+                "value": "-116"
               }
             ]
           },
@@ -2077,8 +2077,8 @@
             "rows": [
               {
                 "label": "Odds",
-                "mets": "-112",
-                "opp": "-104"
+                "mets": "-116",
+                "opp": "-102"
               },
               {
                 "label": "Season Record",
@@ -3366,7 +3366,7 @@
             "whereTheRiskIs": [
               "Overall lineup quality only: projected WAR 0.1 vs 3.9, projected lineup wRC+ 78.1 vs 108.7, xwOBA 0.312 vs 0.346."
             ],
-            "bottomLine": "Model leans Mets at -112. Primary edge: starting pitching."
+            "bottomLine": "Model leans Mets at -116. Primary edge: starting pitching."
           },
           "teamAdvanced": {
             "mets": {
@@ -3479,28 +3479,28 @@
           },
           "meta": {
             "homeAwayLabel": "Home",
-            "moneylineValue": "-112",
+            "moneylineValue": "-116",
             "schedulingSpot": {
               "category": "Scheduling Spot",
               "verdict": "Mets edge",
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "60° | Cloudy | Wind 18 mph SSE"
+            "weatherSummary": "62° | Cloudy | Wind 17 mph S"
           }
         }
       },
       "bettingHistory": {
         "market": "Mets Moneyline",
-        "odds": -112,
+        "odds": -116,
         "stake": 100
       },
       "weather": {
-        "temperature": 59.8,
-        "temperatureDisplay": "60°",
+        "temperature": 61.5,
+        "temperatureDisplay": "62°",
         "condition": "Cloudy",
-        "wind": "Wind 18 mph SSE",
-        "compact": "60° | Cloudy | Wind 18 mph SSE",
+        "wind": "Wind 17 mph S",
+        "compact": "62° | Cloudy | Wind 17 mph S",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-05-13T23:00Z"
       }
@@ -3516,7 +3516,7 @@
       "status": "pending",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
-      "odds": -112,
+      "odds": -116,
       "stake": 100
     },
     {
