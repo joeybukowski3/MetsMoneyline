@@ -18,6 +18,7 @@ const {
 } = require("./normalizers");
 
 const EASTERN_TIME_ZONE = "America/New_York";
+const ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4";
 const DEFAULT_MLB_STATS_TEAM_ID = 121;
 const NATIONAL_LEAGUE_ID = 104;
 const MLB_DIVISION_NAMES = {
@@ -325,6 +326,104 @@ function mergeUpcomingGameDetails(primaryGame, fallbackGame) {
   };
 }
 
+function canonicalTeamKeyFromName(name) {
+  return normalizeTeamIdentity({ name }).canonicalKey || String(name || "").toLowerCase();
+}
+
+function normalizeTheOddsApiMarket(market = {}) {
+  return {
+    key: market?.key || null,
+    label: market?.key || "Market",
+    outcomes: Array.isArray(market?.outcomes)
+      ? market.outcomes.map((outcome) => ({
+          name: outcome?.name || null,
+          description: outcome?.description || null,
+          price: typeof outcome?.price === "number" ? outcome.price : null,
+          point: typeof outcome?.point === "number" ? outcome.point : null
+        }))
+      : []
+  };
+}
+
+function normalizeTheOddsApiEvent(event) {
+  if (!event) {
+    return {
+      gameId: null,
+      markets: [],
+      bookmakers: [],
+      consensus: null,
+      raw: null
+    };
+  }
+
+  const bookmakers = Array.isArray(event?.bookmakers)
+    ? event.bookmakers.map((bookmaker) => ({
+        key: bookmaker?.key || null,
+        title: bookmaker?.title || bookmaker?.key || "Bookmaker",
+        markets: Array.isArray(bookmaker?.markets) ? bookmaker.markets.map(normalizeTheOddsApiMarket) : []
+      }))
+    : [];
+
+  return {
+    gameId: event?.id || null,
+    markets: bookmakers[0]?.markets || [],
+    bookmakers,
+    consensus: bookmakers[0] || null,
+    raw: event
+  };
+}
+
+function scoreOddsEventMatch(event, nextGame) {
+  if (!event || !nextGame) return -1;
+  const homeKey = canonicalTeamKeyFromName(event.home_team);
+  const awayKey = canonicalTeamKeyFromName(event.away_team);
+  const nextHomeKey = canonicalTeamKeyFromName(nextGame.home?.name);
+  const nextAwayKey = canonicalTeamKeyFromName(nextGame.away?.name);
+  let score = 0;
+  if (homeKey === nextHomeKey) score += 2;
+  if (awayKey === nextAwayKey) score += 2;
+  const eventTime = event?.commence_time ? new Date(event.commence_time).getTime() : NaN;
+  const nextTime = nextGame?.date ? new Date(nextGame.date).getTime() : NaN;
+  if (Number.isFinite(eventTime) && Number.isFinite(nextTime)) {
+    const diffMinutes = Math.abs(eventTime - nextTime) / 60000;
+    if (diffMinutes <= 10) score += 2;
+    else if (diffMinutes <= 60) score += 1;
+  }
+  return score;
+}
+
+async function fetchTheOddsApiEvent(nextGame, options = {}) {
+  const apiKey = process.env.ODDS_API_KEY;
+  if (!apiKey) return null;
+
+  const path = options.path || "/sports/baseball_mlb/odds";
+  const params = {
+    apiKey,
+    regions: "us",
+    oddsFormat: "american",
+    dateFormat: "iso",
+    ...options.params
+  };
+  const url = buildUrl(`${ODDS_API_BASE_URL}${path}`, params);
+  const payload = await fetchJsonWithRetry(url);
+  const events = Array.isArray(payload) ? payload : payload ? [payload] : [];
+
+  if (events.length === 0) return null;
+
+  if (nextGame) {
+    const scored = events
+      .map((event) => ({ event, score: scoreOddsEventMatch(event, nextGame) }))
+      .filter((entry) => entry.score >= 3)
+      .sort((a, b) => b.score - a.score);
+    if (scored[0]) return scored[0].event;
+  }
+
+  return events.find((event) => (
+    /new york mets|^mets$/i.test(event?.home_team || "")
+    || /new york mets|^mets$/i.test(event?.away_team || "")
+  )) || events[0] || null;
+}
+
 async function fetchStandingsWithFallback(config = getApiSportsConfig()) {
   const season = getCurrentSeason();
   try {
@@ -474,12 +573,74 @@ async function buildRecentGamesPayload() {
 }
 
 async function buildOddsPayload() {
-  const bundle = await getGamesBundle();
-  const odds = await fetchApiSportsOdds(bundle.liveGame?.gameId || bundle.nextGame?.gameId || null, bundle.config, bundle.season);
+  var bundle;
+  try {
+    bundle = await getGamesBundle();
+  } catch (error) {
+    console.warn(`[warn] Odds bundle fallback using MLB Stats only: ${error?.message || error}`);
+    bundle = {
+      config: getApiSportsConfig(),
+      season: getCurrentSeason(),
+      liveGame: null,
+      nextGame: await fetchMlbStatsUpcomingGame().catch(() => null)
+    };
+  }
+  const targetGame = bundle.liveGame || bundle.nextGame || null;
+  let odds = null;
+  let props = null;
+  let provider = "api-sports";
+
+  try {
+    const oddsEvent = await fetchTheOddsApiEvent(targetGame, {
+      params: {
+        markets: "h2h,spreads,totals"
+      }
+    });
+
+    if (oddsEvent) {
+      odds = normalizeTheOddsApiEvent(oddsEvent);
+      provider = "the-odds-api";
+
+      if (oddsEvent.id) {
+        const propsEvent = await fetchTheOddsApiEvent(targetGame, {
+          path: `/sports/baseball_mlb/events/${oddsEvent.id}/odds`,
+          params: {
+            markets: "player_strikeouts,player_home_runs"
+          }
+        }).catch(() => null);
+
+        if (propsEvent) {
+          props = normalizeTheOddsApiEvent(propsEvent);
+        }
+      }
+    }
+  } catch (error) {
+    console.warn(`[warn] The Odds API odds fetch failed: ${error?.message || error}`);
+  }
+
+  if (!odds) {
+    odds = await fetchApiSportsOdds(bundle.liveGame?.gameId || bundle.nextGame?.gameId || null, bundle.config, bundle.season);
+  }
+
+  const trackedSportsbooks = ["Fanatics", "DraftKings", "FanDuel", "BetMGM", "Caesars"];
+  const availableSportsbooks = Array.isArray(odds?.bookmakers)
+    ? odds.bookmakers.map((bookmaker) => bookmaker?.title).filter(Boolean)
+    : [];
+
   return {
     ...odds,
+    props,
+    context: targetGame ? normalizeNextGame(targetGame, bundle.config.metsTeamId, odds) : null,
+    diagnostics: {
+      mainEndpoint: "/v4/sports/baseball_mlb/odds",
+      mainMarkets: ["h2h", "spreads", "totals"],
+      propsEndpoint: odds?.gameId ? `/v4/sports/baseball_mlb/events/${odds.gameId}/odds` : null,
+      propsMarkets: ["player_strikeouts", "player_home_runs"],
+      availableSportsbooks,
+      missingTrackedSportsbooks: trackedSportsbooks.filter((name) => !availableSportsbooks.includes(name))
+    },
     meta: {
-      provider: "api-sports",
+      provider,
       generatedAt: new Date().toISOString(),
       cacheHint: "odds: 2-5 minutes"
     }

@@ -45,6 +45,11 @@ The same conceptual data may exist in more than one form:
 
 Always verify which path the relevant page or workflow actually uses.
 
+### Betting page caution
+
+- `api/mlb/mets/odds.json` is the generated static odds artifact and can be fetched safely from the frontend.
+- `/api/mlb/mets/next-game` currently resolves to the live handler in deployment, not the generated artifact, so do not use it as a static frontend dependency without confirming env support and route precedence.
+
 ## Documentation habit
 
 For non-trivial changes, read:

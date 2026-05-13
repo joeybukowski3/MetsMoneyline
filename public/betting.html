@@ -197,6 +197,16 @@
       min-height: 28px;
       font-weight: 700;
     }
+    .odds-total-cell {
+      min-width: 270px;
+    }
+    .odds-separator {
+      display: inline-flex;
+      align-items: center;
+      margin: 0 0.32rem;
+      color: #94a3b8;
+      font-weight: 700;
+    }
     .odds-muted {
       color: #64748b;
       font-weight: 600;
@@ -238,6 +248,91 @@
       border-radius: 14px;
       background: #fff;
       color: var(--text-muted);
+    }
+    .prop-section {
+      margin-top: 1.25rem;
+    }
+    .prop-section h3 {
+      margin: 0 0 0.75rem;
+      font-family: "Oswald", sans-serif;
+      font-size: 1rem;
+      color: var(--navy);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .prop-table-wrap {
+      overflow-x: auto;
+      border: 1px solid #d6dde8;
+      border-radius: 16px;
+      background: #fff;
+    }
+    .prop-table {
+      width: 100%;
+      min-width: 680px;
+      border-collapse: collapse;
+    }
+    .prop-table-wide {
+      min-width: 760px;
+    }
+    .prop-table thead th {
+      background: #002d72;
+      color: #fff;
+      padding: 0.8rem 0.9rem;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      text-align: left;
+    }
+    .prop-table tbody tr:nth-child(odd) { background: #ffffff; }
+    .prop-table tbody tr:nth-child(even) { background: #f8fafc; }
+    .prop-table td {
+      padding: 0.85rem 0.9rem;
+      border-top: 1px solid #e2e8f0;
+      vertical-align: top;
+      color: #0f172a;
+      font-size: 0.9rem;
+    }
+    .prop-price-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .prop-price-item-best .prop-pill {
+      background: #d1fae5;
+      border-color: #86efac;
+      color: #065f46;
+    }
+    .prop-pill {
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.42rem 0.58rem;
+      border: 1px solid #d6dde8;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.45;
+    }
+    .prop-book-link {
+      color: #002d72;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .prop-book-link:hover {
+      color: #ff5910;
+    }
+    .prop-pill-copy {
+      font-weight: 700;
+    }
+    .prop-unavailable {
+      padding: 1rem;
+      border: 1px dashed #d6dde8;
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text-muted);
+      text-align: center;
     }
 
     @media (max-width: 980px) {
