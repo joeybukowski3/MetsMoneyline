@@ -253,7 +253,7 @@ const TODAY_PICK_CONFIDENCE_SCORE = {
   Strong: 8
 };
 
-const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are the Today's Pick writer for MetsMoneyline.com. You are a disciplined MLB betting analyst writing from the perspective of a Mets-focused betting site. You must use only the structured game data provided by the application. You may not browse the web, infer missing facts, invent stats, or mention anything not present in the provided context. Your job is to identify the most defensible Mets-side betting case using the provided matchup data. You must always make the official pick Mets ML, but the reasoning must remain objective, grounded, and honest. If the data is mixed or unfavorable, acknowledge the risks and explain the best realistic path for the Mets ML side. Never guarantee a win. Never use words like lock, free money, can't lose, or guaranteed. Return valid JSON only.";
+const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a sharp MLB bettor writing a technical pre-game breakdown for MetsMoneyline.com. Your job is to identify the real analytical edges in today's matchup and explain concisely why the line is wrong or right. Use only the structured game data provided — no invented stats, no browsing. You must always set officialPick to \"Mets ML\", but the reasoning in bettingAngle must be grounded in actual numbers: xERA, percentile ranks, bullpen xERA, recent OPS ranks, or run differentials from the context. The bettingAngle field must read like a sharp bettor talking to another bettor: lead with the biggest quantified edge, use specific numbers and percentiles, end with the takeaway or contrarian angle if the line misprices the edge. Avoid all generic filler — no phrases like \"enters this one,\" \"mixed run,\" \"the stage is set,\" \"analytically unambiguous,\" or any sentence that could apply to any game. If the data is mixed, say so with specifics. Never use words like lock, guaranteed, free money, can't lose, or sure thing. Return valid JSON only.";
 
 const GROK_TODAY_PICK_SCHEMA = {
   type: "object",
@@ -429,6 +429,20 @@ function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deter
       dataMode: edge.dataMode || null
     }));
 
+  const keyEdgesTable = (edgeScoring?.categories || []).map((edge) => ({
+    category: edge.category,
+    winner: edge.edge === "Mets edge" ? "Mets" : edge.edge === "Opponent edge" ? "Opponent" : "Even",
+    strength: edge.strength,
+    explanation: edge.explanation
+  }));
+
+  const mfRows = gameFacts?.recentForm?.mets?.rows || [];
+  const ofRows = gameFacts?.recentForm?.opp?.rows || [];
+  const mOpsRow = mfRows.find((r) => r.statKey === "ops") || null;
+  const oOpsRow = ofRows.find((r) => r.statKey === "ops") || null;
+
+  const ha = gameFacts?.emailData?.homeAwayEdge || null;
+
   return {
     sourcePolicy: "Use only the fields in this JSON context. Do not browse or add missing facts.",
     game: {
@@ -450,7 +464,12 @@ function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deter
         name: gameFacts?.pitching?.mets?.name || null,
         hand: gameFacts?.pitching?.mets?.hand || null,
         seasonERA: gameFacts?.pitching?.mets?.seasonERA || null,
+        seasonXERA: gameFacts?.pitching?.mets?.seasonXERA || null,
         seasonWHIP: gameFacts?.pitching?.mets?.seasonWHIP || null,
+        xERAPercentile: gameFacts?.pitching?.mets?.savant?.percentiles?.xERA ?? null,
+        kPct: gameFacts?.pitching?.mets?.savant?.kPct || null,
+        kPctPercentile: gameFacts?.pitching?.mets?.savant?.percentiles?.kPct ?? null,
+        bbPct: gameFacts?.pitching?.mets?.savant?.bbPct || null,
         note: gameFacts?.pitching?.mets?.note || null,
         recentStarts: gameFacts?.pitching?.mets?.recentStarts || []
       },
@@ -458,15 +477,57 @@ function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deter
         name: gameFacts?.pitching?.opp?.name || null,
         hand: gameFacts?.pitching?.opp?.hand || null,
         seasonERA: gameFacts?.pitching?.opp?.seasonERA || null,
+        seasonXERA: gameFacts?.pitching?.opp?.seasonXERA || null,
         seasonWHIP: gameFacts?.pitching?.opp?.seasonWHIP || null,
+        xERAPercentile: gameFacts?.pitching?.opp?.savant?.percentiles?.xERA ?? null,
+        kPct: gameFacts?.pitching?.opp?.savant?.kPct || null,
+        kPctPercentile: gameFacts?.pitching?.opp?.savant?.percentiles?.kPct ?? null,
+        bbPct: gameFacts?.pitching?.opp?.savant?.bbPct || null,
         note: gameFacts?.pitching?.opp?.note || null,
         recentStarts: gameFacts?.pitching?.opp?.recentStarts || []
       }
     },
     bullpen: {
-      mets: gameFacts?.pitching?.metsBullpen || null,
-      opponent: gameFacts?.pitching?.oppBullpen || null
+      mets: {
+        seasonXERA: gameFacts?.pitching?.metsBullpen?.seasonXERAAverage ?? null,
+        seasonERA: gameFacts?.pitching?.metsBullpen?.seasonERA ?? null,
+        last20ERA: gameFacts?.pitching?.metsBullpen?.last20ERA ?? null,
+        usage: gameFacts?.pitching?.metsBullpen?.usage ?? null
+      },
+      opponent: {
+        seasonXERA: gameFacts?.pitching?.oppBullpen?.seasonXERAAverage ?? null,
+        seasonERA: gameFacts?.pitching?.oppBullpen?.seasonERA ?? null,
+        last20ERA: gameFacts?.pitching?.oppBullpen?.last20ERA ?? null,
+        usage: gameFacts?.pitching?.oppBullpen?.usage ?? null
+      }
     },
+    recentForm: {
+      mets: {
+        last20OPS: mOpsRow?.recentValue ?? null,
+        last20OPSRank: mOpsRow?.recentRank ?? null,
+        seasonOPS: mOpsRow?.seasonValue ?? null,
+        seasonOPSRank: mOpsRow?.seasonRank ?? null,
+        opsChangePct: mOpsRow?.differencePct ?? null,
+        improving: mOpsRow?.improving ?? null
+      },
+      opponent: {
+        last20OPS: oOpsRow?.recentValue ?? null,
+        last20OPSRank: oOpsRow?.recentRank ?? null,
+        seasonOPS: oOpsRow?.seasonValue ?? null,
+        seasonOPSRank: oOpsRow?.seasonRank ?? null,
+        opsChangePct: oOpsRow?.differencePct ?? null,
+        improving: oOpsRow?.improving ?? null
+      }
+    },
+    homeAwayEdge: ha ? {
+      metsHome: ha.metsHome
+        ? { games: ha.metsHome.games, differential: ha.metsHome.differential }
+        : null,
+      oppRoad: ha.oppRoad
+        ? { games: ha.oppRoad.games, differential: ha.oppRoad.differential }
+        : null
+    } : null,
+    keyEdgesTable,
     lineups: {
       status: gameFacts?.lineups?.status || null,
       mets: (gameFacts?.lineups?.mets || []).map((player) => ({
@@ -578,14 +639,25 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
   }
 
   const userPrompt = [
-    "Write the Today's Pick section using only this provided game context.",
+    "Write the Today's Pick section using ONLY the provided game context. Do not invent or imply any stat not present in the data.",
     "",
-    "Required output:",
-    "- Valid JSON only",
-    "- No markdown",
-    "- No commentary outside JSON",
+    "Required output format:",
+    "- Valid JSON only — no markdown, no commentary outside JSON",
     "- officialPick must be exactly \"Mets ML\"",
-    "- Do not include any stat, injury, lineup, odds, trend, or weather detail unless it appears in the provided context",
+    "",
+    "bettingAngle field — write 2–3 sentences as a sharp bettor talking to another bettor:",
+    "  1st sentence: The biggest pitching or bullpen edge with specific numbers (xERA, percentile rank, or K%).",
+    "  2nd sentence: Secondary edge (offense OPS rank, home/away differential, or additional pitching context) with data.",
+    "  3rd sentence (optional): The takeaway — is the line right or wrong? Any contrarian note?",
+    "  - Use specific numbers: \"Scott's 3.30 xERA (88th percentile)\" not \"Scott has been solid\"",
+    "  - No clichés: no 'enters this one', 'mixed run', 'the stage is set', 'analytically unambiguous'",
+    "  - No filler that could apply to any game",
+    "  - If the data is thin or mixed, say so with specifics — do not inflate confidence",
+    "",
+    "summary field: 1–2 sentence headline summary of the pick rationale (can be slightly broader than bettingAngle).",
+    "headline field: Short punchy title for the pick card (8 words max).",
+    "metsEdges: 2–3 specific, data-backed bullet points on the Mets side.",
+    "risks: 1–2 specific risks with numbers where available.",
     "",
     `JSON schema:\n${JSON.stringify(GROK_TODAY_PICK_SCHEMA, null, 2)}`,
     "",
