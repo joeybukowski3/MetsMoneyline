@@ -199,6 +199,7 @@
     .verdict-hot { background: rgba(220, 38, 38, 0.1); color: #dc2626; }
     .verdict-cold { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
     .verdict-track { background: rgba(22, 163, 74, 0.1); color: #16a34a; }
+    .verdict-avg { background: rgba(234, 179, 8, 0.12); color: #92400e; }
 
     .trends-content-grid {
       display: grid;
@@ -505,12 +506,12 @@
       return v != null ? String(v) : "&mdash;";
     }
 
-    function verdictBadge(ba, xba) {
-      if (ba == null || xba == null) return "";
-      const diff = ba - xba;
-      if (diff > 0.02) return '<span class="verdict-badge verdict-hot">Running hot</span>';
-      if (diff < -0.02) return '<span class="verdict-badge verdict-cold">Running cold</span>';
-      return '<span class="verdict-badge verdict-track">On track</span>';
+    function verdictBadge(ba) {
+      if (ba == null || !LEAGUE_AVG.ba) return "";
+      const ratio = ba / LEAGUE_AVG.ba;
+      if (ratio > 1.10) return '<span class="verdict-badge verdict-track">Above Average</span>';
+      if (ratio < 0.90) return '<span class="verdict-badge verdict-cold">Running Cold</span>';
+      return '<span class="verdict-badge verdict-avg">Average</span>';
     }
 
     function resolveCardStat(cardId) {
@@ -670,6 +671,26 @@
       }
     };
 
+    const mlbAvgLabelPlugin = {
+      id: "mlbAvgLabel",
+      afterDraw: function(chart, args, pluginOptions) {
+        if (!pluginOptions || pluginOptions.value == null) return;
+        const yScale = chart.scales.y;
+        if (!yScale) return;
+        const yPixel = yScale.getPixelForValue(pluginOptions.value);
+        if (yPixel < yScale.top || yPixel > yScale.bottom) return;
+        const ctx = chart.ctx;
+        const right = chart.chartArea.right;
+        ctx.save();
+        ctx.fillStyle = "#9ca3af";
+        ctx.font = "500 9px Inter";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        ctx.fillText("MLB Avg", right - 2, yPixel - 2);
+        ctx.restore();
+      }
+    };
+
     function buildPlayerChartSpec(windowData, statKey) {
       const normalized = normalizeRolling(windowData || {});
       const labels = sliceVisibleSeries(normalized.labels, getVisiblePointCount());
@@ -682,6 +703,8 @@
       let yMin = BA_XBA_Y_MIN;
       let yMax = BA_XBA_Y_MAX;
       let tickFormatter = fmtDecimal;
+
+      let avgValue = null;
 
       if (statKey === "ba") {
         datasets.push({
@@ -698,6 +721,7 @@
         });
         yMin = BA_XBA_Y_MIN;
         yMax = BA_XBA_Y_MAX;
+        avgValue = LEAGUE_AVG.ba || null;
       } else if (statKey === "xba") {
         datasets.push({
           label: "Cumulative xBA",
@@ -713,6 +737,7 @@
         });
         yMin = BA_XBA_Y_MIN;
         yMax = BA_XBA_Y_MAX;
+        avgValue = LEAGUE_AVG.xba || null;
       } else if (statKey === "ops") {
         datasets.push({
           label: "Cumulative OPS",
@@ -728,6 +753,22 @@
         });
         yMin = 0.5;
         yMax = 0.95;
+        avgValue = LEAGUE_AVG.ops || null;
+      }
+
+      if (avgValue != null) {
+        datasets.push({
+          label: "MLB Avg",
+          data: labels.map(function() { return avgValue; }),
+          borderColor: "#9ca3af",
+          borderWidth: 1.2,
+          borderDash: [5, 4],
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          tension: 0,
+          fill: false,
+          order: 2
+        });
       }
 
       return {
@@ -736,7 +777,8 @@
         datasets: datasets,
         yMin: yMin,
         yMax: yMax,
-        tickFormatter: tickFormatter
+        tickFormatter: tickFormatter,
+        mlbAvgLabel: { value: avgValue }
       };
     }
 
@@ -878,6 +920,7 @@
           plugins: {
             legend: { display: false },
             teamBarLabels: spec.teamBarLabels || { enabled: false },
+            mlbAvgLabel: spec.mlbAvgLabel || { value: null },
             tooltip: {
               backgroundColor: "#1a1a2e",
               titleFont: { family: "Inter", size: 11, weight: "600" },
@@ -886,7 +929,7 @@
               cornerRadius: 8,
               displayColors: true,
               boxPadding: 4,
-              filter: function(item) { return item.parsed.y != null; },
+              filter: function(item) { return item.parsed.y != null && item.dataset.label !== "MLB Avg"; },
               callbacks: {
                 label: function(tipItem) {
                   if (tipItem.parsed.y == null) return null;
@@ -920,7 +963,7 @@
             }
           }
         },
-        plugins: [teamBarLabelsPlugin]
+        plugins: [teamBarLabelsPlugin, mlbAvgLabelPlugin]
       });
     }
 
@@ -985,7 +1028,7 @@
               "<h3>New York Mets - Team</h3>" +
               "<span>Full season and recent window comparison</span>" +
             "</div>" +
-            verdictBadge(w.ba, w.xba) +
+            verdictBadge(w.ba) +
           "</div>" +
           '<div class="team-stat-tabs">' +
             TEAM_CHART_STATS.map(function(statKey) {
@@ -1026,7 +1069,7 @@
               "<h3>" + player.name + "</h3>" +
               "<span>" + (player.position || "") + " · " + (w.pa || 0) + " PA · " + (w.games || 0) + " G</span>" +
             "</div>" +
-            verdictBadge(w.ba, w.xba) +
+            verdictBadge(w.ba) +
           "</div>" +
           '<div class="trend-chart-wrap"><canvas id="chart-player-' + idx + '"></canvas></div>' +
           '<div class="trend-meta-row trend-stats-row">' +
