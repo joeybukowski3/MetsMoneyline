@@ -239,16 +239,7 @@ const GROK_TODAY_PICK_SCHEMA = {
     bettingAngle: { type: "string" },
     officialPick: { type: "string", const: "Mets ML" },
     confidenceLabel: { type: "string", enum: ["Low", "Lean", "Standard", "Strong"] },
-    confidenceScore: { type: "number" },
-    sosInsights: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        metsStarterSummary: { type: "string" },
-        opponentStarterSummary: { type: "string" }
-      },
-      required: ["metsStarterSummary", "opponentStarterSummary"]
-    }
+    confidenceScore: { type: "number" }
   },
   required: [
     "headline",
@@ -258,8 +249,7 @@ const GROK_TODAY_PICK_SCHEMA = {
     "bettingAngle",
     "officialPick",
     "confidenceLabel",
-    "confidenceScore",
-    "sosInsights"
+    "confidenceScore"
   ]
 };
 
@@ -277,10 +267,7 @@ const cachedFangraphsTeams = new Map();
 const cachedFangraphsLeaderboards = new Map();
 const cachedGameFeeds = new Map();
 const cachedTeamScheduleGames = new Map();
-const cachedTeamHittingGameLogs = new Map();
-const cachedPitcherGameLogs = new Map();
-const cachedPitcherSeasonStats = new Map();
-const cachedTeamOffenseContexts = new Map();
+const cachedRecentTeamHittingStats = new Map();
 
 function getTodayEasternISO() {
   return getEasternDateISO();
@@ -341,24 +328,6 @@ function formatSignedPercent(value, digits = 1) {
   return `${value > 0 ? "+" : ""}${normalized}%`;
 }
 
-function buildDeterministicSosSummary(pitcherName, row, venueLabel) {
-  if (!pitcherName) return "Schedule-adjusted context is unavailable for this starter.";
-  if (!row || !Number.isFinite(row.adjustmentPct)) {
-    return `${pitcherName}'s schedule-adjusted context is unavailable for this report.`;
-  }
-  const contextLabel = row.context === "home" ? "home" : "road";
-  const venuePhrase = venueLabel
-    ? (row.context === "home" ? ` at ${venueLabel}` : ` away from ${venueLabel}`)
-    : (row.context === "home" ? " in home starts" : " in road starts");
-  if (row.adjustmentPct >= 5) {
-    return `${pitcherName}'s ${contextLabel} line has held up against schedule-adjusted context${venuePhrase}; the results are better than the opponent-quality baseline suggests.`;
-  }
-  if (row.adjustmentPct <= -5) {
-    return `${pitcherName}'s ${contextLabel} line needs more caution${venuePhrase}; the results trail the opponent-quality baseline he has faced.`;
-  }
-  return `${pitcherName}'s ${contextLabel} results are close to schedule-adjusted expectation${venuePhrase}, without a major inflation or discount from opponent quality.`;
-}
-
 function buildDeterministicTodayPick(gameFacts, writeup, analysisObject, edgeScoring) {
   const pickSummary = stripUnsupportedPickLanguage(writeup?.pickSummary || "");
   const pickNarrative = stripUnsupportedPickLanguage(writeup?.pickNarrative || "");
@@ -396,19 +365,7 @@ function buildDeterministicTodayPick(gameFacts, writeup, analysisObject, edgeSco
     bettingAngle,
     officialPick: "Mets ML",
     confidenceLabel,
-    confidenceScore,
-    sosInsights: {
-      metsStarterSummary: buildDeterministicSosSummary(
-        gameFacts?.pitching?.mets?.name,
-        gameFacts?.sosAnalytics?.metsStarter?.currentContext || null,
-        gameFacts?.meta?.ballpark || null
-      ),
-      opponentStarterSummary: buildDeterministicSosSummary(
-        gameFacts?.pitching?.opp?.name,
-        gameFacts?.sosAnalytics?.oppStarter?.currentContext || null,
-        gameFacts?.meta?.ballpark || null
-      )
-    }
+    confidenceScore
   };
 }
 
@@ -435,7 +392,7 @@ function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deter
     }));
 
   return {
-    sourcePolicy: "Use only the fields in this JSON context. Do not browse or add missing facts. Reference schedule-adjusted context when it is meaningful and any SoS adjustment is at least 5% in either direction.",
+    sourcePolicy: "Use only the fields in this JSON context. Do not browse or add missing facts.",
     game: {
       date: gameFacts?.meta?.date || null,
       time: gameFacts?.meta?.time || null,
@@ -503,14 +460,12 @@ function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deter
     },
     records: gameFacts?.records || null,
     teamAdvanced: gameFacts?.advanced?.teamAdvanced || null,
-    sosAnalytics: gameFacts?.sosAnalytics || null,
     model: {
       analyticalLean: deterministicTodayPick?.confidenceLabel === "Strong"
         ? "Mets"
         : (analysisObject?.context?.analyticalLean || null),
       projectedWinProbability: edgeScoring?.projectedWinProbability ?? null,
       confidence: edgeScoring?.confidence || null,
-      overallSosEdge: gameFacts?.sosAnalytics?.edgeSummary?.badge || null,
       topMetsEdges,
       topRisks
     },
@@ -561,15 +516,7 @@ function normalizeTodayPickPayload(payload, fallbackTodayPick) {
     bettingAngle: bettingAngle || fallbackTodayPick.bettingAngle,
     officialPick: "Mets ML",
     confidenceLabel: normalizedConfidence.confidenceLabel,
-    confidenceScore: normalizedConfidence.confidenceScore,
-    sosInsights: {
-      metsStarterSummary: stripUnsupportedPickLanguage(
-        payload?.sosInsights?.metsStarterSummary || fallbackTodayPick?.sosInsights?.metsStarterSummary
-      ),
-      opponentStarterSummary: stripUnsupportedPickLanguage(
-        payload?.sosInsights?.opponentStarterSummary || fallbackTodayPick?.sosInsights?.opponentStarterSummary
-      )
-    }
+    confidenceScore: normalizedConfidence.confidenceScore
   };
 }
 
@@ -581,7 +528,6 @@ function applyTodayPickToWriteup(writeup, todayPick) {
   return {
     ...writeup,
     todayPick: normalized,
-    sosInsights: normalized.sosInsights,
     pickSummary: normalized.bettingAngle,
     pickNarrative: narrative,
     confidence: normalized.confidenceLabel.toLowerCase()
@@ -601,8 +547,6 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
     "- No markdown",
     "- No commentary outside JSON",
     "- officialPick must be exactly \"Mets ML\"",
-    "- Include sosInsights with one sentence each for the Mets starter and opponent starter schedule-adjusted read",
-    "- If any schedule-adjusted percentage in the context is at least 5% in either direction, reference that context when it materially affects the betting case",
     "- Do not include any stat, injury, lineup, odds, trend, or weather detail unless it appears in the provided context",
     "",
     `JSON schema:\n${JSON.stringify(GROK_TODAY_PICK_SCHEMA, null, 2)}`,
@@ -2220,28 +2164,30 @@ async function buildLineupFacts(feed, oppTeamId, targetDate) {
 async function buildBullpenFacts(teamId, teamName, isMets) {
   const season = String(getEasternYear());
   const today = getTodayEasternISO();
-  const last14Start = addDaysToDateISO(today, -14);
-  const last3Start = addDaysToDateISO(today, -3);
+  const last20Start = addDaysToDateISO(today, -20);
+  const last7Start = addDaysToDateISO(today, -7);
 
-  const [current, fangraphsTeam, last14, last3] = await Promise.all([
+  const [current, fangraphsTeam, seasonRoster, last20Roster, gameLogRoster] = await Promise.all([
     safeGetJson(
       `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=season&group=pitching&season=${season}`,
       `team pitching ${teamId} ${season}`
     ),
     loadFangraphsTeamData(teamName),
     safeGetJson(
-      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last14Start}&endDate=${today}`,
-      `team pitching last14 ${teamId} ${season}`
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active&season=${season}&hydrate=person(stats(type=[season],group=[pitching],season=${season}))`,
+      `pitching roster season ${teamId} ${season}`
     ),
     safeGetJson(
-      `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=pitching&gameType=R&startDate=${last3Start}&endDate=${today}`,
-      `team pitching last3 ${teamId} ${season}`
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active&season=${season}&hydrate=person(stats(type=[byDateRange],group=[pitching],startDate=${last20Start},endDate=${today}))`,
+      `pitching roster last20 ${teamId} ${season}`
+    ),
+    safeGetJson(
+      `https://statsapi.mlb.com/api/v1/teams/${teamId}/roster?rosterType=active&season=${season}&hydrate=person(stats(type=[gameLog],group=[pitching],season=${season}))`,
+      `pitching roster game log ${teamId} ${season}`
     )
   ]);
 
   const stat = current?.stats?.[0]?.splits?.[0]?.stat || null;
-  const last14Stat = last14?.stats?.[0]?.splits?.[0]?.stat || null;
-  const last3Stat = last3?.stats?.[0]?.splits?.[0]?.stat || null;
   const pitchingTotal = fangraphsTeam?.pitchingTeamTotal || {};
   const seasonEra = pitchingTotal['ERA'] || stat?.era || null;
   const seasonWhip = stat?.whip || null;
@@ -2249,17 +2195,163 @@ async function buildBullpenFacts(teamId, teamName, isMets) {
   const rating = seasonEra
     ? Math.max(40, Math.min(85, Math.round(100 - (parseFloat(seasonEra) - 2.5) * 12)))
     : (isMets ? 70 : 65);
+  const relieverSeasonRows = extractPitchingRosterRows(seasonRoster);
+  const relieverLast20Rows = extractPitchingRosterRows(last20Roster);
+  const relieverGameLogRows = extractPitchingGameLogs(gameLogRoster);
+  const relieverIds = new Set(relieverSeasonRows.map((row) => row.playerId));
+  const seasonAggregate = aggregateBullpenRows(relieverSeasonRows);
+  const last20Aggregate = aggregateBullpenRows(relieverLast20Rows.filter((row) => relieverIds.has(row.playerId)));
+  const last7Games = relieverGameLogRows.filter((row) => relieverIds.has(row.playerId) && row.date >= last7Start && row.date < today);
+  const closer = buildCloserSnapshot(relieverSeasonRows, last7Games);
+  const usage = buildBullpenUsage(last7Games, relieverIds.size);
 
   return {
-    seasonERA: seasonEra,
+    seasonERA: seasonAggregate.era ?? seasonEra,
     seasonXFIP: seasonFip,
-    last14ERA: last14Stat?.era || null,
-    last3DaysIP: last3Stat?.inningsPitched || null,
-    seasonWHIP: seasonWhip,
+    last14ERA: null,
+    last20ERA: last20Aggregate.era,
+    last20WHIP: last20Aggregate.whip,
+    last3DaysIP: null,
+    seasonWHIP: seasonAggregate.whip ?? seasonWhip,
     seasonKPct: pitchingTotal['K%'] || null,
     seasonBBPct: pitchingTotal['BB%'] || null,
     rating,
-    team: teamName
+    team: teamName,
+    usage,
+    closer,
+    relieverCount: relieverIds.size
+  };
+}
+
+function extractPitchingRosterRows(data) {
+  return (data?.roster || [])
+    .map((entry) => {
+      const stat = entry?.person?.stats?.[0]?.splits?.find((split) => split?.sport?.id !== 0)?.stat
+        || entry?.person?.stats?.[0]?.splits?.[0]?.stat
+        || null;
+      return {
+        playerId: entry?.person?.id || null,
+        name: entry?.person?.fullName || entry?.person?.nameFirstLast || "Pitcher",
+        stats: stat
+      };
+    })
+    .filter((row) => row.playerId && row.stats && Number(row.stats.gamesPlayed || 0) > 0);
+}
+
+function extractPitchingGameLogs(data) {
+  return (data?.roster || []).flatMap((entry) => {
+    const splits = entry?.person?.stats?.[0]?.splits || [];
+    return splits
+      .filter((split) => split?.date && split?.stat)
+      .map((split) => ({
+        playerId: entry?.person?.id || null,
+        name: entry?.person?.fullName || entry?.person?.nameFirstLast || "Pitcher",
+        date: split.date,
+        stat: split.stat
+      }));
+  });
+}
+
+function isRelieverStatLine(stat = {}) {
+  const gamesPlayed = Number(stat.gamesPlayed || stat.gamesPitched || 0);
+  const gamesStarted = Number(stat.gamesStarted || 0);
+  return gamesPlayed > 0 && gamesStarted === 0;
+}
+
+function formatOutsToIp(outs) {
+  const wholeOuts = Number(outs);
+  if (!Number.isFinite(wholeOuts)) return null;
+  const whole = Math.floor(wholeOuts / 3);
+  const remainder = wholeOuts % 3;
+  return `${whole}.${remainder}`;
+}
+
+function aggregateBullpenRows(rows = []) {
+  let outs = 0;
+  let earnedRuns = 0;
+  let walks = 0;
+  let hits = 0;
+
+  for (const row of rows) {
+    const stat = row?.stats || row?.stat || null;
+    if (!isRelieverStatLine(stat)) continue;
+    const rowOuts = inningsPitchedToOuts(stat.inningsPitched);
+    if (!Number.isFinite(rowOuts) || rowOuts <= 0) continue;
+    outs += rowOuts;
+    earnedRuns += Number(stat.earnedRuns || 0);
+    walks += Number(stat.baseOnBalls || 0);
+    hits += Number(stat.hits || 0);
+  }
+
+  if (!outs) {
+    return {
+      outs: 0,
+      inningsPitched: null,
+      era: null,
+      whip: null
+    };
+  }
+
+  const innings = outs / 3;
+  return {
+    outs,
+    inningsPitched: formatOutsToIp(outs),
+    era: Number(((earnedRuns * 9) / innings).toFixed(2)),
+    whip: Number(((hits + walks) / innings).toFixed(2))
+  };
+}
+
+function buildBullpenUsage(gameLogs = [], relieverCount = 0) {
+  const appearances = gameLogs.filter((row) => isRelieverStatLine(row?.stat)).length;
+  const appearancesPerPitcherPerDay = relieverCount > 0
+    ? appearances / relieverCount / 7
+    : null;
+  let label = "Low";
+  let tone = "green";
+  if (appearancesPerPitcherPerDay != null && appearancesPerPitcherPerDay >= 0.6) {
+    label = "High";
+    tone = "red";
+  } else if (appearancesPerPitcherPerDay != null && appearancesPerPitcherPerDay >= 0.3) {
+    label = "Medium";
+    tone = "yellow";
+  }
+  return {
+    appearances,
+    appearancesPerPitcherPerDay: appearancesPerPitcherPerDay == null
+      ? null
+      : Number(appearancesPerPitcherPerDay.toFixed(2)),
+    label,
+    tone
+  };
+}
+
+function buildCloserSnapshot(seasonRows = [], recentGameLogs = []) {
+  const relievers = seasonRows
+    .filter((row) => isRelieverStatLine(row?.stats))
+    .map((row) => {
+      const stat = row.stats;
+      return {
+        playerId: row.playerId,
+        name: row.name,
+        saves: Number(stat.saves || 0),
+        saveOpportunities: Number(stat.saveOpportunities || 0),
+        era: parseNumber(stat.era),
+        whip: parseNumber(stat.whip)
+      };
+    });
+  const closer = relievers
+    .sort((a, b) => (b.saves - a.saves) || (b.saveOpportunities - a.saveOpportunities) || a.name.localeCompare(b.name))[0];
+  if (!closer) return null;
+
+  const closerLogs = recentGameLogs.filter((row) => row.playerId === closer.playerId && isRelieverStatLine(row?.stat));
+  const usageOuts = closerLogs.reduce((sum, row) => sum + (inningsPitchedToOuts(row?.stat?.inningsPitched) || 0), 0);
+  return {
+    ...closer,
+    saveConversionPct: closer.saveOpportunities > 0
+      ? Number(((closer.saves / closer.saveOpportunities) * 100).toFixed(1))
+      : null,
+    last7DaysAppearances: closerLogs.length,
+    last7DaysInningsPitched: usageOuts ? formatOutsToIp(usageOuts) : "0.0"
   };
 }
 
@@ -2351,6 +2443,123 @@ function pctFromCounts(numerator, denominator) {
   const den = Number(denominator || 0);
   if (!den) return null;
   return ((num / den) * 100).toFixed(1);
+}
+
+function computeRatePct(numerator, denominator, digits = 1) {
+  const num = Number(numerator || 0);
+  const den = Number(denominator || 0);
+  if (!den) return null;
+  return Number(((num / den) * 100).toFixed(digits));
+}
+
+function normalizeTeamHittingSnapshot(stat = null) {
+  if (!stat) {
+    return {
+      ops: null,
+      avg: null,
+      kPct: null,
+      bbPct: null
+    };
+  }
+  return {
+    ops: parseNumber(stat.ops),
+    avg: parseNumber(stat.avg),
+    kPct: computeRatePct(stat.strikeOuts, stat.plateAppearances),
+    bbPct: computeRatePct(stat.baseOnBalls, stat.plateAppearances)
+  };
+}
+
+async function getTeamRecentHittingStats(teamId, endDate, days = 20) {
+  const season = String(endDate).slice(0, 4);
+  const startDate = addDaysToDateISO(endDate, -days);
+  const cacheKey = `${teamId}:${startDate}:${endDate}`;
+  if (cachedRecentTeamHittingStats.has(cacheKey)) return cachedRecentTeamHittingStats.get(cacheKey);
+  const promise = safeGetJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=byDateRange&group=hitting&gameType=R&startDate=${startDate}&endDate=${endDate}`,
+    `team hitting byDateRange ${teamId} ${startDate} ${endDate}`
+  ).then((data) => data?.stats?.[0]?.splits?.[0]?.stat || null);
+  cachedRecentTeamHittingStats.set(cacheKey, promise);
+  return promise;
+}
+
+function assignStatRanks(teamRows, statKey, { descending = true } = {}) {
+  const ranked = teamRows
+    .filter((row) => Number.isFinite(row?.stats?.[statKey]))
+    .sort((left, right) => descending
+      ? right.stats[statKey] - left.stats[statKey]
+      : left.stats[statKey] - right.stats[statKey]);
+  ranked.forEach((row, index) => {
+    row.ranks ||= {};
+    row.ranks[statKey] = index + 1;
+  });
+}
+
+function computeTrendDifference(seasonValue, recentValue, invert = false) {
+  if (!Number.isFinite(seasonValue) || !Number.isFinite(recentValue) || seasonValue === 0) return null;
+  const raw = invert
+    ? ((seasonValue - recentValue) / seasonValue) * 100
+    : ((recentValue - seasonValue) / seasonValue) * 100;
+  return Number(raw.toFixed(1));
+}
+
+function buildRecentFormRow(statKey, seasonRow, recentRow) {
+  const invert = statKey === "kPct";
+  return {
+    statKey,
+    seasonRank: seasonRow?.ranks?.[statKey] || null,
+    seasonValue: seasonRow?.stats?.[statKey] ?? null,
+    recentRank: recentRow?.ranks?.[statKey] || null,
+    recentValue: recentRow?.stats?.[statKey] ?? null,
+    differencePct: computeTrendDifference(seasonRow?.stats?.[statKey], recentRow?.stats?.[statKey], invert),
+    improving: invert
+      ? Number.isFinite(seasonRow?.stats?.[statKey]) && Number.isFinite(recentRow?.stats?.[statKey]) && recentRow.stats[statKey] < seasonRow.stats[statKey]
+      : Number.isFinite(seasonRow?.stats?.[statKey]) && Number.isFinite(recentRow?.stats?.[statKey]) && recentRow.stats[statKey] > seasonRow.stats[statKey]
+  };
+}
+
+async function buildRecentFormFacts(targetDate, oppTeamId) {
+  const endDate = addDaysToDateISO(targetDate, -1);
+  const season = String(targetDate).slice(0, 4);
+  const teamEntries = Object.entries(TEAM_IDS);
+  const snapshots = await Promise.all(teamEntries.map(async ([name, id]) => {
+    const [seasonStat, recentStat] = await Promise.all([
+      getTeamSeasonStats(id, "hitting", season),
+      getTeamRecentHittingStats(id, endDate, 20)
+    ]);
+    return {
+      teamId: id,
+      teamName: name,
+      season: { stats: normalizeTeamHittingSnapshot(seasonStat), ranks: {} },
+      recent: { stats: normalizeTeamHittingSnapshot(recentStat), ranks: {} }
+    };
+  }));
+
+  for (const statKey of ["ops", "avg", "bbPct"]) {
+    assignStatRanks(snapshots.map((row) => row.season), statKey, { descending: true });
+    assignStatRanks(snapshots.map((row) => row.recent), statKey, { descending: true });
+  }
+  assignStatRanks(snapshots.map((row) => row.season), "kPct", { descending: false });
+  assignStatRanks(snapshots.map((row) => row.recent), "kPct", { descending: false });
+
+  const buildTeamForm = (teamId) => {
+    const team = snapshots.find((entry) => entry.teamId === teamId);
+    if (!team) return null;
+    return {
+      teamId,
+      teamName: team.teamName,
+      rows: [
+        buildRecentFormRow("ops", team.season, team.recent),
+        buildRecentFormRow("avg", team.season, team.recent),
+        buildRecentFormRow("kPct", team.season, team.recent),
+        buildRecentFormRow("bbPct", team.season, team.recent)
+      ]
+    };
+  };
+
+  return {
+    mets: buildTeamForm(TEAM_ID),
+    opp: buildTeamForm(oppTeamId)
+  };
 }
 
 function deriveApproxWrcPlus(hittingStat) {
@@ -2706,69 +2915,6 @@ async function getOddsFacts(game) {
   }
 }
 
-function normalizeContextKey(value) {
-  return value === "road" ? "away" : value;
-}
-
-function normalizeHomeFlag(value) {
-  if (typeof value === "boolean") return value;
-  if (value == null) return null;
-  const normalized = String(value).trim().toLowerCase();
-  if (["home", "h", "true"].includes(normalized)) return true;
-  if (["away", "road", "a", "false"].includes(normalized)) return false;
-  return null;
-}
-
-function calculateBattingAverageFromTotals(totals = {}) {
-  const atBats = Number(totals.atBats || 0);
-  const hits = Number(totals.hits || 0);
-  if (!atBats) return null;
-  return Number((hits / atBats).toFixed(3));
-}
-
-function calculateOpsFromTotals(totals = {}) {
-  const atBats = Number(totals.atBats || 0);
-  const hits = Number(totals.hits || 0);
-  const doubles = Number(totals.doubles || 0);
-  const triples = Number(totals.triples || 0);
-  const homeRuns = Number(totals.homeRuns || 0);
-  const walks = Number(totals.baseOnBalls || totals.walks || 0);
-  const hitByPitch = Number(totals.hitByPitch || 0);
-  const sacFlies = Number(totals.sacFlies || 0);
-  if (!atBats) return null;
-  const singles = Math.max(0, hits - doubles - triples - homeRuns);
-  const totalBases = singles + (2 * doubles) + (3 * triples) + (4 * homeRuns);
-  const obpDenominator = atBats + walks + hitByPitch + sacFlies;
-  const obp = obpDenominator ? (hits + walks + hitByPitch) / obpDenominator : null;
-  const slg = atBats ? totalBases / atBats : null;
-  if (!Number.isFinite(obp) || !Number.isFinite(slg)) return null;
-  return Number((obp + slg).toFixed(3));
-}
-
-function accumulateHittingTotals(target, stat = {}) {
-  target.atBats += Number(stat.atBats || 0);
-  target.hits += Number(stat.hits || 0);
-  target.doubles += Number(stat.doubles || 0);
-  target.triples += Number(stat.triples || 0);
-  target.homeRuns += Number(stat.homeRuns || 0);
-  target.baseOnBalls += Number(stat.baseOnBalls || stat.walks || 0);
-  target.hitByPitch += Number(stat.hitByPitch || 0);
-  target.sacFlies += Number(stat.sacFlies || 0);
-}
-
-function createHittingTotals() {
-  return {
-    atBats: 0,
-    hits: 0,
-    doubles: 0,
-    triples: 0,
-    homeRuns: 0,
-    baseOnBalls: 0,
-    hitByPitch: 0,
-    sacFlies: 0
-  };
-}
-
 function isCompletedRegularSeasonGame(game) {
   const state = game?.status?.detailedState || "";
   return ["Final", "Completed Early", "Game Over"].includes(state);
@@ -2779,88 +2925,6 @@ async function getCachedGameFeed(gamePk) {
   if (cachedGameFeeds.has(gamePk)) return cachedGameFeeds.get(gamePk);
   const promise = getGameFeed(gamePk);
   cachedGameFeeds.set(gamePk, promise);
-  return promise;
-}
-
-async function getCompletedScheduleGames(teamId, season, beforeDate) {
-  const cacheKey = `${teamId}:${season}:${beforeDate}`;
-  if (cachedTeamScheduleGames.has(cacheKey)) return cachedTeamScheduleGames.get(cacheKey);
-  const promise = safeGetJson(
-    `https://statsapi.mlb.com/api/v1/schedule?teamId=${teamId}&sportId=1&gameType=R&startDate=${season}-03-01&endDate=${beforeDate}&hydrate=team,linescore`,
-    `team schedule ${teamId} ${season} ${beforeDate}`
-  ).then((data) => (data?.dates || [])
-    .flatMap((dateEntry) => dateEntry.games || [])
-    .filter((game) => isCompletedRegularSeasonGame(game) && game?.officialDate && game.officialDate < beforeDate));
-  cachedTeamScheduleGames.set(cacheKey, promise);
-  return promise;
-}
-
-async function getTeamHittingGameLog(teamId, season) {
-  const cacheKey = `${teamId}:${season}`;
-  if (cachedTeamHittingGameLogs.has(cacheKey)) return cachedTeamHittingGameLogs.get(cacheKey);
-  const promise = safeGetJson(
-    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=gameLog&group=hitting&season=${season}`,
-    `team hitting game log ${teamId} ${season}`
-  ).then((data) => data?.stats?.[0]?.splits || []);
-  cachedTeamHittingGameLogs.set(cacheKey, promise);
-  return promise;
-}
-
-async function getPitcherGameLog(playerId, season) {
-  const cacheKey = `${playerId}:${season}`;
-  if (cachedPitcherGameLogs.has(cacheKey)) return cachedPitcherGameLogs.get(cacheKey);
-  const promise = safeGetJson(
-    `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=gameLog&group=pitching&season=${season}`,
-    `pitcher game log ${playerId} ${season}`
-  ).then((data) => data?.stats?.[0]?.splits || []);
-  cachedPitcherGameLogs.set(cacheKey, promise);
-  return promise;
-}
-
-async function getPitcherSeasonBaAgainst(playerId, season) {
-  if (!playerId) return null;
-  const cacheKey = `${playerId}:${season}`;
-  if (cachedPitcherSeasonStats.has(cacheKey)) return cachedPitcherSeasonStats.get(cacheKey);
-  const promise = safeGetJson(
-    `https://statsapi.mlb.com/api/v1/people/${playerId}/stats?stats=season&group=pitching&season=${season}`,
-    `pitcher season stats ${playerId} ${season}`
-  ).then((data) => {
-    const stat = data?.stats?.[0]?.splits?.[0]?.stat || null;
-    return parseNumber(stat?.avg);
-  });
-  cachedPitcherSeasonStats.set(cacheKey, promise);
-  return promise;
-}
-
-async function getTeamOffenseContextMetrics(teamId, season, beforeDate) {
-  const cacheKey = `${teamId}:${season}:${beforeDate}`;
-  if (cachedTeamOffenseContexts.has(cacheKey)) return cachedTeamOffenseContexts.get(cacheKey);
-  const promise = getTeamHittingGameLog(teamId, season).then((splits) => {
-    const buckets = {
-      home: { totals: createHittingTotals(), games: 0 },
-      away: { totals: createHittingTotals(), games: 0 }
-    };
-    for (const split of splits || []) {
-      if (!split?.date || split.date >= beforeDate) continue;
-      const isHome = normalizeHomeFlag(split?.isHome);
-      const context = isHome ? "home" : "away";
-      accumulateHittingTotals(buckets[context].totals, split?.stat || {});
-      buckets[context].games += 1;
-    }
-    return {
-      home: {
-        ba: calculateBattingAverageFromTotals(buckets.home.totals),
-        ops: calculateOpsFromTotals(buckets.home.totals),
-        games: buckets.home.games
-      },
-      away: {
-        ba: calculateBattingAverageFromTotals(buckets.away.totals),
-        ops: calculateOpsFromTotals(buckets.away.totals),
-        games: buckets.away.games
-      }
-    };
-  });
-  cachedTeamOffenseContexts.set(cacheKey, promise);
   return promise;
 }
 
@@ -2892,192 +2956,6 @@ function extractStartingPitcherFromFeed(feed, teamId) {
     return { id: probable.id, name: probable.fullName || "Starting Pitcher" };
   }
   return null;
-}
-
-function calculateOffenseSosAdjustment(rawBa, baselineBa) {
-  if (!Number.isFinite(rawBa) || !Number.isFinite(baselineBa) || baselineBa === 0) return null;
-  return Number((((rawBa - baselineBa) / baselineBa) * 100).toFixed(1));
-}
-
-function calculatePitcherSosAdjustment(baAgainst, baselineBaEquivalent) {
-  if (!Number.isFinite(baAgainst) || !Number.isFinite(baselineBaEquivalent) || baselineBaEquivalent === 0) return null;
-  return Number((((baselineBaEquivalent - baAgainst) / baselineBaEquivalent) * 100).toFixed(1));
-}
-
-function finalizeSosRow(context, rawValue, baselineValue, sampleSize, baselineLabel, adjustmentPct, sampleThreshold, attemptedCount = sampleSize) {
-  if (!Number.isFinite(rawValue) || !Number.isFinite(baselineValue) || !Number.isFinite(adjustmentPct)) return null;
-  return {
-    context,
-    rawValue: Number(rawValue.toFixed(3)),
-    baselineValue: Number(baselineValue.toFixed(3)),
-    sampleSize,
-    attemptedCount,
-    unavailableCount: Math.max(0, Number(attemptedCount || 0) - Number(sampleSize || 0)),
-    sampleFlag: Number(attemptedCount || 0) < sampleThreshold,
-    baselineLabel,
-    adjustmentPct
-  };
-}
-
-async function buildMetsOffenseSos(targetDate, season) {
-  const [completedGames, teamContexts] = await Promise.all([
-    getCompletedScheduleGames(TEAM_ID, season, targetDate),
-    getTeamOffenseContextMetrics(TEAM_ID, season, targetDate)
-  ]);
-
-  const contextPitchers = { home: [], away: [] };
-  for (const game of completedGames) {
-    const metsHome = game?.teams?.home?.team?.id === TEAM_ID;
-    const context = metsHome ? "home" : "away";
-    const opponentTeamId = metsHome ? game?.teams?.away?.team?.id : game?.teams?.home?.team?.id;
-    const feed = await getCachedGameFeed(game?.gamePk);
-    const starter = extractStartingPitcherFromFeed(feed, opponentTeamId);
-    if (starter?.id) contextPitchers[context].push(starter.id);
-  }
-
-  const buildContextRow = async (context) => {
-    const pitcherIds = contextPitchers[context];
-    const baselines = await Promise.all(pitcherIds.map((pitcherId) => getPitcherSeasonBaAgainst(pitcherId, season)));
-    const validBaselines = baselines.filter(Number.isFinite);
-    const baselineAverage = averageNumbers(validBaselines);
-    const metsBa = teamContexts?.[context]?.ba;
-    const games = teamContexts?.[context]?.games || 0;
-    return finalizeSosRow(
-      context,
-      metsBa,
-      baselineAverage,
-      validBaselines.length,
-      "pitchers",
-      calculateOffenseSosAdjustment(metsBa, baselineAverage),
-      8,
-      games
-    );
-  };
-
-  const [home, away] = await Promise.all([buildContextRow("home"), buildContextRow("away")]);
-  return {
-    home,
-    away,
-    currentContext: null
-  };
-}
-
-function extractPitcherStartsByContext(splits = [], beforeDate) {
-  const starts = { home: [], away: [] };
-  for (const split of splits || []) {
-    if (!split?.date || split.date >= beforeDate) continue;
-    if (Number(split?.stat?.gamesStarted || 0) <= 0) continue;
-    const isHome = normalizeHomeFlag(split?.isHome);
-    const context = isHome ? "home" : "away";
-    starts[context].push(split);
-  }
-  return starts;
-}
-
-function aggregatePitchingAverageAllowed(starts = []) {
-  const totals = { atBats: 0, hits: 0 };
-  for (const split of starts || []) {
-    totals.atBats += Number(split?.stat?.atBats || 0);
-    totals.hits += Number(split?.stat?.hits || 0);
-  }
-  return calculateBattingAverageFromTotals(totals);
-}
-
-async function buildStarterSos(playerId, pitcherName, season, beforeDate, currentContext) {
-  if (!playerId) return null;
-  const gameLog = await getPitcherGameLog(playerId, season);
-  const startsByContext = extractPitcherStartsByContext(gameLog, beforeDate);
-
-  const buildRow = async (context) => {
-    const starts = startsByContext[context] || [];
-    if (!starts.length) return null;
-    const baAgainst = aggregatePitchingAverageAllowed(starts);
-    const baselineValues = [];
-    for (const split of starts) {
-      const opponentTeamId = split?.opponent?.id || TEAM_IDS[split?.opponent?.name] || null;
-      if (!opponentTeamId) continue;
-      const opponentContexts = await getTeamOffenseContextMetrics(opponentTeamId, season, beforeDate);
-      const opponentOps = context === "home" ? opponentContexts?.away?.ops : opponentContexts?.home?.ops;
-      if (Number.isFinite(opponentOps)) baselineValues.push(opponentOps);
-    }
-    const baselineOps = averageNumbers(baselineValues);
-    const baselineBaEquivalent = Number.isFinite(baselineOps)
-      ? Number((baselineOps * 0.265).toFixed(3))
-      : null;
-    return finalizeSosRow(
-      context,
-      baAgainst,
-      baselineBaEquivalent,
-      baselineValues.length,
-      "teams",
-      calculatePitcherSosAdjustment(baAgainst, baselineBaEquivalent),
-      4,
-      starts.length
-    );
-  };
-
-  const [home, away] = await Promise.all([buildRow("home"), buildRow("away")]);
-  return {
-    name: pitcherName || "Starting Pitcher",
-    home,
-    away,
-    currentContext: currentContext ? (normalizeContextKey(currentContext) === "away" ? away : home) : null
-  };
-}
-
-function buildOverallSosEdge(sosAnalytics, gameFacts) {
-  if (!sosAnalytics) return null;
-  const currentOffense = sosAnalytics?.offense?.currentContext || null;
-  const currentMetsPitcher = sosAnalytics?.metsStarter?.currentContext || null;
-  const currentOppPitcher = sosAnalytics?.oppStarter?.currentContext || null;
-  const offenseEdgePct = currentOffense?.adjustmentPct ?? null;
-  const pitchingEdgePct = Number.isFinite(currentMetsPitcher?.adjustmentPct) && Number.isFinite(currentOppPitcher?.adjustmentPct)
-    ? Number((currentMetsPitcher.adjustmentPct - currentOppPitcher.adjustmentPct).toFixed(1))
-    : null;
-  const combinedEdge = Number.isFinite(offenseEdgePct) && Number.isFinite(pitchingEdgePct)
-    ? Number((offenseEdgePct + pitchingEdgePct).toFixed(1))
-    : Number.isFinite(offenseEdgePct)
-      ? offenseEdgePct
-      : pitchingEdgePct;
-  const oppAbbr = TEAM_NAME_TO_ABBR[gameFacts?.game?.opponent] || "OPP";
-  const badge = Number.isFinite(combinedEdge)
-    ? (combinedEdge >= 5 ? "NYM EDGE" : combinedEdge <= -5 ? `${oppAbbr} EDGE` : "NEUTRAL")
-    : "NEUTRAL";
-  return {
-    offenseEdgePct,
-    pitchingEdgePct,
-    combinedEdgePct: Number.isFinite(combinedEdge) ? combinedEdge : null,
-    badge,
-    currentOffenseAdjustmentPct: offenseEdgePct,
-    currentMetsPitcherAdjustmentPct: currentMetsPitcher?.adjustmentPct ?? null,
-    currentOppPitcherAdjustmentPct: currentOppPitcher?.adjustmentPct ?? null
-  };
-}
-
-async function buildSosAnalytics(gameFacts) {
-  const season = String(gameFacts?.meta?.date || "").slice(0, 4);
-  if (!season) return null;
-  const metsCurrentContext = normalizeContextKey(gameFacts?.meta?.homeAway);
-  const oppCurrentContext = metsCurrentContext === "home" ? "away" : "home";
-  const beforeDate = gameFacts?.meta?.date;
-  const [offense, metsStarter, oppStarter] = await Promise.all([
-    buildMetsOffenseSos(beforeDate, season),
-    buildStarterSos(gameFacts?.pitching?.mets?.mlbId, gameFacts?.pitching?.mets?.name, season, beforeDate, metsCurrentContext),
-    buildStarterSos(gameFacts?.pitching?.opp?.mlbId, gameFacts?.pitching?.opp?.name, season, beforeDate, oppCurrentContext)
-  ]);
-
-  if (offense) {
-    offense.currentContext = metsCurrentContext === "away" ? offense.away : offense.home;
-  }
-
-  const sosAnalytics = {
-    season,
-    offense,
-    metsStarter,
-    oppStarter
-  };
-  sosAnalytics.edgeSummary = buildOverallSosEdge(sosAnalytics, gameFacts);
-  return sosAnalytics;
 }
 
 async function buildGameFacts(targetDate) {
@@ -3139,7 +3017,7 @@ async function buildGameFacts(targetDate) {
         savantTeam: { mets: null, opp: null },
         teamAdvanced: game.teamAdvanced || {}
       },
-      sosAnalytics: game.sosAnalytics || null,
+      recentForm: game.recentForm || null,
       weather: game.weather || null,
       game: {
         gamePk: game.gamePk || game.sourceGamePk || null,
@@ -3180,7 +3058,7 @@ async function buildGameFacts(targetDate) {
     opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
   };
 
-  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
+  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, recentForm, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
     Promise.all([
       getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME, resolvedDate),
       getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name, resolvedDate)
@@ -3189,6 +3067,7 @@ async function buildGameFacts(targetDate) {
     buildBullpenFacts(TEAM_ID, TEAM_NAME, true),
     buildBullpenFacts(oppTeam.id, oppTeam.name, false),
     buildTeamAdvancedFacts(TEAM_ID, oppTeam.id),
+    buildRecentFormFacts(resolvedDate, oppTeam.id),
     getTeamRecentGames(TEAM_ID, resolvedDate, 5),
     getTeamRecentGames(oppTeam.id, resolvedDate, 5),
     getHeadToHead(TEAM_ID, oppTeam.id, resolvedDate.slice(0, 4)),
@@ -3287,7 +3166,7 @@ async function buildGameFacts(targetDate) {
       },
       teamAdvanced
     },
-    sosAnalytics: null,
+    recentForm,
     weather: weather || null,
     game: {
       gamePk: game.gamePk,
@@ -3304,8 +3183,6 @@ async function buildGameFacts(targetDate) {
       note: source ? `Resolved via ${source}.` : "Resolved via external/mlb-stats."
     }
   };
-
-  facts.sosAnalytics = await buildSosAnalytics(facts);
 
   ensureNoUndefinedStrings(sanitizeForModel(facts));
   return facts;
@@ -3590,8 +3467,7 @@ function buildGameAnalysisObject(gameFacts) {
     bullpen: {
       mets: buildBullpenAnalysis(gameFacts.pitching.metsBullpen),
       opp: buildBullpenAnalysis(gameFacts.pitching.oppBullpen)
-    },
-    sos: gameFacts.sosAnalytics || null
+    }
   };
 
   analysisObject.context = buildContextAnalysis(gameFacts, analysisObject);
@@ -3613,9 +3489,7 @@ function buildMissingMetricsList(analysisObject) {
     ["Pitcher splits vs opponent handedness/profile", analysisObject?.pitchers?.mets?.splitsVsOpponentHandedness],
     ["Opponent pitcher splits vs opponent handedness/profile", analysisObject?.pitchers?.opp?.splitsVsOpponentHandedness],
     ["Mets bullpen leverage-arm availability", analysisObject?.bullpen?.mets?.availabilityTopArms],
-    ["Opponent bullpen leverage-arm availability", analysisObject?.bullpen?.opp?.availabilityTopArms],
-    ["Schedule-adjusted offense context", analysisObject?.sos?.offense?.currentContext?.adjustmentPct],
-    ["Schedule-adjusted pitcher context", analysisObject?.sos?.edgeSummary?.currentMetsPitcherAdjustmentPct]
+    ["Opponent bullpen leverage-arm availability", analysisObject?.bullpen?.opp?.availabilityTopArms]
   ];
 
   return checks.filter(([, value]) => value == null).map(([label]) => label);
@@ -3756,44 +3630,6 @@ function scoreRegressionEdge(analysisObject) {
   );
 }
 
-function scoreScheduleAdjustedEdge(analysisObject) {
-  const offenseAdjustment = analysisObject?.sos?.edgeSummary?.currentOffenseAdjustmentPct;
-  const metsPitcherAdjustment = analysisObject?.sos?.edgeSummary?.currentMetsPitcherAdjustmentPct;
-  const oppPitcherAdjustment = analysisObject?.sos?.edgeSummary?.currentOppPitcherAdjustmentPct;
-  const hasAny = [offenseAdjustment, metsPitcherAdjustment, oppPitcherAdjustment].some(Number.isFinite);
-  if (!hasAny) {
-    return withCategoryMeta(
-      buildCategoryResult("SoS Analytics", 8, 0, "Schedule-adjusted context is unavailable for this matchup.", "Limited data"),
-      {
-        dataMode: "fallback",
-        supportedBy: [],
-        missing: ["schedule-adjusted offense and pitcher context"]
-      }
-    );
-  }
-  let score = 0;
-  if (Number.isFinite(offenseAdjustment)) score += offenseAdjustment * 0.5;
-  if (Number.isFinite(metsPitcherAdjustment) && Number.isFinite(oppPitcherAdjustment)) {
-    score += (metsPitcherAdjustment - oppPitcherAdjustment) * 0.7;
-  } else if (Number.isFinite(metsPitcherAdjustment)) {
-    score += metsPitcherAdjustment * 0.4;
-  }
-  score = Number(score.toFixed(2));
-  const explanation = `Schedule-adjusted lens: Mets offense ${formatSignedPercent(offenseAdjustment)} in today's context; ${analysisObject?.pitchers?.mets?.name || "Mets SP"} ${formatSignedPercent(metsPitcherAdjustment)} vs ${analysisObject?.pitchers?.opp?.name || "Opponent SP"} ${formatSignedPercent(oppPitcherAdjustment)}.`;
-  return withCategoryMeta(
-    buildCategoryResult("SoS Analytics", 8, score, explanation, "Limited data"),
-    {
-      dataMode: Number.isFinite(offenseAdjustment) && Number.isFinite(metsPitcherAdjustment) && Number.isFinite(oppPitcherAdjustment) ? "real" : "fallback",
-      supportedBy: ["schedule-adjusted offense context", "schedule-adjusted starter context"],
-      missing: [
-        Number.isFinite(offenseAdjustment) ? null : "Mets offense SoS",
-        Number.isFinite(metsPitcherAdjustment) ? null : "Mets starter SoS",
-        Number.isFinite(oppPitcherAdjustment) ? null : "Opponent starter SoS"
-      ].filter(Boolean)
-    }
-  );
-}
-
 function scoreBullpenEdge(analysisObject) {
   const mets = analysisObject.bullpen.mets;
   const opp = analysisObject.bullpen.opp;
@@ -3878,7 +3714,6 @@ function buildEdgeScoring(analysisObject) {
     scoreLineupEdge(analysisObject),
     scoreBullpenEdge(analysisObject),
     scoreRegressionEdge(analysisObject),
-    scoreScheduleAdjustedEdge(analysisObject),
     scoreHomeAwayEdge(analysisObject),
     scoreContextEdge(analysisObject)
   ];
@@ -3975,7 +3810,6 @@ function buildEdgeSummary(edgeScoring, pick) {
     "Lineup vs Handedness",
     "Bullpen",
     "Regression Signals",
-    "SoS Analytics",
     "Context",
     "Market Value"
   ];
@@ -4004,7 +3838,6 @@ function buildEdgeSummary(edgeScoring, pick) {
     lineupQuality: findVerdict("Lineup Quality"),
     bullpen: findVerdict("Bullpen"),
     regressionSignals: findVerdict("Regression Signals"),
-    sosAnalytics: findVerdict("SoS Analytics"),
     context: findVerdict("Context"),
     schedulingSpot: findVerdict("Context")
       ? { ...findVerdict("Context"), category: "Scheduling Spot" }
@@ -4099,12 +3932,6 @@ function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
     }
   }
 
-  if (!whyMetsHaveCase.length && metsAngles.some((edge) => edge.category === "SoS Analytics")) {
-    const offenseAdj = gameFacts?.sosAnalytics?.edgeSummary?.currentOffenseAdjustmentPct;
-    const pitcherAdj = gameFacts?.sosAnalytics?.edgeSummary?.currentMetsPitcherAdjustmentPct;
-    whyMetsHaveCase.push(`Schedule-adjusted context: Mets offense ${formatSignedPercent(offenseAdj)} and ${mp.name || "the Mets starter"} ${formatSignedPercent(pitcherAdj)} in today's split.`);
-  }
-
   if (!whyMetsHaveCase.length) {
     whyMetsHaveCase.push("No single dominant Mets edge. Lineup quality is the primary case.");
   }
@@ -4126,11 +3953,6 @@ function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
     } else {
       whereRiskIs.push(edge.explanation || "Contextual factors slightly favor the opponent.");
     }
-  }
-
-  if (!whereRiskIs.length && riskAngles.some((edge) => edge.category === "SoS Analytics")) {
-    const oppAdj = gameFacts?.sosAnalytics?.edgeSummary?.currentOppPitcherAdjustmentPct;
-    whereRiskIs.push(`Schedule-adjusted context leans the other way: opposing starter ${formatSignedPercent(oppAdj)} in today's split.`);
   }
 
   if (!whereRiskIs.length) {
@@ -4706,66 +4528,53 @@ function buildTrendArray(gameFacts) {
   ];
 }
 
-function buildSosPresentationRow(row, rowType) {
-  if (!row) return null;
+function formatReportAverage(value) {
+  if (!Number.isFinite(value)) return "N/A";
+  const fixed = Number(value).toFixed(3);
+  return fixed.startsWith("0") ? fixed.slice(1) : fixed;
+}
+
+function formatReportPct(value, digits = 1) {
+  if (!Number.isFinite(value)) return "N/A";
+  return `${Number(value).toFixed(digits)}%`;
+}
+
+function formatRecentFormDiff(value) {
+  if (!Number.isFinite(value)) return "N/A";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}%`;
+}
+
+function buildBullpenPresentationCard(teamName, teamId, bullpen = {}) {
+  const closer = bullpen?.closer || null;
   return {
-    context: row.context === "home" ? "Home" : "Away",
-    rawLabel: rowType === "offense" ? "Mets BA" : "BA Against",
-    rawValue: formatBattingRate(row.rawValue),
-    baselineValue: formatBattingRate(row.baselineValue),
-    baselineMeta: `vs ${row.sampleSize} ${row.baselineLabel}`,
-    adjustmentLabel: formatSignedPercent(row.adjustmentPct),
-    adjustmentPct: row.adjustmentPct,
-    sampleFlag: Boolean(row.sampleFlag),
-    unavailableCount: row.unavailableCount || 0,
-    attemptedCount: row.attemptedCount || row.sampleSize || 0,
-    sampleSize: row.sampleSize || 0
+    teamName,
+    teamId,
+    usage: bullpen?.usage || { label: "Low", tone: "green" },
+    statsRow: {
+      seasonEra: parseNumber(bullpen?.seasonERA),
+      seasonWhip: parseNumber(bullpen?.seasonWHIP),
+      last20Era: parseNumber(bullpen?.last20ERA)
+    },
+    closer: closer ? {
+      name: closer.name,
+      playerId: closer.playerId,
+      saves: closer.saves,
+      saveOpportunities: closer.saveOpportunities,
+      saveConversionPct: closer.saveConversionPct,
+      era: closer.era,
+      whip: closer.whip,
+      last7DaysAppearances: closer.last7DaysAppearances,
+      last7DaysInningsPitched: closer.last7DaysInningsPitched
+    } : null
   };
 }
 
-function buildSosPresentationReport(game, writeup) {
-  const sos = game?.sosAnalytics || null;
-  if (!sos) return null;
-  const opponentAbbr = TEAM_NAME_TO_ABBR[game?.opponent] || "OPP";
-  const offenseRows = [buildSosPresentationRow(sos?.offense?.home, "offense"), buildSosPresentationRow(sos?.offense?.away, "offense")].filter(Boolean);
-  const metsStarterRows = [buildSosPresentationRow(sos?.metsStarter?.home, "pitcher"), buildSosPresentationRow(sos?.metsStarter?.away, "pitcher")].filter(Boolean);
-  const oppStarterRows = [buildSosPresentationRow(sos?.oppStarter?.home, "pitcher"), buildSosPresentationRow(sos?.oppStarter?.away, "pitcher")].filter(Boolean);
-  const edgeSummary = sos?.edgeSummary || null;
-  const offenseLine = Number.isFinite(edgeSummary?.offenseEdgePct)
-    ? `Mets offense is ${Math.abs(edgeSummary.offenseEdgePct).toFixed(1)}% ${edgeSummary.offenseEdgePct >= 0 ? "better than" : "below"} its schedule-adjusted baseline in today's ${game?.homeAway === "home" ? "home" : "road"} split.`
-    : null;
-  const pitchingLine = Number.isFinite(edgeSummary?.pitchingEdgePct)
-    ? `Pitching edge: ${formatSignedPercent(edgeSummary.currentMetsPitcherAdjustmentPct)} for ${game?.pitching?.mets?.name || "the Mets starter"} versus ${formatSignedPercent(edgeSummary.currentOppPitcherAdjustmentPct)} for ${game?.pitching?.opp?.name || "the opposing starter"}.`
-    : null;
+function buildRecentFormPresentationReport(game) {
+  const recentForm = game?.recentForm || null;
+  if (!recentForm) return null;
   return {
-    subtitle: "Stats adjusted for opponent quality faced in each context",
-    offenseCard: offenseRows.length ? {
-      title: "Mets Offense — Schedule-Adjusted BA",
-      rows: offenseRows
-    } : null,
-    metsStarterCard: metsStarterRows.length ? {
-      title: `${game?.pitching?.mets?.name || "Mets Starter"} — Schedule-Adjusted Performance`,
-      rows: metsStarterRows,
-      summary: writeup?.sosInsights?.metsStarterSummary || null
-    } : null,
-    oppStarterCard: oppStarterRows.length ? {
-      title: `${game?.pitching?.opp?.name || "Opponent Starter"} — Schedule-Adjusted Performance`,
-      rows: oppStarterRows,
-      summary: writeup?.sosInsights?.opponentStarterSummary || null
-    } : null,
-    edgeSummary: edgeSummary ? {
-      offenseLine,
-      pitchingLine,
-      badge: edgeSummary.badge || "NEUTRAL",
-      badgeTone: edgeSummary.badge === "NYM EDGE"
-        ? "mets"
-        : edgeSummary.badge === `${opponentAbbr} EDGE`
-          ? "opp"
-          : "neutral",
-      combinedLabel: Number.isFinite(edgeSummary.combinedEdgePct)
-        ? `Overall SoS edge ${formatSignedPercent(edgeSummary.combinedEdgePct)}`
-        : "Overall SoS edge unavailable"
-    } : null
+    mets: recentForm.mets || null,
+    opp: recentForm.opp || null
   };
 }
 
@@ -4904,7 +4713,11 @@ function buildPresentationReport(game) {
   const preliminaryTitle = preliminaryMeta?.enabled
     ? `${preliminaryMeta.titlePrefix || "PRELIMINARY REPORT"} - ${headline}`
     : headline;
-  const sosAnalytics = buildSosPresentationReport(game, writeup);
+  const bullpenReport = {
+    mets: buildBullpenPresentationCard("New York Mets", TEAM_ID, pitching.metsBullpen),
+    opp: buildBullpenPresentationCard(game?.opponent || "Opponent", game?.oppTeamId || null, pitching.oppBullpen)
+  };
+  const recentFormReport = buildRecentFormPresentationReport(game);
   const teamComparison = {
     metsHeader: "New York Mets",
     oppHeader: game?.opponent === "San Francisco Giants" ? "SF Giants" : (game?.opponent || "Opponent"),
@@ -5050,7 +4863,8 @@ function buildPresentationReport(game) {
       ],
       summary: writeup.pitchingEdgeSummary || null
     },
-    sosAnalytics,
+    bullpenReport,
+    recentFormReport,
     pitcherContactProfile: {
       metsPitcher: pitching.mets?.name || "TBD",
       oppPitcher: pitching.opp?.name || "TBD",
@@ -5120,6 +4934,46 @@ function buildPresentationReport(game) {
   };
 }
 
+function stripLegacySosPayload(value) {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => stripLegacySosPayload(item))
+      .filter((item) => item !== null);
+  }
+  if (value && typeof value === "object") {
+    if (value.category === "SoS Analytics") return null;
+    const cleaned = {};
+    for (const [key, entry] of Object.entries(value)) {
+      if (key === "sos" || key === "sosAnalytics" || key === "sosInsights") continue;
+      const sanitized = stripLegacySosPayload(entry);
+      if (sanitized !== null) cleaned[key] = sanitized;
+    }
+    return cleaned;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if ((trimmed.startsWith("{") && trimmed.endsWith("}")) || (trimmed.startsWith("[") && trimmed.endsWith("]"))) {
+      try {
+        return JSON.stringify(stripLegacySosPayload(JSON.parse(value)));
+      } catch {
+        return value
+          .replace(/\bSoS Analytics\b/g, "")
+          .replace(/\s*\|\s*SoS Analytics:[^|]*/g, "")
+          .replace(/Schedule-adjusted lens:[^.]*\./g, "")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+      }
+    }
+    return value
+      .replace(/\bSoS Analytics\b/g, "")
+      .replace(/\s*\|\s*SoS Analytics:[^|]*/g, "")
+      .replace(/Schedule-adjusted lens:[^.]*\./g, "")
+      .replace(/\s{2,}/g, " ")
+      .trim();
+  }
+  return value;
+}
+
 function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
@@ -5171,7 +5025,7 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     },
     advancedMatchup: gameFacts.advanced.cards,
     teamAdvanced: gameFacts.advanced.teamAdvanced,
-    sosAnalytics: gameFacts.sosAnalytics || null,
+    recentForm: gameFacts.recentForm || null,
     gameContext: gameFacts.gameContext,
     canonicalGameSource: gameFacts.canonicalGameSource || null,
     editorial: gameFacts.editorial,
@@ -5191,7 +5045,6 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       pickSummary: writeup.pickSummary,
       pickNarrative: writeup.pickNarrative || null,
       todayPick: writeup.todayPick || null,
-      sosInsights: writeup.sosInsights || null,
       officialPick,
       edgeTable: writeup.edgeTable || [],
       keyAngles: writeup.keyAngles || [],
@@ -5246,13 +5099,13 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
     .sort((a, b) => String(b.date).localeCompare(String(a.date)))
     .slice(0, 30);
 
-  const output = {
+  const output = stripLegacySosPayload({
     generatedAt: new Date().toISOString(),
     referenceDate: gameFacts.meta.requestedDate || gameFacts.meta.date,
     cacheKey: buildDateScopedCacheKey("sample-game", gameFacts.meta.requestedDate || gameFacts.meta.date),
     games,
     recentBreakdowns: mergeRecentBreakdowns(previousOutput, currentGame, Array.isArray(pickHistory?.entries) ? pickHistory.entries : [])
-  };
+  });
 
   ensureNoUndefinedStrings(output);
   return output;
@@ -5832,72 +5685,115 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
           <td class="email-stack-col" valign="top" style="width:100%;padding:0;">${renderEmailPitcherCard(report.startingPitchersComparison?.oppCard, oppPitcherTables)}</td>
         </tr>
       </table>`;
-  const renderSosFlag = (row) => row?.sampleFlag
-    ? `<span style="display:inline-block;margin-left:4px;color:#94a3b8;font-size:12px;font-weight:800;" title="Small sample">*</span>`
-    : "";
-  const renderSosAdjustment = (row) => {
-    const pct = row?.adjustmentPct;
-    const color = !Number.isFinite(pct)
-      ? "#64748b"
-      : pct > 0
-        ? "#15803d"
-        : pct < 0
-          ? "#b91c1c"
-          : "#64748b";
-    const arrow = pct > 0 ? "↑" : pct < 0 ? "↓" : "→";
-    return `<span style="font-weight:800;color:${color};">${valueCell(row?.adjustmentLabel)} ${arrow}</span>${renderSosFlag(row)}`;
+  const renderUsageBadge = (usage) => {
+    const tone = usage?.tone || "green";
+    const palette = tone === "red"
+      ? { bg: "#fee2e2", fg: "#b91c1c" }
+      : tone === "yellow"
+        ? { bg: "#fef3c7", fg: "#a16207" }
+        : { bg: "#dcfce7", fg: "#15803d" };
+    return `<span style="display:inline-block;padding:6px 10px;border-radius:999px;background:${palette.bg};color:${palette.fg};font-size:12px;font-weight:900;letter-spacing:0.06em;text-transform:uppercase;">${valueCell(usage?.label || "Low")}</span>`;
   };
-  const renderSosTable = (rows, baselineHeader) => `
-    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-      <table style="width:100%;min-width:${mode === "site" ? "560px" : "520px"};border-collapse:collapse;border:1px solid #d6dde8;background:#ffffff;">
-        <thead>
-          <tr>
-            <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:left;${smallLabel}">Context</th>
-            <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:center;${smallLabel}">${baselineHeader === "Opp Pitcher Baseline" ? "Mets BA" : "BA Against"}</th>
-            <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#7c2d12;text-align:center;${smallLabel}">${baselineHeader}</th>
-            <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;${smallLabel}">SoS Adjustment</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${(rows || []).map((row) => `
-            <tr>
-              <td style="padding:11px 12px;border-bottom:1px solid #edf2f7;color:#111827;font-weight:700;">${valueCell(row.context)}${renderSosFlag(row)}</td>
-              <td style="padding:11px 12px;border-bottom:1px solid #edf2f7;text-align:center;color:#111827;font-weight:700;background:#f8fbff;">${valueCell(row.rawValue)}</td>
-              <td style="padding:11px 12px;border-bottom:1px solid #edf2f7;text-align:center;color:#111827;font-weight:700;background:#fffaf5;">
-                <div>${valueCell(row.baselineValue)}</div>
-                <div style="margin-top:4px;font-size:11px;color:#6b7280;font-weight:600;">${valueCell(row.baselineMeta)}${row.unavailableCount ? `, ${row.unavailableCount} unavailable` : ""}</div>
-              </td>
-              <td style="padding:11px 12px;border-bottom:1px solid #edf2f7;text-align:center;background:#f8fafc;">${renderSosAdjustment(row)}</td>
-            </tr>`).join("")}
-        </tbody>
-      </table>
-    </div>`;
-  const renderSosCard = (card, baselineHeader) => {
-    if (!card?.rows?.length) return "";
+  const renderBullpenCard = (card) => {
+    if (!card) return "";
+    const closer = card.closer || null;
+    const closerHeadshot = closer?.playerId
+      ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/${closer.playerId}/headshot/67/current`
+      : null;
     return `
-      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;padding:${mode === "site" ? "16px 18px" : "14px 16px"};box-shadow:${mode === "site" ? "0 8px 20px rgba(15,23,42,0.05)" : "none"};">
-        <div style="margin:0 0 10px 0;font-size:${mode === "site" ? "16px" : "15px"};line-height:1.3;color:#002d72;font-weight:800;">${valueCell(card.title)}</div>
-        ${renderSosTable(card.rows, baselineHeader)}
-        ${card.summary ? `<p style="margin:12px 0 0 0;color:#374151;">${valueCell(card.summary)}</p>` : ""}
+      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;padding:${mode === "site" ? "18px" : "16px"};box-shadow:${mode === "site" ? "0 8px 20px rgba(15,23,42,0.05)" : "none"};">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
+          <div>
+            <div style="margin:0 0 6px 0;font-size:${mode === "site" ? "17px" : "16px"};line-height:1.3;color:#002d72;font-weight:800;">${valueCell(card.teamName)} Bullpen</div>
+            ${renderUsageBadge(card.usage)}
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:14px;color:#374151;font-size:13px;font-weight:700;">
+          <span>Season ERA ${valueCell(card.statsRow?.seasonEra)}</span>
+          <span>Season WHIP ${valueCell(card.statsRow?.seasonWhip)}</span>
+          <span>Last 20 Days ERA ${valueCell(card.statsRow?.last20Era)}</span>
+        </div>
+        <div style="margin:0 0 12px 0;padding-top:10px;border-top:1px solid #d6dde8;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;font-weight:800;">Closer</div>
+        ${closer ? `
+          <div style="display:flex;align-items:center;gap:12px;">
+            ${closerHeadshot
+              ? `<img src="${closerHeadshot}" alt="${valueCell(closer.name)} headshot" width="56" height="56" loading="lazy" decoding="async" style="display:block;width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;">`
+              : ""}
+            <div style="min-width:0;">
+              <div style="font-size:16px;color:#111827;font-weight:800;line-height:1.25;">${valueCell(closer.name)}</div>
+              <div style="margin-top:4px;color:#374151;font-size:13px;font-weight:700;">${valueCell(closer.saves)} SV / ${valueCell(closer.saveOpportunities)} SVO &middot; ${valueCell(Number.isFinite(closer.saveConversionPct) ? `${closer.saveConversionPct}%` : "N/A")} conversion &middot; ERA ${valueCell(closer.era)}</div>
+              <div style="margin-top:4px;color:#64748b;font-size:12px;font-weight:700;">Last 7 days: ${valueCell(closer.last7DaysAppearances)} appearances, ${valueCell(closer.last7DaysInningsPitched)} IP</div>
+            </div>
+          </div>`
+        : `<p style="margin:0;color:#64748b;">Closer data unavailable.</p>`}
       </div>`;
   };
-  const sosSection = report?.sosAnalytics
-    ? `
-      <p style="margin:0 0 14px 0;color:#475569;">${valueCell(report.sosAnalytics.subtitle)}</p>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-        ${renderSosCard(report.sosAnalytics.offenseCard, "Opp Pitcher Baseline")}
-        ${renderSosCard(report.sosAnalytics.metsStarterCard, "Opp Offense Baseline")}
-        ${renderSosCard(report.sosAnalytics.oppStarterCard, "Opp Offense Baseline")}
-        ${report.sosAnalytics.edgeSummary ? `
-          <div style="border:1px solid #d9e1ee;border-radius:16px;background:linear-gradient(180deg,#ffffff 0%,#f8fbff 100%);padding:${mode === "site" ? "16px 18px" : "14px 16px"};">
-            <div style="margin:0 0 10px 0;font-size:${mode === "site" ? "16px" : "15px"};line-height:1.3;color:#002d72;font-weight:800;">SoS Edge Summary</div>
-            ${report.sosAnalytics.edgeSummary.offenseLine ? `<p style="margin:0 0 8px 0;color:#374151;">${report.sosAnalytics.edgeSummary.offenseLine}</p>` : ""}
-            ${report.sosAnalytics.edgeSummary.pitchingLine ? `<p style="margin:0 0 12px 0;color:#374151;">${report.sosAnalytics.edgeSummary.pitchingLine}</p>` : ""}
-            <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
-              <span style="display:inline-block;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;background:${report.sosAnalytics.edgeSummary.badgeTone === "mets" ? "#e0f2fe" : report.sosAnalytics.edgeSummary.badgeTone === "opp" ? "#fff1f2" : "#e5e7eb"};color:${report.sosAnalytics.edgeSummary.badgeTone === "mets" ? "#002d72" : report.sosAnalytics.edgeSummary.badgeTone === "opp" ? "#9f1239" : "#475569"};">${valueCell(report.sosAnalytics.edgeSummary.badge)}</span>
-              <span style="font-size:13px;color:#475569;font-weight:700;">${valueCell(report.sosAnalytics.edgeSummary.combinedLabel)}</span>
-            </div>
-          </div>` : ""}
+  const renderRecentFormValue = (statKey, value) => {
+    if (!Number.isFinite(value)) return "N/A";
+    if (statKey === "ops" || statKey === "avg") return formatReportAverage(value);
+    return formatReportPct(value);
+  };
+  const renderRecentFormTable = (team) => {
+    if (!team?.rows?.length) return "";
+    const logoUrl = team.teamId ? `https://www.mlbstatic.com/team-logos/${team.teamId}.svg` : "";
+    const rows = team.rows.map((row) => {
+      const diffColor = !Number.isFinite(row?.differencePct)
+        ? "#64748b"
+        : row.improving
+          ? "#15803d"
+          : "#b91c1c";
+      const statLabel = row.statKey === "ops"
+        ? "OPS Rank"
+        : row.statKey === "avg"
+          ? "BA Rank"
+          : row.statKey === "kPct"
+            ? "K% Rank"
+            : "BB% Rank";
+      return `
+        <tr>
+          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">${statLabel}</td>
+          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
+            <div style="font-weight:800;">${row.seasonRank ? `#${row.seasonRank}` : "N/A"}</div>
+            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">${renderRecentFormValue(row.statKey, row.seasonValue)}</div>
+          </td>
+          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
+            <div style="font-weight:800;">${row.recentRank ? `#${row.recentRank}` : "N/A"}</div>
+            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">${renderRecentFormValue(row.statKey, row.recentValue)}</div>
+          </td>
+          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:${diffColor};text-align:center;font-weight:900;">${formatRecentFormDiff(row.differencePct)}</td>
+        </tr>`;
+    }).join("");
+    return `
+      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;overflow:hidden;box-shadow:${mode === "site" ? "0 8px 20px rgba(15,23,42,0.05)" : "none"};">
+        <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#002d72;color:#ffffff;">
+          ${logoUrl ? `<img src="${logoUrl}" alt="${valueCell(team.teamName)} logo" width="28" height="28" decoding="async" style="width:28px;height:28px;object-fit:contain;background:#ffffff;border-radius:50%;padding:2px;">` : ""}
+          <div style="font-size:16px;font-weight:800;line-height:1.25;">${valueCell(team.teamName)}</div>
+        </div>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+          <table style="width:100%;border-collapse:collapse;min-width:${mode === "site" ? "100%" : "420px"};">
+            <thead>
+              <tr>
+                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:left;${smallLabel}">Stat</th>
+                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;${smallLabel}">Season</th>
+                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;${smallLabel}">Last 20 Days</th>
+                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;${smallLabel}">% Difference</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  };
+  const bullpenSection = report?.bullpenReport
+    ? `<div class="report-two-col" style="${twoColStyle}">
+        ${renderBullpenCard(report.bullpenReport.mets)}
+        ${renderBullpenCard(report.bullpenReport.opp)}
+      </div>`
+    : "";
+  const recentFormSection = report?.recentFormReport
+    ? `<div class="report-two-col" style="${twoColStyle}">
+        ${renderRecentFormTable(report.recentFormReport.mets)}
+        ${renderRecentFormTable(report.recentFormReport.opp)}
       </div>`
     : "";
 
@@ -5906,7 +5802,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
 
     ${wrapSection("Starting Pitchers Comparison", pitcherComparisonMarkup)}
 
-    ${sosSection ? wrapSection("SoS Analytics", sosSection) : ""}
+    ${bullpenSection ? wrapSection("Bullpen Report", bullpenSection) : ""}
+
+    ${recentFormSection ? wrapSection("Recent Form &mdash; Last 20 Games vs Season", recentFormSection) : ""}
 
     ${wrapSection("Projected Lineup Comparison", renderLineupTable(report.projectedLineupComparison?.mets || [], report.projectedLineupComparison?.opp || []))}
 
