@@ -1763,6 +1763,14 @@ function showNoGameTodayState(state = null) {
 
 async function init() {
   const { games, generatedAt, recentBreakdowns } = await loadGameData();
+
+  if (!Array.isArray(games) || games.length === 0) {
+    console.error("[home] sample-game.json returned no games — site may be serving stale deployment data");
+  } else {
+    const g = games[0];
+    console.log(`[home] Loaded ${games.length} game(s). First: ${g.date} vs ${g.opponent} (status: ${g.status}, source: ${g?.canonicalGameSource?.source ?? "unknown"})`);
+  }
+
   const featuredState = resolveFeaturedGameState(games, {
     now: new Date(),
     referenceDate: getTodayISO(),
@@ -1773,6 +1781,14 @@ async function init() {
     console.log(`[home] Cache age anchor: ${generatedAt}`);
   }
   const featuredGame = featuredState.featuredGame;
+
+  if (!featuredGame) {
+    if (Array.isArray(games) && games.length > 0) {
+      console.error(`[home] No featured game resolved despite ${games.length} loaded game(s). Check dates and statuses above.`);
+    } else {
+      console.error("[home] No featured game — games array is empty. Likely a stale deployment issue.");
+    }
+  }
 
   // Update hero headline - three separate lines
   if (!featuredGame) {
