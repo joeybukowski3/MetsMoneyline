@@ -5,3 +5,22 @@ node_modules/
 Thumbs.db
 .vercel/
 .env
+
+# Bot-generated files — committed only by scheduled CI workflows (report-send.yml, daily-update.yml).
+# DO NOT commit these manually. See CLAUDE.md for details.
+# Note: these files are tracked in git, so .gitignore does not prevent staging them —
+# the .githooks/pre-commit hook enforces this instead.
+#
+# public/data/sample-game.json
+# public/report.html
+# bot/report-send-state.json
+# public/api/mlb/mets/next-game
+# public/api/mlb/mets/live-game
+# public/api/mlb/mets/standings
+# public/api/mlb/mets/recent-games
+# public/api/mlb/mets/overview
+# public/api/mlb/mets/odds.json
+# public/data/odds-history.json
+# public/data/trends.json
+# public/data/prospects.json
+# public/rss.xml
