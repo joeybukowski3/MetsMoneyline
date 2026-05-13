@@ -7,12 +7,12 @@
       "outcomes": [
         {
           "name": "Detroit Tigers",
-          "price": -112,
+          "price": -110,
           "point": null
         },
         {
           "name": "New York Mets",
-          "price": -104,
+          "price": -106,
           "point": null
         }
       ]
@@ -61,12 +61,12 @@
           "outcomes": [
             {
               "name": "Detroit Tigers",
-              "price": -112,
+              "price": -110,
               "point": null
             },
             {
               "name": "New York Mets",
-              "price": -104,
+              "price": -106,
               "point": null
             }
           ]
@@ -104,6 +104,60 @@
           ]
         }
       ]
+    },
+    {
+      "key": "betrivers",
+      "title": "BetRivers",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "Detroit Tigers",
+              "price": -117,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -107,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "Detroit Tigers",
+              "price": 148,
+              "point": -1.5
+            },
+            {
+              "name": "New York Mets",
+              "price": -186,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -107,
+              "point": 8
+            },
+            {
+              "name": "Under",
+              "price": -117,
+              "point": 8
+            }
+          ]
+        }
+      ]
     }
   ],
   "consensus": {
@@ -116,12 +170,12 @@
         "outcomes": [
           {
             "name": "Detroit Tigers",
-            "price": -112,
+            "price": -110,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -104,
+            "price": -106,
             "point": null
           }
         ]
@@ -171,25 +225,25 @@
       {
         "key": "fanduel",
         "title": "FanDuel",
-        "last_update": "2026-05-12T23:44:11Z",
+        "last_update": "2026-05-13T01:30:25Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-05-12T23:44:11Z",
+            "last_update": "2026-05-13T01:30:25Z",
             "outcomes": [
               {
                 "name": "Detroit Tigers",
-                "price": -112
+                "price": -110
               },
               {
                 "name": "New York Mets",
-                "price": -104
+                "price": -106
               }
             ]
           },
           {
             "key": "spreads",
-            "last_update": "2026-05-12T23:44:11Z",
+            "last_update": "2026-05-13T01:30:25Z",
             "outcomes": [
               {
                 "name": "Detroit Tigers",
@@ -205,7 +259,7 @@
           },
           {
             "key": "totals",
-            "last_update": "2026-05-12T23:44:11Z",
+            "last_update": "2026-05-13T01:30:25Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -220,12 +274,65 @@
             ]
           }
         ]
+      },
+      {
+        "key": "betrivers",
+        "title": "BetRivers",
+        "last_update": "2026-05-13T01:30:25Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-05-13T01:30:25Z",
+            "outcomes": [
+              {
+                "name": "Detroit Tigers",
+                "price": -117
+              },
+              {
+                "name": "New York Mets",
+                "price": -107
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-05-13T01:30:25Z",
+            "outcomes": [
+              {
+                "name": "Detroit Tigers",
+                "price": 148,
+                "point": -1.5
+              },
+              {
+                "name": "New York Mets",
+                "price": -186,
+                "point": 1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-05-13T01:30:25Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -107,
+                "point": 8
+              },
+              {
+                "name": "Under",
+                "price": -117,
+                "point": 8
+              }
+            ]
+          }
+        ]
       }
     ]
   },
   "meta": {
     "provider": "the-odds-api",
-    "generatedAt": "2026-05-12T23:44:19.867Z",
+    "generatedAt": "2026-05-13T01:30:39.715Z",
     "cacheHint": "odds: 2-5 minutes"
   }
 }
