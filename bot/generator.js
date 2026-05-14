@@ -12,7 +12,6 @@ Output:
 const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
-const OpenAI = require("openai");
 const { parse } = require("csv-parse/sync");
 const generateSitemap = require("./generate-sitemap");
 const generateRss = require("./generate-rss");
@@ -242,9 +241,7 @@ const DEFAULT_METS_LINEUP = [
   { order: 9, playerId: 673357, name: "Luis Robert Jr.", pos: "RF", hand: "R" }
 ];
 
-const grokClient = process.env.GROK_API_KEY
-  ? new OpenAI({ apiKey: process.env.GROK_API_KEY, baseURL: "https://api.x.ai/v1" })
-  : null;
+const grokApiKey = process.env.GROK_API_KEY || "";
 
 const TODAY_PICK_CONFIDENCE_SCORE = {
   Low: 4,
@@ -634,7 +631,7 @@ function applyTodayPickToWriteup(writeup, todayPick) {
 }
 
 async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
-  if (!grokClient) {
+  if (!grokApiKey) {
     return fallbackTodayPick;
   }
 
@@ -673,12 +670,24 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
     const messages = attempt === 0
       ? requestMessages
       : [...requestMessages, { role: "user", content: GROK_JSON_REPAIR_PROMPT }];
-    const completion = await grokClient.chat.completions.create({
-      model: DEFAULT_GROK_MODEL,
-      response_format: { type: "json_object" },
-      temperature: 0.35,
-      messages
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${grokApiKey}`
+      },
+      body: JSON.stringify({
+        model: DEFAULT_GROK_MODEL,
+        response_format: { type: "json_object" },
+        temperature: 0.35,
+        messages
+      })
     });
+    if (!response.ok) {
+      const details = await response.text();
+      throw new Error(`Grok API request failed (${response.status}): ${details}`);
+    }
+    const completion = await response.json();
     const text = completion?.choices?.[0]?.message?.content || "";
     const parsed = extractJsonObject(text);
     if (!parsed) {
@@ -4751,7 +4760,7 @@ async function generateWriteupFromFacts(gameFacts) {
   const gameContext = buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, fallbackTodayPick);
 
   try {
-    console.log(grokClient ? "Generating Today's Pick with Grok" : "Using deterministic fallback for Today's Pick (missing GROK_API_KEY)");
+    console.log(grokApiKey ? "Generating Today's Pick with Grok" : "Using deterministic fallback for Today's Pick (missing GROK_API_KEY)");
     const todayPick = await requestGrokTodayPick(gameContext, fallbackTodayPick);
     return applyTodayPickToWriteup(baseWriteup, todayPick);
   } catch (error) {

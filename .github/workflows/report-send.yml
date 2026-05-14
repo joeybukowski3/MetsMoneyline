@@ -46,8 +46,7 @@ jobs:
         continue-on-error: true
         working-directory: ./bot
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
           BUTTONDOWN_API_KEY: ${{ secrets.BUTTONDOWN_API_KEY }}
           API_SPORTS_KEY: ${{ secrets.API_SPORTS_KEY }}
           API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
