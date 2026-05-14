@@ -185,9 +185,15 @@
     const liveGame = sortedGames.find((game) => isLiveGame(game)) || null;
     if (liveGame) return { game: liveGame, normalizedGames, sortedGames, referenceDate, liveGame };
 
-    const sameDayGames = sortedGames
+    const sameDayPlayableGames = sortedGames
       .filter((game) => game.date === referenceDate && isPlayableScheduledGame(game))
       .sort(compareGamesForDisplay);
+    const sameDayFinalGames = sameDayPlayableGames.length === 0
+      ? sortedGames
+          .filter((game) => game.date === referenceDate && isFinalGame(game))
+          .sort((a, b) => resolveGameTimestamp(b) - resolveGameTimestamp(a))
+      : [];
+    const sameDayGames = [...sameDayPlayableGames, ...sameDayFinalGames];
     const sameDayGame = sameDayGames[0] || null;
     if (sameDayGame) {
       return {
@@ -275,11 +281,14 @@
       offDay = true;
       const dayDiff = diffCalendarDays(referenceDate, nextUpcomingGame.date);
       if (dayDiff === 1) {
-        kind = "tomorrow";
-        displayLabel = "Tomorrow's Game";
+        kind = "today";
+        displayLabel = "Today's Game";
+        offDay = false;
       } else {
         kind = "next";
-        displayLabel = "Next Game";
+        const nextGameDate = parseDateOnlyToUtcMidday(nextUpcomingGame.date);
+        const dateFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: EASTERN_TIME_ZONE });
+        displayLabel = nextGameDate ? `Next Game: ${dateFormatter.format(nextGameDate)}` : "Next Game";
       }
     } else if (sortedGames.some((game) => game.date === referenceDate && isCancelledLike(game))) {
       kind = "off-day";
