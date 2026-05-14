@@ -1,7 +1,7 @@
 {
   "gameId": 823630,
   "startTime": "2026-05-14T17:10:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 121,
     "canonicalKey": "mets",
@@ -40,9 +40,119 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
-    "opp": []
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "DH"
+      },
+      {
+        "order": 4,
+        "playerId": 668901,
+        "name": "Mark Vientos",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 669004,
+        "name": "MJ Melendez",
+        "pos": "LF"
+      },
+      {
+        "order": 6,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "3B"
+      },
+      {
+        "order": 7,
+        "playerId": 543760,
+        "name": "Marcus Semien",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 9,
+        "playerId": 663584,
+        "name": "Hayden Senger",
+        "pos": "C"
+      }
+    ],
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 805808,
+        "name": "Kevin McGonigle",
+        "pos": "SS"
+      },
+      {
+        "order": 2,
+        "playerId": 690993,
+        "name": "Colt Keith",
+        "pos": "3B"
+      },
+      {
+        "order": 3,
+        "playerId": 682985,
+        "name": "Riley Greene",
+        "pos": "LF"
+      },
+      {
+        "order": 4,
+        "playerId": 693307,
+        "name": "Dillon Dingler",
+        "pos": "DH"
+      },
+      {
+        "order": 5,
+        "playerId": 669398,
+        "name": "Gage Workman",
+        "pos": "2B"
+      },
+      {
+        "order": 6,
+        "playerId": 656716,
+        "name": "Zach McKinstry",
+        "pos": "RF"
+      },
+      {
+        "order": 7,
+        "playerId": 679529,
+        "name": "Spencer Torkelson",
+        "pos": "1B"
+      },
+      {
+        "order": 8,
+        "playerId": 672761,
+        "name": "Wenceel Pérez",
+        "pos": "CF"
+      },
+      {
+        "order": 9,
+        "playerId": 668670,
+        "name": "Jake Rogers",
+        "pos": "C"
+      }
+    ]
   },
   "sportsbookSummary": {
     "key": "fanduel",
@@ -54,12 +164,12 @@
         "outcomes": [
           {
             "name": "Detroit Tigers",
-            "price": 146,
+            "price": 138,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -174,
+            "price": -164,
             "point": null
           }
         ]
@@ -70,12 +180,12 @@
         "outcomes": [
           {
             "name": "Detroit Tigers",
-            "price": -152,
+            "price": -166,
             "point": 1.5
           },
           {
             "name": "New York Mets",
-            "price": 126,
+            "price": 138,
             "point": -1.5
           }
         ]
@@ -86,12 +196,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -102,
+            "price": 102,
             "point": 7.5
           },
           {
             "name": "Under",
-            "price": -120,
+            "price": -124,
             "point": 7.5
           }
         ]
@@ -108,9 +218,9 @@
     "officialDate": "2026-05-14",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -168,6 +278,7 @@
           "losses": 24,
           "pct": ".442"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 672456,
           "fullName": "Keider Montero",
@@ -235,6 +346,7 @@
           "losses": 25,
           "pct": ".405"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 690997,
           "fullName": "Nolan McLean",
@@ -251,26 +363,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
+        },
+        "catcher": {
+          "id": 663584,
+          "fullName": "Hayden Senger",
+          "link": "/api/v1/people/663584"
+        },
+        "first": {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901"
+        },
+        "second": {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760"
+        },
+        "third": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "shortstop": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "left": {
+          "id": 669004,
+          "fullName": "MJ Melendez",
+          "link": "/api/v1/people/669004"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 805808,
+          "fullName": "Kevin McGonigle",
+          "link": "/api/v1/people/805808"
+        },
+        "onDeck": {
+          "id": 690993,
+          "fullName": "Colt Keith",
+          "link": "/api/v1/people/690993"
+        },
+        "inHole": {
+          "id": 682985,
+          "fullName": "Riley Greene",
+          "link": "/api/v1/people/682985"
+        },
+        "pitcher": {
+          "id": 672456,
+          "fullName": "Keider Montero",
+          "link": "/api/v1/people/672456"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 116,
           "name": "Detroit Tigers",
           "link": "/api/v1/teams/116"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -287,7 +514,7 @@
       "totalGames": 3,
       "isTied": false,
       "isOver": false,
-      "wins": 1,
+      "wins": 2,
       "losses": 0,
       "winningTeam": {
         "springLeague": {
@@ -315,7 +542,7 @@
       },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "NYM leads 1-0",
+      "result": "NYM leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -335,11 +562,269 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901",
+          "firstName": "Mark",
+          "lastName": "Vientos",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Mark"
+        },
+        {
+          "id": 669004,
+          "fullName": "MJ Melendez",
+          "link": "/api/v1/people/669004",
+          "firstName": "Mervyl",
+          "lastName": "Melendez",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "MJ"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760",
+          "firstName": "Marcus",
+          "lastName": "Semien",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Marcus"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 663584,
+          "fullName": "Hayden Senger",
+          "link": "/api/v1/people/663584",
+          "firstName": "Hayden",
+          "lastName": "Senger",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Hayden"
+        }
+      ],
+      "awayPlayers": [
+        {
+          "id": 805808,
+          "fullName": "Kevin McGonigle",
+          "link": "/api/v1/people/805808",
+          "firstName": "Kevin",
+          "lastName": "McGonigle",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Kevin"
+        },
+        {
+          "id": 690993,
+          "fullName": "Colt Keith",
+          "link": "/api/v1/people/690993",
+          "firstName": "Colten",
+          "lastName": "Keith",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Colt"
+        },
+        {
+          "id": 682985,
+          "fullName": "Riley Greene",
+          "link": "/api/v1/people/682985",
+          "firstName": "Riley",
+          "lastName": "Greene",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Riley"
+        },
+        {
+          "id": 693307,
+          "fullName": "Dillon Dingler",
+          "link": "/api/v1/people/693307",
+          "firstName": "Francis",
+          "lastName": "Dingler",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Dillon"
+        },
+        {
+          "id": 669398,
+          "fullName": "Gage Workman",
+          "link": "/api/v1/people/669398",
+          "firstName": "Gage",
+          "lastName": "Workman",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Gage"
+        },
+        {
+          "id": 656716,
+          "fullName": "Zach McKinstry",
+          "link": "/api/v1/people/656716",
+          "firstName": "Zachary",
+          "lastName": "McKinstry",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Zach"
+        },
+        {
+          "id": 679529,
+          "fullName": "Spencer Torkelson",
+          "link": "/api/v1/people/679529",
+          "firstName": "Spencer",
+          "lastName": "Torkelson",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Spencer"
+        },
+        {
+          "id": 672761,
+          "fullName": "Wenceel Pérez",
+          "link": "/api/v1/people/672761",
+          "firstName": "Wenceel",
+          "lastName": "Pérez",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Wenceel"
+        },
+        {
+          "id": 668670,
+          "fullName": "Jake Rogers",
+          "link": "/api/v1/people/668670",
+          "firstName": "Jacob",
+          "lastName": "Rogers",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Jake"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-14T13:16:34.319Z",
+    "generatedAt": "2026-05-14T15:40:33.040Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-14",
     "cacheKey": "next-game:2026-05-14"
