@@ -726,6 +726,8 @@ const PCTL = {
   KPct: v => clamp(Math.round(((parseFloat(v) - 10) / (36 - 10)) * 95), 5, 99),
   // BB%: elite ~4%, avg ~8%, poor ~13% - lower is better
   BBPct: v => clamp(Math.round(100 - ((parseFloat(v) - 3.5) / (13.5 - 3.5)) * 90), 5, 99),
+  // Barrel%: lower is better for pitcher; elite ~4%, avg ~7.5%, poor ~11.5%
+  Barrel: v => clamp(Math.round(100 - ((parseFloat(v) - 4) / (11.5 - 4)) * 90), 5, 99),
   // K/BB: elite ~5.0, avg ~2.8, poor ~1.5
   KBB:  v => clamp(Math.round(((parseFloat(v) - 1.2) / (6.0 - 1.2)) * 95), 5, 99),
   // Hard-Hit%: lower is better for pitcher; elite ~28%, avg ~37%, poor ~45%
@@ -742,13 +744,13 @@ const PCTL = {
 
 function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
 
-/* Color the bar: blue (poor) → gray (avg) → red (elite) */
+/* Color the bar: red (poor) → gray (avg) → green (elite) */
 function pctlColor(pct) {
-  if (pct >= 80) return "#c0392b";   // elite red
-  if (pct >= 60) return "#e08060";   // good orange-red
+  if (pct >= 80) return "#15803d";   // elite green
+  if (pct >= 60) return "#16a34a";   // good green
   if (pct >= 45) return "#aab8c8";   // avg gray
-  if (pct >= 25) return "#5a9fd4";   // below avg blue
-  return "#1a6bb5";                  // poor blue
+  if (pct >= 25) return "#f87171";   // below avg red
+  return "#dc2626";                  // poor red
 }
 
 function pctlTone(pct) {
@@ -769,7 +771,7 @@ function getStatcastMetricMeta(label) {
     case "xERA":
       return { pct: v => PCTL.xERA(v) };
     case "Barrel%":
-      return { pct: v => PCTL.HardHit(v) };
+      return { pct: v => PCTL.Barrel(v) };
     case "Hard-Hit%":
       return { pct: v => PCTL.HardHit(v) };
     case "Whiff%":

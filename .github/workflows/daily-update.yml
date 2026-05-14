@@ -1,15 +1,15 @@
-name: Daily Odds Update
+name: Daily Site Data Update
 
 on:
   schedule:
-    - cron: "0 14,22 * * *"
+    - cron: "0 6 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  refresh-odds:
+  refresh-site-data:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -38,6 +38,9 @@ jobs:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: node build-api-cache.js
 
+      - name: Generate next Mets game package
+        run: node bot/generator.js
+
       - name: Refresh trends data
         run: node bot/build-trends.js
         env:
@@ -48,7 +51,7 @@ jobs:
         env:
           NODE_ENV: production
 
-      - name: Commit and push updated odds artifacts
+      - name: Commit and push updated site data artifacts
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -58,14 +61,16 @@ jobs:
                   public/api/mlb/mets/recent-games \
                   public/api/mlb/mets/overview \
                   public/api/mlb/mets/odds.json \
+                  public/data/sample-game.json \
                   public/data/odds-history.json \
                   public/data/trends.json \
-                  public/data/prospects.json
+                  public/data/prospects.json \
+                  public/report.html
           if git diff --staged --quiet; then
-            echo "No odds updates to commit."
+            echo "No site data updates to commit."
             exit 0
           fi
-          git commit -m "chore: refresh Mets odds artifacts [skip ci]"
+          git commit -m "chore: refresh daily site data [skip ci]"
           git stash
           git pull --rebase origin main
           git stash pop || true

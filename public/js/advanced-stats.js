@@ -652,8 +652,8 @@ function buildMetricTone(subjectRaw, baselineRaw, higherIsBetter) {
 
   const alpha = 0.05 + (scaled * 0.2);
   return diff >= 0
-    ? { style: `background:rgba(192,57,43,${alpha.toFixed(3)});`, color: "#9f2a1d" }
-    : { style: `background:rgba(37,99,235,${alpha.toFixed(3)});`, color: "#1d4ed8" };
+    ? { style: `background:rgba(22,163,74,${alpha.toFixed(3)});`, color: "#166534" }
+    : { style: `background:rgba(220,38,38,${alpha.toFixed(3)});`, color: "#b91c1c" };
 }
 
 function buildComparisonCell(display, subjectRaw, baselineRaw, higherIsBetter, rank = null) {

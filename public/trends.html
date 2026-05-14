@@ -434,7 +434,7 @@
       </div>
       <section id="seo-content" class="seo-summary-card">
         <!-- SEO_TRENDS_SUMMARY:START -->
-<p>The 2026 New York Mets are batting .227 as a team, ranking 28th in MLB, with a .637 OPS. Top performer: MJ Melendez (.295 BA, .912 OPS). Running cold: Andy Ibanez (.100 BA). Individual hitter trends, xBA analysis, and team-vs-MLB comparisons update daily.</p>
+<p>The 2026 New York Mets are batting .225 as a team, ranking 28th in MLB, with a .630 OPS. Top performer: MJ Melendez (.255 BA, .816 OPS). Running cold: Tyrone Taylor (.187 BA). Individual hitter trends, xBA analysis, and team-vs-MLB comparisons update daily.</p>
 <!-- SEO_TRENDS_SUMMARY:END -->
       </section>
 
@@ -1248,7 +1248,7 @@
       }
     });
 
-    fetch(TRENDS_DATA_URL)
+    fetch(TRENDS_DATA_URL + "?ts=" + Date.now(), { cache: "no-store" })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         trendsData = data;

@@ -77,6 +77,13 @@ function weightedAverage(entries, valueKey, weightKey) {
   return weight > 0 ? parseFloat((weighted / weight).toFixed(3)) : null;
 }
 
+function summarizeExpectedStats(entries = []) {
+  const valid = entries.filter((entry) => Number.isFinite(entry?.xba) && Number.isFinite(entry?.pa) && entry.pa > 0);
+  const pa = valid.reduce((sum, entry) => sum + entry.pa, 0);
+  const xba = weightedAverage(valid, "xba", "pa");
+  return { pa, xba };
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .normalize("NFD")
@@ -217,6 +224,23 @@ async function getExpectedStatsLeaderboard(teamId = null) {
     console.warn("[trends] expected stats CSV parse failed:", e.message);
     return { entries: [], byPlayerId: {} };
   }
+}
+
+async function getTeamExpectedStatSummaries(teams, seededLeaderboards = {}) {
+  const summaries = {};
+  await Promise.all(teams.map(async (team) => {
+    const seeded = seededLeaderboards[String(team.id)];
+    const leaderboard = seeded || await getExpectedStatsLeaderboard(team.id);
+    const summary = summarizeExpectedStats(leaderboard.entries);
+    summaries[String(team.id)] = {
+      teamId: team.id,
+      abbr: team.abbr,
+      name: team.name,
+      pa: summary.pa,
+      xba: summary.xba,
+    };
+  }));
+  return summaries;
 }
 
 function buildStatcastSearchUrl(startDate, endDate, teamAbbr = "") {
@@ -525,6 +549,35 @@ function rankTeamsByStat(rows, statKey) {
   }));
 }
 
+function buildExpectedStatBenchmark(rows, statKey) {
+  const valid = rows
+    .filter((row) => Number.isFinite(row?.[statKey]))
+    .sort((a, b) => {
+      if (a[statKey] !== b[statKey]) return a[statKey] - b[statKey];
+      return a.teamId - b.teamId;
+    });
+
+  const avg = valid.length
+    ? parseFloat((valid.reduce((sum, row) => sum + row[statKey], 0) / valid.length).toFixed(3))
+    : null;
+
+  return {
+    avg,
+    worst: valid.length ? formatBenchmarkTeam({
+      teamId: valid[0].teamId,
+      abbr: valid[0].abbr,
+      name: valid[0].name,
+      [statKey]: valid[0][statKey],
+    }, statKey) : null,
+    best: valid.length ? formatBenchmarkTeam({
+      teamId: valid[valid.length - 1].teamId,
+      abbr: valid[valid.length - 1].abbr,
+      name: valid[valid.length - 1].name,
+      [statKey]: valid[valid.length - 1][statKey],
+    }, statKey) : null,
+  };
+}
+
 function computeTeamComparisons(teams, logsByTeamId, expectedHitsByTeamId, leagueAvg) {
   const windows = [
     { key: "season", windowSize: null },
@@ -665,6 +718,9 @@ async function main() {
     }))),
   ]);
   const leagueAvg = await getLeagueAverages(leagueExpectedStats);
+  const teamExpectedSummaries = await getTeamExpectedStatSummaries(teams, {
+    [String(TEAM_ID)]: metsExpectedStats,
+  });
   const logsByTeamId = leagueTeamLogs.reduce((acc, row) => {
     acc[String(row.teamId)] = row.logs.sort((a, b) => a.date.localeCompare(b.date));
     return acc;
@@ -675,6 +731,16 @@ async function main() {
     leagueTeamExpectedHits,
     leagueAvg
   );
+  const seasonExpectedRows = Object.values(teamExpectedSummaries).filter((row) => Number.isFinite(row.xba));
+  seasonExpectedRows.sort((a, b) => {
+    if (b.xba !== a.xba) return b.xba - a.xba;
+    return a.teamId - b.teamId;
+  });
+  const metsSeasonExpectedRank = seasonExpectedRows.findIndex((row) => row.teamId === TEAM_ID) + 1;
+  if (metsSeasonExpectedRank > 0) {
+    metsRanks.season.xba = metsSeasonExpectedRank;
+  }
+  teamBenchmarks.season.xba = buildExpectedStatBenchmark(seasonExpectedRows, "xba");
 
   console.log(
     `[trends] Found ${hitters.length} active hitters, ` +
@@ -716,48 +782,17 @@ async function main() {
     });
   }
 
-  const allLogs = playerLogs.flat();
-  const byDate = {};
-  allLogs.forEach((g) => {
-    if (!byDate[g.date]) {
-      byDate[g.date] = {
-        date: g.date,
-        h: 0,
-        ab: 0,
-        doubles: 0,
-        triples: 0,
-        hr: 0,
-        bb: 0,
-        hbp: 0,
-        sf: 0,
-        pa: 0,
-        ops: null,
-      };
-    }
-    const d = byDate[g.date];
-    d.h += g.h;
-    d.ab += g.ab;
-    d.doubles += g.doubles || 0;
-    d.triples += g.triples || 0;
-    d.hr += g.hr || 0;
-    d.bb += g.bb || 0;
-    d.hbp += g.hbp || 0;
-    d.sf += g.sf || 0;
-    d.pa += g.pa || 0;
-  });
-
-  Object.values(byDate).forEach((d) => {
-    const singles = Math.max(0, d.h - d.doubles - d.triples - d.hr);
-    const totalBases = singles + 2 * d.doubles + 3 * d.triples + 4 * d.hr;
-    const slg = d.ab > 0 ? totalBases / d.ab : null;
-    const obpDen = d.ab + d.bb + d.hbp + d.sf;
-    const obp = obpDen > 0 ? (d.h + d.bb + d.hbp) / obpDen : null;
-    d.ops = obp != null && slg != null ? parseFloat((obp + slg).toFixed(3)) : null;
-  });
-
-  const teamLogs = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
-  const teamFallbackXba = weightedAverage(metsExpectedStats.entries, "xba", "pa") || leagueAvg.xba;
+  const teamLogs = logsByTeamId[String(TEAM_ID)] || [];
+  const teamFallbackXba = teamExpectedSummaries[String(TEAM_ID)]?.xba || leagueAvg.xba;
   const teamExpectedHitsByDate = leagueTeamExpectedHits[String(TEAM_ID)] || statcastExpected.teamByDate;
+  const teamSeasonStats = buildWindowStats(teamLogs, {
+    chartSourceLogs: teamLogs,
+    expectedHitsByDate: teamExpectedHitsByDate,
+    xbaFallback: teamFallbackXba,
+  });
+  if (teamSeasonStats && Number.isFinite(teamExpectedSummaries[String(TEAM_ID)]?.xba)) {
+    teamSeasonStats.xba = teamExpectedSummaries[String(TEAM_ID)].xba;
+  }
 
   const output = {
     generatedAt: new Date().toISOString(),
@@ -767,11 +802,7 @@ async function main() {
     teamBenchmarks,
     team: {
       season: {
-        ...buildWindowStats(teamLogs, {
-          chartSourceLogs: teamLogs,
-          expectedHitsByDate: teamExpectedHitsByDate,
-          xbaFallback: teamFallbackXba,
-        }),
+        ...teamSeasonStats,
         ranks: metsRanks.season,
       },
       last20: {

@@ -5086,10 +5086,10 @@ function buildPresentationReport(game) {
           rightHeader: `${oppAbbr} Offense`,
           rightTeamKey: "opp",
           rows: [
-            { label: "Barrel %", left: pitching.mets?.savant?.barrelPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.barrelPct ?? null, right: analysisObject?.offense?.opp?.barrelPct || null, rightRankKey: "barrelPct" },
-            { label: "xBA", left: pitching.mets?.savant?.xBAAllowed || null, leftPercentile: pitching.mets?.savant?.percentiles?.xBAAllowed ?? null, right: analysisObject?.offense?.opp?.xBA || null, rightRankKey: "xba" },
-            { label: "Hard Hit %", left: pitching.mets?.savant?.hardHitPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.hardHitPct ?? null, right: analysisObject?.offense?.opp?.hardHitPct || null, rightRankKey: "hardHit" },
-            { label: "xSLG %", left: pitching.mets?.savant?.xSLGAllowed || null, leftPercentile: pitching.mets?.savant?.percentiles?.xSLGAllowed ?? null, right: analysisObject?.offense?.opp?.xSLG || null, rightRankKey: "xslg" }
+            { label: "Barrel %", left: pitching.mets?.savant?.barrelPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.barrelPct ?? null, leftMetricLabel: "Pitcher Barrel %", right: analysisObject?.offense?.opp?.barrelPct || null, rightMetricLabel: "Batter Barrel %", rightRankKey: "barrelPct" },
+            { label: "xBA", left: pitching.mets?.savant?.xBAAllowed || null, leftPercentile: pitching.mets?.savant?.percentiles?.xBAAllowed ?? null, leftMetricLabel: "Pitcher xBA", right: analysisObject?.offense?.opp?.xBA || null, rightMetricLabel: "Batter xBA", rightRankKey: "xba" },
+            { label: "Hard Hit %", left: pitching.mets?.savant?.hardHitPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.hardHitPct ?? null, leftMetricLabel: "Pitcher Hard Hit %", right: analysisObject?.offense?.opp?.hardHitPct || null, rightMetricLabel: "Batter Hard Hit %", rightRankKey: "hardHit" },
+            { label: "xSLG %", left: pitching.mets?.savant?.xSLGAllowed || null, leftPercentile: pitching.mets?.savant?.percentiles?.xSLGAllowed ?? null, leftMetricLabel: "Pitcher xSLG %", right: analysisObject?.offense?.opp?.xSLG || null, rightMetricLabel: "Batter xSLG %", rightRankKey: "xslg" }
           ]
         },
         {
@@ -5098,10 +5098,10 @@ function buildPresentationReport(game) {
           rightHeader: "NYM Offense",
           rightTeamKey: "mets",
           rows: [
-            { label: "Barrel %", left: pitching.opp?.savant?.barrelPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.barrelPct ?? null, right: analysisObject?.offense?.mets?.barrelPct || null, rightRankKey: "barrelPct" },
-            { label: "xBA", left: pitching.opp?.savant?.xBAAllowed || null, leftPercentile: pitching.opp?.savant?.percentiles?.xBAAllowed ?? null, right: analysisObject?.offense?.mets?.xBA || null, rightRankKey: "xba" },
-            { label: "Hard Hit %", left: pitching.opp?.savant?.hardHitPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.hardHitPct ?? null, right: analysisObject?.offense?.mets?.hardHitPct || null, rightRankKey: "hardHit" },
-            { label: "xSLG %", left: pitching.opp?.savant?.xSLGAllowed || null, leftPercentile: pitching.opp?.savant?.percentiles?.xSLGAllowed ?? null, right: analysisObject?.offense?.mets?.xSLG || null, rightRankKey: "xslg" }
+            { label: "Barrel %", left: pitching.opp?.savant?.barrelPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.barrelPct ?? null, leftMetricLabel: "Pitcher Barrel %", right: analysisObject?.offense?.mets?.barrelPct || null, rightMetricLabel: "Batter Barrel %", rightRankKey: "barrelPct" },
+            { label: "xBA", left: pitching.opp?.savant?.xBAAllowed || null, leftPercentile: pitching.opp?.savant?.percentiles?.xBAAllowed ?? null, leftMetricLabel: "Pitcher xBA", right: analysisObject?.offense?.mets?.xBA || null, rightMetricLabel: "Batter xBA", rightRankKey: "xba" },
+            { label: "Hard Hit %", left: pitching.opp?.savant?.hardHitPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.hardHitPct ?? null, leftMetricLabel: "Pitcher Hard Hit %", right: analysisObject?.offense?.mets?.hardHitPct || null, rightMetricLabel: "Batter Hard Hit %", rightRankKey: "hardHit" },
+            { label: "xSLG %", left: pitching.opp?.savant?.xSLGAllowed || null, leftPercentile: pitching.opp?.savant?.percentiles?.xSLGAllowed ?? null, leftMetricLabel: "Pitcher xSLG %", right: analysisObject?.offense?.mets?.xSLG || null, rightMetricLabel: "Batter xSLG %", rightRankKey: "xslg" }
           ]
         },
         {
@@ -5112,8 +5112,8 @@ function buildPresentationReport(game) {
           rows: [
             { label: "Pitching Hand / vs Split", left: expandPitchingHandLabel(pitching.mets?.hand), right: formatVsSplitLabel(pitching.mets?.hand) },
             { label: "Innings Pitched / Plate Appearances", left: extractSeasonIp(pitching.mets?.seasonLine, pitching.mets?.note), right: oppProjectedPa },
-            { label: "K%", left: pitching.mets?.savant?.kPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.kPct ?? null, right: analysisObject?.offense?.opp?.kPct || null, rightRankKey: "kPct" },
-            { label: "BB%", left: pitching.mets?.savant?.bbPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.bbPct ?? null, right: analysisObject?.offense?.opp?.bbPct || null, rightRankKey: "bbPct" }
+            { label: "K%", left: pitching.mets?.savant?.kPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.kPct ?? null, leftMetricLabel: "Pitcher K%", right: analysisObject?.offense?.opp?.kPct || null, rightMetricLabel: "Batter K%", rightRankKey: "kPct" },
+            { label: "BB%", left: pitching.mets?.savant?.bbPct || null, leftPercentile: pitching.mets?.savant?.percentiles?.bbPct ?? null, leftMetricLabel: "Pitcher BB%", right: analysisObject?.offense?.opp?.bbPct || null, rightMetricLabel: "Batter BB%", rightRankKey: "bbPct" }
           ]
         },
         {
@@ -5124,8 +5124,8 @@ function buildPresentationReport(game) {
           rows: [
             { label: "Pitching Hand / vs Split", left: expandPitchingHandLabel(pitching.opp?.hand), right: formatVsSplitLabel(pitching.opp?.hand) },
             { label: "Innings Pitched / Plate Appearances", left: extractSeasonIp(pitching.opp?.seasonLine, pitching.opp?.note), right: metsProjectedPa },
-            { label: "K%", left: pitching.opp?.savant?.kPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.kPct ?? null, right: analysisObject?.offense?.mets?.kPct || null, rightRankKey: "kPct" },
-            { label: "BB%", left: pitching.opp?.savant?.bbPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.bbPct ?? null, right: analysisObject?.offense?.mets?.bbPct || null, rightRankKey: "bbPct" }
+            { label: "K%", left: pitching.opp?.savant?.kPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.kPct ?? null, leftMetricLabel: "Pitcher K%", right: analysisObject?.offense?.mets?.kPct || null, rightMetricLabel: "Batter K%", rightRankKey: "kPct" },
+            { label: "BB%", left: pitching.opp?.savant?.bbPct || null, leftPercentile: pitching.opp?.savant?.percentiles?.bbPct ?? null, leftMetricLabel: "Pitcher BB%", right: analysisObject?.offense?.mets?.bbPct || null, rightMetricLabel: "Batter BB%", rightRankKey: "bbPct" }
           ]
         }
       ],
@@ -5149,10 +5149,10 @@ function buildPresentationReport(game) {
         { label: "Projected wRC+", mets: analysisObject?.offense?.opp?.projectedLineupWRCPlus || null, opp: analysisObject?.offense?.mets?.projectedLineupWRCPlus || null },
         { label: "xwOBA", mets: analysisObject?.offense?.opp?.xwOBA || null, opp: analysisObject?.offense?.mets?.xwOBA || null },
         { label: "xSLG", mets: analysisObject?.offense?.opp?.xSLG || null, opp: analysisObject?.offense?.mets?.xSLG || null },
-        { label: "Hard-Hit%", mets: analysisObject?.offense?.opp?.hardHitPct || null, opp: analysisObject?.offense?.mets?.hardHitPct || null },
-        { label: "Barrel%", mets: analysisObject?.offense?.opp?.barrelPct || null, opp: analysisObject?.offense?.mets?.barrelPct || null },
-        { label: "K%", mets: analysisObject?.offense?.opp?.kPct || null, opp: analysisObject?.offense?.mets?.kPct || null },
-        { label: "BB%", mets: analysisObject?.offense?.opp?.bbPct || null, opp: analysisObject?.offense?.mets?.bbPct || null }
+        { label: "Hard-Hit%", metricLabel: "Batter Hard-Hit%", mets: analysisObject?.offense?.opp?.hardHitPct || null, opp: analysisObject?.offense?.mets?.hardHitPct || null },
+        { label: "Barrel%", metricLabel: "Batter Barrel%", mets: analysisObject?.offense?.opp?.barrelPct || null, opp: analysisObject?.offense?.mets?.barrelPct || null },
+        { label: "K%", metricLabel: "Batter K%", mets: analysisObject?.offense?.opp?.kPct || null, opp: analysisObject?.offense?.mets?.kPct || null },
+        { label: "BB%", metricLabel: "Batter BB%", mets: analysisObject?.offense?.opp?.bbPct || null, opp: analysisObject?.offense?.mets?.bbPct || null }
       ]
     },
     pitcherSplitMatchup: {
@@ -5162,8 +5162,8 @@ function buildPresentationReport(game) {
         { label: "Pitcher Hand", mets: pitching.mets?.hand || null, opp: pitching.opp?.hand || null },
         { label: "Opponent Lineup wRC+", mets: analysisObject?.offense?.opp?.projectedLineupWRCPlus || null, opp: analysisObject?.offense?.mets?.projectedLineupWRCPlus || null },
         { label: "Opponent xwOBA", mets: analysisObject?.offense?.opp?.xwOBA || null, opp: analysisObject?.offense?.mets?.xwOBA || null },
-        { label: "Opponent K%", mets: analysisObject?.offense?.opp?.kPct || null, opp: analysisObject?.offense?.mets?.kPct || null },
-        { label: "Opponent BB%", mets: analysisObject?.offense?.opp?.bbPct || null, opp: analysisObject?.offense?.mets?.bbPct || null }
+        { label: "Opponent K%", metricLabel: "Opponent K%", mets: analysisObject?.offense?.opp?.kPct || null, opp: analysisObject?.offense?.mets?.kPct || null },
+        { label: "Opponent BB%", metricLabel: "Opponent BB%", mets: analysisObject?.offense?.opp?.bbPct || null, opp: analysisObject?.offense?.mets?.bbPct || null }
       ],
       opponentRows: [
         { label: "Pitcher Hand", mets: pitching.opp?.hand || null, opp: pitching.mets?.hand || null },
@@ -5391,12 +5391,13 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   const twoColStyle = mode === "site"
     ? "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start;"
     : "display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;";
-  const heatCell = (label, value, percentileOverride = null) => {
-    const style = label === "WAR"
+  const heatCell = (label, value, percentileOverride = null, metricLabel = null) => {
+    const resolvedLabel = metricLabel || label;
+    const style = label === "WAR" || resolvedLabel === "WAR" || resolvedLabel === "Lineup WAR"
       ? reportWarCellStyle(value)
       : (() => {
         if (percentileOverride != null) return reportCellToneStyle(percentileOverride);
-        const pct = reportMetricPct(label, value);
+        const pct = reportMetricPct(resolvedLabel, value);
         return pct == null ? "background:#f3f4f6;color:#374151;border-radius:8px;" : reportCellToneStyle(pct);
       })();
     return `<span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;${style}">${valueCell(value)}</span>`;
@@ -5424,8 +5425,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
         ${(rows || []).map((row) => `
           <tr>
             <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;color:#4b5563;font-weight:600;">${row.label}</td>
-            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${heatCell(row.label, row.mets)}</td>
-            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${heatCell(row.label, row.opp)}</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${heatCell(row.label, row.mets, null, row.metricLabel)}</td>
+            <td style="padding:9px 8px;border-bottom:1px solid #f0f2f5;text-align:center;color:#111827;">${heatCell(row.label, row.opp, null, row.metricLabel)}</td>
           </tr>`).join("")}
       </tbody>
     </table>`;
@@ -5476,7 +5477,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
                     <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">${valueCell(table.leftHeader)}</div>
                     <div style="padding:8px 0;vertical-align:top;">
                       <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${valueCell(row.label)}</div>
-                      <div>${heatCell(row.label, row.left)}</div>
+                      <div>${heatCell(row.label, row.left, row.leftPercentile ?? null, row.leftMetricLabel)}</div>
                       ${row.leftPercentile != null ? `<div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">${ordinalSuffix(row.leftPercentile)} %ile</div>` : ""}
                     </div>
                   </td>
@@ -5484,7 +5485,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
                     <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">${valueCell(table.rightHeader)}</div>
                     <div style="padding:8px 0 8px 8px;vertical-align:top;">
                       <div style="${smallLabel}margin-bottom:4px;color:#6b7280;">${valueCell(row.label)}</div>
-                      <div>${heatCell(row.label, row.right)}</div>
+                      <div>${heatCell(row.label, row.right, null, row.rightMetricLabel)}</div>
                       ${resolvedRank != null ? `<div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#${resolvedRank} MLB</div>` : ""}
                     </div>
                   </td>
@@ -5572,20 +5573,42 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     'xERA':       { pctPos: 52, label: '4.05' },
     'WHIP':       { pctPos: 51, label: '1.28' },
     'K%':         { pctPos: 47, label: '22.5%' },
+    'Pitcher K%': { pctPos: 47, label: '22.5%' },
+    'Batter K%':  { pctPos: 47, label: '22.5%' },
+    'Opponent K%': { pctPos: 47, label: '22.5%' },
     'BB%':        { pctPos: 51, label: '8.2%' },
+    'Pitcher BB%': { pctPos: 51, label: '8.2%' },
+    'Batter BB%': { pctPos: 51, label: '8.2%' },
+    'Opponent BB%': { pctPos: 51, label: '8.2%' },
     'Barrel %':   { pctPos: 50, label: '7.5%' },
+    'Pitcher Barrel %': { pctPos: 50, label: '7.5%' },
+    'Batter Barrel %': { pctPos: 50, label: '7.5%' },
     'Barrel%':    { pctPos: 50, label: '7.5%' },
+    'Batter Barrel%': { pctPos: 50, label: '7.5%' },
     'xBA':        { pctPos: 48, label: '0.248' },
+    'Pitcher xBA': { pctPos: 48, label: '0.248' },
+    'Batter xBA': { pctPos: 48, label: '0.248' },
     'Hard Hit %': { pctPos: 50, label: '37%' },
+    'Pitcher Hard Hit %': { pctPos: 50, label: '37%' },
+    'Batter Hard Hit %': { pctPos: 50, label: '37%' },
     'Hard-Hit%':  { pctPos: 50, label: '37%' },
+    'Pitcher Hard-Hit%': { pctPos: 50, label: '37%' },
+    'Batter Hard-Hit%': { pctPos: 50, label: '37%' },
     'xSLG %':     { pctPos: 49, label: '0.400' },
+    'Pitcher xSLG %': { pctPos: 49, label: '0.400' },
+    'Batter xSLG %': { pctPos: 49, label: '0.400' },
     'xSLG':       { pctPos: 49, label: '0.400' },
+    'Pitcher xSLG': { pctPos: 49, label: '0.400' },
+    'Batter xSLG': { pctPos: 49, label: '0.400' },
     'xwOBA':      { pctPos: 48, label: '0.310' },
     'wRC+':       { pctPos: 47, label: '100' },
     'WAR':        { pctPos: 43, label: '0.5' },
   };
-  const renderAdvancedBar = (label, value, contextValue = null, contextKind = 'rank', align = 'left') => {
-    const pct = reportMetricPct(label, value);
+  const renderAdvancedBar = (label, value, contextValue = null, contextKind = 'rank', align = 'left', metricLabel = null) => {
+    const resolvedLabel = metricLabel || label;
+    const pct = contextKind === 'percentile' && contextValue != null
+      ? contextValue
+      : reportMetricPct(resolvedLabel, value);
     const shown = valueCell(value);
     const textAlign = align === 'right' ? 'right' : 'left';
     const ctxText = contextValue != null
@@ -5598,7 +5621,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </div>`;
     }
     const color = reportPctlColor(pct);
-    const avg = ADVCELL_MLB_AVG[label];
+    const avg = ADVCELL_MLB_AVG[resolvedLabel] || ADVCELL_MLB_AVG[label];
     const avgMarker = avg
       ? `<div style="position:absolute;top:0;left:${avg.pctPos}%;height:100%;width:2px;background:#374151;transform:translateX(-50%);z-index:2;border-radius:1px;"></div>`
       : '';
@@ -5615,8 +5638,11 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       ${ctxText ? `<span style="font-size:12px;color:#6b7280;font-weight:700;display:block;margin-top:14px;text-align:${textAlign};">${ctxText}</span>` : ''}
     </div>`;
   };
-  const renderEmailAdvBar = (label, value, contextValue = null, contextKind = 'rank') => {
-    const pct = reportMetricPct(label, value);
+  const renderEmailAdvBar = (label, value, contextValue = null, contextKind = 'rank', metricLabel = null) => {
+    const resolvedLabel = metricLabel || label;
+    const pct = contextKind === 'percentile' && contextValue != null
+      ? contextValue
+      : reportMetricPct(resolvedLabel, value);
     const shown = valueCell(value);
 
     if (pct == null) {
@@ -5630,7 +5656,7 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     }
 
     const color = reportPctlColor(pct);
-    const avg = ADVCELL_MLB_AVG[label];
+    const avg = ADVCELL_MLB_AVG[resolvedLabel] || ADVCELL_MLB_AVG[label];
     const barTotalPx = 100;
     const fillPx = Math.round((pct / 100) * barTotalPx);
     const ctx = contextValue != null
@@ -5668,8 +5694,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
                 <div class="email-adv-label" style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f8fafc;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">${valueCell(row.label)}</div>
                 <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
                   <tr>
-                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderEmailAdvBar(row.label, row.left, row.leftPercentile ?? null, "percentile")}</td>
-                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderEmailAdvBar(row.label, row.right, resolvedRank, "rank")}</td>
+                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;border-right:1px solid #e5e7eb;background:#f4f9ff;text-align:left;vertical-align:middle;">${renderEmailAdvBar(row.label, row.left, row.leftPercentile ?? null, "percentile", row.leftMetricLabel)}</td>
+                    <td class="email-adv-side" valign="top" style="width:50%;padding:9px 8px;background:#fff7ef;text-align:right;vertical-align:middle;">${renderEmailAdvBar(row.label, row.right, resolvedRank, "rank", row.rightMetricLabel)}</td>
                   </tr>
                 </table>
               </div>
@@ -5692,9 +5718,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             const resolvedRank = row.rightRank ?? (row.rightRankKey ? report?.teamAdvanced?.[table.rightTeamKey || ""]?.leagueRanks?.[row.rightRankKey] : null);
             return `
             <tr>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.left, row.leftPercentile ?? null, 'percentile', 'left')}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:left;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.left, row.leftPercentile ?? null, 'percentile', 'left', row.leftMetricLabel)}</td>
               <td style="width:34%;padding:6px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;vertical-align:middle;height:88px;">${valueCell(row.label)}</td>
-              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.right, resolvedRank, 'rank', 'right')}</td>
+              <td style="width:33%;padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:right;vertical-align:top;overflow:visible;">${renderAdvancedBar(row.label, row.right, resolvedRank, 'rank', 'right', row.rightMetricLabel)}</td>
             </tr>
           `;}).join("")}
         </tbody>
@@ -5760,9 +5786,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
                   <tr style="background:${i % 2 === 0 ? '#ffffff' : '#f9fafb'};">
                     <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">${valueCell(p.order ?? i + 1)}</td>
                     <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">${valueCell(p.name)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("xBA", p.savant?.xBA || null)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null)}</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null)}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("xBA", p.savant?.xBA || null, null, "Batter xBA")}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("K%", p.savant?.kPct || p.fangraphs?.kPct || null, null, "Batter K%")}</td>
+                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;">${heatCell("Hard Hit %", p.savant?.hardHitPct || null, null, "Batter Hard Hit %")}</td>
                   </tr>`).join("")}
               </tbody>
             </table>
@@ -5792,15 +5818,15 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       rows.push(`
         <tr>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;text-align:left;">${lineupNameCell(m, "mets")}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("xBA", m.savant?.xBA || null)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("K%", m.savant?.kPct || m.fangraphs?.kPct || null)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("Hard Hit %", m.savant?.hardHitPct || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("xBA", m.savant?.xBA || null, null, "Batter xBA")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("K%", m.savant?.kPct || m.fangraphs?.kPct || null, null, "Batter K%")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("Hard Hit %", m.savant?.hardHitPct || null, null, "Batter Hard Hit %")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#f4f9ff;text-align:center;">${heatCell("WAR", m.fangraphs?.war || null)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:800;">${valueCell(m.order ?? o.order ?? i + 1)}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:left;">${lineupNameCell(o, "opp")}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("xBA", o.savant?.xBA || null)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("K%", o.savant?.kPct || o.fangraphs?.kPct || null)}</td>
-          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("Hard Hit %", o.savant?.hardHitPct || null)}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("xBA", o.savant?.xBA || null, null, "Batter xBA")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("K%", o.savant?.kPct || o.fangraphs?.kPct || null, null, "Batter K%")}</td>
+          <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("Hard Hit %", o.savant?.hardHitPct || null, null, "Batter Hard Hit %")}</td>
           <td style="padding:8px 10px;border-bottom:1px solid #d6dde8;background:#fff7ef;text-align:center;">${heatCell("WAR", o.fangraphs?.war || null)}</td>
         </tr>`);
     }
@@ -5818,9 +5844,9 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
             </div>
           </div>
           <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;">
-            <div><div style="${smallLabel}margin-bottom:4px;">xBA</div>${heatCell("xBA", player.savant?.xBA || null)}</div>
-            <div><div style="${smallLabel}margin-bottom:4px;">K%</div>${heatCell("K%", player.savant?.kPct || player.fangraphs?.kPct || null)}</div>
-            <div><div style="${smallLabel}margin-bottom:4px;">Hard Hit</div>${heatCell("Hard Hit %", player.savant?.hardHitPct || null)}</div>
+            <div><div style="${smallLabel}margin-bottom:4px;">xBA</div>${heatCell("xBA", player.savant?.xBA || null, null, "Batter xBA")}</div>
+            <div><div style="${smallLabel}margin-bottom:4px;">K%</div>${heatCell("K%", player.savant?.kPct || player.fangraphs?.kPct || null, null, "Batter K%")}</div>
+            <div><div style="${smallLabel}margin-bottom:4px;">Hard Hit</div>${heatCell("Hard Hit %", player.savant?.hardHitPct || null, null, "Batter Hard Hit %")}</div>
             <div><div style="${smallLabel}margin-bottom:4px;">WAR</div>${heatCell("WAR", player.fangraphs?.war || null)}</div>
           </div>
         </div>`;
@@ -6319,10 +6345,16 @@ const REPORT_PCTL = {
   WHIP: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 0.90) / (1.70 - 0.90)) * 90), 5, 99),
   KPct: (v) => clampReport(Math.round(((parseFloat(v) - 10) / (36 - 10)) * 95), 5, 99),
   BBPct: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 3.5) / (13.5 - 3.5)) * 90), 5, 99),
+  BatterBBPct: (v) => clampReport(Math.round(((parseFloat(v) - 4) / (14 - 4)) * 95), 5, 99),
   KBB: (v) => clampReport(Math.round(((parseFloat(v) - 1.2) / (6.0 - 1.2)) * 95), 5, 99),
+  BatterKPct: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 12) / (33 - 12)) * 90), 5, 99),
   HardHit: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 26) / (47 - 26)) * 90), 5, 99),
+  HardHitBat: (v) => clampReport(Math.round(((parseFloat(v) - 25) / (55 - 25)) * 95), 5, 99),
   Barrel: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 2.5) / (16 - 2.5)) * 90), 5, 99),
+  BarrelBat: (v) => clampReport(Math.round(((parseFloat(v) - 2) / (18 - 2)) * 95), 5, 99),
   Chase: (v) => clampReport(Math.round(((parseFloat(v) - 18) / (38 - 18)) * 95), 5, 99),
+  PitcherXBA: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 0.190) / (0.320 - 0.190)) * 95), 5, 99),
+  PitcherXSLG: (v) => clampReport(Math.round(100 - ((parseFloat(v) - 0.280) / (0.560 - 0.280)) * 95), 5, 99),
   xwOBA: (v) => clampReport(Math.round(((parseFloat(v) - 0.260) / (0.380 - 0.260)) * 95), 5, 99),
   xSLG: (v) => clampReport(Math.round(((parseFloat(v) - 0.280) / (0.560 - 0.280)) * 95), 5, 99),
   xBA: (v) => clampReport(Math.round(((parseFloat(v) - 0.190) / (0.320 - 0.190)) * 95), 5, 99),
@@ -6331,11 +6363,11 @@ const REPORT_PCTL = {
 };
 
 function reportPctlColor(pct) {
-  if (pct >= 80) return "#c0392b";
-  if (pct >= 60) return "#e08060";
+  if (pct >= 80) return "#15803d";
+  if (pct >= 60) return "#16a34a";
   if (pct >= 45) return "#aab8c8";
-  if (pct >= 25) return "#5a9fd4";
-  return "#1a6bb5";
+  if (pct >= 25) return "#f87171";
+  return "#dc2626";
 }
 
 function reportCellToneStyle(pct) {
@@ -6351,9 +6383,9 @@ function reportWarCellStyle(value) {
   const magnitude = Math.min(Math.abs(parsed), 4);
   const alpha = 0.34 + ((magnitude / 4) * 0.54);
   if (parsed > 0) {
-    return `background:rgba(192,57,43,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(127,29,29,0.22);`;
+    return `background:rgba(22,163,74,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(21,128,61,0.22);`;
   }
-  return `background:rgba(26,107,181,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(30,64,175,0.22);`;
+  return `background:rgba(220,38,38,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(153,27,27,0.22);`;
 }
 
 function parseReportNumber(value) {
@@ -6372,14 +6404,20 @@ function reportMetricPct(label, value) {
     case "xERA": return REPORT_PCTL.xERA(parsed);
     case "FIP": return REPORT_PCTL.FIP(parsed);
     case "WHIP": return REPORT_PCTL.WHIP(parsed);
-    case "K%": return REPORT_PCTL.KPct(parsed);
-    case "BB%": return REPORT_PCTL.BBPct(parsed);
+    case "K%":
+    case "Pitcher K%": return REPORT_PCTL.KPct(parsed);
+    case "BB%":
+    case "Pitcher BB%": return REPORT_PCTL.BBPct(parsed);
     case "K-BB%":
     case "K/BB": return REPORT_PCTL.KBB(parsed);
-    case "Hard-Hit%": return REPORT_PCTL.HardHit(parsed);
-    case "Hard Hit %": return REPORT_PCTL.HardHit(parsed);
-    case "Barrel%": return REPORT_PCTL.Barrel(parsed);
-    case "Barrel %": return REPORT_PCTL.Barrel(parsed);
+    case "Hard-Hit%":
+    case "Pitcher Hard-Hit%": return REPORT_PCTL.HardHit(parsed);
+    case "Hard Hit %":
+    case "Pitcher Hard Hit %": return REPORT_PCTL.HardHit(parsed);
+    case "Barrel%":
+    case "Pitcher Barrel%": return REPORT_PCTL.Barrel(parsed);
+    case "Barrel %":
+    case "Pitcher Barrel %": return REPORT_PCTL.Barrel(parsed);
     case "Whiff%": return REPORT_PCTL.KPct(parsed);
     case "Chase%": return REPORT_PCTL.Chase(parsed);
     case "Projected wRC+":
@@ -6387,11 +6425,25 @@ function reportMetricPct(label, value) {
     case "xwOBA":
     case "Opponent xwOBA":
     case "Lineup xwOBA": return REPORT_PCTL.xwOBA(parsed);
+    case "Pitcher xSLG":
+    case "Pitcher xSLG %": return REPORT_PCTL.PitcherXSLG(parsed);
     case "xSLG":
+    case "Batter xSLG":
     case "xSLG %":
+    case "Batter xSLG %":
     case "Lineup xSLG": return REPORT_PCTL.xSLG(parsed);
+    case "Pitcher xBA": return REPORT_PCTL.PitcherXBA(parsed);
     case "xBA":
+    case "Batter xBA":
     case "Lineup xBA": return REPORT_PCTL.xBA(parsed);
+    case "Batter Hard-Hit%": return REPORT_PCTL.HardHitBat(parsed);
+    case "Batter Hard Hit %": return REPORT_PCTL.HardHitBat(parsed);
+    case "Batter Barrel%": return REPORT_PCTL.BarrelBat(parsed);
+    case "Batter Barrel %": return REPORT_PCTL.BarrelBat(parsed);
+    case "Batter K%":
+    case "Opponent K%": return REPORT_PCTL.BatterKPct(parsed);
+    case "Batter BB%":
+    case "Opponent BB%": return REPORT_PCTL.BatterBBPct(parsed);
     case "WAR": return REPORT_PCTL.WAR(parsed);
     case "Lineup WAR": return REPORT_PCTL.WAR(parsed);
     default: return null;
