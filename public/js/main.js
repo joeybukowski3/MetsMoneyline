@@ -5,6 +5,7 @@ const METS_TEAM_ID = 121;
 const EASTERN_TIME_ZONE = "America/New_York";
 const {
   buildDateScopedCacheKey,
+  getFeaturedReferenceDateISO,
   getEasternDateISO,
   isFinalGame,
   isPlayableScheduledGame,
@@ -14,7 +15,7 @@ const {
 } = globalThis.MetsFeaturedGameState;
 
 function getTodayISO() {
-  return getEasternDateISO();
+  return getFeaturedReferenceDateISO();
 }
 
 function getTodayET() {
@@ -198,6 +199,63 @@ async function fetchInternalJson(path) {
   const res = await fetch(path);
   if (!res.ok) throw new Error(`Internal endpoint failed: ${path} (${res.status})`);
   return res.json();
+}
+
+async function fetchDirectMlbScheduleFallback(referenceDate, standings, recentGames, odds) {
+  const endDate = globalThis.MetsFeaturedGameState.addDaysToDateISO(referenceDate, 7) || referenceDate;
+  const url =
+    "https://statsapi.mlb.com/api/v1/schedule" +
+    `?sportId=1&teamId=${METS_TEAM_ID}&startDate=${referenceDate}&endDate=${endDate}` +
+    "&hydrate=team,venue,linescore,probablePitcher,lineups,seriesStatus";
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`MLB fallback schedule failed (${res.status})`);
+  const data = await res.json();
+  const rawGames = (data?.dates || []).flatMap((dateEntry) => Array.isArray(dateEntry?.games) ? dateEntry.games : []);
+  if (!rawGames.length) return null;
+
+  const normalizedGames = rawGames
+    .map((game) => {
+      const isHome = game?.teams?.home?.team?.id === METS_TEAM_ID;
+      const opponentTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
+      return mapInternalGameToSiteGame({
+        gameId: game?.gamePk,
+        isMetsHome: isHome,
+        startTime: game?.gameDate,
+        venue: game?.venue?.name || "Venue TBD",
+        status: game?.status?.detailedState || game?.status?.abstractGameState || "",
+        homeScore: game?.teams?.home?.score ?? null,
+        awayScore: game?.teams?.away?.score ?? null,
+        homeTeam: {
+          id: game?.teams?.home?.team?.id ?? null,
+          mlbStatsTeamId: game?.teams?.home?.team?.id ?? null,
+          name: game?.teams?.home?.team?.name || "Home Team",
+          record: game?.teams?.home?.leagueRecord
+            ? `${game.teams.home.leagueRecord.wins}-${game.teams.home.leagueRecord.losses}`
+            : null
+        },
+        awayTeam: {
+          id: game?.teams?.away?.team?.id ?? null,
+          mlbStatsTeamId: game?.teams?.away?.team?.id ?? null,
+          name: game?.teams?.away?.team?.name || "Away Team",
+          record: game?.teams?.away?.leagueRecord
+            ? `${game.teams.away.leagueRecord.wins}-${game.teams.away.leagueRecord.losses}`
+            : null
+        },
+        probablePitchers: {
+          mets: isHome ? game?.teams?.home?.probablePitcher : game?.teams?.away?.probablePitcher,
+          opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
+        },
+        raw: game
+      }, standings, recentGames, odds);
+    })
+    .filter(Boolean);
+
+  const fallbackState = resolveFeaturedGameState(normalizedGames, {
+    now: new Date(),
+    referenceDate,
+    lookaheadDays: 7
+  });
+  return fallbackState.featuredGame || normalizedGames[0] || null;
 }
 
 function buildRecentLogRows(recentGames = []) {
@@ -427,6 +485,32 @@ async function loadGameData() {
         oddsUpdatedAt: odds?.meta?.generatedAt || filteredGames[0]?.oddsUpdatedAt || null
       };
     }
+    const previewState = resolveFeaturedGameState(filteredGames, {
+      now: new Date(),
+      referenceDate: todayEt,
+      lookaheadDays: 7
+    });
+
+    if (!filteredGames.length || (previewState.kind === "no-upcoming-data" && !previewState.nextUpcomingGame)) {
+      const directFallbackGame = await fetchDirectMlbScheduleFallback(todayEt, standings, recentGames, odds).catch((error) => {
+        console.warn(`[home] Direct MLB fallback failed: ${error?.message || error}`);
+        return null;
+      });
+      if (directFallbackGame) {
+        console.warn("[home] Recovered featured game directly from MLB schedule fallback.");
+        const existingIndex = filteredGames.findIndex((game) =>
+          game?.date === directFallbackGame.date &&
+          game?.opponent === directFallbackGame.opponent &&
+          game?.homeAway === directFallbackGame.homeAway
+        );
+        if (existingIndex >= 0) {
+          filteredGames[existingIndex] = mergeLiveGame(filteredGames[existingIndex], directFallbackGame);
+        } else {
+          filteredGames.unshift(directFallbackGame);
+        }
+      }
+    }
+
     data.games = filteredGames;
     data.referenceDate = todayEt;
     data.cacheKey = buildDateScopedCacheKey("home-game-data", todayEt);

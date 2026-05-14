@@ -25,6 +25,34 @@
     }).format(value);
   }
 
+  function getEasternDateTimeParts(value = new Date()) {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: EASTERN_TIME_ZONE,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    });
+    const parts = formatter.formatToParts(value);
+    const readPart = (type) => Number(parts.find((part) => part.type === type)?.value || 0);
+    return {
+      year: readPart("year"),
+      month: readPart("month"),
+      day: readPart("day"),
+      hour: readPart("hour"),
+      minute: readPart("minute")
+    };
+  }
+
+  function getFeaturedReferenceDateISO(value = new Date(), rolloverHour = 2) {
+    const parts = getEasternDateTimeParts(value);
+    const todayIso = formatDateIsoParts(parts.year, parts.month, parts.day);
+    if (parts.hour >= rolloverHour) return todayIso;
+    return addDaysToDateISO(todayIso, -1) || todayIso;
+  }
+
   function parseDateOnlyToUtcMidday(dateIso) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateIso || ""))) return null;
     const parsed = new Date(`${dateIso}T12:00:00Z`);
@@ -138,6 +166,76 @@
     return sourceStale || !sourceName || sourceName.startsWith("local/");
   }
 
+  function selectGameToDisplay(games, options = {}) {
+    const now = options.now instanceof Date ? options.now : new Date();
+    const referenceDate = options.referenceDate || getFeaturedReferenceDateISO(now);
+    const lookaheadDays = Number.isFinite(options.lookaheadDays) ? options.lookaheadDays : 7;
+    const normalizedGames = Array.isArray(games)
+      ? games
+          .map((game) => {
+            if (!game) return null;
+            const normalizedDate = normalizeGameDate(game);
+            if (!normalizedDate) return null;
+            return { ...game, date: normalizedDate };
+          })
+          .filter(Boolean)
+      : [];
+
+    const sortedGames = normalizedGames.slice().sort(compareGamesForDisplay);
+    const liveGame = sortedGames.find((game) => isLiveGame(game)) || null;
+    if (liveGame) return { game: liveGame, normalizedGames, sortedGames, referenceDate, liveGame };
+
+    const sameDayGames = sortedGames
+      .filter((game) => game.date === referenceDate && isPlayableScheduledGame(game))
+      .sort(compareGamesForDisplay);
+    const sameDayGame = sameDayGames[0] || null;
+    if (sameDayGame) {
+      return {
+        game: sameDayGame,
+        normalizedGames,
+        sortedGames,
+        referenceDate,
+        liveGame: null,
+        sameDayGames
+      };
+    }
+
+    const upcomingGames = sortedGames
+      .filter((game) => {
+        if (!isPlayableScheduledGame(game)) return false;
+        const dayDiff = diffCalendarDays(referenceDate, game.date);
+        return dayDiff != null && dayDiff >= 1 && dayDiff <= lookaheadDays;
+      })
+      .sort(compareGamesForDisplay);
+    const nextUpcomingGame = upcomingGames[0] || null;
+    if (nextUpcomingGame) {
+      return {
+        game: nextUpcomingGame,
+        normalizedGames,
+        sortedGames,
+        referenceDate,
+        liveGame: null,
+        sameDayGames,
+        upcomingGames
+      };
+    }
+
+    const finalGames = sortedGames
+      .filter((game) => isFinalGame(game))
+      .sort((first, second) => resolveGameTimestamp(second) - resolveGameTimestamp(first));
+
+    return {
+      game: finalGames[0] || null,
+      normalizedGames,
+      sortedGames,
+      referenceDate,
+      liveGame: null,
+      sameDayGames,
+      upcomingGames: [],
+      finalGames
+    };
+  }
+
   function buildStateLogLines(state) {
     return [
       `Current site date/time: ${state.nowIso}`,
@@ -153,39 +251,24 @@
 
   function resolveFeaturedGameState(games, options = {}) {
     const now = options.now instanceof Date ? options.now : new Date();
-    const referenceDate = options.referenceDate || getEasternDateISO(now);
+    const referenceDate = options.referenceDate || getFeaturedReferenceDateISO(now);
     const lookaheadDays = Number.isFinite(options.lookaheadDays) ? options.lookaheadDays : 7;
-    const normalizedGames = Array.isArray(games)
-      ? games
-          .map((game) => {
-            if (!game) return null;
-            const normalizedDate = normalizeGameDate(game);
-            if (!normalizedDate) return null;
-            return { ...game, date: normalizedDate };
-          })
-          .filter(Boolean)
-      : [];
-
-    const sortedGames = normalizedGames.slice().sort(compareGamesForDisplay);
-    const todayGames = sortedGames
-      .filter((game) => game.date === referenceDate && isPlayableScheduledGame(game))
-      .sort(compareGamesForDisplay);
-
-    const futureGames = sortedGames.filter((game) => {
-      if (!isPlayableScheduledGame(game)) return false;
-      const dayDiff = diffCalendarDays(referenceDate, game.date);
-      return dayDiff != null && dayDiff >= 1 && dayDiff <= lookaheadDays;
-    });
-
+    const selection = selectGameToDisplay(games, { now, referenceDate, lookaheadDays });
+    const normalizedGames = selection.normalizedGames || [];
+    const sortedGames = selection.sortedGames || [];
+    const todayGames = selection.sameDayGames || [];
     const todayGame = todayGames[0] || null;
-    const nextUpcomingGame = futureGames[0] || null;
-    const featuredGame = todayGame || nextUpcomingGame || null;
+    const nextUpcomingGame = (selection.upcomingGames && selection.upcomingGames[0]) || null;
+    const featuredGame = selection.game || null;
 
     let kind = "no-upcoming-data";
     let displayLabel = "No Mets game today";
     let offDay = false;
 
-    if (todayGame) {
+    if (selection.liveGame) {
+      kind = "live";
+      displayLabel = "Live Game";
+    } else if (todayGame) {
       kind = "today";
       displayLabel = "Today's Game";
     } else if (nextUpcomingGame) {

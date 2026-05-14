@@ -1952,6 +1952,20 @@ async function fetchExactExternalGameForDate(targetDate) {
   return { status: game ? "found" : "empty", game };
 }
 
+function isPlayableExternalScheduleGame(game) {
+  const statusText = String(game?.status?.abstractGameState || game?.status?.detailedState || "").toLowerCase();
+  if (!game?.gamePk) return false;
+  if (/postponed|suspended|cancelled|canceled/.test(statusText)) return false;
+  if (/live|in progress|manager challenge|warmup|delayed/.test(statusText)) return true;
+  if (/preview|scheduled|pre-game/.test(statusText)) return true;
+  return !/final|completed|game over/.test(statusText);
+}
+
+function isExternalFinalScheduleGame(game) {
+  const statusText = String(game?.status?.abstractGameState || game?.status?.detailedState || "").toLowerCase();
+  return /final|completed|game over/.test(statusText);
+}
+
 async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = true, allowFutureFallback = false, log = false } = {}) {
   const messages = [];
   const pushLog = (message) => {
@@ -1960,33 +1974,36 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
   };
 
   pushLog(`Resolving Mets game for ${targetDate}`);
-  const localResolution = loadExactLocalResolvedGameForDate(targetDate);
-  if (localResolution) {
-    pushLog(`Local site schedule found: ${buildLocalGameLabel(localResolution.game)}`);
-    pushLog(`Resolved game source: ${localResolution.source}`);
-    return { ...localResolution, logs: messages };
-  }
-
   const exactExternal = await fetchExactExternalGameForDate(targetDate);
   if (exactExternal.status === "found" && exactExternal.game) {
     const game = exactExternal.game;
-    const isHome = game?.teams?.home?.team?.id === TEAM_ID;
-    const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
-    pushLog(`External schedule found: ${isHome ? `${oppTeam?.name || "Opponent"} @ Mets` : `Mets @ ${oppTeam?.name || "Opponent"}`}`);
-    pushLog("Resolved game source: external/mlb-stats");
-    return {
-      source: "external/mlb-stats",
-      type: "mlb-schedule-game",
-      requestedDate: targetDate,
-      resolvedDate: targetDate,
-      stale: false,
-      game,
-      logs: messages
-    };
+    if (allowFutureFallback && isExternalFinalScheduleGame(game)) {
+      pushLog(`Exact-date game for ${targetDate} is already final; advancing to next playable Mets game.`);
+    } else {
+      const isHome = game?.teams?.home?.team?.id === TEAM_ID;
+      const oppTeam = isHome ? game?.teams?.away?.team : game?.teams?.home?.team;
+      pushLog(`External schedule found: ${isHome ? `${oppTeam?.name || "Opponent"} @ Mets` : `Mets @ ${oppTeam?.name || "Opponent"}`}`);
+      pushLog("Resolved game source: external/mlb-stats");
+      return {
+        source: "external/mlb-stats",
+        type: "mlb-schedule-game",
+        requestedDate: targetDate,
+        resolvedDate: targetDate,
+        stale: false,
+        game,
+        logs: messages
+      };
+    }
   }
 
   if (exactExternal.status === "unavailable") {
     pushLog("External schedule fetch failed: unavailable; continuing with local data if present");
+    const localResolution = loadExactLocalResolvedGameForDate(targetDate);
+    if (localResolution) {
+      pushLog(`Local site schedule found: ${buildLocalGameLabel(localResolution.game)}`);
+      pushLog(`Resolved game source: ${localResolution.source}`);
+      return { ...localResolution, logs: messages };
+    }
     const staleLocal = loadLocalResolvedGameForDate(targetDate, { allowSeriesContinuation });
     if (staleLocal) {
       pushLog(`Local cached game found after external failure: ${buildLocalGameLabel(staleLocal.game)}`);
@@ -1996,12 +2013,18 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
   }
 
   if (!allowFutureFallback) {
+    const localResolution = loadExactLocalResolvedGameForDate(targetDate);
+    if (localResolution) {
+      pushLog(`Local site schedule found after external miss: ${buildLocalGameLabel(localResolution.game)}`);
+      pushLog(`Resolved game source: ${localResolution.source}`);
+      return { ...localResolution, logs: messages };
+    }
     pushLog(`No Mets game found for ${targetDate} after checking local and external sources.`);
     return null;
   }
 
   const startDate = targetDate;
-  const endDate = addDaysToDateISO(targetDate, 14);
+  const endDate = addDaysToDateISO(targetDate, 7);
 
   const url =
     "https://statsapi.mlb.com/api/v1/schedule" +
@@ -2010,6 +2033,7 @@ async function resolveMetsGameForDate(targetDate, { allowSeriesContinuation = tr
   const data = await safeGetJson(url, `schedule window ${startDate} ${endDate}`);
   const nextGame = (data?.dates || [])
     .flatMap((dateEntry) => dateEntry.games || [])
+    .filter((game) => isPlayableExternalScheduleGame(game))
     .sort((a, b) => new Date(a.gameDate) - new Date(b.gameDate))[0] || null;
 
   if (!nextGame) {
