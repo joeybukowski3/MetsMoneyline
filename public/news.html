@@ -400,6 +400,15 @@
       return match ? match[1] : "";
     }
 
+    function toSafeExternalUrl(value) {
+      try {
+        const url = new URL(String(value || ""));
+        return /^https?:$/i.test(url.protocol) ? url.toString() : "";
+      } catch (_error) {
+        return "";
+      }
+    }
+
     function categorize(article) {
       const text = `${article.title} ${article.description}`.toLowerCase();
       for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
@@ -432,14 +441,35 @@
       return `<span class="news-cat-badge ${cat}">${labels[cat]}</span>`;
     }
 
-    function thumbHtml(article) {
-      if (article.thumbnail) {
-        return `<div class="news-thumb-wrap">
-          <img src="${article.thumbnail}" alt="${article.title} article thumbnail" width="640" height="360" loading="lazy" decoding="async"
-               onerror="this.parentElement.innerHTML='<div class=\\'news-thumb-placeholder\\'>⚾</div>'">
-        </div>`;
+    function buildThumb(article) {
+      const wrap = document.createElement("div");
+      wrap.className = "news-thumb-wrap";
+
+      const thumbnailUrl = toSafeExternalUrl(article.thumbnail);
+      if (!thumbnailUrl) {
+        const placeholder = document.createElement("div");
+        placeholder.className = "news-thumb-placeholder";
+        placeholder.textContent = "⚾";
+        wrap.appendChild(placeholder);
+        return wrap;
       }
-      return `<div class="news-thumb-wrap"><div class="news-thumb-placeholder">⚾</div></div>`;
+
+      const img = document.createElement("img");
+      img.src = thumbnailUrl;
+      img.alt = `${article.title} article thumbnail`;
+      img.width = 640;
+      img.height = 360;
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.addEventListener("error", function handleThumbError() {
+        wrap.replaceChildren();
+        const placeholder = document.createElement("div");
+        placeholder.className = "news-thumb-placeholder";
+        placeholder.textContent = "⚾";
+        wrap.appendChild(placeholder);
+      }, { once: true });
+      wrap.appendChild(img);
+      return wrap;
     }
 
     function renderArticles(articles) {
@@ -457,17 +487,43 @@
         return;
       }
 
-      grid.innerHTML = filtered.map(article => `
-        <a class="news-card" href="${article.link}" target="_blank" rel="noopener">
-          ${thumbHtml(article)}
-          <div class="news-body">
-            <span class="news-source">${article.source}</span>
-            ${catBadgeHtml(article.category)}
-            <span class="news-title">${article.title}</span>
-            <span class="news-date">${getRelativeTime(article.pubDate)}</span>
-          </div>
-        </a>
-      `).join("");
+      const cards = filtered.map((article) => {
+        const card = document.createElement("a");
+        card.className = "news-card";
+        card.href = toSafeExternalUrl(article.link) || "#";
+        card.target = "_blank";
+        card.rel = "noopener";
+
+        card.appendChild(buildThumb(article));
+
+        const body = document.createElement("div");
+        body.className = "news-body";
+
+        const source = document.createElement("span");
+        source.className = "news-source";
+        source.textContent = article.source;
+        body.appendChild(source);
+
+        const badgeHtml = catBadgeHtml(article.category);
+        if (badgeHtml) {
+          body.insertAdjacentHTML("beforeend", badgeHtml);
+        }
+
+        const title = document.createElement("span");
+        title.className = "news-title";
+        title.textContent = article.title;
+        body.appendChild(title);
+
+        const date = document.createElement("span");
+        date.className = "news-date";
+        date.textContent = getRelativeTime(article.pubDate);
+        body.appendChild(date);
+
+        card.appendChild(body);
+        return card;
+      });
+
+      grid.replaceChildren(...cards);
     }
 
     function updateLastUpdatedLabel() {

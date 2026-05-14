@@ -291,6 +291,15 @@
       return match ? match[1] : "";
     }
 
+    function toSafeExternalUrl(value) {
+      try {
+        const url = new URL(String(value || ""));
+        return /^https?:$/i.test(url.protocol) ? url.toString() : "";
+      } catch (_error) {
+        return "";
+      }
+    }
+
     function toArticle(item, feedName) {
       return {
         source: feedName,
@@ -321,15 +330,45 @@
         return;
       }
 
-      container.innerHTML = items.map(article => `
-        <a class="news-card-sm" href="${article.link}" target="_blank" rel="noopener">
-          ${article.thumbnail ? `<img src="${article.thumbnail}" alt="${article.title} thumbnail" width="60" height="60" loading="lazy" decoding="async" onerror="this.style.display='none'">` : ""}
-          <div>
-            <div class="news-card-sm-title">${article.title}</div>
-            <div class="news-card-sm-meta">${article.source} &middot; ${getRelativeTime(article.pubDate)}</div>
-          </div>
-        </a>
-      `).join("");
+      const cards = items.map((article) => {
+        const card = document.createElement("a");
+        card.className = "news-card-sm";
+        card.href = toSafeExternalUrl(article.link) || "#";
+        card.target = "_blank";
+        card.rel = "noopener";
+
+        const thumbnailUrl = toSafeExternalUrl(article.thumbnail);
+        if (thumbnailUrl) {
+          const img = document.createElement("img");
+          img.src = thumbnailUrl;
+          img.alt = `${article.title} thumbnail`;
+          img.width = 60;
+          img.height = 60;
+          img.loading = "lazy";
+          img.decoding = "async";
+          img.addEventListener("error", function handleThumbError() {
+            img.remove();
+          }, { once: true });
+          card.appendChild(img);
+        }
+
+        const body = document.createElement("div");
+
+        const title = document.createElement("div");
+        title.className = "news-card-sm-title";
+        title.textContent = article.title;
+        body.appendChild(title);
+
+        const meta = document.createElement("div");
+        meta.className = "news-card-sm-meta";
+        meta.textContent = `${article.source} · ${getRelativeTime(article.pubDate)}`;
+        body.appendChild(meta);
+
+        card.appendChild(body);
+        return card;
+      });
+
+      container.replaceChildren(...cards);
     }
 
     async function fetchFeedItems(feed) {
