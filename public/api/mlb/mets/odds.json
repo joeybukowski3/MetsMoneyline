@@ -23,12 +23,12 @@
       "outcomes": [
         {
           "name": "New York Mets",
-          "price": -154,
+          "price": -156,
           "point": 1.5
         },
         {
           "name": "New York Yankees",
-          "price": 128,
+          "price": 130,
           "point": -1.5
         }
       ]
@@ -77,12 +77,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": -154,
+              "price": -156,
               "point": 1.5
             },
             {
               "name": "New York Yankees",
-              "price": 128,
+              "price": 130,
               "point": -1.5
             }
           ]
@@ -180,6 +180,44 @@
           ]
         }
       ]
+    },
+    {
+      "key": "draftkings",
+      "title": "DraftKings",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 123,
+              "point": null
+            },
+            {
+              "name": "New York Yankees",
+              "price": -149,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -120,
+              "point": 7
+            },
+            {
+              "name": "Under",
+              "price": 100,
+              "point": 7
+            }
+          ]
+        }
+      ]
     }
   ],
   "consensus": {
@@ -208,12 +246,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -154,
+            "price": -156,
             "point": 1.5
           },
           {
             "name": "New York Yankees",
-            "price": 128,
+            "price": 130,
             "point": -1.5
           }
         ]
@@ -247,11 +285,11 @@
       {
         "key": "fanduel",
         "title": "FanDuel",
-        "last_update": "2026-05-14T19:17:35Z",
+        "last_update": "2026-05-14T20:51:27Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-05-14T19:17:35Z",
+            "last_update": "2026-05-14T20:51:27Z",
             "outcomes": [
               {
                 "name": "New York Mets",
@@ -265,23 +303,23 @@
           },
           {
             "key": "spreads",
-            "last_update": "2026-05-14T19:17:35Z",
+            "last_update": "2026-05-14T20:51:27Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": -154,
+                "price": -156,
                 "point": 1.5
               },
               {
                 "name": "New York Yankees",
-                "price": 128,
+                "price": 130,
                 "point": -1.5
               }
             ]
           },
           {
             "key": "totals",
-            "last_update": "2026-05-14T19:17:35Z",
+            "last_update": "2026-05-14T20:51:27Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -300,11 +338,11 @@
       {
         "key": "lowvig",
         "title": "LowVig.ag",
-        "last_update": "2026-05-14T19:17:33Z",
+        "last_update": "2026-05-14T20:51:26Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-05-14T19:17:33Z",
+            "last_update": "2026-05-14T20:51:26Z",
             "outcomes": [
               {
                 "name": "New York Mets",
@@ -318,7 +356,7 @@
           },
           {
             "key": "totals",
-            "last_update": "2026-05-14T19:17:33Z",
+            "last_update": "2026-05-14T20:51:26Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -337,11 +375,11 @@
       {
         "key": "betonlineag",
         "title": "BetOnline.ag",
-        "last_update": "2026-05-14T19:17:12Z",
+        "last_update": "2026-05-14T20:51:46Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-05-14T19:17:12Z",
+            "last_update": "2026-05-14T20:51:46Z",
             "outcomes": [
               {
                 "name": "New York Mets",
@@ -355,7 +393,44 @@
           },
           {
             "key": "totals",
-            "last_update": "2026-05-14T19:17:12Z",
+            "last_update": "2026-05-14T20:51:46Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -120,
+                "point": 7
+              },
+              {
+                "name": "Under",
+                "price": 100,
+                "point": 7
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-05-14T20:51:27Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-05-14T20:51:27Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": 123
+              },
+              {
+                "name": "New York Yankees",
+                "price": -149
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-05-14T20:51:27Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -375,7 +450,7 @@
   },
   "meta": {
     "provider": "the-odds-api",
-    "generatedAt": "2026-05-14T19:17:58.645Z",
+    "generatedAt": "2026-05-14T20:51:58.044Z",
     "cacheHint": "odds: 2-5 minutes"
   }
 }

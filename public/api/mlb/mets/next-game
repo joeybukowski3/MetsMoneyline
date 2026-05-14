@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -154,
+            "price": -156,
             "point": 1.5
           },
           {
             "name": "New York Yankees",
-            "price": 128,
+            "price": 130,
             "point": -1.5
           }
         ]
@@ -231,9 +231,9 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 17,
+          "wins": 18,
           "losses": 25,
-          "pct": ".405"
+          "pct": ".419"
         },
         "probablePitcher": {
           "id": 605280,
@@ -259,16 +259,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 147,
+          "name": "New York Yankees",
+          "link": "/api/v1/teams/147"
         }
       },
       "offense": {
         "team": {
-          "id": 147,
-          "name": "New York Yankees",
-          "link": "/api/v1/teams/147"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -310,11 +310,12 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-14T19:17:58.645Z",
+    "generatedAt": "2026-05-14T20:51:58.043Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-14",
     "cacheKey": "next-game:2026-05-14"
