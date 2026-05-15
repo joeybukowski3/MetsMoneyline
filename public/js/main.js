@@ -828,13 +828,15 @@ const PCTL = {
 
 function clamp(n, lo, hi) { return Math.max(lo, Math.min(hi, n)); }
 
-/* Color the bar: red (poor) → gray (avg) → green (elite) */
+const REPORT_PREVIEW_HIGH_COLOR = "#ff5910";
+const REPORT_PREVIEW_NEUTRAL_COLOR = "#9ca3af";
+const REPORT_PREVIEW_LOW_COLOR = "#002d72";
+
+/* Color the bar: blue (weak) → gray (avg) → orange (strong) */
 function pctlColor(pct) {
-  if (pct >= 80) return "#15803d";   // elite green
-  if (pct >= 60) return "#16a34a";   // good green
-  if (pct >= 45) return "#aab8c8";   // avg gray
-  if (pct >= 25) return "#f87171";   // below avg red
-  return "#dc2626";                  // poor red
+  if (pct >= 70) return REPORT_PREVIEW_HIGH_COLOR;
+  if (pct >= 40) return REPORT_PREVIEW_NEUTRAL_COLOR;
+  return REPORT_PREVIEW_LOW_COLOR;
 }
 
 function pctlTone(pct) {
@@ -1348,7 +1350,7 @@ function buildRow3(game) {
   };
   const rankBadge = (rank) => {
     if (rank == null) return "";
-    const rankColor = rank <= 10 ? "#15803d" : rank <= 20 ? "#92400e" : "#b91c1c";
+    const rankColor = rank <= 10 ? REPORT_PREVIEW_HIGH_COLOR : rank <= 20 ? "#92400e" : REPORT_PREVIEW_LOW_COLOR;
     return `<div style="font-size:0.68rem;font-weight:700;color:${rankColor};margin-top:1px;">#${rank} MLB</div>`;
   };
   const advCards = resolvedMetrics.map(r => {
@@ -1765,14 +1767,14 @@ function buildTeamAdvancedCard(game) {
     const hasComparison = mNum != null && oNum != null;
     const metsLeads = hasComparison && (r.higherBetter ? mNum > oNum : mNum < oNum);
     const oppLeads  = hasComparison && !metsLeads && mNum !== oNum;
-    const mStyle = metsLeads ? "font-weight:700;color:#15803d" : "";
-    const oStyle = oppLeads  ? "font-weight:700;color:#b91c1c" : "";
+    const mStyle = metsLeads ? `font-weight:700;color:${REPORT_PREVIEW_HIGH_COLOR}` : "";
+    const oStyle = oppLeads  ? `font-weight:700;color:${REPORT_PREVIEW_LOW_COLOR}` : "";
     const mRank = ta.mets.leagueRanks?.[r.rankKey];
     const oRank = ta.opp.leagueRanks?.[r.rankKey];
     const fmtCell = (val, rank, isLeading) => {
       const statStr = fmt(val);
       if (rank == null) return `<span style="${isLeading ? "font-weight:700;" : ""}">${statStr}</span>`;
-      const rankColor = rank <= 10 ? "#15803d" : rank <= 20 ? "#92400e" : "#b91c1c";
+      const rankColor = rank <= 10 ? REPORT_PREVIEW_HIGH_COLOR : rank <= 20 ? "#92400e" : REPORT_PREVIEW_LOW_COLOR;
       return `<div style="line-height:1.3;"><span style="font-size:1rem;font-weight:800;color:${rankColor};">${ordinalSuffix(rank)}</span><span style="font-size:0.72rem;color:#6b7280;font-weight:500;margin-left:3px;">— ${statStr}</span></div>`;
     };
     const edgeBadge = metsLeads
