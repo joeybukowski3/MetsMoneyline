@@ -1,26 +1,11 @@
 (function () {
   const DATA_URL = "data/social-pulse.json";
+  const EMPTY_PLAYER_POSTS = "No recent pulled posts available for this player.";
+  let selectedPlayerKey = "";
+  let playerIndex = {};
+  let ALL_POSTS = [];
+  let activeFilters = { platform: "all", sourcetype: "all", topic: "all" };
 
-  // Current 2026 Mets roster — MLB headshot IDs
-  var PLAYER_IDS = {
-    "juan soto": 665742,
-    "francisco lindor": 596019,
-    "mark vientos": 668901,
-    "bo bichette": 666182,
-    "marcus semien": 425772,
-    "brett baty": 683146,
-    "francisco alvarez": 682626,
-    "mj melendez": 669004,
-    "tyrone taylor": 622491,
-    "a.j. ewing": 0,
-    "aj ewing": 0,
-    "luis torrens": 650402,
-    "jeff mcneil": 643446,
-    "carlos mendoza": 0,
-    "carson benge": 700363
-  };
-
-  // Accounts treated as authoritative/media sources
   var MEDIA_HANDLES = new Set([
     "craigcalcaterra.com", "jessespector.com", "jomboymedia.bsky.social",
     "talkinbaseballbot.bsky.social", "umpscorecard.bsky.social", "rawmlb.bsky.social",
@@ -29,8 +14,8 @@
   ]);
 
   function isMediaSource(post) {
-    var st = String(post.sourceType || "").toLowerCase();
-    var handle = String(post.author || "").toLowerCase().replace(/^@/, "");
+    var st = String(post && post.sourceType || "").toLowerCase();
+    var handle = String(post && post.author || "").toLowerCase().replace(/^@/, "");
     return st === "media" || MEDIA_HANDLES.has(handle);
   }
 
@@ -52,8 +37,13 @@
       .trim();
   }
 
-  function getPlayerId(name) {
-    return PLAYER_IDS[String(name || "").toLowerCase()] || null;
+  function slugify(value) {
+    return String(value || "")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
   }
 
   function formatUpdated(value) {
@@ -139,9 +129,17 @@
       "</svg>";
   }
 
+  function buildHeadshot(playerId, name) {
+    if (!playerId) {
+      return '<span class="sp-player-fallback">' + escapeHtml(String(name || "").slice(0, 1).toUpperCase()) + "</span>";
+    }
+
+    return '<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/' + Number(playerId) + '/headshot/67/current" alt="' + escapeHtml(name) + ' headshot" loading="lazy">';
+  }
+
   function renderTopics(items) {
     if (!Array.isArray(items) || !items.length) {
-      return '<p class="sp-empty-inline">No strong signals yet.</p>';
+      return '<p class="sp-empty-inline">No strong current-team signals yet.</p>';
     }
 
     return items.map(function (item) {
@@ -156,7 +154,7 @@
     }).join("");
   }
 
-  function renderPlayers(items) {
+  function renderPlayerCards(items, groupLabel) {
     if (!Array.isArray(items) || !items.length) {
       return '<p class="sp-empty-inline">No player chatter yet.</p>';
     }
@@ -166,22 +164,21 @@
       var mentions = Number(item.mentions ?? item.count ?? 0) || 0;
       var sentiment = Number(item.sentiment ?? 0) || 0;
       var tone = sentimentTone(sentiment);
-      var id = getPlayerId(name);
-      var imageHtml = id
-        ? '<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/' + id + '/headshot/67/current" alt="' + escapeHtml(name) + ' headshot" loading="lazy">'
-        : '<span class="sp-player-fallback">' + escapeHtml(name.slice(0, 1).toUpperCase()) + "</span>";
+      var key = slugify(groupLabel + "-" + name);
+      var activeClass = selectedPlayerKey === key ? " is-active" : "";
 
-      return '<div class="sp-player-card">' +
-        imageHtml +
+      return '<button type="button" class="sp-player-card sp-player-card-button' + activeClass + '" data-player-key="' + escapeHtml(key) + '">' +
+        buildHeadshot(item.playerId, name) +
         "<div>" +
         '<div class="sp-player-name">' + escapeHtml(name) + "</div>" +
+        '<div class="sp-player-role">' + escapeHtml(groupLabel) + "</div>" +
         '<div class="sp-player-mentions">' + mentions + " mentions</div>" +
         "</div>" +
         '<div class="sp-player-meta">' +
         '<span class="sp-player-dot ' + tone + '"></span>' +
         "<span>" + sentimentLabel(sentiment) + "</span>" +
         "</div>" +
-        "</div>";
+        "</button>";
     }).join("");
   }
 
@@ -225,7 +222,6 @@
       return '<div class="sp-empty-state">Social pulse data is not available yet.</div>';
     }
 
-    // Sort: media posts first, then by recency
     var sorted = posts.slice().sort(function (a, b) {
       var aMedia = isMediaSource(a) ? 1 : 0;
       var bMedia = isMediaSource(b) ? 1 : 0;
@@ -233,7 +229,7 @@
       return Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0);
     });
 
-    return sorted.map(function (post) {
+    return '<div class="sp-post-grid">' + sorted.map(function (post) {
       var sentiment = Number(post.sentiment ?? 0) || 0;
       var tone = sentimentTone(sentiment);
       var matchedTopics = Array.isArray(post.matchedTopics) ? post.matchedTopics.slice(0, 4) : [];
@@ -241,6 +237,7 @@
       var author = normalizeDisplay(post.author || "unknown");
       var text = normalizeDisplay(post.text || "");
       var media = isMediaSource(post);
+      var exactTime = post.createdAt ? new Date(post.createdAt).toLocaleString() : "";
 
       return '<article class="sp-post-card sentiment-' + tone + (media ? ' sp-post-media' : '') + '">' +
         '<div class="sp-post-head">' +
@@ -252,7 +249,7 @@
         sourceTypeBadge(post) +
         '<span class="sp-platform-badge">' + platformIconMarkup(post.platform) + "<span>" + escapeHtml(platformLabel(post.platform)) + "</span></span>" +
         '<span class="sp-sentiment ' + tone + '">' + sentimentLabel(sentiment) + "</span>" +
-        '<span class="sp-time">' + escapeHtml(formatRelative(post.createdAt)) + "</span>" +
+        '<span class="sp-time" title="' + escapeHtml(exactTime) + '">' + escapeHtml(formatRelative(post.createdAt)) + "</span>" +
         "</div>" +
         "</div>" +
         '<p class="sp-post-text">' + escapeHtml(text) + "</p>" +
@@ -265,7 +262,29 @@
         (post.url ? '<a href="' + escapeHtml(post.url) + '" target="_blank" rel="noopener noreferrer">View post &#8599;</a>' : "") +
         "</div>" +
         "</article>";
-    }).join("");
+    }).join("") + "</div>";
+  }
+
+  function renderPlayerPosts() {
+    var title = document.getElementById("sp-player-posts-title");
+    var subtitle = document.getElementById("sp-player-posts-subtitle");
+    var container = document.getElementById("sp-player-posts");
+    var activePlayer = playerIndex[selectedPlayerKey];
+
+    if (!container || !title || !subtitle) return;
+
+    if (!activePlayer) {
+      title.textContent = "Player Post Detail";
+      subtitle.textContent = "Click a current or former player above to inspect the recent posts used for that name.";
+      container.innerHTML = '<div class="sp-empty-state">' + escapeHtml(EMPTY_PLAYER_POSTS) + "</div>";
+      return;
+    }
+
+    title.textContent = activePlayer.name + " Recent Posts";
+    subtitle.textContent = activePlayer.groupLabel + " • " + (Number(activePlayer.mentions || 0) || 0) + " tracked mentions";
+    container.innerHTML = Array.isArray(activePlayer.posts) && activePlayer.posts.length
+      ? renderPosts(activePlayer.posts)
+      : '<div class="sp-empty-state">' + escapeHtml(EMPTY_PLAYER_POSTS) + "</div>";
   }
 
   function moodFromScore(score) {
@@ -274,31 +293,6 @@
     if (score >= 40) return "Cautious";
     return "Negative";
   }
-
-  function renderHero(data) {
-    var score = Number(data && data.overallScore) || 0;
-    // Prefer overallMood from JSON, fall back to computing from score
-    var rawMood = (data && (data.overallMood || data.mood)) || moodFromScore(score);
-    var mood = escapeHtml(normalizeDisplay(rawMood));
-    var summary = escapeHtml(normalizeDisplay((data && data.summary) || ""));
-    return '<div class="sp-hero-compact">' +
-        '<div class="sp-hero-left">' +
-          '<div class="sp-hero-kicker">Fan Sentiment</div>' +
-          '<div class="sp-hero-score-row">' +
-            '<span class="sp-hero-score">' + score + '</span>' +
-            '<span class="sp-hero-mood">' + mood + '</span>' +
-          '</div>' +
-          (summary ? '<p class="sp-hero-summary">' + summary + '</p>' : '') +
-        '</div>' +
-        '<div class="sp-hero-right">' +
-          buildSentimentGauge(score) +
-        '</div>' +
-      '</div>';
-  }
-
-  // ── Filter state ─────────────────────────────────────────────
-  var ALL_POSTS = [];
-  var activeFilters = { platform: "all", sourcetype: "all", topic: "all" };
 
   function applyFilters() {
     var postsEl = document.getElementById("sp-posts");
@@ -311,7 +305,7 @@
         if (st !== activeFilters.sourcetype) return false;
       }
       if (activeFilters.topic !== "all") {
-        var topics = (post.matchedTopics || []).map(function(t){ return t.toLowerCase(); });
+        var topics = (post.matchedTopics || []).map(function (t) { return String(t || "").toLowerCase(); });
         if (!topics.includes(activeFilters.topic.toLowerCase())) return false;
       }
       return true;
@@ -321,13 +315,11 @@
       ? renderPosts(filtered)
       : '<div class="sp-no-results">No posts match this filter combination.</div>';
 
-    // Update platform/sourcetype button active states (only buttons with data-filter-type)
     document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
       var type = btn.dataset.filterType;
       var val = btn.dataset.filterValue;
       btn.classList.toggle("active", activeFilters[type] === val);
     });
-    // Update topic pill active states separately
     document.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
       btn.classList.toggle("active", activeFilters.topic === btn.dataset.topic);
     });
@@ -337,30 +329,31 @@
     var topicEl = document.getElementById("sp-topic-filters");
     if (!topicEl) return;
 
-    // Collect all unique topics across posts
     var topicCounts = {};
     posts.forEach(function (post) {
-      (post.matchedTopics || []).forEach(function (t) {
-        topicCounts[t] = (topicCounts[t] || 0) + 1;
+      (post.matchedTopics || []).forEach(function (topic) {
+        topicCounts[topic] = (topicCounts[topic] || 0) + 1;
       });
     });
 
     var sorted = Object.entries(topicCounts)
-      .filter(function(e){ return e[1] >= 1; })
-      .sort(function(a, b){ return b[1] - a[1]; })
+      .filter(function (entry) { return entry[1] >= 1; })
+      .sort(function (a, b) { return b[1] - a[1]; })
       .slice(0, 10);
 
-    if (!sorted.length) { topicEl.style.display = "none"; return; }
+    if (!sorted.length) {
+      topicEl.style.display = "none";
+      return;
+    }
 
-    var html = '<span class="sp-filter-label">Topic:</span>' +
+    topicEl.style.display = "";
+    topicEl.innerHTML = '<span class="sp-filter-label">Topic:</span>' +
       '<button class="sp-topic-pill sp-filter-btn active" data-topic="all">All</button>' +
-      sorted.map(function (e) {
-        return '<button class="sp-topic-pill sp-filter-btn" data-topic="' + escapeHtml(e[0]) + '">' +
-          escapeHtml(e[0]) +
-          '<span class="sp-filter-count">' + e[1] + '</span></button>';
+      sorted.map(function (entry) {
+        return '<button class="sp-topic-pill sp-filter-btn" data-topic="' + escapeHtml(entry[0]) + '">' +
+          escapeHtml(entry[0]) +
+          '<span class="sp-filter-count">' + entry[1] + "</span></button>";
       }).join("");
-
-    topicEl.innerHTML = html;
 
     topicEl.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -374,8 +367,6 @@
     document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         activeFilters[btn.dataset.filterType] = btn.dataset.filterValue;
-        // Reset topic filter when changing platform or source type — avoids
-        // confusing zero-result combinations (e.g. X + starting pitching = 1 post)
         if (btn.dataset.filterType !== "topic") {
           activeFilters.topic = "all";
         }
@@ -384,13 +375,60 @@
     });
   }
 
+  function renderHero(data) {
+    var score = Number(data && data.overallScore) || 0;
+    var rawMood = (data && (data.overallMood || data.mood)) || moodFromScore(score);
+    var mood = escapeHtml(normalizeDisplay(rawMood));
+    var summary = escapeHtml(normalizeDisplay((data && data.summary) || ""));
+    return '<div class="sp-hero-compact">' +
+      '<div class="sp-hero-left">' +
+        '<div class="sp-hero-kicker">Fan Sentiment</div>' +
+        '<div class="sp-hero-score-row">' +
+          '<span class="sp-hero-score">' + score + "</span>" +
+          '<span class="sp-hero-mood">' + mood + "</span>" +
+        "</div>" +
+        (summary ? '<p class="sp-hero-summary">' + summary + "</p>" : "") +
+      "</div>" +
+      '<div class="sp-hero-right">' + buildSentimentGauge(score) + "</div>" +
+      "</div>";
+  }
+
+  function buildPlayerIndex(data) {
+    var nextIndex = {};
+
+    function addPlayers(items, groupLabel) {
+      if (!Array.isArray(items)) return;
+      items.forEach(function (item) {
+        var name = normalizeDisplay(item && item.name);
+        if (!name) return;
+        var key = slugify(groupLabel + "-" + name);
+        nextIndex[key] = {
+          name: name,
+          mentions: Number(item.mentions ?? item.count ?? 0) || 0,
+          groupLabel: groupLabel,
+          posts: Array.isArray(item.posts) ? item.posts : []
+        };
+      });
+    }
+
+    addPlayers(data && data.currentPlayers, "Current Met");
+    addPlayers(data && data.formerPlayers, "Former Met");
+    return nextIndex;
+  }
+
   function render(data) {
     var hero = document.getElementById("sp-hero");
     var updated = document.getElementById("sp-updated");
     var topics = document.getElementById("sp-topics");
-    var players = document.getElementById("sp-players");
+    var currentPlayers = document.getElementById("sp-current-players");
+    var formerPlayers = document.getElementById("sp-former-players");
     var sources = document.getElementById("sp-sources");
     var score = Number(data && data.overallScore) || 0;
+
+    playerIndex = buildPlayerIndex(data || {});
+    if (!playerIndex[selectedPlayerKey]) {
+      selectedPlayerKey = Object.keys(playerIndex)[0] || "";
+    }
 
     if (hero) {
       hero.classList.remove("positive", "mixed", "negative");
@@ -400,13 +438,15 @@
 
     if (updated) updated.textContent = formatUpdated(data && data.generatedAt);
     if (topics) topics.innerHTML = renderTopics(data && data.trendingTopics);
-    if (players) players.innerHTML = renderPlayers(data && data.trendingPlayers);
+    if (currentPlayers) currentPlayers.innerHTML = renderPlayerCards(data && data.currentPlayers, "Current Met");
+    if (formerPlayers) formerPlayers.innerHTML = renderPlayerCards(data && data.formerPlayers, "Former Met");
     if (sources) sources.innerHTML = renderSourceCards(data && data.sources);
 
     ALL_POSTS = Array.isArray(data && data.posts) ? data.posts : [];
     buildTopicFilterBar(ALL_POSTS);
     wireFilterBar();
     applyFilters();
+    renderPlayerPosts();
   }
 
   function renderEmpty(message) {
@@ -418,6 +458,17 @@
   }
 
   async function init() {
+    document.addEventListener("click", function (event) {
+      var button = event.target && event.target.closest ? event.target.closest("[data-player-key]") : null;
+      if (!button) return;
+      selectedPlayerKey = button.getAttribute("data-player-key") || "";
+      var cards = document.querySelectorAll("[data-player-key]");
+      cards.forEach(function (card) {
+        card.classList.toggle("is-active", card.getAttribute("data-player-key") === selectedPlayerKey);
+      });
+      renderPlayerPosts();
+    });
+
     try {
       var response = await fetch(DATA_URL, { cache: "no-store" });
       if (!response.ok) throw new Error("Social pulse request failed with " + response.status);

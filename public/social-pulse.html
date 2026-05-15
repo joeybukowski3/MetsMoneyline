@@ -229,6 +229,21 @@
       flex: 1 1 180px;
       box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
     }
+    .sp-player-card-button {
+      width: 100%;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+    }
+    .sp-player-card-button:hover,
+    .sp-player-card-button:focus-visible,
+    .sp-player-card.is-active {
+      border-color: rgba(2, 132, 199, 0.45);
+      box-shadow: 0 10px 24px rgba(2, 132, 199, 0.12);
+      transform: translateY(-1px);
+      outline: none;
+    }
     .sp-player-card img {
       width: 36px;
       height: 36px;
@@ -254,6 +269,7 @@
     }
     .sp-player-name { font-weight: 700; color: var(--navy); font-size: 0.82rem; }
     .sp-player-mentions { font-size: 0.68rem; color: #6b7280; }
+    .sp-player-role { font-size: 0.66rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; }
     .sp-player-meta {
       margin-left: auto;
       display: flex;
@@ -274,6 +290,23 @@
     .sp-player-dot.mixed { background: #f59e0b; }
     .sp-player-dot.negative { background: #ef4444; }
     .sp-posts-panel { padding: 1rem 1.05rem; }
+    .sp-section-stack { display: grid; gap: 1.25rem; }
+    .sp-player-detail-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+    }
+    .sp-player-detail-head h2,
+    .sp-player-detail-head p {
+      margin: 0;
+    }
+    .sp-player-detail-head p {
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      margin-top: 0.2rem;
+    }
     .sp-post-grid { display: grid; gap: 0.95rem; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
     .sp-post-card {
       background: #fff;
@@ -468,12 +501,28 @@
           <div class="sp-pill-wrap" id="sp-topics"></div>
         </div>
         <div class="sp-panel">
-          <h2>Trending Players</h2>
-          <div class="sp-pill-wrap" id="sp-players"></div>
+          <h2>Current Mets Trending</h2>
+          <div class="sp-pill-wrap" id="sp-current-players"></div>
         </div>
       </div>
 
-      <section class="sp-posts-panel">
+      <div class="sp-section-stack">
+        <section class="sp-posts-panel">
+          <h2>Former Mets Watch</h2>
+          <div class="sp-pill-wrap" id="sp-former-players"></div>
+        </section>
+
+        <section class="sp-posts-panel">
+          <div class="sp-player-detail-head">
+            <div>
+              <h2 id="sp-player-posts-title">Player Post Detail</h2>
+              <p id="sp-player-posts-subtitle">Click a current or former player above to inspect the recent posts used for that name.</p>
+            </div>
+          </div>
+          <div id="sp-player-posts"></div>
+        </section>
+
+        <section class="sp-posts-panel">
         <h2>Recent Posts</h2>
         <div class="sp-filter-bar" id="sp-filter-bar">
           <span class="sp-filter-label">Source:</span>
@@ -488,7 +537,8 @@
         </div>
         <div id="sp-topic-filters" class="sp-filter-bar" style="margin-top:-0.35rem;"></div>
         <div class="sp-post-grid" id="sp-posts"></div>
-      </section>
+        </section>
+      </div>
     </div>
   </main>
 

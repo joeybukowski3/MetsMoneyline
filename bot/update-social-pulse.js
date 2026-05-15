@@ -1,35 +1,33 @@
 const fs = require("fs");
 const path = require("path");
 const { TwitterApi } = require("twitter-api-v2");
+const {
+  CURRENT_PLAYER_ALIAS_OVERRIDES,
+  FORMER_PLAYER_DEFS
+} = require("./social-player-config");
 
 const OUTPUT_PATH = path.join(__dirname, "..", "public", "data", "social-pulse.json");
 const BLUESKY_API_BASE = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts";
+const MLB_ROSTER_URL = "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active";
 const MAX_STORED_POSTS = 60;
+const MAX_PLAYER_POSTS = 6;
 const BLUESKY_QUERY_LIMIT = 15;
 const DEFAULT_X_LIMIT = 10;
 const HARD_X_LIMIT = 10;
 
-// ─── Search terms ─────────────────────────────────────────────────────────────
-// Tier 1: topic/player queries (quoted phrases to reduce noise)
+// Tier 1: broad Mets/game-day queries.
 const BLUESKY_PRIORITY_TERMS = [
-  { label: "New York Mets", query: '"New York Mets"' },
+  { label: "New York Mets", query: "\"New York Mets\"" },
   { label: "#LGM", query: "#LGM" },
   { label: "#NYMets", query: "#NYMets" },
-  { label: "Mets baseball", query: '"Mets" baseball' },
-  { label: "Citi Field", query: '"Citi Field"' },
-  { label: "Subway Series", query: '"Subway Series"' },
-  { label: "Juan Soto Mets", query: '"Juan Soto" Mets' },
-  { label: "Francisco Lindor", query: '"Francisco Lindor"' },
-  { label: "Mark Vientos", query: '"Mark Vientos"' },
-  { label: "Bo Bichette Mets", query: '"Bo Bichette" Mets' },
-  { label: "Marcus Semien Mets", query: '"Marcus Semien" Mets' },
-  { label: "Brett Baty", query: '"Brett Baty"' },
-  { label: "Francisco Alvarez Mets", query: '"Francisco Alvarez" Mets' },
-  { label: "Carlos Mendoza", query: '"Carlos Mendoza" Mets' },
-  { label: "Mets bullpen", query: '"Mets bullpen"' },
-  { label: "Mets rotation", query: '"Mets rotation" OR "Mets pitching"' },
-  { label: "Mets lineup", query: '"Mets lineup"' },
-  { label: "Mets trade", query: '"Mets" trade' },
+  { label: "Mets baseball", query: "\"Mets\" baseball" },
+  { label: "Citi Field", query: "\"Citi Field\"" },
+  { label: "Subway Series", query: "\"Subway Series\"" },
+  { label: "Carlos Mendoza", query: "\"Carlos Mendoza\" Mets" },
+  { label: "Mets bullpen", query: "\"Mets bullpen\"" },
+  { label: "Mets rotation", query: "\"Mets rotation\" OR \"Mets pitching\"" },
+  { label: "Mets lineup", query: "\"Mets lineup\"" },
+  { label: "Mets trade", query: "\"Mets\" trade" }
 ];
 
 // Tier 2: known authoritative Bluesky accounts
@@ -84,36 +82,18 @@ const MATCHED_TOPIC_MAP = {
   metsmysterymanager: "fan media",
   juansotostats: "Soto",
   fptrack: "media",
-  X: "Mets",
+  X: "Mets"
 };
-
-// ─── Current 2026 Mets roster ────────────────────────────────────────────────
-const PLAYER_DEFS = [
-  { name: "Juan Soto", label: "Soto", aliases: ["juan soto", "soto"] },
-  { name: "Francisco Lindor", label: "Lindor", aliases: ["francisco lindor", "lindor", "mr. smile", "mr smile"] },
-  { name: "Mark Vientos", label: "Vientos", aliases: ["mark vientos", "vientos"] },
-  { name: "Bo Bichette", label: "Bichette", aliases: ["bo bichette", "bichette"] },
-  { name: "Marcus Semien", label: "Semien", aliases: ["marcus semien", "semien"] },
-  { name: "Brett Baty", label: "Baty", aliases: ["brett baty", "baty"] },
-  { name: "Francisco Alvarez", label: "Álvarez", aliases: ["francisco alvarez", "francisco álvarez", "alvarez", "álvarez"] },
-  { name: "MJ Melendez", label: "Melendez", aliases: ["mj melendez", "melendez"] },
-  { name: "Tyrone Taylor", label: "Taylor", aliases: ["tyrone taylor"] },
-  { name: "A.J. Ewing", label: "Ewing", aliases: ["a.j. ewing", "aj ewing", "ewing"] },
-  { name: "Luis Torrens", label: "Torrens", aliases: ["luis torrens", "torrens"] },
-  { name: "Jeff McNeil", label: "McNeil", aliases: ["jeff mcneil", "mcneil", "the squirrel"] },
-  { name: "Carlos Mendoza", label: "Mendoza", aliases: ["carlos mendoza", "mendoza"] },
-];
-
-
 const TOPIC_DEFS = [
-  { label: "bullpen", aliases: ["bullpen", "reliever", "closer", "meltdown", "save situation"] },
-  { label: "starting pitching", aliases: ["starting pitching", "starter", "rotation", "ace", "senga", "pitching matchup"] },
-  { label: "lineup", aliases: ["lineup", "order", "batting order", "top of the order"] },
-  { label: "offense", aliases: ["offense", "bats", "batting", "homer", "home run", "rbi", "slugging"] },
+  { label: "bullpen", aliases: ["bullpen", "reliever", "closer", "save situation"] },
+  { label: "starting pitching", aliases: ["starting pitching", "starting pitcher", "rotation", "ace", "pitching matchup"] },
+  { label: "lineup", aliases: ["lineup", "batting order", "top of the order", "cleanup spot"] },
+  { label: "offense", aliases: ["offense", "bats", "batting", "home run", "homer", "rbi", "slugging"] },
   { label: "defense", aliases: ["defense", "glove", "fielding", "error"] },
-  { label: "injuries", aliases: ["injury", "injured", "il", "hurt", "day-to-day", "calf issue"] },
+  { label: "injuries", aliases: ["injured list", "10-day injured list", "15-day injured list", "day-to-day", "hamstring", "oblique", "calf strain", "wrist soreness"] },
   { label: "manager", aliases: ["manager", "mendoza", "lineup card"] },
-  { label: "vibes", aliases: ["lgm", "#lgm", "let's go mets", "lets go mets"] }
+  { label: "game day", aliases: ["tonight", "first pitch", "subway series", "series opener", "citi field", "yankees", "braves", "phillies", "marlins", "nationals"] },
+  { label: "vibes", aliases: ["lgm", "#lgm", "lets go mets", "let's go mets"] }
 ];
 
 const POSITIVE_PATTERNS = [
@@ -159,6 +139,19 @@ const SPAM_PATTERNS = [
   /\bjersey\b/i
 ];
 
+const STRONG_METS_PATTERNS = [
+  /\bnew york mets\b/i,
+  /#lgm\b/i,
+  /#mets\b/i,
+  /\blet'?s go mets\b/i,
+  /\bciti field\b/i,
+  /\bmr\.?\s*met\b/i,
+  /\bamazin'?s\b/i,
+  /\bnym\b/i
+];
+
+const BASEBALL_CONTEXT_PATTERN = /\b(baseball|mlb|pitcher|bullpen|lineup|rotation|slugger|homer|home run|inning|innings|series|first pitch|shortstop|outfielder|catcher|citi field|mets fan|yankees|braves|phillies|marlins|nationals|dodgers)\b/i;
+
 function sanitizeText(value) {
   return String(value || "")
     .replace(/[<>]/g, "")
@@ -169,19 +162,36 @@ function sanitizeText(value) {
     .trim();
 }
 
-function slugify(value) {
+function stripDiacritics(value) {
   return sanitizeText(value)
     .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function normalizeKey(value) {
+  return stripDiacritics(value).toLowerCase();
+}
+
+function slugify(value) {
+  return normalizeKey(value)
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function escapeRegExp(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildAliasPattern(alias) {
+  const normalized = normalizeKey(alias);
+  const source = escapeRegExp(normalized).replace(/\\ /g, "\\s+");
+  return new RegExp(`(^|[^a-z0-9])${source}([^a-z0-9]|$)`, "i");
 }
 
 function excerpt(text, maxLength) {
   const clean = sanitizeText(text);
   if (clean.length <= maxLength) return clean;
-  return `${clean.slice(0, Math.max(0, maxLength - 1)).trim()}…`;
+  return `${clean.slice(0, Math.max(0, maxLength - 1)).trim()}...`;
 }
 
 function writeJson(filePath, data) {
@@ -189,104 +199,30 @@ function writeJson(filePath, data) {
   fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
-function isLikelySpam(text, author) {
-  const clean = `${sanitizeText(text)} ${sanitizeText(author)}`;
-  if (!clean) return true;
-  if (clean.length < 12) return true;
-  return SPAM_PATTERNS.some((pattern) => pattern.test(clean));
+function round(value, places = 2) {
+  const factor = 10 ** places;
+  return Math.round((Number(value) || 0) * factor) / factor;
 }
 
-// Non-English common words that look like "Mets" in other languages
-const NON_BASEBALL_METS_PATTERNS = [
-  /\bje\s+mets\b/i,       // French: "I put"
-  /\bon\s+mets\b/i,        // French
-  /\bse\s+mets\b/i,        // French
-  /\btu\s+mets\b/i,        // French
-  /\bil\s+mets\b/i,        // French
-  /\belles\s+mets\b/i,     // French
-  /\bmets\s+en\s+place\b/i,// French phrase
-  /\bmets\s+toujours\b/i,  // French
-  /\bguillemets\b/i,        // French: quotation marks
-  /\benchères\b/i,          // French: auctions
-  /\bdbz\b/i,               // Dragon Ball Z (unrelated)
-  /\banime\b/i,             // anime context
-  /\bkame\b/i,              // Dragon Ball Z
-  /\bpokemon\b/i,           // unrelated
-];
-
-// Words that strongly indicate baseball/Mets context
-const BASEBALL_CONTEXT = [
-  "mets", "#lgm", "#nymets", "new york mets", "lets go mets", "let's go mets",
-  "citi field", "subway series", "flushing", "wilpon", "steve cohen",
-  "mlb", "baseball", "home run", "strikeout", "bullpen", "pitcher", "lineup",
-  "inning", "at bat", "plate appearance", "earned run", "lgm",
-];
-
-function isLikelyNonEnglish(text) {
-  const lower = text.toLowerCase();
-  // Common French function words that rarely appear in English baseball posts
-  const frenchMarkers = ["c'est", "je ", "il y a", "dans le", "pour le", "avec le", "alors", "aussi", "donc", "très", "même", "toujours", "encore", "mais ", "quand", "comme ça", "ça ", "sur le", "de la", "du ", " au ", "en fait", "j'ai", "n'est", "qu'elle", "qu'il"];
-  const spanishMarkers = ["carreras", "jonrón", "béisbol", " los ", " las ", " del ", "partidos", "temporada", " se ", "también", "como ", "para ", "pero ", "con ", "por ", "que ", "cuando", "juego", "equipo"];
-  const frenchCount = frenchMarkers.filter((m) => lower.includes(m)).length;
-  const spanishCount = spanishMarkers.filter((m) => lower.includes(m)).length;
-  // If 2+ markers of a non-English language, likely non-English (unless it has strong baseball context)
-  return frenchCount >= 2 || spanishCount >= 3;
+function buildMood(score) {
+  if (score < 25) return "Very Negative";
+  if (score < 45) return "Negative";
+  if (score <= 55) return "Mixed";
+  if (score <= 75) return "Positive";
+  return "Very Positive";
 }
 
-function isMetsRelevant(text, queryLabel) {
-  const lower = sanitizeText(text).toLowerCase();
-  if (!lower) return false;
-
-  // Reject posts that are clearly non-English with no baseball context
-  if (isLikelyNonEnglish(lower)) {
-    // Allow through only if they have explicit Mets baseball context
-    const hasExplicitMetsContext = lower.includes("new york mets") || lower.includes("#lgm") || lower.includes("#nymets");
-    if (!hasExplicitMetsContext) return false;
-  }
-
-  // Reject posts where "mets" appears only as a French/non-baseball word
-  if (lower.includes("mets") && !lower.includes("new york mets") && !lower.includes("#lgm") && !lower.includes("mets ") && !lower.includes(" mets")) {
-    // Skip further checks — need context below
-  }
-
-  // Reject known non-baseball patterns
-  if (NON_BASEBALL_METS_PATTERNS.some((p) => p.test(lower))) return false;
-
-  // Accept if any strong baseball context word is present
-  if (BASEBALL_CONTEXT.some((word) => lower.includes(word))) return true;
-
-  // Accept if a current Mets player is mentioned
-  if (PLAYER_DEFS.some((player) => player.aliases.some((alias) => lower.includes(alias)))) return true;
-
-  // Accept if the query label itself appears (e.g. from-account queries)
-  const normalizedLabel = sanitizeText(queryLabel).toLowerCase();
-  if (normalizedLabel && lower.includes(normalizedLabel)) return true;
-
-  return false;
+function sentimentLabel(value) {
+  if (value >= 0.25) return "Positive";
+  if (value <= -0.25) return "Negative";
+  return "Mixed";
 }
 
-function detectPlayers(text) {
-  const lower = sanitizeText(text).toLowerCase();
-  return PLAYER_DEFS
-    .filter((player) => player.aliases.some((alias) => lower.includes(alias)))
-    .map((player) => player.name);
-}
-
-function detectTopics(text, matchedLabel, detectedPlayers) {
-  const lower = sanitizeText(text).toLowerCase();
-  const found = new Set();
-
-  TOPIC_DEFS.forEach((topic) => {
-    if (topic.aliases.some((alias) => lower.includes(alias))) found.add(topic.label);
-  });
-
-  detectedPlayers.forEach((name) => {
-    const player = PLAYER_DEFS.find((entry) => entry.name === name);
-    found.add(player ? player.label : name);
-  });
-
-  if (matchedLabel && MATCHED_TOPIC_MAP[matchedLabel]) found.add(MATCHED_TOPIC_MAP[matchedLabel]);
-  return Array.from(found);
+function recencyWeight(createdAt) {
+  const timestamp = Date.parse(createdAt);
+  if (!Number.isFinite(timestamp)) return 1;
+  const ageHours = Math.max(0, (Date.now() - timestamp) / 3600000);
+  return Number((Math.exp(-ageHours / 36) + 0.15).toFixed(3));
 }
 
 function scoreSentiment(text) {
@@ -313,108 +249,193 @@ function scoreSentiment(text) {
   return Math.max(-1, Math.min(1, Number(score.toFixed(2))));
 }
 
-function recencyWeight(createdAt) {
-  const timestamp = Date.parse(createdAt);
-  if (!Number.isFinite(timestamp)) return 1;
-  const ageHours = Math.max(0, (Date.now() - timestamp) / 3600000);
-  return Number((Math.exp(-ageHours / 36) + 0.15).toFixed(3));
-}
-
-function round(value, places = 2) {
-  const factor = 10 ** places;
-  return Math.round((Number(value) || 0) * factor) / factor;
-}
-
-function buildMood(score) {
-  if (score < 25) return "Very Negative";
-  if (score < 45) return "Negative";
-  if (score <= 55) return "Mixed";
-  if (score <= 75) return "Positive";
-  return "Very Positive";
-}
-
-function sentimentLabel(value) {
-  if (value >= 0.25) return "Positive";
-  if (value <= -0.25) return "Negative";
-  return "Mixed";
-}
-
-function buildSummary(overallScore, mood, trendingTopics, trendingPlayers) {
+function buildSummary(overallScore, mood, trendingTopics, currentPlayers) {
   const topTopic = trendingTopics[0]?.label;
-  const topPlayer = trendingPlayers[0]?.name;
+  const topPlayer = currentPlayers[0]?.name;
   if (!topTopic && !topPlayer) {
-    return "Mets discussion is limited right now, with no strong topic dominating the public conversation.";
+    return "Current Mets conversation is limited right now, with no strong theme dominating the public discussion.";
   }
 
-  const topicPhrase = topTopic ? `around ${topTopic}` : "around the Mets";
+  const topicPhrase = topTopic ? `around ${topTopic}` : "around the current Mets roster";
   const playerPhrase = topPlayer ? ` Mentions of ${topPlayer} are among the most active.` : "";
 
   if (mood === "Very Positive" || mood === "Positive") {
-    return `Mets discussion is leaning positive, with the strongest conversation ${topicPhrase}.${playerPhrase}`.trim();
+    return `Current Mets discussion is leaning positive, with the strongest conversation ${topicPhrase}.${playerPhrase}`.trim();
   }
   if (mood === "Very Negative" || mood === "Negative") {
-    return `Mets discussion is leaning negative, with the sharpest reactions ${topicPhrase}.${playerPhrase}`.trim();
+    return `Current Mets discussion is leaning negative, with the sharpest reactions ${topicPhrase}.${playerPhrase}`.trim();
   }
-  return `Mets discussion is mixed, with the busiest conversation ${topicPhrase}.${playerPhrase}`.trim();
+  return `Current Mets discussion is mixed, with the busiest conversation ${topicPhrase}.${playerPhrase}`.trim();
 }
 
-function aggregateTopicStats(posts) {
-  const map = new Map();
-  posts.forEach((post) => {
-    (post.matchedTopics || []).forEach((label) => {
-      const current = map.get(label) || { label, count: 0, sentimentTotal: 0 };
-      current.count += 1;
-      current.sentimentTotal += Number(post.sentiment) || 0;
-      map.set(label, current);
-    });
-  });
-
-  return Array.from(map.values())
-    .map((item) => ({
-      label: item.label,
-      count: item.count,
-      sentiment: round(item.sentimentTotal / item.count)
-    }))
-    .sort((a, b) => b.count - a.count || b.sentiment - a.sentiment || a.label.localeCompare(b.label))
-    .slice(0, 8);
+function isLikelySpam(text, author) {
+  const clean = `${sanitizeText(text)} ${sanitizeText(author)}`;
+  if (!clean) return true;
+  if (clean.length < 12) return true;
+  return SPAM_PATTERNS.some((pattern) => pattern.test(clean));
 }
 
-function aggregatePlayerStats(posts) {
-  const map = new Map();
-  posts.forEach((post) => {
-    (post.detectedPlayers || []).forEach((name) => {
-      const current = map.get(name) || { name, mentions: 0, sentimentTotal: 0 };
-      current.mentions += 1;
-      current.sentimentTotal += Number(post.sentiment) || 0;
-      map.set(name, current);
-    });
-  });
-
-  return Array.from(map.values())
-    .map((item) => ({
-      name: item.name,
-      mentions: item.mentions,
-      sentiment: round(item.sentimentTotal / item.mentions)
-    }))
-    .sort((a, b) => b.mentions - a.mentions || b.sentiment - a.sentiment || a.name.localeCompare(b.name))
-    .slice(0, 8);
+function hasStrongMetsSignal(text) {
+  return STRONG_METS_PATTERNS.some((pattern) => pattern.test(text));
 }
 
-function buildEmptyPayload(message) {
+function hasBareMetsBaseballContext(text) {
+  return /\bmets\b/i.test(text) && BASEBALL_CONTEXT_PATTERN.test(text);
+}
+
+function buildPlayerDef(name, playerId, aliasOverride, bucket) {
+  const normalizedName = stripDiacritics(name);
+  const aliases = Array.from(new Set(
+    [normalizedName]
+      .concat(aliasOverride?.aliases || [])
+      .map((alias) => normalizeKey(alias))
+      .filter(Boolean)
+  ));
+
   return {
-    generatedAt: new Date().toISOString(),
-    overallScore: 50,
-    mood: "Mixed",
-    summary: message || "Social pulse data is not available yet.",
-    sources: {
-      bluesky: {
-        postCount: 0,
-        averageSentiment: 0
-      }
-    },
-    trendingTopics: [],
-    trendingPlayers: [],
-    posts: []
+    name: sanitizeText(name),
+    normalizedName,
+    nameKey: normalizeKey(name),
+    label: sanitizeText(name),
+    playerId: Number(playerId) || null,
+    bucket,
+    requiresTeamContext: Boolean(aliasOverride?.requiresTeamContext),
+    aliases,
+    aliasPatterns: aliases.map((alias) => buildAliasPattern(alias))
+  };
+}
+
+async function fetchCurrentRosterDefs() {
+  const response = await fetch(MLB_ROSTER_URL, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "MetsMoneylineSocialPulse/1.0"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`MLB roster request failed with ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const roster = Array.isArray(payload?.roster) ? payload.roster : [];
+
+  return roster
+    .map((entry) => {
+      const name = sanitizeText(entry?.person?.fullName || "");
+      if (!name) return null;
+      const override = CURRENT_PLAYER_ALIAS_OVERRIDES[stripDiacritics(name)] || null;
+      return buildPlayerDef(name, entry?.person?.id, override, "current");
+    })
+    .filter(Boolean);
+}
+
+function buildFormerPlayerDefs(currentPlayers) {
+  const currentKeys = new Set(currentPlayers.map((player) => player.nameKey));
+  return FORMER_PLAYER_DEFS
+    .filter((player) => !currentKeys.has(normalizeKey(player.name)))
+    .map((player) => buildPlayerDef(player.name, player.playerId, player, "former"));
+}
+
+async function buildPlayerUniverse() {
+  const currentPlayers = await fetchCurrentRosterDefs();
+  const formerPlayers = buildFormerPlayerDefs(currentPlayers);
+  const byNameKey = new Map();
+
+  currentPlayers.concat(formerPlayers).forEach((player) => {
+    byNameKey.set(player.nameKey, player);
+  });
+
+  return {
+    currentPlayers,
+    formerPlayers,
+    byNameKey,
+    allPlayers: currentPlayers.concat(formerPlayers)
+  };
+}
+
+function buildBlueskySearchTerms(playerUniverse) {
+  const seen = new Set();
+  const terms = [];
+
+  BLUESKY_SEARCH_TERMS.forEach((term) => {
+    const key = `${term.label}:${term.query}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    terms.push(term);
+  });
+
+  playerUniverse.currentPlayers.concat(playerUniverse.formerPlayers).forEach((player) => {
+    const label = player.name;
+    const query = `"${player.name}"`;
+    const key = `${label}:${query}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    terms.push({ label, query });
+  });
+
+  return terms;
+}
+
+function detectPlayerMentions(text, playerDefs) {
+  const normalized = normalizeKey(text);
+  return playerDefs.filter((player) => player.aliasPatterns.some((pattern) => pattern.test(normalized)));
+}
+
+function detectTopics(text, matchedLabel, detectedCurrentPlayers) {
+  const normalized = normalizeKey(text);
+  const found = new Set();
+
+  TOPIC_DEFS.forEach((topic) => {
+    if (topic.aliases.some((alias) => buildAliasPattern(alias).test(normalized))) {
+      found.add(topic.label);
+    }
+  });
+
+  detectedCurrentPlayers.forEach((player) => {
+    found.add(player.name);
+  });
+
+  if (matchedLabel && MATCHED_TOPIC_MAP[matchedLabel]) found.add(MATCHED_TOPIC_MAP[matchedLabel]);
+  return Array.from(found);
+}
+
+function isMetsRelevant(text, matchedLabel, currentMatches, formerMatches) {
+  const clean = sanitizeText(text);
+  if (!clean) return false;
+
+  if (hasStrongMetsSignal(clean) || hasBareMetsBaseballContext(clean)) {
+    return true;
+  }
+
+  if (currentMatches.length || formerMatches.length) {
+    const matchedPlayers = currentMatches.concat(formerMatches);
+    if (BASEBALL_CONTEXT_PATTERN.test(clean)) return true;
+    return matchedPlayers.some((player) => !player.requiresTeamContext);
+  }
+
+  return false;
+}
+
+function classifyForMainScore(post) {
+  return !post.detectedFormerPlayers.length || post.detectedCurrentPlayers.length > 0;
+}
+
+function toStoredPost(post) {
+  return {
+    platform: post.platform,
+    author: post.author,
+    displayName: post.displayName,
+    text: post.text,
+    url: post.url,
+    createdAt: post.createdAt,
+    sentiment: post.sentiment,
+    sentimentLabel: post.sentimentLabel,
+    popularityScore: Number(post.popularityScore || 0),
+    sourceType: post.sourceType || "fan",
+    matchedTopics: post.matchedTopics,
+    detectedCurrentPlayers: post.detectedCurrentPlayers.map((player) => player.name),
+    detectedFormerPlayers: post.detectedFormerPlayers.map((player) => player.name)
   };
 }
 
@@ -449,7 +470,6 @@ async function fetchBlueskySearchResults(label, query) {
   return Array.isArray(json.posts) ? json.posts : [];
 }
 
-// Accounts considered authoritative/media sources — get a sourceType tag
 const AUTHORITATIVE_HANDLES = new Set([
   "craigcalcaterra.com", "jessespector.com", "jomboymedia.bsky.social",
   "talkinbaseballbot.bsky.social", "umpscorecard.bsky.social", "rawmlb.bsky.social",
@@ -463,15 +483,16 @@ function getSourceType(handle) {
   if (AUTHORITATIVE_HANDLES.has(h)) return "media";
   return "fan";
 }
-
-function normalizeBlueskyPost(view, matchedLabel) {
+function normalizeBlueskyPost(view, matchedLabel, playerUniverse) {
   const text = sanitizeText(view?.record?.text || view?.text || "");
   if (!text) return null;
   if (isLikelySpam(text, view?.author?.handle)) return null;
-  if (!isMetsRelevant(text, matchedLabel)) return null;
 
-  const detectedPlayers = detectPlayers(text);
-  const matchedTopics = detectTopics(text, matchedLabel, detectedPlayers);
+  const currentMatches = detectPlayerMentions(text, playerUniverse.currentPlayers);
+  const formerMatches = detectPlayerMentions(text, playerUniverse.formerPlayers);
+  if (!isMetsRelevant(text, matchedLabel, currentMatches, formerMatches)) return null;
+
+  const matchedTopics = detectTopics(text, matchedLabel, currentMatches);
   const sentiment = scoreSentiment(text);
   const createdAt = view?.record?.createdAt || view?.indexedAt || new Date().toISOString();
 
@@ -489,7 +510,8 @@ function normalizeBlueskyPost(view, matchedLabel) {
     popularityScore: Number(view?.likeCount || 0) + Number(view?.repostCount || 0),
     sourceType: getSourceType(authorHandle),
     matchedTopics,
-    detectedPlayers
+    detectedCurrentPlayers: currentMatches,
+    detectedFormerPlayers: formerMatches
   };
 }
 
@@ -528,16 +550,18 @@ function buildXPostUrl(author, id) {
   return `https://x.com/${handle}/status/${tweetId}`;
 }
 
-function normalizeXPost(tweet, usersById) {
+function normalizeXPost(tweet, usersById, playerUniverse) {
   const text = sanitizeText(tweet?.text || "");
   if (!text) return null;
   const authorProfile = usersById.get(tweet?.author_id) || {};
   const author = sanitizeText(authorProfile.username || authorProfile.handle || "");
   if (isLikelySpam(text, author)) return null;
-  if (!isMetsRelevant(text, "X")) return null;
 
-  const detectedPlayers = detectPlayers(text);
-  const matchedTopics = detectTopics(text, "X", detectedPlayers);
+  const currentMatches = detectPlayerMentions(text, playerUniverse.currentPlayers);
+  const formerMatches = detectPlayerMentions(text, playerUniverse.formerPlayers);
+  if (!isMetsRelevant(text, "X", currentMatches, formerMatches)) return null;
+
+  const matchedTopics = detectTopics(text, "X", currentMatches);
   const sentiment = scoreSentiment(text);
   const metrics = tweet?.public_metrics || {};
 
@@ -552,12 +576,14 @@ function normalizeXPost(tweet, usersById) {
     sentiment,
     sentimentLabel: sentimentLabel(sentiment),
     popularityScore: Number(metrics.like_count || 0) + Number(metrics.retweet_count || 0) + Number(metrics.reply_count || 0),
+    sourceType: "fan",
     matchedTopics,
-    detectedPlayers
+    detectedCurrentPlayers: currentMatches,
+    detectedFormerPlayers: formerMatches
   };
 }
 
-async function fetchXPosts() {
+async function fetchXPosts(playerUniverse) {
   if (!getEnabledX()) {
     console.log("X social pulse skipped: ENABLE_X_SOCIAL_PULSE is not true.");
     return [];
@@ -591,7 +617,7 @@ async function fetchXPosts() {
     );
 
     const normalized = tweets
-      .map((tweet) => normalizeXPost(tweet, usersById))
+      .map((tweet) => normalizeXPost(tweet, usersById, playerUniverse))
       .filter(Boolean)
       .slice(0, maxResults);
 
@@ -613,24 +639,127 @@ function collectPosts(deduped, normalizedPosts) {
 
     const existing = deduped.get(key);
     const mergedTopics = Array.from(new Set([...(existing.matchedTopics || []), ...(post.matchedTopics || [])]));
-    const mergedPlayers = Array.from(new Set([...(existing.detectedPlayers || []), ...(post.detectedPlayers || [])]));
+    const mergedCurrentPlayers = Array.from(new Map(
+      [...(existing.detectedCurrentPlayers || []), ...(post.detectedCurrentPlayers || [])]
+        .map((player) => [player.nameKey, player])
+    ).values());
+    const mergedFormerPlayers = Array.from(new Map(
+      [...(existing.detectedFormerPlayers || []), ...(post.detectedFormerPlayers || [])]
+        .map((player) => [player.nameKey, player])
+    ).values());
+
     deduped.set(key, Object.assign({}, existing, {
       matchedTopics: mergedTopics,
-      detectedPlayers: mergedPlayers,
+      detectedCurrentPlayers: mergedCurrentPlayers,
+      detectedFormerPlayers: mergedFormerPlayers,
       popularityScore: Math.max(Number(existing.popularityScore || 0), Number(post.popularityScore || 0))
     }));
   });
 }
 
+function aggregateTopicStats(posts) {
+  const map = new Map();
+  posts.forEach((post) => {
+    (post.matchedTopics || []).forEach((label) => {
+      const current = map.get(label) || { label, count: 0, sentimentTotal: 0 };
+      current.count += 1;
+      current.sentimentTotal += Number(post.sentiment) || 0;
+      map.set(label, current);
+    });
+  });
+
+  return Array.from(map.values())
+    .map((item) => ({
+      label: item.label,
+      count: item.count,
+      sentiment: round(item.sentimentTotal / item.count)
+    }))
+    .sort((a, b) => b.count - a.count || b.sentiment - a.sentiment || a.label.localeCompare(b.label))
+    .slice(0, 8);
+}
+
+function buildPlayerEntries(playerDefs, posts, bucket) {
+  const entries = playerDefs.map((player) => {
+    const matchingPosts = posts.filter((post) => {
+      const detected = bucket === "current" ? post.detectedCurrentPlayers : post.detectedFormerPlayers;
+      return detected.some((entry) => entry.nameKey === player.nameKey);
+    });
+    if (!matchingPosts.length) return null;
+
+    const sentiment = matchingPosts.reduce((sum, post) => sum + (Number(post.sentiment) || 0), 0) / matchingPosts.length;
+
+    return {
+      name: player.name,
+      playerId: player.playerId,
+      mentions: matchingPosts.length,
+      sentiment: round(sentiment),
+      posts: matchingPosts
+        .sort((a, b) => Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0))
+        .slice(0, MAX_PLAYER_POSTS)
+        .map((post) => ({
+          platform: post.platform,
+          author: post.author,
+          displayName: post.displayName,
+          text: post.text,
+          url: post.url,
+          createdAt: post.createdAt,
+          sentiment: post.sentiment,
+          sentimentLabel: post.sentimentLabel,
+          matchedTopics: post.matchedTopics
+        }))
+    };
+  }).filter(Boolean);
+
+  return entries.sort((a, b) => b.mentions - a.mentions || b.sentiment - a.sentiment || a.name.localeCompare(b.name));
+}
+
+function buildSourceMap(posts) {
+  const sourceMap = {};
+  ["bluesky", "x"].forEach((platform) => {
+    const platformPosts = posts.filter((post) => post.platform === platform);
+    if (!platformPosts.length) return;
+    const avg = platformPosts.reduce((sum, post) => sum + (Number(post.sentiment) || 0), 0) / platformPosts.length;
+    sourceMap[platform] = {
+      postCount: platformPosts.length,
+      averageSentiment: round(avg)
+    };
+  });
+  return sourceMap;
+}
+
+function buildEmptyPayload(message) {
+  return {
+    generatedAt: new Date().toISOString(),
+    overallScore: 50,
+    mood: "Mixed",
+    summary: message || "Social pulse data is not available yet.",
+    rosterSource: "mlb-active-roster",
+    sources: {
+      bluesky: {
+        postCount: 0,
+        averageSentiment: 0
+      }
+    },
+    trendingTopics: [],
+    trendingPlayers: [],
+    currentPlayers: [],
+    formerPlayers: [],
+    posts: [],
+    formerPosts: []
+  };
+}
+
 async function buildSocialPulse() {
+  const playerUniverse = await buildPlayerUniverse();
+  const searchTerms = buildBlueskySearchTerms(playerUniverse);
   const deduped = new Map();
   const sourceFailures = [];
 
-  for (const term of BLUESKY_SEARCH_TERMS) {
+  for (const term of searchTerms) {
     try {
       const posts = await fetchBlueskySearchResults(term.label, term.query);
       const normalized = posts
-        .map((view) => normalizeBlueskyPost(view, term.label))
+        .map((view) => normalizeBlueskyPost(view, term.label, playerUniverse))
         .filter(Boolean);
       collectPosts(deduped, normalized);
     } catch (error) {
@@ -638,31 +767,16 @@ async function buildSocialPulse() {
     }
   }
 
-  const xPosts = await fetchXPosts();
+  const xPosts = await fetchXPosts(playerUniverse);
   collectPosts(deduped, xPosts);
 
-  const storedPosts = Array.from(deduped.values())
-    .sort((a, b) => {
-      const dateDiff = Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0);
-      if (dateDiff !== 0) return dateDiff;
-      return Number(b.popularityScore || 0) - Number(a.popularityScore || 0);
-    })
-    .slice(0, MAX_STORED_POSTS)
-    .map((post) => ({
-      platform: post.platform,
-      author: post.author,
-      displayName: post.displayName,
-      text: post.text,
-      url: post.url,
-      createdAt: post.createdAt,
-      sentiment: post.sentiment,
-      sentimentLabel: post.sentimentLabel,
-      popularityScore: Number(post.popularityScore || 0),
-      sourceType: post.sourceType || "fan",
-      matchedTopics: post.matchedTopics
-    }));
+  const fullPosts = Array.from(deduped.values()).sort((a, b) => {
+    const dateDiff = Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0);
+    if (dateDiff !== 0) return dateDiff;
+    return Number(b.popularityScore || 0) - Number(a.popularityScore || 0);
+  });
 
-  if (!storedPosts.length) {
+  if (!fullPosts.length) {
     sourceFailures.forEach((entry) => console.warn(entry));
     if (fs.existsSync(OUTPUT_PATH)) {
       console.warn("No fresh social pulse data was collected. Keeping the existing social-pulse.json artifact.");
@@ -671,12 +785,17 @@ async function buildSocialPulse() {
     return buildEmptyPayload("Social pulse data is not available yet.");
   }
 
-  const weightedSum = storedPosts.reduce((sum, post) => {
+  const scoringPosts = fullPosts.filter((post) => classifyForMainScore(post));
+  const formerOnlyPosts = fullPosts.filter((post) => !classifyForMainScore(post));
+  const storedPosts = scoringPosts.slice(0, MAX_STORED_POSTS).map((post) => toStoredPost(post));
+  const storedFormerPosts = formerOnlyPosts.slice(0, MAX_STORED_POSTS).map((post) => toStoredPost(post));
+
+  const weightedSum = scoringPosts.reduce((sum, post) => {
     const sourceFactor = post.platform === "x" ? 0.45 : 1;
     return sum + (Number(post.sentiment) || 0) * recencyWeight(post.createdAt) * sourceFactor;
   }, 0);
 
-  const totalWeight = storedPosts.reduce((sum, post) => {
+  const totalWeight = scoringPosts.reduce((sum, post) => {
     const sourceFactor = post.platform === "x" ? 0.45 : 1;
     return sum + recencyWeight(post.createdAt) * sourceFactor;
   }, 0) || 1;
@@ -684,31 +803,23 @@ async function buildSocialPulse() {
   const averageSentiment = weightedSum / totalWeight;
   const overallScore = Math.max(0, Math.min(100, Math.round(50 + (averageSentiment * 50))));
   const mood = buildMood(overallScore);
-
-  const fullPosts = Array.from(deduped.values());
-  const trendingTopics = aggregateTopicStats(fullPosts);
-  const trendingPlayers = aggregatePlayerStats(fullPosts);
-
-  const sourceMap = {};
-  ["bluesky", "x"].forEach((platform) => {
-    const platformPosts = storedPosts.filter((post) => post.platform === platform);
-    if (!platformPosts.length) return;
-    const avg = platformPosts.reduce((sum, post) => sum + (Number(post.sentiment) || 0), 0) / platformPosts.length;
-    sourceMap[platform] = {
-      postCount: platformPosts.length,
-      averageSentiment: round(avg)
-    };
-  });
+  const trendingTopics = aggregateTopicStats(scoringPosts);
+  const currentPlayers = buildPlayerEntries(playerUniverse.currentPlayers, fullPosts, "current").slice(0, 10);
+  const formerPlayers = buildPlayerEntries(playerUniverse.formerPlayers, fullPosts, "former").slice(0, 10);
 
   return {
     generatedAt: new Date().toISOString(),
     overallScore,
     mood,
-    summary: buildSummary(overallScore, mood, trendingTopics, trendingPlayers),
-    sources: sourceMap,
+    summary: buildSummary(overallScore, mood, trendingTopics, currentPlayers),
+    rosterSource: "mlb-active-roster",
+    sources: buildSourceMap(scoringPosts),
     trendingTopics,
-    trendingPlayers,
-    posts: storedPosts
+    trendingPlayers: currentPlayers,
+    currentPlayers,
+    formerPlayers,
+    posts: storedPosts,
+    formerPosts: storedFormerPosts
   };
 }
 
@@ -716,7 +827,7 @@ async function main() {
   const data = await buildSocialPulse();
   if (!data) return;
   writeJson(OUTPUT_PATH, data);
-  console.log(`Wrote social pulse snapshot with ${data.posts.length} posts to ${OUTPUT_PATH}`);
+  console.log(`Wrote social pulse snapshot with ${data.posts.length} current/team posts to ${OUTPUT_PATH}`);
 }
 
 if (require.main === module) {
