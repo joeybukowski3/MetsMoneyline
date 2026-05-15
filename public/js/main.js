@@ -671,6 +671,13 @@ function parseMetricNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
+function rankToPercent(rank, totalTeams = 30) {
+  const numericRank = Number(rank);
+  if (!Number.isFinite(numericRank)) return 0;
+  const clampedRank = Math.min(Math.max(numericRank, 1), totalTeams);
+  return ((totalTeams - clampedRank) / (totalTeams - 1)) * 100;
+}
+
 function metricValueClass(label, value) {
   const num = parseMetricNumber(value);
   if (num == null) return "";
@@ -1359,12 +1366,11 @@ function buildRow3(game) {
     const lowerBetter = /k%|strikeout rate/i.test(r.category);
     const comparable = nymRaw != null && oppRaw != null;
     const nymWins = comparable ? (lowerBetter ? nymRaw < oppRaw : nymRaw > oppRaw) : false;
-    const maxVal = comparable ? Math.max(nymRaw, oppRaw, 0.001) : 1;
-    const nymPct = comparable ? (Math.min((nymRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
-    const oppPct = comparable ? (Math.min((oppRaw / (maxVal * 1.25)) * 100, 100) || 50) : 50;
     const rankKey = METRIC_RANK_KEY[r.category];
     const metsRank = rankKey ? ta?.mets?.leagueRanks?.[rankKey] : null;
     const oppRank  = rankKey ? ta?.opp?.leagueRanks?.[rankKey]  : null;
+    const nymPct = rankToPercent(metsRank);
+    const oppPct = rankToPercent(oppRank);
     return `
       <div class="adv-metric-card">
         <div class="amc-label">${r.category}</div>
