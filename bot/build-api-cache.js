@@ -589,13 +589,24 @@ async function run() {
   ensureDir(PUBLIC_API_ROOT);
   ensureDir(GAME_ROOT);
 
-  // Confirm these IDs against your API-SPORTS account if their Baseball API uses different IDs.
-  const games = sortByDateAsc(await fetchApiSportsGames(config, season));
-  const featuredState = resolveFeaturedGameState(games, {
-    referenceDate,
-    lookaheadDays: 7
-  });
-  featuredState.logs.forEach((line) => console.log(`[cache] ${line}`));
+  let games = [];
+  let featuredState = {
+    todayGame: null,
+    nextUpcomingGame: null,
+    logs: []
+  };
+  try {
+    // Confirm these IDs against your API-SPORTS account if their Baseball API uses different IDs.
+    games = sortByDateAsc(await fetchApiSportsGames(config, season));
+    featuredState = resolveFeaturedGameState(games, {
+      referenceDate,
+      lookaheadDays: 7
+    });
+    featuredState.logs.forEach((line) => console.log(`[cache] ${line}`));
+  } catch (error) {
+    console.warn(`[warn] API-SPORTS games fetch failed: ${error.message}`);
+    console.warn("[warn] Continuing with MLB Stats fallback for upcoming-game and odds cache generation.");
+  }
   const standings = await fetchStandingsWithFallback(config, season);
 
   const liveGame = games.find(isLiveStatus) || null;
@@ -637,7 +648,7 @@ async function run() {
   };
 
   const standingsPayload = {
-    ...standings,
+    ...(standings || { division: "NL East", season, teams: [] }),
     meta: {
       provider: standings?.sourceProvider || "api-sports",
       generatedAt: new Date().toISOString(),
@@ -674,7 +685,11 @@ async function run() {
   const oddsPayload = {
     ...resolvedOdds,
     meta: {
-      provider: process.env.ODDS_API_KEY ? (odds?.raw?.sport_key ? "the-odds-api" : "api-sports") : "api-sports",
+      provider:
+        resolvedOdds?.meta?.provider
+        || (resolvedOdds?.raw?.sport_key ? "the-odds-api" : null)
+        || (odds?.raw?.sport_key ? "the-odds-api" : null)
+        || "api-sports",
       generatedAt: new Date().toISOString(),
       cacheHint: "odds: 2-5 minutes",
       ...((!oddsHasData && resolvedOdds !== odds) ? { note: "preserved from previous cache — live fetch returned empty" } : {})

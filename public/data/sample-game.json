@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-15T18:05:46.822Z",
+  "generatedAt": "2026-05-15T17:54:32.646Z",
   "referenceDate": "2026-05-15",
   "cacheKey": "sample-game:2026-05-15",
   "games": [
@@ -19,7 +19,16 @@
         "oppHome": "14-6",
         "oppRoad": "13-11"
       },
-      "moneyline": {},
+      "moneyline": {
+        "mets": -164,
+        "opp": 138
+      },
+      "runLine": {
+        "mets": -1.5,
+        "price": 134
+      },
+      "total": 7.5,
+      "overUnder": 7.5,
       "status": "upcoming",
       "pitching": {
         "mets": {
@@ -27,7 +36,7 @@
           "mlbId": 605280,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-15T18:05:26.923Z",
+          "generatedAt": "2026-05-15T17:54:30.141Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -86,7 +95,7 @@
           "mlbId": 693645,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-15T18:05:26.937Z",
+          "generatedAt": "2026-05-15T17:54:32.110Z",
           "statsSources": {
             "era": "mlb",
             "fip": "computed",
@@ -1318,7 +1327,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-15T18:05:27.045Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-15\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":66.4,\"temperatureDisplay\":\"66°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph NW\",\"compact\":\"66° | Clear | Wind 9 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-15T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Clay Holmes\",\"handedness\":\"R\",\"era\":1.86,\"xERA\":3.75,\"fip\":3.44,\"whip\":1.01,\"kPct\":19.3,\"bbPct\":8.3,\"kMinusBbPct\":11,\"hardHitPct\":43.5,\"barrelPct\":5.1,\"xBAAllowed\":0.252,\"xSLGAllowed\":0.366,\"xwOBAAllowed\":0.308,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-09\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"5.2\",\"er\":2,\"k\":6,\"result\":\"L\"},{\"date\":\"2026-05-03\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"6.2\",\"er\":1,\"k\":6,\"result\":\"W\"},{\"date\":\"2026-04-28\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":0,\"k\":6,\"result\":\"W\"},{\"date\":\"2026-04-22\",\"opponent\":\"Minnesota Twins\",\"ip\":\"7.0\",\"er\":2,\"k\":3,\"result\":\"W\"}],\"avgInnings\":6.33,\"avgEarnedRuns\":1.25,\"avgStrikeouts\":5.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":6.33,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Cam Schlittler\",\"handedness\":\"R\",\"era\":1.35,\"xERA\":2.49,\"fip\":1.75,\"whip\":0.81,\"kPct\":29.2,\"bbPct\":4.5,\"kMinusBbPct\":24.7,\"hardHitPct\":40.3,\"barrelPct\":6,\"xBAAllowed\":0.214,\"xSLGAllowed\":0.326,\"xwOBAAllowed\":0.253,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-09\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"6.0\",\"er\":0,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-05-04\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.2\",\"er\":1,\"k\":4,\"result\":\"W\"},{\"date\":\"2026-04-28\",\"opponent\":\"Texas Rangers\",\"ip\":\"6.0\",\"er\":0,\"k\":8,\"result\":\"W\"},{\"date\":\"2026-04-23\",\"opponent\":\"Boston Red Sox\",\"ip\":\"8.0\",\"er\":1,\"k\":5,\"result\":\"W\"}],\"avgInnings\":6.42,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":5.75,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":6.42,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":0.2,\"projectedLineupWRCPlus\":84.2,\"obp\":0.289,\"iso\":0.123,\"kPct\":20.8,\"bbPct\":8.2,\"xBA\":0.251,\"xSLG\":0.419,\"xwOBA\":0.319,\"hardHitPct\":42.2,\"barrelPct\":8.6,\"battingAverage\":0.23,\"wOBA\":0.288,\"lineup\":{\"totalWAR\":0.2,\"totalWRCPlus\":84.2,\"totalOBP\":0.289,\"totalISO\":0.126,\"totalKPct\":19.9,\"totalBBPct\":7.7,\"totalAVG\":0.23,\"totalWOBA\":0.288,\"totalXBA\":0.26,\"totalXSLG\":0.439,\"totalXWOBA\":0.328,\"totalHardHitPct\":42,\"totalBarrelPct\":9,\"regressionSignals\":{\"baMinusXba\":-0.03,\"wobaMinusXwoba\":-0.04}},\"regressionSignals\":{\"baMinusXba\":-0.03,\"wobaMinusXwoba\":-0.04},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.8,\"projectedLineupWRCPlus\":121.9,\"obp\":0.341,\"iso\":0.199,\"kPct\":23.3,\"bbPct\":12.1,\"xBA\":0.247,\"xSLG\":0.464,\"xwOBA\":0.355,\"hardHitPct\":47.7,\"barrelPct\":12.8,\"battingAverage\":0.234,\"wOBA\":0.349,\"lineup\":{\"totalWAR\":6.8,\"totalWRCPlus\":121.9,\"totalOBP\":0.341,\"totalISO\":0.22,\"totalKPct\":23.8,\"totalBBPct\":14,\"totalAVG\":0.234,\"totalWOBA\":0.349,\"totalXBA\":0.248,\"totalXSLG\":0.467,\"totalXWOBA\":0.357,\"totalHardHitPct\":48,\"totalBarrelPct\":13.4,\"regressionSignals\":{\"baMinusXba\":-0.014,\"wobaMinusXwoba\":-0.008}},\"regressionSignals\":{\"baMinusXba\":-0.014,\"wobaMinusXwoba\":-0.008},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":0.2,\"totalWRCPlus\":84.2,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.8,\"totalWRCPlus\":121.9,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.37,\"kMinusBbPct\":15.6,\"xFIP\":3.65,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.19,\"kMinusBbPct\":15.6,\"xFIP\":3.63,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":66.4,\"temperatureDisplay\":\"66°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph NW\",\"compact\":\"66° | Clear | Wind 9 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-15T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Clay Holmes 3.75/3.44 vs Cam Schlittler 2.49/1.75; K-BB% 11.0 to 24.7.\",\"rawScore\":-29.63,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355.\",\"rawScore\":-12.58,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.65 vs 3.63, WHIP 1.37 vs 1.19, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.46,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.030 and wOBA-xwOBA -0.040; opponent starter overperformance signal 2.29.\",\"rawScore\":-8.16,\"weightedImpact\":-10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days.\",\"rawScore\":0.52,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-65,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":0,\"oppMajorEdges\":4,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-15T17:54:32.642Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-15\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":66.4,\"temperatureDisplay\":\"66°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph NW\",\"compact\":\"66° | Clear | Wind 9 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-15T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Clay Holmes\",\"handedness\":\"R\",\"era\":1.86,\"xERA\":3.75,\"fip\":3.44,\"whip\":1.01,\"kPct\":19.3,\"bbPct\":8.3,\"kMinusBbPct\":11,\"hardHitPct\":43.5,\"barrelPct\":5.1,\"xBAAllowed\":0.252,\"xSLGAllowed\":0.366,\"xwOBAAllowed\":0.308,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-09\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"5.2\",\"er\":2,\"k\":6,\"result\":\"L\"},{\"date\":\"2026-05-03\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"6.2\",\"er\":1,\"k\":6,\"result\":\"W\"},{\"date\":\"2026-04-28\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":0,\"k\":6,\"result\":\"W\"},{\"date\":\"2026-04-22\",\"opponent\":\"Minnesota Twins\",\"ip\":\"7.0\",\"er\":2,\"k\":3,\"result\":\"W\"}],\"avgInnings\":6.33,\"avgEarnedRuns\":1.25,\"avgStrikeouts\":5.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":6.33,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Cam Schlittler\",\"handedness\":\"R\",\"era\":1.35,\"xERA\":2.49,\"fip\":1.75,\"whip\":0.81,\"kPct\":29.2,\"bbPct\":4.5,\"kMinusBbPct\":24.7,\"hardHitPct\":40.3,\"barrelPct\":6,\"xBAAllowed\":0.214,\"xSLGAllowed\":0.326,\"xwOBAAllowed\":0.253,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-09\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"6.0\",\"er\":0,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-05-04\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.2\",\"er\":1,\"k\":4,\"result\":\"W\"},{\"date\":\"2026-04-28\",\"opponent\":\"Texas Rangers\",\"ip\":\"6.0\",\"er\":0,\"k\":8,\"result\":\"W\"},{\"date\":\"2026-04-23\",\"opponent\":\"Boston Red Sox\",\"ip\":\"8.0\",\"er\":1,\"k\":5,\"result\":\"W\"}],\"avgInnings\":6.42,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":5.75,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":6.42,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":0.2,\"projectedLineupWRCPlus\":84.2,\"obp\":0.289,\"iso\":0.123,\"kPct\":20.8,\"bbPct\":8.2,\"xBA\":0.251,\"xSLG\":0.419,\"xwOBA\":0.319,\"hardHitPct\":42.2,\"barrelPct\":8.6,\"battingAverage\":0.23,\"wOBA\":0.288,\"lineup\":{\"totalWAR\":0.2,\"totalWRCPlus\":84.2,\"totalOBP\":0.289,\"totalISO\":0.126,\"totalKPct\":19.9,\"totalBBPct\":7.7,\"totalAVG\":0.23,\"totalWOBA\":0.288,\"totalXBA\":0.26,\"totalXSLG\":0.439,\"totalXWOBA\":0.328,\"totalHardHitPct\":42,\"totalBarrelPct\":9,\"regressionSignals\":{\"baMinusXba\":-0.03,\"wobaMinusXwoba\":-0.04}},\"regressionSignals\":{\"baMinusXba\":-0.03,\"wobaMinusXwoba\":-0.04},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.8,\"projectedLineupWRCPlus\":121.9,\"obp\":0.341,\"iso\":0.199,\"kPct\":23.3,\"bbPct\":12.1,\"xBA\":0.247,\"xSLG\":0.464,\"xwOBA\":0.355,\"hardHitPct\":47.7,\"barrelPct\":12.8,\"battingAverage\":0.234,\"wOBA\":0.349,\"lineup\":{\"totalWAR\":6.8,\"totalWRCPlus\":121.9,\"totalOBP\":0.341,\"totalISO\":0.22,\"totalKPct\":23.8,\"totalBBPct\":14,\"totalAVG\":0.234,\"totalWOBA\":0.349,\"totalXBA\":0.248,\"totalXSLG\":0.467,\"totalXWOBA\":0.357,\"totalHardHitPct\":48,\"totalBarrelPct\":13.4,\"regressionSignals\":{\"baMinusXba\":-0.014,\"wobaMinusXwoba\":-0.008}},\"regressionSignals\":{\"baMinusXba\":-0.014,\"wobaMinusXwoba\":-0.008},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":0.2,\"totalWRCPlus\":84.2,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.8,\"totalWRCPlus\":121.9,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.37,\"kMinusBbPct\":15.6,\"xFIP\":3.65,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.19,\"kMinusBbPct\":15.6,\"xFIP\":3.63,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":66.4,\"temperatureDisplay\":\"66°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph NW\",\"compact\":\"66° | Clear | Wind 9 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-15T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Clay Holmes 3.75/3.44 vs Cam Schlittler 2.49/1.75; K-BB% 11.0 to 24.7.\",\"rawScore\":-29.63,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355.\",\"rawScore\":-12.58,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.65 vs 3.63, WHIP 1.37 vs 1.19, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.46,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.030 and wOBA-xwOBA -0.040; opponent starter overperformance signal 2.29.\",\"rawScore\":-8.16,\"weightedImpact\":-10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days.\",\"rawScore\":0.52,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-65,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":0,\"oppMajorEdges\":4,\"fallbackHeavy\":true}}",
         "headline": "Mets vs New York Yankees: starting pitching is the clearest angle",
         "synopsis": "Clay Holmes vs Cam Schlittler sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Clay Holmes 3.75/3.44 vs Cam Schlittler 2.49/1.75; K-BB% 11.0 to 24.7. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1335,7 +1344,7 @@
           "ballpark": "Citi Field",
           "weather": "66° | Clear | Wind 9 mph NW",
           "lineupStatus": "Projected",
-          "moneyline": "N/A"
+          "moneyline": "-164"
         },
         "edgeSummary": {
           "startingPitching": {
@@ -1430,7 +1439,7 @@
             "Cam Schlittler has the better pitching profile: K% 29.2% vs 19.3%, FIP 1.75 vs 3.44.",
             "Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at -164."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
@@ -1440,7 +1449,7 @@
             "Cam Schlittler has the better pitching profile: K% 29.2% vs 19.3%, FIP 1.75 vs 3.44.",
             "Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at -164."
         },
         "sections": [
           {
@@ -1449,7 +1458,7 @@
           },
           {
             "heading": "2. Game Details",
-            "body": "2026-05-15 | 7:15 PM ET | Citi Field. Mets home game. Lineups: Projected. Mets ML: N/A."
+            "body": "2026-05-15 | 7:15 PM ET | Citi Field. Mets home game. Lineups: Projected. Mets ML: -164."
           },
           {
             "heading": "3. Edge Summary",
@@ -1473,27 +1482,27 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• No single dominant Mets edge. Lineup quality is the primary case. Where the risk is\n• Cam Schlittler has the better pitching profile: K% 29.2% vs 19.3%, FIP 1.75 vs 3.44.\n• Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
+            "body": "Why the Mets have a case\n• No single dominant Mets edge. Lineup quality is the primary case. Where the risk is\n• Cam Schlittler has the better pitching profile: K% 29.2% vs 19.3%, FIP 1.75 vs 3.44.\n• Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle at -164."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
             "body": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle."
           }
         ],
-        "pickSummary": "Cam Schlittler posts a 2.49 xERA in the 91st percentile while Clay Holmes sits at 3.75 in the 69th. Mets hold a home rest edge with zero travel days against the Yankees' one day off the road. The model projects only 35% win probability for the Mets but the venue and schedule context support taking the ML at the current price.",
-        "pickNarrative": "Mets host Yankees at Citi Field with a slight home and rest differential despite inferior pitching and lineup metrics. Model projects 35% win probability but venue context supports the ML. Cam Schlittler posts a 2.49 xERA in the 91st percentile while Clay Holmes sits at 3.75 in the 69th. Mets hold a home rest edge with zero travel days against the Yankees' one day off the road. The model projects only 35% win probability for the Mets but the venue and schedule context support taking the ML at the current price.",
+        "pickSummary": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle.",
+        "pickNarrative": "At 3-2 over their last 5 games, the Mets are neither riding momentum nor running from a slump. Cam Schlittler holds the underlying pitching edge at 1.75 FIP compared to Clay Holmes's 3.44, so New York needs the offense to carry this one. The supporting case sits in the rotation: New York ranks 4th in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. Taking the Mets here as the best available path, not a strong analytical endorsement — the board leans the other way, but the price and the case hold up. Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle.",
         "todayPick": {
-          "headline": "Home Rest Backs Mets ML Play",
-          "summary": "Mets host Yankees at Citi Field with a slight home and rest differential despite inferior pitching and lineup metrics. Model projects 35% win probability but venue context supports the ML.",
+          "headline": "Mets ML Pick",
+          "summary": "At 3-2 over their last 5 games, the Mets are neither riding momentum nor running from a slump. Cam Schlittler holds the underlying pitching edge at 1.75 FIP compared to Clay Holmes's 3.44, so New York needs the offense to carry this one. The supporting case sits in the rotation: New York ranks 4th in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. Taking the Mets here as the best available path, not a strong analytical endorsement — the board leans the other way, but the price and the case hold up.",
           "metsEdges": [
-            "Mets are home with rest 0 vs opponent 1 days.",
-            "Mets travel home to home, opponent travel road to road, bullpen tax normal/normal."
+            "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days.",
+            "Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal."
           ],
           "risks": [
-            "Clay Holmes 3.75 xERA vs Cam Schlittler 2.49 xERA; K-BB% 11.0 to 24.7.",
-            "Mets projected lineup wRC+ 84.2 vs 121.9"
+            "xERA/FIP profile: Clay Holmes 3.75/3.44 vs Cam Schlittler 2.49/1.75; K-BB% 11.0 to 24.7.",
+            "Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355."
           ],
-          "bettingAngle": "Cam Schlittler posts a 2.49 xERA in the 91st percentile while Clay Holmes sits at 3.75 in the 69th. Mets hold a home rest edge with zero travel days against the Yankees' one day off the road. The model projects only 35% win probability for the Mets but the venue and schedule context support taking the ML at the current price.",
+          "bettingAngle": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -2022,7 +2031,7 @@
             "ballpark": "Citi Field",
             "weather": "66° | Clear | Wind 9 mph NW",
             "lineupStatus": "Projected",
-            "moneyline": "N/A"
+            "moneyline": "-164"
           },
           "gameDetailsTable": {
             "rows": [
@@ -2040,7 +2049,7 @@
               },
               {
                 "label": "Mets ML Odds",
-                "value": "N/A"
+                "value": "-164"
               }
             ]
           },
@@ -2050,8 +2059,8 @@
             "rows": [
               {
                 "label": "Odds",
-                "mets": "N/A",
-                "opp": "N/A"
+                "mets": "-164",
+                "opp": "+138"
               },
               {
                 "label": "Season Record",
@@ -3384,7 +3393,7 @@
               "Cam Schlittler has the better pitching profile: K% 29.2% vs 19.3%, FIP 1.75 vs 3.44.",
               "Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355."
             ],
-            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at -164."
           },
           "teamAdvanced": {
             "mets": {
@@ -3463,41 +3472,41 @@
             }
           },
           "todayPick": {
-            "headline": "Home Rest Backs Mets ML Play",
-            "summary": "Mets host Yankees at Citi Field with a slight home and rest differential despite inferior pitching and lineup metrics. Model projects 35% win probability but venue context supports the ML.",
+            "headline": "Mets ML Pick",
+            "summary": "At 3-2 over their last 5 games, the Mets are neither riding momentum nor running from a slump. Cam Schlittler holds the underlying pitching edge at 1.75 FIP compared to Clay Holmes's 3.44, so New York needs the offense to carry this one. The supporting case sits in the rotation: New York ranks 4th in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. Taking the Mets here as the best available path, not a strong analytical endorsement — the board leans the other way, but the price and the case hold up.",
             "metsEdges": [
-              "Mets are home with rest 0 vs opponent 1 days.",
-              "Mets travel home to home, opponent travel road to road, bullpen tax normal/normal."
+              "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days.",
+              "Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal."
             ],
             "risks": [
-              "Clay Holmes 3.75 xERA vs Cam Schlittler 2.49 xERA; K-BB% 11.0 to 24.7.",
-              "Mets projected lineup wRC+ 84.2 vs 121.9"
+              "xERA/FIP profile: Clay Holmes 3.75/3.44 vs Cam Schlittler 2.49/1.75; K-BB% 11.0 to 24.7.",
+              "Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355."
             ],
-            "bettingAngle": "Cam Schlittler posts a 2.49 xERA in the 91st percentile while Clay Holmes sits at 3.75 in the 69th. Mets hold a home rest edge with zero travel days against the Yankees' one day off the road. The model projects only 35% win probability for the Mets but the venue and schedule context support taking the ML at the current price.",
+            "bettingAngle": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Cam Schlittler posts a 2.49 xERA in the 91st percentile while Clay Holmes sits at 3.75 in the 69th. Mets hold a home rest edge with zero travel days against the Yankees' one day off the road. The model projects only 35% win probability for the Mets but the venue and schedule context support taking the ML at the current price.",
-            "headline": "Home Rest Backs Mets ML Play",
-            "summary": "Mets host Yankees at Citi Field with a slight home and rest differential despite inferior pitching and lineup metrics. Model projects 35% win probability but venue context supports the ML.",
+            "explanation": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle.",
+            "headline": "Mets ML Pick",
+            "summary": "At 3-2 over their last 5 games, the Mets are neither riding momentum nor running from a slump. Cam Schlittler holds the underlying pitching edge at 1.75 FIP compared to Clay Holmes's 3.44, so New York needs the offense to carry this one. The supporting case sits in the rotation: New York ranks 4th in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. Taking the Mets here as the best available path, not a strong analytical endorsement — the board leans the other way, but the price and the case hold up.",
             "metsEdges": [
-              "Mets are home with rest 0 vs opponent 1 days.",
-              "Mets travel home to home, opponent travel road to road, bullpen tax normal/normal."
+              "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days.",
+              "Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal."
             ],
             "risks": [
-              "Clay Holmes 3.75 xERA vs Cam Schlittler 2.49 xERA; K-BB% 11.0 to 24.7.",
-              "Mets projected lineup wRC+ 84.2 vs 121.9"
+              "xERA/FIP profile: Clay Holmes 3.75/3.44 vs Cam Schlittler 2.49/1.75; K-BB% 11.0 to 24.7.",
+              "Overall lineup quality only: projected WAR 0.2 vs 6.8, projected lineup wRC+ 84.2 vs 121.9, xwOBA 0.319 vs 0.355."
             ],
-            "bettingAngle": "Cam Schlittler posts a 2.49 xERA in the 91st percentile while Clay Holmes sits at 3.75 in the 69th. Mets hold a home rest edge with zero travel days against the Yankees' one day off the road. The model projects only 35% win probability for the Mets but the venue and schedule context support taking the ML at the current price.",
+            "bettingAngle": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 1 days. Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal. Note: model does not fully favor Mets. Pick is based on the best supported individual angle.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
           "meta": {
             "homeAwayLabel": "Home",
-            "moneylineValue": "N/A",
+            "moneylineValue": "-164",
             "schedulingSpot": {
               "category": "Scheduling Spot",
               "verdict": "Mets edge",
@@ -3510,7 +3519,7 @@
       },
       "bettingHistory": {
         "market": "Mets Moneyline",
-        "odds": 120,
+        "odds": -164,
         "stake": 100
       },
       "weather": {
@@ -3534,7 +3543,7 @@
       "status": "pending",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
-      "odds": 120,
+      "odds": -164,
       "stake": 100
     },
     {
@@ -3548,12 +3557,14 @@
       "finalScore": "9-4",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
+      "odds": -164,
       "oddsSource": "missing",
       "resultSource": "mlb-stats-schedule",
       "sourceGamePk": 823630,
       "startTime": "2026-05-14T17:10:00.000Z",
       "stake": 100,
-      "result": "W"
+      "result": "W",
+      "cumulativeProfit": -1090.27
     },
     {
       "gameId": "2026-05-13-mets-vs-detroit-tigers",

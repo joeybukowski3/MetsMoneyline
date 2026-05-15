@@ -45,6 +45,11 @@ The same conceptual data may exist in more than one form:
 
 Always verify which path the relevant page or workflow actually uses.
 
+### Odds cache resilience
+
+- `bot/build-api-cache.js` must not hard-fail the entire static odds refresh just because `API_SPORTS_KEY` is missing or flaky.
+- The homepage and report pipeline depend on `public/api/mlb/mets/odds.json`, so the builder needs a fallback path that can still publish today’s odds when schedule/game context can be recovered from MLB Stats and The Odds API.
+
 ### Betting page caution
 
 - `api/mlb/mets/odds.json` is the generated static odds artifact and can be fetched safely from the frontend.

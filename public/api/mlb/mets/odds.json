@@ -1,12 +1,393 @@
 {
   "gameId": 823629,
-  "markets": [],
-  "bookmakers": [],
-  "consensus": null,
-  "raw": null,
+  "markets": [
+    {
+      "key": "h2h",
+      "label": "h2h",
+      "outcomes": [
+        {
+          "name": "New York Yankees",
+          "price": 138,
+          "point": null
+        },
+        {
+          "name": "New York Mets",
+          "price": -164,
+          "point": null
+        }
+      ]
+    },
+    {
+      "key": "spreads",
+      "label": "spreads",
+      "outcomes": [
+        {
+          "name": "New York Yankees",
+          "price": -162,
+          "point": 1.5
+        },
+        {
+          "name": "New York Mets",
+          "price": 134,
+          "point": -1.5
+        }
+      ]
+    },
+    {
+      "key": "totals",
+      "label": "totals",
+      "outcomes": [
+        {
+          "name": "Over",
+          "price": 102,
+          "point": 7.5
+        },
+        {
+          "name": "Under",
+          "price": -124,
+          "point": 7.5
+        }
+      ]
+    }
+  ],
+  "bookmakers": [
+    {
+      "key": "fanduel",
+      "title": "FanDuel",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": 138,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -164,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": -162,
+              "point": 1.5
+            },
+            {
+              "name": "New York Mets",
+              "price": 134,
+              "point": -1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": 102,
+              "point": 7.5
+            },
+            {
+              "name": "Under",
+              "price": -124,
+              "point": 7.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "draftkings",
+      "title": "DraftKings",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": 130,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -157,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -120,
+              "point": 7
+            },
+            {
+              "name": "Under",
+              "price": -101,
+              "point": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "betmgm",
+      "title": "BetMGM",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": 135,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -160,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -120,
+              "point": 7
+            },
+            {
+              "name": "Under",
+              "price": 100,
+              "point": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "caesars",
+      "title": "Caesars",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": 135,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -160,
+              "point": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fanatics",
+      "title": "Fanatics",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": 132,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -155,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Yankees",
+              "price": -165,
+              "point": 1.5
+            },
+            {
+              "name": "New York Mets",
+              "price": 145,
+              "point": -1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -115,
+              "point": 7
+            },
+            {
+              "name": "Under",
+              "price": -105,
+              "point": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consensus": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Yankees",
+            "price": 138,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -164,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Yankees",
+            "price": -162,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 134,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 102,
+            "point": 7.5
+          },
+          {
+            "name": "Under",
+            "price": -124,
+            "point": 7.5
+          }
+        ]
+      }
+    ]
+  },
+  "raw": {
+    "home_team": "New York Mets",
+    "away_team": "New York Yankees",
+    "commence_time": "2026-05-15T23:15:00Z",
+    "sport_key": "baseball_mlb"
+  },
+  "props": null,
+  "context": {
+    "gameId": 823629,
+    "startTime": "2026-05-15T23:15:00Z",
+    "status": "Scheduled",
+    "homeTeam": {
+      "id": 121,
+      "canonicalKey": "mets",
+      "mlbStatsTeamId": 121,
+      "apiSportsTeamId": 121,
+      "name": "New York Mets",
+      "abbreviation": "NYM",
+      "record": null
+    },
+    "awayTeam": {
+      "id": 147,
+      "canonicalKey": "yankees",
+      "mlbStatsTeamId": 147,
+      "apiSportsTeamId": 147,
+      "name": "New York Yankees",
+      "abbreviation": "NYY",
+      "record": null
+    },
+    "isMetsHome": true,
+    "venue": "Citi Field",
+    "league": 1,
+    "probablePitchers": {
+      "mets": {
+        "id": 605280,
+        "fullName": "Clay Holmes",
+        "era": "1.86",
+        "fip": null,
+        "whip": "1.01"
+      },
+      "opp": {
+        "id": 693645,
+        "fullName": "Cam Schlittler",
+        "era": "1.35",
+        "fip": null,
+        "whip": "0.81"
+      }
+    },
+    "lineups": {
+      "lineupStatus": "not_released",
+      "mets": [],
+      "opp": []
+    }
+  },
+  "diagnostics": {
+    "mainEndpoint": "manual-refresh",
+    "mainMarkets": [
+      "h2h",
+      "spreads",
+      "totals"
+    ],
+    "propsEndpoint": null,
+    "propsMarkets": [],
+    "availableSportsbooks": [
+      "FanDuel",
+      "DraftKings",
+      "BetMGM",
+      "Caesars",
+      "Fanatics"
+    ],
+    "missingTrackedSportsbooks": []
+  },
   "meta": {
-    "provider": "api-sports",
-    "generatedAt": "2026-05-15T18:05:23.705Z",
-    "cacheHint": "odds: 2-5 minutes"
+    "provider": "manual-external-refresh",
+    "generatedAt": "2026-05-15T17:47:04.932Z",
+    "cacheHint": "odds: manual refresh",
+    "note": "Manual one-off refresh from current external market listings while local odds API credentials were unavailable."
   }
 }
