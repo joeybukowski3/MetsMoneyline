@@ -6016,10 +6016,10 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
   const renderUsageBadge = (usage) => {
     const tone = usage?.tone || "green";
     const palette = tone === "red"
-      ? { bg: "#fee2e2", fg: "#b91c1c" }
+      ? { bg: "#e8effa", fg: "#002d72" }
       : tone === "yellow"
         ? { bg: "#fef3c7", fg: "#a16207" }
-        : { bg: "#dcfce7", fg: "#15803d" };
+        : { bg: "#fff0e8", fg: "#cc4500" };
     return `<span style="display:inline-block;padding:6px 10px;border-radius:999px;background:${palette.bg};color:${palette.fg};font-size:12px;font-weight:900;letter-spacing:0.06em;text-transform:uppercase;">${valueCell(usage?.label || "Low")}</span>`;
   };
   const renderBullpenCard = (card) => {
@@ -6068,8 +6068,8 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       const diffColor = !Number.isFinite(row?.differencePct)
         ? "#64748b"
         : row.improving
-          ? "#15803d"
-          : "#b91c1c";
+          ? "#ff5910"
+          : "#002d72";
       const statLabel = row.statKey === "ops"
         ? "OPS Rank"
         : row.statKey === "avg"
@@ -6396,16 +6396,14 @@ const REPORT_PCTL = {
 };
 
 function reportPctlColor(pct) {
-  if (pct >= 80) return "#15803d";
-  if (pct >= 60) return "#16a34a";
-  if (pct >= 45) return "#aab8c8";
-  if (pct >= 25) return "#f87171";
-  return "#dc2626";
+  if (pct >= 70) return "#ff5910";
+  if (pct >= 40) return "#9ca3af";
+  return "#002d72";
 }
 
 function reportCellToneStyle(pct) {
   const bg = reportPctlColor(pct);
-  const darkText = pct >= 45 && pct < 80;
+  const darkText = pct >= 40 && pct < 70;
   return `background:${bg};color:${darkText ? "#10213a" : "#ffffff"};font-weight:700;border-radius:8px;`;
 }
 
@@ -6416,9 +6414,9 @@ function reportWarCellStyle(value) {
   const magnitude = Math.min(Math.abs(parsed), 4);
   const alpha = 0.34 + ((magnitude / 4) * 0.54);
   if (parsed > 0) {
-    return `background:rgba(22,163,74,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(21,128,61,0.22);`;
+    return `background:rgba(255,89,16,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(200,60,0,0.22);`;
   }
-  return `background:rgba(220,38,38,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(153,27,27,0.22);`;
+  return `background:rgba(0,45,114,${alpha.toFixed(3)});color:#ffffff;font-weight:800;border-radius:8px;box-shadow:inset 0 0 0 1px rgba(0,30,80,0.22);`;
 }
 
 function parseReportNumber(value) {
@@ -6612,8 +6610,8 @@ function buildCondensedEmailHtml(game) {
   // Usage badge helper
   const usageBadge = (label) => {
     if (!label) return "";
-    const bgMap = { High: "#fee2e2", Medium: "#fef9c3", Low: "#dcfce7" };
-    const colorMap = { High: "#991b1b", Medium: "#92400e", Low: "#166534" };
+    const bgMap = { High: "#e8effa", Medium: "#fef9c3", Low: "#fff0e8" };
+    const colorMap = { High: "#002d72", Medium: "#92400e", Low: "#cc4500" };
     return `<span style="display:inline-block;padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700;background:${bgMap[label] || "#f3f4f6"};color:${colorMap[label] || "#374151"};">${label} Usage</span>`;
   };
 
