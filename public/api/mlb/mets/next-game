@@ -97,7 +97,62 @@
         "pos": "C"
       }
     ],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 663757,
+        "name": "Trent Grisham",
+        "pos": "CF"
+      },
+      {
+        "order": 2,
+        "playerId": 700250,
+        "name": "Ben Rice",
+        "pos": "1B"
+      },
+      {
+        "order": 3,
+        "playerId": 592450,
+        "name": "Aaron Judge",
+        "pos": "RF"
+      },
+      {
+        "order": 4,
+        "playerId": 641355,
+        "name": "Cody Bellinger",
+        "pos": "LF"
+      },
+      {
+        "order": 5,
+        "playerId": 665862,
+        "name": "Jazz Chisholm Jr.",
+        "pos": "2B"
+      },
+      {
+        "order": 6,
+        "playerId": 641857,
+        "name": "Ryan McMahon",
+        "pos": "3B"
+      },
+      {
+        "order": 7,
+        "playerId": 682987,
+        "name": "Spencer Jones",
+        "pos": "DH"
+      },
+      {
+        "order": 8,
+        "playerId": 683011,
+        "name": "Anthony Volpe",
+        "pos": "SS"
+      },
+      {
+        "order": 9,
+        "playerId": 669224,
+        "name": "Austin Wells",
+        "pos": "C"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -170,6 +225,7 @@
           "losses": 17,
           "pct": ".614"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 693645,
           "fullName": "Cam Schlittler",
@@ -237,6 +293,7 @@
           "losses": 25,
           "pct": ".419"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 605280,
           "fullName": "Clay Holmes",
@@ -253,26 +310,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 605280,
+          "fullName": "Clay Holmes",
+          "link": "/api/v1/people/605280"
+        },
+        "catcher": {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443"
+        },
+        "first": {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901"
+        },
+        "second": {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760"
+        },
+        "third": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "shortstop": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "left": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 663757,
+          "fullName": "Trent Grisham",
+          "link": "/api/v1/people/663757"
+        },
+        "onDeck": {
+          "id": 700250,
+          "fullName": "Ben Rice",
+          "link": "/api/v1/people/700250"
+        },
+        "inHole": {
+          "id": 592450,
+          "fullName": "Aaron Judge",
+          "link": "/api/v1/people/592450"
+        },
+        "pitcher": {
+          "id": 693645,
+          "fullName": "Cam Schlittler",
+          "link": "/api/v1/people/693645"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 147,
           "name": "New York Yankees",
           "link": "/api/v1/teams/147"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -441,12 +613,140 @@
           },
           "useName": "Luis"
         }
+      ],
+      "awayPlayers": [
+        {
+          "id": 663757,
+          "fullName": "Trent Grisham",
+          "link": "/api/v1/people/663757",
+          "firstName": "Trenton",
+          "lastName": "Grisham",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Trent"
+        },
+        {
+          "id": 700250,
+          "fullName": "Ben Rice",
+          "link": "/api/v1/people/700250",
+          "firstName": "Benjamin",
+          "lastName": "Rice",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Ben"
+        },
+        {
+          "id": 592450,
+          "fullName": "Aaron Judge",
+          "link": "/api/v1/people/592450",
+          "firstName": "Aaron",
+          "lastName": "Judge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Aaron"
+        },
+        {
+          "id": 641355,
+          "fullName": "Cody Bellinger",
+          "link": "/api/v1/people/641355",
+          "firstName": "Cody",
+          "lastName": "Bellinger",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Cody"
+        },
+        {
+          "id": 665862,
+          "fullName": "Jazz Chisholm Jr.",
+          "link": "/api/v1/people/665862",
+          "firstName": "Jasrado",
+          "lastName": "Chisholm",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Jazz"
+        },
+        {
+          "id": 641857,
+          "fullName": "Ryan McMahon",
+          "link": "/api/v1/people/641857",
+          "firstName": "Ryan",
+          "lastName": "McMahon",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Ryan"
+        },
+        {
+          "id": 682987,
+          "fullName": "Spencer Jones",
+          "link": "/api/v1/people/682987",
+          "firstName": "Spencer",
+          "lastName": "Jones",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Spencer"
+        },
+        {
+          "id": 683011,
+          "fullName": "Anthony Volpe",
+          "link": "/api/v1/people/683011",
+          "firstName": "Anthony",
+          "lastName": "Volpe",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Anthony"
+        },
+        {
+          "id": 669224,
+          "fullName": "Austin Wells",
+          "link": "/api/v1/people/669224",
+          "firstName": "Austin",
+          "lastName": "Wells",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Austin"
+        }
       ]
     }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-15T19:53:11.558Z",
+    "generatedAt": "2026-05-15T20:54:20.065Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-15",
     "cacheKey": "next-game:2026-05-15"
