@@ -1900,19 +1900,31 @@ async function init() {
     }
 
   const container = document.getElementById("today-game-container");
-  container.innerHTML =
-    buildMatchupStrip(featuredGame) +         // Row 1 - matchup header
-    buildGameContextCard(featuredGame) +      // Row 2 - recent form, injuries, H2H, pitcher logs
-    buildPitchingCard(featuredGame) +         // Row 3 - starting pitching comparison
-    buildRow3(featuredGame) +                 // Row 4 - lineups + advanced metrics
-    buildTeamAdvancedCard(featuredGame) +     // Row 5 - team advanced stats table
-    buildAnalysisRow(featuredGame) +          // Row 6 - 3 analysis tiles
-    buildPickSection(featuredGame) +          // Row 7 - pick banner
-    buildTrendsCard(featuredGame);            // supplemental trends
+  try {
+    container.innerHTML =
+      buildMatchupStrip(featuredGame) +
+      buildGameContextCard(featuredGame) +
+      buildPitchingCard(featuredGame) +
+      buildRow3(featuredGame) +
+      buildTeamAdvancedCard(featuredGame) +
+      buildAnalysisRow(featuredGame) +
+      buildPickSection(featuredGame) +
+      buildTrendsCard(featuredGame);
+  } catch (renderErr) {
+    console.error("[home] Render error:", renderErr);
+    container.innerHTML = `<div class="card full-card" style="padding:1.5rem;color:#c0392b">Unable to render game breakdown. Check console for details.</div>`;
+  }
 
   }
 
-  document.getElementById("recent-games-container").innerHTML = buildRecentTiles(games, recentBreakdowns);
+  const recentContainer = document.getElementById("recent-games-container");
+  if (recentContainer) {
+    try {
+      recentContainer.innerHTML = buildRecentTiles(games, recentBreakdowns);
+    } catch (e) {
+      console.error("[home] Recent tiles render error:", e);
+    }
+  }
 
   if (generatedAt) {
     const el = document.getElementById("data-timestamp");
