@@ -1445,6 +1445,44 @@ function cleanSectionBody(body) {
     .trim();
 }
 
+function sameNormalizedSentence(a, b) {
+  const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim().toLowerCase();
+  const left = normalize(a);
+  const right = normalize(b);
+  return left && right && left === right;
+}
+
+function buildHomePickSummary(game) {
+  const writeup = game?.writeup || {};
+  const reportPick = writeup?.report?.officialPick || {};
+  const todayPick = writeup?.todayPick || {};
+  const sections = writeup.sections ?? [];
+  const pickSection = sections.find(s => /today|pick|final|bottom line/i.test(s.heading));
+
+  const summary = cleanSectionBody(
+    reportPick.summary ||
+    todayPick.summary ||
+    writeup.pickNarrative ||
+    pickSection?.body ||
+    writeup.pickSummary ||
+    game?.matchupSummary ||
+    ""
+  );
+
+  const detail = cleanSectionBody(
+    reportPick.bettingAngle ||
+    reportPick.explanation ||
+    todayPick.bettingAngle ||
+    writeup.pickSummary ||
+    ""
+  );
+
+  if (summary && detail && !sameNormalizedSentence(summary, detail)) {
+    return `${summary} ${detail}`.trim();
+  }
+  return summary || detail || "";
+}
+
 /* ── ROW 4: Analysis tiles (3 side-by-side) ── */
 function buildAnalysisRow(game) {
   if (!game.writeup?.sections?.length) {
@@ -1499,10 +1537,7 @@ function buildPickSection(game) {
       </div>`;
   }
 
-  const sections = game.writeup.sections ?? [];
-  // Find pick/today section by heading keyword
-  const pickSection = sections.find(s => /today|pick|final|bottom line/i.test(s.heading));
-  const summary = cleanSectionBody(game.writeup?.pickNarrative || pickSection?.body || game.writeup?.pickSummary || game.matchupSummary || "");
+  const summary = buildHomePickSummary(game);
 
   const metsML  = game.moneyline?.mets;
   const oddsStr = metsML != null ? (metsML > 0 ? `+${metsML}` : `${metsML}`) : "";
