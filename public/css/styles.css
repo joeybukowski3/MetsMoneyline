@@ -2180,14 +2180,14 @@ footer {
   background-clip: padding-box;
 }
 .metric-cell.metric-positive {
-  background: rgba(22, 163, 74, 0.16) !important;
-  color: #166534 !important;
-  box-shadow: inset 0 0 0 9999px rgba(22, 163, 74, 0.06);
+  background: rgba(255, 89, 16, 0.16) !important;
+  color: var(--orange) !important;
+  box-shadow: inset 0 0 0 9999px rgba(255, 89, 16, 0.06);
 }
 .metric-cell.metric-negative {
-  background: rgba(220, 38, 38, 0.16) !important;
-  color: #b91c1c !important;
-  box-shadow: inset 0 0 0 9999px rgba(220, 38, 38, 0.06);
+  background: rgba(0, 45, 114, 0.14) !important;
+  color: var(--navy) !important;
+  box-shadow: inset 0 0 0 9999px rgba(0, 45, 114, 0.05);
 }
 .metric-cell.metric-neutral {
   background: rgba(148, 163, 184, 0.14) !important;
