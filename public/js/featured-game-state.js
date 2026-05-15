@@ -322,6 +322,7 @@
     EASTERN_TIME_ZONE,
     compareGamesForDisplay,
     diffCalendarDays,
+    getFeaturedReferenceDateISO,
     getEasternYear,
     getEasternDateISO,
     isCancelledLike,
