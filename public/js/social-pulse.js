@@ -1,26 +1,38 @@
 (function () {
   const DATA_URL = "data/social-pulse.json";
 
+  // Current 2026 Mets roster — MLB headshot IDs
   var PLAYER_IDS = {
-    "pete alonso": 624413,
-    "francisco lindor": 596019,
     "juan soto": 665742,
-    "brandon nimmo": 607043,
-    "jeff mcneil": 643446,
+    "francisco lindor": 596019,
     "mark vientos": 668901,
+    "bo bichette": 666182,
+    "marcus semien": 425772,
     "brett baty": 683146,
-    "kodai senga": 672282,
-    "edwin diaz": 621242,
+    "francisco alvarez": 682626,
+    "mj melendez": 669004,
+    "tyrone taylor": 622491,
+    "a.j. ewing": 0,
+    "aj ewing": 0,
+    "luis torrens": 650402,
+    "jeff mcneil": 643446,
     "carlos mendoza": 0,
-    "david peterson": 656849,
-    "jose quintana": 500779,
-    "sean manaea": 640455,
-    "jose soto": 665742,
-    "tylor megill": 656731,
-    "nolan mclean": 702043,
-    "carson benge": 700363,
-    "francisco alvarez": 682626
+    "carson benge": 700363
   };
+
+  // Accounts treated as authoritative/media sources
+  var MEDIA_HANDLES = new Set([
+    "craigcalcaterra.com", "jessespector.com", "jomboymedia.bsky.social",
+    "talkinbaseballbot.bsky.social", "umpscorecard.bsky.social", "rawmlb.bsky.social",
+    "grandcentralmets.com", "metsmysterymanager.bsky.social", "juan-soto-stats.bsky.social",
+    "fptrack.com", "soltalks.bsky.social", "docbeisbol"
+  ]);
+
+  function isMediaSource(post) {
+    var st = String(post.sourceType || "").toLowerCase();
+    var handle = String(post.author || "").toLowerCase().replace(/^@/, "");
+    return st === "media" || MEDIA_HANDLES.has(handle);
+  }
 
   function escapeHtml(value) {
     return String(value || "")
@@ -201,26 +213,43 @@
     }).join("") + "</div>";
   }
 
+  function sourceTypeBadge(post) {
+    if (isMediaSource(post)) {
+      return '<span class="sp-source-type-badge media">&#128240; Media</span>';
+    }
+    return '<span class="sp-source-type-badge fan">&#128100; Fan</span>';
+  }
+
   function renderPosts(posts) {
     if (!Array.isArray(posts) || !posts.length) {
       return '<div class="sp-empty-state">Social pulse data is not available yet.</div>';
     }
 
-    return posts.map(function (post) {
+    // Sort: media posts first, then by recency
+    var sorted = posts.slice().sort(function (a, b) {
+      var aMedia = isMediaSource(a) ? 1 : 0;
+      var bMedia = isMediaSource(b) ? 1 : 0;
+      if (bMedia !== aMedia) return bMedia - aMedia;
+      return Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0);
+    });
+
+    return sorted.map(function (post) {
       var sentiment = Number(post.sentiment ?? 0) || 0;
       var tone = sentimentTone(sentiment);
       var matchedTopics = Array.isArray(post.matchedTopics) ? post.matchedTopics.slice(0, 4) : [];
       var displayName = normalizeDisplay(post.displayName || post.author || "Unknown author");
       var author = normalizeDisplay(post.author || "unknown");
       var text = normalizeDisplay(post.text || "");
+      var media = isMediaSource(post);
 
-      return '<article class="sp-post-card sentiment-' + tone + '">' +
+      return '<article class="sp-post-card sentiment-' + tone + (media ? ' sp-post-media' : '') + '">' +
         '<div class="sp-post-head">' +
         "<div>" +
         "<h3>" + escapeHtml(displayName) + "</h3>" +
         "<p>@" + escapeHtml(author) + "</p>" +
         "</div>" +
         '<div class="sp-post-meta">' +
+        sourceTypeBadge(post) +
         '<span class="sp-platform-badge">' + platformIconMarkup(post.platform) + "<span>" + escapeHtml(platformLabel(post.platform)) + "</span></span>" +
         '<span class="sp-sentiment ' + tone + '">' + sentimentLabel(sentiment) + "</span>" +
         '<span class="sp-time">' + escapeHtml(formatRelative(post.createdAt)) + "</span>" +
@@ -233,7 +262,7 @@
           return "<span>" + escapeHtml(normalizeDisplay(topic)) + "</span>";
         }).join("") +
         "</div>" +
-        (post.url ? '<a href="' + escapeHtml(post.url) + '" target="_blank" rel="noopener noreferrer">View post</a>' : "") +
+        (post.url ? '<a href="' + escapeHtml(post.url) + '" target="_blank" rel="noopener noreferrer">View post &#8599;</a>' : "") +
         "</div>" +
         "</article>";
     }).join("");

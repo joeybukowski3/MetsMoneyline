@@ -4,57 +4,106 @@ const { TwitterApi } = require("twitter-api-v2");
 
 const OUTPUT_PATH = path.join(__dirname, "..", "public", "data", "social-pulse.json");
 const BLUESKY_API_BASE = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts";
-const MAX_STORED_POSTS = 40;
-const BLUESKY_QUERY_LIMIT = 12;
+const MAX_STORED_POSTS = 60;
+const BLUESKY_QUERY_LIMIT = 15;
 const DEFAULT_X_LIMIT = 10;
 const HARD_X_LIMIT = 10;
 
-const BLUESKY_SEARCH_TERMS = [
-  { label: "Mets", query: "Mets" },
+// ─── Search terms ─────────────────────────────────────────────────────────────
+// Tier 1: topic/player queries (quoted phrases to reduce noise)
+const BLUESKY_PRIORITY_TERMS = [
+  { label: "New York Mets", query: '"New York Mets"' },
   { label: "#LGM", query: "#LGM" },
-  { label: "New York Mets", query: "\"New York Mets\"" },
-  { label: "Mets bullpen", query: "\"Mets bullpen\"" },
-  { label: "Pete Alonso", query: "\"Pete Alonso\"" },
-  { label: "Francisco Lindor", query: "\"Francisco Lindor\"" },
-  { label: "Brandon Nimmo", query: "\"Brandon Nimmo\"" },
-  { label: "Edwin Diaz", query: "\"Edwin Diaz\"" },
-  { label: "Kodai Senga", query: "\"Kodai Senga\"" }
+  { label: "#NYMets", query: "#NYMets" },
+  { label: "Mets baseball", query: '"Mets" baseball' },
+  { label: "Citi Field", query: '"Citi Field"' },
+  { label: "Subway Series", query: '"Subway Series"' },
+  { label: "Juan Soto Mets", query: '"Juan Soto" Mets' },
+  { label: "Francisco Lindor", query: '"Francisco Lindor"' },
+  { label: "Mark Vientos", query: '"Mark Vientos"' },
+  { label: "Bo Bichette Mets", query: '"Bo Bichette" Mets' },
+  { label: "Marcus Semien Mets", query: '"Marcus Semien" Mets' },
+  { label: "Brett Baty", query: '"Brett Baty"' },
+  { label: "Francisco Alvarez Mets", query: '"Francisco Alvarez" Mets' },
+  { label: "Carlos Mendoza", query: '"Carlos Mendoza" Mets' },
+  { label: "Mets bullpen", query: '"Mets bullpen"' },
+  { label: "Mets rotation", query: '"Mets rotation" OR "Mets pitching"' },
+  { label: "Mets lineup", query: '"Mets lineup"' },
+  { label: "Mets trade", query: '"Mets" trade' },
 ];
 
+// Tier 2: known authoritative Bluesky accounts
+const BLUESKY_ACCOUNT_TERMS = [
+  { label: "craigcalcaterra", query: "from:craigcalcaterra.com Mets" },
+  { label: "jessespector", query: "from:jessespector.com Mets" },
+  { label: "jomboymedia", query: "from:jomboymedia.bsky.social Mets" },
+  { label: "talkinbaseball", query: "from:talkinbaseballbot.bsky.social Mets" },
+  { label: "umpscorecard", query: "from:umpscorecard.bsky.social Mets" },
+  { label: "rawmlb", query: "from:rawmlb.bsky.social Mets" },
+  { label: "grandcentralmets", query: "from:grandcentralmets.com" },
+  { label: "metsmysterymanager", query: "from:metsmysterymanager.bsky.social" },
+  { label: "juansotostats", query: "from:juan-soto-stats.bsky.social" },
+  { label: "fptrack", query: "from:fptrack.com Mets" },
+];
+
+const BLUESKY_SEARCH_TERMS = [...BLUESKY_PRIORITY_TERMS, ...BLUESKY_ACCOUNT_TERMS];
+
 const X_QUERY = [
-  "(Mets OR \"New York Mets\" OR #LGM OR \"Mets bullpen\" OR \"Pete Alonso\" OR \"Francisco Lindor\" OR \"Carlos Mendoza\")",
+  '("New York Mets" OR #LGM OR #NYMets OR "Mets bullpen" OR "Mets rotation" OR "Subway Series" OR "Citi Field" OR "Juan Soto" Mets OR "Francisco Lindor" OR "Mark Vientos" OR "Bo Bichette" Mets OR "Carlos Mendoza" Mets)',
+  "lang:en",
   "-is:retweet",
   "-is:reply",
-  "-has:links"
 ].join(" ");
 
 const MATCHED_TOPIC_MAP = {
-  Mets: "Mets",
-  "#LGM": "vibes",
   "New York Mets": "Mets",
-  "Mets bullpen": "bullpen",
-  "Pete Alonso": "Alonso",
+  "#LGM": "vibes",
+  "#NYMets": "Mets",
+  "Mets baseball": "Mets",
+  "Citi Field": "Mets",
+  "Subway Series": "Subway Series",
+  "Juan Soto Mets": "Soto",
   "Francisco Lindor": "Lindor",
-  "Brandon Nimmo": "Nimmo",
-  "Edwin Diaz": "Díaz",
-  "Kodai Senga": "Senga",
-  X: "Mets"
+  "Mark Vientos": "Vientos",
+  "Bo Bichette Mets": "Bichette",
+  "Marcus Semien Mets": "Semien",
+  "Brett Baty": "Baty",
+  "Francisco Alvarez Mets": "Álvarez",
+  "Carlos Mendoza": "Mendoza",
+  "Mets bullpen": "bullpen",
+  "Mets rotation": "starting pitching",
+  "Mets lineup": "lineup",
+  "Mets trade": "roster moves",
+  craigcalcaterra: "media",
+  jessespector: "media",
+  jomboymedia: "media",
+  talkinbaseball: "media",
+  umpscorecard: "umpires",
+  rawmlb: "media",
+  grandcentralmets: "fan media",
+  metsmysterymanager: "fan media",
+  juansotostats: "Soto",
+  fptrack: "media",
+  X: "Mets",
 };
 
+// ─── Current 2026 Mets roster ────────────────────────────────────────────────
 const PLAYER_DEFS = [
-  { name: "Pete Alonso", label: "Alonso", aliases: ["pete alonso", "alonso", "polar bear"] },
-  { name: "Francisco Lindor", label: "Lindor", aliases: ["francisco lindor", "lindor"] },
-  { name: "Brandon Nimmo", label: "Nimmo", aliases: ["brandon nimmo", "nimmo"] },
-  { name: "Edwin Díaz", label: "Díaz", aliases: ["edwin diaz", "edwin díaz", "diaz", "díaz", "sugar"] },
-  { name: "Kodai Senga", label: "Senga", aliases: ["kodai senga", "senga", "ghost fork"] },
   { name: "Juan Soto", label: "Soto", aliases: ["juan soto", "soto"] },
+  { name: "Francisco Lindor", label: "Lindor", aliases: ["francisco lindor", "lindor", "mr. smile", "mr smile"] },
   { name: "Mark Vientos", label: "Vientos", aliases: ["mark vientos", "vientos"] },
-  { name: "Jeff McNeil", label: "McNeil", aliases: ["jeff mcneil", "mcneil"] },
-  { name: "Francisco Alvarez", label: "Álvarez", aliases: ["francisco alvarez", "francisco álvarez", "alvarez", "álvarez"] },
+  { name: "Bo Bichette", label: "Bichette", aliases: ["bo bichette", "bichette"] },
+  { name: "Marcus Semien", label: "Semien", aliases: ["marcus semien", "semien"] },
   { name: "Brett Baty", label: "Baty", aliases: ["brett baty", "baty"] },
-  { name: "Luisangel Acuña", label: "Acuña", aliases: ["luisangel acuna", "luisangel acuña", "acuna", "acuña"] },
-  { name: "Carlos Mendoza", label: "Mendoza", aliases: ["carlos mendoza", "mendoza"] }
+  { name: "Francisco Alvarez", label: "Álvarez", aliases: ["francisco alvarez", "francisco álvarez", "alvarez", "álvarez"] },
+  { name: "MJ Melendez", label: "Melendez", aliases: ["mj melendez", "melendez"] },
+  { name: "Tyrone Taylor", label: "Taylor", aliases: ["tyrone taylor"] },
+  { name: "A.J. Ewing", label: "Ewing", aliases: ["a.j. ewing", "aj ewing", "ewing"] },
+  { name: "Luis Torrens", label: "Torrens", aliases: ["luis torrens", "torrens"] },
+  { name: "Jeff McNeil", label: "McNeil", aliases: ["jeff mcneil", "mcneil", "the squirrel"] },
+  { name: "Carlos Mendoza", label: "Mendoza", aliases: ["carlos mendoza", "mendoza"] },
 ];
+
 
 const TOPIC_DEFS = [
   { label: "bullpen", aliases: ["bullpen", "reliever", "closer", "meltdown", "save situation"] },
@@ -147,25 +196,73 @@ function isLikelySpam(text, author) {
   return SPAM_PATTERNS.some((pattern) => pattern.test(clean));
 }
 
+// Non-English common words that look like "Mets" in other languages
+const NON_BASEBALL_METS_PATTERNS = [
+  /\bje\s+mets\b/i,       // French: "I put"
+  /\bon\s+mets\b/i,        // French
+  /\bse\s+mets\b/i,        // French
+  /\btu\s+mets\b/i,        // French
+  /\bil\s+mets\b/i,        // French
+  /\belles\s+mets\b/i,     // French
+  /\bmets\s+en\s+place\b/i,// French phrase
+  /\bmets\s+toujours\b/i,  // French
+  /\bguillemets\b/i,        // French: quotation marks
+  /\benchères\b/i,          // French: auctions
+  /\bdbz\b/i,               // Dragon Ball Z (unrelated)
+  /\banime\b/i,             // anime context
+  /\bkame\b/i,              // Dragon Ball Z
+  /\bpokemon\b/i,           // unrelated
+];
+
+// Words that strongly indicate baseball/Mets context
+const BASEBALL_CONTEXT = [
+  "mets", "#lgm", "#nymets", "new york mets", "lets go mets", "let's go mets",
+  "citi field", "subway series", "flushing", "wilpon", "steve cohen",
+  "mlb", "baseball", "home run", "strikeout", "bullpen", "pitcher", "lineup",
+  "inning", "at bat", "plate appearance", "earned run", "lgm",
+];
+
+function isLikelyNonEnglish(text) {
+  const lower = text.toLowerCase();
+  // Common French function words that rarely appear in English baseball posts
+  const frenchMarkers = ["c'est", "je ", "il y a", "dans le", "pour le", "avec le", "alors", "aussi", "donc", "très", "même", "toujours", "encore", "mais ", "quand", "comme ça", "ça ", "sur le", "de la", "du ", " au ", "en fait", "j'ai", "n'est", "qu'elle", "qu'il"];
+  const spanishMarkers = ["carreras", "jonrón", "béisbol", " los ", " las ", " del ", "partidos", "temporada", " se ", "también", "como ", "para ", "pero ", "con ", "por ", "que ", "cuando", "juego", "equipo"];
+  const frenchCount = frenchMarkers.filter((m) => lower.includes(m)).length;
+  const spanishCount = spanishMarkers.filter((m) => lower.includes(m)).length;
+  // If 2+ markers of a non-English language, likely non-English (unless it has strong baseball context)
+  return frenchCount >= 2 || spanishCount >= 3;
+}
+
 function isMetsRelevant(text, queryLabel) {
   const lower = sanitizeText(text).toLowerCase();
   if (!lower) return false;
 
-  if (
-    lower.includes("mets") ||
-    lower.includes("#lgm") ||
-    lower.includes("new york mets") ||
-    lower.includes("lets go mets") ||
-    lower.includes("let's go mets")
-  ) {
-    return true;
+  // Reject posts that are clearly non-English with no baseball context
+  if (isLikelyNonEnglish(lower)) {
+    // Allow through only if they have explicit Mets baseball context
+    const hasExplicitMetsContext = lower.includes("new york mets") || lower.includes("#lgm") || lower.includes("#nymets");
+    if (!hasExplicitMetsContext) return false;
   }
 
-  if (PLAYER_DEFS.some((player) => player.aliases.some((alias) => lower.includes(alias)))) {
-    return true;
+  // Reject posts where "mets" appears only as a French/non-baseball word
+  if (lower.includes("mets") && !lower.includes("new york mets") && !lower.includes("#lgm") && !lower.includes("mets ") && !lower.includes(" mets")) {
+    // Skip further checks — need context below
   }
 
-  return lower.includes(sanitizeText(queryLabel).toLowerCase());
+  // Reject known non-baseball patterns
+  if (NON_BASEBALL_METS_PATTERNS.some((p) => p.test(lower))) return false;
+
+  // Accept if any strong baseball context word is present
+  if (BASEBALL_CONTEXT.some((word) => lower.includes(word))) return true;
+
+  // Accept if a current Mets player is mentioned
+  if (PLAYER_DEFS.some((player) => player.aliases.some((alias) => lower.includes(alias)))) return true;
+
+  // Accept if the query label itself appears (e.g. from-account queries)
+  const normalizedLabel = sanitizeText(queryLabel).toLowerCase();
+  if (normalizedLabel && lower.includes(normalizedLabel)) return true;
+
+  return false;
 }
 
 function detectPlayers(text) {
@@ -352,6 +449,21 @@ async function fetchBlueskySearchResults(label, query) {
   return Array.isArray(json.posts) ? json.posts : [];
 }
 
+// Accounts considered authoritative/media sources — get a sourceType tag
+const AUTHORITATIVE_HANDLES = new Set([
+  "craigcalcaterra.com", "jessespector.com", "jomboymedia.bsky.social",
+  "talkinbaseballbot.bsky.social", "umpscorecard.bsky.social", "rawmlb.bsky.social",
+  "grandcentralmets.com", "metsmysterymanager.bsky.social", "juan-soto-stats.bsky.social",
+  "fptrack.com", "soltalks.bsky.social",
+]);
+
+function getSourceType(handle) {
+  if (!handle) return "fan";
+  const h = String(handle).toLowerCase().replace(/^@/, "");
+  if (AUTHORITATIVE_HANDLES.has(h)) return "media";
+  return "fan";
+}
+
 function normalizeBlueskyPost(view, matchedLabel) {
   const text = sanitizeText(view?.record?.text || view?.text || "");
   if (!text) return null;
@@ -363,17 +475,19 @@ function normalizeBlueskyPost(view, matchedLabel) {
   const sentiment = scoreSentiment(text);
   const createdAt = view?.record?.createdAt || view?.indexedAt || new Date().toISOString();
 
+  const authorHandle = sanitizeText(view?.author?.handle);
   return {
     id: sanitizeText(view?.uri || view?.cid || `${matchedLabel}-${slugify(text).slice(0, 24)}`),
     platform: "bluesky",
-    author: sanitizeText(view?.author?.handle),
+    author: authorHandle,
     displayName: sanitizeText(view?.author?.displayName || view?.author?.handle || "Unknown"),
-    text: excerpt(text, 220),
+    text: excerpt(text, 280),
     url: postUrlFromBlueskyView(view),
     createdAt,
     sentiment,
     sentimentLabel: sentimentLabel(sentiment),
     popularityScore: Number(view?.likeCount || 0) + Number(view?.repostCount || 0),
+    sourceType: getSourceType(authorHandle),
     matchedTopics,
     detectedPlayers
   };
@@ -544,6 +658,7 @@ async function buildSocialPulse() {
       sentiment: post.sentiment,
       sentimentLabel: post.sentimentLabel,
       popularityScore: Number(post.popularityScore || 0),
+      sourceType: post.sourceType || "fan",
       matchedTopics: post.matchedTopics
     }));
 
