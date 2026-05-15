@@ -185,6 +185,29 @@
     }
     .trend-card-header .player-info h3 { font-size: 1rem; font-weight: 800; color: var(--navy); margin: 0; }
     .trend-card-header .player-info span { font-size: 0.78rem; color: var(--text-muted); }
+    .selected-period-summary {
+      margin-top: 0.7rem;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid #d8e0ea;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fbff 0%, #f3f7fc 100%);
+    }
+    .selected-period-summary .summary-label {
+      display: block;
+      font-size: 0.64rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 0.22rem;
+    }
+    .selected-period-summary .summary-stats {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.4;
+    }
 
     .verdict-badge {
       display: inline-block;
@@ -434,7 +457,7 @@
       </div>
       <section id="seo-content" class="seo-summary-card">
         <!-- SEO_TRENDS_SUMMARY:START -->
-<p>The 2026 New York Mets are batting .225 as a team, ranking 28th in MLB, with a .630 OPS. Top performer: MJ Melendez (.255 BA, .816 OPS). Running cold: Tyrone Taylor (.187 BA). Individual hitter trends, xBA analysis, and team-vs-MLB comparisons update daily.</p>
+<p>The 2026 New York Mets are batting .226 as a team, ranking 28th in MLB, with a .641 OPS. Top performer: Juan Soto (.269 BA, .829 OPS). Running cold: Tyrone Taylor (.182 BA). Individual hitter trends, xBA analysis, and team-vs-MLB comparisons update daily.</p>
 <!-- SEO_TRENDS_SUMMARY:END -->
       </section>
 
@@ -504,6 +527,29 @@
 
     function fmtInteger(v) {
       return v != null ? String(v) : "&mdash;";
+    }
+
+    function getSelectedPeriodLabel(windowKey) {
+      if (windowKey === "last20") return "Last 20 Games";
+      if (windowKey === "last10") return "Last 10 Games";
+      return "Season";
+    }
+
+    function renderSelectedPeriodSummary(windowData, windowKey) {
+      const selected = windowData || {};
+      return (
+        '<div class="selected-period-summary">' +
+          '<span class="summary-label">Selected Period: ' + getSelectedPeriodLabel(windowKey) + "</span>" +
+          '<span class="summary-stats">' +
+            fmtInteger(selected.games) + ' G | ' +
+            fmtInteger(selected.pa) + ' PA | ' +
+            fmtDecimal(selected.ba) + ' BA | ' +
+            fmtDecimal(selected.xba) + ' xBA | ' +
+            fmtDecimal(selected.ops) + ' OPS | ' +
+            fmtInteger(selected.hr) + ' HR' +
+          "</span>" +
+        "</div>"
+      );
     }
 
     function verdictBadge(ba) {
@@ -1072,6 +1118,7 @@
             verdictBadge(w.ba) +
           "</div>" +
           '<div class="trend-chart-wrap"><canvas id="chart-player-' + idx + '"></canvas></div>' +
+          renderSelectedPeriodSummary(w, windowKey) +
           '<div class="trend-meta-row trend-stats-row">' +
             '<div class="trend-row-label">Stats</div>' +
             renderStatControl(cardId, "ba", w, getWindowChangeLabel(seasonRolling.cumulativeBa), true) +
