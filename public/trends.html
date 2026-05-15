@@ -419,23 +419,118 @@
     }
 
     @media (max-width: 640px) {
-      .trends-shell { padding: 0 0.75rem 2rem; }
-      .trend-chart-wrap { height: 180px; }
-      .trend-card { padding: 1rem; }
-      .players-grid { grid-template-columns: 1fr; }
+      /* Shell & card padding */
+      .trends-shell { padding: 0 0.6rem 2rem; }
+      .trend-card { padding: 0.85rem 0.75rem; }
+
+      /* Chart height — give charts room to breathe */
+      .trend-chart-wrap { height: 200px; }
+
+      /* Card header: stack name + badge cleanly */
+      .trend-card-header {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: flex-start;
+        margin-bottom: 0.85rem;
+      }
+      .trend-card-header .player-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .trend-card-header .player-info h3 {
+        font-size: 0.92rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .trend-card-header .player-info span {
+        font-size: 0.72rem;
+        display: block;
+        margin-top: 0.1rem;
+      }
+      .verdict-badge {
+        font-size: 0.62rem;
+        padding: 0.18rem 0.5rem;
+        margin-left: 0;
+        flex-shrink: 0;
+        align-self: flex-start;
+        margin-top: 2px;
+      }
+
+      /* Team stat tabs: 2-per-row grid so they never squash */
+      .team-stat-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.4rem;
+        margin-bottom: 0.65rem;
+      }
+      .team-stat-tab {
+        font-size: 0.72rem;
+        padding: 0.38rem 0.5rem;
+        text-align: center;
+      }
+
+      /* Stat row: label takes full width on its own line, cells share row below */
+      .trend-meta-row {
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
       .trend-row-label {
         min-width: 100%;
         flex-basis: 100%;
-        margin-bottom: 0.1rem;
+        margin-bottom: 0.2rem;
+        font-size: 0.6rem;
       }
       .trend-stat-tab,
       .trend-stat-cell,
       .trend-vs-cell {
-        min-width: calc(50% - 0.3rem);
+        flex: 1 1 calc(25% - 0.35rem);
+        min-width: 0;
       }
+      .trend-stat-tab .val,
+      .trend-stat-cell .val {
+        font-size: 0.82rem;
+      }
+      .trend-stat-tab .lbl,
+      .trend-stat-cell .lbl,
+      .trend-vs-cell .lbl {
+        font-size: 0.56rem;
+        letter-spacing: 0.03em;
+      }
+      .trend-vs-cell .val { font-size: 0.65rem; }
+
+      /* Legend: wrap cleanly with more breathing room */
+      .chart-legend-guide,
+      .team-chart-legend {
+        gap: 0.6rem 1rem;
+        font-size: 0.68rem;
+        padding: 0.5rem 0.75rem;
+        justify-content: flex-start;
+      }
+
+      /* Window tabs: fill row evenly */
+      .window-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.35rem;
+        margin-bottom: 1rem;
+      }
+      .window-tab {
+        font-size: 0.74rem;
+        padding: 0.45rem 0.5rem;
+        text-align: center;
+      }
+
+      /* Team trend strip: 2-up grid */
       .team-trend-strip {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
+      .team-trend-tile .tile-label { font-size: 0.58rem; }
+      .team-trend-tile .tile-value { font-size: 0.9rem; }
+      .team-trend-tile .tile-diff  { font-size: 0.66rem; }
+
+      /* Players grid always single column */
+      .players-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
