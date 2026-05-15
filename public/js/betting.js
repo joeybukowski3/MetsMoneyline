@@ -40,6 +40,16 @@
     console.debug("[betting]", label, payload);
   }
 
+  function oddsPayloadHasUsableMarkets(payload) {
+    if (!payload || payload.error) return false;
+    if (Array.isArray(payload.markets) && payload.markets.length > 0) return true;
+    if (payload.consensus && Array.isArray(payload.consensus.markets) && payload.consensus.markets.length > 0) return true;
+    if (Array.isArray(payload.bookmakers) && payload.bookmakers.some(function (bookmaker) {
+      return Array.isArray(bookmaker && bookmaker.markets) && bookmaker.markets.length > 0;
+    })) return true;
+    return false;
+  }
+
   function formatTimestamp(value) {
     var ts = Date.parse(value);
     if (!Number.isFinite(ts)) return "Updated recently";
@@ -619,7 +629,7 @@
   async function fetchOddsPayload() {
     var liveUrl = LIVE_ODDS_URL + (DEBUG_ODDS ? "?debug=1" : "");
     var livePayload = await fetchJsonOrNull(liveUrl);
-    if (livePayload && !livePayload.error) {
+    if (oddsPayloadHasUsableMarkets(livePayload)) {
       return livePayload;
     }
     return fetchJsonOrNull(STATIC_ODDS_URL);

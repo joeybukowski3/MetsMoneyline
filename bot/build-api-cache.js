@@ -659,7 +659,7 @@ async function run() {
   const oddsHasData = odds?.gameId && Array.isArray(odds?.markets) && odds.markets.length > 0;
   let resolvedOdds = odds;
   if (!oddsHasData) {
-    const existingOddsPath = path.join(PUBLIC_API_ROOT, "odds");
+    const existingOddsPath = path.join(PUBLIC_API_ROOT, "odds.json");
     try {
       const existingRaw = fs.readFileSync(existingOddsPath, "utf8");
       const existingOdds = JSON.parse(existingRaw);
