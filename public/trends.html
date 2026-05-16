@@ -424,7 +424,7 @@
       .trend-card { padding: 0.85rem 0.75rem; }
 
       /* Chart height — give charts room to breathe */
-      .trend-chart-wrap { height: 200px; }
+      .trend-chart-wrap { height: 220px; }
 
       /* Card header: stack name + badge cleanly */
       .trend-card-header {
@@ -499,12 +499,14 @@
       }
       .trend-vs-cell .val { font-size: 0.65rem; }
 
-      /* Legend: wrap cleanly with more breathing room */
+      /* Legend: 2x2 grid on mobile for clarity */
       .chart-legend-guide,
       .team-chart-legend {
-        gap: 0.6rem 1rem;
-        font-size: 0.68rem;
-        padding: 0.5rem 0.75rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.4rem 0.75rem;
+        font-size: 0.7rem;
+        padding: 0.55rem 0.75rem;
         justify-content: flex-start;
       }
 
@@ -787,6 +789,14 @@
         if (!pluginOptions || !pluginOptions.enabled) return;
         const ctx = chart.ctx;
         const formatter = pluginOptions.formatter || fmtDecimal;
+        const isMobile = window.innerWidth <= 640;
+        const chartWidth = chart.width;
+        // On mobile: only show value above bar (no team abbr), smaller font, clip to chart area
+        const valFontSize = isMobile ? 9 : 11;
+        const lblFontSize = isMobile ? 8 : 10;
+        const valOffset  = isMobile ? 8 : 10;
+        const lblOffset  = isMobile ? 18 : 24;
+        const chartTop = chart.chartArea ? chart.chartArea.top : 0;
         ctx.save();
         (pluginOptions.series || []).forEach(function(series) {
           const datasetMeta = chart.getDatasetMeta(series.datasetIndex);
@@ -797,14 +807,20 @@
             const x = bar.x;
             const topY = bar.y;
             const seriesLabel = (series.labels || [])[index] || "";
+            const valY = topY - valOffset;
+            const lblY = topY - lblOffset;
+            // Don't draw if bar label would go above the chart area
+            if (valY < chartTop + 4) return;
             ctx.textAlign = "center";
             ctx.fillStyle = "#0f172a";
-            ctx.font = "700 11px Inter";
-            ctx.fillText(String(formatter(value)).replace(/&mdash;/g, "—"), x, topY - 10);
-            if (seriesLabel) {
+            ctx.font = "700 " + valFontSize + "px Inter";
+            ctx.fillText(String(formatter(value)).replace(/&mdash;/g, "—"), x, valY);
+            // On mobile: skip team abbreviation labels — too crowded
+            // On desktop: show them above the value
+            if (!isMobile && seriesLabel && lblY >= chartTop + 2) {
               ctx.fillStyle = series.datasetIndex === 0 ? "#002d72" : "#475569";
-              ctx.font = series.datasetIndex === 0 ? "800 10px Inter" : "700 10px Inter";
-              ctx.fillText(seriesLabel, x, topY - 24);
+              ctx.font = (series.datasetIndex === 0 ? "800 " : "700 ") + lblFontSize + "px Inter";
+              ctx.fillText(seriesLabel, x, lblY);
             }
           });
         });
@@ -973,6 +989,10 @@
         stepSize = Math.max(1, Math.ceil(yMax / 5 / 5) * 5);
       }
 
+      const isMobile = window.innerWidth <= 640;
+      const catPct = isMobile ? 0.58 : 0.68;
+      const barPct = isMobile ? 0.75 : 0.82;
+
       return {
         type: "bar",
         labels: windowLabels,
@@ -984,9 +1004,9 @@
             hoverBackgroundColor: "#143e86",
             borderColor: "#001f4f",
             borderWidth: 1.2,
-            borderRadius: 6,
-            categoryPercentage: 0.68,
-            barPercentage: 0.82
+            borderRadius: 5,
+            categoryPercentage: catPct,
+            barPercentage: barPct
           },
           {
             label: "MLB Avg",
@@ -995,9 +1015,9 @@
             hoverBackgroundColor: "#7f8998",
             borderColor: "#7b8794",
             borderWidth: 1.2,
-            borderRadius: 6,
-            categoryPercentage: 0.68,
-            barPercentage: 0.82
+            borderRadius: 5,
+            categoryPercentage: catPct,
+            barPercentage: barPct
           },
           {
             label: "Best Team",
@@ -1006,9 +1026,9 @@
             hoverBackgroundColor: "#16a34a",
             borderColor: "#15803d",
             borderWidth: 1.2,
-            borderRadius: 6,
-            categoryPercentage: 0.68,
-            barPercentage: 0.82
+            borderRadius: 5,
+            categoryPercentage: catPct,
+            barPercentage: barPct
           },
           {
             label: "Worst Team",
@@ -1017,9 +1037,9 @@
             hoverBackgroundColor: "#dc2626",
             borderColor: "#b91c1c",
             borderWidth: 1.2,
-            borderRadius: 6,
-            categoryPercentage: 0.68,
-            barPercentage: 0.82
+            borderRadius: 5,
+            categoryPercentage: catPct,
+            barPercentage: barPct
           }
         ],
         yMin: yMin,
@@ -1057,6 +1077,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 24, left: 2, right: 2, bottom: 0 } },
           interaction: { mode: "index", intersect: false },
           plugins: {
             legend: { display: false },
