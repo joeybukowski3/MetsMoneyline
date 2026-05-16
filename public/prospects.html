@@ -70,16 +70,16 @@
     .tag-hitter  { background: rgba(0,45,114,0.06);  color: var(--navy); }
     .tag-pitcher { background: rgba(255,89,16,0.06); color: #b93d00; }
 
-    /* ── Bottom two-column: chart left, stats right ── */
+    /* ── Three-column data row: chart | season stats | recent games ── */
     .prospect-data-row {
       display: grid;
-      grid-template-columns: 1fr 280px;
-      gap: 0.75rem;
+      grid-template-columns: minmax(260px, 1.8fr) minmax(130px, 0.8fr) minmax(190px, 1fr);
+      gap: 0.6rem;
       margin-top: 0.65rem;
       align-items: start;
     }
 
-    /* ── Chart panel ── */
+    /* ── Chart panel (left) ── */
     .prospect-chart-panel {
       background: #f9fafb; border-radius: 10px; border: 1px solid #f0f2f6;
       padding: 0.55rem 0.6rem 0.45rem;
@@ -88,53 +88,64 @@
     .prospect-chart-title {
       font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
       letter-spacing: 0.07em; color: #64748b; margin-bottom: 0.3rem;
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex; justify-content: space-between; align-items: center; gap: 0.35rem;
     }
     .prospect-chart-title .trend-pill {
       font-size: 0.62rem; font-weight: 800; border-radius: 999px;
-      padding: 0.12rem 0.5rem; text-transform: none; letter-spacing: 0;
+      padding: 0.12rem 0.5rem; text-transform: none; letter-spacing: 0; white-space: nowrap;
     }
     .prospect-chart-title .trend-pill.rising   { background: rgba(22,163,74,0.12);  color: #15803d; }
     .prospect-chart-title .trend-pill.declining { background: rgba(220,38,38,0.1);   color: #dc2626; }
     .prospect-chart-title .trend-pill.neutral   { background: rgba(100,116,139,0.1); color: #475569; }
 
-    /* ── Stats right panel ── */
-    .prospect-stats-panel { min-width: 0; }
-
-    /* Season stats strip */
-    .prospect-season-stats {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 0.2rem; margin-bottom: 0.55rem;
+    /* ── Season stats panel (middle) ── */
+    .prospect-stats-panel {
+      background: #f9fafb; border-radius: 10px; border: 1px solid #f0f2f6;
+      padding: 0.5rem 0.45rem; min-width: 0;
     }
-    .p-stat { text-align: center; background: #f8fafc; border-radius: 8px; padding: 0.3rem 0.2rem; }
-    .p-stat .val { font-size: 0.84rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
-    .p-stat .lbl { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-top: 1px; }
+    .prospect-panel-label {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #64748b; margin-bottom: 0.35rem;
+    }
+    .prospect-season-stats {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 0.22rem;
+    }
+    .p-stat {
+      text-align: center; background: #fff; border-radius: 7px;
+      padding: 0.32rem 0.15rem; border: 1px solid #eef0f5;
+    }
+    .p-stat .val { font-size: 0.82rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
+    .p-stat .lbl { font-size: 0.54rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-top: 1px; }
 
-    /* Recent games table */
+    /* ── Recent games panel (right) ── */
+    .prospect-games-panel {
+      background: #f9fafb; border-radius: 10px; border: 1px solid #f0f2f6;
+      padding: 0.5rem 0.45rem; min-width: 0;
+    }
     .prospect-games-label {
       font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.07em; color: #64748b; margin-bottom: 0.3rem;
+      letter-spacing: 0.07em; color: #64748b; margin-bottom: 0.35rem;
     }
     .prospect-games-table {
-      width: 100%; border-collapse: collapse; font-size: 0.68rem;
+      width: 100%; border-collapse: collapse; font-size: 0.66rem;
     }
     .prospect-games-table thead th {
-      background: var(--navy); color: #fff; padding: 0.28rem 0.3rem;
-      font-size: 0.58rem; font-weight: 800; text-transform: uppercase;
-      letter-spacing: 0.04em; text-align: center;
+      background: var(--navy); color: #fff; padding: 0.26rem 0.28rem;
+      font-size: 0.57rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.03em; text-align: center;
     }
-    .prospect-games-table thead th:first-child { text-align: left; border-radius: 6px 0 0 0; }
-    .prospect-games-table thead th:last-child  { border-radius: 0 6px 0 0; }
+    .prospect-games-table thead th:first-child { text-align: left; border-radius: 5px 0 0 0; }
+    .prospect-games-table thead th:last-child  { border-radius: 0 5px 0 0; }
     .prospect-games-table tbody tr:nth-child(odd)  { background: #fff; }
-    .prospect-games-table tbody tr:nth-child(even) { background: #f8fafc; }
+    .prospect-games-table tbody tr:nth-child(even) { background: #f4f6fa; }
     .prospect-games-table tbody td {
-      padding: 0.28rem 0.3rem; text-align: center; color: #0f172a; font-weight: 600;
+      padding: 0.26rem 0.28rem; text-align: center; color: #0f172a; font-weight: 600;
       border-bottom: 1px solid #f0f4f8;
     }
     .prospect-games-table tbody td:first-child { text-align: left; font-weight: 700; color: #475569; }
     .prospect-games-table .no-games {
-      text-align: center; padding: 0.65rem; color: #94a3b8; font-size: 0.68rem;
-      font-style: italic;
+      text-align: center; padding: 0.6rem; color: #94a3b8; font-size: 0.66rem; font-style: italic;
     }
 
     .prospect-news {
@@ -148,21 +159,33 @@
     .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; }
     .source-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; }
 
+    /* ── Tablet: chart full width, stats + table side by side below ── */
     @media (max-width: 900px) {
-      .prospect-data-row { grid-template-columns: 1fr; }
-      .prospect-season-stats { grid-template-columns: repeat(6, 1fr); }
+      .prospect-data-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+      }
+      .prospect-chart-panel { grid-column: 1 / -1; }  /* chart spans full width */
+      .prospect-season-stats { grid-template-columns: repeat(3, 1fr); }
     }
+    /* ── Mobile: all three panels stack vertically ── */
     @media (max-width: 640px) {
       .prospects-shell { padding: 0 0.65rem 2rem; }
       .prospects-header { padding: 1rem 0 0.65rem; }
       .prospects-header h1 { font-size: 1.35rem; }
-      .prospect-card { grid-template-columns: 38px 1fr; gap: 0.55rem; padding: 0.8rem 0.85rem; }
+      .prospect-card { grid-template-columns: 38px 1fr; gap: 0.55rem; padding: 0.75rem 0.8rem; }
       .prospect-rank { width: 38px; height: 38px; font-size: 0.95rem; }
       .prospect-name-row h3 { font-size: 0.9rem; }
+      /* Stack all 3 panels vertically */
+      .prospect-data-row { grid-template-columns: 1fr; gap: 0.5rem; }
+      .prospect-chart-panel { grid-column: auto; }
+      /* Season stats: 3-across on mobile */
       .prospect-season-stats { grid-template-columns: repeat(3, 1fr); }
-      .prospect-games-table { font-size: 0.64rem; }
+      .p-stat .val { font-size: 0.78rem; }
+      /* Games table compact */
+      .prospect-games-table { font-size: 0.62rem; }
       .prospect-games-table thead th,
-      .prospect-games-table tbody td { padding: 0.22rem 0.22rem; }
+      .prospect-games-table tbody td { padding: 0.2rem 0.2rem; }
     }
   </style>
 </head>
@@ -426,11 +449,10 @@
     // ── Recent games table (last 5) ──────────────────────────────────────────
     function renderRecentGames(trendData, isPitcher) {
       var games = trendData && Array.isArray(trendData.recentGames) ? trendData.recentGames.slice(-5) : [];
-      var label = '<div class="prospect-games-label">Last 5 Games</div>';
+      var panelLabel = '<div class="prospect-games-label">Last 5 Games</div>';
 
       if (!games.length) {
-        // No recentGames yet (pre-bot-update data) — show placeholder
-        return label + '<div class="prospect-games-table"><div class="no-games">Per-game data updates daily</div></div>';
+        return panelLabel + '<div class="no-games">Per-game data updates daily</div>';
       }
 
       if (isPitcher) {
@@ -438,13 +460,13 @@
         var rows = games.slice().reverse().map(function(g) {
           return '<tr><td>' + (g.date||'—') + '</td><td>' + (g.ip||'—') + '</td><td>' + (g.h||0) + '</td><td>' + (g.er||0) + '</td><td>' + (g.k||0) + '</td><td>' + (g.bb||0) + '</td></tr>';
         }).join('');
-        return label + '<table class="prospect-games-table">' + header + '<tbody>' + rows + '</tbody></table>';
+        return panelLabel + '<table class="prospect-games-table">' + header + '<tbody>' + rows + '</tbody></table>';
       } else {
         var header = '<thead><tr><th>Date</th><th>AB</th><th>H</th><th>HR</th><th>RBI</th><th>K</th></tr></thead>';
         var rows = games.slice().reverse().map(function(g) {
           return '<tr><td>' + (g.date||'—') + '</td><td>' + (g.ab||0) + '</td><td>' + (g.h||0) + '</td><td>' + (g.hr||0) + '</td><td>' + (g.rbi||0) + '</td><td>' + (g.k||0) + '</td></tr>';
         }).join('');
-        return label + '<table class="prospect-games-table">' + header + '<tbody>' + rows + '</tbody></table>';
+        return panelLabel + '<table class="prospect-games-table">' + header + '<tbody>' + rows + '</tbody></table>';
       }
     }
 
@@ -488,7 +510,10 @@
             <div class="prospect-data-row">
               ${chartHtml}
               <div class="prospect-stats-panel">
+                <div class="prospect-panel-label">Season Stats</div>
                 ${seasonHtml}
+              </div>
+              <div class="prospect-games-panel">
                 ${gamesHtml}
               </div>
             </div>
