@@ -1,10 +1,42 @@
 (function () {
+  // Sportsbook brand configs with inline SVG logos
   var BRAND = {
-    Fanatics: { bg: "#111827", text: "#ffffff", accent: "#ff5910", abbr: "FAN" },
-    DraftKings: { bg: "#0b0e12", text: "#53d337", accent: "#53d337", abbr: "DK" },
-    FanDuel: { bg: "#0f1923", text: "#1493ff", accent: "#1493ff", abbr: "FD" },
-    BetMGM: { bg: "#1a1a2e", text: "#c5a44e", accent: "#c5a44e", abbr: "MGM" },
-    Caesars: { bg: "#1b3c2a", text: "#c5a44e", accent: "#c5a44e", abbr: "CZR" }
+    Fanatics: {
+      bg: "#111827", text: "#ff5910", accent: "#ff5910", abbr: "FAN",
+      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
+        <rect width="200" height="60" fill="#111827" rx="6"/>
+        <text x="100" y="40" font-family="Arial Black,Arial" font-weight="900" font-size="26" fill="#ff5910" text-anchor="middle" letter-spacing="1">FANATICS</text>
+      </svg>`
+    },
+    DraftKings: {
+      bg: "#0b0e12", text: "#53d337", accent: "#53d337", abbr: "DK",
+      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
+        <rect width="200" height="60" fill="#0b0e12" rx="6"/>
+        <text x="100" y="40" font-family="Arial Black,Arial" font-weight="900" font-size="22" fill="#53d337" text-anchor="middle" letter-spacing="0.5">DRAFTKINGS</text>
+      </svg>`
+    },
+    FanDuel: {
+      bg: "#0f1923", text: "#1493ff", accent: "#1493ff", abbr: "FD",
+      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
+        <rect width="200" height="60" fill="#0f1923" rx="6"/>
+        <text x="100" y="40" font-family="Arial Black,Arial" font-weight="900" font-size="26" fill="#1493ff" text-anchor="middle" letter-spacing="1">FANDUEL</text>
+      </svg>`
+    },
+    BetMGM: {
+      bg: "#000000", text: "#c5a44e", accent: "#c5a44e", abbr: "MGM",
+      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
+        <rect width="200" height="60" fill="#000" rx="6"/>
+        <text x="100" y="42" font-family="Arial Black,Arial" font-weight="900" font-size="30" fill="#c5a44e" text-anchor="middle" letter-spacing="2">BetMGM</text>
+      </svg>`
+    },
+    Caesars: {
+      bg: "#1b3c2a", text: "#c5a44e", accent: "#c5a44e", abbr: "CZR",
+      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
+        <rect width="200" height="60" fill="#1b3c2a" rx="6"/>
+        <text x="100" y="28" font-family="Georgia,serif" font-weight="700" font-size="13" fill="#c5a44e" text-anchor="middle" letter-spacing="3">CAESARS</text>
+        <text x="100" y="46" font-family="Georgia,serif" font-size="11" fill="#a08030" text-anchor="middle" letter-spacing="2">SPORTSBOOK</text>
+      </svg>`
+    }
   };
 
   var SPORTSBOOK_ORDER = ["Fanatics", "DraftKings", "FanDuel", "BetMGM", "Caesars"];
@@ -150,7 +182,7 @@
     return offer ? String(offer.referralUrl || "").trim() : "";
   }
 
-  function renderBadgeRow() {
+  function renderBadgeRow(oddsData) {
     var row = document.getElementById("sportsbook-badge-row");
     if (!row) return;
 
@@ -160,21 +192,44 @@
       return;
     }
 
-    row.innerHTML = books.map(function (book) {
+    // Build book rows with live ML odds if available
+    var bookRows = books.map(function (book) {
+      var bookRow = buildBookRow(book, oddsData);
+      return { book: book, row: bookRow };
+    });
+
+    // Only show books that have at least one live odds value, or all if none have odds
+    var withOdds = bookRows.filter(function(b){ return b.row.metsMlPrice != null; });
+    var toShow = withOdds.length > 0 ? bookRows : bookRows;
+    var bestMl = null;
+    toShow.forEach(function(b){
+      if (b.row.metsMlPrice != null && (bestMl == null || b.row.metsMlPrice > bestMl)) bestMl = b.row.metsMlPrice;
+    });
+
+    row.innerHTML = toShow.map(function (entry) {
+      var book = entry.book;
+      var bookRow = entry.row;
       var brand = getBrand(book.name);
       var referralUrl = String(book.referralUrl || "").trim();
       var openAttrs = referralUrl
         ? ' href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer"'
         : "";
+      var mlOdds = bookRow.metsMlPrice != null ? formatAmericanOdds(bookRow.metsMlPrice) : null;
+      var isBestMl = bookRow.metsMlPrice != null && bookRow.metsMlPrice === bestMl;
+      var oddsHtml = mlOdds
+        ? '<div class="book-badge-odds' + (isBestMl ? ' best' : '') + '">' +
+            '<span class="book-badge-odds-label">ML</span>' +
+            '<span class="book-badge-odds-val">' + escapeHtml(mlOdds) + '</span>' +
+            (isBestMl ? '<span class="book-badge-odds-best">BEST</span>' : '') +
+          '</div>'
+        : '';
       return (
         '<a class="book-badge"' + openAttrs + ">" +
           '<div class="book-badge-logo" style="background:' + brand.bg + ';">' +
-            '<span style="color:' + brand.text + ';">' + escapeHtml(book.name) + "</span>" +
+            (brand.logo || '<span style="color:' + brand.text + ';font-family:Arial Black,sans-serif;font-weight:900;font-size:1.1rem;">' + escapeHtml(book.name) + '</span>') +
           "</div>" +
-          '<div class="book-badge-copy">' +
-            "<span>Open book</span>" +
-            '<em style="color:' + brand.accent + ';">' + escapeHtml(brand.abbr) + "</em>" +
-          "</div>" +
+          oddsHtml +
+          '<div class="book-badge-cta">Bet at ' + escapeHtml(brand.abbr) + ' &#8599;</div>' +
         "</a>"
       );
     }).join("");
@@ -329,6 +384,41 @@
       ? "Current feed does not list " + missingBooks.join(", ") + ", so those cells show \u2014."
       : "Books without a live price in the current feed are shown as \u2014.";
 
+    // Mobile card view — shown when table is hidden on small screens
+    var cardHtml = rows.map(function(row) {
+      var hasAnyOdds = row.metsMlPrice != null || row.runLinePrice != null || row.totalPoint != null;
+      if (!hasAnyOdds) return ""; // skip books with no data on mobile card view
+      var mlHtml = row.metsMlPrice == null
+        ? '<span class="odds-muted">&mdash;</span>'
+        : (row.metsMlPrice === best.bestMl
+            ? '<span class="best-odds">' + escapeHtml(formatAmericanOdds(row.metsMlPrice)) + '<span class="best-flag">Best</span></span>'
+            : escapeHtml(formatAmericanOdds(row.metsMlPrice)));
+      var rlHtml = row.runLinePrice == null || row.runLinePoint == null
+        ? '<span class="odds-muted">&mdash;</span>'
+        : escapeHtml(formatPoint(row.runLinePoint)) + ' (' + escapeHtml(formatAmericanOdds(row.runLinePrice)) + ')';
+      var ouHtml = row.totalPoint == null
+        ? '<span class="odds-muted">&mdash;</span>'
+        : 'O ' + escapeHtml(formatDecimal(row.totalPoint)) + ' (' + escapeHtml(formatAmericanOdds(row.overPrice)) + ') / U (' + escapeHtml(formatAmericanOdds(row.underPrice)) + ')';
+      return (
+        '<div class="odds-card">' +
+          '<div class="odds-card-head">' +
+            renderBookLink(row.name, row.referralUrl) +
+            (row.referralUrl ? '<a class="odds-card-cta" href="' + escapeHtml(row.referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">Bet &#8599;</a>' : '') +
+          '</div>' +
+          '<div class="odds-card-stats">' +
+            '<div class="odds-card-stat"><span class="odds-card-label">ML</span><span>' + mlHtml + '</span></div>' +
+            '<div class="odds-card-stat"><span class="odds-card-label">Run Line</span><span>' + rlHtml + '</span></div>' +
+            '<div class="odds-card-stat"><span class="odds-card-label">O/U</span><span>' + ouHtml + '</span></div>' +
+          '</div>' +
+        '</div>'
+      );
+    }).filter(Boolean).join("");
+
+    var hasAnyCards = rows.some(function(r){ return r.metsMlPrice != null || r.runLinePrice != null || r.totalPoint != null; });
+    var cardsSection = hasAnyCards
+      ? '<div class="odds-cards" style="display:none;">' + cardHtml + '</div>'
+      : '<div class="odds-cards" style="display:none;"><div class="bet-empty">Odds temporarily unavailable &mdash; check back soon.</div></div>';
+
     return (
       '<div class="odds-table-wrap">' +
         '<table class="odds-table">' +
@@ -336,6 +426,7 @@
           "<tbody>" + body + "</tbody>" +
         "</table>" +
       "</div>" +
+      cardsSection +
       '<div class="odds-note">Best available Mets prices are highlighted in green. ' + escapeHtml(feedNote) + "</div>"
     );
   }
@@ -662,7 +753,7 @@
       if (responsible) responsible.textContent = (offersData.responsibleGaming || "") + " Users are responsible for confirming eligibility, location restrictions, and sportsbook terms.";
       if (updated) updated.textContent = formatTimestamp((oddsData && oddsData.meta && oddsData.meta.generatedAt) || offersData.lastUpdated);
 
-      renderBadgeRow();
+      renderBadgeRow(oddsData);
       renderOddsContent(todayGame, oddsData);
     } catch (error) {
       console.error("Failed to load betting hub data:", error);
