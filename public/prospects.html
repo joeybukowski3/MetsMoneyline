@@ -97,6 +97,7 @@
     .prospect-chart-title .trend-pill.rising   { background: rgba(22,163,74,0.12);  color: #15803d; }
     .prospect-chart-title .trend-pill.declining { background: rgba(220,38,38,0.1);   color: #dc2626; }
     .prospect-chart-title .trend-pill.neutral   { background: rgba(100,116,139,0.1); color: #475569; }
+    .prospect-chart-title .trend-pill.steady    { background: rgba(100,116,139,0.12); color: #475569; }
 
     /* ── Season stats panel (middle) ── */
     .prospect-stats-panel {
@@ -279,9 +280,15 @@
       var midIdx  = Math.floor(n / 2);
       var midVal  = values[midIdx];
       var lastVal = values[n - 1];
-      var trendUp = lastVal > midVal;
+      // Within 10% of midpoint = Steady (use % of midVal so ERA 3.00 vs 3.27 = steady)
+      var pctChange = midVal !== 0 ? Math.abs(lastVal - midVal) / Math.abs(midVal) : 0;
+      var isSteady  = pctChange <= 0.10;
+      var trendUp   = lastVal > midVal;
       var trendDir, trendCls;
-      if (isPitcher) {
+      if (isSteady) {
+        trendDir = '→ Steady';
+        trendCls = 'steady';
+      } else if (isPitcher) {
         trendDir = trendUp ? '\u2193 Declining' : '\u2191 Improving';
         trendCls = trendUp ? 'declining' : 'rising';
       } else {
