@@ -94,10 +94,13 @@
       font-size: 0.62rem; font-weight: 800; border-radius: 999px;
       padding: 0.12rem 0.5rem; text-transform: none; letter-spacing: 0; white-space: nowrap;
     }
-    .prospect-chart-title .trend-pill.rising   { background: rgba(22,163,74,0.12);  color: #15803d; }
-    .prospect-chart-title .trend-pill.declining { background: rgba(220,38,38,0.1);   color: #dc2626; }
-    .prospect-chart-title .trend-pill.neutral   { background: rgba(100,116,139,0.1); color: #475569; }
+    /* Rising/Improving = Mets orange (site's "good" color) */
+    .prospect-chart-title .trend-pill.rising   { background: rgba(255,89,16,0.14);  color: #c2410c; }
+    /* Declining = Mets navy (site's "bad" color) */
+    .prospect-chart-title .trend-pill.declining { background: rgba(0,45,114,0.12);  color: #002d72; }
+    /* Steady = neutral gray */
     .prospect-chart-title .trend-pill.steady    { background: rgba(100,116,139,0.12); color: #475569; }
+    .prospect-chart-title .trend-pill.neutral   { background: rgba(100,116,139,0.1);  color: #475569; }
 
     /* ── Season stats panel (middle) ── */
     .prospect-stats-panel {
@@ -115,9 +118,15 @@
     .p-stat {
       text-align: center; background: #fff; border-radius: 7px;
       padding: 0.32rem 0.15rem; border: 1px solid #eef0f5;
+      transition: background 0.15s;
     }
     .p-stat .val { font-size: 0.82rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
     .p-stat .lbl { font-size: 0.54rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-top: 1px; }
+    /* Stat tile above/below league average */
+    .p-stat.stat-above { background: rgba(255,89,16,0.12); border-color: rgba(255,89,16,0.2); }
+    .p-stat.stat-above .val { color: #c2410c; }
+    .p-stat.stat-below { background: rgba(0,45,114,0.09); border-color: rgba(0,45,114,0.18); }
+    .p-stat.stat-below .val { color: #002d72; }
 
     /* ── Recent games panel (right) ── */
     .prospect-games-panel {
@@ -403,34 +412,73 @@
     }
 
 
-    // ── Season stats strip (3-column grid) ───────────────────────────────────
+    // ── League averages by level — used to color stat tiles ─────────────────
+    // Source: 2026 season approximate averages per level
+    var LEAGUE_AVG = {
+      //         ba     obp    ops    era    whip
+      'MLB':   { ba:.243, obp:.315, ops:.710, era:4.20, whip:1.28 },
+      'AAA':   { ba:.258, obp:.338, ops:.755, era:4.55, whip:1.35 },
+      'AA':    { ba:.248, obp:.325, ops:.730, era:4.25, whip:1.32 },
+      'High-A':{ ba:.245, obp:.322, ops:.720, era:4.15, whip:1.33 },
+      'A':     { ba:.240, obp:.318, ops:.705, era:4.00, whip:1.30 },
+      'Low-A': { ba:.238, obp:.315, ops:.700, era:3.95, whip:1.30 },
+      'Rookie':{ ba:.242, obp:.320, ops:.710, era:4.10, whip:1.35 },
+    };
+
+    // Returns 'stat-above', 'stat-below', or '' (neutral)
+    // higherIsBetter: true for BA/OBP/OPS, false for ERA/WHIP
+    // threshold: 5% above/below = colored
+    function statClass(val, leagueVal, higherIsBetter) {
+      var v = parseFloat(String(val).replace(/[^0-9.\-]/g, ''));
+      if (!leagueVal || isNaN(v) || v === 0) return '';
+      var pct = (v - leagueVal) / leagueVal;
+      var THRESH = 0.05;  // 5% threshold
+      if (higherIsBetter) {
+        if (pct >= THRESH)  return 'stat-above';
+        if (pct <= -THRESH) return 'stat-below';
+      } else {
+        if (pct <= -THRESH) return 'stat-above';  // lower ERA = better
+        if (pct >= THRESH)  return 'stat-below';
+      }
+      return '';
+    }
+
+    // ── Season stats strip with league-relative coloring ──────────────────────
     function renderSeasonStats(prospect) {
-      var s = prospect.stats;
+      var s   = prospect.stats;
+      var lvl = prospect.level || 'MLB';
+      var lg  = LEAGUE_AVG[lvl] || LEAGUE_AVG['MLB'];
       var isPitcher = prospect.type === 'Pitcher';
+
       if (!s) return '<div style="color:#9ca3af;font-size:0.75rem;text-align:center;padding:0.5rem;">Season stats unavailable</div>';
+
       var cells;
       if (isPitcher) {
         cells = [
-          { v: s.era,    l: 'ERA' },
-          { v: s.whip,   l: 'WHIP' },
-          { v: s.ip,     l: 'IP' },
-          { v: s.k,      l: 'K' },
-          { v: s.bb,     l: 'BB' },
-          { v: s.kPer9,  l: 'K/9' },
+          { v: s.era,   l: 'ERA',  cls: statClass(s.era,  lg.era,  false) },
+          { v: s.whip,  l: 'WHIP', cls: statClass(s.whip, lg.whip, false) },
+          { v: s.ip,    l: 'IP',   cls: '' },
+          { v: s.k,     l: 'K',    cls: '' },
+          { v: s.bb,    l: 'BB',   cls: '' },
+          { v: s.kPer9, l: 'K/9',  cls: '' },
         ];
       } else {
         cells = [
-          { v: s.avg,  l: 'AVG' },
-          { v: s.obp,  l: 'OBP' },
-          { v: s.ops,  l: 'OPS' },
-          { v: s.hr,   l: 'HR' },
-          { v: s.rbi,  l: 'RBI' },
-          { v: s.sb,   l: 'SB' },
+          { v: s.avg, l: 'AVG', cls: statClass(s.avg, lg.ba,  true) },
+          { v: s.obp, l: 'OBP', cls: statClass(s.obp, lg.obp, true) },
+          { v: s.ops, l: 'OPS', cls: statClass(s.ops, lg.ops, true) },
+          { v: s.hr,  l: 'HR',  cls: '' },
+          { v: s.rbi, l: 'RBI', cls: '' },
+          { v: s.sb,  l: 'SB',  cls: '' },
         ];
       }
+
       return '<div class="prospect-season-stats">' +
         cells.map(function(c) {
-          return '<div class="p-stat"><div class="val">' + (c.v != null ? c.v : '—') + '</div><div class="lbl">' + c.l + '</div></div>';
+          return '<div class="p-stat' + (c.cls ? ' ' + c.cls : '') + '">' +
+            '<div class="val">' + (c.v != null ? c.v : '—') + '</div>' +
+            '<div class="lbl">' + c.l + '</div>' +
+          '</div>';
         }).join('') +
       '</div>';
     }
