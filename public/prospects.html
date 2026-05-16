@@ -238,7 +238,7 @@
       return map[level] || 'tag-lowa';
     }
 
-    // ── Chart: per-game values, last 20 appearances ──────────────────────────
+    // ── Chart: cumulative running ERA/AVG, last 20 appearances (matches trends page) ──
     function buildSparklineSvg(trendData, type) {
       if (!trendData || !trendData.values || trendData.values.length < 3) {
         return '<div style="text-align:center;padding:10px 8px;font-size:11px;color:#9ca3af;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;">Not enough games yet</div>';
@@ -368,6 +368,31 @@
       svg += '<polyline points="' + pts + '" fill="none" stroke="' + lineColor + '" ' +
              'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>';
 
+      // Pitchers have few starts — draw dots + date labels on every point
+      // Hitters have many games — dots would clutter; skip them
+      if (isPitcher && n <= 20) {
+        values.forEach(function(v, i) {
+          var cx = toX(i).toFixed(1);
+          var cy = toY(v).toFixed(1);
+          // Dot
+          svg += '<circle cx="' + cx + '" cy="' + cy + '" r="3.5" ' +
+                 'fill="#fff" stroke="' + lineColor + '" stroke-width="1.8"/>';
+          // Date label above dot (if there's room from top)
+          if (dates[i]) {
+            var lbl = fmtDate(dates[i]);
+            var anchor = i === 0 ? 'start' : (i === n - 1 ? 'end' : 'middle');
+            // Alternate above/below to avoid overlap on dense charts
+            var labelY = (i % 2 === 0) ? (parseFloat(cy) - 5).toFixed(1)
+                                       : (parseFloat(cy) + 13).toFixed(1);
+            // Keep label inside top boundary
+            if (parseFloat(labelY) < T + 2) labelY = (parseFloat(cy) + 13).toFixed(1);
+            svg += '<text x="' + cx + '" y="' + labelY + '" ' +
+                   'font-size="7.5" fill="#475569" font-family="Inter,sans-serif" ' +
+                   'text-anchor="' + anchor + '">' + lbl + '</text>';
+          }
+        });
+      }
+
       // Y-axis tick labels
       yTicks.forEach(function(t) {
         svg += '<text x="' + (L - 4) + '" y="' + (t.y + 3.5).toFixed(1) + '" ' +
@@ -398,9 +423,9 @@
              'x2="' + L + '" y2="' + (T + plotH) + '" ' +
              'stroke="#cbd5e1" stroke-width="1"/>';
 
-      var statLabel  = isPitcher ? 'ERA per start' : 'AVG per game';
+      var statLabel  = isPitcher ? 'Cumulative ERA' : 'Cumulative AVG';
       var headerLabel = n >= 20 ? 'Last 20 appearances · ' + statLabel
-                                : 'Last ' + n + ' appearances · ' + statLabel;
+                                : 'Season · ' + statLabel + ' (' + n + ' appearances)';
 
       return '<div class="prospect-chart-panel">' +
         '<div class="prospect-chart-title">' +

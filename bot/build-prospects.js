@@ -261,19 +261,23 @@ async function getGameLogTrend(mlbId, type, sportId) {
     if (!Array.isArray(splits) || splits.length < 3) continue;
 
     const labels = [];
-    const values = [];      // per-game individual values (not cumulative)
-    const recentGames = []; // raw stats for last 5 games table
+    const values = [];      // cumulative running ERA / AVG (matches trends page approach)
+    const recentGames = []; // raw per-game stats for last 5 games table
 
     if (type === "Pitcher") {
+      let totalER = 0, totalIP = 0;
       for (const s of splits) {
-        const ip    = parseFloat(s.stat?.inningsPitched) || 0;
-        const er    = s.stat?.earnedRuns ?? 0;
-        const k     = s.stat?.strikeOuts ?? 0;
-        const bb    = s.stat?.baseOnBalls ?? 0;
-        const h     = s.stat?.hits ?? 0;
+        const ip = parseFloat(s.stat?.inningsPitched) || 0;
+        const er = s.stat?.earnedRuns ?? 0;
+        const k  = s.stat?.strikeOuts ?? 0;
+        const bb = s.stat?.baseOnBalls ?? 0;
+        const h  = s.stat?.hits ?? 0;
+        totalER += er;
+        totalIP += ip;
+        const cumEra = totalIP > 0 ? parseFloat(((totalER / totalIP) * 9).toFixed(2)) : null;
         const gameEra = ip > 0 ? parseFloat(((er / ip) * 9).toFixed(2)) : null;
         labels.push(s.date ? s.date.slice(5) : "");
-        values.push(gameEra !== null ? gameEra : 0);
+        if (cumEra !== null) values.push(cumEra);
         recentGames.push({
           date: s.date ? s.date.slice(5) : "",
           opp:  s.team?.name ? s.team.name.split(" ").pop() : "—",
@@ -283,6 +287,7 @@ async function getGameLogTrend(mlbId, type, sportId) {
         });
       }
     } else {
+      let totalH = 0, totalAB = 0;
       for (const s of splits) {
         const ab  = s.stat?.atBats ?? 0;
         const h   = s.stat?.hits ?? 0;
@@ -291,9 +296,12 @@ async function getGameLogTrend(mlbId, type, sportId) {
         const k   = s.stat?.strikeOuts ?? 0;
         const bb  = s.stat?.baseOnBalls ?? 0;
         const sb  = s.stat?.stolenBases ?? 0;
+        totalH  += h;
+        totalAB += ab;
+        const cumAvg  = totalAB > 0 ? parseFloat((totalH / totalAB).toFixed(3)) : null;
         const gameAvg = ab > 0 ? parseFloat((h / ab).toFixed(3)) : null;
         labels.push(s.date ? s.date.slice(5) : "");
-        values.push(gameAvg !== null ? gameAvg : 0);
+        if (cumAvg !== null) values.push(cumAvg);
         recentGames.push({
           date: s.date ? s.date.slice(5) : "",
           opp:  s.team?.name ? s.team.name.split(" ").pop() : "—",
@@ -305,7 +313,7 @@ async function getGameLogTrend(mlbId, type, sportId) {
 
     if (labels.length < 3) continue;
 
-    // Chart: last 20 appearances; table: last 5
+    // Chart: last 20 appearances (cumulative from game 1 of that window); table: last 5
     const last20Start = Math.max(0, labels.length - 20);
     return {
       labels: labels.slice(last20Start),
