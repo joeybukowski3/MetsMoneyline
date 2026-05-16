@@ -220,32 +220,53 @@
       if (!trendData || !trendData.values || trendData.values.length < 3) {
         return '<div style="text-align:center;padding:10px 8px;font-size:11px;color:#9ca3af;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;">Not enough games yet</div>';
       }
-      var values = trendData.values;          // already sliced to last 20 by bot
-      var labels = trendData.labels || [];
-      var isPitcher = type === 'Pitcher';
-      var w = 400, h = 55, padX = 6, padY = 8;
-      var min = Math.min.apply(null, values);
-      var max = Math.max.apply(null, values);
-      var range = max - min || 0.001;
-      var stepX = values.length > 1 ? (w - padX * 2) / (values.length - 1) : 0;
-      var points = values.map(function(v, i) {
-        var x = padX + i * stepX;
-        var y = padY + (1 - (v - min) / range) * (h - padY * 2);
-        return x.toFixed(1) + ',' + y.toFixed(1);
-      }).join(' ');
-      var color    = isPitcher ? '#ff5910' : '#002d72';
-      var fillColor = isPitcher ? 'rgba(255,89,16,0.08)' : 'rgba(0,45,114,0.08)';
-      var fillPoints = padX.toFixed(1) + ',' + (h - padY).toFixed(1) + ' ' + points + ' ' +
-                       (padX + (values.length - 1) * stepX).toFixed(1) + ',' + (h - padY).toFixed(1);
 
-      // Trend: compare second half avg vs first half avg
-      var midIdx = Math.floor(values.length / 2);
-      var firstHalf  = values.slice(0, midIdx).reduce(function(a,b){return a+b;},0) / (midIdx || 1);
-      var secondHalf = values.slice(midIdx).reduce(function(a,b){return a+b;},0) / ((values.length - midIdx) || 1);
-      var trendUp = secondHalf > firstHalf;
+      var values   = trendData.values;
+      var dates    = trendData.labels || [];
+      var isPitcher = type === 'Pitcher';
+      var n = values.length;
+
+      // ── Canvas dimensions with room for axes ──────────────────────────────
+      // Total SVG size
+      var W = 400, H = 110;
+      // Plot area insets: left for Y labels, bottom for X labels
+      var L = 36, R = 8, T = 8, B = 22;
+      var plotW = W - L - R;
+      var plotH = H - T - B;
+
+      // ── Scale ─────────────────────────────────────────────────────────────
+      var rawMin = Math.min.apply(null, values);
+      var rawMax = Math.max.apply(null, values);
+      // Add 15% padding so line never sits on the very edge
+      var pad = (rawMax - rawMin) * 0.15 || 0.05;
+      var yMin = rawMin - pad;
+      var yMax = rawMax + pad;
+      var yRange = yMax - yMin || 0.001;
+
+      var stepX = n > 1 ? plotW / (n - 1) : plotW;
+
+      function toX(i)   { return L + i * stepX; }
+      function toY(v)   { return T + (1 - (v - yMin) / yRange) * plotH; }
+
+      // ── Line + fill points ────────────────────────────────────────────────
+      var pts = values.map(function(v, i) {
+        return toX(i).toFixed(1) + ',' + toY(v).toFixed(1);
+      }).join(' ');
+
+      var fillPts = toX(0).toFixed(1) + ',' + (T + plotH).toFixed(1) + ' ' +
+                   pts + ' ' +
+                   toX(n - 1).toFixed(1) + ',' + (T + plotH).toFixed(1);
+
+      var lineColor = isPitcher ? '#ff5910' : '#002d72';
+      var fillColor = isPitcher ? 'rgba(255,89,16,0.09)' : 'rgba(0,45,114,0.09)';
+
+      // ── Midpoint split ────────────────────────────────────────────────────
+      var midIdx    = Math.floor(n / 2);
+      var firstHalf = values.slice(0, midIdx).reduce(function(a,b){return a+b;},0) / (midIdx || 1);
+      var secHalf   = values.slice(midIdx).reduce(function(a,b){return a+b;},0) / ((n - midIdx) || 1);
+      var trendUp   = secHalf > firstHalf;
       var trendDir, trendCls;
       if (isPitcher) {
-        // For pitchers lower ERA = better
         trendDir = trendUp ? '↑ Declining' : '↓ Improving';
         trendCls = trendUp ? 'declining' : 'rising';
       } else {
@@ -253,8 +274,108 @@
         trendCls = trendUp ? 'rising' : 'declining';
       }
 
-      var statLabel = isPitcher ? 'ERA per start' : 'AVG per game';
-      var n = values.length;
+      // X position of the midpoint split line
+      var midX = toX(midIdx - 0.5);  // between last first-half and first second-half point
+
+      // Shading: right half gets a subtle tint to show which half is "recent"
+      var recentShade = trendCls === 'rising'
+        ? 'rgba(22,163,74,0.06)'
+        : trendCls === 'declining'
+          ? 'rgba(220,38,38,0.06)'
+          : 'rgba(100,116,139,0.04)';
+
+      // ── Y-axis tick values (3 ticks: min, mid, max) ───────────────────────
+      var yMid = (yMin + yMax) / 2;
+      function fmtY(v) {
+        if (isPitcher) return v.toFixed(2);
+        // Batting avg: show as .NNN
+        return v < 1 ? '.' + ('000' + Math.round(v * 1000)).slice(-3) : v.toFixed(2);
+      }
+      var yTicks = [
+        { v: yMax, y: toY(yMax), lbl: fmtY(yMax) },
+        { v: yMid, y: toY(yMid), lbl: fmtY(yMid) },
+        { v: yMin, y: toY(yMin), lbl: fmtY(yMin) },
+      ];
+
+      // ── X-axis ticks: first, mid, last ────────────────────────────────────
+      var xTicks = [];
+      function fmtDate(d) { return d ? d.replace(/^\d{4}-/, '') : ''; }
+      if (dates.length >= n) {
+        xTicks.push({ i: 0,     lbl: fmtDate(dates[0]),     anchor: 'start'  });
+        xTicks.push({ i: midIdx, lbl: fmtDate(dates[midIdx]), anchor: 'middle' });
+        xTicks.push({ i: n - 1, lbl: fmtDate(dates[n - 1]), anchor: 'end'    });
+      } else {
+        // No date labels — show game numbers
+        xTicks.push({ i: 0,     lbl: 'G1',        anchor: 'start'  });
+        xTicks.push({ i: midIdx, lbl: 'G' + (midIdx + 1), anchor: 'middle' });
+        xTicks.push({ i: n - 1, lbl: 'G' + n,     anchor: 'end'    });
+      }
+
+      // ── Y axis label (rotated, outside chart) ─────────────────────────────
+      var yAxisLabel = isPitcher ? 'ERA' : 'AVG';
+
+      // ── Build SVG string ──────────────────────────────────────────────────
+      var svg = '';
+
+      // Recent-half background shading (right of midpoint)
+      svg += '<rect x="' + midX.toFixed(1) + '" y="' + T + '" ' +
+             'width="' + (toX(n-1) - midX).toFixed(1) + '" height="' + plotH + '" ' +
+             'fill="' + recentShade + '" rx="0"/>';
+
+      // Gridlines at Y ticks (subtle)
+      yTicks.forEach(function(t) {
+        svg += '<line x1="' + L + '" y1="' + t.y.toFixed(1) + '" ' +
+               'x2="' + (W - R) + '" y2="' + t.y.toFixed(1) + '" ' +
+               'stroke="#e5e7eb" stroke-width="0.8" stroke-dasharray="3,3"/>';
+      });
+
+      // Midpoint vertical line
+      svg += '<line x1="' + midX.toFixed(1) + '" y1="' + T + '" ' +
+             'x2="' + midX.toFixed(1) + '" y2="' + (T + plotH) + '" ' +
+             'stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="4,3"/>';
+
+      // "First half" / "Recent" labels just above X axis at each side
+      svg += '<text x="' + (L + 4) + '" y="' + (T + plotH - 4) + '" ' +
+             'font-size="7" fill="#94a3b8" font-family="Inter,sans-serif">Earlier</text>';
+      svg += '<text x="' + (midX + 4).toFixed(1) + '" y="' + (T + plotH - 4) + '" ' +
+             'font-size="7" fill="#94a3b8" font-family="Inter,sans-serif">Recent ▸</text>';
+
+      // Fill + line
+      svg += '<polygon points="' + fillPts + '" fill="' + fillColor + '"/>';
+      svg += '<polyline points="' + pts + '" fill="none" stroke="' + lineColor + '" ' +
+             'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+      // Y-axis tick labels
+      yTicks.forEach(function(t) {
+        svg += '<text x="' + (L - 4) + '" y="' + (t.y + 3.5).toFixed(1) + '" ' +
+               'font-size="8.5" fill="#64748b" font-family="Inter,sans-serif" text-anchor="end">' +
+               t.lbl + '</text>';
+      });
+
+      // Y-axis label (rotated)
+      svg += '<text transform="rotate(-90,' + (L - 28) + ',' + (T + plotH/2) + ')" ' +
+             'x="' + (L - 28) + '" y="' + (T + plotH/2 + 3.5).toFixed(1) + '" ' +
+             'font-size="8" fill="#94a3b8" font-family="Inter,sans-serif" ' +
+             'font-weight="700" text-anchor="middle" letter-spacing="0.5">' + yAxisLabel + '</text>';
+
+      // X-axis tick labels
+      xTicks.forEach(function(t) {
+        svg += '<text x="' + toX(t.i).toFixed(1) + '" y="' + (T + plotH + 14) + '" ' +
+               'font-size="8.5" fill="#64748b" font-family="Inter,sans-serif" text-anchor="' + t.anchor + '">' +
+               t.lbl + '</text>';
+      });
+
+      // X-axis baseline
+      svg += '<line x1="' + L + '" y1="' + (T + plotH) + '" ' +
+             'x2="' + (W - R) + '" y2="' + (T + plotH) + '" ' +
+             'stroke="#cbd5e1" stroke-width="1"/>';
+
+      // Y-axis baseline
+      svg += '<line x1="' + L + '" y1="' + T + '" ' +
+             'x2="' + L + '" y2="' + (T + plotH) + '" ' +
+             'stroke="#cbd5e1" stroke-width="1"/>';
+
+      var statLabel  = isPitcher ? 'ERA per start' : 'AVG per game';
       var headerLabel = n >= 20 ? 'Last 20 appearances · ' + statLabel
                                 : 'Last ' + n + ' appearances · ' + statLabel;
 
@@ -263,9 +384,9 @@
           '<span>' + headerLabel + '</span>' +
           '<span class="trend-pill ' + trendCls + '">' + trendDir + '</span>' +
         '</div>' +
-        '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" style="display:block;" preserveAspectRatio="none">' +
-          '<polygon points="' + fillPoints + '" fill="' + fillColor + '"/>' +
-          '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '" ' +
+             'style="display:block;" preserveAspectRatio="xMidYMid meet">' +
+          svg +
         '</svg>' +
       '</div>';
     }
