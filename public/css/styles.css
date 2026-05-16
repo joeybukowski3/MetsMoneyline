@@ -493,6 +493,9 @@ main, .page-content {
 
 .mb-teams { display: flex; align-items: center; gap: 0.85rem; flex-shrink: 0; }
 .mb-team  { display: flex; align-items: center; gap: 0.6rem; }
+/* Opponent team: image comes first in DOM but visually it feels natural;
+   on mobile we flip the order so logo→name reads left-to-right */
+.mb-team-opp { justify-content: flex-end; }
 
 .mb-team img {
   width: 40px;
@@ -518,10 +521,28 @@ main, .page-content {
 .mb-ml-nym { color: var(--orange); font-weight: 700; }
 
 @media (max-width: 700px) {
-  .matchup-bar-compact { padding: 0.85rem 1rem; flex-wrap: wrap; }
+  .matchup-bar-compact { padding: 0.75rem 0.9rem; flex-wrap: wrap; gap: 0; }
   .mb-divider { display: none; }
-  .mb-teams { flex-wrap: wrap; gap: 0.5rem; }
-  .mb-meta  { gap: 0.75rem; margin-top: 0.5rem; }
+  /* Both teams always side-by-side, never wrap */
+  .mb-teams {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 0;
+  }
+  .mb-team { gap: 0.45rem; min-width: 0; }
+  /* Right team aligns to the right edge */
+  .mb-teams .mb-team:last-child { justify-content: flex-end; text-align: right; }
+  .mb-teams .mb-team:last-child img { order: 2; }
+  .mb-teams .mb-team:last-child div { order: 1; }
+  .mb-team img { width: 36px; height: 36px; }
+  .mb-team-name { font-size: 0.84rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mb-record { font-size: 0.68rem; }
+  .mb-vs { padding: 0 0.5rem; }
+  .mb-vs-time { font-size: 0.88rem; }
+  .mb-meta { gap: 0.5rem; margin-top: 0.5rem; width: 100%; font-size: 0.76rem; }
+  .mb-meta-item { white-space: nowrap; }
 }
 
 /* =====================
@@ -1468,28 +1489,56 @@ tbody td:first-child { font-weight: 500; }
 }
 
 @media (max-width: 600px) {
+  /* Keep Last 5 panels side by side on mobile */
   .gc-two-col {
-    grid-template-columns: 1fr;
-    gap: 0.75rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
 
   .game-context-card {
-    padding: 0.9rem 0.85rem 0.85rem;
+    padding: 0.75rem 0.75rem 0.8rem;
   }
 
+  /* Compact log rows — horizontal layout preserved */
   .gc-log-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.28rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.22rem 0;
+  }
+
+  .gc-log-meta {
+    gap: 0.22rem;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  .gc-log-date { font-size: 0.68rem; }
+
+  .gc-inline-pill {
+    font-size: 0.6rem !important;
+    padding: 0.1rem 0.35rem !important;
   }
 
   .gc-log-main {
-    justify-content: flex-start;
+    justify-content: flex-end;
+    gap: 0.3rem;
   }
 
+  .gc-log-score { font-size: 0.82rem; }
+
+  /* Opponent name: clip to avoid overflow */
   .gc-log-opponent {
-    text-align: left;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+    text-align: right;
   }
+
+  .gc-subheading { font-size: 0.62rem; }
+  .gc-panel { padding: 0.5rem 0.55rem; border-radius: 10px; }
 }
 
 /* ── Statcast: desktop = table, mobile = stacked cards ── */

@@ -768,7 +768,7 @@ function buildMatchupStrip(game) {
           <span class="mb-vs-label">VS</span>
           <span class="mb-vs-time">${game.time}</span>
         </div>
-        <div class="mb-team">
+        <div class="mb-team mb-team-opp">
           ${oppLogoHtml}
           <div>
             <div class="mb-team-name">${game.opponent}</div>
