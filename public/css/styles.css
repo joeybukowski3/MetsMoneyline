@@ -846,7 +846,7 @@ main, .page-content {
   font-size: 0.9rem;
 }
 
-@media (max-width: 700px) { .lineup-two-col { grid-template-columns: 1fr; } }
+/* lineup-two-col mobile now handled in compact lu-* section */
 
 /* =====================
    ADVANCED METRICS — individual cards with progress bars
@@ -1648,80 +1648,136 @@ tbody td:first-child { font-weight: 500; }
   margin-bottom: 0.2rem;
 }
 
-.compact-log-title {
-  margin-bottom: 0.35rem;
-  font-size: 0.71rem;
-  font-weight: 700;
-  color: #9099b0;
+/* ── Compact pitcher recent starts (plog) — no scroll ── */
+.plog-wrap {
+  margin-top: 0.9rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid #eef2f7;
+}
+.plog-label {
+  font-size: 0.6rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+  margin-bottom: 0.35rem;
 }
-
-.compact-log-wrap {
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
+.plog-row {
+  display: grid;
+  grid-template-columns: 2.2rem 1.2rem 2.2rem 2.8rem 2.2rem 1.2rem;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.28rem 0;
+  border-top: 1px solid #f0f4f8;
 }
-
-.compact-log-table {
-  width: 100%;
-  table-layout: fixed;
-  font-size: 0.78rem;
-  margin: 0;
-}
-
-.compact-log-table thead th {
-  padding: 0.45rem 0.55rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-align: center;
-}
-
-.compact-log-table tbody tr:hover {
-  background: #f8fafc;
-}
-
-.compact-log-table tbody td {
-  padding: 0.45rem 0.55rem;
-  font-size: 0.78rem;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.compact-log-table .compact-date {
+.plog-row:first-of-type { border-top: none; }
+.plog-date {
+  font-size: 0.65rem;
+  font-weight: 700;
   color: #64748b;
   font-variant-numeric: tabular-nums;
 }
-
-.compact-log-table .compact-opp {
+.plog-logo { display: flex; align-items: center; justify-content: center; }
+.plog-ip, .plog-k {
+  font-size: 0.68rem;
   font-weight: 600;
-  color: #1e3a8a;
+  color: #475569;
+  text-align: center;
 }
-
-.compact-log-table .compact-er,
-.compact-log-table .compact-wl {
-  font-weight: 700;
+.plog-er {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-align: center;
 }
+.plog-er.good { color: #15803d; }
+.plog-er.warn { color: #b45309; }
+.plog-er.bad  { color: #b91c1c; }
 
-.compact-log-table .compact-er.good,
-.compact-log-table .compact-wl.good {
-  color: #15803d;
-}
+/* Keep old table hidden if referenced elsewhere — just in case */
+.compact-log-wrap { overflow-x: auto; }
+.compact-log-table { font-size: 0.78rem; margin: 0; }
 
-.compact-log-table .compact-er.warn {
-  color: #b45309;
-}
-
-.compact-log-table .compact-er.bad,
-.compact-log-table .compact-wl.bad {
-  color: #b91c1c;
-}
-
-.compact-log-table .compact-wl.muted {
+/* ── Compact lineup card list — no horizontal scroll ── */
+.lu-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0;
+  padding: 0.18rem 0;
+  font-size: 0.58rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: #94a3b8;
+  border-bottom: 1px solid #eef2f7;
+  margin-bottom: 0.1rem;
+}
+.lu-header span {
+  text-align: center;
+  min-width: 2.8rem;
+}
+
+.lu-list { display: flex; flex-direction: column; gap: 0; }
+
+.lu-row {
+  display: grid;
+  grid-template-columns: 1.5rem 1.8rem 1fr auto auto auto;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.32rem 0;
+  border-top: 1px solid #f0f4f8;
+}
+.lu-row:first-child { border-top: none; }
+
+.lu-order {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #94a3b8;
+  text-align: center;
+}
+.lu-row .player-headshot {
+  width: 22px;
+  height: 22px;
+  margin-right: 0;
+}
+.lu-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.lu-pos {
+  display: none; /* hide on mobile; pos visible on desktop via wider grid */
+}
+.lu-stat {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 2.8rem;
+  border-radius: 4px;
+  padding: 0.08rem 0.15rem;
+}
+.lu-stat.metric-positive { background: rgba(255,89,16,0.1); color: #c2410c; }
+.lu-stat.metric-negative { background: rgba(0,45,114,0.09); color: #002d72; }
+.lu-stat.metric-neutral  { background: transparent; color: #475569; }
+
+.lu-empty { color: #9099b0; font-size: 0.82rem; text-align: center; padding: 1rem 0; }
+
+/* Desktop: show position, wider layout */
+@media (min-width: 700px) {
+  .lu-row { grid-template-columns: 1.5rem 1.8rem 1fr 2rem auto auto auto; }
+  .lu-pos { display: block; font-size: 0.65rem; color: #64748b; font-weight: 600; text-align: center; }
+  .lu-row .player-headshot { width: 26px; height: 26px; }
+  .lu-name { font-size: 0.8rem; }
+  .lu-stat { font-size: 0.72rem; min-width: 3rem; }
+}
+
+/* Lineup two-col: stays side-by-side on mobile too, each card at min-width 0 */
+@media (max-width: 700px) {
+  .lineup-two-col { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .lineup-team-header { font-size: 0.62rem; padding: 0.45rem 0.75rem; }
 }
 
 /* =====================

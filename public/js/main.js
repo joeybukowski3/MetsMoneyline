@@ -976,31 +976,32 @@ function buildPitchingCard(game) {
 
   const pitcherLogTable = (starts, name) => {
     if (!starts?.length) return "";
-    const compactOpponent = (teamName) => {
-      const abbr = getTeamAbbr(teamName);
-      return abbr && abbr !== teamName ? abbr : teamName;
-    };
     const rows = starts.slice(0, 4).map(s => {
+      const dateStr = (() => {
+        if (!s.date) return "--";
+        const d = new Date(`${s.date}T12:00:00`);
+        return `${d.getMonth()+1}/${d.getDate()}`;
+      })();
       const er = parseInt(s.er);
-      const erClass = isNaN(er) ? "" : er <= 2 ? " good" : er <= 4 ? " warn" : " bad";
-      const resultClass = s.result === "W" ? " good" : s.result === "L" ? " bad" : " muted";
-      return `<tr>
-        <td class="compact-date">${String(s.date || "").slice(5)}</td>
-        <td class="compact-opp">${compactOpponent(s.opponent)}</td>
-        <td>${s.ip}</td>
-        <td class="compact-er${erClass}">${s.er}</td>
-        <td>${s.k}</td>
-        <td class="compact-wl${resultClass}">${s.result}</td>
-      </tr>`;
-    }).join("");
-    return `
-      <div class="compact-log-title" style="margin-top:1rem">${name} - Recent Starts</div>
-      <div class="table-wrap compact-log-wrap">
-        <table class="compact-log-table">
-          <thead><tr><th>Date</th><th>Opp</th><th>IP</th><th>ER</th><th>K</th><th>W/L</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
+      const erCls = isNaN(er) ? "" : er <= 2 ? " good" : er <= 4 ? " warn" : " bad";
+      const wl = s.result === "W" ? "gc-dot-w" : s.result === "L" ? "gc-dot-l" : "gc-dot-n";
+      const logo = getTeamLogoUrl(s.opponent);
+      const logoHtml = logo
+        ? `<img src="${logo}" alt="" width="16" height="16" style="object-fit:contain;vertical-align:middle;" loading="lazy" decoding="async">`
+        : `<span style="width:16px;display:inline-block;"></span>`;
+      return `<div class="plog-row">
+        <span class="plog-date">${dateStr}</span>
+        <span class="plog-logo">${logoHtml}</span>
+        <span class="plog-ip">${s.ip}</span>
+        <span class="plog-er${erCls}">${s.er}ER</span>
+        <span class="plog-k">${s.k}K</span>
+        <span class="gc-result-dot ${wl}">${s.result || "?"}</span>
       </div>`;
+    }).join("");
+    return `<div class="plog-wrap">
+      <div class="plog-label">Recent Starts</div>
+      ${rows}
+    </div>`;
   };
 
   // Season stats - 2026 only
@@ -1303,47 +1304,45 @@ function buildRow3(game) {
 
   const statCell = (label, value) => `<td class="metric-cell ${metricValueClass(label, value)}">${value ?? "N/A"}</td>`;
 
-  const metsRows = metsLineup.length > 0
-    ? metsLineup.map(p => `
-    <tr>
-      <td>${p.order}</td>
-      <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
-      <td>${p.pos}</td>
-      ${statCell("AVG", getMetsHitterAVG(p))}
-      ${statCell("OPS", getMetsHitterSeasonOps(p))}
-      ${statCell("wRC+", p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A")}
-      ${statCell("xBA", p.savant?.xBA ?? p.seasonAVG ?? "N/A")}
-      ${statCell("xwOBA", p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A")}
-    </tr>`).join("")
-    : `<tr><td colspan="8" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
-
-  const oppRows = oppLineup.length > 0
-    ? oppLineup.map(p => `
-    <tr>
-      <td>${p.order}</td>
-      <td class="player-name-cell">${headshotImg(p)}<span style="font-weight:600">${p.name}</span></td>
-      <td>${p.pos}</td>
-      ${statCell("AVG", p.seasonAVG ?? "N/A")}
-      ${statCell("OPS", p.seasonOPS ?? "N/A")}
-      ${statCell("wRC+", p.fangraphs?.wRCPlus ?? p.fangraphs?.war ?? "N/A")}
-      ${statCell("xBA", p.savant?.xBA ?? p.seasonAVG ?? "N/A")}
-      ${statCell("xwOBA", p.savant?.xwOBA ?? p.fangraphs?.wOBA ?? p.seasonOPS ?? "N/A")}
-    </tr>`).join("")
-    : `<tr><td colspan="8" style="color:#9099b0;text-align:center;padding:1rem">Lineup TBD</td></tr>`;
+  // Compact lineup card renderer — stacks info, no wide table
+  const lineupCard = (players, getAvg, getOps, getXba, getXwoba, tbd) => {
+    if (!players.length) return `<div class="lu-empty">Lineup TBD</div>`;
+    return players.map(p => {
+      const avg   = getAvg(p)   ?? "N/A";
+      const ops   = getOps(p)   ?? "N/A";
+      const xba   = getXba(p)   ?? "N/A";
+      const xwoba = getXwoba(p) ?? "N/A";
+      const avgCls   = metricValueClass("AVG",   avg);
+      const opsCls   = metricValueClass("OPS",   ops);
+      const xbaCls   = metricValueClass("xBA",   xba);
+      const xwobaCls = metricValueClass("xwOBA", xwoba);
+      return `<div class="lu-row">
+        <span class="lu-order">${p.order}</span>
+        ${headshotImg(p)}
+        <span class="lu-name">${p.name}</span>
+        <span class="lu-pos">${p.pos}</span>
+        <span class="lu-stat ${avgCls}" title="AVG">${avg}</span>
+        <span class="lu-stat ${opsCls}" title="OPS">${ops}</span>
+        <span class="lu-stat ${xbaCls}" title="xBA">${xba}</span>
+      </div>`;
+    }).join("");
+  };
 
   const metsBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
-    : `<div class="table-wrap"><table>
-         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>xBA</th><th>xwOBA</th></tr></thead>
-         <tbody>${metsRows}</tbody>
-       </table></div>`;
+    : `<div class="lu-header"><span>AVG</span><span>OPS</span><span>xBA</span></div>
+       <div class="lu-list">${lineupCard(metsLineup,
+         p => getMetsHitterAVG(p), p => getMetsHitterSeasonOps(p),
+         p => p.savant?.xBA ?? p.seasonAVG,
+         p => p.savant?.xwOBA ?? p.fangraphs?.wOBA)}</div>`;
 
   const oppBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
-    : `<div class="table-wrap"><table>
-         <thead><tr><th>#</th><th>Player</th><th>POS</th><th>AVG</th><th>OPS</th><th>wRC+</th><th>xBA</th><th>xwOBA</th></tr></thead>
-         <tbody>${oppRows}</tbody>
-       </table></div>`;
+    : `<div class="lu-header"><span>AVG</span><span>OPS</span><span>xBA</span></div>
+       <div class="lu-list">${lineupCard(oppLineup,
+         p => p.seasonAVG, p => p.seasonOPS,
+         p => p.savant?.xBA ?? p.seasonAVG,
+         p => p.savant?.xwOBA ?? p.fangraphs?.wOBA)}</div>`;
 
   // Advanced metrics - individual cards with progress bars (matching Lovable design)
   const resolvedMetrics = resolveAdvancedMatchup(game);
