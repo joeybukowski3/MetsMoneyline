@@ -761,8 +761,10 @@ function buildPlainTextEmail(game) {
 
   const metsXERA = parseFloat(String(game?.pitching?.mets?.savant?.xERA ?? ""));
   const oppXERA  = parseFloat(String(game?.pitching?.opp?.savant?.xERA ?? ""));
+  const metsSpStr = (metsCard?.name || "TBD") + " (ERA " + fmt(metsCard?.stats?.era) + (Number.isFinite(metsXERA) ? ", xERA " + fmt(metsXERA) : "") + ")";
+  const oppSpStr  = (oppCard?.name  || "TBD") + " (ERA " + fmt(oppCard?.stats?.era)  + (Number.isFinite(oppXERA)  ? ", xERA " + fmt(oppXERA)  : "") + ")";
   const spLine = (Number.isFinite(metsXERA) || metsCard?.name)
-    ? `SP: ${metsCard?.name || "TBD"} (ERA ${fmt(metsCard?.stats?.era)}${Number.isFinite(metsXERA) ? \`, xERA ${fmt(metsXERA)}\` : ""}) vs ${oppCard?.name || "TBD"} (ERA ${fmt(oppCard?.stats?.era)}${Number.isFinite(oppXERA) ? \`, xERA ${fmt(oppXERA)}\` : ""})`
+    ? "SP: " + metsSpStr + " vs " + oppSpStr
     : "";
 
   const metsRecentForm = report?.recentFormReport?.mets;
@@ -6810,7 +6812,7 @@ function buildCondensedEmailHtml(game) {
           <div style="border:1px solid #d8e4f7;border-radius:10px;padding:12px 12px 10px;background:#f0f5ff;">
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#002d72;margin-bottom:4px;">NYM</div>
             <div style="font-size:14px;font-weight:800;color:#002d72;margin-bottom:1px;">${dash(metsCard?.name)}</div>
-            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${metsCard?.hand ? `${metsCard.hand}HP` : ""} ${metsCard?.record || ""}`.trim()}</div>
+            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${((metsCard?.hand ? metsCard.hand + "HP" : "") + " " + (metsCard?.record || "")).trim()}</div>
             <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
               <tr>
                 <td style="font-size:10px;color:#6b7280;padding:2px 0;width:28%;">ERA</td>
@@ -6835,7 +6837,7 @@ function buildCondensedEmailHtml(game) {
           <div style="border:1px solid #fde8d8;border-radius:10px;padding:12px 12px 10px;background:#fff5f0;">
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7c2d12;margin-bottom:4px;">${oppAbbr}</div>
             <div style="font-size:14px;font-weight:800;color:#7c2d12;margin-bottom:1px;">${dash(oppCard?.name)}</div>
-            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${oppCard?.hand ? `${oppCard.hand}HP` : ""} ${oppCard?.record || ""}`.trim()}</div>
+            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${((oppCard?.hand ? oppCard.hand + "HP" : "") + " " + (oppCard?.record || "")).trim()}</div>
             <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
               <tr>
                 <td style="font-size:10px;color:#6b7280;padding:2px 0;width:28%;">ERA</td>
