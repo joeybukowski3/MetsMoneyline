@@ -192,21 +192,24 @@
       return;
     }
 
-    // Build book rows with live ML odds if available
-    var bookRows = books.map(function (book) {
-      var bookRow = buildBookRow(book, oddsData);
-      return { book: book, row: bookRow };
+    // Remove any existing fallback note
+    var existingNote = document.querySelector('.bet-odds-note');
+    if (existingNote) existingNote.remove();
+
+    var usingFallback = !hasPerBookData(oddsData);
+    var bookRows = books.map(function(book) {
+      return { book: book, row: buildBookRow(book, oddsData) };
     });
 
-    // Only show books that have at least one live odds value, or all if none have odds
-    var withOdds = bookRows.filter(function(b){ return b.row.metsMlPrice != null; });
-    var toShow = withOdds.length > 0 ? bookRows : bookRows;
+    // Only show "BEST" chip when we have real per-book data with different prices
     var bestMl = null;
-    toShow.forEach(function(b){
-      if (b.row.metsMlPrice != null && (bestMl == null || b.row.metsMlPrice > bestMl)) bestMl = b.row.metsMlPrice;
-    });
+    if (!usingFallback) {
+      bookRows.forEach(function(b) {
+        if (b.row.metsMlPrice != null && (bestMl == null || b.row.metsMlPrice > bestMl)) bestMl = b.row.metsMlPrice;
+      });
+    }
 
-    row.innerHTML = toShow.map(function (entry) {
+    row.innerHTML = bookRows.map(function(entry) {
       var book = entry.book;
       var bookRow = entry.row;
       var brand = getBrand(book.name);
@@ -215,25 +218,37 @@
         ? ' href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer"'
         : "";
       var mlOdds = bookRow.metsMlPrice != null ? formatAmericanOdds(bookRow.metsMlPrice) : null;
-      var isBestMl = bookRow.metsMlPrice != null && bookRow.metsMlPrice === bestMl;
+      var isBestMl = !usingFallback && bookRow.metsMlPrice != null && bookRow.metsMlPrice === bestMl;
+      var oddsLabel = usingFallback ? "Consensus" : "ML";
       var oddsHtml = mlOdds
-        ? '<div class="book-badge-odds' + (isBestMl ? ' best' : '') + '">' +
-            '<span class="book-badge-odds-label">ML</span>' +
-            '<span class="book-badge-odds-val">' + escapeHtml(mlOdds) + '</span>' +
-            (isBestMl ? '<span class="book-badge-odds-best">BEST</span>' : '') +
-          '</div>'
-        : '';
+        ? '<div class="book-badge-odds' + (isBestMl ? " best" : "") + '">' +
+            '<span class="book-badge-odds-label">' + oddsLabel + "</span>" +
+            '<span class="book-badge-odds-val">' + escapeHtml(mlOdds) + "</span>" +
+            (isBestMl ? '<span class="book-badge-odds-best">BEST</span>' : "") +
+          "</div>"
+        : '<div class="book-badge-odds"><span class="book-badge-odds-label">ML</span>' +
+          '<span class="book-badge-odds-val" style="color:#9ca3af;">TBD</span></div>';
       return (
         '<a class="book-badge"' + openAttrs + ">" +
           '<div class="book-badge-logo" style="background:' + brand.bg + ';">' +
-            (brand.logo || '<span style="color:' + brand.text + ';font-family:Arial Black,sans-serif;font-weight:900;font-size:1.1rem;">' + escapeHtml(book.name) + '</span>') +
+            (brand.logo || '<span style="color:' + brand.text + ';font-family:Arial Black,sans-serif;font-weight:900;font-size:1.1rem;">' + escapeHtml(book.name) + "</span>") +
           "</div>" +
           oddsHtml +
-          '<div class="book-badge-cta">Bet at ' + escapeHtml(brand.abbr) + ' &#8599;</div>' +
+          '<div class="book-badge-cta">Bet at ' + escapeHtml(brand.abbr) + " &#8599;</div>" +
         "</a>"
       );
     }).join("");
+
+    // Note when showing fallback consensus line
+    if (usingFallback && bookRows.some(function(b){ return b.row.metsMlPrice != null; })) {
+      var note = document.createElement("p");
+      note.className = "bet-odds-note";
+      note.style.cssText = "font-size:0.7rem;color:#9ca3af;text-align:center;margin:0.25rem 0 0.5rem;";
+      note.innerHTML = "&#9432; Showing consensus market line. Per-book prices may differ &mdash; click any book to check their current line.";
+      row.after(note);
+    }
   }
+
 
   function findTodayGame(sampleGame) {
     var todayEt = getTodayEt();
@@ -284,29 +299,57 @@
     }) : null;
   }
 
+  // ── Consensus fallback ──────────────────────────────────────────────────────
+  // When per-book data is unavailable (e.g. free API tier), we use the consensus
+  // line from oddsData.markets to populate all books with the same line.
+  // We flag these rows so the UI can show "Consensus Line" instead of "Best".
+  function getConsensusFallbackMarkets(oddsData) {
+    var markets = oddsData && Array.isArray(oddsData.markets) ? oddsData.markets : [];
+    if (!markets.length) return null;
+    return { key: "consensus", title: "Consensus", markets: markets };
+  }
+
+  function hasPerBookData(oddsData) {
+    return oddsData && Array.isArray(oddsData.bookmakers) && oddsData.bookmakers.length > 0;
+  }
+
   function buildBookRow(book, oddsData) {
+    // Try to find this specific book's data
     var bookmaker = findBookmaker(oddsData && oddsData.bookmakers, book.name);
-    var h2h = findMarket(bookmaker && bookmaker.markets, "h2h");
+
+    // Fallback: if no per-book data, use consensus markets for all books
+    var usingFallback = false;
+    if (!bookmaker) {
+      var fallback = getConsensusFallbackMarkets(oddsData);
+      if (fallback) {
+        bookmaker = fallback;
+        usingFallback = true;
+      }
+    }
+
+    var h2h     = findMarket(bookmaker && bookmaker.markets, "h2h");
     var spreads = findMarket(bookmaker && bookmaker.markets, "spreads");
-    var totals = findMarket(bookmaker && bookmaker.markets, "totals");
-    var metsMl = findOutcome(h2h && h2h.outcomes, "New York Mets");
+    var totals  = findMarket(bookmaker && bookmaker.markets, "totals");
+    var metsMl      = findOutcome(h2h && h2h.outcomes, "New York Mets");
     var metsRunLine = findOutcome(spreads && spreads.outcomes, "New York Mets");
-    var totalOver = findOutcome(totals && totals.outcomes, "Over");
-    var totalUnder = findOutcome(totals && totals.outcomes, "Under");
+    var totalOver   = findOutcome(totals && totals.outcomes, "Over");
+    var totalUnder  = findOutcome(totals && totals.outcomes, "Under");
 
     return {
       name: book.name,
       referralUrl: String(book.referralUrl || "").trim(),
-      metsMlPrice: normalizeAmericanOdds(metsMl && metsMl.price),
+      metsMlPrice:  normalizeAmericanOdds(metsMl && metsMl.price),
       runLinePrice: normalizeAmericanOdds(metsRunLine && metsRunLine.price),
       runLinePoint: metsRunLine && Number.isFinite(Number(metsRunLine.point)) ? Number(metsRunLine.point) : null,
-      overPrice: normalizeAmericanOdds(totalOver && totalOver.price),
-      underPrice: normalizeAmericanOdds(totalUnder && totalUnder.price),
-      totalPoint: totalOver && Number.isFinite(Number(totalOver.point)) ? Number(totalOver.point) : (
+      overPrice:    normalizeAmericanOdds(totalOver && totalOver.price),
+      underPrice:   normalizeAmericanOdds(totalUnder && totalUnder.price),
+      totalPoint:   totalOver && Number.isFinite(Number(totalOver.point)) ? Number(totalOver.point) : (
         totalUnder && Number.isFinite(Number(totalUnder.point)) ? Number(totalUnder.point) : null
-      )
+      ),
+      isFallback: usingFallback
     };
   }
+
 
   function getBestValues(rows) {
     var best = {
@@ -370,19 +413,17 @@
       return (
         "<tr>" +
           "<td>" + renderBookLink(row.name, row.referralUrl) + "</td>" +
-          "<td>" + renderLinkedValue(mlHtml, row.referralUrl, row.metsMlPrice != null && row.metsMlPrice === best.bestMl) + "</td>" +
+          "<td>" + renderLinkedValue(mlHtml, row.referralUrl, !usingFallback && row.metsMlPrice != null && row.metsMlPrice === best.bestMl) + "</td>" +
           "<td>" + renderLinkedValue(runLineHtml, row.referralUrl, row.runLinePrice != null && row.runLinePrice === best.bestRunLine) + "</td>" +
           '<td class="odds-total-cell">' + totalHtml + "</td>" +
         "</tr>"
       );
     }).join("");
 
-    var missingBooks = Array.isArray(oddsData && oddsData.diagnostics && oddsData.diagnostics.missingTrackedSportsbooks)
-      ? oddsData.diagnostics.missingTrackedSportsbooks
-      : [];
-    var feedNote = missingBooks.length
-      ? "Current feed does not list " + missingBooks.join(", ") + ", so those cells show \u2014."
-      : "Books without a live price in the current feed are shown as \u2014.";
+    var usingFallback = !hasPerBookData(oddsData);
+    var feedNote = usingFallback
+      ? "Showing consensus market line across all books. Per-book prices may vary &mdash; click any book to verify their current line."
+      : "Prices shown are the live lines for each book. Best available Mets price highlighted.";
 
     // Mobile card view — shown when table is hidden on small screens
     var cardHtml = rows.map(function(row) {
@@ -390,7 +431,7 @@
       if (!hasAnyOdds) return ""; // skip books with no data on mobile card view
       var mlHtml = row.metsMlPrice == null
         ? '<span class="odds-muted">&mdash;</span>'
-        : (row.metsMlPrice === best.bestMl
+        : (!usingFallback && row.metsMlPrice === best.bestMl
             ? '<span class="best-odds">' + escapeHtml(formatAmericanOdds(row.metsMlPrice)) + '<span class="best-flag">Best</span></span>'
             : escapeHtml(formatAmericanOdds(row.metsMlPrice)));
       var rlHtml = row.runLinePrice == null || row.runLinePoint == null

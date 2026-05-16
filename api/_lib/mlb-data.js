@@ -591,9 +591,12 @@ async function buildOddsPayload() {
   let provider = "api-sports";
 
   try {
+    // Explicitly request the sportsbooks we display — some API tiers require this
+    const TRACKED_BOOK_KEYS = "draftkings,fanduel,betmgm,caesars,williamhill_us,fanatics";
     const oddsEvent = await fetchTheOddsApiEvent(targetGame, {
       params: {
-        markets: "h2h,spreads,totals"
+        markets: "h2h,spreads,totals",
+        bookmakers: TRACKED_BOOK_KEYS
       }
     });
 
