@@ -214,7 +214,7 @@
         renderEvents(events);
       })
       .catch(() => {
-        document.body.innerHTML += '<p>Data temporarily unavailable</p>';
+        var errEl = document.createElement('p'); errEl.textContent = 'Data temporarily unavailable'; document.body.appendChild(errEl);
       });
   </script>
 </body>

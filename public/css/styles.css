@@ -127,6 +127,8 @@ body > header .site-nav {
   background: transparent;
   cursor: pointer;
   font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .nav-more-menu {
@@ -176,14 +178,19 @@ body > header .site-nav {
   flex-direction: column;
   justify-content: center;
   gap: 5px;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 4px;
   border-radius: 6px;
   transition: background 0.15s;
+  /* iOS tap fix */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  position: relative;
+  z-index: 110;
 }
 
 .nav-hamburger:hover { background: var(--bg); }
@@ -251,6 +258,9 @@ body > header .site-nav {
   .nav-mobile-panel.open {
     display: grid;
     gap: 4px;
+    position: relative;
+    z-index: 105;
+    background: #fff;
   }
 
   .nav-more-menu {
