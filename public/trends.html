@@ -69,6 +69,7 @@
     .lg-box.gray { background: #9ca3af; }
     .lg-box.teal { background: #22c55e; }
     .lg-box.red { background: #ef4444; }
+    .lg-box.orange { background: #ff5910; }
 
     .window-tabs {
       display: flex;
@@ -607,6 +608,8 @@
     const charts = {};
     const BA_XBA_Y_MIN = 0.100;
     const BA_XBA_Y_MAX = 0.400;
+    const TEAM_BA_XBA_Y_MIN = 0.150;
+    const TEAM_BA_XBA_Y_MAX = 0.350;
 
     function round3(v) {
       return typeof v === "number" ? Math.round(v * 1000) / 1000 : null;
@@ -776,7 +779,7 @@
       const legend = document.getElementById("team-chart-legend");
       if (!legend) return;
       legend.innerHTML = [
-        '<div class="lg-item"><div class="lg-box navy"></div> Mets</div>',
+        '<div class="lg-item"><div class="lg-box orange"></div> Mets</div>',
         '<div class="lg-item"><div class="lg-box gray"></div> MLB Avg</div>',
         '<div class="lg-item"><div class="lg-box teal"></div> Best Team</div>',
         '<div class="lg-item"><div class="lg-box red"></div> Worst Team</div>'
@@ -818,7 +821,7 @@
             // On mobile: skip team abbreviation labels — too crowded
             // On desktop: show them above the value
             if (!isMobile && seriesLabel && lblY >= chartTop + 2) {
-              ctx.fillStyle = series.datasetIndex === 0 ? "#002d72" : "#475569";
+              ctx.fillStyle = series.datasetIndex === 0 ? "#ff5910" : "#475569";
               ctx.font = (series.datasetIndex === 0 ? "800 " : "700 ") + lblFontSize + "px Inter";
               ctx.fillText(seriesLabel, x, lblY);
             }
@@ -973,8 +976,8 @@
         const benchmarks = getTeamBenchmarksFor(windowKey, statKey) || {};
         return benchmarks.worst ? benchmarks.worst.abbr : "";
       });
-      let yMin = BA_XBA_Y_MIN;
-      let yMax = BA_XBA_Y_MAX;
+      let yMin = TEAM_BA_XBA_Y_MIN;
+      let yMax = TEAM_BA_XBA_Y_MAX;
       let tickFormatter = fmtDecimal;
       let stepSize;
 
@@ -1000,9 +1003,9 @@
           {
             label: "Mets",
             data: metsValues,
-            backgroundColor: "#002d72",
-            hoverBackgroundColor: "#143e86",
-            borderColor: "#001f4f",
+            backgroundColor: "#ff5910",
+            hoverBackgroundColor: "#e04a05",
+            borderColor: "#c73d00",
             borderWidth: 1.2,
             borderRadius: 5,
             categoryPercentage: catPct,
