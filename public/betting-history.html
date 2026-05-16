@@ -42,6 +42,91 @@
     }
   </script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5946778263750869" crossorigin="anonymous"></script>
+  <style>
+    /* ── Page header ── */
+    .page-header { text-align: center; padding: 1.75rem 0 1rem; }
+    .page-header h1 { font-size: 1.65rem; font-weight: 900; color: var(--navy); margin: 0 0 0.25rem; }
+    .page-header p  { color: #5a6072; font-size: 0.9rem; margin: 0; }
+
+    /* ── Summary tile row ── */
+    .ph-summary-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .ph-stat-tile {
+      background: #fff;
+      border: 1px solid #d6dde8;
+      border-radius: 12px;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(15,23,42,0.05);
+    }
+    .ph-tile-val {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.15;
+      font-family: 'Oswald', 'Inter', sans-serif;
+    }
+    .ph-tile-lbl {
+      font-size: 0.58rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #64748b;
+      margin-top: 0.25rem;
+    }
+    .ph-tile-wins  .ph-tile-val { color: #16a34a; }
+    .ph-tile-losses .ph-tile-val { color: #dc2626; }
+
+    /* ── Chart card ── */
+    .ph-chart-card { padding: 0.9rem 1rem 0.75rem; margin-bottom: 1rem; }
+    .ph-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+    .ph-chart-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #334155;
+    }
+    .ph-chart-note {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    /* ── Disclaimer ── */
+    .ph-disclaimer {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      text-align: center;
+      margin: 0.75rem 0 0;
+      padding-top: 0.6rem;
+      border-top: 1px solid #f0f4f8;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 900px) {
+      .ph-summary-row { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 540px) {
+      .ph-summary-row { grid-template-columns: repeat(2, 1fr); gap: 0.45rem; }
+      .ph-tile-val { font-size: 1rem; }
+      .ph-chart-card { padding: 0.75rem 0.75rem 0.6rem; }
+    }
+  </style>
 </head>
 <body>
 
@@ -55,37 +140,63 @@
   </noscript>
 
   <main>
-    <div class="page-header">
+    <div class="page-header" style="text-align:center;">
       <h1>Mets Moneyline Tracker</h1>
-      <p>Season-long Mets moneyline betting history for completed games only.</p>
+      <p>Season-long record of every official MetsMoneyline pick &mdash; completed games only.</p>
     </div>
 
-    <div class="section-card" style="margin-bottom:1rem;">
-      <div class="section-title">How Results Are Tracked</div>
-      <p style="margin:0;color:var(--text-muted);line-height:1.75;">The Moneyline Tracker logs completed Mets moneyline picks only. Each entry records the date, opponent, home or away context, closing or stored Mets moneyline price, final game result, and the running profit or loss using the site’s stated stake convention.</p>
-      <p style="margin:0.8rem 0 0;color:var(--text-muted);line-height:1.75;">This page exists to show the full record, not just the wins. That makes it easier for readers to review how the site has performed across hot streaks, cold streaks, and different price ranges over the season.</p>
-    </div>
-
-    <div class="section-card">
-      <div class="record-bar">
-        <span>Total Bets: <strong id="total-bets-display">&mdash;</strong></span>
-        <span>Wins: <strong id="wins-display">&mdash;</strong></span>
-        <span>Losses: <strong id="losses-display">&mdash;</strong></span>
-        <span>Total Wagered: <strong id="wagered-display">&mdash;</strong></span>
-        <span>Cumulative P/L: <strong id="pl-display" class="text-profit">&mdash;</strong></span>
-        <span>ROI: <strong id="roi-display">&mdash;</strong></span>
-        <span class="disclaimer">Completed games only.</span>
+    <!-- Summary stat tiles -->
+    <div class="ph-summary-row">
+      <div class="ph-stat-tile">
+        <div class="ph-tile-val" id="total-bets-display">&mdash;</div>
+        <div class="ph-tile-lbl">Total Bets</div>
       </div>
+      <div class="ph-stat-tile ph-tile-wins">
+        <div class="ph-tile-val" id="wins-display">&mdash;</div>
+        <div class="ph-tile-lbl">Wins</div>
+      </div>
+      <div class="ph-stat-tile ph-tile-losses">
+        <div class="ph-tile-val" id="losses-display">&mdash;</div>
+        <div class="ph-tile-lbl">Losses</div>
+      </div>
+      <div class="ph-stat-tile">
+        <div class="ph-tile-val" id="wagered-display">&mdash;</div>
+        <div class="ph-tile-lbl">Wagered</div>
+      </div>
+      <div class="ph-stat-tile">
+        <div class="ph-tile-val" id="pl-display">&mdash;</div>
+        <div class="ph-tile-lbl">Cumulative P/L</div>
+      </div>
+      <div class="ph-stat-tile">
+        <div class="ph-tile-val" id="roi-display">&mdash;</div>
+        <div class="ph-tile-lbl">ROI</div>
+      </div>
+    </div>
+
+    <!-- P/L Line Chart -->
+    <div class="section-card ph-chart-card">
+      <div class="ph-chart-header">
+        <span class="ph-chart-title">Cumulative P/L &mdash; Season Progress</span>
+        <span class="ph-chart-note">$100 flat stake &bull; breakeven at $0</span>
+      </div>
+      <div id="pl-chart-wrap" style="width:100%;overflow:hidden;">
+        <svg id="pl-chart-svg" style="display:block;width:100%;" height="180" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+
+    <!-- History table -->
+    <div class="section-card">
+      <div class="section-title" style="margin-bottom:0.75rem;">Full Pick Log</div>
       <div class="table-wrap">
         <table class="history-table">
           <thead>
             <tr>
               <th>Date</th>
               <th>Opponent</th>
-              <th>Home/Away</th>
+              <th>H/A</th>
               <th>Mets ML</th>
               <th>Result</th>
-              <th>Final Score</th>
+              <th>Score</th>
               <th>Stake</th>
               <th>Game P/L</th>
               <th>Cumulative P/L</th>
@@ -94,6 +205,7 @@
           <tbody id="history-body"></tbody>
         </table>
       </div>
+      <p class="ph-disclaimer">Completed and graded picks only. $100 flat stake. For entertainment purposes only.</p>
     </div>
   </main>
 
@@ -249,39 +361,184 @@
       };
     }
 
+    // ── P/L chart ─────────────────────────────────────────────────────────────
+    function drawPLChart(chronologicalEntries) {
+      const svg = document.getElementById("pl-chart-svg");
+      if (!svg) return;
+
+      // Build array of {date, cumPL} for each graded pick in order
+      const points = [];
+      chronologicalEntries.forEach((e) => {
+        if (e.graded && typeof e.cumulativeProfit === "number") {
+          points.push({ date: e.date, pl: e.cumulativeProfit, result: e.result });
+        }
+      });
+      if (points.length < 2) return;
+
+      // Dimensions — use viewBox so it scales
+      const W = 800, H = 180;
+      const L = 52, R = 14, T = 14, B = 32;
+      const plotW = W - L - R;
+      const plotH = H - T - B;
+
+      const pls  = points.map(p => p.pl);
+      const rawMin = Math.min(0, ...pls);
+      const rawMax = Math.max(0, ...pls);
+      const pad  = (rawMax - rawMin) * 0.12 || 50;
+      const yMin = rawMin - pad;
+      const yMax = rawMax + pad;
+      const yRange = yMax - yMin || 1;
+      const n = points.length;
+      const stepX = plotW / (n - 1);
+
+      const toX = i => L + i * stepX;
+      const toY = v => T + (1 - (v - yMin) / yRange) * plotH;
+      const zero = toY(0);
+
+      // Format helpers
+      const fmtPL = v => (v >= 0 ? "+$" : "-$") + Math.abs(v).toFixed(0);
+      const fmtDate = d => {
+        const [, m, day] = d.split("-");
+        return `${parseInt(m)}/${parseInt(day)}`;
+      };
+
+      // ── Build SVG string ──────────────────────────────────────────────────
+      let s = ``;
+
+      // Above-zero fill (profit zone) — green tint
+      const abovePts = points.map((p, i) => `${toX(i).toFixed(1)},${Math.min(toY(p.pl), zero).toFixed(1)}`).join(" ");
+      s += `<polygon points="${toX(0).toFixed(1)},${zero.toFixed(1)} ${abovePts} ${toX(n-1).toFixed(1)},${zero.toFixed(1)}" fill="rgba(22,163,74,0.09)"/>`;
+
+      // Below-zero fill (loss zone) — navy tint
+      const belowPts = points.map((p, i) => `${toX(i).toFixed(1)},${Math.max(toY(p.pl), zero).toFixed(1)}`).join(" ");
+      s += `<polygon points="${toX(0).toFixed(1)},${zero.toFixed(1)} ${belowPts} ${toX(n-1).toFixed(1)},${zero.toFixed(1)}" fill="rgba(0,45,114,0.08)"/>`;
+
+      // Y gridlines + labels — 4 ticks evenly spaced
+      const yStep = (yMax - yMin) / 4;
+      for (let i = 0; i <= 4; i++) {
+        const v = yMin + i * yStep;
+        const y = toY(v).toFixed(1);
+        s += `<line x1="${L}" y1="${y}" x2="${W-R}" y2="${y}" stroke="${v === 0 ? '#94a3b8' : '#e5e7eb'}" stroke-width="${v === 0 ? 0 : 0.8}" stroke-dasharray="${v === 0 ? '' : '4,3'}"/>`;
+        s += `<text x="${L-5}" y="${(parseFloat(y)+3.5).toFixed(1)}" font-size="9.5" fill="${v === 0 ? '#475569' : '#9ca3af'}" font-family="Inter,sans-serif" text-anchor="end" font-weight="${v === 0 ? '700' : '400'}">${fmtPL(Math.round(v))}</text>`;
+      }
+
+      // Breakeven line (zero) — solid, labeled
+      s += `<line x1="${L}" y1="${zero.toFixed(1)}" x2="${W-R}" y2="${zero.toFixed(1)}" stroke="#94a3b8" stroke-width="1.5"/>`;
+      s += `<text x="${W-R+4}" y="${(zero+4).toFixed(1)}" font-size="9" fill="#94a3b8" font-family="Inter,sans-serif" font-weight="700">$0</text>`;
+
+      // Main P/L line — color by current position
+      const lineColor = points[n-1].pl >= 0 ? "#16a34a" : "#002d72";
+      const linePts = points.map((p, i) => `${toX(i).toFixed(1)},${toY(p.pl).toFixed(1)}`).join(" ");
+      s += `<polyline points="${linePts}" fill="none" stroke="${lineColor}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+      // Win/loss dots on each pick
+      points.forEach((p, i) => {
+        const cx = toX(i).toFixed(1);
+        const cy = toY(p.pl).toFixed(1);
+        const dotColor = p.result === "W" ? "#16a34a" : "#dc2626";
+        s += `<circle cx="${cx}" cy="${cy}" r="3.2" fill="${dotColor}" stroke="#fff" stroke-width="1.4"/>`;
+      });
+
+      // X-axis date labels — first, every ~7th, and last
+      const xLabelIdxs = new Set([0, n-1]);
+      const step7 = Math.max(1, Math.round(n / 6));
+      for (let i = step7; i < n - 1; i += step7) xLabelIdxs.add(i);
+      xLabelIdxs.forEach(i => {
+        const anchor = i === 0 ? "start" : i === n-1 ? "end" : "middle";
+        s += `<text x="${toX(i).toFixed(1)}" y="${T+plotH+16}" font-size="9" fill="#64748b" font-family="Inter,sans-serif" text-anchor="${anchor}">${fmtDate(points[i].date)}</text>`;
+      });
+
+      // X baseline
+      s += `<line x1="${L}" y1="${T+plotH}" x2="${W-R}" y2="${T+plotH}" stroke="#e2e8f0" stroke-width="1"/>`;
+
+      // Y axis
+      s += `<line x1="${L}" y1="${T}" x2="${L}" y2="${T+plotH}" stroke="#e2e8f0" stroke-width="1"/>`;
+
+      // Hover tooltip overlay per point
+      const ttId = "pl-tt";
+      s += `<g id="${ttId}" style="display:none;pointer-events:none;">
+        <line id="${ttId}-vl" x1="0" y1="${T}" x2="0" y2="${T+plotH}" stroke="#64748b" stroke-width="1" stroke-dasharray="3,2"/>
+        <circle id="${ttId}-dot" cx="0" cy="0" r="5" fill="#fff" stroke="#002d72" stroke-width="2"/>
+        <rect id="${ttId}-bg" x="0" y="0" width="80" height="32" rx="5" fill="#1e293b" opacity="0.92"/>
+        <text id="${ttId}-val" x="0" y="0" font-size="10.5" font-weight="700" fill="#fff" font-family="Inter,sans-serif" text-anchor="middle"/>
+        <text id="${ttId}-dte" x="0" y="0" font-size="8.5" fill="#94a3b8" font-family="Inter,sans-serif" text-anchor="middle"/>
+      </g>`;
+
+      // Hit area
+      s += `<rect x="${L}" y="${T}" width="${plotW}" height="${plotH}" fill="transparent" style="cursor:crosshair;"
+        data-n="${n}" data-l="${L}" data-step="${stepX.toFixed(4)}"
+        data-t="${T}" data-ph="${plotH}"
+        data-ymin="${yMin.toFixed(4)}" data-yrange="${yRange.toFixed(4)}"
+        data-pls="${points.map(p=>p.pl.toFixed(2)).join(',')}"
+        data-dates="${points.map(p=>fmtDate(p.date)).join(',')}"
+        data-results="${points.map(p=>p.result).join(',')}"
+        onmouseenter="document.getElementById('pl-tt').style.display=''"
+        onmouseleave="document.getElementById('pl-tt').style.display='none'"
+        onmousemove="plMove(this,event)"/>`;
+
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.innerHTML = s;
+    }
+
+    function plMove(rect, evt) {
+      const n     = parseInt(rect.dataset.n);
+      const L     = parseFloat(rect.dataset.l);
+      const step  = parseFloat(rect.dataset.step);
+      const T     = parseFloat(rect.dataset.t);
+      const pH    = parseFloat(rect.dataset.ph);
+      const yMin  = parseFloat(rect.dataset.ymin);
+      const yRange = parseFloat(rect.dataset.yrange);
+      const pls   = rect.dataset.pls.split(',').map(Number);
+      const dates = rect.dataset.dates.split(',');
+      const results = rect.dataset.results.split(',');
+
+      const svgEl = rect.ownerSVGElement;
+      const pt = svgEl.createSVGPoint();
+      pt.x = evt.clientX; pt.y = evt.clientY;
+      const sp = pt.matrixTransform(svgEl.getScreenCTM().inverse());
+
+      const idx = Math.max(0, Math.min(n-1, Math.round((sp.x - L) / step)));
+      const pl  = pls[idx];
+      const cx  = L + idx * step;
+      const cy  = T + (1 - (pl - yMin) / yRange) * pH;
+      const bw = 80, bh = 32;
+      let bx = cx - bw/2; if (bx < L) bx = L; if (bx+bw > 786) bx = 786-bw;
+      let by = cy - bh - 8; if (by < 2) by = cy + 10;
+
+      const color = results[idx] === 'W' ? '#16a34a' : '#dc2626';
+      const vl  = document.getElementById('pl-tt-vl');  if (vl)  { vl.setAttribute('x1',cx); vl.setAttribute('x2',cx); }
+      const dot = document.getElementById('pl-tt-dot'); if (dot) { dot.setAttribute('cx',cx.toFixed(1)); dot.setAttribute('cy',cy.toFixed(1)); dot.setAttribute('stroke',color); }
+      const bg  = document.getElementById('pl-tt-bg');  if (bg)  { bg.setAttribute('x',bx.toFixed(1)); bg.setAttribute('y',by.toFixed(1)); }
+      const val = document.getElementById('pl-tt-val'); if (val) { val.setAttribute('x',(bx+bw/2).toFixed(1)); val.setAttribute('y',(by+13).toFixed(1)); val.textContent=(pl>=0?'+$':'-$')+Math.abs(pl).toFixed(2); }
+      const dte = document.getElementById('pl-tt-dte'); if (dte) { dte.setAttribute('x',(bx+bw/2).toFixed(1)); dte.setAttribute('y',(by+25).toFixed(1)); dte.textContent=dates[idx]+' ('+(results[idx]==='W'?'W':'L')+')'; }
+    }
+
     function renderHistory(data) {
       const historyData = normalizeEntries(data);
       const { displayEntries, summary } = buildDisplayEntries(historyData);
 
-      const rows = displayEntries.map((entry) => {
-        const isFinal = true;
-        const hasProfit = typeof entry?.profit === "number" && entry.graded;
+      // Draw chart from chronological order
+      const chronoGraded = [...historyData].sort(chronologicalAsc);
+      drawPLChart(chronoGraded);
 
-        const cumulative = entry.cumulativeProfit;
-        const resultClass = isFinal
-          ? (entry.result === "W" ? "badge badge-win" : "badge badge-loss")
-          : "badge";
-        const resultLabel = entry.result;
-        const plClass = hasProfit ? (entry.profit >= 0 ? "text-profit" : "text-loss") : "";
-        const cumulativeClass = typeof cumulative === "number"
-          ? (cumulative >= 0 ? "text-profit" : "text-loss")
-          : "";
-        const homeAwayDisplay = entry.homeAway === "home"
-          ? "Home"
-          : entry.homeAway === "away" || entry.homeAway === "road"
-            ? "Away"
-            : "&mdash;";
+      const rows = displayEntries.map((entry) => {
+        const hasProfit    = typeof entry?.profit === "number" && entry.graded;
+        const cumulative   = entry.cumulativeProfit;
+        const resultClass  = entry.result === "W" ? "badge badge-win" : "badge badge-loss";
+        const plClass      = hasProfit ? (entry.profit >= 0 ? "text-profit" : "text-loss") : "";
+        const cumulativeClass = typeof cumulative === "number" ? (cumulative >= 0 ? "text-profit" : "text-loss") : "";
+        const homeAwayDisplay = entry.homeAway === "home" ? "Home" : (entry.homeAway === "away" || entry.homeAway === "road") ? "Away" : "&mdash;";
         const logoUrl = getTeamLogoUrl(entry.opponent);
         const opponentCell = logoUrl
-          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent} team logo for Mets betting history" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
-          : `${entry.opponent}`;
+          ? `<div class="opponent-cell"><img src="${logoUrl}" class="history-team-logo" alt="${entry.opponent}" width="28" height="28" loading="lazy" decoding="async"><span>${entry.opponent}</span></div>`
+          : entry.opponent;
 
         return `<tr>
           <td data-label="Date">${formatDate(entry.date)}</td>
           <td data-label="Opponent">${opponentCell}</td>
           <td data-label="H/A">${homeAwayDisplay}</td>
           <td data-label="Mets ML">${formatOdds(entry.odds)}</td>
-          <td data-label="Result"><span class="${resultClass}">${resultLabel}</span></td>
+          <td data-label="Result"><span class="${resultClass}">${entry.result}</span></td>
           <td data-label="Score">${entry.finalScore || "&mdash;"}</td>
           <td data-label="Stake">$${getStake(entry).toFixed(2)}</td>
           <td data-label="Game P/L" class="${plClass}">${formatCurrency(hasProfit ? entry.profit : null)}</td>
@@ -291,36 +548,21 @@
 
       document.getElementById("history-body").innerHTML = rows.length
         ? rows.join("")
-        : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No Mets moneyline history tracked yet.</td></tr>`;
+        : `<tr><td colspan="9" style="color:#9099b0;padding:1rem;text-align:center">No picks tracked yet.</td></tr>`;
 
+      // Stat tiles
       document.getElementById("total-bets-display").textContent = String(summary.totalBets);
       document.getElementById("wins-display").textContent = String(summary.wins);
       document.getElementById("losses-display").textContent = String(summary.losses);
-      document.getElementById("wagered-display").textContent = `$${summary.totalWagered.toFixed(2)}`;
+      document.getElementById("wagered-display").textContent = `$${summary.totalWagered.toFixed(0)}`;
 
-      const plDisplay = document.getElementById("pl-display");
-      plDisplay.textContent = `${summary.profit >= 0 ? "+$" : "-$"}${Math.abs(summary.profit).toFixed(2)}`;
-      plDisplay.className = summary.profit >= 0 ? "text-profit" : "text-loss";
+      const plEl = document.getElementById("pl-display");
+      plEl.textContent = `${summary.profit >= 0 ? "+$" : "-$"}${Math.abs(summary.profit).toFixed(2)}`;
+      plEl.className = `ph-tile-val ${summary.profit >= 0 ? "text-profit" : "text-loss"}`;
 
-      const roiDisplay = document.getElementById("roi-display");
-      roiDisplay.textContent = `${summary.roi >= 0 ? "+" : ""}${summary.roi.toFixed(2)}%`;
-      roiDisplay.className = summary.roi >= 0 ? "text-profit" : "text-loss";
-
-      if (data?.generatedAt || data?.updatedAt) {
-        const timestamp = data.generatedAt || data.updatedAt;
-        const el = document.getElementById("data-timestamp");
-        if (el) {
-          el.textContent = "Last updated: " + new Date(timestamp).toLocaleString("en-US", {
-            timeZone: "America/New_York",
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-            timeZoneName: "short"
-          });
-        }
-      }
+      const roiEl = document.getElementById("roi-display");
+      roiEl.textContent = `${summary.roi >= 0 ? "+" : ""}${summary.roi.toFixed(1)}%`;
+      roiEl.className = `ph-tile-val ${summary.roi >= 0 ? "text-profit" : "text-loss"}`;
     }
 
     fetch("data/pick-history.json")
