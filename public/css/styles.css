@@ -2310,3 +2310,125 @@ footer {
     min-width: 500px;
   }
 }
+
+/* ============================================================
+   GLOBAL MOBILE AUDIT — comprehensive 640px fixes
+   ============================================================ */
+
+/* ── Universal shell padding ── */
+@media (max-width: 640px) {
+  .page-header { padding: 1rem 0 0.6rem; }
+  .page-header h1 { font-size: 1.45rem; }
+  .page-header p  { font-size: 0.84rem; line-height: 1.45; }
+
+  /* Kill excess top padding on all hero/header sections */
+  .pr-header,
+  .prospects-header,
+  .stats-page-header,
+  .dc-page-header { padding: 1rem 0 0.65rem; }
+
+  .pr-header h1,
+  .prospects-header h1,
+  .stats-page-header h1 { font-size: 1.4rem; }
+
+  /* Tighter shell padding site-wide */
+  .pr-shell       { padding: 0 0.7rem 2rem; }
+  .prospects-shell { padding: 0 0.7rem 2rem; }
+  .dc-shell       { padding: 0 0.7rem 2rem; }
+}
+
+/* ── index.html (Game Day) ── */
+@media (max-width: 640px) {
+  /* Sidebar collapses below main content — hide the sticky news sidebar
+     since main content already has most of the value */
+  .news-sidebar { display: none; }
+  /* Quick-link grid: 2-up on mobile */
+  .page-with-sidebar { grid-template-columns: 1fr; gap: 0.75rem; }
+  /* Alert banner tighter */
+  .alert-banner { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
+}
+
+/* ── Power Rankings ── */
+@media (max-width: 640px) {
+  .pr-shell { padding: 0 0.65rem 2rem; }
+  /* Method explanation: collapse padding */
+  .pr-method { padding: 0.7rem 0.85rem; font-size: 0.78rem; }
+  /* Table: freeze rank + team columns, scroll the rest */
+  .pr-table-wrap { border-radius: 12px; }
+  .pr-table { font-size: 0.75rem; }
+  .pr-table thead th,
+  .pr-table tbody td { padding: 0.5rem 0.45rem; }
+  /* Make rank col narrower */
+  .pr-table th:first-child,
+  .pr-table td:first-child { min-width: 36px; padding: 0.5rem 0.35rem; }
+  /* Team name col */
+  .pr-table th:nth-child(2),
+  .pr-table td:nth-child(2) { min-width: 110px; }
+}
+
+/* ── Prospects ── */
+@media (max-width: 640px) {
+  .prospect-stats { grid-template-columns: repeat(4, 1fr); gap: 0.15rem; }
+  .prospect-stat-val  { font-size: 0.82rem; }
+  .prospect-stat-label { font-size: 0.55rem; }
+  .prospect-name-row h3 { font-size: 0.9rem; }
+  .prospect-meta { font-size: 0.72rem; }
+}
+
+/* ── Betting History / Moneyline Tracker ── */
+@media (max-width: 640px) {
+  /* Record bar: wrap into 2 cols */
+  .record-bar {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+  }
+  .record-bar .disclaimer { grid-column: 1 / -1; font-size: 0.68rem; }
+  /* History table: smaller text, hide less-critical columns */
+  .history-table { font-size: 0.72rem; }
+  .history-table th,
+  .history-table td { padding: 0.42rem 0.4rem; white-space: nowrap; }
+  /* Hide Home/Away and Stake on mobile — not critical */
+  .history-table th:nth-child(3),
+  .history-table td:nth-child(3),
+  .history-table th:nth-child(7),
+  .history-table td:nth-child(7) { display: none; }
+}
+
+/* ── News page ── */
+@media (max-width: 640px) {
+  .news-page-shell { padding: 0 0.7rem 2rem; }
+  .news-page-header { padding: 1rem 0 0.5rem; }
+  .news-page-header h1 { font-size: 1.4rem; }
+  .news-tabs { gap: 0.3rem; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 0.25rem; -webkit-overflow-scrolling: touch; }
+  .news-tab { font-size: 0.74rem; padding: 0.38rem 0.85rem; white-space: nowrap; flex-shrink: 0; }
+  .news-card .news-title { font-size: 0.86rem; -webkit-line-clamp: 2; }
+  .news-body { padding: 0.7rem 0.75rem 0.75rem; gap: 0.28rem; }
+  .news-thumb-wrap { aspect-ratio: 16/8; }
+}
+
+/* ── Advanced Stats ── */
+@media (max-width: 640px) {
+  /* Glance strip: 2-up on mobile */
+  .at-a-glance { gap: 0; }
+  .glance-item { flex: 1 1 50%; }
+}
+
+/* ── Social pulse ── */
+@media (max-width: 640px) {
+  .sp-panels-row { grid-template-columns: 1fr; gap: 0.6rem; }
+  .sp-hero { padding: 1.25rem 1rem; }
+  .sp-hero-score { font-size: 2.4rem; }
+  .sp-panel { padding: 0.8rem 0.85rem; }
+}
+
+/* ── Support page ── */
+@media (max-width: 640px) {
+  .support-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── Gear / Jersey page ── */
+@media (max-width: 640px) {
+  .gear-grid { grid-template-columns: 1fr !important; }
+}

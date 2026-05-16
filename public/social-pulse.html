@@ -395,8 +395,37 @@
       font-size: 0.88rem;
     }
     @media (max-width: 640px) {
-      .sp-filter-bar { gap: 0.35rem; }
-      .sp-filter-btn { font-size: 0.68rem; padding: 0.28rem 0.6rem; }
+      /* Shell */
+      .sp-shell { padding: 0 0.65rem 2rem; }
+      .sp-header { padding: 1rem 0 0.6rem; }
+      .sp-header h1 { font-size: 1.5rem; }
+      .sp-header p { font-size: 0.82rem; }
+      /* Panels: stack to single column */
+      .sp-panels-row { grid-template-columns: 1fr; gap: 0.6rem; margin-bottom: 0.85rem; }
+      .sp-panel { padding: 0.75rem 0.85rem; }
+      .sp-panel h2 { font-size: 0.88rem; margin-bottom: 0.6rem; }
+      /* Hero */
+      .sp-hero { padding: 1.1rem 0.9rem; border-radius: 14px; }
+      .sp-hero-score { font-size: 2.6rem; }
+      .sp-hero-mood { font-size: 1.1rem; }
+      .sp-hero-summary { font-size: 0.82rem; }
+      .sp-gauge-wrap { max-width: 260px; }
+      /* Disclaimer: hide one, compress the other */
+      .sp-disclaimer:first-of-type { display: none; }
+      .sp-disclaimer { padding: 0.6rem 0.75rem; font-size: 0.76rem; margin-bottom: 0.7rem; }
+      /* Post cards: full width */
+      .sp-post-grid { grid-template-columns: 1fr; gap: 0.65rem; }
+      .sp-post-card { padding: 0.75rem 0.8rem; gap: 0.6rem; }
+      .sp-post-head h3 { font-size: 0.86rem; }
+      .sp-post-text { font-size: 0.84rem; -webkit-line-clamp: 4; }
+      .sp-post-meta { gap: 0.22rem; }
+      /* Filter bar */
+      .sp-filter-bar { gap: 0.3rem; }
+      .sp-filter-btn { font-size: 0.66rem; padding: 0.24rem 0.55rem; }
+      .sp-filter-divider { margin: 0; }
+      /* Player cards: 2-up */
+      .sp-pill-wrap { gap: 0.5rem; }
+      .sp-player-card { padding: 0.5rem 0.6rem; }
     }
   </style>
 </head>
