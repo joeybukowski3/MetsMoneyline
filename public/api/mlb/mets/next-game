@@ -24,7 +24,13 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 623211,
+      "fullName": "Huascar Brazobán",
+      "era": "2.14",
+      "fip": null,
+      "whip": "0.95"
+    },
     "opp": {
       "id": 607074,
       "fullName": "Carlos Rodón",
@@ -105,9 +111,9 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 27,
+          "wins": 28,
           "losses": 17,
-          "pct": ".614"
+          "pct": ".622"
         },
         "probablePitcher": {
           "id": 607074,
@@ -173,8 +179,13 @@
         },
         "leagueRecord": {
           "wins": 18,
-          "losses": 25,
-          "pct": ".419"
+          "losses": 26,
+          "pct": ".409"
+        },
+        "probablePitcher": {
+          "id": 623211,
+          "fullName": "Huascar Brazobán",
+          "link": "/api/v1/people/623211"
         },
         "splitSquad": false,
         "seriesNumber": 15,
@@ -221,12 +232,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYY leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -251,9 +287,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-16T02:14:46.339Z",
+    "generatedAt": "2026-05-16T04:01:06.054Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-05-15",
-    "cacheKey": "next-game:2026-05-15"
+    "referenceDate": "2026-05-16",
+    "cacheKey": "next-game:2026-05-16"
   }
 }

@@ -1,8 +1,3494 @@
 {
-  "generatedAt": "2026-05-16T02:14:48.906Z",
-  "referenceDate": "2026-05-15",
-  "cacheKey": "sample-game:2026-05-15",
+  "generatedAt": "2026-05-16T04:01:18.163Z",
+  "referenceDate": "2026-05-16",
+  "cacheKey": "sample-game:2026-05-16",
   "games": [
+    {
+      "id": "2026-05-16-mets-vs-new-york-yankees",
+      "date": "2026-05-16",
+      "time": "7:15 PM ET",
+      "ballpark": "Citi Field",
+      "opponent": "New York Yankees",
+      "oppTeamId": 147,
+      "homeAway": "home",
+      "metsRecord": "18-26",
+      "oppRecord": "28-17",
+      "recordSplits": {
+        "metsHome": "9-13",
+        "metsRoad": "9-13",
+        "oppHome": "14-6",
+        "oppRoad": "14-11"
+      },
+      "moneyline": {},
+      "status": "upcoming",
+      "pitching": {
+        "mets": {
+          "name": "Huascar Brazobán",
+          "mlbId": 623211,
+          "announced": true,
+          "hand": "R",
+          "generatedAt": "2026-05-16T04:01:08.430Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "2-1, 2.14 ERA, 0.95 WHIP, 21.0 IP",
+          "seasonRecord": "2-1",
+          "seasonERA": "2.14",
+          "seasonFIP": "3.49",
+          "seasonXERA": "2.73",
+          "seasonWHIP": "0.95",
+          "seasonHR9": "0.43",
+          "last3KBB": "2.00",
+          "kMinusBbPct": 9.7,
+          "note": "2026 - 21.0 IP",
+          "savant": {
+            "xERA": "2.73",
+            "xBAAllowed": "0.208",
+            "xSLGAllowed": "0.275",
+            "xwOBAAllowed": "0.265",
+            "barrelPct": "1.8%",
+            "hardHitPct": "22.8%",
+            "whiffPct": "25.6%",
+            "chasePct": "32.1%",
+            "kPct": "19.5%",
+            "bbPct": "9.8%",
+            "exitVeloAllowed": 83.4,
+            "launchAngleAllowed": 8.8,
+            "percentiles": {
+              "barrelPct": 88,
+              "hardHitPct": 96,
+              "kPct": 44,
+              "bbPct": 48,
+              "xERA": 88,
+              "xBAAllowed": 82,
+              "xSLGAllowed": 90
+            }
+          },
+          "vsRoster": {
+            "PA": 23,
+            "kPct": 0.2608695652173913,
+            "bbPct": 0.30434782608695654,
+            "AVG": "0.133",
+            "wOBA": "0.346",
+            "xwOBA": "0.355",
+            "exitVelo": 83.4,
+            "launchAngle": 8.8,
+            "xBA": "0.245",
+            "xSLG": "0.459",
+            "HR": 0
+          }
+        },
+        "opp": {
+          "name": "Carlos Rodón",
+          "mlbId": 607074,
+          "announced": true,
+          "hand": "L",
+          "generatedAt": "2026-05-16T04:01:08.437Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "0-0, 6.23 ERA, 1.62 WHIP, 4.1 IP",
+          "seasonRecord": "0-0",
+          "seasonERA": "6.23",
+          "seasonFIP": "5.42",
+          "seasonXERA": "4.52",
+          "seasonWHIP": "1.62",
+          "seasonHR9": "0.00",
+          "last3KBB": "0.80",
+          "kMinusBbPct": -4.8,
+          "note": "2026 - 4.1 IP",
+          "savant": {
+            "xERA": "4.52",
+            "xBAAllowed": "0.169",
+            "xSLGAllowed": "0.191",
+            "xwOBAAllowed": "0.335",
+            "barrelPct": "0%",
+            "hardHitPct": "18.2%",
+            "whiffPct": "28.1%",
+            "chasePct": "21.7%",
+            "kPct": "19%",
+            "bbPct": "23.8%",
+            "exitVeloAllowed": 92.5,
+            "launchAngleAllowed": -0.9,
+            "percentiles": {
+              "barrelPct": 100,
+              "hardHitPct": 98,
+              "kPct": 42,
+              "bbPct": 4,
+              "xERA": 51,
+              "xBAAllowed": 93,
+              "xSLGAllowed": 97
+            }
+          },
+          "vsRoster": {
+            "PA": 66,
+            "kPct": 0.19696969696969696,
+            "bbPct": 0.09090909090909091,
+            "AVG": "0.190",
+            "wOBA": "0.297",
+            "xwOBA": "0.329",
+            "exitVelo": 92.5,
+            "launchAngle": -0.9,
+            "xBA": "0.258",
+            "xSLG": "0.436",
+            "HR": 2
+          }
+        },
+        "metsBullpen": {
+          "seasonERA": 4.15,
+          "seasonXERAAverage": 3.83,
+          "seasonXFIP": "3.65",
+          "last20ERA": 3.13,
+          "last20WHIP": 1.23,
+          "seasonWHIP": 1.37,
+          "seasonKPct": "24.8%",
+          "seasonBBPct": "9.2%",
+          "rating": 85,
+          "team": "New York Mets",
+          "usage": {
+            "appearances": 16,
+            "appearancesPerPitcherPerDay": 0.18,
+            "label": "Low",
+            "tone": "green"
+          },
+          "closer": {
+            "playerId": 642207,
+            "name": "Devin Williams",
+            "saves": 5,
+            "saveOpportunities": 6,
+            "era": 5.27,
+            "whip": 1.61,
+            "saveConversionPct": 83.3,
+            "last7DaysAppearances": 1,
+            "last7DaysInningsPitched": "1.0"
+          },
+          "relieverCount": 13
+        },
+        "oppBullpen": {
+          "seasonERA": 3.19,
+          "seasonXERAAverage": 3.08,
+          "seasonXFIP": "3.63",
+          "last20ERA": 2.15,
+          "last20WHIP": 1.09,
+          "seasonWHIP": 1.2,
+          "seasonKPct": "23.9%",
+          "seasonBBPct": "8.3%",
+          "rating": 85,
+          "team": "New York Yankees",
+          "usage": {
+            "appearances": 20,
+            "appearancesPerPitcherPerDay": 0.22,
+            "label": "Low",
+            "tone": "green"
+          },
+          "closer": {
+            "playerId": 670280,
+            "name": "David Bednar",
+            "saves": 10,
+            "saveOpportunities": 11,
+            "era": 3.79,
+            "whip": 1.42,
+            "saveConversionPct": 90.9,
+            "last7DaysAppearances": 4,
+            "last7DaysInningsPitched": "3.2"
+          },
+          "relieverCount": 13
+        }
+      },
+      "lineups": {
+        "mets": [
+          {
+            "order": 1,
+            "playerId": 701807,
+            "name": "Carson Benge",
+            "pos": "RF",
+            "seasonAVG": ".230",
+            "seasonOPS": ".621",
+            "seasonHR": 3,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.255",
+              "xSLG": "0.393",
+              "xwOBA": "0.311",
+              "hardHitPct": "42.6%",
+              "barrelPct": "5.9%",
+              "whiffPct": "20.2%",
+              "kPct": "21.1%",
+              "bbPct": "7.7%",
+              "pa": 142
+            },
+            "fangraphs": {
+              "wRCPlus": "86",
+              "wOBA": ".290",
+              "OBP": ".296",
+              "ISO": ".107",
+              "bbPct": "7.7%",
+              "kPct": "21.1%",
+              "war": "0.3"
+            },
+            "recent20": {
+              "avg": 0.306,
+              "ops": 0.751,
+              "plateAppearances": 66,
+              "atBats": 62,
+              "hits": 19
+            }
+          },
+          {
+            "order": 2,
+            "playerId": 666182,
+            "name": "Bo Bichette",
+            "pos": "SS",
+            "seasonAVG": ".213",
+            "seasonOPS": ".539",
+            "seasonHR": 2,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.281",
+              "xSLG": "0.396",
+              "xwOBA": "0.32",
+              "hardHitPct": "44.1%",
+              "barrelPct": "4.2%",
+              "whiffPct": "17.3%",
+              "kPct": "17.5%",
+              "bbPct": "6.9%",
+              "pa": 189
+            },
+            "fangraphs": {
+              "wRCPlus": "60",
+              "wOBA": ".252",
+              "OBP": ".270",
+              "ISO": ".063",
+              "bbPct": "6.9%",
+              "kPct": "17.5%",
+              "war": "0.0"
+            },
+            "recent20": {
+              "avg": 0.174,
+              "ops": 0.473,
+              "plateAppearances": 78,
+              "atBats": 69,
+              "hits": 12
+            }
+          },
+          {
+            "order": 3,
+            "playerId": 665742,
+            "name": "Juan Soto",
+            "pos": "LF",
+            "seasonAVG": ".271",
+            "seasonOPS": ".858",
+            "seasonHR": 6,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.267",
+              "xSLG": "0.564",
+              "xwOBA": "0.384",
+              "hardHitPct": "48.3%",
+              "barrelPct": "18.6%",
+              "whiffPct": "20.6%",
+              "kPct": "15%",
+              "bbPct": "12.5%",
+              "pa": 120
+            },
+            "fangraphs": {
+              "wRCPlus": "132",
+              "wOBA": ".358",
+              "OBP": ".358",
+              "ISO": ".202",
+              "bbPct": "12.5%",
+              "kPct": "15.0%",
+              "war": "0.6"
+            },
+            "recent20": {
+              "avg": 0.242,
+              "ops": 0.868,
+              "plateAppearances": 77,
+              "atBats": 66,
+              "hits": 16
+            }
+          },
+          {
+            "order": 4,
+            "playerId": 668901,
+            "name": "Mark Vientos",
+            "pos": "1B",
+            "seasonAVG": ".234",
+            "seasonOPS": ".697",
+            "seasonHR": 6,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.292",
+              "xSLG": "0.569",
+              "xwOBA": "0.382",
+              "hardHitPct": "48.9%",
+              "barrelPct": "12.8%",
+              "whiffPct": "27.9%",
+              "kPct": "20.9%",
+              "bbPct": "5.4%",
+              "pa": 129
+            },
+            "fangraphs": {
+              "wRCPlus": "104",
+              "wOBA": ".317",
+              "OBP": ".287",
+              "ISO": ".192",
+              "bbPct": "5.4%",
+              "kPct": "20.9%",
+              "war": "-0.1"
+            },
+            "recent20": {
+              "avg": 0.224,
+              "ops": 0.757,
+              "plateAppearances": 62,
+              "atBats": 58,
+              "hits": 13
+            }
+          },
+          {
+            "order": 5,
+            "playerId": 669004,
+            "name": "MJ Melendez",
+            "pos": "DH",
+            "seasonAVG": ".250",
+            "seasonOPS": ".790",
+            "seasonHR": 2,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.18",
+              "xSLG": "0.347",
+              "xwOBA": "0.288",
+              "hardHitPct": "62.5%",
+              "barrelPct": "15.6%",
+              "whiffPct": "35.9%",
+              "kPct": "34.4%",
+              "bbPct": "11.5%",
+              "pa": 61
+            },
+            "fangraphs": {
+              "wRCPlus": "134",
+              "wOBA": ".360",
+              "OBP": ".350",
+              "ISO": ".212",
+              "bbPct": "11.5%",
+              "kPct": "34.4%",
+              "war": "0.2"
+            },
+            "recent20": {
+              "avg": 0.231,
+              "ops": 0.718,
+              "plateAppearances": 46,
+              "atBats": 39,
+              "hits": 9
+            }
+          },
+          {
+            "order": 6,
+            "playerId": 683146,
+            "name": "Brett Baty",
+            "pos": "3B",
+            "seasonAVG": ".230",
+            "seasonOPS": ".644",
+            "seasonHR": 2,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.233",
+              "xSLG": "0.377",
+              "xwOBA": "0.3",
+              "hardHitPct": "38.6%",
+              "barrelPct": "8%",
+              "whiffPct": "27.2%",
+              "kPct": "26.6%",
+              "bbPct": "8.6%",
+              "pa": 139
+            },
+            "fangraphs": {
+              "wRCPlus": "80",
+              "wOBA": ".282",
+              "OBP": ".290",
+              "ISO": ".114",
+              "bbPct": "8.6%",
+              "kPct": "26.6%",
+              "war": "-0.1"
+            },
+            "recent20": {
+              "avg": 0.216,
+              "ops": 0.669,
+              "plateAppearances": 63,
+              "atBats": 51,
+              "hits": 11
+            }
+          },
+          {
+            "order": 7,
+            "playerId": 543760,
+            "name": "Marcus Semien",
+            "pos": "2B",
+            "seasonAVG": ".229",
+            "seasonOPS": ".616",
+            "seasonHR": 3,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.25",
+              "xSLG": "0.406",
+              "xwOBA": "0.314",
+              "hardHitPct": "35.8%",
+              "barrelPct": "8.3%",
+              "whiffPct": "22.7%",
+              "kPct": "19.5%",
+              "bbPct": "7.1%",
+              "pa": 169
+            },
+            "fangraphs": {
+              "wRCPlus": "77",
+              "wOBA": ".277",
+              "OBP": ".286",
+              "ISO": ".097",
+              "bbPct": "7.1%",
+              "kPct": "19.5%",
+              "war": "-0.1"
+            },
+            "recent20": {
+              "avg": 0.231,
+              "ops": 0.634,
+              "plateAppearances": 71,
+              "atBats": 65,
+              "hits": 15
+            }
+          },
+          {
+            "order": 8,
+            "playerId": 805999,
+            "name": "A.J. Ewing",
+            "pos": "CF",
+            "seasonAVG": ".250",
+            "seasonOPS": "1.105",
+            "seasonHR": 1,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.389",
+              "xSLG": "0.928",
+              "xwOBA": "0.599",
+              "hardHitPct": "83.3%",
+              "barrelPct": "33.3%",
+              "whiffPct": "18.8%",
+              "kPct": "23.1%",
+              "bbPct": "30.8%",
+              "pa": 13
+            },
+            "fangraphs": {
+              "wRCPlus": "278",
+              "wOBA": ".572",
+              "OBP": ".538",
+              "ISO": ".556",
+              "bbPct": "30.8%",
+              "kPct": "23.1%",
+              "war": "0.3"
+            },
+            "recent20": {
+              "avg": 0.25,
+              "ops": 1.105,
+              "plateAppearances": 16,
+              "atBats": 12,
+              "hits": 3
+            }
+          },
+          {
+            "order": 9,
+            "playerId": 620443,
+            "name": "Luis Torrens",
+            "pos": "C",
+            "seasonAVG": ".204",
+            "seasonOPS": ".537",
+            "seasonHR": 0,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.232",
+              "xSLG": "0.311",
+              "xwOBA": "0.269",
+              "hardHitPct": "48.8%",
+              "barrelPct": "0%",
+              "whiffPct": "25.7%",
+              "kPct": "19.6%",
+              "bbPct": "5.4%",
+              "pa": 56
+            },
+            "fangraphs": {
+              "wRCPlus": "65",
+              "wOBA": ".260",
+              "OBP": ".273",
+              "ISO": ".078",
+              "bbPct": "5.4%",
+              "kPct": "19.6%",
+              "war": "0.4"
+            },
+            "recent20": {
+              "avg": 0.172,
+              "ops": 0.514,
+              "plateAppearances": 34,
+              "atBats": 29,
+              "hits": 5
+            }
+          }
+        ],
+        "opp": [
+          {
+            "order": 1,
+            "playerId": 663757,
+            "name": "Trent Grisham",
+            "pos": "CF",
+            "seasonAVG": ".169",
+            "seasonOPS": ".654",
+            "seasonHR": 6,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.226",
+              "xSLG": "0.446",
+              "xwOBA": "0.353",
+              "hardHitPct": "51.4%",
+              "barrelPct": "14.4%",
+              "whiffPct": "17.7%",
+              "kPct": "16.8%",
+              "bbPct": "16.8%",
+              "pa": 167
+            },
+            "fangraphs": {
+              "wRCPlus": "94",
+              "wOBA": ".308",
+              "OBP": ".311",
+              "ISO": ".190",
+              "bbPct": "16.8%",
+              "kPct": "16.8%",
+              "war": "0.3"
+            },
+            "recent20": {
+              "avg": 0.176,
+              "ops": 0.67,
+              "plateAppearances": 80,
+              "atBats": 68,
+              "hits": 12
+            }
+          },
+          {
+            "order": 2,
+            "playerId": 700250,
+            "name": "Ben Rice",
+            "pos": "1B",
+            "seasonAVG": ".314",
+            "seasonOPS": "1.104",
+            "seasonHR": 14,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.297",
+              "xSLG": "0.596",
+              "xwOBA": "0.43",
+              "hardHitPct": "58.1%",
+              "barrelPct": "20.4%",
+              "whiffPct": "26%",
+              "kPct": "25.6%",
+              "bbPct": "15.6%",
+              "pa": 160
+            },
+            "fangraphs": {
+              "wRCPlus": "193",
+              "wOBA": ".455",
+              "OBP": ".413",
+              "ISO": ".364",
+              "bbPct": "15.6%",
+              "kPct": "25.6%",
+              "war": "2.0"
+            },
+            "recent20": {
+              "avg": 0.31,
+              "ops": 0.972,
+              "plateAppearances": 65,
+              "atBats": 58,
+              "hits": 18
+            }
+          },
+          {
+            "order": 3,
+            "playerId": 592450,
+            "name": "Aaron Judge",
+            "pos": "RF",
+            "seasonAVG": ".267",
+            "seasonOPS": "1.010",
+            "seasonHR": 16,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.273",
+              "xSLG": "0.639",
+              "xwOBA": "0.435",
+              "hardHitPct": "54.9%",
+              "barrelPct": "24.5%",
+              "whiffPct": "33.3%",
+              "kPct": "28.4%",
+              "bbPct": "17.5%",
+              "pa": 194
+            },
+            "fangraphs": {
+              "wRCPlus": "178",
+              "wOBA": ".433",
+              "OBP": ".404",
+              "ISO": ".350",
+              "bbPct": "17.5%",
+              "kPct": "28.4%",
+              "war": "2.4"
+            },
+            "recent20": {
+              "avg": 0.309,
+              "ops": 1.116,
+              "plateAppearances": 85,
+              "atBats": 68,
+              "hits": 21
+            }
+          },
+          {
+            "order": 4,
+            "playerId": 641355,
+            "name": "Cody Bellinger",
+            "pos": "LF",
+            "seasonAVG": ".270",
+            "seasonOPS": ".846",
+            "seasonHR": 5,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.292",
+              "xSLG": "0.47",
+              "xwOBA": "0.381",
+              "hardHitPct": "41%",
+              "barrelPct": "8.3%",
+              "whiffPct": "17.6%",
+              "kPct": "12.4%",
+              "bbPct": "15.1%",
+              "pa": 185
+            },
+            "fangraphs": {
+              "wRCPlus": "140",
+              "wOBA": ".376",
+              "OBP": ".378",
+              "ISO": ".201",
+              "bbPct": "15.1%",
+              "kPct": "12.4%",
+              "war": "1.9"
+            },
+            "recent20": {
+              "avg": 0.275,
+              "ops": 0.922,
+              "plateAppearances": 83,
+              "atBats": 69,
+              "hits": 19
+            }
+          },
+          {
+            "order": 5,
+            "playerId": 665862,
+            "name": "Jazz Chisholm Jr.",
+            "pos": "2B",
+            "seasonAVG": ".217",
+            "seasonOPS": ".639",
+            "seasonHR": 4,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.191",
+              "xSLG": "0.315",
+              "xwOBA": "0.265",
+              "hardHitPct": "35.6%",
+              "barrelPct": "5.8%",
+              "whiffPct": "31.4%",
+              "kPct": "29.2%",
+              "bbPct": "9.4%",
+              "pa": 171
+            },
+            "fangraphs": {
+              "wRCPlus": "73",
+              "wOBA": ".277",
+              "OBP": ".281",
+              "ISO": ".124",
+              "bbPct": "9.4%",
+              "kPct": "29.2%",
+              "war": "0.4"
+            },
+            "recent20": {
+              "avg": 0.221,
+              "ops": 0.642,
+              "plateAppearances": 76,
+              "atBats": 68,
+              "hits": 15
+            }
+          },
+          {
+            "order": 6,
+            "playerId": 641857,
+            "name": "Ryan McMahon",
+            "pos": "3B",
+            "seasonAVG": ".190",
+            "seasonOPS": ".559",
+            "seasonHR": 3,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.205",
+              "xSLG": "0.338",
+              "xwOBA": "0.277",
+              "hardHitPct": "50.7%",
+              "barrelPct": "8.2%",
+              "whiffPct": "31.6%",
+              "kPct": "31.5%",
+              "bbPct": "9.7%",
+              "pa": 124
+            },
+            "fangraphs": {
+              "wRCPlus": "66",
+              "wOBA": ".266",
+              "OBP": ".274",
+              "ISO": ".107",
+              "bbPct": "9.7%",
+              "kPct": "31.5%",
+              "war": "0.0"
+            },
+            "recent20": {
+              "avg": 0.222,
+              "ops": 0.563,
+              "plateAppearances": 65,
+              "atBats": 63,
+              "hits": 14
+            }
+          },
+          {
+            "order": 7,
+            "playerId": 682987,
+            "name": "Spencer Jones",
+            "pos": "DH",
+            "seasonAVG": ".188",
+            "seasonOPS": ".504",
+            "seasonHR": 0,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.148",
+              "xSLG": "0.188",
+              "xwOBA": "0.259",
+              "hardHitPct": "66.7%",
+              "barrelPct": "0%",
+              "whiffPct": "45.5%",
+              "kPct": "40%",
+              "bbPct": "20%",
+              "pa": 15
+            },
+            "fangraphs": {
+              "wRCPlus": "22",
+              "wOBA": ".201",
+              "OBP": ".267",
+              "ISO": ".000",
+              "bbPct": "20.0%",
+              "kPct": "40.0%",
+              "war": "-0.1"
+            },
+            "recent20": {
+              "avg": 0.188,
+              "ops": 0.504,
+              "plateAppearances": 19,
+              "atBats": 16,
+              "hits": 3
+            }
+          },
+          {
+            "order": 8,
+            "playerId": 683011,
+            "name": "Anthony Volpe",
+            "pos": "SS",
+            "seasonAVG": ".000",
+            "seasonOPS": ".429",
+            "seasonHR": 0,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.015",
+              "xSLG": "0.018",
+              "xwOBA": "0.014",
+              "hardHitPct": "0%",
+              "barrelPct": "0%",
+              "whiffPct": "30%",
+              "kPct": "33.3%",
+              "bbPct": "0%",
+              "pa": 3
+            },
+            "fangraphs": {
+              "wRCPlus": "-100",
+              "wOBA": ".000",
+              "OBP": ".000",
+              "ISO": ".000",
+              "bbPct": "0.0%",
+              "kPct": "33.3%",
+              "war": "-0.1"
+            },
+            "recent20": {
+              "avg": 0,
+              "ops": 0.429,
+              "plateAppearances": 7,
+              "atBats": 4,
+              "hits": 0
+            }
+          },
+          {
+            "order": 9,
+            "playerId": 669224,
+            "name": "Austin Wells",
+            "pos": "C",
+            "seasonAVG": ".173",
+            "seasonOPS": ".567",
+            "seasonHR": 3,
+            "statsSeason": "2026",
+            "savant": {
+              "xBA": "0.222",
+              "xSLG": "0.363",
+              "xwOBA": "0.314",
+              "hardHitPct": "45.9%",
+              "barrelPct": "5.4%",
+              "whiffPct": "27.5%",
+              "kPct": "22.5%",
+              "bbPct": "15.8%",
+              "pa": 120
+            },
+            "fangraphs": {
+              "wRCPlus": "70",
+              "wOBA": ".272",
+              "OBP": ".308",
+              "ISO": ".100",
+              "bbPct": "15.8%",
+              "kPct": "22.5%",
+              "war": "0.4"
+            },
+            "recent20": {
+              "avg": 0.186,
+              "ops": 0.612,
+              "plateAppearances": 49,
+              "atBats": 43,
+              "hits": 8
+            }
+          }
+        ],
+        "lineupStatus": "projected"
+      },
+      "advancedMatchup": [
+        {
+          "category": "Offense vs SP Hand - wRC+",
+          "mets": "85",
+          "opp": "114",
+          "edge": "Opp"
+        },
+        {
+          "category": "Hard-Hit %",
+          "mets": "42.4%",
+          "opp": "47.6%",
+          "edge": "Opp"
+        },
+        {
+          "category": "Barrel %",
+          "mets": "8.7%",
+          "opp": "12.7%",
+          "edge": "Opp"
+        },
+        {
+          "category": "Walk Rate (BB%)",
+          "mets": "8.2%",
+          "opp": "12.1%",
+          "edge": "Opp"
+        },
+        {
+          "category": "Strikeout Rate (K%)",
+          "mets": "20.8%",
+          "opp": "23.3%",
+          "edge": "Mets"
+        }
+      ],
+      "teamAdvanced": {
+        "mets": {
+          "wrcPlus": "85",
+          "woba": ".289",
+          "iso": ".123",
+          "xba": "0.251",
+          "xslg": "0.421",
+          "xwoba": "0.319",
+          "ops": ".638",
+          "hardHit": "42.4",
+          "barrelPct": "8.7",
+          "bbPct": "8.2%",
+          "kPct": "20.8%",
+          "rotFip": "3.55",
+          "rotXfip": "3.65",
+          "rotEra": "3.75",
+          "rotWhip": "1.27",
+          "pitchKPct": "24.8%",
+          "pitchBBPct": "9.2%",
+          "leagueRanks": {
+            "wrcPlus": 29,
+            "woba": 30,
+            "iso": 26,
+            "ops": 30,
+            "xba": 9,
+            "xslg": 10,
+            "xwoba": 15,
+            "hardHit": 6,
+            "barrelPct": 13,
+            "bbPct": 24,
+            "kPct": 7,
+            "rotEra": 9,
+            "rotFip": 4,
+            "rotWhip": 11
+          },
+          "rankScope": "MLB",
+          "rankTotal": 30
+        },
+        "opp": {
+          "wrcPlus": "114",
+          "woba": ".338",
+          "iso": ".199",
+          "xba": "0.246",
+          "xslg": "0.462",
+          "xwoba": "0.353",
+          "ops": ".763",
+          "hardHit": "47.6",
+          "barrelPct": "12.7",
+          "bbPct": "12.1%",
+          "kPct": "23.3%",
+          "rotFip": "3.46",
+          "rotXfip": "3.63",
+          "rotEra": "3.22",
+          "rotWhip": "1.15",
+          "pitchKPct": "23.9%",
+          "pitchBBPct": "8.3%",
+          "leagueRanks": {
+            "wrcPlus": 3,
+            "woba": 3,
+            "iso": 1,
+            "ops": 3,
+            "xba": 12,
+            "xslg": 3,
+            "xwoba": 2,
+            "hardHit": 3,
+            "barrelPct": 1,
+            "bbPct": 1,
+            "kPct": 22,
+            "rotEra": 2,
+            "rotFip": 2,
+            "rotWhip": 3
+          },
+          "rankScope": "MLB",
+          "rankTotal": 30
+        }
+      },
+      "recentForm": {
+        "mets": {
+          "teamId": 121,
+          "teamName": "New York Mets",
+          "rows": [
+            {
+              "statKey": "ops",
+              "seasonRank": 30,
+              "seasonValue": 0.638,
+              "recentRank": 26,
+              "recentValue": 0.641,
+              "differencePct": 0.5,
+              "improving": true
+            },
+            {
+              "statKey": "avg",
+              "seasonRank": 29,
+              "seasonValue": 0.225,
+              "recentRank": 26,
+              "recentValue": 0.217,
+              "differencePct": -3.6,
+              "improving": false
+            },
+            {
+              "statKey": "kPct",
+              "seasonRank": 8,
+              "seasonValue": 20.9,
+              "recentRank": 8,
+              "recentValue": 20.3,
+              "differencePct": 2.9,
+              "improving": true
+            },
+            {
+              "statKey": "bbPct",
+              "seasonRank": 24,
+              "seasonValue": 8.2,
+              "recentRank": 18,
+              "recentValue": 8.8,
+              "differencePct": 7.3,
+              "improving": true
+            }
+          ]
+        },
+        "opp": {
+          "teamId": 147,
+          "teamName": "New York Yankees",
+          "rows": [
+            {
+              "statKey": "ops",
+              "seasonRank": 3,
+              "seasonValue": 0.763,
+              "recentRank": 1,
+              "recentValue": 0.783,
+              "differencePct": 2.6,
+              "improving": true
+            },
+            {
+              "statKey": "avg",
+              "seasonRank": 19,
+              "seasonValue": 0.236,
+              "recentRank": 11,
+              "recentValue": 0.245,
+              "differencePct": 3.8,
+              "improving": true
+            },
+            {
+              "statKey": "kPct",
+              "seasonRank": 23,
+              "seasonValue": 23.4,
+              "recentRank": 14,
+              "recentValue": 21.8,
+              "differencePct": 6.8,
+              "improving": true
+            },
+            {
+              "statKey": "bbPct",
+              "seasonRank": 1,
+              "seasonValue": 12,
+              "recentRank": 3,
+              "recentValue": 11.4,
+              "differencePct": -5,
+              "improving": false
+            }
+          ]
+        }
+      },
+      "emailData": {
+        "homeAwayEdge": {
+          "metsHome": {
+            "homeAway": "home",
+            "games": 22,
+            "runsFor": 89,
+            "runsAgainst": 103,
+            "differential": -14
+          },
+          "oppRoad": {
+            "homeAway": "road",
+            "games": 25,
+            "runsFor": 97,
+            "runsAgainst": 73,
+            "differential": 24
+          }
+        }
+      },
+      "gameContext": {
+        "metsRecentGames": [
+          {
+            "date": "2026-05-15",
+            "opponent": "New York Yankees",
+            "homeAway": "home",
+            "result": "L",
+            "score": "2-5"
+          },
+          {
+            "date": "2026-05-14",
+            "opponent": "Detroit Tigers",
+            "homeAway": "home",
+            "result": "W",
+            "score": "9-4"
+          },
+          {
+            "date": "2026-05-13",
+            "opponent": "Detroit Tigers",
+            "homeAway": "home",
+            "result": "W",
+            "score": "3-2"
+          },
+          {
+            "date": "2026-05-12",
+            "opponent": "Detroit Tigers",
+            "homeAway": "home",
+            "result": "W",
+            "score": "10-2"
+          },
+          {
+            "date": "2026-05-10",
+            "opponent": "Arizona Diamondbacks",
+            "homeAway": "road",
+            "result": "L",
+            "score": "1-5"
+          }
+        ],
+        "oppRecentGames": [
+          {
+            "date": "2026-05-15",
+            "opponent": "New York Mets",
+            "homeAway": "road",
+            "result": "W",
+            "score": "5-2"
+          },
+          {
+            "date": "2026-05-13",
+            "opponent": "Baltimore Orioles",
+            "homeAway": "road",
+            "result": "L",
+            "score": "0-7"
+          },
+          {
+            "date": "2026-05-12",
+            "opponent": "Baltimore Orioles",
+            "homeAway": "road",
+            "result": "W",
+            "score": "6-2"
+          },
+          {
+            "date": "2026-05-11",
+            "opponent": "Baltimore Orioles",
+            "homeAway": "road",
+            "result": "L",
+            "score": "2-3"
+          },
+          {
+            "date": "2026-05-10",
+            "opponent": "Milwaukee Brewers",
+            "homeAway": "road",
+            "result": "L",
+            "score": "3-4"
+          }
+        ],
+        "metsInjuries": [
+          {
+            "name": "Francisco Alvarez",
+            "status": "IL",
+            "description": "Francisco Alvarez (IL) - New York Mets placed C Francisco Alvarez on the 10-day injured list. Right meniscus tear."
+          },
+          {
+            "name": "Ronny Mauricio",
+            "status": "IL",
+            "description": "Ronny Mauricio (IL) - New York Mets placed SS Ronny Mauricio on the 10-day injured list. Left thumb fracture."
+          },
+          {
+            "name": "Kodai Senga",
+            "status": "IL",
+            "description": "Kodai Senga (IL) - New York Mets placed RHP Kodai Senga on the 15-day injured list retroactive to April 27, 2026. Lumbar spine inflammation."
+          },
+          {
+            "name": "Luis Robert Jr.",
+            "status": "IL",
+            "description": "Luis Robert Jr. (IL) - New York Mets placed CF Luis Robert Jr. on the 10-day injured list retroactive to April 27, 2026. Lumbar spine disc herniation."
+          },
+          {
+            "name": "Francisco Lindor",
+            "status": "IL",
+            "description": "Francisco Lindor (IL) - New York Mets placed SS Francisco Lindor on the 10-day injured list. Left calf strain."
+          }
+        ],
+        "oppInjuries": [
+          {
+            "name": "José Caballero",
+            "status": "IL",
+            "description": "José Caballero (IL) - New York Yankees placed SS José Caballero on the 10-day injured list. Right middle finger fracture."
+          },
+          {
+            "name": "Jasson Domínguez",
+            "status": "IL",
+            "description": "Jasson Domínguez (IL) - New York Yankees placed LF Jasson Domínguez on the 10-day injured list. Left shoulder AC joint sprain."
+          },
+          {
+            "name": "Giancarlo Stanton",
+            "status": "IL",
+            "description": "Giancarlo Stanton (IL) - New York Yankees placed DH Giancarlo Stanton on the 10-day injured list retroactive to April 25, 2026. Right calf strain."
+          },
+          {
+            "name": "Angel Chivilli",
+            "status": "IL",
+            "description": "Angel Chivilli (IL) - New York Yankees placed RHP Angel Chivilli on the 15-day injured list retroactive to April 23, 2026. Right shoulder discomfort."
+          }
+        ],
+        "headToHead": {
+          "wins": 0,
+          "losses": 1,
+          "recentGames": [
+            {
+              "date": "2026-05-15",
+              "opponent": "New York Yankees",
+              "homeAway": "home",
+              "result": "L",
+              "score": "2-5"
+            }
+          ]
+        },
+        "lastMeeting": {
+          "gamePk": 823629,
+          "date": "2026-05-15",
+          "ballpark": "Citi Field",
+          "homeAway": "home",
+          "metsScore": 2,
+          "oppScore": 5,
+          "result": "loss",
+          "summary": "On 2026-05-15, the Mets lost to the New York Yankees 2-5 at Citi Field.",
+          "recapHeadline": "Schlittler's Subway Series introduction: 1 run, 9 K's in 6 2/3-inning gem",
+          "recapNotes": [
+            "NEW YORK – If the Yankees have learned one thing about Cam Schlittler as he continues to impress, it might be this: The bigger the stage, the more likely he is to dominate.",
+            "The young right-hander dazzled in his introduction to the Subway Series, striking out nine over 6 2/3 innings as the Yankees renewed their Interleague rivalry with a 5-2 win over the Mets on Friday evening at Citi Field."
+          ],
+          "source": {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Schlittler's Subway Series introduction: 1 run, 9 K's in 6 2/3-inning gem",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/cam-schlittler-shines-in-2026-subway-series-opener"
+          }
+        },
+        "metsPitcherLog": [
+          {
+            "date": "2026-05-13",
+            "opponent": "Detroit Tigers",
+            "ip": "2.1",
+            "er": "0",
+            "k": "2",
+            "result": "W"
+          },
+          {
+            "date": "2026-05-10",
+            "opponent": "Arizona Diamondbacks",
+            "ip": "1.0",
+            "er": "2",
+            "k": "0",
+            "result": "L"
+          },
+          {
+            "date": "2026-05-07",
+            "opponent": "Colorado Rockies",
+            "ip": "1.0",
+            "er": "1",
+            "k": "1",
+            "result": "-"
+          },
+          {
+            "date": "2026-05-04",
+            "opponent": "Colorado Rockies",
+            "ip": "1.0",
+            "er": "0",
+            "k": "0",
+            "result": "W"
+          }
+        ],
+        "oppPitcherLog": [
+          {
+            "date": "2026-05-10",
+            "opponent": "Milwaukee Brewers",
+            "ip": "4.1",
+            "er": "3",
+            "k": "4",
+            "result": "-"
+          }
+        ]
+      },
+      "canonicalGameSource": {
+        "source": "external/mlb-stats",
+        "stale": false,
+        "note": "Resolved via external/mlb-stats."
+      },
+      "editorial": {
+        "recentSources": [
+          {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Schlittler's Subway Series introduction: 1 run, 9 K's in 6 2/3-inning gem",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/cam-schlittler-shines-in-2026-subway-series-opener"
+          }
+        ],
+        "previewMode": {
+          "isOffDayPreview": false,
+          "requestedDate": "2026-05-16",
+          "resolvedDate": "2026-05-16"
+        }
+      },
+      "trends": [
+        {
+          "category": "Last 10 Games",
+          "mets": "6-4",
+          "opp": "4-6",
+          "edge": "Mets"
+        },
+        {
+          "category": "Home/Road",
+          "mets": "Home 9-13",
+          "opp": "Road 14-11",
+          "edge": "Opp"
+        },
+        {
+          "category": "Series Context",
+          "mets": "Game 2",
+          "opp": "Game 2",
+          "edge": "Neutral"
+        }
+      ],
+      "writeup": {
+        "raw": "{\"generatedAt\":\"2026-05-16T04:01:09.666Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-16\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":75.1,\"temperatureDisplay\":\"75°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"75° | Clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-16T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Huascar Brazobán\",\"handedness\":\"R\",\"era\":2.14,\"xERA\":2.73,\"fip\":3.49,\"whip\":0.95,\"kPct\":19.5,\"bbPct\":9.8,\"kMinusBbPct\":9.7,\"hardHitPct\":22.8,\"barrelPct\":1.8,\"xBAAllowed\":0.208,\"xSLGAllowed\":0.275,\"xwOBAAllowed\":0.265,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"ip\":\"2.1\",\"er\":0,\"k\":2,\"result\":\"W\"},{\"date\":\"2026-05-10\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"1.0\",\"er\":2,\"k\":0,\"result\":\"L\"},{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"1.0\",\"er\":1,\"k\":1,\"result\":\"-\"},{\"date\":\"2026-05-04\",\"opponent\":\"Colorado Rockies\",\"ip\":\"1.0\",\"er\":0,\"k\":0,\"result\":\"W\"}],\"avgInnings\":1.33,\"avgEarnedRuns\":0.75,\"avgStrikeouts\":0.75,\"daysSinceLastStart\":3},\"workload\":{\"inningsTrend\":1.33,\"daysSinceLastStart\":3},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Carlos Rodón\",\"handedness\":\"L\",\"era\":6.23,\"xERA\":4.52,\"fip\":5.42,\"whip\":1.62,\"kPct\":19,\"bbPct\":23.8,\"kMinusBbPct\":-4.8,\"hardHitPct\":18.2,\"barrelPct\":0,\"xBAAllowed\":0.169,\"xSLGAllowed\":0.191,\"xwOBAAllowed\":0.335,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-10\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"4.1\",\"er\":3,\"k\":4,\"result\":\"-\"}],\"avgInnings\":4.33,\"avgEarnedRuns\":3,\"avgStrikeouts\":4,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.33,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.5,\"projectedLineupWRCPlus\":90.7,\"obp\":0.3,\"iso\":0.123,\"kPct\":20.8,\"bbPct\":8.2,\"xBA\":0.251,\"xSLG\":0.421,\"xwOBA\":0.319,\"hardHitPct\":42.4,\"barrelPct\":8.7,\"battingAverage\":0.232,\"wOBA\":0.297,\"lineup\":{\"totalWAR\":1.5,\"totalWRCPlus\":90.7,\"totalOBP\":0.3,\"totalISO\":0.131,\"totalKPct\":20.9,\"totalBBPct\":8.2,\"totalAVG\":0.232,\"totalWOBA\":0.297,\"totalXBA\":0.258,\"totalXSLG\":0.436,\"totalXWOBA\":0.329,\"totalHardHitPct\":44.7,\"totalBarrelPct\":9.2,\"regressionSignals\":{\"baMinusXba\":-0.026,\"wobaMinusXwoba\":-0.032}},\"regressionSignals\":{\"baMinusXba\":-0.026,\"wobaMinusXwoba\":-0.032},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":7.2,\"projectedLineupWRCPlus\":119.5,\"obp\":0.342,\"iso\":0.199,\"kPct\":23.3,\"bbPct\":12.1,\"xBA\":0.246,\"xSLG\":0.462,\"xwOBA\":0.353,\"hardHitPct\":47.6,\"barrelPct\":12.7,\"battingAverage\":0.232,\"wOBA\":0.346,\"lineup\":{\"totalWAR\":7.2,\"totalWRCPlus\":119.5,\"totalOBP\":0.342,\"totalISO\":0.212,\"totalKPct\":23.7,\"totalBBPct\":14.5,\"totalAVG\":0.232,\"totalWOBA\":0.346,\"totalXBA\":0.245,\"totalXSLG\":0.459,\"totalXWOBA\":0.355,\"totalHardHitPct\":48.3,\"totalBarrelPct\":12.8,\"regressionSignals\":{\"baMinusXba\":-0.013,\"wobaMinusXwoba\":-0.009}},\"regressionSignals\":{\"baMinusXba\":-0.013,\"wobaMinusXwoba\":-0.009},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.5,\"totalWRCPlus\":90.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":7.2,\"totalWRCPlus\":119.5,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.37,\"kMinusBbPct\":15.6,\"xFIP\":3.65,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":15.6,\"xFIP\":3.63,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":75.1,\"temperatureDisplay\":\"75°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"75° | Clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-16T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Huascar Brazobán 2.73/3.49 vs Carlos Rodón 4.52/5.42; K-BB% 9.7 to -4.8.\",\"rawScore\":29.87,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.\",\"rawScore\":-10.56,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.65 vs 3.63, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.44,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.026 and wOBA-xwOBA -0.032; opponent starter overperformance signal 0.75.\",\"rawScore\":-5.86,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 48.4%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.484,\"totalWeightedImpact\":-1.6,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
+        "headline": "Mets vs New York Yankees: starting pitching is the clearest angle",
+        "synopsis": "Huascar Brazobán vs Carlos Rodón sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Huascar Brazobán 2.73/3.49 vs Carlos Rodón 4.52/5.42; K-BB% 9.7 to -4.8. Several key inputs are still missing, so the read should stay conservative.",
+        "quickRead": {
+          "modelLean": "Mixed",
+          "officialPick": "Mets ML",
+          "bestEdge": "Starting Pitching",
+          "biggestRisk": "Lineup Quality"
+        },
+        "gameDetails": {
+          "date": "2026-05-16",
+          "time": "7:15 PM ET",
+          "opponent": "New York Yankees",
+          "homeAway": "home",
+          "ballpark": "Citi Field",
+          "weather": "75° | Clear | Wind 9 mph S",
+          "lineupStatus": "Projected",
+          "moneyline": "N/A"
+        },
+        "edgeSummary": {
+          "startingPitching": {
+            "category": "Starting Pitching",
+            "verdict": "Mets edge",
+            "strength": "strong",
+            "dataMode": "real"
+          },
+          "lineupQuality": {
+            "category": "Lineup Quality",
+            "verdict": "Opponent edge",
+            "strength": "strong",
+            "dataMode": "fallback"
+          },
+          "bullpen": {
+            "category": "Bullpen",
+            "verdict": "Opponent edge",
+            "strength": "slight",
+            "dataMode": "fallback"
+          },
+          "regressionSignals": {
+            "category": "Regression Signals",
+            "verdict": "Opponent edge",
+            "strength": "moderate",
+            "dataMode": "real"
+          },
+          "context": {
+            "category": "Context",
+            "verdict": "Mets edge",
+            "strength": "slight",
+            "dataMode": "fallback"
+          },
+          "schedulingSpot": {
+            "category": "Scheduling Spot",
+            "verdict": "Mets edge",
+            "strength": "slight",
+            "dataMode": "fallback"
+          },
+          "marketValue": {
+            "category": "Market Value",
+            "verdict": "Limited data",
+            "strength": "even",
+            "dataMode": "fallback"
+          },
+          "rows": [
+            {
+              "category": "Starting Pitching",
+              "verdict": "Mets edge",
+              "strength": "strong",
+              "dataMode": "real"
+            },
+            {
+              "category": "Lineup Quality",
+              "verdict": "Opponent edge",
+              "strength": "strong",
+              "dataMode": "fallback"
+            },
+            {
+              "category": "Bullpen",
+              "verdict": "Opponent edge",
+              "strength": "slight",
+              "dataMode": "fallback"
+            },
+            {
+              "category": "Regression Signals",
+              "verdict": "Opponent edge",
+              "strength": "moderate",
+              "dataMode": "real"
+            },
+            {
+              "category": "Context",
+              "verdict": "Mets edge",
+              "strength": "slight",
+              "dataMode": "fallback"
+            },
+            {
+              "category": "Market Value",
+              "verdict": "Limited data",
+              "strength": "even",
+              "dataMode": "fallback"
+            }
+          ],
+          "overallModelLean": "Mixed"
+        },
+        "pitchingEdgeSummary": "Huascar Brazobán gives the Mets the cleaner underlying starting-pitcher case.",
+        "projectedLineupEdgeSummary": "The opponent has the better overall lineup-quality profile on the current inputs.",
+        "analysis": {
+          "whyMetsHaveACase": [
+            "Huascar Brazobán: 2.14 ERA, 19.5%% K rate, 3.49 FIP, vs Carlos Rodón: 6.23 ERA, 5.42 FIP."
+          ],
+          "whereTheRiskIs": [
+            "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.",
+            "Expected stats haven't converted to runs yet — production lags contact quality."
+          ],
+          "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+        },
+        "gameAnalysis": {
+          "whyMetsHaveCase": [
+            "Huascar Brazobán: 2.14 ERA, 19.5%% K rate, 3.49 FIP, vs Carlos Rodón: 6.23 ERA, 5.42 FIP."
+          ],
+          "whereRiskIs": [
+            "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.",
+            "Expected stats haven't converted to runs yet — production lags contact quality."
+          ],
+          "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+        },
+        "sections": [
+          {
+            "heading": "1. Quick Read",
+            "body": "Model Lean: Mixed. Official Pick: Mets ML. Best Edge: Starting Pitching. Biggest Risk: Lineup Quality."
+          },
+          {
+            "heading": "2. Game Details",
+            "body": "2026-05-16 | 7:15 PM ET | Citi Field. Mets home game. Lineups: Projected. Mets ML: N/A."
+          },
+          {
+            "heading": "3. Edge Summary",
+            "body": "Starting Pitching: Mets edge | Lineup Quality: Opponent edge (fallback) | Bullpen: Opponent edge (fallback) | Regression Signals: Opponent edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Mixed."
+          },
+          {
+            "heading": "4. Starting Pitchers Comparison",
+            "body": "Huascar Brazobán gives the Mets the cleaner underlying starting-pitcher case."
+          },
+          {
+            "heading": "5. Pitcher Contact Profile vs Opponent",
+            "body": "xERA/FIP profile: Huascar Brazobán 2.73/3.49 vs Carlos Rodón 4.52/5.42; K-BB% 9.7 to -4.8."
+          },
+          {
+            "heading": "6. Pitcher Split Matchup vs Opponent",
+            "body": "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353. Series game 2. Rest/travel: Mets 0 days, opponent 0; bullpen tax normal/normal."
+          },
+          {
+            "heading": "7. Projected Lineup Comparison",
+            "body": "The opponent has the better overall lineup-quality profile on the current inputs."
+          },
+          {
+            "heading": "8. Game Analysis",
+            "body": "Why the Mets have a case\n• Huascar Brazobán: 2.14 ERA, 19.5%% K rate, 3.49 FIP, vs Carlos Rodón: 6.23 ERA, 5.42 FIP. Where the risk is\n• Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.\n• Expected stats haven't converted to runs yet — production lags contact quality. Bottom line\nMixed board. Pick based on strongest individual matchup edge."
+          },
+          {
+            "heading": "9. Official MetsMoneyline Pick",
+            "body": "Primary edge: Huascar Brazobán's run-prevention metrics. Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days. Note: model does not fully favor Mets. Pick is based on the best supported individual angle."
+          }
+        ],
+        "pickSummary": "Brazobán's 2.73 xERA (88th percentile) against Rodón's 4.52 xERA (51st percentile) creates the largest quantified gap. Mets rotation FIP of 3.55 ranks fourth league-wide while Yankees bullpen xERA sits at 3.08. Model projects 48.4% win probability for the Mets, so the line slightly underprices the starter edge.",
+        "pickNarrative": "Brazobán 2.73 xERA (88th percentile) faces Rodón 4.52 xERA (51st). Mets rotation FIP ranks fourth in MLB. Brazobán's 2.73 xERA (88th percentile) against Rodón's 4.52 xERA (51st percentile) creates the largest quantified gap. Mets rotation FIP of 3.55 ranks fourth league-wide while Yankees bullpen xERA sits at 3.08. Model projects 48.4% win probability for the Mets, so the line slightly underprices the starter edge.",
+        "todayPick": {
+          "headline": "Brazobán xERA Gap vs Rodón",
+          "summary": "Brazobán 2.73 xERA (88th percentile) faces Rodón 4.52 xERA (51st). Mets rotation FIP ranks fourth in MLB.",
+          "metsEdges": [
+            "Huascar Brazobán 2.73 xERA (88th percentile) vs Carlos Rodón 4.52 xERA (51st); K-BB% 9.7 to -4.8.",
+            "Mets rotation FIP 3.55 ranks fourth in MLB.",
+            "Mets home with 0 rest days vs opponent 0 rest days."
+          ],
+          "risks": [
+            "Yankees lineup xwOBA 0.353 vs Mets 0.319; projected wRC+ 119.5 vs 90.7.",
+            "Mets last20OPS rank 26 at 0.641."
+          ],
+          "bettingAngle": "Brazobán's 2.73 xERA (88th percentile) against Rodón's 4.52 xERA (51st percentile) creates the largest quantified gap. Mets rotation FIP of 3.55 ranks fourth league-wide while Yankees bullpen xERA sits at 3.08. Model projects 48.4% win probability for the Mets, so the line slightly underprices the starter edge.",
+          "officialPick": "Mets ML",
+          "confidenceLabel": "Low",
+          "confidenceScore": 4
+        },
+        "officialPick": "Official Pick: Mets ML",
+        "edgeTable": [
+          {
+            "category": "Starting Pitching",
+            "edge": "Mets edge",
+            "strength": "strong",
+            "reason": "xERA/FIP profile: Huascar Brazobán 2.73/3.49 vs Carlos Rodón 4.52/5.42; K-BB% 9.7 to -4.8.",
+            "dataMode": "real"
+          },
+          {
+            "category": "Overall Lineup Quality",
+            "edge": "Opponent edge",
+            "strength": "strong",
+            "reason": "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.",
+            "dataMode": "fallback"
+          },
+          {
+            "category": "Bullpen",
+            "edge": "Opponent edge",
+            "strength": "slight",
+            "reason": "Bullpen shape: xFIP 3.65 vs 3.63, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
+            "dataMode": "fallback"
+          },
+          {
+            "category": "Regression Signals",
+            "edge": "Opponent edge",
+            "strength": "moderate",
+            "reason": "Regression lens: Mets BA-xBA -0.026 and wOBA-xwOBA -0.032; opponent starter overperformance signal 0.75.",
+            "dataMode": "real"
+          },
+          {
+            "category": "Home/Away Split",
+            "edge": "Mets edge",
+            "strength": "slight",
+            "reason": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.",
+            "dataMode": "fallback"
+          },
+          {
+            "category": "Context",
+            "edge": "Mets edge",
+            "strength": "slight",
+            "reason": "Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.",
+            "dataMode": "fallback"
+          },
+          {
+            "category": "Market Value",
+            "edge": "Limited data",
+            "strength": "even",
+            "reason": "Market check: Mets ML N/A implies N/A vs model 48.4%.",
+            "dataMode": "fallback"
+          }
+        ],
+        "keyAngles": [
+          "xERA/FIP profile: Huascar Brazobán 2.73/3.49 vs Carlos Rodón 4.52/5.42; K-BB% 9.7 to -4.8.",
+          "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.",
+          "Regression lens: Mets BA-xBA -0.026 and wOBA-xwOBA -0.032; opponent starter overperformance signal 0.75.",
+          "Bullpen shape: xFIP 3.65 vs 3.63, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP."
+        ],
+        "pick": "Mets ML",
+        "analyticalLean": "Mixed",
+        "confidence": "low",
+        "missingMetrics": [
+          "Park factor",
+          "Mets team wRC+ vs handedness",
+          "Opponent team wRC+ vs handedness",
+          "Mets projected lineup wRC+ vs handedness",
+          "Opponent projected lineup wRC+ vs handedness",
+          "Mets home/away split wRC+",
+          "Opponent home/away split wRC+",
+          "Mets missing key hitters",
+          "Opponent missing key hitters",
+          "Pitcher splits vs opponent handedness/profile",
+          "Opponent pitcher splits vs opponent handedness/profile",
+          "Mets bullpen leverage-arm availability",
+          "Opponent bullpen leverage-arm availability"
+        ],
+        "analysisObject": {
+          "gameInfo": {
+            "date": "2026-05-16",
+            "opponent": "New York Yankees",
+            "homeAway": "home",
+            "ballpark": "Citi Field",
+            "weather": {
+              "temperature": 75.1,
+              "temperatureDisplay": "75°",
+              "condition": "Clear",
+              "wind": "Wind 9 mph S",
+              "compact": "75° | Clear | Wind 9 mph S",
+              "source": "open-meteo",
+              "forecastTimeUtc": "2026-05-16T23:00Z"
+            }
+          },
+          "pitchers": {
+            "mets": {
+              "name": "Huascar Brazobán",
+              "handedness": "R",
+              "era": 2.14,
+              "xERA": 2.73,
+              "fip": 3.49,
+              "whip": 0.95,
+              "kPct": 19.5,
+              "bbPct": 9.8,
+              "kMinusBbPct": 9.7,
+              "hardHitPct": 22.8,
+              "barrelPct": 1.8,
+              "xBAAllowed": 0.208,
+              "xSLGAllowed": 0.275,
+              "xwOBAAllowed": 0.265,
+              "recentStarts": {
+                "starts": [
+                  {
+                    "date": "2026-05-13",
+                    "opponent": "Detroit Tigers",
+                    "ip": "2.1",
+                    "er": 0,
+                    "k": 2,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-05-10",
+                    "opponent": "Arizona Diamondbacks",
+                    "ip": "1.0",
+                    "er": 2,
+                    "k": 0,
+                    "result": "L"
+                  },
+                  {
+                    "date": "2026-05-07",
+                    "opponent": "Colorado Rockies",
+                    "ip": "1.0",
+                    "er": 1,
+                    "k": 1,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-05-04",
+                    "opponent": "Colorado Rockies",
+                    "ip": "1.0",
+                    "er": 0,
+                    "k": 0,
+                    "result": "W"
+                  }
+                ],
+                "avgInnings": 1.33,
+                "avgEarnedRuns": 0.75,
+                "avgStrikeouts": 0.75,
+                "daysSinceLastStart": 3
+              },
+              "workload": {
+                "inningsTrend": 1.33,
+                "daysSinceLastStart": 3
+              },
+              "opponentHandednessProfile": {
+                "left": 0,
+                "right": 0,
+                "switch": 0
+              }
+            },
+            "opp": {
+              "name": "Carlos Rodón",
+              "handedness": "L",
+              "era": 6.23,
+              "xERA": 4.52,
+              "fip": 5.42,
+              "whip": 1.62,
+              "kPct": 19,
+              "bbPct": 23.8,
+              "kMinusBbPct": -4.8,
+              "hardHitPct": 18.2,
+              "barrelPct": 0,
+              "xBAAllowed": 0.169,
+              "xSLGAllowed": 0.191,
+              "xwOBAAllowed": 0.335,
+              "recentStarts": {
+                "starts": [
+                  {
+                    "date": "2026-05-10",
+                    "opponent": "Milwaukee Brewers",
+                    "ip": "4.1",
+                    "er": 3,
+                    "k": 4,
+                    "result": "-"
+                  }
+                ],
+                "avgInnings": 4.33,
+                "avgEarnedRuns": 3,
+                "avgStrikeouts": 4,
+                "daysSinceLastStart": 6
+              },
+              "workload": {
+                "inningsTrend": 4.33,
+                "daysSinceLastStart": 6
+              },
+              "opponentHandednessProfile": {
+                "left": 0,
+                "right": 0,
+                "switch": 0
+              }
+            }
+          },
+          "offense": {
+            "mets": {
+              "projectedLineupWAR": 1.5,
+              "projectedLineupWRCPlus": 90.7,
+              "obp": 0.3,
+              "iso": 0.123,
+              "kPct": 20.8,
+              "bbPct": 8.2,
+              "xBA": 0.251,
+              "xSLG": 0.421,
+              "xwOBA": 0.319,
+              "hardHitPct": 42.4,
+              "barrelPct": 8.7,
+              "battingAverage": 0.232,
+              "wOBA": 0.297,
+              "lineup": {
+                "totalWAR": 1.5,
+                "totalWRCPlus": 90.7,
+                "totalOBP": 0.3,
+                "totalISO": 0.131,
+                "totalKPct": 20.9,
+                "totalBBPct": 8.2,
+                "totalAVG": 0.232,
+                "totalWOBA": 0.297,
+                "totalXBA": 0.258,
+                "totalXSLG": 0.436,
+                "totalXWOBA": 0.329,
+                "totalHardHitPct": 44.7,
+                "totalBarrelPct": 9.2,
+                "regressionSignals": {
+                  "baMinusXba": -0.026,
+                  "wobaMinusXwoba": -0.032
+                }
+              },
+              "regressionSignals": {
+                "baMinusXba": -0.026,
+                "wobaMinusXwoba": -0.032
+              },
+              "splitContext": {
+                "pitcherHandedness": "L",
+                "splitDataAvailable": false
+              }
+            },
+            "opp": {
+              "projectedLineupWAR": 7.2,
+              "projectedLineupWRCPlus": 119.5,
+              "obp": 0.342,
+              "iso": 0.199,
+              "kPct": 23.3,
+              "bbPct": 12.1,
+              "xBA": 0.246,
+              "xSLG": 0.462,
+              "xwOBA": 0.353,
+              "hardHitPct": 47.6,
+              "barrelPct": 12.7,
+              "battingAverage": 0.232,
+              "wOBA": 0.346,
+              "lineup": {
+                "totalWAR": 7.2,
+                "totalWRCPlus": 119.5,
+                "totalOBP": 0.342,
+                "totalISO": 0.212,
+                "totalKPct": 23.7,
+                "totalBBPct": 14.5,
+                "totalAVG": 0.232,
+                "totalWOBA": 0.346,
+                "totalXBA": 0.245,
+                "totalXSLG": 0.459,
+                "totalXWOBA": 0.355,
+                "totalHardHitPct": 48.3,
+                "totalBarrelPct": 12.8,
+                "regressionSignals": {
+                  "baMinusXba": -0.013,
+                  "wobaMinusXwoba": -0.009
+                }
+              },
+              "regressionSignals": {
+                "baMinusXba": -0.013,
+                "wobaMinusXwoba": -0.009
+              },
+              "splitContext": {
+                "pitcherHandedness": "R",
+                "splitDataAvailable": false
+              }
+            }
+          },
+          "projectedLineups": {
+            "mets": {
+              "status": "projected",
+              "totalWAR": 1.5,
+              "totalWRCPlus": 90.7,
+              "missingKeyHitters": []
+            },
+            "opp": {
+              "status": "projected",
+              "totalWAR": 7.2,
+              "totalWRCPlus": 119.5,
+              "missingKeyHitters": []
+            }
+          },
+          "bullpen": {
+            "mets": {
+              "whip": 1.37,
+              "kMinusBbPct": 15.6,
+              "xFIP": 3.65,
+              "taxLevel": "normal"
+            },
+            "opp": {
+              "whip": 1.2,
+              "kMinusBbPct": 15.6,
+              "xFIP": 3.63,
+              "taxLevel": "normal"
+            }
+          },
+          "context": {
+            "travel": {
+              "mets": "home to home",
+              "opp": "road to road"
+            },
+            "restDays": {
+              "mets": 0,
+              "opp": 0
+            },
+            "seriesGameNumber": 2,
+            "bullpenTax": {
+              "mets": "normal",
+              "opp": "normal"
+            },
+            "weather": {
+              "temperature": 75.1,
+              "temperatureDisplay": "75°",
+              "condition": "Clear",
+              "wind": "Wind 9 mph S",
+              "compact": "75° | Clear | Wind 9 mph S",
+              "source": "open-meteo",
+              "forecastTimeUtc": "2026-05-16T23:00Z"
+            }
+          }
+        },
+        "edgeScoring": {
+          "categories": [
+            {
+              "category": "Starting Pitching",
+              "weight": 30,
+              "edge": "Mets edge",
+              "strength": "strong",
+              "explanation": "xERA/FIP profile: Huascar Brazobán 2.73/3.49 vs Carlos Rodón 4.52/5.42; K-BB% 9.7 to -4.8.",
+              "rawScore": 29.87,
+              "weightedImpact": 30,
+              "dataMode": "real",
+              "supportedBy": [
+                "ERA",
+                "xERA",
+                "FIP",
+                "WHIP",
+                "K-BB%",
+                "hard-hit allowed",
+                "barrel allowed",
+                "xwOBA allowed",
+                "recent starts"
+              ],
+              "missing": []
+            },
+            {
+              "category": "Overall Lineup Quality",
+              "weight": 25,
+              "edge": "Opponent edge",
+              "strength": "strong",
+              "explanation": "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.",
+              "rawScore": -10.56,
+              "weightedImpact": -25,
+              "dataMode": "fallback",
+              "supportedBy": [
+                "projected lineup WAR",
+                "projected lineup wRC+",
+                "xwOBA",
+                "contact quality"
+              ],
+              "missing": [
+                "team wRC+ vs handedness",
+                "projected lineup wRC+ vs handedness"
+              ]
+            },
+            {
+              "category": "Bullpen",
+              "weight": 15,
+              "edge": "Opponent edge",
+              "strength": "slight",
+              "explanation": "Bullpen shape: xFIP 3.65 vs 3.63, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
+              "rawScore": -0.44,
+              "weightedImpact": -4.95,
+              "dataMode": "fallback",
+              "supportedBy": [
+                "recent usage",
+                "WHIP",
+                "K-BB%",
+                "xFIP"
+              ],
+              "missing": [
+                "leverage-arm availability"
+              ]
+            },
+            {
+              "category": "Regression Signals",
+              "weight": 10,
+              "edge": "Opponent edge",
+              "strength": "moderate",
+              "explanation": "Regression lens: Mets BA-xBA -0.026 and wOBA-xwOBA -0.032; opponent starter overperformance signal 0.75.",
+              "rawScore": -5.86,
+              "weightedImpact": -6.6,
+              "dataMode": "real",
+              "supportedBy": [
+                "BA vs xBA",
+                "wOBA vs xwOBA",
+                "starter surface-vs-underlying gap"
+              ],
+              "missing": []
+            },
+            {
+              "category": "Home/Away Split",
+              "weight": 10,
+              "edge": "Mets edge",
+              "strength": "slight",
+              "explanation": "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.",
+              "rawScore": 1.05,
+              "weightedImpact": 3.3,
+              "dataMode": "fallback",
+              "supportedBy": [
+                "venue",
+                "rest"
+              ],
+              "missing": [
+                "home/away split wRC+",
+                "park factor"
+              ]
+            },
+            {
+              "category": "Context",
+              "weight": 5,
+              "edge": "Mets edge",
+              "strength": "slight",
+              "explanation": "Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.",
+              "rawScore": 0.6,
+              "weightedImpact": 1.65,
+              "dataMode": "fallback",
+              "supportedBy": [
+                "travel",
+                "rest",
+                "bullpen tax"
+              ],
+              "missing": [
+                "park factor"
+              ]
+            },
+            {
+              "category": "Market Value",
+              "weight": 5,
+              "edge": "Limited data",
+              "strength": "even",
+              "explanation": "Market check: Mets ML N/A implies N/A vs model 48.4%.",
+              "rawScore": 0,
+              "weightedImpact": 0,
+              "dataMode": "fallback",
+              "supportedBy": [],
+              "missing": [
+                "current moneyline / implied probability"
+              ]
+            }
+          ],
+          "projectedWinProbability": 0.484,
+          "totalWeightedImpact": -1.6,
+          "confidence": "low",
+          "criticalMissingCount": 6
+        },
+        "report": {
+          "header": {
+            "title": "Mets vs New York Yankees: starting pitching is the clearest angle",
+            "matchupTitle": "New York Mets vs New York Yankees",
+            "tagline": "starting pitching is the clearest angle",
+            "date": "2026-05-16",
+            "time": "7:15 PM ET",
+            "ballpark": "Citi Field",
+            "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
+            "oppLogoUrl": "https://www.mlbstatic.com/team-logos/147.svg",
+            "metadataLine": "May 16th | 7:15 PM ET | Citi Field | 75° | Clear | Wind 9 mph S"
+          },
+          "quickRead": {
+            "modelLean": "Mixed",
+            "officialPick": "Mets ML",
+            "bestEdge": "Starting Pitching",
+            "biggestRisk": "Lineup Quality"
+          },
+          "gameDetails": {
+            "date": "2026-05-16",
+            "time": "7:15 PM ET",
+            "opponent": "New York Yankees",
+            "homeAway": "home",
+            "ballpark": "Citi Field",
+            "weather": "75° | Clear | Wind 9 mph S",
+            "lineupStatus": "Projected",
+            "moneyline": "N/A"
+          },
+          "gameDetailsTable": {
+            "rows": [
+              {
+                "label": "Game Date / Time",
+                "value": "May 16th, 7:15pm ET"
+              },
+              {
+                "label": "Location",
+                "value": "Citi Field - New York"
+              },
+              {
+                "label": "Weather Forecast",
+                "value": "75° | Clear | Wind 9 mph S"
+              },
+              {
+                "label": "Mets ML Odds",
+                "value": "N/A"
+              }
+            ]
+          },
+          "teamComparison": {
+            "metsHeader": "New York Mets",
+            "oppHeader": "New York Yankees",
+            "rows": [
+              {
+                "label": "Odds",
+                "mets": "N/A",
+                "opp": "N/A"
+              },
+              {
+                "label": "Season Record",
+                "mets": "18-26",
+                "opp": "28-17"
+              },
+              {
+                "label": "Last 5 Record",
+                "mets": "3-2",
+                "opp": "2-3"
+              },
+              {
+                "label": "Home/Away Record",
+                "mets": "9-13 (home)",
+                "opp": "14-11 (away)"
+              },
+              {
+                "label": "Season Series Record",
+                "mets": "0-1",
+                "opp": "1-0"
+              }
+            ]
+          },
+          "edgeSummary": {
+            "startingPitching": {
+              "category": "Starting Pitching",
+              "verdict": "Mets edge",
+              "strength": "strong",
+              "dataMode": "real"
+            },
+            "lineupQuality": {
+              "category": "Lineup Quality",
+              "verdict": "Opponent edge",
+              "strength": "strong",
+              "dataMode": "fallback"
+            },
+            "bullpen": {
+              "category": "Bullpen",
+              "verdict": "Opponent edge",
+              "strength": "slight",
+              "dataMode": "fallback"
+            },
+            "regressionSignals": {
+              "category": "Regression Signals",
+              "verdict": "Opponent edge",
+              "strength": "moderate",
+              "dataMode": "real"
+            },
+            "context": {
+              "category": "Context",
+              "verdict": "Mets edge",
+              "strength": "slight",
+              "dataMode": "fallback"
+            },
+            "schedulingSpot": {
+              "category": "Scheduling Spot",
+              "verdict": "Mets edge",
+              "strength": "slight",
+              "dataMode": "fallback"
+            },
+            "marketValue": {
+              "category": "Market Value",
+              "verdict": "Limited data",
+              "strength": "even",
+              "dataMode": "fallback"
+            },
+            "rows": [
+              {
+                "category": "Starting Pitching",
+                "verdict": "Mets edge",
+                "strength": "strong",
+                "dataMode": "real"
+              },
+              {
+                "category": "Lineup Quality",
+                "verdict": "Opponent edge",
+                "strength": "strong",
+                "dataMode": "fallback"
+              },
+              {
+                "category": "Bullpen",
+                "verdict": "Opponent edge",
+                "strength": "slight",
+                "dataMode": "fallback"
+              },
+              {
+                "category": "Regression Signals",
+                "verdict": "Opponent edge",
+                "strength": "moderate",
+                "dataMode": "real"
+              },
+              {
+                "category": "Context",
+                "verdict": "Mets edge",
+                "strength": "slight",
+                "dataMode": "fallback"
+              },
+              {
+                "category": "Market Value",
+                "verdict": "Limited data",
+                "strength": "even",
+                "dataMode": "fallback"
+              }
+            ],
+            "overallModelLean": "Mixed"
+          },
+          "startingPitchersComparison": {
+            "metsPitcher": "Huascar Brazobán",
+            "oppPitcher": "Carlos Rodón",
+            "seasonLabel": "2026",
+            "metsCard": {
+              "name": "Huascar Brazobán",
+              "mlbId": 623211,
+              "record": "2-1",
+              "hand": "R",
+              "teamLabel": "NYM",
+              "recentStarts": [
+                {
+                  "date": "2026-05-13",
+                  "opponent": "Detroit Tigers",
+                  "ip": "2.1",
+                  "er": "0",
+                  "k": "2",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-05-10",
+                  "opponent": "Arizona Diamondbacks",
+                  "ip": "1.0",
+                  "er": "2",
+                  "k": "0",
+                  "result": "L"
+                },
+                {
+                  "date": "2026-05-07",
+                  "opponent": "Colorado Rockies",
+                  "ip": "1.0",
+                  "er": "1",
+                  "k": "1",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-05-04",
+                  "opponent": "Colorado Rockies",
+                  "ip": "1.0",
+                  "er": "0",
+                  "k": "0",
+                  "result": "W"
+                }
+              ],
+              "stats": {
+                "era": "2.14",
+                "whip": "0.95",
+                "kPct": "19.5%",
+                "bbPct": "9.8%"
+              }
+            },
+            "oppCard": {
+              "name": "Carlos Rodón",
+              "mlbId": 607074,
+              "record": "0-0",
+              "hand": "L",
+              "teamLabel": "New York Yankees",
+              "recentStarts": [
+                {
+                  "date": "2026-05-10",
+                  "opponent": "Milwaukee Brewers",
+                  "ip": "4.1",
+                  "er": "3",
+                  "k": "4",
+                  "result": "-"
+                }
+              ],
+              "stats": {
+                "era": "6.23",
+                "whip": "1.62",
+                "kPct": "19%",
+                "bbPct": "23.8%"
+              }
+            },
+            "advancedMatchupTables": [
+              {
+                "title": "Advanced Stats vs Opponent",
+                "leftHeader": "NYM Huascar Brazobán",
+                "rightHeader": "NYY Offense",
+                "rightTeamKey": "opp",
+                "rows": [
+                  {
+                    "label": "Barrel %",
+                    "left": "1.8%",
+                    "leftPercentile": 88,
+                    "leftMetricLabel": "Pitcher Barrel %",
+                    "right": 12.7,
+                    "rightMetricLabel": "Batter Barrel %",
+                    "rightRankKey": "barrelPct"
+                  },
+                  {
+                    "label": "xBA",
+                    "left": "0.208",
+                    "leftPercentile": 82,
+                    "leftMetricLabel": "Pitcher xBA",
+                    "right": 0.246,
+                    "rightMetricLabel": "Batter xBA",
+                    "rightRankKey": "xba"
+                  },
+                  {
+                    "label": "Hard Hit %",
+                    "left": "22.8%",
+                    "leftPercentile": 96,
+                    "leftMetricLabel": "Pitcher Hard Hit %",
+                    "right": 47.6,
+                    "rightMetricLabel": "Batter Hard Hit %",
+                    "rightRankKey": "hardHit"
+                  },
+                  {
+                    "label": "xSLG %",
+                    "left": "0.275",
+                    "leftPercentile": 90,
+                    "leftMetricLabel": "Pitcher xSLG %",
+                    "right": 0.462,
+                    "rightMetricLabel": "Batter xSLG %",
+                    "rightRankKey": "xslg"
+                  }
+                ]
+              },
+              {
+                "title": "Opponent Advanced Stats vs Mets",
+                "leftHeader": "NYY Carlos Rodón",
+                "rightHeader": "NYM Offense",
+                "rightTeamKey": "mets",
+                "rows": [
+                  {
+                    "label": "Barrel %",
+                    "left": "0%",
+                    "leftPercentile": 100,
+                    "leftMetricLabel": "Pitcher Barrel %",
+                    "right": 8.7,
+                    "rightMetricLabel": "Batter Barrel %",
+                    "rightRankKey": "barrelPct"
+                  },
+                  {
+                    "label": "xBA",
+                    "left": "0.169",
+                    "leftPercentile": 93,
+                    "leftMetricLabel": "Pitcher xBA",
+                    "right": 0.251,
+                    "rightMetricLabel": "Batter xBA",
+                    "rightRankKey": "xba"
+                  },
+                  {
+                    "label": "Hard Hit %",
+                    "left": "18.2%",
+                    "leftPercentile": 98,
+                    "leftMetricLabel": "Pitcher Hard Hit %",
+                    "right": 42.4,
+                    "rightMetricLabel": "Batter Hard Hit %",
+                    "rightRankKey": "hardHit"
+                  },
+                  {
+                    "label": "xSLG %",
+                    "left": "0.191",
+                    "leftPercentile": 97,
+                    "leftMetricLabel": "Pitcher xSLG %",
+                    "right": 0.421,
+                    "rightMetricLabel": "Batter xSLG %",
+                    "rightRankKey": "xslg"
+                  }
+                ]
+              },
+              {
+                "title": "Advanced Stats vs Opponent Splits",
+                "leftHeader": "NYM Huascar Brazobán",
+                "rightHeader": "NYY Profile",
+                "rightTeamKey": "opp",
+                "rows": [
+                  {
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Right",
+                    "right": "vs Right-handed pitching"
+                  },
+                  {
+                    "label": "Innings Pitched / Plate Appearances",
+                    "left": "21.0",
+                    "right": "1139"
+                  },
+                  {
+                    "label": "K%",
+                    "left": "19.5%",
+                    "leftPercentile": 44,
+                    "leftMetricLabel": "Pitcher K%",
+                    "right": 23.3,
+                    "rightMetricLabel": "Batter K%",
+                    "rightRankKey": "kPct"
+                  },
+                  {
+                    "label": "BB%",
+                    "left": "9.8%",
+                    "leftPercentile": 48,
+                    "leftMetricLabel": "Pitcher BB%",
+                    "right": 12.1,
+                    "rightMetricLabel": "Batter BB%",
+                    "rightRankKey": "bbPct"
+                  }
+                ]
+              },
+              {
+                "title": "Opponent Advanced Stats vs Mets Splits",
+                "leftHeader": "NYY Carlos Rodón",
+                "rightHeader": "NYM Profile",
+                "rightTeamKey": "mets",
+                "rows": [
+                  {
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Left",
+                    "right": "vs Left-handed pitching"
+                  },
+                  {
+                    "label": "Innings Pitched / Plate Appearances",
+                    "left": "4.1",
+                    "right": "1018"
+                  },
+                  {
+                    "label": "K%",
+                    "left": "19%",
+                    "leftPercentile": 42,
+                    "leftMetricLabel": "Pitcher K%",
+                    "right": 20.8,
+                    "rightMetricLabel": "Batter K%",
+                    "rightRankKey": "kPct"
+                  },
+                  {
+                    "label": "BB%",
+                    "left": "23.8%",
+                    "leftPercentile": 4,
+                    "leftMetricLabel": "Pitcher BB%",
+                    "right": 8.2,
+                    "rightMetricLabel": "Batter BB%",
+                    "rightRankKey": "bbPct"
+                  }
+                ]
+              }
+            ],
+            "summary": "Huascar Brazobán gives the Mets the cleaner underlying starting-pitcher case."
+          },
+          "bullpenReport": {
+            "mets": {
+              "teamName": "New York Mets",
+              "teamId": 121,
+              "usage": {
+                "appearances": 16,
+                "appearancesPerPitcherPerDay": 0.18,
+                "label": "Low",
+                "tone": "green"
+              },
+              "statsRow": {
+                "seasonEra": 4.15,
+                "seasonWhip": 1.37,
+                "last20Era": 3.13
+              },
+              "closer": {
+                "name": "Devin Williams",
+                "playerId": 642207,
+                "saves": 5,
+                "saveOpportunities": 6,
+                "saveConversionPct": 83.3,
+                "era": 5.27,
+                "whip": 1.61,
+                "last7DaysAppearances": 1,
+                "last7DaysInningsPitched": "1.0"
+              }
+            },
+            "opp": {
+              "teamName": "New York Yankees",
+              "teamId": 147,
+              "usage": {
+                "appearances": 20,
+                "appearancesPerPitcherPerDay": 0.22,
+                "label": "Low",
+                "tone": "green"
+              },
+              "statsRow": {
+                "seasonEra": 3.19,
+                "seasonWhip": 1.2,
+                "last20Era": 2.15
+              },
+              "closer": {
+                "name": "David Bednar",
+                "playerId": 670280,
+                "saves": 10,
+                "saveOpportunities": 11,
+                "saveConversionPct": 90.9,
+                "era": 3.79,
+                "whip": 1.42,
+                "last7DaysAppearances": 4,
+                "last7DaysInningsPitched": "3.2"
+              }
+            }
+          },
+          "recentFormReport": {
+            "mets": {
+              "teamId": 121,
+              "teamName": "New York Mets",
+              "rows": [
+                {
+                  "statKey": "ops",
+                  "seasonRank": 30,
+                  "seasonValue": 0.638,
+                  "recentRank": 26,
+                  "recentValue": 0.641,
+                  "differencePct": 0.5,
+                  "improving": true
+                },
+                {
+                  "statKey": "avg",
+                  "seasonRank": 29,
+                  "seasonValue": 0.225,
+                  "recentRank": 26,
+                  "recentValue": 0.217,
+                  "differencePct": -3.6,
+                  "improving": false
+                },
+                {
+                  "statKey": "kPct",
+                  "seasonRank": 8,
+                  "seasonValue": 20.9,
+                  "recentRank": 8,
+                  "recentValue": 20.3,
+                  "differencePct": 2.9,
+                  "improving": true
+                },
+                {
+                  "statKey": "bbPct",
+                  "seasonRank": 24,
+                  "seasonValue": 8.2,
+                  "recentRank": 18,
+                  "recentValue": 8.8,
+                  "differencePct": 7.3,
+                  "improving": true
+                }
+              ]
+            },
+            "opp": {
+              "teamId": 147,
+              "teamName": "New York Yankees",
+              "rows": [
+                {
+                  "statKey": "ops",
+                  "seasonRank": 3,
+                  "seasonValue": 0.763,
+                  "recentRank": 1,
+                  "recentValue": 0.783,
+                  "differencePct": 2.6,
+                  "improving": true
+                },
+                {
+                  "statKey": "avg",
+                  "seasonRank": 19,
+                  "seasonValue": 0.236,
+                  "recentRank": 11,
+                  "recentValue": 0.245,
+                  "differencePct": 3.8,
+                  "improving": true
+                },
+                {
+                  "statKey": "kPct",
+                  "seasonRank": 23,
+                  "seasonValue": 23.4,
+                  "recentRank": 14,
+                  "recentValue": 21.8,
+                  "differencePct": 6.8,
+                  "improving": true
+                },
+                {
+                  "statKey": "bbPct",
+                  "seasonRank": 1,
+                  "seasonValue": 12,
+                  "recentRank": 3,
+                  "recentValue": 11.4,
+                  "differencePct": -5,
+                  "improving": false
+                }
+              ]
+            }
+          },
+          "pitcherContactProfile": {
+            "metsPitcher": "Huascar Brazobán",
+            "oppPitcher": "Carlos Rodón",
+            "pitcherRows": [
+              {
+                "label": "xERA",
+                "mets": "2.73",
+                "opp": "4.52"
+              },
+              {
+                "label": "Barrel%",
+                "mets": "1.8%",
+                "opp": "0%"
+              },
+              {
+                "label": "Hard-Hit%",
+                "mets": "22.8%",
+                "opp": "18.2%"
+              },
+              {
+                "label": "Whiff%",
+                "mets": "25.6%",
+                "opp": "28.1%"
+              },
+              {
+                "label": "Chase%",
+                "mets": "32.1%",
+                "opp": "21.7%"
+              },
+              {
+                "label": "K%",
+                "mets": "19.5%",
+                "opp": "19%"
+              },
+              {
+                "label": "BB%",
+                "mets": "9.8%",
+                "opp": "23.8%"
+              }
+            ],
+            "opponentRows": [
+              {
+                "label": "Projected wRC+",
+                "mets": 119.5,
+                "opp": 90.7
+              },
+              {
+                "label": "xwOBA",
+                "mets": 0.353,
+                "opp": 0.319
+              },
+              {
+                "label": "xSLG",
+                "mets": 0.462,
+                "opp": 0.421
+              },
+              {
+                "label": "Hard-Hit%",
+                "metricLabel": "Batter Hard-Hit%",
+                "mets": 47.6,
+                "opp": 42.4
+              },
+              {
+                "label": "Barrel%",
+                "metricLabel": "Batter Barrel%",
+                "mets": 12.7,
+                "opp": 8.7
+              },
+              {
+                "label": "K%",
+                "metricLabel": "Batter K%",
+                "mets": 23.3,
+                "opp": 20.8
+              },
+              {
+                "label": "BB%",
+                "metricLabel": "Batter BB%",
+                "mets": 12.1,
+                "opp": 8.2
+              }
+            ]
+          },
+          "pitcherSplitMatchup": {
+            "metsPitcher": "Huascar Brazobán",
+            "oppPitcher": "Carlos Rodón",
+            "pitcherRows": [
+              {
+                "label": "Pitcher Hand",
+                "mets": "R",
+                "opp": "L"
+              },
+              {
+                "label": "Opponent Lineup wRC+",
+                "mets": 119.5,
+                "opp": 90.7
+              },
+              {
+                "label": "Opponent xwOBA",
+                "mets": 0.353,
+                "opp": 0.319
+              },
+              {
+                "label": "Opponent K%",
+                "metricLabel": "Opponent K%",
+                "mets": 23.3,
+                "opp": 20.8
+              },
+              {
+                "label": "Opponent BB%",
+                "metricLabel": "Opponent BB%",
+                "mets": 12.1,
+                "opp": 8.2
+              }
+            ],
+            "opponentRows": [
+              {
+                "label": "Pitcher Hand",
+                "mets": "L",
+                "opp": "R"
+              },
+              {
+                "label": "Lineup WAR",
+                "mets": 7.2,
+                "opp": 1.5
+              },
+              {
+                "label": "Lineup xBA",
+                "mets": 0.246,
+                "opp": 0.251
+              },
+              {
+                "label": "Lineup xSLG",
+                "mets": 0.462,
+                "opp": 0.421
+              },
+              {
+                "label": "Lineup xwOBA",
+                "mets": 0.353,
+                "opp": 0.319
+              }
+            ]
+          },
+          "projectedLineupComparison": {
+            "summary": "The opponent has the better overall lineup-quality profile on the current inputs.",
+            "mets": [
+              {
+                "order": 1,
+                "playerId": 701807,
+                "name": "Carson Benge",
+                "pos": "RF",
+                "seasonAVG": ".230",
+                "seasonOPS": ".621",
+                "seasonHR": 3,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.255",
+                  "xSLG": "0.393",
+                  "xwOBA": "0.311",
+                  "hardHitPct": "42.6%",
+                  "barrelPct": "5.9%",
+                  "whiffPct": "20.2%",
+                  "kPct": "21.1%",
+                  "bbPct": "7.7%",
+                  "pa": 142
+                },
+                "fangraphs": {
+                  "wRCPlus": "86",
+                  "wOBA": ".290",
+                  "OBP": ".296",
+                  "ISO": ".107",
+                  "bbPct": "7.7%",
+                  "kPct": "21.1%",
+                  "war": "0.3"
+                },
+                "recent20": {
+                  "avg": 0.306,
+                  "ops": 0.751,
+                  "plateAppearances": 66,
+                  "atBats": 62,
+                  "hits": 19
+                }
+              },
+              {
+                "order": 2,
+                "playerId": 666182,
+                "name": "Bo Bichette",
+                "pos": "SS",
+                "seasonAVG": ".213",
+                "seasonOPS": ".539",
+                "seasonHR": 2,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.281",
+                  "xSLG": "0.396",
+                  "xwOBA": "0.32",
+                  "hardHitPct": "44.1%",
+                  "barrelPct": "4.2%",
+                  "whiffPct": "17.3%",
+                  "kPct": "17.5%",
+                  "bbPct": "6.9%",
+                  "pa": 189
+                },
+                "fangraphs": {
+                  "wRCPlus": "60",
+                  "wOBA": ".252",
+                  "OBP": ".270",
+                  "ISO": ".063",
+                  "bbPct": "6.9%",
+                  "kPct": "17.5%",
+                  "war": "0.0"
+                },
+                "recent20": {
+                  "avg": 0.174,
+                  "ops": 0.473,
+                  "plateAppearances": 78,
+                  "atBats": 69,
+                  "hits": 12
+                }
+              },
+              {
+                "order": 3,
+                "playerId": 665742,
+                "name": "Juan Soto",
+                "pos": "LF",
+                "seasonAVG": ".271",
+                "seasonOPS": ".858",
+                "seasonHR": 6,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.267",
+                  "xSLG": "0.564",
+                  "xwOBA": "0.384",
+                  "hardHitPct": "48.3%",
+                  "barrelPct": "18.6%",
+                  "whiffPct": "20.6%",
+                  "kPct": "15%",
+                  "bbPct": "12.5%",
+                  "pa": 120
+                },
+                "fangraphs": {
+                  "wRCPlus": "132",
+                  "wOBA": ".358",
+                  "OBP": ".358",
+                  "ISO": ".202",
+                  "bbPct": "12.5%",
+                  "kPct": "15.0%",
+                  "war": "0.6"
+                },
+                "recent20": {
+                  "avg": 0.242,
+                  "ops": 0.868,
+                  "plateAppearances": 77,
+                  "atBats": 66,
+                  "hits": 16
+                }
+              },
+              {
+                "order": 4,
+                "playerId": 668901,
+                "name": "Mark Vientos",
+                "pos": "1B",
+                "seasonAVG": ".234",
+                "seasonOPS": ".697",
+                "seasonHR": 6,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.292",
+                  "xSLG": "0.569",
+                  "xwOBA": "0.382",
+                  "hardHitPct": "48.9%",
+                  "barrelPct": "12.8%",
+                  "whiffPct": "27.9%",
+                  "kPct": "20.9%",
+                  "bbPct": "5.4%",
+                  "pa": 129
+                },
+                "fangraphs": {
+                  "wRCPlus": "104",
+                  "wOBA": ".317",
+                  "OBP": ".287",
+                  "ISO": ".192",
+                  "bbPct": "5.4%",
+                  "kPct": "20.9%",
+                  "war": "-0.1"
+                },
+                "recent20": {
+                  "avg": 0.224,
+                  "ops": 0.757,
+                  "plateAppearances": 62,
+                  "atBats": 58,
+                  "hits": 13
+                }
+              },
+              {
+                "order": 5,
+                "playerId": 669004,
+                "name": "MJ Melendez",
+                "pos": "DH",
+                "seasonAVG": ".250",
+                "seasonOPS": ".790",
+                "seasonHR": 2,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.18",
+                  "xSLG": "0.347",
+                  "xwOBA": "0.288",
+                  "hardHitPct": "62.5%",
+                  "barrelPct": "15.6%",
+                  "whiffPct": "35.9%",
+                  "kPct": "34.4%",
+                  "bbPct": "11.5%",
+                  "pa": 61
+                },
+                "fangraphs": {
+                  "wRCPlus": "134",
+                  "wOBA": ".360",
+                  "OBP": ".350",
+                  "ISO": ".212",
+                  "bbPct": "11.5%",
+                  "kPct": "34.4%",
+                  "war": "0.2"
+                },
+                "recent20": {
+                  "avg": 0.231,
+                  "ops": 0.718,
+                  "plateAppearances": 46,
+                  "atBats": 39,
+                  "hits": 9
+                }
+              },
+              {
+                "order": 6,
+                "playerId": 683146,
+                "name": "Brett Baty",
+                "pos": "3B",
+                "seasonAVG": ".230",
+                "seasonOPS": ".644",
+                "seasonHR": 2,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.233",
+                  "xSLG": "0.377",
+                  "xwOBA": "0.3",
+                  "hardHitPct": "38.6%",
+                  "barrelPct": "8%",
+                  "whiffPct": "27.2%",
+                  "kPct": "26.6%",
+                  "bbPct": "8.6%",
+                  "pa": 139
+                },
+                "fangraphs": {
+                  "wRCPlus": "80",
+                  "wOBA": ".282",
+                  "OBP": ".290",
+                  "ISO": ".114",
+                  "bbPct": "8.6%",
+                  "kPct": "26.6%",
+                  "war": "-0.1"
+                },
+                "recent20": {
+                  "avg": 0.216,
+                  "ops": 0.669,
+                  "plateAppearances": 63,
+                  "atBats": 51,
+                  "hits": 11
+                }
+              },
+              {
+                "order": 7,
+                "playerId": 543760,
+                "name": "Marcus Semien",
+                "pos": "2B",
+                "seasonAVG": ".229",
+                "seasonOPS": ".616",
+                "seasonHR": 3,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.25",
+                  "xSLG": "0.406",
+                  "xwOBA": "0.314",
+                  "hardHitPct": "35.8%",
+                  "barrelPct": "8.3%",
+                  "whiffPct": "22.7%",
+                  "kPct": "19.5%",
+                  "bbPct": "7.1%",
+                  "pa": 169
+                },
+                "fangraphs": {
+                  "wRCPlus": "77",
+                  "wOBA": ".277",
+                  "OBP": ".286",
+                  "ISO": ".097",
+                  "bbPct": "7.1%",
+                  "kPct": "19.5%",
+                  "war": "-0.1"
+                },
+                "recent20": {
+                  "avg": 0.231,
+                  "ops": 0.634,
+                  "plateAppearances": 71,
+                  "atBats": 65,
+                  "hits": 15
+                }
+              },
+              {
+                "order": 8,
+                "playerId": 805999,
+                "name": "A.J. Ewing",
+                "pos": "CF",
+                "seasonAVG": ".250",
+                "seasonOPS": "1.105",
+                "seasonHR": 1,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.389",
+                  "xSLG": "0.928",
+                  "xwOBA": "0.599",
+                  "hardHitPct": "83.3%",
+                  "barrelPct": "33.3%",
+                  "whiffPct": "18.8%",
+                  "kPct": "23.1%",
+                  "bbPct": "30.8%",
+                  "pa": 13
+                },
+                "fangraphs": {
+                  "wRCPlus": "278",
+                  "wOBA": ".572",
+                  "OBP": ".538",
+                  "ISO": ".556",
+                  "bbPct": "30.8%",
+                  "kPct": "23.1%",
+                  "war": "0.3"
+                },
+                "recent20": {
+                  "avg": 0.25,
+                  "ops": 1.105,
+                  "plateAppearances": 16,
+                  "atBats": 12,
+                  "hits": 3
+                }
+              },
+              {
+                "order": 9,
+                "playerId": 620443,
+                "name": "Luis Torrens",
+                "pos": "C",
+                "seasonAVG": ".204",
+                "seasonOPS": ".537",
+                "seasonHR": 0,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.232",
+                  "xSLG": "0.311",
+                  "xwOBA": "0.269",
+                  "hardHitPct": "48.8%",
+                  "barrelPct": "0%",
+                  "whiffPct": "25.7%",
+                  "kPct": "19.6%",
+                  "bbPct": "5.4%",
+                  "pa": 56
+                },
+                "fangraphs": {
+                  "wRCPlus": "65",
+                  "wOBA": ".260",
+                  "OBP": ".273",
+                  "ISO": ".078",
+                  "bbPct": "5.4%",
+                  "kPct": "19.6%",
+                  "war": "0.4"
+                },
+                "recent20": {
+                  "avg": 0.172,
+                  "ops": 0.514,
+                  "plateAppearances": 34,
+                  "atBats": 29,
+                  "hits": 5
+                }
+              }
+            ],
+            "opp": [
+              {
+                "order": 1,
+                "playerId": 663757,
+                "name": "Trent Grisham",
+                "pos": "CF",
+                "seasonAVG": ".169",
+                "seasonOPS": ".654",
+                "seasonHR": 6,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.226",
+                  "xSLG": "0.446",
+                  "xwOBA": "0.353",
+                  "hardHitPct": "51.4%",
+                  "barrelPct": "14.4%",
+                  "whiffPct": "17.7%",
+                  "kPct": "16.8%",
+                  "bbPct": "16.8%",
+                  "pa": 167
+                },
+                "fangraphs": {
+                  "wRCPlus": "94",
+                  "wOBA": ".308",
+                  "OBP": ".311",
+                  "ISO": ".190",
+                  "bbPct": "16.8%",
+                  "kPct": "16.8%",
+                  "war": "0.3"
+                },
+                "recent20": {
+                  "avg": 0.176,
+                  "ops": 0.67,
+                  "plateAppearances": 80,
+                  "atBats": 68,
+                  "hits": 12
+                }
+              },
+              {
+                "order": 2,
+                "playerId": 700250,
+                "name": "Ben Rice",
+                "pos": "1B",
+                "seasonAVG": ".314",
+                "seasonOPS": "1.104",
+                "seasonHR": 14,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.297",
+                  "xSLG": "0.596",
+                  "xwOBA": "0.43",
+                  "hardHitPct": "58.1%",
+                  "barrelPct": "20.4%",
+                  "whiffPct": "26%",
+                  "kPct": "25.6%",
+                  "bbPct": "15.6%",
+                  "pa": 160
+                },
+                "fangraphs": {
+                  "wRCPlus": "193",
+                  "wOBA": ".455",
+                  "OBP": ".413",
+                  "ISO": ".364",
+                  "bbPct": "15.6%",
+                  "kPct": "25.6%",
+                  "war": "2.0"
+                },
+                "recent20": {
+                  "avg": 0.31,
+                  "ops": 0.972,
+                  "plateAppearances": 65,
+                  "atBats": 58,
+                  "hits": 18
+                }
+              },
+              {
+                "order": 3,
+                "playerId": 592450,
+                "name": "Aaron Judge",
+                "pos": "RF",
+                "seasonAVG": ".267",
+                "seasonOPS": "1.010",
+                "seasonHR": 16,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.273",
+                  "xSLG": "0.639",
+                  "xwOBA": "0.435",
+                  "hardHitPct": "54.9%",
+                  "barrelPct": "24.5%",
+                  "whiffPct": "33.3%",
+                  "kPct": "28.4%",
+                  "bbPct": "17.5%",
+                  "pa": 194
+                },
+                "fangraphs": {
+                  "wRCPlus": "178",
+                  "wOBA": ".433",
+                  "OBP": ".404",
+                  "ISO": ".350",
+                  "bbPct": "17.5%",
+                  "kPct": "28.4%",
+                  "war": "2.4"
+                },
+                "recent20": {
+                  "avg": 0.309,
+                  "ops": 1.116,
+                  "plateAppearances": 85,
+                  "atBats": 68,
+                  "hits": 21
+                }
+              },
+              {
+                "order": 4,
+                "playerId": 641355,
+                "name": "Cody Bellinger",
+                "pos": "LF",
+                "seasonAVG": ".270",
+                "seasonOPS": ".846",
+                "seasonHR": 5,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.292",
+                  "xSLG": "0.47",
+                  "xwOBA": "0.381",
+                  "hardHitPct": "41%",
+                  "barrelPct": "8.3%",
+                  "whiffPct": "17.6%",
+                  "kPct": "12.4%",
+                  "bbPct": "15.1%",
+                  "pa": 185
+                },
+                "fangraphs": {
+                  "wRCPlus": "140",
+                  "wOBA": ".376",
+                  "OBP": ".378",
+                  "ISO": ".201",
+                  "bbPct": "15.1%",
+                  "kPct": "12.4%",
+                  "war": "1.9"
+                },
+                "recent20": {
+                  "avg": 0.275,
+                  "ops": 0.922,
+                  "plateAppearances": 83,
+                  "atBats": 69,
+                  "hits": 19
+                }
+              },
+              {
+                "order": 5,
+                "playerId": 665862,
+                "name": "Jazz Chisholm Jr.",
+                "pos": "2B",
+                "seasonAVG": ".217",
+                "seasonOPS": ".639",
+                "seasonHR": 4,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.191",
+                  "xSLG": "0.315",
+                  "xwOBA": "0.265",
+                  "hardHitPct": "35.6%",
+                  "barrelPct": "5.8%",
+                  "whiffPct": "31.4%",
+                  "kPct": "29.2%",
+                  "bbPct": "9.4%",
+                  "pa": 171
+                },
+                "fangraphs": {
+                  "wRCPlus": "73",
+                  "wOBA": ".277",
+                  "OBP": ".281",
+                  "ISO": ".124",
+                  "bbPct": "9.4%",
+                  "kPct": "29.2%",
+                  "war": "0.4"
+                },
+                "recent20": {
+                  "avg": 0.221,
+                  "ops": 0.642,
+                  "plateAppearances": 76,
+                  "atBats": 68,
+                  "hits": 15
+                }
+              },
+              {
+                "order": 6,
+                "playerId": 641857,
+                "name": "Ryan McMahon",
+                "pos": "3B",
+                "seasonAVG": ".190",
+                "seasonOPS": ".559",
+                "seasonHR": 3,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.205",
+                  "xSLG": "0.338",
+                  "xwOBA": "0.277",
+                  "hardHitPct": "50.7%",
+                  "barrelPct": "8.2%",
+                  "whiffPct": "31.6%",
+                  "kPct": "31.5%",
+                  "bbPct": "9.7%",
+                  "pa": 124
+                },
+                "fangraphs": {
+                  "wRCPlus": "66",
+                  "wOBA": ".266",
+                  "OBP": ".274",
+                  "ISO": ".107",
+                  "bbPct": "9.7%",
+                  "kPct": "31.5%",
+                  "war": "0.0"
+                },
+                "recent20": {
+                  "avg": 0.222,
+                  "ops": 0.563,
+                  "plateAppearances": 65,
+                  "atBats": 63,
+                  "hits": 14
+                }
+              },
+              {
+                "order": 7,
+                "playerId": 682987,
+                "name": "Spencer Jones",
+                "pos": "DH",
+                "seasonAVG": ".188",
+                "seasonOPS": ".504",
+                "seasonHR": 0,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.148",
+                  "xSLG": "0.188",
+                  "xwOBA": "0.259",
+                  "hardHitPct": "66.7%",
+                  "barrelPct": "0%",
+                  "whiffPct": "45.5%",
+                  "kPct": "40%",
+                  "bbPct": "20%",
+                  "pa": 15
+                },
+                "fangraphs": {
+                  "wRCPlus": "22",
+                  "wOBA": ".201",
+                  "OBP": ".267",
+                  "ISO": ".000",
+                  "bbPct": "20.0%",
+                  "kPct": "40.0%",
+                  "war": "-0.1"
+                },
+                "recent20": {
+                  "avg": 0.188,
+                  "ops": 0.504,
+                  "plateAppearances": 19,
+                  "atBats": 16,
+                  "hits": 3
+                }
+              },
+              {
+                "order": 8,
+                "playerId": 683011,
+                "name": "Anthony Volpe",
+                "pos": "SS",
+                "seasonAVG": ".000",
+                "seasonOPS": ".429",
+                "seasonHR": 0,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.015",
+                  "xSLG": "0.018",
+                  "xwOBA": "0.014",
+                  "hardHitPct": "0%",
+                  "barrelPct": "0%",
+                  "whiffPct": "30%",
+                  "kPct": "33.3%",
+                  "bbPct": "0%",
+                  "pa": 3
+                },
+                "fangraphs": {
+                  "wRCPlus": "-100",
+                  "wOBA": ".000",
+                  "OBP": ".000",
+                  "ISO": ".000",
+                  "bbPct": "0.0%",
+                  "kPct": "33.3%",
+                  "war": "-0.1"
+                },
+                "recent20": {
+                  "avg": 0,
+                  "ops": 0.429,
+                  "plateAppearances": 7,
+                  "atBats": 4,
+                  "hits": 0
+                }
+              },
+              {
+                "order": 9,
+                "playerId": 669224,
+                "name": "Austin Wells",
+                "pos": "C",
+                "seasonAVG": ".173",
+                "seasonOPS": ".567",
+                "seasonHR": 3,
+                "statsSeason": "2026",
+                "savant": {
+                  "xBA": "0.222",
+                  "xSLG": "0.363",
+                  "xwOBA": "0.314",
+                  "hardHitPct": "45.9%",
+                  "barrelPct": "5.4%",
+                  "whiffPct": "27.5%",
+                  "kPct": "22.5%",
+                  "bbPct": "15.8%",
+                  "pa": 120
+                },
+                "fangraphs": {
+                  "wRCPlus": "70",
+                  "wOBA": ".272",
+                  "OBP": ".308",
+                  "ISO": ".100",
+                  "bbPct": "15.8%",
+                  "kPct": "22.5%",
+                  "war": "0.4"
+                },
+                "recent20": {
+                  "avg": 0.186,
+                  "ops": 0.612,
+                  "plateAppearances": 49,
+                  "atBats": 43,
+                  "hits": 8
+                }
+              }
+            ],
+            "lineupStatus": "projected"
+          },
+          "analysis": {
+            "whyMetsHaveACase": [
+              "Huascar Brazobán: 2.14 ERA, 19.5%% K rate, 3.49 FIP, vs Carlos Rodón: 6.23 ERA, 5.42 FIP."
+            ],
+            "whereTheRiskIs": [
+              "Overall lineup quality only: projected WAR 1.5 vs 7.2, projected lineup wRC+ 90.7 vs 119.5, xwOBA 0.319 vs 0.353.",
+              "Expected stats haven't converted to runs yet — production lags contact quality."
+            ],
+            "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+          },
+          "teamAdvanced": {
+            "mets": {
+              "wrcPlus": "85",
+              "woba": ".289",
+              "iso": ".123",
+              "xba": "0.251",
+              "xslg": "0.421",
+              "xwoba": "0.319",
+              "ops": ".638",
+              "hardHit": "42.4",
+              "barrelPct": "8.7",
+              "bbPct": "8.2%",
+              "kPct": "20.8%",
+              "rotFip": "3.55",
+              "rotXfip": "3.65",
+              "rotEra": "3.75",
+              "rotWhip": "1.27",
+              "pitchKPct": "24.8%",
+              "pitchBBPct": "9.2%",
+              "leagueRanks": {
+                "wrcPlus": 29,
+                "woba": 30,
+                "iso": 26,
+                "ops": 30,
+                "xba": 9,
+                "xslg": 10,
+                "xwoba": 15,
+                "hardHit": 6,
+                "barrelPct": 13,
+                "bbPct": 24,
+                "kPct": 7,
+                "rotEra": 9,
+                "rotFip": 4,
+                "rotWhip": 11
+              },
+              "rankScope": "MLB",
+              "rankTotal": 30
+            },
+            "opp": {
+              "wrcPlus": "114",
+              "woba": ".338",
+              "iso": ".199",
+              "xba": "0.246",
+              "xslg": "0.462",
+              "xwoba": "0.353",
+              "ops": ".763",
+              "hardHit": "47.6",
+              "barrelPct": "12.7",
+              "bbPct": "12.1%",
+              "kPct": "23.3%",
+              "rotFip": "3.46",
+              "rotXfip": "3.63",
+              "rotEra": "3.22",
+              "rotWhip": "1.15",
+              "pitchKPct": "23.9%",
+              "pitchBBPct": "8.3%",
+              "leagueRanks": {
+                "wrcPlus": 3,
+                "woba": 3,
+                "iso": 1,
+                "ops": 3,
+                "xba": 12,
+                "xslg": 3,
+                "xwoba": 2,
+                "hardHit": 3,
+                "barrelPct": 1,
+                "bbPct": 1,
+                "kPct": 22,
+                "rotEra": 2,
+                "rotFip": 2,
+                "rotWhip": 3
+              },
+              "rankScope": "MLB",
+              "rankTotal": 30
+            }
+          },
+          "todayPick": {
+            "headline": "Brazobán xERA Gap vs Rodón",
+            "summary": "Brazobán 2.73 xERA (88th percentile) faces Rodón 4.52 xERA (51st). Mets rotation FIP ranks fourth in MLB.",
+            "metsEdges": [
+              "Huascar Brazobán 2.73 xERA (88th percentile) vs Carlos Rodón 4.52 xERA (51st); K-BB% 9.7 to -4.8.",
+              "Mets rotation FIP 3.55 ranks fourth in MLB.",
+              "Mets home with 0 rest days vs opponent 0 rest days."
+            ],
+            "risks": [
+              "Yankees lineup xwOBA 0.353 vs Mets 0.319; projected wRC+ 119.5 vs 90.7.",
+              "Mets last20OPS rank 26 at 0.641."
+            ],
+            "bettingAngle": "Brazobán's 2.73 xERA (88th percentile) against Rodón's 4.52 xERA (51st percentile) creates the largest quantified gap. Mets rotation FIP of 3.55 ranks fourth league-wide while Yankees bullpen xERA sits at 3.08. Model projects 48.4% win probability for the Mets, so the line slightly underprices the starter edge.",
+            "officialPick": "Mets ML",
+            "confidenceLabel": "Low",
+            "confidenceScore": 4
+          },
+          "officialPick": {
+            "label": "Official Pick: Mets ML",
+            "explanation": "Brazobán's 2.73 xERA (88th percentile) against Rodón's 4.52 xERA (51st percentile) creates the largest quantified gap. Mets rotation FIP of 3.55 ranks fourth league-wide while Yankees bullpen xERA sits at 3.08. Model projects 48.4% win probability for the Mets, so the line slightly underprices the starter edge.",
+            "headline": "Brazobán xERA Gap vs Rodón",
+            "summary": "Brazobán 2.73 xERA (88th percentile) faces Rodón 4.52 xERA (51st). Mets rotation FIP ranks fourth in MLB.",
+            "metsEdges": [
+              "Huascar Brazobán 2.73 xERA (88th percentile) vs Carlos Rodón 4.52 xERA (51st); K-BB% 9.7 to -4.8.",
+              "Mets rotation FIP 3.55 ranks fourth in MLB.",
+              "Mets home with 0 rest days vs opponent 0 rest days."
+            ],
+            "risks": [
+              "Yankees lineup xwOBA 0.353 vs Mets 0.319; projected wRC+ 119.5 vs 90.7.",
+              "Mets last20OPS rank 26 at 0.641."
+            ],
+            "bettingAngle": "Brazobán's 2.73 xERA (88th percentile) against Rodón's 4.52 xERA (51st percentile) creates the largest quantified gap. Mets rotation FIP of 3.55 ranks fourth league-wide while Yankees bullpen xERA sits at 3.08. Model projects 48.4% win probability for the Mets, so the line slightly underprices the starter edge.",
+            "confidenceLabel": "Low",
+            "confidence": 4
+          },
+          "meta": {
+            "homeAwayLabel": "Home",
+            "moneylineValue": "N/A",
+            "schedulingSpot": {
+              "category": "Scheduling Spot",
+              "verdict": "Mets edge",
+              "strength": "slight",
+              "dataMode": "fallback"
+            },
+            "weatherSummary": "75° | Clear | Wind 9 mph S"
+          }
+        }
+      },
+      "bettingHistory": {
+        "market": "Mets Moneyline",
+        "stake": 100
+      },
+      "weather": {
+        "temperature": 75.1,
+        "temperatureDisplay": "75°",
+        "condition": "Clear",
+        "wind": "Wind 9 mph S",
+        "compact": "75° | Clear | Wind 9 mph S",
+        "source": "open-meteo",
+        "forecastTimeUtc": "2026-05-16T23:00Z"
+      }
+    },
     {
       "id": "2026-05-15-mets-vs-new-york-yankees",
       "date": "2026-05-15",
@@ -3534,6 +7020,17 @@
     }
   ],
   "recentBreakdowns": [
+    {
+      "gameId": "2026-05-16-mets-vs-new-york-yankees",
+      "date": "2026-05-16",
+      "opponent": "New York Yankees",
+      "homeAway": "home",
+      "estimated": false,
+      "status": "pending",
+      "officialPick": "Official Pick: Mets ML",
+      "market": "Mets Moneyline",
+      "stake": 100
+    },
     {
       "gameId": "2026-05-15-mets-vs-new-york-yankees",
       "date": "2026-05-15",
