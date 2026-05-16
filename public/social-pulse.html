@@ -342,6 +342,62 @@
       .sp-player-card { min-width: 100%; }
       .sp-hero { padding: 1.5rem 0.9rem; }
     }
+
+    /* ── Filter bar ─────────────────────────────────── */
+    .sp-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .sp-filter-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-right: 0.25rem;
+      white-space: nowrap;
+    }
+    .sp-filter-btn {
+      border: 1px solid #d8e0ea;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: var(--navy);
+      padding: 0.3rem 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .sp-filter-btn:hover { background: #eef3fa; border-color: rgba(0,45,114,0.3); }
+    .sp-filter-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+    .sp-filter-btn.active.orange { background: var(--orange); border-color: var(--orange); }
+    .sp-filter-divider {
+      width: 1px; height: 18px; background: #d8e0ea;
+      margin: 0 0.15rem; flex-shrink: 0;
+    }
+    .sp-filter-count {
+      font-size: 0.6rem;
+      background: rgba(255,255,255,0.25);
+      border-radius: 999px;
+      padding: 0 0.35rem;
+      margin-left: 0.25rem;
+      display: inline-block;
+    }
+    .sp-no-results {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: #64748b;
+      font-size: 0.88rem;
+    }
+    @media (max-width: 640px) {
+      .sp-filter-bar { gap: 0.35rem; }
+      .sp-filter-btn { font-size: 0.68rem; padding: 0.28rem 0.6rem; }
+    }
   </style>
 </head>
 <body>
@@ -390,6 +446,18 @@
 
       <section class="sp-posts-panel">
         <h2>Recent Posts</h2>
+        <div class="sp-filter-bar" id="sp-filter-bar">
+          <span class="sp-filter-label">Source:</span>
+          <button class="sp-filter-btn active" data-filter-type="platform" data-filter-value="all">All</button>
+          <button class="sp-filter-btn orange" data-filter-type="platform" data-filter-value="x">𝕏 Twitter</button>
+          <button class="sp-filter-btn" data-filter-type="platform" data-filter-value="bluesky">🦋 Bluesky</button>
+          <div class="sp-filter-divider"></div>
+          <span class="sp-filter-label">Type:</span>
+          <button class="sp-filter-btn active" data-filter-type="sourcetype" data-filter-value="all">All</button>
+          <button class="sp-filter-btn" data-filter-type="sourcetype" data-filter-value="media">📰 Media</button>
+          <button class="sp-filter-btn" data-filter-type="sourcetype" data-filter-value="fan">👤 Fan</button>
+        </div>
+        <div id="sp-topic-filters" class="sp-filter-bar" style="margin-top:-0.35rem;"></div>
         <div class="sp-post-grid" id="sp-posts"></div>
       </section>
     </div>

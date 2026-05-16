@@ -279,13 +279,95 @@
       '<p class="sp-hero-summary">' + summary + "</p>";
   }
 
+  // ── Filter state ─────────────────────────────────────────────
+  var ALL_POSTS = [];
+  var activeFilters = { platform: "all", sourcetype: "all", topic: "all" };
+
+  function applyFilters() {
+    var postsEl = document.getElementById("sp-posts");
+    if (!postsEl) return;
+
+    var filtered = ALL_POSTS.filter(function (post) {
+      if (activeFilters.platform !== "all" && post.platform !== activeFilters.platform) return false;
+      if (activeFilters.sourcetype !== "all") {
+        var st = isMediaSource(post) ? "media" : "fan";
+        if (st !== activeFilters.sourcetype) return false;
+      }
+      if (activeFilters.topic !== "all") {
+        var topics = (post.matchedTopics || []).map(function(t){ return t.toLowerCase(); });
+        if (!topics.includes(activeFilters.topic.toLowerCase())) return false;
+      }
+      return true;
+    });
+
+    postsEl.innerHTML = filtered.length
+      ? renderPosts(filtered)
+      : '<div class="sp-no-results">No posts match this filter. Try a different combination.</div>';
+
+    // Update active state on all filter buttons
+    document.querySelectorAll(".sp-filter-btn").forEach(function (btn) {
+      var type = btn.dataset.filterType;
+      var val = btn.dataset.filterValue;
+      btn.classList.toggle("active", activeFilters[type] === val);
+    });
+    // Update topic filter pills
+    document.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
+      btn.classList.toggle("active", activeFilters.topic === btn.dataset.topic);
+    });
+  }
+
+  function buildTopicFilterBar(posts) {
+    var topicEl = document.getElementById("sp-topic-filters");
+    if (!topicEl) return;
+
+    // Collect all unique topics across posts
+    var topicCounts = {};
+    posts.forEach(function (post) {
+      (post.matchedTopics || []).forEach(function (t) {
+        topicCounts[t] = (topicCounts[t] || 0) + 1;
+      });
+    });
+
+    var sorted = Object.entries(topicCounts)
+      .filter(function(e){ return e[1] >= 1; })
+      .sort(function(a, b){ return b[1] - a[1]; })
+      .slice(0, 10);
+
+    if (!sorted.length) { topicEl.style.display = "none"; return; }
+
+    var html = '<span class="sp-filter-label">Topic:</span>' +
+      '<button class="sp-topic-pill sp-filter-btn active" data-topic="all">All</button>' +
+      sorted.map(function (e) {
+        return '<button class="sp-topic-pill sp-filter-btn" data-topic="' + escapeHtml(e[0]) + '">' +
+          escapeHtml(e[0]) +
+          '<span class="sp-filter-count">' + e[1] + '</span></button>';
+      }).join("");
+
+    topicEl.innerHTML = html;
+
+    topicEl.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeFilters.topic = btn.dataset.topic;
+        applyFilters();
+      });
+    });
+  }
+
+  function wireFilterBar() {
+    document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        activeFilters[btn.dataset.filterType] = btn.dataset.filterValue;
+        applyFilters();
+      });
+    });
+  }
+
   function render(data) {
     var hero = document.getElementById("sp-hero");
     var updated = document.getElementById("sp-updated");
     var topics = document.getElementById("sp-topics");
     var players = document.getElementById("sp-players");
     var sources = document.getElementById("sp-sources");
-    var posts = document.getElementById("sp-posts");
     var score = Number(data && data.overallScore) || 0;
 
     if (hero) {
@@ -298,7 +380,11 @@
     if (topics) topics.innerHTML = renderTopics(data && data.trendingTopics);
     if (players) players.innerHTML = renderPlayers(data && data.trendingPlayers);
     if (sources) sources.innerHTML = renderSourceCards(data && data.sources);
-    if (posts) posts.innerHTML = renderPosts(data && data.posts);
+
+    ALL_POSTS = Array.isArray(data && data.posts) ? data.posts : [];
+    buildTopicFilterBar(ALL_POSTS);
+    wireFilterBar();
+    applyFilters();
   }
 
   function renderEmpty(message) {
