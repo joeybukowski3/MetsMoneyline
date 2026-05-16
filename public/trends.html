@@ -224,6 +224,16 @@
     .verdict-cold { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
     .verdict-track { background: rgba(22, 163, 74, 0.1); color: #16a34a; }
     .verdict-avg { background: rgba(234, 179, 8, 0.12); color: #92400e; }
+    /* Player trend pill — matches prospect page pill style */
+    .trend-pill-badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.65rem; font-weight: 800; border-radius: 999px;
+      padding: 0.18rem 0.6rem; white-space: nowrap;
+      letter-spacing: 0.02em; flex-shrink: 0;
+    }
+    .tp-rising   { background: rgba(255,89,16,0.14);  color: #c2410c; }
+    .tp-declining { background: rgba(0,45,114,0.12);   color: #002d72; }
+    .tp-steady   { background: rgba(100,116,139,0.12); color: #475569; }
 
     .trends-content-grid {
       display: grid;
@@ -851,6 +861,74 @@
       }
     };
 
+    // ── Midpoint split plugin — draws Earlier/Recent shading + dashed line ──
+    const midpointSplitPlugin = {
+      id: "midpointSplit",
+      beforeDatasetsDraw: function(chart, args, opts) {
+        if (!opts || !opts.enabled) return;
+        const ca  = chart.chartArea;
+        const ctx = chart.ctx;
+        const n   = chart.data.labels ? chart.data.labels.length : 0;
+        if (n < 3) return;
+
+        const midIdx  = Math.floor(n / 2);
+        const xScale  = chart.scales.x;
+        const midX    = xScale.getPixelForValue(midIdx);
+        const lastX   = xScale.getPixelForValue(n - 1);
+        const firstX  = xScale.getPixelForValue(0);
+        const toneColor = opts.toneColor || "rgba(22,163,74,0.06)";
+
+        ctx.save();
+
+        // Recent-half shading
+        ctx.fillStyle = toneColor;
+        ctx.fillRect(midX, ca.top, lastX - midX, ca.bottom - ca.top);
+
+        // Midpoint dashed vertical line
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(midX, ca.top);
+        ctx.lineTo(midX, ca.bottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // "Earlier" label — left side, just above bottom
+        ctx.font = "600 9px Inter";
+        ctx.fillStyle = "#94a3b8";
+        ctx.textAlign = "left";
+        ctx.fillText("Earlier", firstX + 4, ca.bottom - 5);
+
+        // "Recent ▸" label — right of midline
+        ctx.textAlign = "left";
+        ctx.fillText("Recent ▸", midX + 4, ca.bottom - 5);
+
+        ctx.restore();
+      }
+    };
+
+    // ── Compute trend pill for a cumulative series ────────────────────────────
+    // Uses midpoint-vs-end: if end > mid the stat went UP in the second half.
+    // Higher AVG/OPS = good (trendUp = rising). Higher ERA = bad (handled by caller).
+    function computeTrendPill(series) {
+      const vals = (series || []).filter(function(v) { return typeof v === "number" && v !== null; });
+      if (vals.length < 4) return null;  // need enough data to be meaningful
+      const midIdx  = Math.floor(vals.length / 2);
+      const midVal  = vals[midIdx];
+      const lastVal = vals[vals.length - 1];
+      const pct = midVal !== 0 ? Math.abs(lastVal - midVal) / Math.abs(midVal) : 0;
+      if (pct <= 0.05) return { label: "→ Steady", cls: "tp-steady" };
+      if (lastVal > midVal) return { label: "↑ Rising", cls: "tp-rising" };
+      return { label: "↓ Declining", cls: "tp-declining" };
+    }
+
+    function renderTrendPill(series) {
+      const pill = computeTrendPill(series);
+      if (!pill) return "";
+      return '<span class="trend-pill-badge ' + pill.cls + '">' + pill.label + "</span>";
+    }
+
     function buildPlayerChartSpec(windowData, statKey) {
       const normalized = normalizeRolling(windowData || {});
       const labels = sliceVisibleSeries(normalized.labels, getVisiblePointCount());
@@ -873,8 +951,11 @@
           borderColor: "#002d72",
           backgroundColor: "rgba(0,45,114,0.05)",
           borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 4,
+          pointRadius: function(ctx) { return ctx.datasetIndex === 0 ? 3 : 0; },
+          pointHoverRadius: 5,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: "#002d72",
+          pointBorderWidth: 1.8,
           tension: 0.3,
           fill: true,
           order: 1
@@ -889,8 +970,11 @@
           borderColor: "#ff5910",
           backgroundColor: "rgba(255,89,16,0.07)",
           borderWidth: 2.4,
-          pointRadius: 0,
-          pointHoverRadius: 4,
+          pointRadius: function(ctx) { return ctx.datasetIndex === 0 ? 3 : 0; },
+          pointHoverRadius: 5,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: "#ff5910",
+          pointBorderWidth: 1.8,
           tension: 0.3,
           fill: true,
           order: 1
@@ -905,8 +989,11 @@
           borderColor: "#002d72",
           backgroundColor: "rgba(0,45,114,0.05)",
           borderWidth: 2.5,
-          pointRadius: 0,
-          pointHoverRadius: 4,
+          pointRadius: function(ctx) { return ctx.datasetIndex === 0 ? 3 : 0; },
+          pointHoverRadius: 5,
+          pointBackgroundColor: "#fff",
+          pointBorderColor: "#002d72",
+          pointBorderWidth: 1.8,
           tension: 0.25,
           fill: false,
           order: 1
@@ -931,6 +1018,13 @@
         });
       }
 
+      // Compute tone for midpoint shading based on active stat trend
+      var seriesForTrend = statKey === "xba" ? cumulativeXba : (statKey === "ops" ? cumulativeOps : cumulativeBa);
+      var pill = computeTrendPill(seriesForTrend);
+      var toneColor = pill && pill.cls === "tp-rising"   ? "rgba(22,163,74,0.06)"
+                    : pill && pill.cls === "tp-declining" ? "rgba(220,38,38,0.06)"
+                    : "rgba(100,116,139,0.04)";
+
       return {
         type: "line",
         labels: labels,
@@ -938,7 +1032,8 @@
         yMin: yMin,
         yMax: yMax,
         tickFormatter: tickFormatter,
-        mlbAvgLabel: { value: avgValue }
+        mlbAvgLabel: { value: avgValue },
+        midpointSplit: { enabled: true, toneColor: toneColor }
       };
     }
 
@@ -1086,6 +1181,7 @@
             legend: { display: false },
             teamBarLabels: spec.teamBarLabels || { enabled: false },
             mlbAvgLabel: spec.mlbAvgLabel || { value: null },
+            midpointSplit: spec.midpointSplit || { enabled: false },
             tooltip: {
               backgroundColor: "#1a1a2e",
               titleFont: { family: "Inter", size: 11, weight: "600" },
@@ -1128,7 +1224,7 @@
             }
           }
         },
-        plugins: [teamBarLabelsPlugin, mlbAvgLabelPlugin]
+        plugins: [teamBarLabelsPlugin, mlbAvgLabelPlugin, midpointSplitPlugin]
       });
     }
 
@@ -1234,6 +1330,7 @@
               "<h3>" + player.name + "</h3>" +
               "<span>" + (player.position || "") + " · " + (w.pa || 0) + " PA · " + (w.games || 0) + " G</span>" +
             "</div>" +
+            renderTrendPill(sliceVisibleSeries(normalizeRolling(player.season).cumulativeBa, getVisiblePointCount())) +
             verdictBadge(w.ba) +
           "</div>" +
           '<div class="trend-chart-wrap"><canvas id="chart-player-' + idx + '"></canvas></div>' +
