@@ -206,10 +206,20 @@
       var label = type === 'Pitcher'
         ? 'ERA: ' + lastVal.toFixed(2)
         : 'AVG: ' + lastVal.toFixed(3);
-      var trendDir = lastVal < firstVal ? (type === 'Pitcher' ? '↓ improving' : '↓ declining') : (type === 'Pitcher' ? '↑ rising' : '↑ improving');
-      var trendColor = type === 'Pitcher'
-        ? (lastVal < firstVal ? '#16a34a' : '#dc2626')
-        : (lastVal > firstVal ? '#16a34a' : '#dc2626');
+      // Compare second half avg vs first half avg — fairer than just first vs last point
+      var midIdx = Math.floor(values.length / 2);
+      var firstHalfAvg = values.slice(0, midIdx).reduce(function(a,b){return a+b;},0) / midIdx;
+      var secondHalfAvg = values.slice(midIdx).reduce(function(a,b){return a+b;},0) / (values.length - midIdx);
+      var trendUp = secondHalfAvg > firstHalfAvg;   // stat went up in second half
+      // For hitters: up = good (rising). For pitchers: up in ERA = bad (declining).
+      var trendDir, trendColor;
+      if (type === 'Pitcher') {
+        trendDir   = trendUp ? '↑ Declining' : '↓ Improving';
+        trendColor = trendUp ? '#dc2626' : '#16a34a';
+      } else {
+        trendDir   = trendUp ? '↑ Rising' : '↓ Declining';
+        trendColor = trendUp ? '#16a34a' : '#dc2626';
+      }
       var fillPoints = padX.toFixed(1) + ',' + (h - padY).toFixed(1) + ' ' + points + ' ' + (padX + (values.length - 1) * stepX).toFixed(1) + ',' + (h - padY).toFixed(1);
       return '<div style="margin:0.5rem 0 0.25rem;padding:0.5rem 0.6rem;background:#f9fafb;border-radius:10px;border:1px solid #f0f2f6;">' +
         '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" style="display:block;" preserveAspectRatio="none">' +
@@ -244,7 +254,22 @@
             <div class="prospect-name-row">
               ${headshotUrl ? `<img src="${headshotUrl}" alt="${prospect.name}" width="36" height="36" loading="lazy">` : ''}
               <h3>${prospect.name}</h3>
-              ${prospect.mlbStatus === 'MLB Active' ? `<span style="display:inline-block; background:#002d72; color:#ffffff; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:0.05em; margin-left:6px;">MLB</span>` : ''}
+              ${prospect.mlbStatus === 'MLB Active'
+                ? `<span style="display:inline-flex;align-items:center;margin-left:5px;vertical-align:middle;background:#002d72;border-radius:4px;padding:1px 5px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 14" width="36" height="14">
+                      <text x="18" y="11" font-family="Arial Black,sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1">MLB</text>
+                    </svg>
+                   </span>`
+                : (function() {
+                    var lvl = prospect.level || '';
+                    var bg = lvl === 'AAA' ? '#1d4ed8' : lvl === 'AA' ? '#7c3aed' : lvl.indexOf('High') !== -1 ? '#0891b2' : '#16a34a';
+                    var txt = lvl === 'AAA' ? 'Triple-A' : lvl === 'AA' ? 'Double-A' : lvl.indexOf('High') !== -1 ? 'High-A' : lvl || 'MiLB';
+                    return '<span style="display:inline-flex;align-items:center;margin-left:5px;vertical-align:middle;background:' + bg + ';border-radius:4px;padding:1px 5px;">' +
+                      '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 14\" width=\"48\" height=\"14\">' +
+                      '<text x=\"24\" y=\"11\" font-family=\"Arial Black,sans-serif\" font-weight=\"900\" font-size=\"9\" fill=\"#ffffff\" text-anchor=\"middle\" letter-spacing=\"0.5\">' + txt + '</text>' +
+                      '</svg></span>';
+                  })()
+              }
             </div>
             <div class="prospect-meta">${prospect.position || ''} · Age ${prospect.age || '?'} · ${prospect.bats || ''}/${prospect.throws || ''}</div>
             <div class="prospect-tags">
