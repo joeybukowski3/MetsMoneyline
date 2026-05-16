@@ -1464,6 +1464,79 @@ tbody td:first-child { font-weight: 500; }
   color: #64748b;
 }
 
+/* ── Compact Last-5 rows ──────────────────────────────────────────────────── */
+.gc-panel-compact { padding: 0.5rem 0.6rem; }
+
+.gc-compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gc-compact-row {
+  display: grid;
+  grid-template-columns: 2.2rem 1.2rem 2.6rem 1.1rem 1.2rem;
+  align-items: center;
+  gap: 0.22rem;
+  padding: 0.26rem 0;
+  border-top: 1px solid #f0f4f8;
+}
+.gc-compact-list > .gc-compact-row:first-child { border-top: none; }
+
+.gc-compact-date {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: #64748b;
+  font-variant-numeric: tabular-nums;
+}
+
+/* W / L / N result dot */
+.gc-result-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 50%;
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.gc-dot-w { background: #dcfce7; color: #15803d; }
+.gc-dot-l { background: #fee2e2; color: #b91c1c; }
+.gc-dot-n { background: #f1f5f9; color: #64748b; }
+
+.gc-compact-score {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+/* H / A badge */
+.gc-compact-ha {
+  font-size: 0.58rem;
+  font-weight: 800;
+  border-radius: 4px;
+  padding: 0.1rem 0.22rem;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.gc-ha-home { background: rgba(0,45,114,0.1); color: #002d72; }
+.gc-ha-away { background: #f1f5f9; color: #64748b; }
+
+.gc-compact-logo {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  justify-self: center;
+}
+.gc-compact-logo-placeholder {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
 .gc-chip-wrap {
   display: flex;
   flex-wrap: wrap;
@@ -1499,56 +1572,28 @@ tbody td:first-child { font-weight: 500; }
 }
 
 @media (max-width: 600px) {
-  /* Keep Last 5 panels side by side on mobile */
+  /* Keep Last-5 panels side by side — always */
   .gc-two-col {
     grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
-  .game-context-card {
-    padding: 0.75rem 0.75rem 0.8rem;
+  .game-context-card { padding: 0.7rem 0.7rem 0.75rem; }
+
+  /* Compact grid rows already handle mobile — just ensure no overflow */
+  .gc-compact-row {
+    grid-template-columns: 2rem 1.1rem 2.4rem 1rem 1.1rem;
+    gap: 0.18rem;
   }
-
-  /* Compact log rows — horizontal layout preserved */
-  .gc-log-row {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.22rem 0;
-  }
-
-  .gc-log-meta {
-    gap: 0.22rem;
-    flex-wrap: nowrap;
-    flex-shrink: 0;
-  }
-
-  .gc-log-date { font-size: 0.68rem; }
-
-  .gc-inline-pill {
-    font-size: 0.6rem !important;
-    padding: 0.1rem 0.35rem !important;
-  }
-
-  .gc-log-main {
-    justify-content: flex-end;
-    gap: 0.3rem;
-  }
-
-  .gc-log-score { font-size: 0.82rem; }
-
-  /* Opponent name: clip to avoid overflow */
-  .gc-log-opponent {
-    font-size: 0.7rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 80px;
-    text-align: right;
-  }
-
-  .gc-subheading { font-size: 0.62rem; }
-  .gc-panel { padding: 0.5rem 0.55rem; border-radius: 10px; }
+  .gc-compact-date { font-size: 0.62rem; }
+  .gc-compact-score { font-size: 0.68rem; }
+  .gc-result-dot { width: 1rem; height: 1rem; font-size: 0.58rem; }
+  .gc-compact-ha { font-size: 0.54rem; padding: 0.08rem 0.18rem; }
+  .gc-compact-logo { width: 16px; height: 16px; }
+  .gc-subheading { font-size: 0.6rem; }
+  .gc-panel { padding: 0.45rem 0.5rem; border-radius: 10px; }
+  .gc-inline-pill { font-size: 0.58rem !important; padding: 0.1rem 0.32rem !important; }
+  .gc-subheading-row { margin-bottom: 0.35rem; }
 }
 
 /* ── Statcast: desktop = table, mobile = stacked cards ── */

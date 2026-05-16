@@ -1618,9 +1618,11 @@ function buildGameContextCard(game) {
   if (!gc || !Object.keys(gc).length) return "";
 
   const oppAbbr = getTeamAbbr(game.opponent);
-  const formatGameDate = (value) => value
-    ? new Date(`${value}T12:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })
-    : "--";
+  const formatGameDate = (value) => {
+    if (!value) return "--";
+    const d = new Date(`${value}T12:00:00`);
+    return `${d.getMonth() + 1}/${d.getDate()}`;
+  };
   const getSiteMeta = (homeAway, teamLabel = "team") => {
     const normalized = String(homeAway || "").toLowerCase();
     if (normalized === "home") return { label: "Home", opponentPrefix: "vs" };
@@ -1634,54 +1636,51 @@ function buildGameContextCard(game) {
     return result || "Pending";
   };
 
-  // Recent results log
+  // Recent results log — compact: date | W/L dot | score | H/A | logo
   const resultLog = (games, label) => {
     if (!games?.length) {
-      return `
-        <div class="gc-panel">
-          <div class="gc-subheading">${label}</div>
-          <div class="gc-empty-state">No data</div>
-        </div>`;
+      return `<div class="gc-panel"><div class="gc-subheading">${label}</div><div class="gc-empty-state">No data</div></div>`;
     }
-    const streak = (() => {
-      let s = 0, last = null;
-      for (const g of games) {
-        if (!last) { last = g.result; s = 1; }
-        else if (g.result === last) s++;
-        else break;
-      }
-      const streakClass = last === "W" ? "gc-pill-win" : "gc-pill-loss";
-      return `<span class="gc-inline-pill ${streakClass}">${last}${s}</span>`;
-    })();
+
+    // Streak pill
+    let s = 0, last = null;
+    for (const g of games) {
+      if (!last) { last = g.result; s = 1; }
+      else if (g.result === last) s++;
+      else break;
+    }
+    const streakClass = last === "W" ? "gc-pill-win" : "gc-pill-loss";
+    const streak = `<span class="gc-inline-pill ${streakClass}">${last}${s}</span>`;
 
     const rows = games.slice(0, 5).map(g => {
-      const resultWord = getResultLabel(g.result);
-      const site = getSiteMeta(g.homeAway, label);
-      const resultClass = g.result === "W" ? "gc-pill-win" : g.result === "L" ? "gc-pill-loss" : "gc-pill-neutral";
-      const matchupPrefix = site.opponentPrefix;
-      const opponentLogo = getTeamLogoUrl(g.opponent);
-      return `
-        <div class="gc-log-row">
-          <div class="gc-log-meta">
-            <span class="gc-log-date">${formatGameDate(g.date)}</span>
-            <span class="gc-inline-pill gc-site-pill">${site.label}</span>
-            <span class="gc-inline-pill ${resultClass}">${resultWord}</span>
-          </div>
-          <div class="gc-log-main">
-            <span class="gc-log-score">${g.score || "--"}</span>
-            <span class="gc-log-opponent">${matchupPrefix} ${g.opponent || "Opponent TBD"}${opponentLogo ? ` <img src="${opponentLogo}" alt="${g.opponent || "Opponent TBD"} logo" class="gc-log-team-logo" width="15" height="15" loading="lazy" decoding="async">` : ""}</span>
-          </div>
-        </div>`;
+      const isWin  = g.result === "W";
+      const isLoss = g.result === "L";
+      const resultDotClass = isWin ? "gc-result-dot gc-dot-w" : isLoss ? "gc-result-dot gc-dot-l" : "gc-result-dot gc-dot-n";
+      const resultChar = isWin ? "W" : isLoss ? "L" : (g.result || "?");
+      const logo = getTeamLogoUrl(g.opponent);
+      const homeAway = String(g.homeAway || "").toLowerCase();
+      const isHome = homeAway === "home";
+      const haBadge = isHome ? "H" : "A";
+      const haClass = isHome ? "gc-ha-home" : "gc-ha-away";
+      const logoHtml = logo
+        ? `<img src="${logo}" alt="" class="gc-compact-logo" width="18" height="18" loading="lazy" decoding="async">`
+        : `<span class="gc-compact-logo-placeholder"></span>`;
+
+      return `<div class="gc-compact-row">
+        <span class="gc-compact-date">${formatGameDate(g.date)}</span>
+        <span class="${resultDotClass}">${resultChar}</span>
+        <span class="gc-compact-score">${g.score || "--"}</span>
+        <span class="gc-compact-ha ${haClass}">${haBadge}</span>
+        ${logoHtml}
+      </div>`;
     }).join("");
 
-    return `
-      <div class="gc-panel">
-        <div class="gc-subheading-row">
-          <div class="gc-subheading">${label}</div>
-          ${streak}
-        </div>
-        <div class="gc-log-list">${rows}</div>
-      </div>`;
+    return `<div class="gc-panel gc-panel-compact">
+      <div class="gc-subheading-row">
+        <div class="gc-subheading">${label}</div>${streak}
+      </div>
+      <div class="gc-compact-list">${rows}</div>
+    </div>`;
   };
 
   // Injury chips
@@ -1726,16 +1725,12 @@ function buildGameContextCard(game) {
         const resultClass = meeting.result === "W" ? "gc-pill-win" : meeting.result === "L" ? "gc-pill-loss" : "gc-pill-neutral";
         const opponentLogo = getTeamLogoUrl(meeting.opponent || game.opponent);
         return `
-          <div class="gc-log-row gc-h2h-row">
-            <div class="gc-log-meta">
-              <span class="gc-log-date">${formatGameDate(meeting.date)}</span>
-              <span class="gc-inline-pill gc-site-pill">${site.label}</span>
-              <span class="gc-inline-pill ${resultClass}">${getResultLabel(meeting.result, true)}</span>
-            </div>
-            <div class="gc-log-main">
-              <span class="gc-log-score">${meeting.score || "--"}</span>
-              <span class="gc-log-opponent">${site.opponentPrefix} ${meeting.opponent || game.opponent}${opponentLogo ? ` <img src="${opponentLogo}" alt="${meeting.opponent || game.opponent} logo" class="gc-log-team-logo" width="15" height="15" loading="lazy" decoding="async">` : ""}</span>
-            </div>
+          <div class="gc-compact-row gc-h2h-row">
+            <span class="gc-compact-date">${formatGameDate(meeting.date)}</span>
+            <span class="${resultClass === 'gc-pill-win' ? 'gc-result-dot gc-dot-w' : resultClass === 'gc-pill-loss' ? 'gc-result-dot gc-dot-l' : 'gc-result-dot gc-dot-n'}">${meeting.result === 'W' ? 'W' : meeting.result === 'L' ? 'L' : '?'}</span>
+            <span class="gc-compact-score">${meeting.score || "--"}</span>
+            <span class="gc-compact-ha ${site.label === 'Home' ? 'gc-ha-home' : 'gc-ha-away'}">${site.label === 'Home' ? 'H' : 'A'}</span>
+            ${opponentLogo ? `<img src="${opponentLogo}" alt="" class="gc-compact-logo" width="18" height="18" loading="lazy" decoding="async">` : '<span class="gc-compact-logo-placeholder"></span>'}
           </div>`;
       }).join("")
     : `<div class="gc-empty-state">No prior Mets vs ${game.opponent} results available yet.</div>`;
