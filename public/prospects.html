@@ -55,7 +55,16 @@
     /* ── Header row ── */
     .prospect-name-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
     .prospect-name-row h3 { font-size: 1rem; font-weight: 800; color: var(--navy); }
-    .prospect-name-row img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); }
+    .prospect-name-row img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      object-fit: cover;
+      object-position: top center;
+      flex-shrink: 0;
+      background: #eef2f7;
+    }
     .prospect-meta { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
     .prospect-tags { display: flex; gap: 0.25rem; flex-wrap: wrap; margin-top: 0.3rem; }
     .prospect-tag {
@@ -186,6 +195,7 @@
       .prospect-card { grid-template-columns: 38px 1fr; gap: 0.55rem; padding: 0.75rem 0.8rem; }
       .prospect-rank { width: 38px; height: 38px; font-size: 0.95rem; }
       .prospect-name-row h3 { font-size: 0.9rem; }
+      .prospect-name-row img { width: 42px; height: 42px; }
       /* Stack all 3 panels vertically */
       .prospect-data-row { grid-template-columns: 1fr; gap: 0.5rem; }
       .prospect-chart-panel { grid-column: auto; }
@@ -513,7 +523,7 @@
       const isTop3 = rank <= 3;
       const isPitcher = prospect.type === 'Pitcher';
       const headshotUrl = prospect.mlbId
-        ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${prospect.mlbId}/headshot/67/current`
+        ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/${prospect.mlbId}/headshot/67/current`
         : '';
 
       const leagueBadge = prospect.mlbStatus === 'MLB Active'
@@ -534,7 +544,7 @@
           <div class="prospect-rank ${isTop3 ? 'top3' : ''}">${rank}</div>
           <div class="prospect-body">
             <div class="prospect-name-row">
-              ${headshotUrl ? `<img src="${headshotUrl}" alt="${prospect.name}" width="36" height="36" loading="lazy">` : ''}
+              ${headshotUrl ? `<img src="${headshotUrl}" alt="${prospect.name}" width="44" height="44" loading="lazy">` : ''}
               <h3>${prospect.name}</h3>
               ${leagueBadge}
             </div>
