@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-16T18:07:58.276Z",
+  "generatedAt": "2026-05-16T19:32:33.619Z",
   "referenceDate": "2026-05-16",
   "cacheKey": "sample-game:2026-05-16",
   "games": [
@@ -27,7 +27,7 @@
           "mlbId": 623211,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-16T18:07:44.770Z",
+          "generatedAt": "2026-05-16T19:32:25.304Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -86,7 +86,7 @@
           "mlbId": 607074,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-05-16T18:07:44.848Z",
+          "generatedAt": "2026-05-16T19:32:25.265Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -141,12 +141,12 @@
           }
         },
         "metsBullpen": {
-          "seasonERA": 4.15,
-          "seasonXERAAverage": 3.98,
+          "seasonERA": 4.07,
+          "seasonXERAAverage": 3.8,
           "seasonXFIP": "3.64",
           "last20ERA": 3.13,
           "last20WHIP": 1.23,
-          "seasonWHIP": 1.37,
+          "seasonWHIP": 1.38,
           "seasonKPct": "24.9%",
           "seasonBBPct": "9.2%",
           "rating": 85,
@@ -1163,6 +1163,11 @@
         ],
         "metsInjuries": [
           {
+            "name": "Clay Holmes",
+            "status": "IL",
+            "description": "Clay Holmes (IL) - New York Mets placed RHP Clay Holmes on the 15-day injured list. Right fibula fracture."
+          },
+          {
             "name": "Francisco Alvarez",
             "status": "IL",
             "description": "Francisco Alvarez (IL) - New York Mets placed C Francisco Alvarez on the 10-day injured list. Right meniscus tear."
@@ -1181,11 +1186,6 @@
             "name": "Luis Robert Jr.",
             "status": "IL",
             "description": "Luis Robert Jr. (IL) - New York Mets placed CF Luis Robert Jr. on the 10-day injured list retroactive to April 27, 2026. Lumbar spine disc herniation."
-          },
-          {
-            "name": "Francisco Lindor",
-            "status": "IL",
-            "description": "Francisco Lindor (IL) - New York Mets placed SS Francisco Lindor on the 10-day injured list. Left calf strain."
           }
         ],
         "oppInjuries": [
@@ -1335,7 +1335,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-16T18:07:45.374Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-16\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":70.8,\"temperatureDisplay\":\"71°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph S\",\"compact\":\"71° | Clear | Wind 11 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-16T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Huascar Brazobán\",\"handedness\":\"R\",\"era\":2.14,\"xERA\":2.73,\"fip\":3.48,\"whip\":0.95,\"kPct\":19.5,\"bbPct\":9.8,\"kMinusBbPct\":9.7,\"hardHitPct\":22.8,\"barrelPct\":1.8,\"xBAAllowed\":0.208,\"xSLGAllowed\":0.275,\"xwOBAAllowed\":0.265,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"ip\":\"2.1\",\"er\":0,\"k\":2,\"result\":\"W\"},{\"date\":\"2026-05-10\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"1.0\",\"er\":2,\"k\":0,\"result\":\"L\"},{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"1.0\",\"er\":1,\"k\":1,\"result\":\"-\"},{\"date\":\"2026-05-04\",\"opponent\":\"Colorado Rockies\",\"ip\":\"1.0\",\"er\":0,\"k\":0,\"result\":\"W\"}],\"avgInnings\":1.33,\"avgEarnedRuns\":0.75,\"avgStrikeouts\":0.75,\"daysSinceLastStart\":3},\"workload\":{\"inningsTrend\":1.33,\"daysSinceLastStart\":3},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Carlos Rodón\",\"handedness\":\"L\",\"era\":6.23,\"xERA\":4.5,\"fip\":5.41,\"whip\":1.62,\"kPct\":19,\"bbPct\":23.8,\"kMinusBbPct\":-4.8,\"hardHitPct\":18.2,\"barrelPct\":0,\"xBAAllowed\":0.169,\"xSLGAllowed\":0.191,\"xwOBAAllowed\":0.335,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-10\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"4.1\",\"er\":3,\"k\":4,\"result\":\"-\"}],\"avgInnings\":4.33,\"avgEarnedRuns\":3,\"avgStrikeouts\":4,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.33,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.1,\"projectedLineupWRCPlus\":86,\"obp\":0.294,\"iso\":0.122,\"kPct\":20.9,\"bbPct\":8.2,\"xBA\":0.25,\"xSLG\":0.418,\"xwOBA\":0.318,\"hardHitPct\":42.2,\"barrelPct\":8.8,\"battingAverage\":0.23,\"wOBA\":0.29,\"lineup\":{\"totalWAR\":1.1,\"totalWRCPlus\":86,\"totalOBP\":0.294,\"totalISO\":0.122,\"totalKPct\":20.5,\"totalBBPct\":7.7,\"totalAVG\":0.23,\"totalWOBA\":0.29,\"totalXBA\":0.258,\"totalXSLG\":0.432,\"totalXWOBA\":0.327,\"totalHardHitPct\":42.3,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.037}},\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.037},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":7.5,\"projectedLineupWRCPlus\":120,\"obp\":0.342,\"iso\":0.197,\"kPct\":23.4,\"bbPct\":12,\"xBA\":0.247,\"xSLG\":0.461,\"xwOBA\":0.354,\"hardHitPct\":47.5,\"barrelPct\":12.7,\"battingAverage\":0.231,\"wOBA\":0.346,\"lineup\":{\"totalWAR\":7.5,\"totalWRCPlus\":120,\"totalOBP\":0.342,\"totalISO\":0.209,\"totalKPct\":23.8,\"totalBBPct\":14.3,\"totalAVG\":0.231,\"totalWOBA\":0.346,\"totalXBA\":0.244,\"totalXSLG\":0.457,\"totalXWOBA\":0.353,\"totalHardHitPct\":48,\"totalBarrelPct\":12.8,\"regressionSignals\":{\"baMinusXba\":-0.013,\"wobaMinusXwoba\":-0.007}},\"regressionSignals\":{\"baMinusXba\":-0.013,\"wobaMinusXwoba\":-0.007},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.1,\"totalWRCPlus\":86,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":7.5,\"totalWRCPlus\":120,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.37,\"kMinusBbPct\":15.7,\"xFIP\":3.64,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":15.7,\"xFIP\":3.61,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":70.8,\"temperatureDisplay\":\"71°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph S\",\"compact\":\"71° | Clear | Wind 11 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-16T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Huascar Brazobán 2.73/3.48 vs Carlos Rodón 4.50/5.41; K-BB% 9.7 to -4.8.\",\"rawScore\":29.75,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.1 vs 7.5, projected lineup wRC+ 86.0 vs 120.0, xwOBA 0.318 vs 0.354.\",\"rawScore\":-11.9,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.46,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.037; opponent starter overperformance signal 0.75.\",\"rawScore\":-5.32,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 48.4%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.484,\"totalWeightedImpact\":-1.6,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-16T19:32:25.338Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-16\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":70.9,\"temperatureDisplay\":\"71°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph S\",\"compact\":\"71° | Clear | Wind 11 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-16T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Huascar Brazobán\",\"handedness\":\"R\",\"era\":2.14,\"xERA\":2.73,\"fip\":3.48,\"whip\":0.95,\"kPct\":19.5,\"bbPct\":9.8,\"kMinusBbPct\":9.7,\"hardHitPct\":22.8,\"barrelPct\":1.8,\"xBAAllowed\":0.208,\"xSLGAllowed\":0.275,\"xwOBAAllowed\":0.265,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"ip\":\"2.1\",\"er\":0,\"k\":2,\"result\":\"W\"},{\"date\":\"2026-05-10\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"1.0\",\"er\":2,\"k\":0,\"result\":\"L\"},{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"1.0\",\"er\":1,\"k\":1,\"result\":\"-\"},{\"date\":\"2026-05-04\",\"opponent\":\"Colorado Rockies\",\"ip\":\"1.0\",\"er\":0,\"k\":0,\"result\":\"W\"}],\"avgInnings\":1.33,\"avgEarnedRuns\":0.75,\"avgStrikeouts\":0.75,\"daysSinceLastStart\":3},\"workload\":{\"inningsTrend\":1.33,\"daysSinceLastStart\":3},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Carlos Rodón\",\"handedness\":\"L\",\"era\":6.23,\"xERA\":4.5,\"fip\":5.41,\"whip\":1.62,\"kPct\":19,\"bbPct\":23.8,\"kMinusBbPct\":-4.8,\"hardHitPct\":18.2,\"barrelPct\":0,\"xBAAllowed\":0.169,\"xSLGAllowed\":0.191,\"xwOBAAllowed\":0.335,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-10\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"4.1\",\"er\":3,\"k\":4,\"result\":\"-\"}],\"avgInnings\":4.33,\"avgEarnedRuns\":3,\"avgStrikeouts\":4,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.33,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.1,\"projectedLineupWRCPlus\":86,\"obp\":0.294,\"iso\":0.122,\"kPct\":20.9,\"bbPct\":8.2,\"xBA\":0.25,\"xSLG\":0.418,\"xwOBA\":0.318,\"hardHitPct\":42.2,\"barrelPct\":8.8,\"battingAverage\":0.23,\"wOBA\":0.29,\"lineup\":{\"totalWAR\":1.1,\"totalWRCPlus\":86,\"totalOBP\":0.294,\"totalISO\":0.122,\"totalKPct\":20.5,\"totalBBPct\":7.7,\"totalAVG\":0.23,\"totalWOBA\":0.29,\"totalXBA\":0.258,\"totalXSLG\":0.432,\"totalXWOBA\":0.327,\"totalHardHitPct\":42.3,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.037}},\"regressionSignals\":{\"baMinusXba\":-0.028,\"wobaMinusXwoba\":-0.037},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":7.5,\"projectedLineupWRCPlus\":120,\"obp\":0.342,\"iso\":0.197,\"kPct\":23.4,\"bbPct\":12,\"xBA\":0.247,\"xSLG\":0.461,\"xwOBA\":0.354,\"hardHitPct\":47.5,\"barrelPct\":12.7,\"battingAverage\":0.231,\"wOBA\":0.346,\"lineup\":{\"totalWAR\":7.5,\"totalWRCPlus\":120,\"totalOBP\":0.342,\"totalISO\":0.209,\"totalKPct\":23.8,\"totalBBPct\":14.3,\"totalAVG\":0.231,\"totalWOBA\":0.346,\"totalXBA\":0.244,\"totalXSLG\":0.457,\"totalXWOBA\":0.353,\"totalHardHitPct\":48,\"totalBarrelPct\":12.8,\"regressionSignals\":{\"baMinusXba\":-0.013,\"wobaMinusXwoba\":-0.007}},\"regressionSignals\":{\"baMinusXba\":-0.013,\"wobaMinusXwoba\":-0.007},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.1,\"totalWRCPlus\":86,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":7.5,\"totalWRCPlus\":120,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.38,\"kMinusBbPct\":15.7,\"xFIP\":3.64,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":15.7,\"xFIP\":3.61,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":70.9,\"temperatureDisplay\":\"71°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph S\",\"compact\":\"71° | Clear | Wind 11 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-16T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Huascar Brazobán 2.73/3.48 vs Carlos Rodón 4.50/5.41; K-BB% 9.7 to -4.8.\",\"rawScore\":29.75,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.1 vs 7.5, projected lineup wRC+ 86.0 vs 120.0, xwOBA 0.318 vs 0.354.\",\"rawScore\":-11.9,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.38 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.48,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.037; opponent starter overperformance signal 0.75.\",\"rawScore\":-5.32,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 48.4%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.484,\"totalWeightedImpact\":-1.6,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
         "headline": "Mets vs New York Yankees: starting pitching is the clearest angle",
         "synopsis": "Huascar Brazobán vs Carlos Rodón sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Huascar Brazobán 2.73/3.48 vs Carlos Rodón 4.50/5.41; K-BB% 9.7 to -4.8. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1497,24 +1497,24 @@
             "body": "Primary edge: Huascar Brazobán's run-prevention metrics. Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days. Note: model does not fully favor Mets. Pick is based on the best supported individual angle."
           }
         ],
-        "pickSummary": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st percentile) creates the primary 1.77-run gap, supported by FIP of 3.48 to 5.41. Mets season OPS ranks 30th at .638 while Yankees rank 3rd at .763, with home differential listed at -14 over 22 games. Model at 48.4% implies the line correctly prices the matchup near even.",
-        "pickNarrative": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st) supplies the clearest quantified edge. Model win probability sits at 48.4% with low confidence. Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st percentile) creates the primary 1.77-run gap, supported by FIP of 3.48 to 5.41. Mets season OPS ranks 30th at .638 while Yankees rank 3rd at .763, with home differential listed at -14 over 22 games. Model at 48.4% implies the line correctly prices the matchup near even.",
+        "pickSummary": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP stand against Rodón's 4.50 xERA (51st percentile) and 5.41 FIP. Mets rotation FIP ranks fourth league-wide while both clubs carry zero rest days. Line prices the game closer to even than the 1.93-run pitching gap indicates.",
+        "pickNarrative": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP face Rodón's 4.50 xERA; Mets rotation FIP ranks fourth league-wide. Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP stand against Rodón's 4.50 xERA (51st percentile) and 5.41 FIP. Mets rotation FIP ranks fourth league-wide while both clubs carry zero rest days. Line prices the game closer to even than the 1.93-run pitching gap indicates.",
         "todayPick": {
-          "headline": "Brazobán xERA Gap Anchors Mets ML",
-          "summary": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st) supplies the clearest quantified edge. Model win probability sits at 48.4% with low confidence.",
+          "headline": "Brazobán 2.73 xERA Tops Rodón at Citi",
+          "summary": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP face Rodón's 4.50 xERA; Mets rotation FIP ranks fourth league-wide.",
           "metsEdges": [
-            "Huascar Brazobán 2.73 xERA (89th percentile) and 3.48 FIP versus Rodón 4.50 xERA (51st) and 5.41 FIP; K-BB% 9.7 to -4.8.",
-            "Mets home with 0 rest days versus opponent 0 rest days in Citi Field.",
-            "Rotation FIP ranks Mets 4th in MLB."
+            "Huascar Brazobán 2.73 xERA (89th percentile) and 3.48 FIP vs Rodón 4.50 xERA / 5.41 FIP",
+            "Mets rotation FIP 3.54 ranks 4th in MLB",
+            "Home venue with zero rest days for both clubs"
           ],
           "risks": [
-            "Opponent lineup xwOBA .354 and wRC+ 115 versus Mets .318 and 84.",
-            "Mets BA-xBA -0.028 and wOBA-xwOBA -0.037 regression signals."
+            "Opponent lineup xwOBA 0.354 and projected wRC+ 120 versus Mets 0.318 / 86",
+            "Mets season OPS rank 30th and last-20 OPS rank 26th"
           ],
-          "bettingAngle": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st percentile) creates the primary 1.77-run gap, supported by FIP of 3.48 to 5.41. Mets season OPS ranks 30th at .638 while Yankees rank 3rd at .763, with home differential listed at -14 over 22 games. Model at 48.4% implies the line correctly prices the matchup near even.",
+          "bettingAngle": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP stand against Rodón's 4.50 xERA (51st percentile) and 5.41 FIP. Mets rotation FIP ranks fourth league-wide while both clubs carry zero rest days. Line prices the game closer to even than the 1.93-run pitching gap indicates.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
-          "confidenceScore": 10
+          "confidenceScore": 4
         },
         "officialPick": "Official Pick: Mets ML",
         "edgeTable": [
@@ -1536,7 +1536,7 @@
             "category": "Bullpen",
             "edge": "Opponent edge",
             "strength": "slight",
-            "reason": "Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
+            "reason": "Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.38 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
             "dataMode": "fallback"
           },
           {
@@ -1572,7 +1572,7 @@
           "xERA/FIP profile: Huascar Brazobán 2.73/3.48 vs Carlos Rodón 4.50/5.41; K-BB% 9.7 to -4.8.",
           "Overall lineup quality only: projected WAR 1.1 vs 7.5, projected lineup wRC+ 86.0 vs 120.0, xwOBA 0.318 vs 0.354.",
           "Regression lens: Mets BA-xBA -0.028 and wOBA-xwOBA -0.037; opponent starter overperformance signal 0.75.",
-          "Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP."
+          "Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.38 vs 1.20, last 3-day usage N/A IP vs N/A IP."
         ],
         "pick": "Mets ML",
         "analyticalLean": "Mixed",
@@ -1599,7 +1599,7 @@
             "homeAway": "home",
             "ballpark": "Citi Field",
             "weather": {
-              "temperature": 70.8,
+              "temperature": 70.9,
               "temperatureDisplay": "71°",
               "condition": "Clear",
               "wind": "Wind 11 mph S",
@@ -1818,7 +1818,7 @@
           },
           "bullpen": {
             "mets": {
-              "whip": 1.37,
+              "whip": 1.38,
               "kMinusBbPct": 15.7,
               "xFIP": 3.64,
               "taxLevel": "normal"
@@ -1845,7 +1845,7 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 70.8,
+              "temperature": 70.9,
               "temperatureDisplay": "71°",
               "condition": "Clear",
               "wind": "Wind 11 mph S",
@@ -1904,8 +1904,8 @@
               "weight": 15,
               "edge": "Opponent edge",
               "strength": "slight",
-              "explanation": "Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.37 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
-              "rawScore": -0.46,
+              "explanation": "Bullpen shape: xFIP 3.64 vs 3.61, WHIP 1.38 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
+              "rawScore": -0.48,
               "weightedImpact": -4.95,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2401,8 +2401,8 @@
                 "tone": "green"
               },
               "statsRow": {
-                "seasonEra": 4.15,
-                "seasonWhip": 1.37,
+                "seasonEra": 4.07,
+                "seasonWhip": 1.38,
                 "last20Era": 3.13
               },
               "closer": {
@@ -3433,39 +3433,39 @@
             }
           },
           "todayPick": {
-            "headline": "Brazobán xERA Gap Anchors Mets ML",
-            "summary": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st) supplies the clearest quantified edge. Model win probability sits at 48.4% with low confidence.",
+            "headline": "Brazobán 2.73 xERA Tops Rodón at Citi",
+            "summary": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP face Rodón's 4.50 xERA; Mets rotation FIP ranks fourth league-wide.",
             "metsEdges": [
-              "Huascar Brazobán 2.73 xERA (89th percentile) and 3.48 FIP versus Rodón 4.50 xERA (51st) and 5.41 FIP; K-BB% 9.7 to -4.8.",
-              "Mets home with 0 rest days versus opponent 0 rest days in Citi Field.",
-              "Rotation FIP ranks Mets 4th in MLB."
+              "Huascar Brazobán 2.73 xERA (89th percentile) and 3.48 FIP vs Rodón 4.50 xERA / 5.41 FIP",
+              "Mets rotation FIP 3.54 ranks 4th in MLB",
+              "Home venue with zero rest days for both clubs"
             ],
             "risks": [
-              "Opponent lineup xwOBA .354 and wRC+ 115 versus Mets .318 and 84.",
-              "Mets BA-xBA -0.028 and wOBA-xwOBA -0.037 regression signals."
+              "Opponent lineup xwOBA 0.354 and projected wRC+ 120 versus Mets 0.318 / 86",
+              "Mets season OPS rank 30th and last-20 OPS rank 26th"
             ],
-            "bettingAngle": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st percentile) creates the primary 1.77-run gap, supported by FIP of 3.48 to 5.41. Mets season OPS ranks 30th at .638 while Yankees rank 3rd at .763, with home differential listed at -14 over 22 games. Model at 48.4% implies the line correctly prices the matchup near even.",
+            "bettingAngle": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP stand against Rodón's 4.50 xERA (51st percentile) and 5.41 FIP. Mets rotation FIP ranks fourth league-wide while both clubs carry zero rest days. Line prices the game closer to even than the 1.93-run pitching gap indicates.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
-            "confidenceScore": 10
+            "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st percentile) creates the primary 1.77-run gap, supported by FIP of 3.48 to 5.41. Mets season OPS ranks 30th at .638 while Yankees rank 3rd at .763, with home differential listed at -14 over 22 games. Model at 48.4% implies the line correctly prices the matchup near even.",
-            "headline": "Brazobán xERA Gap Anchors Mets ML",
-            "summary": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st) supplies the clearest quantified edge. Model win probability sits at 48.4% with low confidence.",
+            "explanation": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP stand against Rodón's 4.50 xERA (51st percentile) and 5.41 FIP. Mets rotation FIP ranks fourth league-wide while both clubs carry zero rest days. Line prices the game closer to even than the 1.93-run pitching gap indicates.",
+            "headline": "Brazobán 2.73 xERA Tops Rodón at Citi",
+            "summary": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP face Rodón's 4.50 xERA; Mets rotation FIP ranks fourth league-wide.",
             "metsEdges": [
-              "Huascar Brazobán 2.73 xERA (89th percentile) and 3.48 FIP versus Rodón 4.50 xERA (51st) and 5.41 FIP; K-BB% 9.7 to -4.8.",
-              "Mets home with 0 rest days versus opponent 0 rest days in Citi Field.",
-              "Rotation FIP ranks Mets 4th in MLB."
+              "Huascar Brazobán 2.73 xERA (89th percentile) and 3.48 FIP vs Rodón 4.50 xERA / 5.41 FIP",
+              "Mets rotation FIP 3.54 ranks 4th in MLB",
+              "Home venue with zero rest days for both clubs"
             ],
             "risks": [
-              "Opponent lineup xwOBA .354 and wRC+ 115 versus Mets .318 and 84.",
-              "Mets BA-xBA -0.028 and wOBA-xwOBA -0.037 regression signals."
+              "Opponent lineup xwOBA 0.354 and projected wRC+ 120 versus Mets 0.318 / 86",
+              "Mets season OPS rank 30th and last-20 OPS rank 26th"
             ],
-            "bettingAngle": "Brazobán's 2.73 xERA (89th percentile) versus Rodón's 4.50 xERA (51st percentile) creates the primary 1.77-run gap, supported by FIP of 3.48 to 5.41. Mets season OPS ranks 30th at .638 while Yankees rank 3rd at .763, with home differential listed at -14 over 22 games. Model at 48.4% implies the line correctly prices the matchup near even.",
+            "bettingAngle": "Brazobán's 2.73 xERA (89th percentile) and 3.48 FIP stand against Rodón's 4.50 xERA (51st percentile) and 5.41 FIP. Mets rotation FIP ranks fourth league-wide while both clubs carry zero rest days. Line prices the game closer to even than the 1.93-run pitching gap indicates.",
             "confidenceLabel": "Low",
-            "confidence": 10
+            "confidence": 4
           },
           "meta": {
             "homeAwayLabel": "Home",
@@ -3485,7 +3485,7 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 70.8,
+        "temperature": 70.9,
         "temperatureDisplay": "71°",
         "condition": "Clear",
         "wind": "Wind 11 mph S",
