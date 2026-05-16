@@ -32,18 +32,13 @@
     .prospects-header h1 { font-size: 1.6rem; font-weight: 800; color: var(--navy); margin-bottom: 0.25rem; }
     .prospects-header p { color: var(--text-muted); font-size: 0.9rem; }
     .prospect-seo-summary {
-      margin: 0 auto 1rem;
-      max-width: 960px;
-      padding: 0.9rem 1rem;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      background: #f8fafc;
-      color: #475569;
-      font-size: 0.85rem;
-      line-height: 1.65;
+      margin: 0 auto 1rem; max-width: 960px; padding: 0.9rem 1rem;
+      border: 1px solid var(--border); border-radius: 14px;
+      background: #f8fafc; color: #475569; font-size: 0.85rem; line-height: 1.65;
     }
     .prospect-seo-summary p { margin: 0; }
 
+    /* ── Card outer shell ── */
     .prospect-card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
       padding: 1rem 1.25rem; margin-bottom: 0.75rem; box-shadow: var(--shadow);
@@ -55,8 +50,9 @@
       background: var(--navy); flex-shrink: 0;
     }
     .prospect-rank.top3 { background: var(--orange); }
-
     .prospect-body { min-width: 0; }
+
+    /* ── Header row ── */
     .prospect-name-row { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
     .prospect-name-row h3 { font-size: 1rem; font-weight: 800; color: var(--navy); }
     .prospect-name-row img { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border); }
@@ -66,48 +62,107 @@
       font-size: 0.68rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: 999px;
       text-transform: uppercase; letter-spacing: 0.04em;
     }
-    .tag-mlb { background: rgba(0,45,114,0.1); color: var(--navy); }
-    .tag-aaa { background: rgba(255,89,16,0.1); color: #b93d00; }
-    .tag-aa { background: rgba(22,163,74,0.1); color: #15803d; }
+    .tag-mlb   { background: rgba(0,45,114,0.1);   color: var(--navy); }
+    .tag-aaa   { background: rgba(255,89,16,0.1);  color: #b93d00; }
+    .tag-aa    { background: rgba(22,163,74,0.1);  color: #15803d; }
     .tag-higha { background: rgba(147,51,234,0.1); color: #7c3aed; }
-    .tag-lowa { background: rgba(107,114,128,0.1); color: #4b5563; }
-    .tag-hitter { background: rgba(0,45,114,0.06); color: var(--navy); }
+    .tag-lowa  { background: rgba(107,114,128,0.1);color: #4b5563; }
+    .tag-hitter  { background: rgba(0,45,114,0.06);  color: var(--navy); }
     .tag-pitcher { background: rgba(255,89,16,0.06); color: #b93d00; }
 
-    .prospect-stats {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
-      gap: 0.25rem; margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid var(--border);
+    /* ── Bottom two-column: chart left, stats right ── */
+    .prospect-data-row {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 0.75rem;
+      margin-top: 0.65rem;
+      align-items: start;
     }
-    .p-stat { text-align: center; }
-    .p-stat .val { font-size: 0.88rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
-    .p-stat .lbl { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; margin-top: 1px; }
+
+    /* ── Chart panel ── */
+    .prospect-chart-panel {
+      background: #f9fafb; border-radius: 10px; border: 1px solid #f0f2f6;
+      padding: 0.55rem 0.6rem 0.45rem;
+      min-width: 0;
+    }
+    .prospect-chart-title {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #64748b; margin-bottom: 0.3rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .prospect-chart-title .trend-pill {
+      font-size: 0.62rem; font-weight: 800; border-radius: 999px;
+      padding: 0.12rem 0.5rem; text-transform: none; letter-spacing: 0;
+    }
+    .prospect-chart-title .trend-pill.rising   { background: rgba(22,163,74,0.12);  color: #15803d; }
+    .prospect-chart-title .trend-pill.declining { background: rgba(220,38,38,0.1);   color: #dc2626; }
+    .prospect-chart-title .trend-pill.neutral   { background: rgba(100,116,139,0.1); color: #475569; }
+
+    /* ── Stats right panel ── */
+    .prospect-stats-panel { min-width: 0; }
+
+    /* Season stats strip */
+    .prospect-season-stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 0.2rem; margin-bottom: 0.55rem;
+    }
+    .p-stat { text-align: center; background: #f8fafc; border-radius: 8px; padding: 0.3rem 0.2rem; }
+    .p-stat .val { font-size: 0.84rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
+    .p-stat .lbl { font-size: 0.55rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-top: 1px; }
+
+    /* Recent games table */
+    .prospect-games-label {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #64748b; margin-bottom: 0.3rem;
+    }
+    .prospect-games-table {
+      width: 100%; border-collapse: collapse; font-size: 0.68rem;
+    }
+    .prospect-games-table thead th {
+      background: var(--navy); color: #fff; padding: 0.28rem 0.3rem;
+      font-size: 0.58rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.04em; text-align: center;
+    }
+    .prospect-games-table thead th:first-child { text-align: left; border-radius: 6px 0 0 0; }
+    .prospect-games-table thead th:last-child  { border-radius: 0 6px 0 0; }
+    .prospect-games-table tbody tr:nth-child(odd)  { background: #fff; }
+    .prospect-games-table tbody tr:nth-child(even) { background: #f8fafc; }
+    .prospect-games-table tbody td {
+      padding: 0.28rem 0.3rem; text-align: center; color: #0f172a; font-weight: 600;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .prospect-games-table tbody td:first-child { text-align: left; font-weight: 700; color: #475569; }
+    .prospect-games-table .no-games {
+      text-align: center; padding: 0.65rem; color: #94a3b8; font-size: 0.68rem;
+      font-style: italic;
+    }
 
     .prospect-news {
-      margin-top: 0.4rem; padding: 0.5rem 0.75rem; background: #f8fafc; border-radius: 8px;
-      border-left: 3px solid var(--orange); font-size: 0.78rem; color: var(--text-main); line-height: 1.4;
+      margin-top: 0.55rem; padding: 0.45rem 0.75rem; background: #f8fafc; border-radius: 8px;
+      border-left: 3px solid var(--orange); font-size: 0.76rem; color: var(--text-main); line-height: 1.4;
     }
     .prospect-news a { color: var(--navy); font-weight: 600; text-decoration: none; }
     .prospect-news a:hover { text-decoration: underline; }
-    .prospect-news .news-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .prospect-news .news-date { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.1rem; }
 
     .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; }
     .source-note { text-align: center; font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; }
 
+    @media (max-width: 900px) {
+      .prospect-data-row { grid-template-columns: 1fr; }
+      .prospect-season-stats { grid-template-columns: repeat(6, 1fr); }
+    }
     @media (max-width: 640px) {
       .prospects-shell { padding: 0 0.65rem 2rem; }
       .prospects-header { padding: 1rem 0 0.65rem; }
       .prospects-header h1 { font-size: 1.35rem; }
-      .prospects-header p { font-size: 0.82rem; }
-      .prospect-card { grid-template-columns: 38px 1fr; gap: 0.6rem; padding: 0.85rem 0.9rem; }
+      .prospect-card { grid-template-columns: 38px 1fr; gap: 0.55rem; padding: 0.8rem 0.85rem; }
       .prospect-rank { width: 38px; height: 38px; font-size: 0.95rem; }
       .prospect-name-row h3 { font-size: 0.9rem; }
-      .prospect-meta { font-size: 0.7rem; }
-      /* Stats: 4-up so all stats fit in one row */
-      .prospect-stats { grid-template-columns: repeat(4, 1fr); gap: 0.18rem; margin-top: 0.5rem; }
-      .prospect-stat-val { font-size: 0.8rem; }
-      .prospect-stat-label { font-size: 0.54rem; }
-      /* Level badge compact */
-      .level-badge { font-size: 0.6rem; padding: 0.12rem 0.4rem; }
+      .prospect-season-stats { grid-template-columns: repeat(3, 1fr); }
+      .prospect-games-table { font-size: 0.64rem; }
+      .prospect-games-table thead th,
+      .prospect-games-table tbody td { padding: 0.22rem 0.22rem; }
     }
   </style>
 </head>
@@ -160,78 +215,119 @@
       return map[level] || 'tag-lowa';
     }
 
-    function renderHitterStats(s) {
-      if (!s) return renderMissingStats(['AVG', 'OPS', 'HR', 'RBI', 'SB', 'PA']);
-      return `
-        <div class="p-stat"><div class="val">${s.avg ?? '—'}</div><div class="lbl">AVG</div></div>
-        <div class="p-stat"><div class="val">${s.ops ?? '—'}</div><div class="lbl">OPS</div></div>
-        <div class="p-stat"><div class="val">${s.hr ?? '—'}</div><div class="lbl">HR</div></div>
-        <div class="p-stat"><div class="val">${s.rbi ?? '—'}</div><div class="lbl">RBI</div></div>
-        <div class="p-stat"><div class="val">${s.sb ?? '—'}</div><div class="lbl">SB</div></div>
-        <div class="p-stat"><div class="val">${s.pa ?? '—'}</div><div class="lbl">PA</div></div>
-      `;
-    }
-
-    function renderPitcherStats(s) {
-      if (!s) return renderMissingStats(['ERA', 'IP', 'K', 'WHIP', 'BB', 'K/9']);
-      return `
-        <div class="p-stat"><div class="val">${s.era ?? '—'}</div><div class="lbl">ERA</div></div>
-        <div class="p-stat"><div class="val">${s.ip ?? '—'}</div><div class="lbl">IP</div></div>
-        <div class="p-stat"><div class="val">${s.k ?? '—'}</div><div class="lbl">K</div></div>
-        <div class="p-stat"><div class="val">${s.whip ?? '—'}</div><div class="lbl">WHIP</div></div>
-        <div class="p-stat"><div class="val">${s.bb ?? '—'}</div><div class="lbl">BB</div></div>
-        <div class="p-stat"><div class="val">${s.kPer9 ?? '—'}</div><div class="lbl">K/9</div></div>
-      `;
-    }
-
+    // ── Chart: per-game values, last 20 appearances ──────────────────────────
     function buildSparklineSvg(trendData, type) {
       if (!trendData || !trendData.values || trendData.values.length < 3) {
-        return '<div style="text-align:center;padding:12px 8px;font-size:11px;color:#9ca3af;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;margin:8px 0;">Not enough games for trend line</div>';
+        return '<div style="text-align:center;padding:10px 8px;font-size:11px;color:#9ca3af;background:#f9fafb;border-radius:8px;border:1px dashed #e5e7eb;">Not enough games yet</div>';
       }
-      var values = trendData.values;
-      var w = 400, h = 60, padX = 6, padY = 6;
+      var values = trendData.values;          // already sliced to last 20 by bot
+      var labels = trendData.labels || [];
+      var isPitcher = type === 'Pitcher';
+      var w = 400, h = 55, padX = 6, padY = 8;
       var min = Math.min.apply(null, values);
       var max = Math.max.apply(null, values);
       var range = max - min || 0.001;
-      var stepX = (w - padX * 2) / (values.length - 1);
+      var stepX = values.length > 1 ? (w - padX * 2) / (values.length - 1) : 0;
       var points = values.map(function(v, i) {
         var x = padX + i * stepX;
         var y = padY + (1 - (v - min) / range) * (h - padY * 2);
         return x.toFixed(1) + ',' + y.toFixed(1);
       }).join(' ');
-      var color = type === 'Pitcher' ? '#ff5910' : '#002d72';
-      var fillColor = type === 'Pitcher' ? 'rgba(255,89,16,0.08)' : 'rgba(0,45,114,0.08)';
-      var lastVal = values[values.length - 1];
-      var firstVal = values[0];
-      var label = type === 'Pitcher'
-        ? 'ERA: ' + lastVal.toFixed(2)
-        : 'AVG: ' + lastVal.toFixed(3);
-      // Compare second half avg vs first half avg — fairer than just first vs last point
+      var color    = isPitcher ? '#ff5910' : '#002d72';
+      var fillColor = isPitcher ? 'rgba(255,89,16,0.08)' : 'rgba(0,45,114,0.08)';
+      var fillPoints = padX.toFixed(1) + ',' + (h - padY).toFixed(1) + ' ' + points + ' ' +
+                       (padX + (values.length - 1) * stepX).toFixed(1) + ',' + (h - padY).toFixed(1);
+
+      // Trend: compare second half avg vs first half avg
       var midIdx = Math.floor(values.length / 2);
-      var firstHalfAvg = values.slice(0, midIdx).reduce(function(a,b){return a+b;},0) / midIdx;
-      var secondHalfAvg = values.slice(midIdx).reduce(function(a,b){return a+b;},0) / (values.length - midIdx);
-      var trendUp = secondHalfAvg > firstHalfAvg;   // stat went up in second half
-      // For hitters: up = good (rising). For pitchers: up in ERA = bad (declining).
-      var trendDir, trendColor;
-      if (type === 'Pitcher') {
-        trendDir   = trendUp ? '↑ Declining' : '↓ Improving';
-        trendColor = trendUp ? '#dc2626' : '#16a34a';
+      var firstHalf  = values.slice(0, midIdx).reduce(function(a,b){return a+b;},0) / (midIdx || 1);
+      var secondHalf = values.slice(midIdx).reduce(function(a,b){return a+b;},0) / ((values.length - midIdx) || 1);
+      var trendUp = secondHalf > firstHalf;
+      var trendDir, trendCls;
+      if (isPitcher) {
+        // For pitchers lower ERA = better
+        trendDir = trendUp ? '↑ Declining' : '↓ Improving';
+        trendCls = trendUp ? 'declining' : 'rising';
       } else {
-        trendDir   = trendUp ? '↑ Rising' : '↓ Declining';
-        trendColor = trendUp ? '#16a34a' : '#dc2626';
+        trendDir = trendUp ? '↑ Rising' : '↓ Declining';
+        trendCls = trendUp ? 'rising' : 'declining';
       }
-      var fillPoints = padX.toFixed(1) + ',' + (h - padY).toFixed(1) + ' ' + points + ' ' + (padX + (values.length - 1) * stepX).toFixed(1) + ',' + (h - padY).toFixed(1);
-      return '<div style="margin:0.5rem 0 0.25rem;padding:0.5rem 0.6rem;background:#f9fafb;border-radius:10px;border:1px solid #f0f2f6;">' +
+
+      var statLabel = isPitcher ? 'ERA per start' : 'AVG per game';
+      var n = values.length;
+      var headerLabel = n >= 20 ? 'Last 20 appearances · ' + statLabel
+                                : 'Last ' + n + ' appearances · ' + statLabel;
+
+      return '<div class="prospect-chart-panel">' +
+        '<div class="prospect-chart-title">' +
+          '<span>' + headerLabel + '</span>' +
+          '<span class="trend-pill ' + trendCls + '">' + trendDir + '</span>' +
+        '</div>' +
         '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="' + h + '" style="display:block;" preserveAspectRatio="none">' +
-        '<polygon points="' + fillPoints + '" fill="' + fillColor + '"/>' +
-        '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '<polygon points="' + fillPoints + '" fill="' + fillColor + '"/>' +
+          '<polyline points="' + points + '" fill="none" stroke="' + color + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' +
         '</svg>' +
-        '<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.68rem;color:#6b7280;margin-top:4px;">' +
-        '<span style="font-weight:600;">' + label + '</span>' +
-        '<span style="font-weight:700;color:' + trendColor + ';">' + trendDir + '</span>' +
-        '</div></div>';
+      '</div>';
     }
 
+    // ── Season stats strip (3-column grid) ───────────────────────────────────
+    function renderSeasonStats(prospect) {
+      var s = prospect.stats;
+      var isPitcher = prospect.type === 'Pitcher';
+      if (!s) return '<div style="color:#9ca3af;font-size:0.75rem;text-align:center;padding:0.5rem;">Season stats unavailable</div>';
+      var cells;
+      if (isPitcher) {
+        cells = [
+          { v: s.era,    l: 'ERA' },
+          { v: s.whip,   l: 'WHIP' },
+          { v: s.ip,     l: 'IP' },
+          { v: s.k,      l: 'K' },
+          { v: s.bb,     l: 'BB' },
+          { v: s.kPer9,  l: 'K/9' },
+        ];
+      } else {
+        cells = [
+          { v: s.avg,  l: 'AVG' },
+          { v: s.obp,  l: 'OBP' },
+          { v: s.ops,  l: 'OPS' },
+          { v: s.hr,   l: 'HR' },
+          { v: s.rbi,  l: 'RBI' },
+          { v: s.sb,   l: 'SB' },
+        ];
+      }
+      return '<div class="prospect-season-stats">' +
+        cells.map(function(c) {
+          return '<div class="p-stat"><div class="val">' + (c.v != null ? c.v : '—') + '</div><div class="lbl">' + c.l + '</div></div>';
+        }).join('') +
+      '</div>';
+    }
+
+    // ── Recent games table (last 5) ──────────────────────────────────────────
+    function renderRecentGames(trendData, isPitcher) {
+      var games = trendData && Array.isArray(trendData.recentGames) ? trendData.recentGames.slice(-5) : [];
+      var label = '<div class="prospect-games-label">Last 5 Games</div>';
+
+      if (!games.length) {
+        // No recentGames yet (pre-bot-update data) — show placeholder
+        return label + '<div class="prospect-games-table"><div class="no-games">Per-game data updates daily</div></div>';
+      }
+
+      if (isPitcher) {
+        var header = '<thead><tr><th>Date</th><th>IP</th><th>H</th><th>ER</th><th>K</th><th>BB</th></tr></thead>';
+        var rows = games.slice().reverse().map(function(g) {
+          return '<tr><td>' + (g.date||'—') + '</td><td>' + (g.ip||'—') + '</td><td>' + (g.h||0) + '</td><td>' + (g.er||0) + '</td><td>' + (g.k||0) + '</td><td>' + (g.bb||0) + '</td></tr>';
+        }).join('');
+        return label + '<table class="prospect-games-table">' + header + '<tbody>' + rows + '</tbody></table>';
+      } else {
+        var header = '<thead><tr><th>Date</th><th>AB</th><th>H</th><th>HR</th><th>RBI</th><th>K</th></tr></thead>';
+        var rows = games.slice().reverse().map(function(g) {
+          return '<tr><td>' + (g.date||'—') + '</td><td>' + (g.ab||0) + '</td><td>' + (g.h||0) + '</td><td>' + (g.hr||0) + '</td><td>' + (g.rbi||0) + '</td><td>' + (g.k||0) + '</td></tr>';
+        }).join('');
+        return label + '<table class="prospect-games-table">' + header + '<tbody>' + rows + '</tbody></table>';
+      }
+    }
+
+    // ── Full card renderer ───────────────────────────────────────────────────
     function renderCard(prospect, idx) {
       const rank = idx + 1;
       const isTop3 = rank <= 3;
@@ -239,9 +335,15 @@
       const headshotUrl = prospect.mlbId
         ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${prospect.mlbId}/headshot/67/current`
         : '';
-      const stats = isPitcher ? renderPitcherStats(prospect.stats) : renderHitterStats(prospect.stats);
-      const trendHtml = buildSparklineSvg(prospect.trendData, prospect.type);
-      const newsHtml = prospect.news ? `
+
+      const leagueBadge = prospect.mlbStatus === 'MLB Active'
+        ? `<img src="https://www.mlbstatic.com/team-logos/league-logos/1.svg" alt="MLB" title="MLB Active Roster" width="32" height="20" style="margin-left:6px;vertical-align:middle;object-fit:contain;" loading="lazy" onerror="this.style.display='none'">`
+        : `<img src="https://www.mlbstatic.com/team-logos/league-logos/11.svg" alt="MiLB" title="Minor League Baseball" width="32" height="20" style="margin-left:6px;vertical-align:middle;object-fit:contain;opacity:0.9;" loading="lazy" onerror="this.style.display='none'">`;
+
+      const chartHtml   = buildSparklineSvg(prospect.trendData, prospect.type);
+      const seasonHtml  = renderSeasonStats(prospect);
+      const gamesHtml   = renderRecentGames(prospect.trendData, isPitcher);
+      const newsHtml    = prospect.news ? `
         <div class="prospect-news">
           <a href="${prospect.news.url || '#'}" target="_blank" rel="noopener">${prospect.news.title}</a>
           <div class="news-date">${prospect.news.date || ''}</div>
@@ -254,31 +356,21 @@
             <div class="prospect-name-row">
               ${headshotUrl ? `<img src="${headshotUrl}" alt="${prospect.name}" width="36" height="36" loading="lazy">` : ''}
               <h3>${prospect.name}</h3>
-              ${prospect.mlbStatus === 'MLB Active'
-                ? `<span style="display:inline-flex;align-items:center;margin-left:5px;vertical-align:middle;background:#002d72;border-radius:4px;padding:1px 5px;">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 14" width="36" height="14">
-                      <text x="18" y="11" font-family="Arial Black,sans-serif" font-weight="900" font-size="11" fill="#ffffff" text-anchor="middle" letter-spacing="1">MLB</text>
-                    </svg>
-                   </span>`
-                : (function() {
-                    var lvl = prospect.level || '';
-                    var bg = lvl === 'AAA' ? '#1d4ed8' : lvl === 'AA' ? '#7c3aed' : lvl.indexOf('High') !== -1 ? '#0891b2' : '#16a34a';
-                    var txt = lvl === 'AAA' ? 'Triple-A' : lvl === 'AA' ? 'Double-A' : lvl.indexOf('High') !== -1 ? 'High-A' : lvl || 'MiLB';
-                    return '<span style="display:inline-flex;align-items:center;margin-left:5px;vertical-align:middle;background:' + bg + ';border-radius:4px;padding:1px 5px;">' +
-                      '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 14\" width=\"48\" height=\"14\">' +
-                      '<text x=\"24\" y=\"11\" font-family=\"Arial Black,sans-serif\" font-weight=\"900\" font-size=\"9\" fill=\"#ffffff\" text-anchor=\"middle\" letter-spacing=\"0.5\">' + txt + '</text>' +
-                      '</svg></span>';
-                  })()
-              }
+              ${leagueBadge}
             </div>
-            <div class="prospect-meta">${prospect.position || ''} · Age ${prospect.age || '?'} · ${prospect.bats || ''}/${prospect.throws || ''}</div>
+            <div class="prospect-meta">${prospect.position || ''} &middot; Age ${prospect.age || '?'} &middot; ${prospect.bats || ''}/${prospect.throws || ''}</div>
             <div class="prospect-tags">
               <span class="prospect-tag ${levelTag(prospect.level)}">${prospect.level || '?'}</span>
               <span class="prospect-tag ${isPitcher ? 'tag-pitcher' : 'tag-hitter'}">${isPitcher ? 'Pitcher' : 'Hitter'}</span>
               ${prospect.eta ? `<span class="prospect-tag tag-mlb">ETA ${prospect.eta}</span>` : ''}
             </div>
-            <div class="prospect-stats">${stats}</div>
-            ${trendHtml}
+            <div class="prospect-data-row">
+              ${chartHtml}
+              <div class="prospect-stats-panel">
+                ${seasonHtml}
+                ${gamesHtml}
+              </div>
+            </div>
             ${newsHtml}
           </div>
         </div>`;

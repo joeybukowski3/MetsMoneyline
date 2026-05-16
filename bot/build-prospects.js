@@ -247,12 +247,12 @@ function buildStatsLookup(allPlayers, statsCache) {
   return { byId, byName };
 }
 
-/* ── Fetch game log for sparkline trend data ── */
+/* ── Fetch game log for trend chart + recent games table ── */
 async function getGameLogTrend(mlbId, type, sportId) {
   if (!mlbId) return null;
   const group = type === "Pitcher" ? "pitching" : "hitting";
-  // Try the player's current sport level first, fall back to MLB
   const sids = sportId && sportId !== 1 ? [sportId, 1] : [1];
+
   for (const sid of sids) {
     const data = await fetchJson(
       `https://statsapi.mlb.com/api/v1/people/${mlbId}/stats?stats=gameLog&season=${SEASON}&group=${group}&sportId=${sid}`
@@ -261,31 +261,57 @@ async function getGameLogTrend(mlbId, type, sportId) {
     if (!Array.isArray(splits) || splits.length < 3) continue;
 
     const labels = [];
-    const values = [];
+    const values = [];      // per-game individual values (not cumulative)
+    const recentGames = []; // raw stats for last 5 games table
 
     if (type === "Pitcher") {
-      let totalER = 0, totalIP = 0;
       for (const s of splits) {
-        const ip = parseFloat(s.stat?.inningsPitched) || 0;
-        const er = s.stat?.earnedRuns ?? 0;
-        totalER += er;
-        totalIP += ip;
-        const era = totalIP > 0 ? (totalER / totalIP) * 9 : 0;
+        const ip    = parseFloat(s.stat?.inningsPitched) || 0;
+        const er    = s.stat?.earnedRuns ?? 0;
+        const k     = s.stat?.strikeOuts ?? 0;
+        const bb    = s.stat?.baseOnBalls ?? 0;
+        const h     = s.stat?.hits ?? 0;
+        const gameEra = ip > 0 ? parseFloat(((er / ip) * 9).toFixed(2)) : null;
         labels.push(s.date ? s.date.slice(5) : "");
-        values.push(parseFloat(era.toFixed(2)));
+        values.push(gameEra !== null ? gameEra : 0);
+        recentGames.push({
+          date: s.date ? s.date.slice(5) : "",
+          opp:  s.team?.name ? s.team.name.split(" ").pop() : "—",
+          ip:   s.stat?.inningsPitched ?? "—",
+          h, er, k, bb,
+          era:  gameEra,
+        });
       }
     } else {
-      let totalH = 0, totalAB = 0;
       for (const s of splits) {
-        totalH += s.stat?.hits ?? 0;
-        totalAB += s.stat?.atBats ?? 0;
-        const avg = totalAB > 0 ? totalH / totalAB : 0;
+        const ab  = s.stat?.atBats ?? 0;
+        const h   = s.stat?.hits ?? 0;
+        const hr  = s.stat?.homeRuns ?? 0;
+        const rbi = s.stat?.rbi ?? 0;
+        const k   = s.stat?.strikeOuts ?? 0;
+        const bb  = s.stat?.baseOnBalls ?? 0;
+        const sb  = s.stat?.stolenBases ?? 0;
+        const gameAvg = ab > 0 ? parseFloat((h / ab).toFixed(3)) : null;
         labels.push(s.date ? s.date.slice(5) : "");
-        values.push(parseFloat(avg.toFixed(3)));
+        values.push(gameAvg !== null ? gameAvg : 0);
+        recentGames.push({
+          date: s.date ? s.date.slice(5) : "",
+          opp:  s.team?.name ? s.team.name.split(" ").pop() : "—",
+          ab, h, hr, rbi, k, bb, sb,
+          avg:  gameAvg,
+        });
       }
     }
 
-    if (labels.length >= 3) return { labels, values };
+    if (labels.length < 3) continue;
+
+    // Chart: last 20 appearances; table: last 5
+    const last20Start = Math.max(0, labels.length - 20);
+    return {
+      labels: labels.slice(last20Start),
+      values: values.slice(last20Start),
+      recentGames: recentGames.slice(-5),
+    };
   }
   return null;
 }
