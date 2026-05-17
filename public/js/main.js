@@ -681,20 +681,42 @@ function rankToPercent(rank, totalTeams = 30) {
 function metricValueClass(label, value) {
   const num = parseMetricNumber(value);
   if (num == null) return "";
+
+  // League-average anchored thresholds (2026 MLB season)
+  // Neutral band = within ~5% of league average
+  // good  = clearly above average (orange/positive)
+  // bad   = clearly below average (navy/negative)
+  // between = neutral (gray/no highlight)
   const lowerBetter = /k%|strikeout rate/i.test(label);
-  const thresholds = /wrc\+/.test(label.toLowerCase())
-    ? { good: 115, bad: 90 }
-    : /avg|xba/i.test(label)
-      ? { good: 0.26, bad: 0.235 }
-      : /ops|xslg|iso|woba|xwoba/i.test(label)
-        ? { good: 0.34, bad: 0.3 }
-        : /bb%|walk rate/i.test(label)
-          ? { good: 9, bad: 6.5 }
-          : /k%|strikeout rate/i.test(label)
-            ? { good: 20, bad: 25 }
-            : null;
+  const thresholds = /wrc\+/i.test(label)
+    ? { good: 110, bad: 92 }          // avg = 100; ±8-10% band
+    : /\bxba\b/i.test(label)
+      ? { good: 0.262, bad: 0.230 }   // avg ~.245
+      : /\bavg\b/i.test(label)
+        ? { good: 0.262, bad: 0.228 } // avg ~.243; ±5-8%
+        : /xwoba|xwOBA/i.test(label)
+          ? { good: 0.335, bad: 0.298 } // avg ~.315
+          : /woba|wOBA/i.test(label)
+            ? { good: 0.335, bad: 0.298 }
+            : /\bops\b/i.test(label)
+              ? { good: 0.748, bad: 0.672 } // avg ~.710; ±5-6%
+              : /xslg/i.test(label)
+                ? { good: 0.430, bad: 0.370 } // avg ~.400
+                : /\biso\b/i.test(label)
+                  ? { good: 0.180, bad: 0.130 } // avg ~.155
+                  : /bb%|walk rate/i.test(label)
+                    ? { good: 9.5, bad: 7.0 }   // avg ~8.5%
+                    : /k%|strikeout rate/i.test(label)
+                      ? { good: 20, bad: 26 }    // avg ~23%; lower = better
+                      : /era|xera/i.test(label)
+                        ? { good: 3.50, bad: 4.80 } // avg ~4.20; lower = better
+                        : /whip/i.test(label)
+                          ? { good: 1.15, bad: 1.40 } // avg ~1.28; lower = better
+                          : null;
+
   if (!thresholds) return "";
-  if (lowerBetter) {
+
+  if (lowerBetter || /era|xera|whip/i.test(label)) {
     if (num <= thresholds.good) return "metric-positive";
     if (num >= thresholds.bad) return "metric-negative";
     return "metric-neutral";
