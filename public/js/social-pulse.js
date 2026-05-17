@@ -268,15 +268,32 @@
     }).join("");
   }
 
+  function moodFromScore(score) {
+    if (score >= 62) return "Positive";
+    if (score >= 52) return "Mixed";
+    if (score >= 40) return "Cautious";
+    return "Negative";
+  }
+
   function renderHero(data) {
     var score = Number(data && data.overallScore) || 0;
-    var mood = escapeHtml(normalizeDisplay((data && data.mood) || "Mixed"));
-    var summary = escapeHtml(normalizeDisplay((data && data.summary) || "Social pulse data is not available yet."));
-    return '<div class="sp-hero-kicker">Live Fan Sentiment Snapshot</div>' +
-      '<div class="sp-gauge-wrap">' + buildSentimentGauge(score) + "</div>" +
-      '<div class="sp-hero-score">' + score + "</div>" +
-      '<div class="sp-hero-mood">' + mood + "</div>" +
-      '<p class="sp-hero-summary">' + summary + "</p>";
+    // Prefer overallMood from JSON, fall back to computing from score
+    var rawMood = (data && (data.overallMood || data.mood)) || moodFromScore(score);
+    var mood = escapeHtml(normalizeDisplay(rawMood));
+    var summary = escapeHtml(normalizeDisplay((data && data.summary) || ""));
+    return '<div class="sp-hero-compact">' +
+        '<div class="sp-hero-left">' +
+          '<div class="sp-hero-kicker">Fan Sentiment</div>' +
+          '<div class="sp-hero-score-row">' +
+            '<span class="sp-hero-score">' + score + '</span>' +
+            '<span class="sp-hero-mood">' + mood + '</span>' +
+          '</div>' +
+          (summary ? '<p class="sp-hero-summary">' + summary + '</p>' : '') +
+        '</div>' +
+        '<div class="sp-hero-right">' +
+          buildSentimentGauge(score) +
+        '</div>' +
+      '</div>';
   }
 
   // ── Filter state ─────────────────────────────────────────────
@@ -302,15 +319,15 @@
 
     postsEl.innerHTML = filtered.length
       ? renderPosts(filtered)
-      : '<div class="sp-no-results">No posts match this filter. Try a different combination.</div>';
+      : '<div class="sp-no-results">No posts match this filter combination.</div>';
 
-    // Update active state on all filter buttons
-    document.querySelectorAll(".sp-filter-btn").forEach(function (btn) {
+    // Update platform/sourcetype button active states (only buttons with data-filter-type)
+    document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
       var type = btn.dataset.filterType;
       var val = btn.dataset.filterValue;
       btn.classList.toggle("active", activeFilters[type] === val);
     });
-    // Update topic filter pills
+    // Update topic pill active states separately
     document.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
       btn.classList.toggle("active", activeFilters.topic === btn.dataset.topic);
     });
@@ -357,6 +374,11 @@
     document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         activeFilters[btn.dataset.filterType] = btn.dataset.filterValue;
+        // Reset topic filter when changing platform or source type — avoids
+        // confusing zero-result combinations (e.g. X + starting pitching = 1 post)
+        if (btn.dataset.filterType !== "topic") {
+          activeFilters.topic = "all";
+        }
         applyFilters();
       });
     });
