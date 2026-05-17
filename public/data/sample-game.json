@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-17T15:56:44.203Z",
+  "generatedAt": "2026-05-17T16:50:39.903Z",
   "referenceDate": "2026-05-17",
   "cacheKey": "sample-game:2026-05-17",
   "games": [
@@ -27,7 +27,7 @@
           "mlbId": 642547,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-17T15:56:33.660Z",
+          "generatedAt": "2026-05-17T16:50:25.544Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -86,7 +86,7 @@
           "mlbId": 695684,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-17T15:56:33.665Z",
+          "generatedAt": "2026-05-17T16:50:25.542Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -1067,24 +1067,7 @@
           ]
         }
       },
-      "emailData": {
-        "homeAwayEdge": {
-          "metsHome": {
-            "homeAway": "home",
-            "games": 23,
-            "runsFor": 95,
-            "runsAgainst": 106,
-            "differential": -11
-          },
-          "oppRoad": {
-            "homeAway": "road",
-            "games": 26,
-            "runsFor": 100,
-            "runsAgainst": 79,
-            "differential": 21
-          }
-        }
-      },
+      "emailData": {},
       "gameContext": {
         "metsRecentGames": [
           {
@@ -1234,27 +1217,6 @@
             }
           ]
         },
-        "lastMeeting": {
-          "gamePk": 823627,
-          "date": "2026-05-16",
-          "ballpark": "Citi Field",
-          "homeAway": "home",
-          "metsScore": 6,
-          "oppScore": 3,
-          "result": "win",
-          "summary": "On 2026-05-16, the Mets beat the New York Yankees 6-3 at Citi Field.",
-          "recapHeadline": "Weaver can't help but smirk after stifling Yankees' bases-loaded threat",
-          "recapNotes": [
-            "It was Luke Weaver who, after the Mets snapped one of the longest losing streaks in franchise history last month, stood on the field, looked up at the Citi Field crowd and crowed, “I’m not the biggest guy in the room, but I ain’t scared of nobody.” It was also Weaver who, following a difficult loss to the Nationals on April 30, spoke quietly about the “freedom” of playing professional baseball “getting suffocated a little bit.” Weaver gets it.",
-            "Among the more thoughtful and eloquent players in the game today, Weaver understands how to act when things are going well for the Mets, and he knows the score when things are going poorly."
-          ],
-          "source": {
-            "source": "MLB.com",
-            "label": "Last meeting recap",
-            "headline": "Weaver can't help but smirk after stifling Yankees' bases-loaded threat",
-            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/luke-weaver-comes-up-clutch-for-mets-vs-yankees"
-          }
-        },
         "metsPitcherLog": [
           {
             "date": "2026-05-12",
@@ -1314,14 +1276,7 @@
         "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
-        "recentSources": [
-          {
-            "source": "MLB.com",
-            "label": "Last meeting recap",
-            "headline": "Weaver can't help but smirk after stifling Yankees' bases-loaded threat",
-            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/luke-weaver-comes-up-clutch-for-mets-vs-yankees"
-          }
-        ],
+        "recentSources": [],
         "previewMode": {
           "isOffDayPreview": false,
           "requestedDate": "2026-05-17",
@@ -1349,7 +1304,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-17T15:56:34.172Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-17\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":90.2,\"temperatureDisplay\":\"90°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph WSW\",\"compact\":\"90° | Clear | Wind 8 mph WSW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-17T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Freddy Peralta\",\"handedness\":\"R\",\"era\":3.1,\"xERA\":3.56,\"fip\":3.66,\"whip\":1.22,\"kPct\":23.8,\"bbPct\":9,\"kMinusBbPct\":14.8,\"hardHitPct\":37.4,\"barrelPct\":4.3,\"xBAAllowed\":0.236,\"xSLGAllowed\":0.356,\"xwOBAAllowed\":0.301,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-12\",\"opponent\":\"Detroit Tigers\",\"ip\":\"6.0\",\"er\":2,\"k\":7,\"result\":\"W\"},{\"date\":\"2026-05-06\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.0\",\"er\":0,\"k\":1,\"result\":\"W\"},{\"date\":\"2026-04-30\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-04-24\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.2\",\"er\":2,\"k\":8,\"result\":\"L\"}],\"avgInnings\":5.67,\"avgEarnedRuns\":1.25,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5.67,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Elmer Rodríguez\",\"handedness\":\"R\",\"era\":5.19,\"xERA\":7.48,\"fip\":5.4,\"whip\":2.08,\"kPct\":11.4,\"bbPct\":18.2,\"kMinusBbPct\":-6.8,\"hardHitPct\":37.9,\"barrelPct\":6.9,\"xBAAllowed\":0.298,\"xSLGAllowed\":0.398,\"xwOBAAllowed\":0.414,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-05\",\"opponent\":\"Texas Rangers\",\"ip\":\"4.2\",\"er\":3,\"k\":2,\"result\":\"W\"},{\"date\":\"2026-04-29\",\"opponent\":\"Texas Rangers\",\"ip\":\"4.0\",\"er\":2,\"k\":3,\"result\":\"L\"}],\"avgInnings\":4.33,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":2.5,\"daysSinceLastStart\":12},\"workload\":{\"inningsTrend\":4.33,\"daysSinceLastStart\":12},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.3,\"projectedLineupWRCPlus\":91.7,\"obp\":0.302,\"iso\":0.121,\"kPct\":21.1,\"bbPct\":8.3,\"xBA\":0.247,\"xSLG\":0.413,\"xwOBA\":0.316,\"hardHitPct\":42,\"barrelPct\":8.8,\"battingAverage\":0.236,\"wOBA\":0.299,\"lineup\":{\"totalWAR\":1.3,\"totalWRCPlus\":91.7,\"totalOBP\":0.302,\"totalISO\":0.131,\"totalKPct\":21.3,\"totalBBPct\":8.6,\"totalAVG\":0.236,\"totalWOBA\":0.299,\"totalXBA\":0.256,\"totalXSLG\":0.436,\"totalXWOBA\":0.33,\"totalHardHitPct\":44,\"totalBarrelPct\":9.9,\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.031}},\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.031},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":7.1,\"projectedLineupWRCPlus\":122.6,\"obp\":0.342,\"iso\":0.195,\"kPct\":23.6,\"bbPct\":11.9,\"xBA\":0.245,\"xSLG\":0.455,\"xwOBA\":0.351,\"hardHitPct\":46.9,\"barrelPct\":12.4,\"battingAverage\":0.235,\"wOBA\":0.349,\"lineup\":{\"totalWAR\":7.1,\"totalWRCPlus\":122.6,\"totalOBP\":0.342,\"totalISO\":0.214,\"totalKPct\":23.9,\"totalBBPct\":13.8,\"totalAVG\":0.235,\"totalWOBA\":0.349,\"totalXBA\":0.245,\"totalXSLG\":0.456,\"totalXWOBA\":0.353,\"totalHardHitPct\":47,\"totalBarrelPct\":12.8,\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.004}},\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.004},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"confirmed\",\"totalWAR\":1.3,\"totalWRCPlus\":91.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"confirmed\",\"totalWAR\":7.1,\"totalWRCPlus\":122.6,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.36,\"kMinusBbPct\":15.9,\"xFIP\":3.62,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.21,\"kMinusBbPct\":15.8,\"xFIP\":3.59,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":90.2,\"temperatureDisplay\":\"90°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph WSW\",\"compact\":\"90° | Clear | Wind 8 mph WSW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-17T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Freddy Peralta 3.56/3.66 vs Elmer Rodríguez 7.48/5.40; K-BB% 14.8 to -6.8.\",\"rawScore\":59.2,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.3 vs 7.1, projected lineup wRC+ 91.7 vs 122.6, xwOBA 0.316 vs 0.351.\",\"rawScore\":-10.81,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.38,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.031; opponent starter overperformance signal 3.25.\",\"rawScore\":10.94,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 65.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.65,\"totalWeightedImpact\":15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight Mets edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-17T16:50:39.895Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-17\",\"opponent\":\"New York Yankees\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":88.4,\"temperatureDisplay\":\"88°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph SW\",\"compact\":\"88° | Clear | Wind 9 mph SW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-17T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Freddy Peralta\",\"handedness\":\"R\",\"era\":3.1,\"xERA\":3.56,\"fip\":3.66,\"whip\":1.22,\"kPct\":23.8,\"bbPct\":9,\"kMinusBbPct\":14.8,\"hardHitPct\":37.4,\"barrelPct\":4.3,\"xBAAllowed\":0.236,\"xSLGAllowed\":0.356,\"xwOBAAllowed\":0.301,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-12\",\"opponent\":\"Detroit Tigers\",\"ip\":\"6.0\",\"er\":2,\"k\":7,\"result\":\"W\"},{\"date\":\"2026-05-06\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.0\",\"er\":0,\"k\":1,\"result\":\"W\"},{\"date\":\"2026-04-30\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"result\":\"-\"},{\"date\":\"2026-04-24\",\"opponent\":\"Colorado Rockies\",\"ip\":\"5.2\",\"er\":2,\"k\":8,\"result\":\"L\"}],\"avgInnings\":5.67,\"avgEarnedRuns\":1.25,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5.67,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Elmer Rodríguez\",\"handedness\":\"R\",\"era\":5.19,\"xERA\":7.48,\"fip\":5.4,\"whip\":2.08,\"kPct\":11.4,\"bbPct\":18.2,\"kMinusBbPct\":-6.8,\"hardHitPct\":37.9,\"barrelPct\":6.9,\"xBAAllowed\":0.298,\"xSLGAllowed\":0.398,\"xwOBAAllowed\":0.414,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-05\",\"opponent\":\"Texas Rangers\",\"ip\":\"4.2\",\"er\":3,\"k\":2,\"result\":\"W\"},{\"date\":\"2026-04-29\",\"opponent\":\"Texas Rangers\",\"ip\":\"4.0\",\"er\":2,\"k\":3,\"result\":\"L\"}],\"avgInnings\":4.33,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":2.5,\"daysSinceLastStart\":12},\"workload\":{\"inningsTrend\":4.33,\"daysSinceLastStart\":12},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.3,\"projectedLineupWRCPlus\":91.7,\"obp\":0.302,\"iso\":0.121,\"kPct\":21.1,\"bbPct\":8.3,\"xBA\":0.247,\"xSLG\":0.413,\"xwOBA\":0.316,\"hardHitPct\":42,\"barrelPct\":8.8,\"battingAverage\":0.236,\"wOBA\":0.299,\"lineup\":{\"totalWAR\":1.3,\"totalWRCPlus\":91.7,\"totalOBP\":0.302,\"totalISO\":0.131,\"totalKPct\":21.3,\"totalBBPct\":8.6,\"totalAVG\":0.236,\"totalWOBA\":0.299,\"totalXBA\":0.256,\"totalXSLG\":0.436,\"totalXWOBA\":0.33,\"totalHardHitPct\":44,\"totalBarrelPct\":9.9,\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.031}},\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.031},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":7.1,\"projectedLineupWRCPlus\":122.6,\"obp\":0.342,\"iso\":0.195,\"kPct\":23.6,\"bbPct\":11.9,\"xBA\":0.245,\"xSLG\":0.455,\"xwOBA\":0.351,\"hardHitPct\":46.9,\"barrelPct\":12.4,\"battingAverage\":0.235,\"wOBA\":0.349,\"lineup\":{\"totalWAR\":7.1,\"totalWRCPlus\":122.6,\"totalOBP\":0.342,\"totalISO\":0.214,\"totalKPct\":23.9,\"totalBBPct\":13.8,\"totalAVG\":0.235,\"totalWOBA\":0.349,\"totalXBA\":0.245,\"totalXSLG\":0.456,\"totalXWOBA\":0.353,\"totalHardHitPct\":47,\"totalBarrelPct\":12.8,\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.004}},\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.004},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"confirmed\",\"totalWAR\":1.3,\"totalWRCPlus\":91.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"confirmed\",\"totalWAR\":7.1,\"totalWRCPlus\":122.6,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.36,\"kMinusBbPct\":15.9,\"xFIP\":3.62,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.21,\"kMinusBbPct\":15.8,\"xFIP\":3.59,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":88.4,\"temperatureDisplay\":\"88°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph SW\",\"compact\":\"88° | Clear | Wind 9 mph SW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-17T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Freddy Peralta 3.56/3.66 vs Elmer Rodríguez 7.48/5.40; K-BB% 14.8 to -6.8.\",\"rawScore\":59.2,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.3 vs 7.1, projected lineup wRC+ 91.7 vs 122.6, xwOBA 0.316 vs 0.351.\",\"rawScore\":-10.81,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.38,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.031; opponent starter overperformance signal 3.25.\",\"rawScore\":10.94,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 65.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.65,\"totalWeightedImpact\":15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight Mets edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
         "headline": "Mets vs New York Yankees: starting pitching is the clearest angle",
         "synopsis": "Freddy Peralta vs Elmer Rodríguez sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Freddy Peralta 3.56/3.66 vs Elmer Rodríguez 7.48/5.40; K-BB% 14.8 to -6.8. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1364,7 +1319,7 @@
           "opponent": "New York Yankees",
           "homeAway": "home",
           "ballpark": "Citi Field",
-          "weather": "90° | Clear | Wind 8 mph WSW",
+          "weather": "88° | Clear | Wind 9 mph SW",
           "lineupStatus": "Confirmed",
           "moneyline": "N/A"
         },
@@ -1513,21 +1468,21 @@
             "body": "Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead."
           }
         ],
-        "pickSummary": "Peralta's 3.56 xERA (73rd percentile) and 23.8% K rate stand against Rodríguez's 7.48 xERA (14th percentile) and 11.4% K rate. Mets carry -0.020 BA-xBA and -0.031 wOBA-xwOBA gaps for positive regression while opponent owns 0.755 last-20 OPS rank 3. Model assigns Mets 65% win probability against a line that treats the matchup as closer to even.",
-        "pickNarrative": "Freddy Peralta's 3.56 xERA and 73rd percentile profile creates a 3.92-run edge over Elmer Rodríguez's 7.48 xERA at 14th percentile. Mets regression signals and home venue supply the secondary support against a superior opponent lineup. Peralta's 3.56 xERA (73rd percentile) and 23.8% K rate stand against Rodríguez's 7.48 xERA (14th percentile) and 11.4% K rate. Mets carry -0.020 BA-xBA and -0.031 wOBA-xwOBA gaps for positive regression while opponent owns 0.755 last-20 OPS rank 3. Model assigns Mets 65% win probability against a line that treats the matchup as closer to even.",
+        "pickSummary": "Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead.",
+        "pickNarrative": "New York has been playing its best ball lately — 4-1 over the last 5 games. On pure process numbers, Freddy Peralta (3.66 FIP) has a 1.74-run edge over Elmer Rodríguez (5.40 FIP) — the kind of gap that shows up in outcomes over time. The supporting case sits in the rotation: New York ranks 3rd in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. The board gives New York a slim edge — the pick is Mets ML, though with measured conviction. Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead.",
         "todayPick": {
-          "headline": "Peralta xERA Gap Anchors Mets ML",
-          "summary": "Freddy Peralta's 3.56 xERA and 73rd percentile profile creates a 3.92-run edge over Elmer Rodríguez's 7.48 xERA at 14th percentile. Mets regression signals and home venue supply the secondary support against a superior opponent lineup.",
+          "headline": "Mets ML Pick",
+          "summary": "New York has been playing its best ball lately — 4-1 over the last 5 games. On pure process numbers, Freddy Peralta (3.66 FIP) has a 1.74-run edge over Elmer Rodríguez (5.40 FIP) — the kind of gap that shows up in outcomes over time. The supporting case sits in the rotation: New York ranks 3rd in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. The board gives New York a slim edge — the pick is Mets ML, though with measured conviction.",
           "metsEdges": [
             "xERA/FIP profile: Freddy Peralta 3.56/3.66 vs Elmer Rodríguez 7.48/5.40; K-BB% 14.8 to -6.8.",
             "Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.031; opponent starter overperformance signal 3.25.",
-            "Mets home with rest 0 vs opponent 0 days and rotation FIP ranked 3rd league-wide."
+            "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days."
           ],
           "risks": [
             "Overall lineup quality only: projected WAR 1.3 vs 7.1, projected lineup wRC+ 91.7 vs 122.6, xwOBA 0.316 vs 0.351.",
-            "Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21."
+            "Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP."
           ],
-          "bettingAngle": "Peralta's 3.56 xERA (73rd percentile) and 23.8% K rate stand against Rodríguez's 7.48 xERA (14th percentile) and 11.4% K rate. Mets carry -0.020 BA-xBA and -0.031 wOBA-xwOBA gaps for positive regression while opponent owns 0.755 last-20 OPS rank 3. Model assigns Mets 65% win probability against a line that treats the matchup as closer to even.",
+          "bettingAngle": "Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Lean",
           "confidenceScore": 5
@@ -1615,11 +1570,11 @@
             "homeAway": "home",
             "ballpark": "Citi Field",
             "weather": {
-              "temperature": 90.2,
-              "temperatureDisplay": "90°",
+              "temperature": 88.4,
+              "temperatureDisplay": "88°",
               "condition": "Clear",
-              "wind": "Wind 8 mph WSW",
-              "compact": "90° | Clear | Wind 8 mph WSW",
+              "wind": "Wind 9 mph SW",
+              "compact": "88° | Clear | Wind 9 mph SW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-05-17T18:00Z"
             }
@@ -1869,11 +1824,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 90.2,
-              "temperatureDisplay": "90°",
+              "temperature": 88.4,
+              "temperatureDisplay": "88°",
               "condition": "Clear",
-              "wind": "Wind 8 mph WSW",
-              "compact": "90° | Clear | Wind 8 mph WSW",
+              "wind": "Wind 9 mph SW",
+              "compact": "88° | Clear | Wind 9 mph SW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-05-17T18:00Z"
             }
@@ -2024,7 +1979,7 @@
             "ballpark": "Citi Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/147.svg",
-            "metadataLine": "May 17th | 1:40 PM ET | Citi Field | 90° | Clear | Wind 8 mph WSW"
+            "metadataLine": "May 17th | 1:40 PM ET | Citi Field | 88° | Clear | Wind 9 mph SW"
           },
           "quickRead": {
             "modelLean": "Slight Mets edge",
@@ -2038,7 +1993,7 @@
             "opponent": "New York Yankees",
             "homeAway": "home",
             "ballpark": "Citi Field",
-            "weather": "90° | Clear | Wind 8 mph WSW",
+            "weather": "88° | Clear | Wind 9 mph SW",
             "lineupStatus": "Confirmed",
             "moneyline": "N/A"
           },
@@ -2054,7 +2009,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "90° | Clear | Wind 8 mph WSW"
+                "value": "88° | Clear | Wind 9 mph SW"
               },
               {
                 "label": "Mets ML Odds",
@@ -3466,37 +3421,37 @@
             }
           },
           "todayPick": {
-            "headline": "Peralta xERA Gap Anchors Mets ML",
-            "summary": "Freddy Peralta's 3.56 xERA and 73rd percentile profile creates a 3.92-run edge over Elmer Rodríguez's 7.48 xERA at 14th percentile. Mets regression signals and home venue supply the secondary support against a superior opponent lineup.",
+            "headline": "Mets ML Pick",
+            "summary": "New York has been playing its best ball lately — 4-1 over the last 5 games. On pure process numbers, Freddy Peralta (3.66 FIP) has a 1.74-run edge over Elmer Rodríguez (5.40 FIP) — the kind of gap that shows up in outcomes over time. The supporting case sits in the rotation: New York ranks 3rd in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. The board gives New York a slim edge — the pick is Mets ML, though with measured conviction.",
             "metsEdges": [
               "xERA/FIP profile: Freddy Peralta 3.56/3.66 vs Elmer Rodríguez 7.48/5.40; K-BB% 14.8 to -6.8.",
               "Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.031; opponent starter overperformance signal 3.25.",
-              "Mets home with rest 0 vs opponent 0 days and rotation FIP ranked 3rd league-wide."
+              "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days."
             ],
             "risks": [
               "Overall lineup quality only: projected WAR 1.3 vs 7.1, projected lineup wRC+ 91.7 vs 122.6, xwOBA 0.316 vs 0.351.",
-              "Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21."
+              "Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP."
             ],
-            "bettingAngle": "Peralta's 3.56 xERA (73rd percentile) and 23.8% K rate stand against Rodríguez's 7.48 xERA (14th percentile) and 11.4% K rate. Mets carry -0.020 BA-xBA and -0.031 wOBA-xwOBA gaps for positive regression while opponent owns 0.755 last-20 OPS rank 3. Model assigns Mets 65% win probability against a line that treats the matchup as closer to even.",
+            "bettingAngle": "Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Lean",
             "confidenceScore": 5
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Peralta's 3.56 xERA (73rd percentile) and 23.8% K rate stand against Rodríguez's 7.48 xERA (14th percentile) and 11.4% K rate. Mets carry -0.020 BA-xBA and -0.031 wOBA-xwOBA gaps for positive regression while opponent owns 0.755 last-20 OPS rank 3. Model assigns Mets 65% win probability against a line that treats the matchup as closer to even.",
-            "headline": "Peralta xERA Gap Anchors Mets ML",
-            "summary": "Freddy Peralta's 3.56 xERA and 73rd percentile profile creates a 3.92-run edge over Elmer Rodríguez's 7.48 xERA at 14th percentile. Mets regression signals and home venue supply the secondary support against a superior opponent lineup.",
+            "explanation": "Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead.",
+            "headline": "Mets ML Pick",
+            "summary": "New York has been playing its best ball lately — 4-1 over the last 5 games. On pure process numbers, Freddy Peralta (3.66 FIP) has a 1.74-run edge over Elmer Rodríguez (5.40 FIP) — the kind of gap that shows up in outcomes over time. The supporting case sits in the rotation: New York ranks 3rd in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff. The board gives New York a slim edge — the pick is Mets ML, though with measured conviction.",
             "metsEdges": [
               "xERA/FIP profile: Freddy Peralta 3.56/3.66 vs Elmer Rodríguez 7.48/5.40; K-BB% 14.8 to -6.8.",
               "Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.031; opponent starter overperformance signal 3.25.",
-              "Mets home with rest 0 vs opponent 0 days and rotation FIP ranked 3rd league-wide."
+              "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days."
             ],
             "risks": [
               "Overall lineup quality only: projected WAR 1.3 vs 7.1, projected lineup wRC+ 91.7 vs 122.6, xwOBA 0.316 vs 0.351.",
-              "Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21."
+              "Bullpen shape: xFIP 3.62 vs 3.59, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP."
             ],
-            "bettingAngle": "Peralta's 3.56 xERA (73rd percentile) and 23.8% K rate stand against Rodríguez's 7.48 xERA (14th percentile) and 11.4% K rate. Mets carry -0.020 BA-xBA and -0.031 wOBA-xwOBA gaps for positive regression while opponent owns 0.755 last-20 OPS rank 3. Model assigns Mets 65% win probability against a line that treats the matchup as closer to even.",
+            "bettingAngle": "Primary edge: Freddy Peralta's run-prevention metrics. Supporting factor: contact quality metrics suggest positive regression ahead.",
             "confidenceLabel": "Lean",
             "confidence": 5
           },
@@ -3509,7 +3464,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "90° | Clear | Wind 8 mph WSW"
+            "weatherSummary": "88° | Clear | Wind 9 mph SW"
           }
         }
       },
@@ -3518,11 +3473,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 90.2,
-        "temperatureDisplay": "90°",
+        "temperature": 88.4,
+        "temperatureDisplay": "88°",
         "condition": "Clear",
-        "wind": "Wind 8 mph WSW",
-        "compact": "90° | Clear | Wind 8 mph WSW",
+        "wind": "Wind 9 mph SW",
+        "compact": "88° | Clear | Wind 9 mph SW",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-05-17T18:00Z"
       }
