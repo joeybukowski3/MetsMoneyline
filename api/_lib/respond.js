@@ -13,12 +13,13 @@ function sendJson(res, statusCode, payload, cacheOptions) {
 
 function sendError(res, error, cacheOptions) {
   const statusCode = error?.statusCode && Number(error.statusCode) >= 400 ? Number(error.statusCode) : 500;
+  // Log full error server-side but never expose stack traces or internal messages to clients
+  console.error('[api-error]', statusCode, error?.message || error);
   sendJson(
     res,
     statusCode,
     {
-      error: "Failed to load Mets data endpoint",
-      message: error?.message || "Unknown error",
+      error: "Data temporarily unavailable",
       generatedAt: new Date().toISOString()
     },
     cacheOptions

@@ -2,7 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
     "api/**/*.js": {
-      "regions": ["iad1"],
+      "regions": [
+        "iad1"
+      ],
       "maxDuration": 10
     }
   },
@@ -18,51 +20,253 @@
       "destination": "https://www.metsmoneyline.com/:path*",
       "permanent": true
     },
-    { "source": "/picks/:date", "destination": "/pick-history", "permanent": true },
-    { "source": "/game/:slug", "destination": "/pick-history", "permanent": true },
-    { "source": "/report.html", "destination": "/report", "permanent": true },
-    { "source": "/trends.html", "destination": "/trends", "permanent": true },
-    { "source": "/advanced-stats.html", "destination": "/advanced-stats", "permanent": true },
-    { "source": "/power-rankings.html", "destination": "/rankings", "permanent": true },
-    { "source": "/rankings.html", "destination": "/rankings", "permanent": true },
-    { "source": "/power-rankings", "destination": "/rankings", "permanent": true },
-    { "source": "/prospects.html", "destination": "/prospects", "permanent": true },
-    { "source": "/about.html", "destination": "/about", "permanent": true },
-    { "source": "/depth-chart.html", "destination": "/depth-chart", "permanent": true },
-    { "source": "/betting-history.html", "destination": "/pick-history", "permanent": true },
-    { "source": "/pick-history.html", "destination": "/pick-history", "permanent": true },
-    { "source": "/betting-history", "destination": "/pick-history", "permanent": true },
-    { "source": "/news.html", "destination": "/news", "permanent": true },
-    { "source": "/on-this-day.html", "destination": "/on-this-day", "permanent": true },
-    { "source": "/social-pulse.html", "destination": "/social", "permanent": true },
-    { "source": "/social.html", "destination": "/social", "permanent": true },
-    { "source": "/social-pulse", "destination": "/social", "permanent": true },
-    { "source": "/betting.html", "destination": "/betting", "permanent": true },
-    { "source": "/gear.html", "destination": "/gear", "permanent": true },
-    { "source": "/support.html", "destination": "/support", "permanent": true },
-    { "source": "/privacy-policy.html", "destination": "/privacy-policy", "permanent": true },
-    { "source": "/terms.html", "destination": "/terms", "permanent": true },
-    { "source": "/editorial-policy.html", "destination": "/editorial-policy", "permanent": true },
-    { "source": "/disclaimer.html", "destination": "/disclaimer", "permanent": true }
+    {
+      "source": "/picks/:date",
+      "destination": "/pick-history",
+      "permanent": true
+    },
+    {
+      "source": "/game/:slug",
+      "destination": "/pick-history",
+      "permanent": true
+    },
+    {
+      "source": "/report.html",
+      "destination": "/report",
+      "permanent": true
+    },
+    {
+      "source": "/trends.html",
+      "destination": "/trends",
+      "permanent": true
+    },
+    {
+      "source": "/advanced-stats.html",
+      "destination": "/advanced-stats",
+      "permanent": true
+    },
+    {
+      "source": "/power-rankings.html",
+      "destination": "/rankings",
+      "permanent": true
+    },
+    {
+      "source": "/rankings.html",
+      "destination": "/rankings",
+      "permanent": true
+    },
+    {
+      "source": "/power-rankings",
+      "destination": "/rankings",
+      "permanent": true
+    },
+    {
+      "source": "/prospects.html",
+      "destination": "/prospects",
+      "permanent": true
+    },
+    {
+      "source": "/about.html",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/depth-chart.html",
+      "destination": "/depth-chart",
+      "permanent": true
+    },
+    {
+      "source": "/betting-history.html",
+      "destination": "/pick-history",
+      "permanent": true
+    },
+    {
+      "source": "/pick-history.html",
+      "destination": "/pick-history",
+      "permanent": true
+    },
+    {
+      "source": "/betting-history",
+      "destination": "/pick-history",
+      "permanent": true
+    },
+    {
+      "source": "/news.html",
+      "destination": "/news",
+      "permanent": true
+    },
+    {
+      "source": "/on-this-day.html",
+      "destination": "/on-this-day",
+      "permanent": true
+    },
+    {
+      "source": "/social-pulse.html",
+      "destination": "/social",
+      "permanent": true
+    },
+    {
+      "source": "/social.html",
+      "destination": "/social",
+      "permanent": true
+    },
+    {
+      "source": "/social-pulse",
+      "destination": "/social",
+      "permanent": true
+    },
+    {
+      "source": "/betting.html",
+      "destination": "/betting",
+      "permanent": true
+    },
+    {
+      "source": "/gear.html",
+      "destination": "/gear",
+      "permanent": true
+    },
+    {
+      "source": "/support.html",
+      "destination": "/support",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy.html",
+      "destination": "/privacy-policy",
+      "permanent": true
+    },
+    {
+      "source": "/terms.html",
+      "destination": "/terms",
+      "permanent": true
+    },
+    {
+      "source": "/editorial-policy.html",
+      "destination": "/editorial-policy",
+      "permanent": true
+    },
+    {
+      "source": "/disclaimer.html",
+      "destination": "/disclaimer",
+      "permanent": true
+    }
   ],
   "rewrites": [
-    { "source": "/report", "destination": "/report.html" },
-    { "source": "/trends", "destination": "/trends.html" },
-    { "source": "/advanced-stats", "destination": "/advanced-stats.html" },
-    { "source": "/rankings", "destination": "/power-rankings.html" },
-    { "source": "/prospects", "destination": "/prospects.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/depth-chart", "destination": "/depth-chart.html" },
-    { "source": "/pick-history", "destination": "/betting-history.html" },
-    { "source": "/news", "destination": "/news.html" },
-    { "source": "/on-this-day", "destination": "/on-this-day.html" },
-    { "source": "/social", "destination": "/social-pulse.html" },
-    { "source": "/betting", "destination": "/betting.html" },
-    { "source": "/gear", "destination": "/gear.html" },
-    { "source": "/support", "destination": "/support.html" },
-    { "source": "/privacy-policy", "destination": "/privacy-policy.html" },
-    { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/editorial-policy", "destination": "/editorial-policy.html" },
-    { "source": "/disclaimer", "destination": "/disclaimer.html" }
+    {
+      "source": "/report",
+      "destination": "/report.html"
+    },
+    {
+      "source": "/trends",
+      "destination": "/trends.html"
+    },
+    {
+      "source": "/advanced-stats",
+      "destination": "/advanced-stats.html"
+    },
+    {
+      "source": "/rankings",
+      "destination": "/power-rankings.html"
+    },
+    {
+      "source": "/prospects",
+      "destination": "/prospects.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/depth-chart",
+      "destination": "/depth-chart.html"
+    },
+    {
+      "source": "/pick-history",
+      "destination": "/betting-history.html"
+    },
+    {
+      "source": "/news",
+      "destination": "/news.html"
+    },
+    {
+      "source": "/on-this-day",
+      "destination": "/on-this-day.html"
+    },
+    {
+      "source": "/social",
+      "destination": "/social-pulse.html"
+    },
+    {
+      "source": "/betting",
+      "destination": "/betting.html"
+    },
+    {
+      "source": "/gear",
+      "destination": "/gear.html"
+    },
+    {
+      "source": "/support",
+      "destination": "/support.html"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/editorial-policy",
+      "destination": "/editorial-policy.html"
+    },
+    {
+      "source": "/disclaimer",
+      "destination": "/disclaimer.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self), payment=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://img.mlbstatic.com https://www.mlbstatic.com https://lh3.googleusercontent.com https://pbs.twimg.com https://cdn.bsky.app; connect-src 'self' https://www.google-analytics.com https://*.supabase.co https://api.bsky.app https://statsapi.mlb.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex"
+        }
+      ]
+    }
   ]
 }
