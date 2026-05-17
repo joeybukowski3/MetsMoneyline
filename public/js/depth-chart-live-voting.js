@@ -699,7 +699,7 @@
 
   function isMissingToggleSetup(error) {
     const text = String(error && (error.message || error.details || error.hint || error.code) || "").toLowerCase();
-    return text.includes("depth_chart_toggle_vote") || text.includes("depth_chart_get_voter_votes") || text.includes("pgrst");
+    return text.includes("depth_chart_toggle_vote") || text.includes("depth_chart_get_voter_votes") || text.includes("pgrst") || text.includes("not configured");
   }
 
   async function recordVote(playerId, pos, direction) {
@@ -730,17 +730,26 @@
     try {
       const voterHash = await getVoterHash();
       const currentValue = currentVoteValue(playerId, pos);
-      const result = await supabaseClient.rpc("depth_chart_toggle_vote", {
-        p_position: pos,
-        p_player_id: playerId,
-        p_vote_value: direction,
-        p_voter_hash: voterHash
+
+      // Use server-side proxy so the real IP can be captured for rate limiting
+      const proxyRes = await fetch("/api/vote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          position: pos,
+          player_id: playerId,
+          vote_value: direction,
+          voter_hash: voterHash
+        })
       });
 
-      if (result.error) throw result.error;
+      const resultData = await proxyRes.json();
+      if (!proxyRes.ok) throw new Error(resultData.error || "Vote failed");
 
-      const action = sanitizeName(result.data && result.data.action).toLowerCase();
-      if (action === "removed") {
+      const action = sanitizeName(resultData && resultData.action).toLowerCase();
+      if (action === "rate_limited") {
+        showStatus("You\'ve already voted on this player today.", "error");
+      } else if (action === "removed") {
         setCurrentVote(playerId, pos, 0);
         showStatus("Vote removed.", "success");
       } else if (action === "changed" || (currentValue !== 0 && currentValue !== direction)) {
