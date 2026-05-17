@@ -517,8 +517,8 @@
       const historyData = normalizeEntries(data);
       const { displayEntries, summary } = buildDisplayEntries(historyData);
 
-      // Draw chart from chronological order
-      const chronoGraded = [...historyData].sort(chronologicalAsc);
+      // Draw chart using enriched entries (which have .graded and .cumulativeProfit set)
+      const chronoGraded = [...displayEntries].sort(chronologicalAsc);
       drawPLChart(chronoGraded);
 
       const rows = displayEntries.map((entry) => {
