@@ -48,9 +48,6 @@ jobs:
 
       - name: Refresh prospects data
         run: node bot/build-prospects.js
-
-      - name: Run game log build
-        run: node bot/build-game-log.js
         env:
           NODE_ENV: production
 
@@ -68,7 +65,6 @@ jobs:
                   public/data/odds-history.json \
                   public/data/trends.json \
                   public/data/prospects.json \
-                  public/data/game-log.json \
                   public/report.html
           if git diff --staged --quiet; then
             echo "No site data updates to commit."
