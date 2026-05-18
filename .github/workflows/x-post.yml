@@ -2,11 +2,9 @@ name: X Post
 
 on:
   schedule:
-    # Hourly from 7 PM to 2 AM ET (23:00–06:00 UTC).
-    # Afternoon games (end ~4-5 PM ET) caught by 23:00/00:00 UTC runs.
-    # Night games (end ~10-11 PM ET) caught by 02:00/03:00 UTC runs.
-    # Fires within ~1 hour of game end instead of waiting until 2 AM.
-    - cron: "0 23,0,1,2,3,4,5,6 * * *"
+    # Pregame: 10 AM–1 PM ET (14:00–17:00 UTC) — after morning data refresh
+    # Postgame: 7 PM–2 AM ET (23:00–06:00 UTC) — within ~1hr of game end
+    - cron: "0 14,15,16,17,23,0,1,2,3,4,5,6 * * *"
   workflow_dispatch:
     inputs:
       type:
@@ -52,22 +50,24 @@ jobs:
         working-directory: ./bot
         run: npm ci
 
-      - name: Resolve X post parameters
+      - - name: Resolve X post parameters
         id: params
         shell: bash
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "type=postgame" >> "$GITHUB_OUTPUT"
             echo "mode=post" >> "$GITHUB_OUTPUT"
-            # Before midnight ET (hour >= 4): today is the game day.
-            # After midnight ET (hour 0-3): the game was yesterday.
             ET_HOUR=$(TZ=America/New_York date +%-H)
-            if [ "$ET_HOUR" -ge 4 ]; then
-              GAME_DATE=$(TZ=America/New_York date +%Y-%m-%d)
+            if [ "$ET_HOUR" -ge 10 ] && [ "$ET_HOUR" -lt 14 ]; then
+              echo "type=pregame" >> "$GITHUB_OUTPUT"
+              echo "date=$(TZ=America/New_York date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
             else
-              GAME_DATE=$(TZ=America/New_York date -d "yesterday" +%Y-%m-%d)
+              echo "type=postgame" >> "$GITHUB_OUTPUT"
+              if [ "$ET_HOUR" -ge 4 ]; then
+                echo "date=$(TZ=America/New_York date +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+              else
+                echo "date=$(TZ=America/New_York date -d 'yesterday' +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+              fi
             fi
-            echo "date=${GAME_DATE}" >> "$GITHUB_OUTPUT"
           else
             echo "type=${{ inputs.type }}" >> "$GITHUB_OUTPUT"
             echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
