@@ -50,7 +50,7 @@ jobs:
         working-directory: ./bot
         run: npm ci
 
-      - - name: Resolve X post parameters
+      - name: Resolve X post parameters
         id: params
         shell: bash
         run: |
