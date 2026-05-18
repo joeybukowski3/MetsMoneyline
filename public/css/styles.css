@@ -2592,3 +2592,20 @@ footer {
 @media (max-width: 640px) {
   .gear-grid { grid-template-columns: 1fr !important; }
 }
+
+/* ── Situational Splits Card ─────────────────────────────────────────────────── */
+.sit-wrap       { }
+.sit-title      { font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:.5rem; }
+.sit-table      { width:100%;border-collapse:collapse;font-size:.82rem; }
+.sit-th         { padding:6px 8px;text-align:left;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#fff;background:var(--navy);border-right:1px solid rgba(255,255,255,.1); }
+.sit-th--center { text-align:center; }
+.sit-row        { border-bottom:1px solid #f0f4f8; }
+.sit-row:hover  { background:#f8fafc; }
+.sit-label      { padding:6px 8px;font-size:.8rem;font-weight:600;color:#374151; }
+.sit-rec        { padding:6px 8px;font-size:.82rem;font-weight:800;text-align:center;white-space:nowrap; }
+.sit-stat       { padding:6px 8px;font-size:.8rem;font-weight:600;color:#374151;text-align:center; }
+.sit-pct        { display:inline-block;padding:1px 6px;border-radius:8px;font-size:.65rem;font-weight:800;background:#f1f5f9;color:#475569;margin-left:3px; }
+.sit-pct--good  { background:rgba(21,128,61,.12);color:#15803d; }
+.sit-pct--bad   { background:rgba(185,28,28,.12);color:#b91c1c; }
+.sit-foot       { font-size:.65rem;color:#94a3b8;margin-top:.4rem;text-align:right; }
+.sit-link       { color:var(--orange);text-decoration:none;font-weight:700; }

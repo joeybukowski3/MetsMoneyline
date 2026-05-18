@@ -5073,6 +5073,7 @@ function buildPresentationReport(game) {
     : null);
 
   return {
+    _situationalSplits: game?.situationalSplits || null,
     header: {
       title: preliminaryTitle,
       matchupTitle: `New York Mets vs ${game?.opponent || "Opponent"}`,
@@ -5305,6 +5306,62 @@ function stripLegacySosPayload(value) {
   return value;
 }
 
+
+/* ── Situational splits from game-log.json ─────────────────────────────────────
+   Reads the pre-built game log and returns compact W-L stats for the current
+   game's matchup (opponent, H/A, day/night, day of week, combined H/A+day/night).
+   Returns null on any failure so callers can degrade gracefully.                */
+function loadSituationalSplits(gameFacts) {
+  try {
+    const logPath = path.join(__dirname, "..", "public", "data", "game-log.json");
+    if (!fs.existsSync(logPath)) return null;
+    const raw  = fs.readFileSync(logPath, "utf8");
+    const data = JSON.parse(raw);
+    const games = (data.games || []).filter(g => g.result === "W" || g.result === "L");
+    if (!games.length) return null;
+
+    const oppAbbr = TEAM_NAME_TO_ABBR[gameFacts.game.opponent]
+      || gameFacts.game.opponent.split(" ").pop().toUpperCase().slice(0, 3);
+    const ha      = gameFacts.meta.homeAway === "home" ? "home" : "away";
+    const tod     = gameFacts.meta.time
+      ? (/^(1[0-9]|2[0-3]):[0-5][0-9]/.test(gameFacts.meta.time) ? "night" : "day")
+      : "night";
+    // Derive day of week from the game date
+    const gameDate   = gameFacts.meta.date || getTodayEasternISO();
+    const dowIndex   = new Date(gameDate + "T12:00:00").getDay();
+    const dowName    = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][dowIndex];
+    const haLabel    = ha === "home" ? "Home" : "Away";
+    const todLabel   = tod === "day"  ? "Day"  : "Night";
+    const haFull     = ha === "home" ? "home" : "road";
+
+    function buildRow(label, filterFn) {
+      const g = games.filter(filterFn);
+      if (!g.length) return null;
+      const w = g.filter(x => x.result === "W").length;
+      const l = g.length - w;
+      const withRuns = g.filter(x => x.metsRuns != null);
+      const avgR = withRuns.length
+        ? +(withRuns.reduce((s,x)=>s+(x.metsRuns||0),0)/withRuns.length).toFixed(1) : null;
+      const avgA = withRuns.length
+        ? +(withRuns.reduce((s,x)=>s+(x.oppRuns||0),0)/withRuns.length).toFixed(1) : null;
+      const pct  = Math.round(w/g.length*100);
+      return { label, w, l, pct, avgR, avgA, games: g.length };
+    }
+
+    return {
+      vsOpponent:   buildRow(`vs ${oppAbbr}`, g => g.oppAbbr === oppAbbr),
+      homeAway:     buildRow(`${haLabel} games`, g => g.homeAway === haFull),
+      timeOfDay:    buildRow(`${todLabel} games`, g => g.timeOfDay === tod),
+      dayOfWeek:    buildRow(`${dowName}s`, g => g.dayOfWeek === dowName),
+      combined:     buildRow(`${haLabel} ${todLabel.toLowerCase()}s`, g => g.homeAway === haFull && g.timeOfDay === tod),
+      meta: { oppAbbr, ha, tod, dow: dowName }
+    };
+  } catch (e) {
+    console.warn("[situational-splits] Failed to load:", e.message);
+    return null;
+  }
+}
+
 function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = null) {
   const opponentSlug = slugify(gameFacts.game.opponent);
   const id = `${gameFacts.meta.date}-mets-vs-${opponentSlug}`;
@@ -5388,7 +5445,8 @@ function buildGameJson(gameFacts, writeup, previousOutput = null, pickHistory = 
       edgeScoring: writeup.edgeScoring || null
     },
     bettingHistory: null,
-    weather: gameFacts.weather || null
+    weather: gameFacts.weather || null,
+    situationalSplits: loadSituationalSplits(gameFacts)
   };
 
   currentGame.writeup.report = buildPresentationReport(currentGame);
@@ -6155,7 +6213,16 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
       </div>`
     : "";
 
+  // Build situational splits card (site mode) — wrapped in try-catch, never throws
+  let sitSplitsCard = "";
+  try {
+    const sitGame = { situationalSplits: report._situationalSplits };
+    sitSplitsCard = buildSituationalSplitsHtml(sitGame, { mode: "site" });
+  } catch (_) {}
+
   return `
+    ${sitSplitsCard ? `<section style="background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);">${sitSplitsCard}</section>` : ""}
+
     ${wrapSection("Matchup Details", renderSummarySheetTable(matchupRows, matchupHeaders))}
 
     ${wrapSection("Starting Pitchers Comparison", pitcherComparisonMarkup)}
@@ -6597,6 +6664,95 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
   };
 }
 
+
+/* ── Situational splits renderer ───────────────────────────────────────────────
+   Returns a compact HTML card for use in site report and email.
+   Returns "" on any failure — never throws.                                     */
+function buildSituationalSplitsHtml(game, { mode = "site" } = {}) {
+  try {
+    const splits = game?.situationalSplits;
+    if (!splits) return "";
+
+    const rows = [
+      splits.vsOpponent,
+      splits.homeAway,
+      splits.timeOfDay,
+      splits.dayOfWeek,
+      splits.combined,
+    ].filter(Boolean);
+    if (!rows.length) return "";
+
+    // Compact row: Label | W-L (%) | Avg R | Avg RA
+    const isEmail = mode === "email";
+    const NAV   = "#002d72";
+    const ORG   = "#ff5910";
+
+    const rowHtml = rows.map(r => {
+      const isGood = r.pct >= 55;
+      const isBad  = r.pct <= 42;
+      const recColor = isGood ? "#15803d" : isBad ? "#b91c1c" : "#374151";
+      const rec = `${r.w}-${r.l}`;
+
+      if (isEmail) {
+        return `<tr>
+          <td style="padding:5px 8px;font-size:11px;color:#374151;font-weight:600;border-bottom:1px solid #f0f4f8;">${r.label}</td>
+          <td style="padding:5px 8px;font-size:12px;font-weight:800;color:${recColor};border-bottom:1px solid #f0f4f8;text-align:center;">${rec}</td>
+          <td style="padding:5px 8px;font-size:11px;color:#6b7280;border-bottom:1px solid #f0f4f8;text-align:center;">${r.pct}%</td>
+          <td style="padding:5px 8px;font-size:11px;color:#374151;border-bottom:1px solid #f0f4f8;text-align:center;">${r.avgR ?? "—"}</td>
+          <td style="padding:5px 8px;font-size:11px;color:#374151;border-bottom:1px solid #f0f4f8;text-align:center;">${r.avgA ?? "—"}</td>
+        </tr>`;
+      }
+
+      // site mode
+      const pctBadge = isGood
+        ? `<span class="sit-pct sit-pct--good">${r.pct}%</span>`
+        : isBad
+          ? `<span class="sit-pct sit-pct--bad">${r.pct}%</span>`
+          : `<span class="sit-pct">${r.pct}%</span>`;
+
+      return `<tr class="sit-row">
+        <td class="sit-label">${r.label}</td>
+        <td class="sit-rec" style="color:${recColor};">${rec} ${pctBadge}</td>
+        <td class="sit-stat">${r.avgR ?? "—"}</td>
+        <td class="sit-stat">${r.avgA ?? "—"}</td>
+      </tr>`;
+    }).join("");
+
+    if (isEmail) {
+      return `<table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;font-size:12px;margin-bottom:16px;">
+        <thead>
+          <tr style="background:#002d72;">
+            <th style="padding:6px 8px;text-align:left;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;">Situation</th>
+            <th style="padding:6px 8px;text-align:center;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;">Record</th>
+            <th style="padding:6px 8px;text-align:center;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;">Win%</th>
+            <th style="padding:6px 8px;text-align:center;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;">Avg R</th>
+            <th style="padding:6px 8px;text-align:center;color:#fff;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;">Avg RA</th>
+          </tr>
+        </thead>
+        <tbody>${rowHtml}</tbody>
+      </table>`;
+    }
+
+    // site mode — uses CSS classes from styles.css
+    return `<div class="sit-wrap">
+      <div class="sit-title">Mets Situational Record</div>
+      <table class="sit-table">
+        <thead><tr>
+          <th class="sit-th">Situation</th>
+          <th class="sit-th sit-th--center">Record</th>
+          <th class="sit-th sit-th--center">Avg R</th>
+          <th class="sit-th sit-th--center">Avg RA</th>
+        </tr></thead>
+        <tbody>${rowHtml}</tbody>
+      </table>
+      <div class="sit-foot">Source: 2026 season game log &bull; <a href="/game-log" class="sit-link">Full trend finder →</a></div>
+    </div>`;
+  } catch (e) {
+    console.warn("[situational-splits] Render failed:", e.message);
+    return "";
+  }
+}
+
 function buildCondensedEmailHtml(game) {
   const report = game?.writeup?.report || buildPresentationReport(game);
   const header = report?.header;
@@ -6977,6 +7133,12 @@ function buildCondensedEmailHtml(game) {
       ${oppIL.length ? `<div style="margin-bottom:4px;font-size:10px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;">${oppAbbr} IL</div>
       <div>${oppIL.map(i => ilChip(i.name, i.status)).join("")}</div>` : ""}
     </div>` : ""}
+
+    <!-- ══ SITUATIONAL SPLITS ══ -->
+    ${(function(){ try {
+      const sitHtml = buildSituationalSplitsHtml(game, { mode: "email" });
+      return sitHtml ? '<div style="padding:0 20px 0;"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:6px;">Mets Situational Record</div>' + sitHtml + '</div>' : '';
+    } catch(e) { return ''; } })()}
 
     <!-- ══ BOTTOM CTA ══ -->
     <div style="text-align:center;padding:10px 0 20px;">
