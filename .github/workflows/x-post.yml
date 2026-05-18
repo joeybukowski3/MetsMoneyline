@@ -2,7 +2,11 @@ name: X Post
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    # Hourly from 7 PM to 2 AM ET (23:00–06:00 UTC).
+    # Afternoon games (end ~4-5 PM ET) caught by 23:00/00:00 UTC runs.
+    # Night games (end ~10-11 PM ET) caught by 02:00/03:00 UTC runs.
+    # Fires within ~1 hour of game end instead of waiting until 2 AM.
+    - cron: "0 23,0,1,2,3,4,5,6 * * *"
   workflow_dispatch:
     inputs:
       type:
@@ -22,7 +26,7 @@ on:
           - dry-run
           - post
       date:
-        description: "Optional target date: blank, yesterday, or YYYY-MM-DD"
+        description: "Optional target date: blank, today, yesterday, or YYYY-MM-DD"
         required: false
         default: ""
         type: string
@@ -55,12 +59,25 @@ jobs:
           if [ "${{ github.event_name }}" = "schedule" ]; then
             echo "type=postgame" >> "$GITHUB_OUTPUT"
             echo "mode=post" >> "$GITHUB_OUTPUT"
-            echo "date=" >> "$GITHUB_OUTPUT"
+            # Before midnight ET (hour >= 4): today is the game day.
+            # After midnight ET (hour 0-3): the game was yesterday.
+            ET_HOUR=$(TZ=America/New_York date +%-H)
+            if [ "$ET_HOUR" -ge 4 ]; then
+              GAME_DATE=$(TZ=America/New_York date +%Y-%m-%d)
+            else
+              GAME_DATE=$(TZ=America/New_York date -d "yesterday" +%Y-%m-%d)
+            fi
+            echo "date=${GAME_DATE}" >> "$GITHUB_OUTPUT"
           else
             echo "type=${{ inputs.type }}" >> "$GITHUB_OUTPUT"
             echo "mode=${{ inputs.mode }}" >> "$GITHUB_OUTPUT"
             echo "date=${{ inputs.date }}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Refresh pick history (fetch latest game result)
+        if: steps.params.outputs.mode == 'post'
+        working-directory: ./bot
+        run: node refresh-pick-history.js
 
       - name: Run X post bot
         working-directory: ./bot
@@ -77,12 +94,12 @@ jobs:
           fi
           node x-post-mets-report.js --${{ steps.params.outputs.mode }} --type=${{ steps.params.outputs.type }}$DATE_ARG
 
-      - name: Commit X post state
+      - name: Commit X post state and refreshed history
         if: steps.params.outputs.mode == 'post'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bot/x-post-state.json
+          git add bot/x-post-state.json public/data/pick-history.json
           if git diff --cached --quiet; then
             echo "No X post state changes to commit."
             exit 0
