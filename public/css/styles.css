@@ -81,6 +81,7 @@ body > header .site-nav {
   font-weight: 900;
   letter-spacing: -0.5px;
   flex-shrink: 0;
+  margin-right: 1.5rem;
 }
 
 .brand-mets { color: var(--orange); }
@@ -89,7 +90,6 @@ body > header .site-nav {
 .nav-actions {
   display: flex;
   align-items: center;
-  margin-left: auto;
 }
 
 .nav-links {
@@ -2374,6 +2374,7 @@ footer {
   .pitching-section-divider { padding-left: 1.5rem; }
   .glossary dl       { grid-template-columns: 1fr; }
   header .site-nav   { padding: 0 16px; }
+  .nav-brand         { margin-right: 0.75rem; }
   .nav-mobile-panel  { padding: 0 16px 16px; }
   main, .page-content { padding: 1.5rem 1rem 3rem; }
   .email-form, .signup-form { flex-direction: column; }
