@@ -3,226 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mets Game Log & Trend Finder | MetsMoneyline</title>
-  <meta name="description" content="Interactive 2026 Mets game log with filters by day, time, home/away, and opponent. Find trends for your picks.">
+  <title>Mets 2026 Game Log & Trend Finder | MetsMoneyline</title>
+  <meta name="description" content="Every 2026 Mets game with box score, opponent stats, series position and filterable trends.">
+  <link rel="icon" type="image/jpeg" href="favicon.jpg">
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
   <style>
-    .gl-shell { max-width: 1300px; margin: 0 auto; padding: 0 1.25rem 3rem; }
-    .gl-header { padding: 1.75rem 0 1rem; }
-    .gl-header h1 { font-size: 1.6rem; font-weight: 900; color: var(--navy); margin: 0 0 0.2rem; }
-    .gl-header p  { color: var(--text-muted); font-size: 0.88rem; margin: 0; }
+    .gl-wrap   { max-width:1400px;margin:0 auto;padding:0 1rem 3rem; }
+    .gl-hero   { padding:1.5rem 0 0.75rem; }
+    .gl-hero h1{ font-size:1.55rem;font-weight:900;color:var(--navy);margin:0 0 .2rem; }
+    .gl-hero p { color:var(--text-muted);font-size:.85rem;margin:0; }
 
-    /* ── Summary strip ── */
-    .gl-summary {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-    .gl-stat {
-      background: #fff;
-      border: 1px solid #d6dde8;
-      border-radius: 11px;
-      padding: 0.6rem 0.7rem;
-      text-align: center;
-    }
-    .gl-stat-val { font-size: 1.1rem; font-weight: 900; color: var(--navy); font-family: 'Oswald', sans-serif; }
-    .gl-stat-lbl { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: #64748b; margin-top: 2px; }
-    .gl-stat-delta { font-size: 0.65rem; font-weight: 700; margin-top: 1px; }
-    .gl-stat-delta.pos { color: #16a34a; }
-    .gl-stat-delta.neg { color: #dc2626; }
+    /* ── tiles ── */
+    .gl-tiles { display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:.5rem;margin-bottom:.9rem; }
+    .gl-tile  { background:#fff;border:1px solid #d6dde8;border-radius:11px;padding:.6rem .6rem;text-align:center; }
+    .gl-tile-val { font-size:1.1rem;font-weight:900;color:var(--navy); }
+    .gl-tile-lbl { font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-top:2px; }
+    .gl-tile-sub { font-size:.62rem;font-weight:700;margin-top:1px; }
+    .gl-tile-sub.pos { color:#16a34a; }
+    .gl-tile-sub.neg { color:#dc2626; }
 
-    /* ── Insight bullets ── */
-    .gl-insights {
-      background: #f0f5ff;
-      border: 1px solid #c7d8f5;
-      border-radius: 12px;
-      padding: 0.85rem 1rem;
-      margin-bottom: 1rem;
-    }
-    .gl-insights-title { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #002d72; margin-bottom: 0.45rem; }
-    .gl-insights-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; }
-    .gl-insights-list li { font-size: 0.8rem; color: #1e3a6e; }
-    .gl-insights-list li::before { content: "⚾ "; }
+    /* ── quality-of-win strip ── */
+    .gl-qow { background:#f0f5ff;border:1px solid #c7d8f5;border-radius:11px;padding:.75rem 1rem;margin-bottom:.9rem;display:none; }
+    .gl-qow-title { font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);margin-bottom:.45rem; }
+    .gl-qow-grid  { display:grid;grid-template-columns:1fr 1fr;gap:.5rem; }
+    .gl-qow-card  { background:#fff;border:1px solid #d6dde8;border-radius:8px;padding:.5rem .75rem; }
+    .gl-qow-label { font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-bottom:3px; }
+    .gl-qow-stat  { font-size:.95rem;font-weight:900;color:var(--navy); }
+    .gl-qow-sub   { font-size:.62rem;color:#64748b;margin-top:1px; }
 
-    /* ── Filters ── */
-    .gl-filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 1rem;
-      align-items: flex-start;
-      margin-bottom: 0.9rem;
-      padding: 0.75rem 1rem;
-      background: #fff;
-      border: 1px solid #d6dde8;
-      border-radius: 12px;
-    }
-    .gl-filter-group { display: flex; flex-direction: column; gap: 0.2rem; }
-    .gl-filter-label { font-size: 0.58rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.07em; color: #64748b; }
-    .gl-filter-pills { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-    .gl-pill {
-      border: 1px solid #d6dde8;
-      border-radius: 999px;
-      background: #f8fafc;
-      color: #334155;
-      padding: 0.22rem 0.65rem;
-      font-size: 0.72rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.12s;
-      font-family: inherit;
-      white-space: nowrap;
-    }
-    .gl-pill:hover { background: #eef3fa; border-color: rgba(0,45,114,0.3); }
-    .gl-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-    .gl-reset { font-size: 0.7rem; font-weight: 700; color: var(--orange); background: none; border: none; cursor: pointer; font-family: inherit; padding: 0.2rem 0.4rem; text-decoration: underline; align-self: flex-end; }
+    /* ── insights ── */
+    .gl-insights { background:#f0f5ff;border:1px solid #c7d8f5;border-radius:11px;padding:.75rem 1rem;margin-bottom:.9rem;display:none; }
+    .gl-insights-title { font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--navy);margin-bottom:.4rem; }
+    .gl-insights-list  { display:flex;flex-wrap:wrap;gap:.3rem 1rem;list-style:none;margin:0;padding:0; }
+    .gl-insights-list li { font-size:.8rem;color:#1e3a6e; }
+    .gl-insights-list li::before { content:"⚾ "; }
 
-    /* ── Table ── */
-    .gl-table-wrap {
-      border: 1px solid #d6dde8;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #fff;
-    }
-    .gl-table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .gl-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.78rem;
-      min-width: 820px;
-    }
-    .gl-table thead th {
-      background: var(--navy);
-      color: #fff;
-      padding: 0.55rem 0.6rem;
-      font-size: 0.65rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      text-align: center;
-      white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
-    }
-    .gl-table thead th:first-child { text-align: left; border-radius: 0; }
-    .gl-table thead th:hover { background: #003580; }
-    .gl-table thead th .sort-arrow { margin-left: 3px; opacity: 0.5; font-size: 0.6rem; }
-    .gl-table thead th.sorted-asc .sort-arrow::after { content: " ↑"; opacity: 1; }
-    .gl-table thead th.sorted-desc .sort-arrow::after { content: " ↓"; opacity: 1; }
-    .gl-table tbody tr:nth-child(odd) { background: #fff; }
-    .gl-table tbody tr:nth-child(even) { background: #f8fafc; }
-    .gl-table tbody tr:hover { background: #eef3fa; }
-    .gl-table tbody td {
-      padding: 0.45rem 0.6rem;
-      text-align: center;
-      border-bottom: 1px solid #f0f4f8;
-      color: #1e293b;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .gl-table tbody td:first-child { text-align: left; }
-    /* Result badges */
-    .gl-w { display:inline-block; width:1.3rem; height:1.3rem; border-radius:50%; background:#dcfce7; color:#15803d; font-size:0.68rem; font-weight:900; line-height:1.3rem; text-align:center; }
-    .gl-l { display:inline-block; width:1.3rem; height:1.3rem; border-radius:50%; background:#fee2e2; color:#b91c1c; font-size:0.68rem; font-weight:900; line-height:1.3rem; text-align:center; }
-    /* Stat coloring */
-    .gl-good { color: #15803d; font-weight: 800; }
-    .gl-bad  { color: #b91c1c; font-weight: 800; }
-    .gl-muted { color: #94a3b8; }
-    /* H/A badge */
-    .gl-home { display:inline-block; padding:1px 6px; border-radius:4px; background:rgba(0,45,114,0.1); color:#002d72; font-size:0.65rem; font-weight:800; }
-    .gl-away { display:inline-block; padding:1px 6px; border-radius:4px; background:#f1f5f9; color:#475569; font-size:0.65rem; font-weight:800; }
-    .gl-day-badge  { display:inline-block; padding:1px 6px; border-radius:4px; background:#fef3c7; color:#92400e; font-size:0.65rem; font-weight:800; }
-    .gl-night-badge{ display:inline-block; padding:1px 6px; border-radius:4px; background:#ede9fe; color:#5b21b6; font-size:0.65rem; font-weight:800; }
+    /* ── filters ── */
+    .gl-filters { background:#fff;border:1px solid #d6dde8;border-radius:12px;padding:.75rem 1rem;margin-bottom:.85rem; }
+    .gl-fg      { display:inline-flex;flex-direction:column;gap:.2rem;margin-right:1.25rem;margin-bottom:.5rem; }
+    .gl-fg-lbl  { font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#64748b; }
+    .gl-pills   { display:flex;flex-wrap:wrap;gap:.25rem; }
+    .gl-pill    { border:1.5px solid #d6dde8;border-radius:999px;background:#f8fafc;color:#334155;
+                  padding:.2rem .65rem;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap; }
+    .gl-pill:hover  { background:#eef3fa; }
+    .gl-pill.active { background:var(--navy);color:#fff;border-color:var(--navy); }
+    .gl-pill.orange.active { background:var(--orange);border-color:var(--orange); }
+    .gl-pill.slate.active  { background:#475569;border-color:#475569; }
+    .gl-pill.amber.active  { background:#b45309;border-color:#b45309; }
+    .gl-pill.purple.active { background:#5b21b6;border-color:#5b21b6; }
+    .gl-pill.blue.active   { background:#0369a1;border-color:#0369a1; }
+    .gl-run-inputs { display:flex;gap:.4rem;align-items:center; }
+    .gl-run-inputs input { width:42px;padding:4px 6px;border:1px solid #d1d5db;border-radius:6px;font-size:.8rem;font-family:inherit; }
+    .gl-reset { background:none;border:none;cursor:pointer;color:var(--orange);font-size:.72rem;font-weight:700;font-family:inherit;text-decoration:underline;padding:.2rem .3rem;align-self:flex-end; }
 
-    /* Empty state */
-    .gl-empty { text-align:center; padding:2.5rem 1rem; color:#94a3b8; font-size:0.88rem; }
+    /* ── table ── */
+    .gl-table-wrap   { border:1px solid #d6dde8;border-radius:14px;overflow:hidden;background:#fff; }
+    .gl-table-scroll { overflow-x:auto;-webkit-overflow-scrolling:touch; }
+    table.gl { width:100%;border-collapse:collapse;font-size:.78rem;min-width:1100px; }
+    table.gl thead th {
+      background:var(--navy);color:#fff;padding:.5rem .55rem;font-size:.62rem;font-weight:800;
+      text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap;
+      cursor:pointer;user-select:none;border-right:1px solid rgba(255,255,255,.08);
+    }
+    table.gl thead th:hover { background:#003580; }
+    table.gl thead th.sort-asc::after  { content:" ↑";opacity:.9; }
+    table.gl thead th.sort-desc::after { content:" ↓";opacity:.9; }
+    table.gl thead th:not(.sort-asc):not(.sort-desc)::after { content:" ↕";opacity:.3; }
+    table.gl tbody tr:nth-child(odd)  { background:#fff; }
+    table.gl tbody tr:nth-child(even) { background:#f9fafb; }
+    table.gl tbody tr:hover           { background:#eef3fa; }
+    table.gl tbody td { padding:.42rem .55rem;text-align:center;border-bottom:1px solid #f0f4f8;color:#1e293b;font-weight:600;white-space:nowrap; }
+    table.gl tbody td.left { text-align:left; }
+    .gl-empty { padding:2rem;text-align:center;color:#94a3b8;font-size:.88rem; }
+    .gl-foot  { padding:.6rem 1rem;border-top:1px solid #f0f4f8;font-size:.7rem;color:#94a3b8;text-align:center; }
 
-    /* Hits note */
-    .gl-hits-note { font-size:0.72rem; color:#94a3b8; text-align:center; padding:0.6rem; border-top:1px solid #f0f4f8; }
+    /* cell badges */
+    .badge-w  { display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#dcfce7;color:#15803d;font-size:.68rem;font-weight:900; }
+    .badge-l  { display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:#fee2e2;color:#b91c1c;font-size:.68rem;font-weight:900; }
+    .badge-h  { display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(0,45,114,.1);color:var(--navy);font-size:.63rem;font-weight:800; }
+    .badge-a  { display:inline-block;padding:1px 6px;border-radius:4px;background:#f1f5f9;color:#475569;font-size:.63rem;font-weight:800; }
+    .badge-day   { display:inline-block;padding:1px 6px;border-radius:4px;background:#fef3c7;color:#92400e;font-size:.63rem;font-weight:800; }
+    .badge-night { display:inline-block;padding:1px 6px;border-radius:4px;background:#ede9fe;color:#5b21b6;font-size:.63rem;font-weight:800; }
+    .badge-g1   { display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(3,105,161,.12);color:#0369a1;font-size:.63rem;font-weight:800; }
+    .badge-gn   { display:inline-block;padding:1px 6px;border-radius:4px;background:#f1f5f9;color:#475569;font-size:.63rem;font-weight:800; }
+    .badge-last { color:var(--orange);margin-left:2px;font-size:.72rem; }
+    .stat-good  { color:#15803d;font-weight:800; }
+    .stat-bad   { color:#b91c1c;font-weight:800; }
+    .stat-hi    { background:rgba(22,163,74,.07); }
+    .stat-lo    { background:rgba(185,28,28,.07); }
+    .col-sep    { border-left:2px solid #e5e7eb !important; }
 
-    @media (max-width: 640px) {
-      .gl-shell { padding: 0 0.65rem 2rem; }
-      .gl-header h1 { font-size: 1.35rem; }
-      .gl-summary { grid-template-columns: repeat(3, 1fr); }
-      .gl-filters { padding: 0.65rem 0.75rem; gap: 0.5rem; }
-      .gl-insights { padding: 0.65rem 0.75rem; }
-      .gl-insights-list li { font-size: 0.76rem; }
+    @media(max-width:640px) {
+      .gl-wrap { padding:0 .65rem 2rem; }
+      .gl-hero h1 { font-size:1.3rem; }
+      .gl-tiles { grid-template-columns:repeat(3,1fr); }
+      .gl-qow-grid { grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="alert-banner">Live 2026 season mode &mdash; game log updates daily</div>
+  <div class="alert-banner">Game Log updates nightly at 3 AM — all stats current as of today</div>
   <header></header>
-
   <main>
-    <div class="gl-shell">
-      <div class="gl-header">
+    <div class="gl-wrap">
+      <div class="gl-hero">
         <h1>Mets Game Log &amp; Trend Finder</h1>
-        <p>Filter by any combination of day, time, home/away, or opponent to find patterns you can use in your picks.</p>
+        <p>Filter any combination of day, time, home/away, series position, or opponent quality. Updated daily.</p>
       </div>
 
-      <!-- Summary strip -->
-      <div class="gl-summary" id="gl-summary"></div>
+      <!-- Stat tiles -->
+      <div class="gl-tiles" id="gl-tiles"></div>
 
-      <!-- Auto-generated insights -->
-      <div class="gl-insights" id="gl-insights" style="display:none;">
-        <div class="gl-insights-title">📊 Trend Insights for Current Filter</div>
+      <!-- Quality of opponent strip (shows when filters active) -->
+      <div class="gl-qow" id="gl-qow">
+        <div class="gl-qow-title">📊 Opponent Quality in View</div>
+        <div class="gl-qow-grid" id="gl-qow-grid"></div>
+      </div>
+
+      <!-- Insights -->
+      <div class="gl-insights" id="gl-insights">
+        <div class="gl-insights-title">⚾ Trend Insights</div>
         <ul class="gl-insights-list" id="gl-insights-list"></ul>
       </div>
 
       <!-- Filters -->
       <div class="gl-filters">
-        <div class="gl-filter-group">
-          <div class="gl-filter-label">Day of Week</div>
-          <div class="gl-filter-pills" id="f-day"></div>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-start;">
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">Day of Week</span>
+            <div class="gl-pills" id="f-day"></div>
+          </div>
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">Home / Away</span>
+            <div class="gl-pills" id="f-ha"></div>
+          </div>
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">Time</span>
+            <div class="gl-pills" id="f-tod"></div>
+          </div>
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">Game in Series</span>
+            <div class="gl-pills" id="f-series"></div>
+          </div>
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">Opponent</span>
+            <div class="gl-pills" id="f-opp"></div>
+          </div>
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">NYM Runs Scored</span>
+            <div class="gl-run-inputs">
+              <input id="min-runs" placeholder="Min" type="number" min="0" max="30">
+              <span style="color:#94a3b8">–</span>
+              <input id="max-runs" placeholder="Max" type="number" min="0" max="30">
+            </div>
+          </div>
+          <div class="gl-fg">
+            <span class="gl-fg-lbl">Opp Win%</span>
+            <div class="gl-pills" id="f-winpct"></div>
+          </div>
+          <button class="gl-reset" id="gl-reset" style="display:none" onclick="resetAll()">Reset all</button>
         </div>
-        <div class="gl-filter-group">
-          <div class="gl-filter-label">Home / Away</div>
-          <div class="gl-filter-pills" id="f-ha"></div>
-        </div>
-        <div class="gl-filter-group">
-          <div class="gl-filter-label">Time of Day</div>
-          <div class="gl-filter-pills" id="f-tod"></div>
-        </div>
-        <div class="gl-filter-group">
-          <div class="gl-filter-label">Opponent</div>
-          <div class="gl-filter-pills" id="f-opp"></div>
-        </div>
-        <button class="gl-reset" id="gl-reset" onclick="resetFilters()">Reset all filters</button>
       </div>
 
       <!-- Table -->
       <div class="gl-table-wrap">
         <div class="gl-table-scroll">
-          <table class="gl-table" id="gl-table">
+          <table class="gl" id="gl-table">
             <thead>
               <tr>
-                <th onclick="sortBy('date')" title="Sort by date">Date<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('dayOfWeek')" title="Sort by day">Day<span class="sort-arrow"></span></th>
-                <th title="Time of day">TOD</th>
-                <th onclick="sortBy('homeAway')" title="Sort">H/A<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('opponent')" title="Sort by opponent">Opponent<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('metsRuns')" title="Mets runs scored">NYM R<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('metsHits')" title="Mets hits">NYM H<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('oppRuns')" title="Opponent runs scored">OPP R<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('oppHits')" title="Opponent hits">OPP H<span class="sort-arrow"></span></th>
-                <th onclick="sortBy('result')" title="Result">Result<span class="sort-arrow"></span></th>
-                <th title="Mets record after game">NYM Rec</th>
-                <th title="Mets home record after game">NYM H</th>
-                <th title="Mets road record after game">NYM A</th>
-                <th title="Opponent season record">OPP Rec</th>
-                <th title="Opponent home record">OPP H</th>
-                <th title="Opponent road record">OPP A</th>
+                <th data-col="date"           title="Date">Date</th>
+                <th data-col="dayOfWeek"      title="Day of week">Day</th>
+                <th data-col="timeOfDay"      title="Day or night game">TOD</th>
+                <th data-col="homeAway"       title="Home or away">H/A</th>
+                <th data-col="oppAbbr"        title="Opponent" class="left">Opp</th>
+                <th data-col="seriesGameNum"  title="Game number in series">Series</th>
+                <th data-col="metsRuns"       title="Mets runs scored">NYM R</th>
+                <th data-col="metsHits"       title="Mets hits">NYM H</th>
+                <th data-col="oppRuns"        title="Opponent runs scored">Opp R</th>
+                <th data-col="oppHits"        title="Opponent hits">Opp H</th>
+                <th data-col="result"         title="Win or loss">Result</th>
+                <th data-col="finalScore"     title="Final score">Score</th>
+                <th data-col="metsRecord"     title="Mets cumulative record">NYM Rec</th>
+                <th data-col="metsHomeRecord" title="Mets home record">NYM H</th>
+                <th data-col="metsRoadRecord" title="Mets road record">NYM A</th>
+                <th data-col="oppRecord"      title="Opponent season record" class="col-sep">Opp Rec</th>
+                <th data-col="oppWinPct"      title="Opponent win percentage">Opp W%</th>
+                <th data-col="oppHomeRecord"  title="Opponent home record">Opp H</th>
+                <th data-col="oppRoadRecord"  title="Opponent road record">Opp A</th>
+                <th data-col="oppSeasonAvg"   title="Opponent team batting average">Opp AVG</th>
+                <th data-col="oppSeasonEra"   title="Opponent team ERA">Opp ERA</th>
               </tr>
             </thead>
-            <tbody id="gl-tbody"><tr><td colspan="16" class="gl-empty">Loading game log…</td></tr></tbody>
+            <tbody id="gl-tbody">
+              <tr><td colspan="21" class="gl-empty">Loading game log…</td></tr>
+            </tbody>
           </table>
         </div>
-        <div class="gl-hits-note" id="gl-hits-note" style="display:none;">
-          ⚾ Hits data updates nightly via the daily data refresh.
-        </div>
+        <div class="gl-foot" id="gl-foot"></div>
       </div>
     </div>
   </main>
@@ -230,278 +211,356 @@
   <script defer src="/js/site-header.js"></script>
   <script defer src="/js/site-footer.js"></script>
   <script>
-    var ALL_GAMES  = [];
-    var SUMMARY    = {};
-    var filters    = { day: "all", ha: "all", tod: "all", opp: "all" };
-    var sortCol    = "date";
-    var sortAsc    = true;
-    var hitsAvail  = false;
+  (function () {
+    "use strict";
 
-    // ── Load data ─────────────────────────────────────────────────────────────
+    var ALL    = [];
+    var SUM    = {};
+    var filters = { day:"all", ha:"all", tod:"all", series:"all", opp:"all", winpct:"all" };
+    var minRuns = "", maxRuns = "";
+    var sortCol = "date", sortAsc = true;
+    var DAYS    = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    var DAYS_FULL = { Mon:"Monday",Tue:"Tuesday",Wed:"Wednesday",Thu:"Thursday",Fri:"Friday",Sat:"Saturday",Sun:"Sunday" };
+
+    // ── load ──────────────────────────────────────────────────────────────────
     fetch("/data/game-log.json?v=" + Date.now())
       .then(function(r){ return r.json(); })
-      .then(function(data) {
-        ALL_GAMES = (data.games || []).filter(function(g){ return g.result === "W" || g.result === "L"; });
-        SUMMARY   = data.summary || {};
-        hitsAvail = !!data.hitsAvailable;
-        if (!hitsAvail) document.getElementById("gl-hits-note").style.display = "";
+      .then(function(data){
+        ALL = (data.games || []).filter(function(g){ return g.result === "W" || g.result === "L"; });
+        SUM = data.summary || {};
         buildFilters();
         render();
       })
-      .catch(function(e){ document.getElementById("gl-tbody").innerHTML = '<tr><td colspan="16" class="gl-empty">Game log data not available yet.</td></tr>'; });
+      .catch(function(){ document.getElementById("gl-tbody").innerHTML = '<tr><td colspan="21" class="gl-empty">Game log data not available yet. Check back after tonight\'s update.</td></tr>'; });
 
-    // ── Filter pill builder ───────────────────────────────────────────────────
-    function buildFilters() {
-      var days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
-      buildPillGroup("f-day",  ["all"].concat(days),            "day",  function(v){ return v === "all" ? "All" : v.slice(0,3); });
-      buildPillGroup("f-ha",   ["all","home","away"],           "ha",   function(v){ return v === "all" ? "All" : v === "home" ? "Home" : "Away"; });
-      buildPillGroup("f-tod",  ["all","day","night"],           "tod",  function(v){ return v === "all" ? "All" : v === "day" ? "☀ Day" : "🌙 Night"; });
-
-      // Opponents — sorted by frequency
-      var oppCount = {};
-      ALL_GAMES.forEach(function(g){ oppCount[g.opponent] = (oppCount[g.opponent]||0)+1; });
-      var opps = Object.keys(oppCount).sort(function(a,b){ return oppCount[b]-oppCount[a]; });
-      buildPillGroup("f-opp", ["all"].concat(opps), "opp", function(v){ return v === "all" ? "All" : (v.split(" ").pop()); });
-    }
-
-    function buildPillGroup(id, values, key, label) {
-      var el = document.getElementById(id);
-      el.innerHTML = values.map(function(v) {
-        var active = filters[key] === v ? " active" : "";
-        return '<button class="gl-pill' + active + '" data-key="' + key + '" data-val="' + v + '" onclick="setFilter(this)">' + label(v) + "</button>";
-      }).join("");
-    }
-
-    function setFilter(btn) {
-      var key = btn.dataset.key;
-      var val = btn.dataset.val;
-      filters[key] = val;
-      // Update active class in this pill group
-      btn.closest(".gl-filter-pills").querySelectorAll(".gl-pill").forEach(function(b){
-        b.classList.toggle("active", b.dataset.val === val);
-      });
-      render();
-    }
-
-    function resetFilters() {
-      filters = { day: "all", ha: "all", tod: "all", opp: "all" };
-      document.querySelectorAll(".gl-pill").forEach(function(b){
-        b.classList.toggle("active", b.dataset.val === "all");
-      });
-      render();
-    }
-
-    // ── Sort ──────────────────────────────────────────────────────────────────
-    function sortBy(col) {
-      if (sortCol === col) sortAsc = !sortAsc;
-      else { sortCol = col; sortAsc = true; }
-      document.querySelectorAll(".gl-table thead th").forEach(function(th){
-        th.classList.remove("sorted-asc","sorted-desc");
-      });
-      var ths = document.querySelectorAll(".gl-table thead th");
-      var cols = ["date","dayOfWeek","tod","homeAway","opponent","metsRuns","metsHits","oppRuns","oppHits","result","metsRecord","metsHomeRecord","metsRoadRecord","oppRecord","oppHomeRecord","oppRoadRecord"];
-      var idx  = ["date","dayOfWeek","tod","homeAway","opponent","metsRuns","metsHits","oppRuns","oppHits","result"].indexOf(col);
-      if (idx >= 0 && ths[idx]) ths[idx].classList.add(sortAsc ? "sorted-asc" : "sorted-desc");
-      render();
-    }
-
-    // ── Filter + compute stats ────────────────────────────────────────────────
+    // ── filter logic ──────────────────────────────────────────────────────────
     function filtered() {
-      return ALL_GAMES.filter(function(g) {
-        if (filters.day !== "all" && g.dayOfWeek !== filters.day) return false;
-        if (filters.ha  !== "all" && g.homeAway  !== filters.ha)  return false;
-        if (filters.tod !== "all" && g.timeOfDay !== filters.tod) return false;
-        if (filters.opp !== "all" && g.opponent  !== filters.opp) return false;
+      return ALL.filter(function(g){
+        if (filters.day    !== "all" && g.dayOfWeek !== DAYS_FULL[filters.day]) return false;
+        if (filters.ha     !== "all" && g.homeAway  !== filters.ha)  return false;
+        if (filters.tod    !== "all" && g.timeOfDay !== filters.tod) return false;
+        if (filters.opp    !== "all" && g.oppAbbr   !== filters.opp) return false;
+        if (filters.series !== "all") {
+          if (filters.series === "opener" && g.seriesGameNum !== 1)  return false;
+          if (filters.series === "g2"     && g.seriesGameNum !== 2)  return false;
+          if (filters.series === "g3plus" && g.seriesGameNum < 3)    return false;
+          if (filters.series === "finale" && !g.isSeriesLast)        return false;
+        }
+        if (filters.winpct !== "all") {
+          var wp = g.oppWinPct;
+          if (wp == null) return false;
+          if (filters.winpct === "elite"  && wp < 0.560) return false;
+          if (filters.winpct === "above"  && (wp < 0.500 || wp >= 0.560)) return false;
+          if (filters.winpct === "below"  && (wp >= 0.500)) return false;
+          if (filters.winpct === "weak"   && wp >= 0.420) return false;
+        }
+        if (minRuns !== "" && g.metsRuns < Number(minRuns)) return false;
+        if (maxRuns !== "" && g.metsRuns > Number(maxRuns)) return false;
         return true;
       });
     }
 
-    function avg(arr, fn) {
+    function isFiltered() {
+      return Object.values(filters).some(function(v){ return v !== "all"; }) || minRuns !== "" || maxRuns !== "";
+    }
+
+    // ── stat helpers ──────────────────────────────────────────────────────────
+    function mean(arr, fn) {
       var vals = arr.map(fn).filter(function(v){ return v != null && !isNaN(v); });
       return vals.length ? vals.reduce(function(a,b){return a+b;},0)/vals.length : null;
     }
-
-    function pct(arr, fn) {
-      var total = arr.length;
-      if (!total) return null;
-      return arr.filter(fn).length / total;
-    }
-
-    function fmtAvg(v) { return v != null ? v.toFixed(2) : "—"; }
-    function fmtPct(v) { return v != null ? Math.round(v*100)+"%" : "—"; }
     function wl(arr) {
       var w = arr.filter(function(g){return g.result==="W";}).length;
-      return w+"-"+(arr.length-w);
+      return w + "-" + (arr.length - w);
+    }
+    function fmtWP(v) { return v != null ? (v * 100).toFixed(1) + "%" : "—"; }
+    function fmtAvg(v, d) { return v != null ? v.toFixed(d != null ? d : 2) : "—"; }
+    function sign(v, base) {
+      if (v == null || base == null) return null;
+      var d = v - base;
+      return { val: d, lbl: (d >= 0 ? "+" : "") + d.toFixed(2) };
     }
 
-    // ── Insight generation ────────────────────────────────────────────────────
-    function generateInsights(games, baseline) {
-      var insights = [];
-      if (!games.length) return insights;
-
-      var w = games.filter(function(g){return g.result==="W";}).length;
-      var l = games.length - w;
-      var winPct = w / games.length;
-      var baseWin = SUMMARY.totalGames ? (parseInt(SUMMARY.record) || 19) / SUMMARY.totalGames : 0;
-
-      // Win rate
-      insights.push("Record: <strong>" + w + "-" + l + "</strong> (" + Math.round(winPct*100) + "% win rate" +
-        (Math.abs(winPct - (19/45)) > 0.05 ? " vs " + Math.round((19/45)*100) + "% season avg" : "") + ")");
-
-      // Runs
-      var avgR = avg(games, function(g){return g.metsRuns;});
-      var avgOR = avg(games, function(g){return g.oppRuns;});
-      if (avgR != null) insights.push("Mets avg <strong>" + avgR.toFixed(1) + " runs</strong> scored" +
-        (SUMMARY.avgMetsRuns ? " vs " + SUMMARY.avgMetsRuns + " season avg" : ""));
-      if (avgOR != null) insights.push("Opponents avg <strong>" + avgOR.toFixed(1) + " runs</strong> allowed" +
-        (SUMMARY.avgOppRuns ? " vs " + SUMMARY.avgOppRuns + " season avg" : ""));
-
-      // Best/worst day
-      if (filters.day === "all") {
-        var byDay = {};
-        games.forEach(function(g){
-          if (!byDay[g.dayOfWeek]) byDay[g.dayOfWeek]={w:0,l:0};
-          if (g.result==="W") byDay[g.dayOfWeek].w++; else byDay[g.dayOfWeek].l++;
-        });
-        var bestDay = null, bestPct = -1;
-        Object.keys(byDay).forEach(function(d){
-          var rec = byDay[d];
-          var p = rec.w/(rec.w+rec.l);
-          if (rec.w+rec.l >= 3 && p > bestPct) { bestPct=p; bestDay=d+": "+rec.w+"-"+rec.l; }
-        });
-        if (bestDay) insights.push("Best day: <strong>" + bestDay + "</strong>");
-      }
-
-      // Home vs away split
-      if (filters.ha === "all") {
-        var homeW = games.filter(function(g){return g.homeAway==="home"&&g.result==="W";}).length;
-        var homeG = games.filter(function(g){return g.homeAway==="home";}).length;
-        var awayW = games.filter(function(g){return g.homeAway==="away"&&g.result==="W";}).length;
-        var awayG = games.filter(function(g){return g.homeAway==="away";}).length;
-        if (homeG) insights.push("Home: <strong>"+homeW+"-"+(homeG-homeW)+"</strong> · Away: <strong>"+awayW+"-"+(awayG-awayW)+"</strong>");
-      }
-
-      return insights.slice(0, 6);
+    // Combined opponent record for a set of games
+    function combinedOppRec(games) {
+      var totalW = 0, totalL = 0, count = 0;
+      games.forEach(function(g){
+        if (g.oppWins != null && g.oppLosses != null) {
+          totalW += g.oppWins; totalL += g.oppLosses; count++;
+        }
+      });
+      if (!count) return null;
+      var pct = totalW / (totalW + totalL);
+      return { wins: totalW, losses: totalL, pct: pct, games: count };
     }
 
-    // ── Render ────────────────────────────────────────────────────────────────
-    function render() {
-      var games = filtered();
+    // ── build filters ─────────────────────────────────────────────────────────
+    function buildFilters() {
+      // Day
+      pill("f-day", DAYS.map(function(d){ return {val:d,lbl:d}; }), "day", "");
+      // H/A
+      pill("f-ha", [{val:"home",lbl:"Home"},{val:"away",lbl:"Away"}], "ha", "slate");
+      // TOD
+      pill("f-tod", [{val:"day",lbl:"☀ Day"},{val:"night",lbl:"🌙 Night"}], "tod", "amber");
+      // Series
+      pill("f-series", [
+        {val:"opener",lbl:"G1 Opener"},{val:"g2",lbl:"G2"},
+        {val:"g3plus",lbl:"G3+"},{val:"finale",lbl:"Finale ★"}
+      ], "series", "blue");
+      // Opponents (sorted by frequency)
+      var oppCount = {};
+      ALL.forEach(function(g){ oppCount[g.oppAbbr] = (oppCount[g.oppAbbr]||0)+1; });
+      var opps = Object.keys(oppCount).sort(function(a,b){ return oppCount[b]-oppCount[a]; });
+      pill("f-opp", opps.map(function(o){ return {val:o,lbl:o}; }), "opp", "slate");
+      // Win pct tiers
+      pill("f-winpct", [
+        {val:"elite",lbl:"Elite ≥.560"},{val:"above",lbl:"Above .500"},
+        {val:"below",lbl:"Below .500"},{val:"weak",lbl:"Weak ≤.420"}
+      ], "winpct", "slate");
+      // Run inputs
+      document.getElementById("min-runs").addEventListener("input", function(){ minRuns = this.value; render(); });
+      document.getElementById("max-runs").addEventListener("input", function(){ maxRuns = this.value; render(); });
+      // Sort headers
+      document.querySelectorAll("table.gl thead th[data-col]").forEach(function(th){
+        th.addEventListener("click", function(){ toggleSort(this.dataset.col); });
+      });
+    }
 
-      // Sort
-      games = games.slice().sort(function(a,b){
+    function pill(containerId, items, key, cls) {
+      var el = document.getElementById(containerId);
+      el.innerHTML = items.map(function(item){
+        var c = "gl-pill" + (cls ? " " + cls : "");
+        return '<button class="' + c + '" data-key="' + key + '" data-val="' + item.val + '">' + item.lbl + '</button>';
+      }).join("");
+      el.querySelectorAll(".gl-pill").forEach(function(btn){
+        btn.addEventListener("click", function(){
+          var k = this.dataset.key, v = this.dataset.val;
+          filters[k] = (filters[k] === v) ? "all" : v;
+          updatePillStates(containerId, k);
+          render();
+        });
+      });
+    }
+
+    function updatePillStates(containerId, key) {
+      document.getElementById(containerId).querySelectorAll(".gl-pill").forEach(function(b){
+        b.classList.toggle("active", b.dataset.val === filters[key]);
+      });
+    }
+
+    window.resetAll = function() {
+      Object.keys(filters).forEach(function(k){ filters[k] = "all"; });
+      minRuns = ""; maxRuns = "";
+      document.getElementById("min-runs").value = "";
+      document.getElementById("max-runs").value = "";
+      ["f-day","f-ha","f-tod","f-series","f-opp","f-winpct"].forEach(function(id){
+        document.getElementById(id).querySelectorAll(".gl-pill").forEach(function(b){ b.classList.remove("active"); });
+      });
+      render();
+    };
+
+    // ── sort ──────────────────────────────────────────────────────────────────
+    function toggleSort(col) {
+      if (sortCol === col) sortAsc = !sortAsc;
+      else { sortCol = col; sortAsc = true; }
+      document.querySelectorAll("table.gl thead th").forEach(function(th){
+        th.classList.remove("sort-asc","sort-desc");
+        if (th.dataset.col === col) th.classList.add(sortAsc ? "sort-asc" : "sort-desc");
+      });
+      render();
+    }
+
+    function sortedRows(rows) {
+      return rows.slice().sort(function(a,b){
         var av = a[sortCol], bv = b[sortCol];
         if (av == null && bv == null) return 0;
-        if (av == null) return 1;
-        if (bv == null) return -1;
-        var cmp = typeof av === "number" ? av - bv : String(av).localeCompare(String(bv));
-        return sortAsc ? cmp : -cmp;
+        if (av == null) return 1; if (bv == null) return -1;
+        var c = (typeof av === "number") ? av - bv : String(av).localeCompare(String(bv));
+        return sortAsc ? c : -c;
       });
+    }
 
-      // Summary
-      renderSummary(games);
+    // ── render ────────────────────────────────────────────────────────────────
+    function render() {
+      var rows = filtered();
+      var seaWP = SUM.winPct || (19/45);
+      var fil   = isFiltered();
+      document.getElementById("gl-reset").style.display = fil ? "" : "none";
 
-      // Insights
-      var insights = generateInsights(games);
-      var insightsEl = document.getElementById("gl-insights");
-      var listEl     = document.getElementById("gl-insights-list");
-      if (insights.length) {
-        listEl.innerHTML = insights.map(function(s){ return "<li>" + s + "</li>"; }).join("");
-        insightsEl.style.display = "";
-      } else {
-        insightsEl.style.display = "none";
+      renderTiles(rows, seaWP, fil);
+      renderQoW(rows, fil);
+      renderInsights(rows, seaWP, fil);
+      renderTable(rows);
+      renderFoot(rows);
+    }
+
+    // tiles
+    function renderTiles(rows, seaWP, fil) {
+      var avgMR  = mean(rows, function(g){ return g.metsRuns; });
+      var avgOR  = mean(rows, function(g){ return g.oppRuns; });
+      var filtWP = rows.length ? rows.filter(function(g){return g.result==="W";}).length/rows.length : null;
+      var dWP    = sign(filtWP, seaWP);
+      var dMR    = sign(avgMR, SUM.avgMetsRuns);
+      var dOR    = avgOR != null && SUM.avgOppRuns != null ? {val: SUM.avgOppRuns - avgOR, lbl: (SUM.avgOppRuns - avgOR >= 0 ? "+" : "") + (SUM.avgOppRuns - avgOR).toFixed(2)} : null;
+
+      var tiles = [
+        { val: wl(rows),                                     lbl: "Record" },
+        { val: filtWP != null ? Math.round(filtWP*100)+"%" : "—", lbl: "Win %",
+          sub: fil && dWP ? (dWP.val > 0.02 ? "▲ above avg" : dWP.val < -0.02 ? "▼ below avg" : "≈ season avg") : null,
+          pos: dWP && dWP.val > 0 },
+        { val: fmtAvg(avgMR),                                lbl: "Avg NYM R",
+          sub: fil && dMR ? (dMR.val > 0.15 ? "▲ above avg" : dMR.val < -0.15 ? "▼ below avg" : "≈ season avg") : null,
+          pos: dMR && dMR.val > 0 },
+        { val: fmtAvg(avgOR),                                lbl: "Avg Opp R",
+          sub: fil && dOR ? (dOR.val > 0.15 ? "▲ giving up less" : dOR.val < -0.15 ? "▼ giving up more" : "≈ season avg") : null,
+          pos: dOR && dOR.val > 0 },
+        { val: fmtAvg(mean(rows, function(g){ return g.metsHits; }), 1), lbl: "Avg NYM H" },
+        { val: fmtAvg(mean(rows, function(g){ return g.oppHits;  }), 1), lbl: "Avg Opp H" },
+        { val: rows.length,                                  lbl: "Games" },
+      ];
+      document.getElementById("gl-tiles").innerHTML = tiles.map(function(t){
+        return '<div class="gl-tile"><div class="gl-tile-val">' + t.val + '</div>' +
+          '<div class="gl-tile-lbl">' + t.lbl + '</div>' +
+          (t.sub ? '<div class="gl-tile-sub ' + (t.pos ? "pos" : "neg") + '">' + t.sub + '</div>' : '') +
+          '</div>';
+      }).join("");
+    }
+
+    // quality of win/loss opponent strip
+    function renderQoW(rows, fil) {
+      var el = document.getElementById("gl-qow");
+      if (!fil || !rows.length) { el.style.display = "none"; return; }
+      var wins   = rows.filter(function(g){ return g.result==="W"; });
+      var losses = rows.filter(function(g){ return g.result==="L"; });
+      var wRec   = combinedOppRec(wins);
+      var lRec   = combinedOppRec(losses);
+      var allRec = combinedOppRec(rows);
+
+      function card(label, rec, cls) {
+        if (!rec) return '<div class="gl-qow-card"><div class="gl-qow-label">' + label + '</div><div class="gl-qow-stat">—</div></div>';
+        return '<div class="gl-qow-card">' +
+          '<div class="gl-qow-label">' + label + '</div>' +
+          '<div class="gl-qow-stat ' + cls + '">' + rec.wins + '-' + rec.losses + ' (' + fmtWP(rec.pct) + ')</div>' +
+          '<div class="gl-qow-sub">Combined opp record across ' + rec.games + ' game' + (rec.games>1?'s':'') + '</div>' +
+          '</div>';
       }
 
-      // Table
-      var tbody = document.getElementById("gl-tbody");
-      if (!games.length) {
-        tbody.innerHTML = '<tr><td colspan="16" class="gl-empty">No games match the current filters.</td></tr>';
+      var grid = card("Opp Record in Wins",   wRec,   "stat-good") +
+                 card("Opp Record in Losses", lRec,   "stat-bad")  +
+                 card("All Opps in Filter",   allRec, "");
+
+      if (allRec) {
+        grid += '<div class="gl-qow-card">' +
+          '<div class="gl-qow-label">Avg Opp Win %</div>' +
+          '<div class="gl-qow-stat">' + fmtWP(allRec.pct) + '</div>' +
+          '<div class="gl-qow-sub">Combined opp strength</div>' +
+          '</div>';
+      }
+
+      document.getElementById("gl-qow-grid").innerHTML = grid;
+      el.style.display = "";
+    }
+
+    // insight bullets
+    function renderInsights(rows, seaWP, fil) {
+      var el = document.getElementById("gl-insights");
+      if (!rows.length) { el.style.display = "none"; return; }
+      var w   = rows.filter(function(g){return g.result==="W";}).length;
+      var wp  = w / rows.length;
+      var out = [];
+      out.push("Record: <strong>" + w + "-" + (rows.length-w) + "</strong> (" + Math.round(wp*100) + "% wins" +
+        (fil ? " vs " + Math.round(seaWP*100) + "% season avg" : "") + ")");
+
+      var avgMR = mean(rows, function(g){ return g.metsRuns; });
+      var avgOR = mean(rows, function(g){ return g.oppRuns; });
+      if (avgMR != null) out.push("Mets avg <strong>" + avgMR.toFixed(1) + " R</strong>" + (fil ? " vs " + SUM.avgMetsRuns + " season" : ""));
+      if (avgOR != null) out.push("Opp avg <strong>" + avgOR.toFixed(1) + " R</strong> allowed" + (fil ? " vs " + SUM.avgOppRuns + " season" : ""));
+
+      // Best day in filtered set
+      if (filters.day === "all" && rows.length >= 4) {
+        var byDay = {};
+        rows.forEach(function(g){
+          var d = g.dayOfWeek; byDay[d] = byDay[d]||{w:0,t:0}; byDay[d].t++;
+          if (g.result==="W") byDay[d].w++;
+        });
+        var best = Object.entries(byDay).filter(function(e){return e[1].t>=2;})
+          .sort(function(a,b){ return b[1].w/b[1].t - a[1].w/a[1].t; })[0];
+        if (best) out.push("Best day: <strong>" + best[0] + "</strong> (" + best[1].w + "-" + (best[1].t-best[1].w) + ")");
+      }
+
+      document.getElementById("gl-insights-list").innerHTML = out.map(function(s){return "<li>" + s + "</li>";}).join("");
+      el.style.display = "";
+    }
+
+    // table rows
+    function renderTable(rows) {
+      var sorted = sortedRows(rows);
+      var avgMR  = mean(rows, function(g){ return g.metsRuns; });
+      var avgOR  = mean(rows, function(g){ return g.oppRuns; });
+      var tbody  = document.getElementById("gl-tbody");
+
+      if (!sorted.length) {
+        tbody.innerHTML = '<tr><td colspan="21" class="gl-empty">No games match the current filters.</td></tr>';
         return;
       }
 
-      var avgMR = avg(games, function(g){return g.metsRuns;});
-      var avgOR = avg(games, function(g){return g.oppRuns;});
+      tbody.innerHTML = sorted.map(function(g) {
+        var isW  = g.result === "W";
+        var dt   = g.date ? g.date.slice(5).replace("-","/") : "—";
+        var day  = (g.dayOfWeek || "—").slice(0,3);
+        var mrBg = avgMR != null && g.metsRuns != null ? (g.metsRuns >= avgMR+0.5 ? " stat-hi" : g.metsRuns <= avgMR-0.5 ? " stat-lo" : "") : "";
+        var orBg = avgOR != null && g.oppRuns  != null ? (g.oppRuns  >= avgOR+0.5 ? " stat-lo" : g.oppRuns  <= avgOR-0.5 ? " stat-hi" : "") : "";
 
-      tbody.innerHTML = games.map(function(g) {
-        var dateStr = g.date ? g.date.slice(5).replace("-","/") : "—";
-        var dayShort = g.dayOfWeek ? g.dayOfWeek.slice(0,3) : "—";
-        var todBadge = g.timeOfDay === "day"
-          ? '<span class="gl-day-badge">Day</span>'
-          : '<span class="gl-night-badge">Night</span>';
-        var haBadge = g.homeAway === "home"
-          ? '<span class="gl-home">H</span>'
-          : '<span class="gl-away">A</span>';
-        var res = g.result === "W"
-          ? '<span class="gl-w">W</span>'
-          : '<span class="gl-l">L</span>';
+        var serBadge = '<span class="' + (g.seriesGameNum===1 ? "badge-g1" : "badge-gn") + '">G' + (g.seriesGameNum||"?") + '</span>' +
+          (g.isSeriesLast ? '<span class="badge-last" title="Series finale">★</span>' : "");
 
-        // Color runs relative to average
-        var mrCls = avgMR && g.metsRuns != null ? (g.metsRuns >= avgMR + 0.5 ? " gl-good" : g.metsRuns <= avgMR - 0.5 ? " gl-bad" : "") : "";
-        var orCls = avgOR && g.oppRuns  != null ? (g.oppRuns  >= avgOR + 0.5 ? " gl-bad"  : g.oppRuns  <= avgOR - 0.5 ? " gl-good" : "") : "";
+        // Opp AVG coloring
+        var avgVal = g.oppSeasonAvg;
+        var avgNum = avgVal ? parseFloat(avgVal) : NaN;
+        var avgCls = !isNaN(avgNum) ? (avgNum >= 0.255 ? " stat-good stat-hi" : avgNum <= 0.230 ? " stat-bad stat-lo" : "") : "";
 
-        var mr  = g.metsRuns != null ? g.metsRuns  : '<span class="gl-muted">—</span>';
-        var mh  = g.metsHits != null ? g.metsHits  : '<span class="gl-muted">—</span>';
-        var or  = g.oppRuns  != null ? g.oppRuns   : '<span class="gl-muted">—</span>';
-        var oh  = g.oppHits  != null ? g.oppHits   : '<span class="gl-muted">—</span>';
+        // Opp ERA coloring (lower = better for us, so high ERA = good for Mets)
+        var eraVal = g.oppSeasonEra;
+        var eraNum = eraVal ? parseFloat(eraVal) : NaN;
+        var eraCls = !isNaN(eraNum) ? (eraNum >= 4.75 ? " stat-good stat-hi" : eraNum <= 3.50 ? " stat-bad stat-lo" : "") : "";
 
-        var abbr = (g.oppAbbr || g.opponent.split(" ").pop().slice(0,3).toUpperCase());
+        // Opp win% coloring
+        var wpNum  = g.oppWinPct;
+        var wpStr  = wpNum != null ? (wpNum*100).toFixed(1)+"%" : "—";
+        var wpCls  = wpNum != null ? (wpNum >= 0.560 ? " stat-bad stat-lo" : wpNum <= 0.420 ? " stat-good stat-hi" : "") : "";
 
         return "<tr>" +
-          "<td><strong>" + dateStr + "</strong></td>" +
-          "<td>" + dayShort + "</td>" +
-          "<td>" + todBadge + "</td>" +
-          "<td>" + haBadge + "</td>" +
-          "<td style='text-align:left;'>" + abbr + "</td>" +
-          "<td class='" + mrCls.trim() + "'>" + mr + "</td>" +
-          "<td>" + mh + "</td>" +
-          "<td class='" + orCls.trim() + "'>" + or + "</td>" +
-          "<td>" + oh + "</td>" +
-          "<td>" + res + "</td>" +
+          "<td class='left'><strong>" + dt + "</strong></td>" +
+          "<td>" + day + "</td>" +
+          "<td><span class='" + (g.timeOfDay==="day"?"badge-day":"badge-night") + "'>" + (g.timeOfDay==="day"?"☀":"🌙") + "</span></td>" +
+          "<td><span class='" + (g.homeAway==="home"?"badge-h":"badge-a") + "'>" + (g.homeAway==="home"?"H":"A") + "</span></td>" +
+          "<td class='left'><strong>" + (g.oppAbbr||"—") + "</strong></td>" +
+          "<td>" + serBadge + "</td>" +
+          "<td class='" + mrBg + "'>" + (g.metsRuns != null ? g.metsRuns : "—") + "</td>" +
+          "<td>" + (g.metsHits != null ? g.metsHits : "—") + "</td>" +
+          "<td class='" + orBg + "'>" + (g.oppRuns  != null ? g.oppRuns  : "—") + "</td>" +
+          "<td>" + (g.oppHits  != null ? g.oppHits  : "—") + "</td>" +
+          "<td><span class='" + (isW?"badge-w":"badge-l") + "'>" + g.result + "</span></td>" +
+          "<td><strong>" + (g.finalScore||"—") + "</strong></td>" +
           "<td>" + (g.metsRecord||"—") + "</td>" +
           "<td>" + (g.metsHomeRecord||"—") + "</td>" +
           "<td>" + (g.metsRoadRecord||"—") + "</td>" +
-          "<td>" + (g.oppRecord||"—") + "</td>" +
+          "<td class='col-sep'>" + (g.oppRecord||"—") + "</td>" +
+          "<td class='" + wpCls + "'>" + wpStr + "</td>" +
           "<td>" + (g.oppHomeRecord||"—") + "</td>" +
           "<td>" + (g.oppRoadRecord||"—") + "</td>" +
-        "</tr>";
+          "<td class='" + avgCls + "'>" + (avgVal||"—") + "</td>" +
+          "<td class='" + eraCls + "'>" + (eraVal||"—") + "</td>" +
+          "</tr>";
       }).join("");
     }
 
-    function renderSummary(games) {
-      var el = document.getElementById("gl-summary");
-      if (!games.length) { el.innerHTML = ""; return; }
-      var w   = games.filter(function(g){return g.result==="W";}).length;
-      var l   = games.length - w;
-      var avgMR = avg(games, function(g){return g.metsRuns;});
-      var avgOR = avg(games, function(g){return g.oppRuns;});
-      var avgMH = avg(games, function(g){return g.metsHits;});
-      var avgOH = avg(games, function(g){return g.oppHits;});
-
-      var isFiltered = Object.values(filters).some(function(v){return v!=="all";});
-
-      function delta(val, base) {
-        if (val == null || base == null) return "";
-        var d = val - base;
-        var cls = d > 0.09 ? "pos" : d < -0.09 ? "neg" : "";
-        var sign = d >= 0 ? "+" : "";
-        return cls ? '<div class="gl-stat-delta ' + cls + '">' + sign + d.toFixed(2) + " vs season</div>" : "";
-      }
-
-      el.innerHTML = [
-        { val: w+"-"+l, lbl: "Record", delta: "" },
-        { val: Math.round(w/games.length*100)+"%", lbl: "Win %",
-          delta: isFiltered ? delta(w/games.length, 19/45) : "" },
-        { val: fmtAvg(avgMR), lbl: "Avg Mets R",
-          delta: isFiltered ? delta(avgMR, SUMMARY.avgMetsRuns) : "" },
-        { val: fmtAvg(avgOR), lbl: "Avg Opp R",
-          delta: isFiltered ? delta(avgOR, SUMMARY.avgOppRuns) : "" },
-        { val: hitsAvail ? fmtAvg(avgMH) : "—", lbl: "Avg Mets H", delta: "" },
-        { val: hitsAvail ? fmtAvg(avgOH) : "—", lbl: "Avg Opp H", delta: "" },
-        { val: games.length, lbl: "Games", delta: "" },
-      ].map(function(s){
-        return '<div class="gl-stat"><div class="gl-stat-val">'+s.val+'</div><div class="gl-stat-lbl">'+s.lbl+'</div>'+s.delta+'</div>';
-      }).join("");
+    function renderFoot(rows) {
+      document.getElementById("gl-foot").textContent =
+        "Showing " + rows.length + " of " + ALL.length + " games  ·  " +
+        "★ = series finale  ·  Opp stats updated nightly  ·  Green/red = above/below league avg";
     }
+  }());
   </script>
 </body>
 </html>
