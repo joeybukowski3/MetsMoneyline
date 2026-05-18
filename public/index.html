@@ -265,14 +265,7 @@
   <script defer src="/js/site-footer.js"></script>
   <script type="module" src="js/main.js"></script>
   <script>
-    const NEWS_FEEDS = [
-      { name: "ESPN Mets",     url: "https://www.espn.com/espn/rss/mlb/news" },
-      { name: "MLB.com Mets",  url: "https://www.mlb.com/feeds/news/rss.xml?teamId=121" },
-      { name: "NY Post Mets",  url: "https://nypost.com/tag/new-york-mets/feed/" },
-      { name: "SNY",           url: "https://sny.tv/rss/mets" },
-      { name: "Amazin Avenue", url: "https://www.amazinavenue.com/rss/current" }
-    ];
-    const RSS_PROXY = "https://api.rss2json.com/v1/api.json?rss_url=";
+    // News is fetched via /api/news (server-side RSS proxy — no third-party limits)
 
     function stripHtml(value) {
       return String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
@@ -291,30 +284,6 @@
       return rtf.format(days, "day");
     }
 
-    function getThumbnail(item) {
-      const candidates = [
-        item.enclosure && item.enclosure.link,
-        item.thumbnail,
-        item.image,
-        item["media:thumbnail"],
-        item["media:content"]
-      ];
-
-      for (const candidate of candidates) {
-        const url = typeof candidate === "string"
-          ? candidate
-          : candidate && typeof candidate.url === "string"
-            ? candidate.url
-            : candidate && typeof candidate.link === "string"
-              ? candidate.link
-              : "";
-        if (url && /^https?:\/\//i.test(url)) return url;
-      }
-
-      const match = String(item.description || "").match(/<img[^>]+src=["']([^"']+)["']/i);
-      return match ? match[1] : "";
-    }
-
     function toSafeExternalUrl(value) {
       try {
         const url = new URL(String(value || ""));
@@ -322,28 +291,6 @@
       } catch (_error) {
         return "";
       }
-    }
-
-    function toArticle(item, feedName) {
-      return {
-        source: feedName,
-        title: stripHtml(item.title),
-        link: item.link || "#",
-        pubDate: item.pubDate || item.published || item.date || "",
-        description: stripHtml(item.description || item.content || ""),
-        thumbnail: getThumbnail(item)
-      };
-    }
-
-    function isMetsArticle(article) {
-      const text = `${article.title} ${article.description}`.toLowerCase();
-      return text.includes("mets");
-    }
-
-    function sortByNewest(first, second) {
-      const firstTime = new Date(first.pubDate).getTime() || 0;
-      const secondTime = new Date(second.pubDate).getTime() || 0;
-      return secondTime - firstTime;
     }
 
     function renderNewsItems(items) {
@@ -395,39 +342,17 @@
       container.replaceChildren(...cards);
     }
 
-    async function fetchFeedItems(feed) {
-      try {
-        const response = await fetch(RSS_PROXY + encodeURIComponent(feed.url), {
-          signal: AbortSignal.timeout(10000)
-        });
-
-        if (!response.ok) {
-          console.warn(`Sidebar news feed failed: ${feed.url} (${response.status})`);
-          return [];
-        }
-
-        const data = await response.json();
-        if (data.status !== "ok") {
-          console.warn(`Sidebar news feed failed: ${feed.url}`);
-          return [];
-        }
-
-        return (data.items || []).map(item => toArticle(item, feed.name));
-      } catch {
-        console.warn(`Sidebar news feed failed: ${feed.url}`);
-        return [];
-      }
-    }
-
     async function loadSidebarNews() {
-      const results = await Promise.all(NEWS_FEEDS.map(fetchFeedItems));
-      const articles = results
-        .flatMap(items => items)
-        .filter(isMetsArticle)
-        .sort(sortByNewest)
-        .slice(0, 5);
-
-      renderNewsItems(articles);
+      try {
+        const response = await fetch("/api/news", { signal: AbortSignal.timeout(12000) });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        renderNewsItems(data.articles || []);
+      } catch (err) {
+        console.warn("Sidebar news failed:", err.message);
+        const container = document.getElementById("sidebar-news");
+        if (container) container.innerHTML = `<span style="color:#9099b0;font-size:0.85rem;">News temporarily unavailable.</span>`;
+      }
     }
 
     loadSidebarNews();
