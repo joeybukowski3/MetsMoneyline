@@ -62,13 +62,17 @@ function isIsoDate(value) {
 function resolveTargetDate(args) {
   const rawDate = cleanText(args.date);
   if (!rawDate) {
-    return args.type === "postgame" ? getYesterdayEasternISO() : getTodayEasternISO();
+    // No date passed: use today (scheduled runs now pass the game date explicitly)
+    return getTodayEasternISO();
+  }
+  if (rawDate.toLowerCase() === "today") {
+    return getTodayEasternISO();
   }
   if (rawDate.toLowerCase() === "yesterday") {
     return getYesterdayEasternISO();
   }
   if (!isIsoDate(rawDate)) {
-    throw new Error(`Unsupported date value: ${rawDate}. Use yesterday or YYYY-MM-DD.`);
+    throw new Error(`Unsupported date value: ${rawDate}. Use today, yesterday, or YYYY-MM-DD.`);
   }
   return rawDate;
 }
