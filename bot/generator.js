@@ -250,7 +250,7 @@ const TODAY_PICK_CONFIDENCE_SCORE = {
   Strong: 8
 };
 
-const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a sharp MLB bettor writing a technical pre-game breakdown for MetsMoneyline.com. Your job is to identify the real analytical edges in today's matchup and explain concisely why the line is wrong or right. Use only the structured game data provided — no invented stats, no browsing. You must always set officialPick to \"Mets ML\", but the reasoning in bettingAngle must be grounded in actual numbers: xERA, percentile ranks, bullpen xERA, recent OPS ranks, or run differentials from the context. The bettingAngle field must read like a sharp bettor talking to another bettor: lead with the biggest quantified edge, use specific numbers and percentiles, end with the takeaway or contrarian angle if the line misprices the edge. Avoid all generic filler — no phrases like \"enters this one,\" \"mixed run,\" \"the stage is set,\" \"analytically unambiguous,\" or any sentence that could apply to any game. If the data is mixed, say so with specifics. Never use words like lock, guaranteed, free money, can't lose, or sure thing. Return valid JSON only.";
+const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a technical MLB analyst writing a pre-game breakdown for MetsMoneyline.com. Write like ESPN Stats & Info — direct, number-first, no narrative filler. Use only the structured game data provided. Never invent or imply stats not in the context. officialPick must always be \"Mets ML\". The bettingAngle must be 2-3 sentences of pure technical analysis: start with the most significant quantified edge (xERA, K%, OPS L20, bullpen xERA), add a secondary data point that either supports or complicates it, and end with the honest bottom line on what the numbers say. Every sentence must contain at least one specific number. BANNED WORDS AND PHRASES — never use these: workable, random draw, cleaner spot, process is pointing, the stage is set, analytically unambiguous, backs into, deep end of the staff, lean toward, the price is, price is workable, right direction, free money, lock, can't lose, sure thing, enters this one, mixed run, worth noting, shapes up, live secondary, real margin. If data is thin or conflicting, state that plainly with the specific numbers that conflict. Return valid JSON only.";
 
 const GROK_TODAY_PICK_SCHEMA = {
   type: "object",
@@ -565,7 +565,35 @@ function buildGrokTodayPickContext(gameFacts, analysisObject, edgeScoring, deter
       topMetsEdges,
       topRisks
     },
-    deterministicFallback: deterministicTodayPick
+    deterministicFallback: deterministicTodayPick,
+    trendsContext: (function() {
+      try {
+        const trendsPath = path.join(__dirname, "..", "public", "data", "trends.json");
+        if (!fs.existsSync(trendsPath)) return null;
+        const trends = JSON.parse(fs.readFileSync(trendsPath, "utf8"));
+        const players = (trends.players || []).slice(0, 20);
+        // Pull players with meaningful xBA vs AVG divergence (regression signals)
+        const signals = players
+          .map(p => {
+            const avg = parseFloat(p.seasonAVG || p.avg || 0);
+            const xba = parseFloat(p.xBA || p.xba || 0);
+            const diff = xba - avg;
+            return { name: p.name, team: p.team || "NYM", avg, xba, diff };
+          })
+          .filter(p => p.team === "NYM" && Math.abs(p.diff) >= 0.025 && p.avg > 0 && p.xba > 0)
+          .sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff))
+          .slice(0, 4)
+          .map(p => ({
+            player: p.name,
+            metric: "xBA vs AVG",
+            avg: p.avg.toFixed(3),
+            xBA: p.xba.toFixed(3),
+            gap: (p.diff >= 0 ? "+" : "") + p.diff.toFixed(3),
+            signal: p.diff > 0 ? "positive regression candidate" : "negative regression risk"
+          }));
+        return signals.length ? signals : null;
+      } catch(e) { return null; }
+    })()
   };
 }
 
@@ -642,19 +670,17 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
     "- Valid JSON only — no markdown, no commentary outside JSON",
     "- officialPick must be exactly \"Mets ML\"",
     "",
-    "bettingAngle field — write 2–3 sentences as a sharp bettor talking to another bettor:",
-    "  1st sentence: The biggest pitching or bullpen edge with specific numbers (xERA, percentile rank, or K%).",
-    "  2nd sentence: Secondary edge (offense OPS rank, home/away differential, or additional pitching context) with data.",
-    "  3rd sentence (optional): The takeaway — is the line right or wrong? Any contrarian note?",
-    "  - Use specific numbers: \"Scott's 3.30 xERA (88th percentile)\" not \"Scott has been solid\"",
-    "  - No clichés: no 'enters this one', 'mixed run', 'the stage is set', 'analytically unambiguous'",
-    "  - No filler that could apply to any game",
-    "  - If the data is thin or mixed, say so with specifics — do not inflate confidence",
+    "bettingAngle — 2-3 sentences of technical analysis only:",
+    "  1st sentence: The biggest SP or bullpen edge with exact numbers. Example: \"Brazobán 2.73 xERA (92nd pct) vs Rodón 4.50 xERA — 1.77-run gap in expected quality.\"",
+    "  2nd sentence: Secondary data point — offensive OPS differential, bullpen xERA gap, home/road run differential, or a conflicting factor if the data is mixed.",
+    "  3rd sentence (optional): What the numbers say plainly — do they support the line, beat it, or conflict? No verdict language, just the honest read.",
+    "  RULES: Every sentence must contain at least one number. No sentences that work for any game.",
+    "  If trendsContext is provided and a trend is relevant to today's matchup, cite it briefly with the player and stat.",
     "",
-    "summary field: 1–2 sentence headline summary of the pick rationale (can be slightly broader than bettingAngle).",
-    "headline field: Short punchy title for the pick card (8 words max).",
-    "metsEdges: 2–3 specific, data-backed bullet points on the Mets side.",
-    "risks: 1–2 specific risks with numbers where available.",
+    "summary field: 1-2 sentences summarizing the key matchup factors. No pick language — just the data summary.",
+    "headline field: 6-8 words describing the matchup technically. No hype.",
+    "metsEdges: 2-3 bullet points, each starting with a specific number from the context.",
+    "risks: 1-2 specific risks with numbers. Honest even if data is thin.",
     "",
     `JSON schema:\n${JSON.stringify(GROK_TODAY_PICK_SCHEMA, null, 2)}`,
     "",
@@ -4338,7 +4364,7 @@ function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
     hook = hookOpts[hashPick("hook") % hookOpts.length];
   } else if (lastFive.length >= 4 && losses >= 4) {
     const hookOpts = [
-      `The Mets are ${wins}-${losses} over their last ${lastFive.length}, but the board still finds a workable path today.`,
+      `Mets are ${wins}-${losses} in their last ${lastFive.length} games.`,
       `New York has been grinding through a tough stretch — ${wins}-${losses} in the last ${lastFive.length} — which makes the price more interesting than the record suggests.`,
       `Coming in at ${wins}-${losses} over the last ${lastFive.length}, the Mets haven't found a rhythm lately, but the underlying case here isn't built on results.`
     ];
@@ -4425,7 +4451,7 @@ function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
       pitcherCase = opts[hashPick("fipbad") % opts.length];
     }
   } else {
-    pitcherCase = `${metsPitcher} takes the ball today for New York against ${oppPitcher}, and while full underlying splits aren't available yet, the matchup shapes up as workable.`;
+    pitcherCase = `${metsPitcher} vs ${oppPitcher}. SP underlying splits unavailable — ERA comparison only.`;
   }
 
   // --- PART 3: SUPPORT ANGLE ---
@@ -4444,8 +4470,8 @@ function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
   let supportAngle = "";
   if (rotRank != null && rotRank <= 12) {
     const opts = [
-      `The supporting case sits in the rotation: New York ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in MLB by rotation FIP, which means today isn't a random draw — the Mets are throwing from a deep end of the staff.`,
-      `Context worth noting: the Mets' rotation ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in the league by FIP, putting this lineup behind one of the better pitching groups in baseball right now.`
+      `Mets rotation ranks ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in MLB by FIP this season.`,
+      `Mets rotation is ${rotRank}${ordinalSuffix(rotRank).slice(-2)} in MLB by FIP.`
     ];
     supportAngle = opts[hashPick("rotrank") % opts.length];
   } else if (hasRegressionEdge && wrcPlus != null && wrcRank != null) {
@@ -4456,8 +4482,8 @@ function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
     supportAngle = opts[hashPick("wrc") % opts.length];
   } else if (hasBullpenEdge) {
     const opts = [
-      `The secondary angle is the bullpen: New York's relief group has a real seasonal edge in the underlying numbers, which matters most if the game reaches the middle innings close.`,
-      `If the game stays tight, New York's bullpen is a live secondary advantage — the relief numbers have held up better than the opponent's this season.`
+      `Mets bullpen xERA advantage is the secondary edge if the game is close in the middle innings.`,
+      `Mets bullpen xERA holds a seasonal edge over the opponent's relief corps.`
     ];
     supportAngle = opts[hashPick("bp") % opts.length];
   } else if (wrcPlus != null && wrcRank != null && wrcRank <= 15) {
@@ -4467,7 +4493,7 @@ function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
     ];
     supportAngle = opts[hashPick("wrcgood") % opts.length];
   } else {
-    supportAngle = "The supporting case is more about process than a clean secondary edge — the model isn't finding a dominant secondary angle, which is part of why the pick stays measured.";
+    supportAngle = "No dominant secondary edge found in the data — SP matchup is the primary factor.";
   }
 
   // --- PART 4: CLOSE (calibrated to analyticalLean) ---
@@ -4479,8 +4505,8 @@ function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
       mlStr
         ? `New York at ${mlStr} is the play — the board has the cleaner shape on the Mets side and the price still offers value for the matchup.`
         : `The board has the cleaner shape on the Mets side, and that's the play.`,
-      `This is one of the cleaner Mets ML spots of the week — the process is pointing in the right direction and the price is workable.`,
-      `Taking the Mets here. The analytical lean is unambiguous and the matchup structure supports it.`
+      mlStr ? `Mets ML ${mlStr}. SP and offense edges align.` : `SP and offense edges align.`,
+      mlStr ? `Mets ML ${mlStr}. Both SP edge and offense lean in the same direction.` : `SP edge and offense lean align.`
     ];
     close = opts[hashPick("close") % opts.length];
   } else if (lean === "Slight Mets edge") {
@@ -4749,7 +4775,7 @@ function buildFallbackWriteup(gameFacts) {
       ],
       overallModelLean: "Mets"
     },
-    pitchingEdgeSummary: `${metsPitcher} vs ${oppPitcher} is workable, but this version is still running on fallback data.`,
+    pitchingEdgeSummary: `${metsPitcher} vs ${oppPitcher} — underlying splits unavailable.`,
     projectedLineupEdgeSummary: "The best Mets case is still the overall lineup shape and run-creation potential.",
     analysis: {
       whyMetsHaveACase: [
@@ -4793,9 +4819,9 @@ function buildFallbackWriteup(gameFacts) {
           "The fallback sheet still lands on the Mets, but with a lighter analytical touch."
         ].join("\n")
       },
-      { heading: "9. Official MetsMoneyline Pick", body: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.` }
+      { heading: "9. Official MetsMoneyline Pick", body: `SP and bullpen underlying data unavailable for this fallback — analysis based on surface stats only.` }
     ],
-    pickSummary: `The best case for backing the Mets is the cleaner offensive path and a workable bullpen script if the game stays close early.`,
+    pickSummary: `SP and bullpen underlying data unavailable for this fallback — analysis based on surface stats only.`,
     officialPick: "Official Pick: Mets ML",
     analyticalLean: "Mets"
   };
