@@ -3085,6 +3085,8 @@ async function getPitcherRecentStarts(mlbId, beforeDate, n = 4) {
         ip: split?.stat?.inningsPitched || "0.0",
         er: split?.stat?.earnedRuns != null ? String(split.stat.earnedRuns) : "0",
         k: split?.stat?.strikeOuts != null ? String(split.stat.strikeOuts) : "0",
+        h: split?.stat?.hits != null ? String(split.stat.hits) : "0",
+        bb: split?.stat?.baseOnBalls != null ? String(split.stat.baseOnBalls) : "0",
         result: split?.isWin ? "W" : split?.isLoss ? "L" : split?.stat?.wins ? "W" : split?.stat?.losses ? "L" : "-"
       }));
 
@@ -3623,6 +3625,8 @@ function buildRecentStartsSummary(starts = [], gameDate) {
     ip: start.ip || null,
     er: parseNumber(start.er),
     k: parseNumber(start.k),
+    h: parseNumber(start.h),
+    bb: parseNumber(start.bb),
     result: start.result || null
   }));
   const avgInnings = averageNumbers(normalized.map((start) => ipStringToNumber(start.ip)));

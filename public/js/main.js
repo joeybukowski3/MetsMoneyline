@@ -1006,18 +1006,23 @@ function buildPitchingCard(game) {
       })();
       const er = parseInt(s.er);
       const erCls = isNaN(er) ? "" : er <= 2 ? " good" : er <= 4 ? " warn" : " bad";
-      const wl = s.result === "W" ? "gc-dot-w" : s.result === "L" ? "gc-dot-l" : "gc-dot-n";
+      const decisionCls = s.result === "W" ? "gc-dot-w" : s.result === "L" ? "gc-dot-l" : "gc-dot-n";
+      const decisionLabel = s.result === "W" ? "Win" : s.result === "L" ? "Loss" : "N/D";
       const logo = getTeamLogoUrl(s.opponent);
       const logoHtml = logo
         ? `<img src="${logo}" alt="" width="16" height="16" style="object-fit:contain;vertical-align:middle;" loading="lazy" decoding="async">`
         : `<span style="width:16px;display:inline-block;"></span>`;
+      const hVal = s.h != null ? `${s.h}H` : "--";
+      const bbVal = s.bb != null ? `${s.bb}BB` : "--";
       return `<div class="plog-row">
         <span class="plog-date">${dateStr}</span>
         <span class="plog-logo">${logoHtml}</span>
         <span class="plog-ip">${s.ip}</span>
         <span class="plog-er${erCls}">${s.er}ER</span>
+        <span class="plog-stat">${hVal}</span>
+        <span class="plog-stat">${bbVal}</span>
         <span class="plog-k">${s.k}K</span>
-        <span class="gc-result-dot ${wl}">${s.result || "?"}</span>
+        <span class="plog-decision ${decisionCls}">${decisionLabel}</span>
       </div>`;
     }).join("");
     return `<div class="plog-wrap">
