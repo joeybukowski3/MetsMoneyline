@@ -6669,8 +6669,8 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
   if (bodyHtml.includes("<pre><code>")) {
     throw new Error("[buttondown] bodyHtml contains <pre><code> — code block wrapping detected, refusing to send");
   }
-  if (!/^\s*<(style|table|div)/i.test(bodyHtml)) {
-    throw new Error(`[buttondown] bodyHtml does not start with <style>, <table>, or <div> — first 80 chars: ${bodyHtml.slice(0, 80)}`);
+  if (!/^\s*(<(!DOCTYPE|html|style|table|div))/i.test(bodyHtml)) {
+    throw new Error(`[buttondown] bodyHtml does not start with a valid HTML element — first 80 chars: ${bodyHtml.slice(0, 80)}`);
   }
 
   const plainText = String(bodyText || "").trim();

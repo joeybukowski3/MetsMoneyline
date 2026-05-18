@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
 
-# Queue with history-refresh — both write pick-history.json
+# Prevent concurrent runs that both write pick-history.json / report data
 concurrency:
   group: site-data-write
   cancel-in-progress: false
@@ -16,6 +16,7 @@ concurrency:
 jobs:
   send-report:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -26,11 +27,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
 
       - name: Install bot dependencies
         working-directory: ./bot
         run: npm ci
 
+      # Refresh live odds, next-game, standings, and live-game API cache
       - name: Refresh API cache
         working-directory: ./bot
         env:
@@ -41,6 +45,7 @@ jobs:
           API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: node build-api-cache.js
 
+      # Check eligibility window and send if conditions are met
       - name: Check eligibility and send report
         id: sendcheck
         continue-on-error: true
@@ -54,30 +59,36 @@ jobs:
           API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: node check-and-send-report.js
 
-      - name: Commit report send state and refreshed report data
+      # Always commit any changed data files back to the repo
+      - name: Commit updated report data
         if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add bot/report-send-state.json \
-                  public/data/sample-game.json \
-                  public/report.html \
-                  public/api/mlb/mets/next-game \
-                  public/api/mlb/mets/live-game \
-                  public/api/mlb/mets/standings \
-                  public/api/mlb/mets/recent-games \
-                  public/api/mlb/mets/overview \
-                  public/api/mlb/mets/odds.json
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-          else
-            git commit -m "chore: report send state update [skip ci]"
-            git stash
-            git pull --rebase origin main
-            git stash pop || true
-            git push origin main
+
+          # Stage everything that the two scripts above may have written
+          git add --ignore-errors \
+            bot/report-send-state.json \
+            public/data/sample-game.json \
+            public/report.html \
+            public/sitemap.xml \
+            public/rss.xml \
+            "public/api/mlb/mets/" \
+            "public/data/odds-history.json" \
+            || true
+
+          if git diff --staged --quiet; then
+            echo "Nothing changed — no commit needed."
+            exit 0
           fi
 
-      - name: Fail workflow if send step failed
+          git commit -m "chore: report send state update [skip ci]"
+          git pull --rebase origin main
+          git push origin main
+
+      # Bubble up any failure from the send step
+      - name: Fail if send step errored
         if: steps.sendcheck.outcome == 'failure'
-        run: exit 1
+        run: |
+          echo "Report send step failed. Check the 'Check eligibility and send report' step logs above."
+          exit 1
