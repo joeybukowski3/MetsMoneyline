@@ -330,29 +330,33 @@ async function main() {
     ? formatPreliminaryButtondownSubject(game, lineupPlan?.sourceLabel || "projected lineups")
     : formatButtondownSubject(game);
 
-  // Always build the full HTML report for the site.
-  const bodyHtml = buildEmailHtml(game);
+  // Build the full HTML report for the email body.
+  console.log(`[send] Building email HTML…`);
+  let bodyHtml;
+  try {
+    bodyHtml = buildEmailHtml(game);
+  } catch (htmlErr) {
+    throw new Error(`[send] buildEmailHtml threw: ${htmlErr.message}`);
+  }
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to generate blank report`);
   }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
-  console.log(`[send] bodyHtml first 200: ${bodyHtml.slice(0, 200)}`);
 
-  // Also build a condensed email-friendly HTML block and write it to disk so it
-  // can be pasted into Buttondown's editor manually when composing the email.
-  const condensedHtml = buildCondensedEmailHtml(game);
-  const condensedDir = path.join(__dirname, "output");
-  const condensedPath = path.join(condensedDir, `${gameId}-email-condensed.html`);
-  fs.mkdirSync(condensedDir, { recursive: true });
-  fs.writeFileSync(condensedPath, condensedHtml, "utf8");
-  console.log(`[send] Wrote condensed email HTML to ${condensedPath}`);
-  const bodyText = buildPlainTextEmail(game);
-
-  // Validate before sending
-  if (!bodyHtml || bodyHtml.trim().length < 1000) {
-    throw new Error(`[send] bodyHtml too short (${bodyHtml?.length ?? 0} chars)`);
+  // Build condensed email HTML and write to disk (debug artifact — non-critical).
+  // Wrapped in try-catch so a runtime error here never blocks the actual send.
+  try {
+    const condensedHtml = buildCondensedEmailHtml(game);
+    const condensedDir = path.join(__dirname, "output");
+    const condensedPath = path.join(condensedDir, `${gameId}-email-condensed.html`);
+    fs.mkdirSync(condensedDir, { recursive: true });
+    fs.writeFileSync(condensedPath, condensedHtml, "utf8");
+    console.log(`[send] Wrote condensed email HTML to ${condensedPath}`);
+  } catch (condensedErr) {
+    console.warn(`[send] buildCondensedEmailHtml failed (non-fatal, send continues): ${condensedErr.message}`);
   }
-  console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
+
+  const bodyText = buildPlainTextEmail(game);
   console.log(`[send] bodyText length: ${bodyText.length} chars`);
 
   const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
