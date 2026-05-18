@@ -306,134 +306,118 @@ function buildPregameStateKey(targetDate, opponent) {
   return `${targetDate}-pregame-${slugify(opponent)}`;
 }
 
+function buildPregameAngles(game) {
+  // Pull 1-3 short, data-backed key angles from the report.
+  // Priority: keyAngles (top edge explanations) → metsEdges from pick → pickSummary.
+  const report  = game?.writeup?.report || {};
+  const raw = [
+    ...(Array.isArray(game?.writeup?.keyAngles) ? game.writeup.keyAngles : []),
+    ...(Array.isArray(report?.officialPick?.metsEdges) ? report.officialPick.metsEdges : []),
+    ...(Array.isArray(game?.writeup?.todayPick?.metsEdges) ? game.writeup.todayPick.metsEdges : []),
+    cleanText(game?.writeup?.pickSummary || ""),
+    cleanText(report?.officialPick?.bettingAngle || ""),
+  ]
+    .map(a => cleanText(String(a || "")))
+    .filter(a => a && !looksPlaceholder(a) && a.length >= 15);
+
+  // Deduplicate by first 30 chars
+  const seen = new Set();
+  return raw.filter(a => {
+    const key = a.slice(0, 30);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function buildPregameSingleTweet(game) {
+  const opponent   = cleanText(game?.opponent);
+  const oppShort   = opponentShortName(opponent) || opponent;
+  const report     = game?.writeup?.report || {};
+  const metsCard   = report?.startingPitchersComparison?.metsCard  || {};
+  const oppCard    = report?.startingPitchersComparison?.oppCard   || {};
+  const metsPitcher = game?.pitching?.mets || {};
+  const oppPitcher  = game?.pitching?.opp  || {};
+
+  // Pitcher names
+  const metsName = lastName(metsPitcher.name || metsCard.name || "");
+  const oppName  = lastName(oppPitcher.name  || oppCard.name  || "");
+
+  // Records (W-L) — prefer SP card, fall back to pitching object
+  const metsRec = cleanText(metsCard.record || metsPitcher.record || "");
+  const oppRec  = cleanText(oppCard.record  || oppPitcher.record  || "");
+
+  // ERA — prefer xERA from Savant, fall back to season ERA
+  const metsEra = formatStatNumber(
+    metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA ?? metsPitcher.era
+  );
+  const oppEra = formatStatNumber(
+    oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA  ?? oppPitcher.era
+  );
+
+  // Pitching matchup line
+  function spSummary(name, rec, era, isXera) {
+    if (!name) return null;
+    const eraSuffix = era ? ` ${era} ${isXera ? "xERA" : "ERA"}` : "";
+    const recPart   = rec ? ` (${rec})` : "";
+    return `${name}${recPart}${eraSuffix}`;
+  }
+  const hasXera = (metsPitcher.savant?.xERA != null || metsPitcher.seasonXERA != null);
+  const metsSP  = spSummary(metsName, metsRec, metsEra, hasXera);
+  const oppSP   = spSummary(oppName,  oppRec,  oppEra,  hasXera);
+  const pitcherLine = (metsSP && oppSP) ? `${metsSP} vs ${oppSP}` : (metsSP || oppSP || null);
+
+  // Key angles — fill to budget
+  const rawAngles = buildPregameAngles(game);
+  const fixedParts = [
+    `Mets vs ${oppShort}`,
+    pitcherLine,
+    "Today's Pick: Mets ML",
+    "Go to metsmoneyline.com for the full analytical breakdown ⚾ #LGM"
+  ].filter(Boolean);
+  const fixedLength = fixedParts.join("\n").length + fixedParts.length - 1;
+  const budget = MAX_TWEET_LENGTH - fixedLength - 2; // 2 extra newlines for angle block
+
+  const bullets = [];
+  for (const raw of rawAngles.slice(0, 3)) {
+    const bullet = `• ${clip(raw, 65)}`;
+    const blockLen = bullets.concat(bullet).join("\n").length;
+    if (blockLen <= budget) bullets.push(bullet);
+  }
+
+  const allParts = [
+    `Mets vs ${oppShort}`,
+    pitcherLine,
+    bullets.length ? bullets.join("\n") : null,
+    "Today's Pick: Mets ML",
+    "Go to metsmoneyline.com for the full analytical breakdown ⚾ #LGM"
+  ].filter(Boolean);
+
+  return cleanText(allParts.join("\n"));
+}
+
 function validatePregameGame(game, targetDate, state) {
   if (!game) return { ok: false, reason: `no Mets report data found for ${targetDate}` };
   if (game.date !== targetDate) return { ok: false, reason: `report date ${game.date} does not match today ${targetDate}` };
   if (cleanText(game.status).toLowerCase() !== "upcoming") {
     return { ok: false, reason: `game is not pregame (status=${game.status || "unknown"})` };
   }
-
-  const parts = buildPregameParts(game);
-  if (looksPlaceholder(parts.opponent)) return { ok: false, reason: "opponent is placeholder or missing" };
-  if (!parts.pick || looksPlaceholder(parts.pick)) return { ok: false, reason: "pick is missing or placeholder" };
-  if (!parts.keyEdge || looksPlaceholder(parts.keyEdge)) return { ok: false, reason: "key edge is missing or placeholder" };
-  if (!parts.time || looksPlaceholder(parts.time)) return { ok: false, reason: "game time is missing" };
-  if (!parts.venue || looksPlaceholder(parts.venue)) return { ok: false, reason: "venue is missing" };
-  if (!parts.odds || looksPlaceholder(parts.odds)) return { ok: false, reason: "Mets moneyline odds are missing" };
+  if (looksPlaceholder(cleanText(game?.opponent))) {
+    return { ok: false, reason: "opponent is placeholder or missing" };
+  }
   if (looksPlaceholder(game?.writeup?.headline) || looksPlaceholder(game?.writeup?.synopsis)) {
-    return { ok: false, reason: "report text looks like placeholder/sample content" };
+    return { ok: false, reason: "report text looks like placeholder or sample content" };
   }
-
-  const requiredTweet2 = [
-    ["Mets starter last name", parts.metsPitcherLastName],
-    ["Mets starter ERA", parts.metsPitcherEra],
-    ["Mets starter K rate", parts.metsPitcherKRate],
-    ["Mets starter FIP", parts.metsPitcherFip],
-    ["Opponent starter last name", parts.oppPitcherLastName],
-    ["Opponent starter ERA", parts.oppPitcherEra],
-    ["Opponent starter FIP", parts.oppPitcherFip],
-    ["Mets bullpen ERA", parts.metsBullpenEra],
-    ["Mets bullpen xFIP", parts.metsBullpenXFip],
-    ["Opponent bullpen ERA", parts.oppBullpenEra],
-    ["Opponent bullpen xFIP", parts.oppBullpenXFip]
-  ];
-  const missingTweet2 = requiredTweet2.find(([, value]) => !value || looksPlaceholder(value));
-  if (missingTweet2) return { ok: false, reason: `${missingTweet2[0]} is missing for tweet 2` };
-
-  const postKey = buildPregameStateKey(targetDate, parts.opponent);
+  const postKey = buildPregameStateKey(targetDate, cleanText(game.opponent));
   const existing = state.posts?.[postKey];
-  if (existing?.postedAt || (Array.isArray(existing?.tweetIds) && existing.tweetIds.length)) {
-    return { ok: false, reason: `pregame post already sent for ${targetDate} vs ${parts.opponent}` };
+  if (existing?.postedAt || existing?.tweetId) {
+    return { ok: false, reason: `pregame post already sent for ${targetDate} vs ${game.opponent}` };
   }
-
-  return { ok: true, postKey, parts };
+  return { ok: true, postKey };
 }
 
-function buildTweet2Variants(parts) {
-  const signoff = `Official Pick: Mets Moneyline ${parts.odds}`;
-  return [
-    cleanText([
-      "Why the Mets can win:",
-      "",
-      `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
-      `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
-      "",
-      "Bullpen:",
-      `Mets BP: ${parts.metsBullpenEra} ERA, ${parts.metsBullpenXFip} xFIP`,
-      `${parts.opponentShort} BP: ${parts.oppBullpenEra} ERA, ${parts.oppBullpenXFip} xFIP`,
-      "",
-      signoff
-    ].join("\n")),
-    cleanText([
-      "Why the Mets can win:",
-      "",
-      `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
-      `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
-      "",
-      `Bullpen: Mets ${parts.metsBullpenEra}/${parts.metsBullpenXFip} xFIP | ${parts.opponentShort} ${parts.oppBullpenEra}/${parts.oppBullpenXFip}`,
-      "",
-      signoff
-    ].join("\n")),
-    cleanText([
-      "Why the Mets can win:",
-      "",
-      `${parts.metsPitcherLastName}: ${parts.metsPitcherEra} ERA, ${parts.metsPitcherKRate}% K, ${parts.metsPitcherFip} FIP`,
-      `${parts.oppPitcherLastName}: ${parts.oppPitcherEra} ERA, ${parts.oppPitcherFip} FIP`,
-      "",
-      `Bullpen: Mets ${parts.metsBullpenEra}/${parts.metsBullpenXFip} | ${parts.opponentShort} ${parts.oppBullpenEra}/${parts.oppBullpenXFip}`,
-      "",
-      signoff
-    ].join("\n"))
-  ];
-}
-
-function buildPregameThread(parts) {
-  const tweet1 = cleanText([
-    "MetsMoneyline Pregame Report",
-    "",
-    `Mets vs ${parts.opponentShort}`,
-    parts.time,
-    parts.venue,
-    "",
-    `Key edge: ${parts.keyEdge}`,
-    "",
-    "Full breakdown:",
-    `${SITE_URL} #LGM`
-  ].join("\n"));
-
-  const tweet2 = buildTweet2Variants(parts).find((candidate) => candidate.length <= MAX_TWEET_LENGTH);
-  if (!tweet2) {
-    throw new Error("tweet 2 exceeds character limit even after bullpen shortening");
-  }
-
-  return [tweet1, tweet2];
-}
-
-function validatePregameThreadTexts(texts, parts) {
-  if (texts.length !== 2) {
-    return { ok: false, reason: `expected 2 tweets, got ${texts.length}` };
-  }
-
-  const expectedEnding = `Official Pick: Mets Moneyline ${parts.odds}`;
-  for (let i = 0; i < texts.length; i += 1) {
-    const text = texts[i];
-    if (looksPlaceholder(text)) {
-      return { ok: false, reason: `tweet ${i + 1} contains placeholder text` };
-    }
-    if (text.length > MAX_TWEET_LENGTH) {
-      return { ok: false, reason: `tweet ${i + 1} exceeds ${MAX_TWEET_LENGTH} characters (${text.length})` };
-    }
-  }
-
-  if (!texts[0].includes(SITE_URL)) {
-    return { ok: false, reason: "tweet 1 is missing the website link" };
-  }
-  if (!texts[1].endsWith(expectedEnding)) {
-    return { ok: false, reason: "tweet 2 does not end with the required official pick sign-off" };
-  }
-
-  return { ok: true };
-}
+// buildTweet2Variants, buildPregameThread, validatePregameThreadTexts removed
+// — replaced by buildPregameSingleTweet above
 
 function isMetsMoneylineEntry(entry) {
   const market = cleanText(entry?.market).toLowerCase();
@@ -692,8 +676,8 @@ async function postSingle(text) {
 
 async function runPregame(args, targetDate) {
   const sampleData = loadJson(SAMPLE_GAME_PATH);
-  const state = loadState();
-  const game = selectTodayGame(sampleData, targetDate);
+  const state      = loadState();
+  const game       = selectTodayGame(sampleData, targetDate);
   const validation = validatePregameGame(game, targetDate, state);
 
   if (!validation.ok) {
@@ -701,45 +685,44 @@ async function runPregame(args, targetDate) {
     return;
   }
 
-  let tweetTexts;
+  // Build single pregame tweet
+  let tweetText;
   try {
-    tweetTexts = buildPregameThread(validation.parts);
-  } catch (error) {
-    logSkip(error.message);
+    tweetText = buildPregameSingleTweet(game);
+  } catch (err) {
+    logSkip(`buildPregameSingleTweet failed: ${err.message}`);
     return;
   }
 
-  const threadValidation = validatePregameThreadTexts(tweetTexts, validation.parts);
-  if (!threadValidation.ok) {
-    logSkip(threadValidation.reason);
+  if (!tweetText || looksPlaceholder(tweetText)) {
+    logSkip("pregame tweet resolved to empty or placeholder content");
+    return;
+  }
+  if (tweetText.length > MAX_TWEET_LENGTH) {
+    logSkip(`pregame tweet too long (${tweetText.length} chars)`);
     return;
   }
 
   if (args.mode === "dry-run") {
-    tweetTexts.forEach((text, index) => {
-      console.log(`Tweet ${index + 1} (${text.length}/${MAX_TWEET_LENGTH})`);
-      console.log(text);
-      if (index < tweetTexts.length - 1) console.log("");
-    });
+    console.log(`Pregame tweet (${tweetText.length}/${MAX_TWEET_LENGTH}):`);
+    console.log(tweetText);
     return;
   }
 
-  const tweetIds = await postThread(tweetTexts);
+  const tweetId = await postSingle(tweetText);
   const postedAt = new Date().toISOString();
   state.posts[validation.postKey] = {
     date: targetDate,
-    opponent: validation.parts.opponent,
-    postType: "pregame-thread",
-    tweetTexts,
-    tweetIds,
+    opponent: cleanText(game.opponent),
+    postType: "pregame",
+    tweetText,
+    tweetId,
     postedAt
   };
   saveState(state);
 
-  console.log(`POSTED THREAD: ${tweetIds.join(", ")}`);
-  tweetTexts.forEach((text, index) => {
-    console.log(`Tweet ${index + 1}: ${text}`);
-  });
+  console.log(`POSTED PREGAME TWEET: ${tweetId}`);
+  console.log(tweetText);
 }
 
 async function runPostgame(args, targetDate) {
