@@ -21,45 +21,35 @@
 
   function escapeHtml(value) {
     return String(value || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
   }
 
   function normalizeDisplay(value) {
     return String(value || "")
-      .replace(/Ã­/g, "i")
-      .replace(/Ã/g, "a")
-      .replace(/â€¦/g, "...")
-      .replace(/Â°/g, " degrees")
-      .trim();
+      .replace(/Ã­/g, "i").replace(/Ã/g, "a").replace(/â€¦/g, "...")
+      .replace(/Â°/g, " degrees").trim();
   }
 
   function slugify(value) {
-    return String(value || "")
-      .normalize("NFKD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "");
+    return String(value || "").normalize("NFKD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
   }
 
   function formatUpdated(value) {
-    var timestamp = Date.parse(value);
-    if (!Number.isFinite(timestamp)) return "Last updated unavailable";
-    return "Last updated " + new Date(timestamp).toLocaleString();
+    var ts = Date.parse(value);
+    if (!Number.isFinite(ts)) return "Last updated unavailable";
+    return "Last updated " + new Date(ts).toLocaleString();
   }
 
   function formatRelative(value) {
-    var timestamp = Date.parse(value);
-    if (!Number.isFinite(timestamp)) return "";
-    var diffMinutes = Math.max(1, Math.round((Date.now() - timestamp) / 60000));
-    if (diffMinutes < 60) return diffMinutes + "m ago";
-    var diffHours = Math.round(diffMinutes / 60);
-    if (diffHours < 24) return diffHours + "h ago";
-    return Math.round(diffHours / 24) + "d ago";
+    var ts = Date.parse(value);
+    if (!Number.isFinite(ts)) return "";
+    var diffMin = Math.max(1, Math.round((Date.now() - ts) / 60000));
+    if (diffMin < 60) return diffMin + "m ago";
+    var diffH = Math.round(diffMin / 60);
+    if (diffH < 24) return diffH + "h ago";
+    return Math.round(diffH / 24) + "d ago";
   }
 
   function scoreTone(score) {
@@ -81,51 +71,42 @@
   }
 
   function platformLabel(platform) {
-    if (platform === "x") return "X";
+    if (platform === "x") return "𝕏";
     if (platform === "bluesky") return "Bluesky";
     return platform || "Source";
   }
 
   function platformIconMarkup(platform) {
     if (platform === "bluesky") return '<span aria-hidden="true">&#129419;</span>';
-    if (platform === "x") return '<span aria-hidden="true">&#10005;</span>';
+    if (platform === "x") return '<span aria-hidden="true" style="font-weight:900;">𝕏</span>';
     return '<span aria-hidden="true">&#8226;</span>';
   }
 
   function sourceFillColor(avg) {
-    if (avg >= 0.25) return "linear-gradient(90deg, #22c55e, #16a34a)";
-    if (avg <= -0.25) return "linear-gradient(90deg, #ef4444, #dc2626)";
-    return "linear-gradient(90deg, #fbbf24, #f59e0b)";
+    if (avg >= 0.25) return "#22c55e";
+    if (avg <= -0.25) return "#ef4444";
+    return "#f59e0b";
   }
 
   function buildSentimentGauge(score) {
     var s = Math.max(0, Math.min(100, score || 0));
-    var cx = 150, cy = 130, r = 110;
-    var startAngle = Math.PI;
-    var endAngle = 0;
-    var needleAngle = startAngle + (s / 100) * (endAngle - startAngle);
-
+    var cx = 150, cy = 120, r = 100;
     function arcPath(start, end) {
-      var x1 = cx + r * Math.cos(start);
-      var y1 = cy + r * Math.sin(start);
-      var x2 = cx + r * Math.cos(end);
-      var y2 = cy + r * Math.sin(end);
-      var large = (end - start > Math.PI) ? 1 : 0;
-      return "M " + x1 + " " + y1 + " A " + r + " " + r + " 0 " + large + " 1 " + x2 + " " + y2;
+      var x1 = cx + r * Math.cos(start), y1 = cy + r * Math.sin(start);
+      var x2 = cx + r * Math.cos(end),   y2 = cy + r * Math.sin(end);
+      return "M " + x1 + " " + y1 + " A " + r + " " + r + " 0 0 1 " + x2 + " " + y2;
     }
-
-    var nx = cx + (r - 15) * Math.cos(needleAngle);
-    var ny = cy + (r - 15) * Math.sin(needleAngle);
-
-    return '<svg viewBox="0 0 300 155" width="280" height="145" style="display:block;margin:0 auto;">' +
-      '<path d="' + arcPath(Math.PI, Math.PI * 0.667) + '" fill="none" stroke="#ef4444" stroke-width="18" stroke-linecap="round" opacity="0.2"/>' +
-      '<path d="' + arcPath(Math.PI * 0.667, Math.PI * 0.333) + '" fill="none" stroke="#f59e0b" stroke-width="18" stroke-linecap="round" opacity="0.2"/>' +
-      '<path d="' + arcPath(Math.PI * 0.333, 0) + '" fill="none" stroke="#22c55e" stroke-width="18" stroke-linecap="round" opacity="0.2"/>' +
-      '<line x1="' + cx + '" y1="' + cy + '" x2="' + nx + '" y2="' + ny + '" stroke="#002d72" stroke-width="3" stroke-linecap="round"/>' +
-      '<circle cx="' + cx + '" cy="' + cy + '" r="6" fill="#002d72"/>' +
-      '<text x="' + cx + '" y="' + (cy + 2) + '" text-anchor="middle" font-family="Oswald" font-size="42" font-weight="700" fill="#002d72" dy="-18">' + s + "</text>" +
-      '<text x="40" y="' + (cy + 18) + '" font-size="11" fill="#94a3b8" font-weight="600">NEGATIVE</text>' +
-      '<text x="230" y="' + (cy + 18) + '" font-size="11" fill="#94a3b8" font-weight="600">POSITIVE</text>' +
+    var needleAngle = Math.PI + (s / 100) * (-Math.PI);
+    var nx = cx + (r - 12) * Math.cos(needleAngle);
+    var ny = cy + (r - 12) * Math.sin(needleAngle);
+    return '<svg viewBox="0 0 300 140" width="220" height="105" style="display:block;margin:0 auto;">' +
+      '<path d="' + arcPath(Math.PI, Math.PI * 0.667) + '" fill="none" stroke="#ef4444" stroke-width="14" stroke-linecap="round" opacity="0.25"/>' +
+      '<path d="' + arcPath(Math.PI * 0.667, Math.PI * 0.333) + '" fill="none" stroke="#f59e0b" stroke-width="14" stroke-linecap="round" opacity="0.25"/>' +
+      '<path d="' + arcPath(Math.PI * 0.333, 0) + '" fill="none" stroke="#22c55e" stroke-width="14" stroke-linecap="round" opacity="0.25"/>' +
+      '<line x1="' + cx + '" y1="' + cy + '" x2="' + nx + '" y2="' + ny + '" stroke="#002d72" stroke-width="2.5" stroke-linecap="round"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="5" fill="#002d72"/>' +
+      '<text x="30" y="' + (cy + 16) + '" font-size="10" fill="#94a3b8" font-weight="600">NEG</text>' +
+      '<text x="248" y="' + (cy + 16) + '" font-size="10" fill="#94a3b8" font-weight="600">POS</text>' +
       "</svg>";
   }
 
@@ -133,20 +114,18 @@
     if (!playerId) {
       return '<span class="sp-player-fallback">' + escapeHtml(String(name || "").slice(0, 1).toUpperCase()) + "</span>";
     }
-
     return '<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/' + Number(playerId) + '/headshot/67/current" alt="' + escapeHtml(name) + ' headshot" loading="lazy">';
   }
 
+  /* ── Render topics (side panel pills) ── */
   function renderTopics(items) {
     if (!Array.isArray(items) || !items.length) {
-      return '<p class="sp-empty-inline">No strong current-team signals yet.</p>';
+      return '<p class="sp-empty-inline" style="padding-top:0.5rem;font-size:0.78rem;">No strong topics yet.</p>';
     }
-
     return items.map(function (item) {
       var label = escapeHtml(normalizeDisplay(item.label || item.name || "Unknown"));
       var count = Number(item.count ?? item.mentions ?? 0) || 0;
-      var sentiment = Number(item.sentiment ?? 0) || 0;
-      var tone = sentimentTone(sentiment);
+      var tone = sentimentTone(Number(item.sentiment ?? 0) || 0);
       return '<div class="sp-pill ' + tone + '">' +
         '<span class="sp-pill-label">' + label + "</span>" +
         '<span class="sp-pill-meta">' + count + " mentions</span>" +
@@ -154,137 +133,68 @@
     }).join("");
   }
 
-  function renderPlayerCards(items, groupLabel) {
+  /* ── Render player cards (side panel) ── */
+  function renderPlayerCardsSide(items, groupLabel) {
     if (!Array.isArray(items) || !items.length) {
-      return '<p class="sp-empty-inline">No player chatter yet.</p>';
+      return '<p class="sp-empty-inline" style="padding-top:0.5rem;font-size:0.78rem;">No player chatter yet.</p>';
     }
-
     return items.map(function (item) {
       var name = normalizeDisplay(item.name || item.label || "Unknown");
       var mentions = Number(item.mentions ?? item.count ?? 0) || 0;
-      var sentiment = Number(item.sentiment ?? 0) || 0;
-      var tone = sentimentTone(sentiment);
+      var tone = sentimentTone(Number(item.sentiment ?? 0) || 0);
       var key = slugify(groupLabel + "-" + name);
       var activeClass = selectedPlayerKey === key ? " is-active" : "";
-
-      return '<button type="button" class="sp-player-card sp-player-card-button' + activeClass + '" data-player-key="' + escapeHtml(key) + '">' +
+      return '<button type="button" class="sp-player-card' + activeClass + '" data-player-key="' + escapeHtml(key) + '">' +
         buildHeadshot(item.playerId, name) +
         "<div>" +
         '<div class="sp-player-name">' + escapeHtml(name) + "</div>" +
-        '<div class="sp-player-role">' + escapeHtml(groupLabel) + "</div>" +
         '<div class="sp-player-mentions">' + mentions + " mentions</div>" +
         "</div>" +
         '<div class="sp-player-meta">' +
         '<span class="sp-player-dot ' + tone + '"></span>' +
-        "<span>" + sentimentLabel(sentiment) + "</span>" +
+        sentimentLabel(Number(item.sentiment ?? 0) || 0).slice(0, 3) +
         "</div>" +
         "</button>";
     }).join("");
   }
 
-  function renderSourceCards(sources) {
+  /* ── Render source breakdown (compact, inside hero) ── */
+  function renderSourcesCompact(sources) {
     var entries = Object.entries(sources || {});
-    if (!entries.length) {
-      return '<div class="sp-empty-inline">Waiting for the first pulse update.</div>';
-    }
-
-    var maxPosts = entries.reduce(function (max, entry) {
-      return Math.max(max, Number(entry[1] && entry[1].postCount) || 0);
-    }, 1);
-
-    return '<div class="sp-source-list">' + entries.map(function (entry) {
-      var key = entry[0];
-      var source = entry[1] || {};
-      var posts = Number(source.postCount ?? 0) || 0;
-      var avg = Number(source.averageSentiment ?? 0) || 0;
-      var width = Math.max(10, Math.round((posts / maxPosts) * 100));
-      var label = platformLabel(key);
-      return '<div class="sp-source-bar">' +
-        '<div class="sp-source-name">' + platformIconMarkup(key) + " " + escapeHtml(label) + "</div>" +
-        '<div class="sp-source-fill">' +
-        '<div class="sp-source-fill-inner" style="width:' + width + "%;background:" + sourceFillColor(avg) + ';"></div>' +
-        '<div class="sp-source-fill-label">Avg ' + avg.toFixed(2) + "</div>" +
-        "</div>" +
-        '<div class="sp-source-count">' + posts + " posts</div>" +
+    if (!entries.length) return "";
+    var maxPosts = entries.reduce(function (mx, e) { return Math.max(mx, Number(e[1] && e[1].postCount) || 0); }, 1);
+    return entries.map(function (e) {
+      var key = e[0], src = e[1] || {};
+      var posts = Number(src.postCount ?? 0) || 0;
+      var avg = Number(src.averageSentiment ?? 0) || 0;
+      var width = Math.max(8, Math.round((posts / maxPosts) * 100));
+      var icon = key === "x" ? "𝕏" : key === "bluesky" ? "🦋" : "●";
+      var label = key === "x" ? "X / Twitter" : key === "bluesky" ? "Bluesky" : key;
+      return '<div class="sp-source-row">' +
+        '<span class="sp-source-icon">' + icon + "</span>" +
+        '<span class="sp-source-name-sm">' + escapeHtml(label) + "</span>" +
+        '<div class="sp-source-bar-mini"><div class="sp-source-bar-mini-fill" style="width:' + width + '%;background:' + sourceFillColor(avg) + ';"></div></div>' +
+        '<span class="sp-source-count-sm">' + posts + " posts</span>" +
         "</div>";
-    }).join("") + "</div>";
+    }).join("");
   }
 
-  function sourceTypeBadge(post) {
-    if (isMediaSource(post)) {
-      return '<span class="sp-source-type-badge media">&#128240; Media</span>';
-    }
-    return '<span class="sp-source-type-badge fan">&#128100; Fan</span>';
-  }
-
-  function renderPosts(posts) {
-    if (!Array.isArray(posts) || !posts.length) {
-      return '<div class="sp-empty-state">Social pulse data is not available yet.</div>';
-    }
-
-    var sorted = posts.slice().sort(function (a, b) {
-      var aMedia = isMediaSource(a) ? 1 : 0;
-      var bMedia = isMediaSource(b) ? 1 : 0;
-      if (bMedia !== aMedia) return bMedia - aMedia;
-      return Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0);
-    });
-
-    return '<div class="sp-post-grid">' + sorted.map(function (post) {
-      var sentiment = Number(post.sentiment ?? 0) || 0;
-      var tone = sentimentTone(sentiment);
-      var matchedTopics = Array.isArray(post.matchedTopics) ? post.matchedTopics.slice(0, 4) : [];
-      var displayName = normalizeDisplay(post.displayName || post.author || "Unknown author");
-      var author = normalizeDisplay(post.author || "unknown");
-      var text = normalizeDisplay(post.text || "");
-      var media = isMediaSource(post);
-      var exactTime = post.createdAt ? new Date(post.createdAt).toLocaleString() : "";
-
-      return '<article class="sp-post-card sentiment-' + tone + (media ? ' sp-post-media' : '') + '">' +
-        '<div class="sp-post-head">' +
-        "<div>" +
-        "<h3>" + escapeHtml(displayName) + "</h3>" +
-        "<p>@" + escapeHtml(author) + "</p>" +
-        "</div>" +
-        '<div class="sp-post-meta">' +
-        sourceTypeBadge(post) +
-        '<span class="sp-platform-badge">' + platformIconMarkup(post.platform) + "<span>" + escapeHtml(platformLabel(post.platform)) + "</span></span>" +
-        '<span class="sp-sentiment ' + tone + '">' + sentimentLabel(sentiment) + "</span>" +
-        '<span class="sp-time" title="' + escapeHtml(exactTime) + '">' + escapeHtml(formatRelative(post.createdAt)) + "</span>" +
-        "</div>" +
-        "</div>" +
-        '<p class="sp-post-text">' + escapeHtml(text) + "</p>" +
-        '<div class="sp-post-foot">' +
-        '<div class="sp-post-tags">' +
-        matchedTopics.map(function (topic) {
-          return "<span>" + escapeHtml(normalizeDisplay(topic)) + "</span>";
-        }).join("") +
-        "</div>" +
-        (post.url ? '<a href="' + escapeHtml(post.url) + '" target="_blank" rel="noopener noreferrer">View post &#8599;</a>' : "") +
-        "</div>" +
-        "</article>";
-    }).join("") + "</div>";
-  }
-
-  function renderPlayerPosts() {
-    var title = document.getElementById("sp-player-posts-title");
-    var subtitle = document.getElementById("sp-player-posts-subtitle");
-    var container = document.getElementById("sp-player-posts");
-    var activePlayer = playerIndex[selectedPlayerKey];
-
-    if (!container || !title || !subtitle) return;
-
-    if (!activePlayer) {
-      title.textContent = "Player Post Detail";
-      subtitle.textContent = "Click a current or former player above to inspect the recent posts used for that name.";
-      container.innerHTML = '<div class="sp-empty-state">' + escapeHtml(EMPTY_PLAYER_POSTS) + "</div>";
-      return;
-    }
-
-    title.textContent = activePlayer.name + " Recent Posts";
-    subtitle.textContent = activePlayer.groupLabel + " • " + (Number(activePlayer.mentions || 0) || 0) + " tracked mentions";
-    container.innerHTML = Array.isArray(activePlayer.posts) && activePlayer.posts.length
-      ? renderPosts(activePlayer.posts)
-      : '<div class="sp-empty-state">' + escapeHtml(EMPTY_PLAYER_POSTS) + "</div>";
+  /* ── Render hero ── */
+  function renderHero(data) {
+    var score = Number(data && data.overallScore) || 0;
+    var mood = escapeHtml(normalizeDisplay((data && (data.overallMood || data.mood)) || moodFromScore(score)));
+    var summary = escapeHtml(normalizeDisplay((data && data.summary) || ""));
+    var sourcesHtml = renderSourcesCompact(data && data.sources);
+    return '<div class="sp-hero-score-block">' +
+        '<div class="sp-hero-kicker">Fan Sentiment</div>' +
+        '<span class="sp-hero-score">' + score + "</span>" +
+        '<div class="sp-hero-mood">' + mood + "</div>" +
+      "</div>" +
+      '<div class="sp-hero-center">' +
+        '<div class="sp-gauge-wrap">' + buildSentimentGauge(score) + "</div>" +
+        (summary ? '<p class="sp-hero-summary">' + summary + "</p>" : "") +
+      "</div>" +
+      (sourcesHtml ? '<div class="sp-hero-sources"><div class="sp-sources-label">Sources</div>' + sourcesHtml + "</div>" : "");
   }
 
   function moodFromScore(score) {
@@ -294,10 +204,74 @@
     return "Negative";
   }
 
+  function sourceTypeBadge(post) {
+    if (isMediaSource(post)) return '<span class="sp-source-type-badge media">&#128240; Media</span>';
+    return '<span class="sp-source-type-badge fan">&#128100; Fan</span>';
+  }
+
+  /* ── Render posts ── */
+  function renderPosts(posts) {
+    if (!Array.isArray(posts) || !posts.length) {
+      return '<div class="sp-empty-state">No posts available yet.</div>';
+    }
+    var sorted = posts.slice().sort(function (a, b) {
+      var aMedia = isMediaSource(a) ? 1 : 0, bMedia = isMediaSource(b) ? 1 : 0;
+      if (bMedia !== aMedia) return bMedia - aMedia;
+      return Date.parse(b.createdAt || 0) - Date.parse(a.createdAt || 0);
+    });
+    return '<div class="sp-post-grid">' + sorted.map(function (post) {
+      var sentiment = Number(post.sentiment ?? 0) || 0;
+      var tone = sentimentTone(sentiment);
+      var matchedTopics = Array.isArray(post.matchedTopics) ? post.matchedTopics.slice(0, 3) : [];
+      var displayName = escapeHtml(normalizeDisplay(post.displayName || post.author || "Unknown"));
+      var author = escapeHtml(normalizeDisplay(post.author || "unknown"));
+      var text = escapeHtml(normalizeDisplay(post.text || ""));
+      var media = isMediaSource(post);
+      var exactTime = post.createdAt ? new Date(post.createdAt).toLocaleString() : "";
+      return '<article class="sp-post-card sentiment-' + tone + (media ? " sp-post-media" : "") + '">' +
+        '<div class="sp-post-head"><div>' +
+          "<h3>" + displayName + "</h3>" +
+          "<p>@" + author + "</p>" +
+        "</div>" +
+        '<div class="sp-post-meta">' +
+          sourceTypeBadge(post) +
+          '<span class="sp-platform-badge">' + platformIconMarkup(post.platform) + "<span>" + escapeHtml(platformLabel(post.platform)) + "</span></span>" +
+          '<span class="sp-sentiment ' + tone + '">' + sentimentLabel(sentiment) + "</span>" +
+          '<span class="sp-time" title="' + escapeHtml(exactTime) + '">' + escapeHtml(formatRelative(post.createdAt)) + "</span>" +
+        "</div></div>" +
+        '<p class="sp-post-text">' + text + "</p>" +
+        '<div class="sp-post-foot">' +
+          '<div class="sp-post-tags">' +
+          matchedTopics.map(function (t) { return "<span>" + escapeHtml(normalizeDisplay(t)) + "</span>"; }).join("") +
+          "</div>" +
+          (post.url ? '<a href="' + escapeHtml(post.url) + '" target="_blank" rel="noopener noreferrer">View &#8599;</a>' : "") +
+        "</div>" +
+        "</article>";
+    }).join("") + "</div>";
+  }
+
+  /* ── Player detail ── */
+  function renderPlayerPosts() {
+    var panel = document.getElementById("sp-player-detail-panel");
+    var title = document.getElementById("sp-player-posts-title");
+    var subtitle = document.getElementById("sp-player-posts-subtitle");
+    var container = document.getElementById("sp-player-posts");
+    if (!panel || !container) return;
+    var activePlayer = playerIndex[selectedPlayerKey];
+    if (!activePlayer) { panel.style.display = "none"; return; }
+    panel.style.display = "";
+    title.textContent = activePlayer.name + " — Recent Posts";
+    subtitle.textContent = activePlayer.groupLabel + " · " + (Number(activePlayer.mentions || 0) || 0) + " tracked mentions";
+    container.innerHTML = Array.isArray(activePlayer.posts) && activePlayer.posts.length
+      ? renderPosts(activePlayer.posts)
+      : '<div class="sp-empty-state">' + escapeHtml(EMPTY_PLAYER_POSTS) + "</div>";
+    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  /* ── Filters ── */
   function applyFilters() {
     var postsEl = document.getElementById("sp-posts");
     if (!postsEl) return;
-
     var filtered = ALL_POSTS.filter(function (post) {
       if (activeFilters.platform !== "all" && post.platform !== activeFilters.platform) return false;
       if (activeFilters.sourcetype !== "all") {
@@ -310,15 +284,11 @@
       }
       return true;
     });
-
     postsEl.innerHTML = filtered.length
       ? renderPosts(filtered)
       : '<div class="sp-no-results">No posts match this filter combination.</div>';
-
     document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
-      var type = btn.dataset.filterType;
-      var val = btn.dataset.filterValue;
-      btn.classList.toggle("active", activeFilters[type] === val);
+      btn.classList.toggle("active", activeFilters[btn.dataset.filterType] === btn.dataset.filterValue);
     });
     document.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
       btn.classList.toggle("active", activeFilters.topic === btn.dataset.topic);
@@ -328,38 +298,22 @@
   function buildTopicFilterBar(posts) {
     var topicEl = document.getElementById("sp-topic-filters");
     if (!topicEl) return;
-
     var topicCounts = {};
     posts.forEach(function (post) {
-      (post.matchedTopics || []).forEach(function (topic) {
-        topicCounts[topic] = (topicCounts[topic] || 0) + 1;
-      });
+      (post.matchedTopics || []).forEach(function (topic) { topicCounts[topic] = (topicCounts[topic] || 0) + 1; });
     });
-
-    var sorted = Object.entries(topicCounts)
-      .filter(function (entry) { return entry[1] >= 1; })
-      .sort(function (a, b) { return b[1] - a[1]; })
-      .slice(0, 10);
-
-    if (!sorted.length) {
-      topicEl.style.display = "none";
-      return;
-    }
-
+    var sorted = Object.entries(topicCounts).filter(function (e) { return e[1] >= 1; })
+      .sort(function (a, b) { return b[1] - a[1]; }).slice(0, 10);
+    if (!sorted.length) { topicEl.style.display = "none"; return; }
     topicEl.style.display = "";
     topicEl.innerHTML = '<span class="sp-filter-label">Topic:</span>' +
       '<button class="sp-topic-pill sp-filter-btn active" data-topic="all">All</button>' +
-      sorted.map(function (entry) {
-        return '<button class="sp-topic-pill sp-filter-btn" data-topic="' + escapeHtml(entry[0]) + '">' +
-          escapeHtml(entry[0]) +
-          '<span class="sp-filter-count">' + entry[1] + "</span></button>";
+      sorted.map(function (e) {
+        return '<button class="sp-topic-pill sp-filter-btn" data-topic="' + escapeHtml(e[0]) + '">' +
+          escapeHtml(e[0]) + '<span class="sp-filter-count">' + e[1] + "</span></button>";
       }).join("");
-
     topicEl.querySelectorAll(".sp-topic-pill").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        activeFilters.topic = btn.dataset.topic;
-        applyFilters();
-      });
+      btn.addEventListener("click", function () { activeFilters.topic = btn.dataset.topic; applyFilters(); });
     });
   }
 
@@ -367,80 +321,50 @@
     document.querySelectorAll(".sp-filter-btn[data-filter-type]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         activeFilters[btn.dataset.filterType] = btn.dataset.filterValue;
-        if (btn.dataset.filterType !== "topic") {
-          activeFilters.topic = "all";
-        }
+        if (btn.dataset.filterType !== "topic") activeFilters.topic = "all";
         applyFilters();
       });
     });
   }
 
-  function renderHero(data) {
-    var score = Number(data && data.overallScore) || 0;
-    var rawMood = (data && (data.overallMood || data.mood)) || moodFromScore(score);
-    var mood = escapeHtml(normalizeDisplay(rawMood));
-    var summary = escapeHtml(normalizeDisplay((data && data.summary) || ""));
-    return '<div class="sp-hero-compact">' +
-      '<div class="sp-hero-left">' +
-        '<div class="sp-hero-kicker">Fan Sentiment</div>' +
-        '<div class="sp-hero-score-row">' +
-          '<span class="sp-hero-score">' + score + "</span>" +
-          '<span class="sp-hero-mood">' + mood + "</span>" +
-        "</div>" +
-        (summary ? '<p class="sp-hero-summary">' + summary + "</p>" : "") +
-      "</div>" +
-      '<div class="sp-hero-right">' + buildSentimentGauge(score) + "</div>" +
-      "</div>";
-  }
-
+  /* ── Build player index ── */
   function buildPlayerIndex(data) {
-    var nextIndex = {};
-
-    function addPlayers(items, groupLabel) {
+    var idx = {};
+    function add(items, groupLabel) {
       if (!Array.isArray(items)) return;
       items.forEach(function (item) {
         var name = normalizeDisplay(item && item.name);
         if (!name) return;
         var key = slugify(groupLabel + "-" + name);
-        nextIndex[key] = {
-          name: name,
-          mentions: Number(item.mentions ?? item.count ?? 0) || 0,
-          groupLabel: groupLabel,
-          posts: Array.isArray(item.posts) ? item.posts : []
-        };
+        idx[key] = { name, mentions: Number(item.mentions ?? item.count ?? 0) || 0, groupLabel, posts: Array.isArray(item.posts) ? item.posts : [] };
       });
     }
-
-    addPlayers(data && data.currentPlayers, "Current Met");
-    addPlayers(data && data.formerPlayers, "Former Met");
-    return nextIndex;
+    add(data && data.currentPlayers, "Current Met");
+    add(data && data.formerPlayers, "Former Met");
+    return idx;
   }
 
+  /* ── Main render ── */
   function render(data) {
     var hero = document.getElementById("sp-hero");
     var updated = document.getElementById("sp-updated");
     var topics = document.getElementById("sp-topics");
     var currentPlayers = document.getElementById("sp-current-players");
-    var formerPlayers = document.getElementById("sp-former-players");
-    var sources = document.getElementById("sp-sources");
+    var formerPlayersSide = document.getElementById("sp-former-players-side");
     var score = Number(data && data.overallScore) || 0;
 
     playerIndex = buildPlayerIndex(data || {});
-    if (!playerIndex[selectedPlayerKey]) {
-      selectedPlayerKey = Object.keys(playerIndex)[0] || "";
-    }
+    if (!playerIndex[selectedPlayerKey]) selectedPlayerKey = Object.keys(playerIndex)[0] || "";
 
     if (hero) {
       hero.classList.remove("positive", "mixed", "negative");
       hero.classList.add(scoreTone(score));
       hero.innerHTML = renderHero(data || {});
     }
-
     if (updated) updated.textContent = formatUpdated(data && data.generatedAt);
     if (topics) topics.innerHTML = renderTopics(data && data.trendingTopics);
-    if (currentPlayers) currentPlayers.innerHTML = renderPlayerCards(data && data.currentPlayers, "Current Met");
-    if (formerPlayers) formerPlayers.innerHTML = renderPlayerCards(data && data.formerPlayers, "Former Met");
-    if (sources) sources.innerHTML = renderSourceCards(data && data.sources);
+    if (currentPlayers) currentPlayers.innerHTML = renderPlayerCardsSide(data && data.currentPlayers, "Current Met");
+    if (formerPlayersSide) formerPlayersSide.innerHTML = renderPlayerCardsSide(data && data.formerPlayers, "Former Met");
 
     ALL_POSTS = Array.isArray(data && data.posts) ? data.posts : [];
     buildTopicFilterBar(ALL_POSTS);
@@ -453,20 +377,30 @@
     var hero = document.getElementById("sp-hero");
     if (hero) {
       hero.classList.remove("positive", "mixed", "negative");
-      hero.innerHTML = '<div class="sp-empty-state">' + escapeHtml(message || "Social pulse data is not available yet.") + "</div>";
+      hero.innerHTML = '<div class="sp-empty-state" style="grid-column:1/-1;">' + escapeHtml(message || "Social pulse data is not available yet.") + "</div>";
     }
   }
 
   async function init() {
-    document.addEventListener("click", function (event) {
-      var button = event.target && event.target.closest ? event.target.closest("[data-player-key]") : null;
-      if (!button) return;
-      selectedPlayerKey = button.getAttribute("data-player-key") || "";
-      var cards = document.querySelectorAll("[data-player-key]");
-      cards.forEach(function (card) {
-        card.classList.toggle("is-active", card.getAttribute("data-player-key") === selectedPlayerKey);
-      });
-      renderPlayerPosts();
+    // Player card clicks
+    document.addEventListener("click", function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest("[data-player-key]") : null;
+      if (btn) {
+        selectedPlayerKey = btn.getAttribute("data-player-key") || "";
+        document.querySelectorAll("[data-player-key]").forEach(function (c) {
+          c.classList.toggle("is-active", c.getAttribute("data-player-key") === selectedPlayerKey);
+        });
+        renderPlayerPosts();
+        return;
+      }
+      // Close button
+      var closeBtn = e.target && e.target.closest ? e.target.closest("#sp-player-detail-close") : null;
+      if (closeBtn) {
+        selectedPlayerKey = "";
+        document.querySelectorAll("[data-player-key]").forEach(function (c) { c.classList.remove("is-active"); });
+        var panel = document.getElementById("sp-player-detail-panel");
+        if (panel) panel.style.display = "none";
+      }
     });
 
     try {

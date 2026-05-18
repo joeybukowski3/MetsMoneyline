@@ -9,11 +9,11 @@ const {
 const OUTPUT_PATH = path.join(__dirname, "..", "public", "data", "social-pulse.json");
 const BLUESKY_API_BASE = "https://api.bsky.app/xrpc/app.bsky.feed.searchPosts";
 const MLB_ROSTER_URL = "https://statsapi.mlb.com/api/v1/teams/121/roster?rosterType=active";
-const MAX_STORED_POSTS = 60;
+const MAX_STORED_POSTS = 100;
 const MAX_PLAYER_POSTS = 6;
 const BLUESKY_QUERY_LIMIT = 15;
-const DEFAULT_X_LIMIT = 10;
-const HARD_X_LIMIT = 10;
+const DEFAULT_X_LIMIT = 30;
+const HARD_X_LIMIT = 50;
 
 // Tier 1: broad Mets/game-day queries.
 const BLUESKY_PRIORITY_TERMS = [
