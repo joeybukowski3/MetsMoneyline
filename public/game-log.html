@@ -150,10 +150,6 @@
             <div class="gl-pills" id="f-series"></div>
           </div>
           <div class="gl-fg">
-            <span class="gl-fg-lbl">Opponent</span>
-            <div class="gl-pills" id="f-opp"></div>
-          </div>
-          <div class="gl-fg">
             <span class="gl-fg-lbl">NYM Runs Scored</span>
             <div class="gl-run-inputs">
               <input id="min-runs" placeholder="Min" type="number" min="0" max="30">
@@ -216,7 +212,7 @@
 
     var ALL    = [];
     var SUM    = {};
-    var filters = { day:"all", ha:"all", tod:"all", series:"all", opp:"all", winpct:"all" };
+    var filters = { day:"all", ha:"all", tod:"all", series:"all", winpct:"all" };
     var minRuns = "", maxRuns = "";
     var sortCol = "date", sortAsc = true;
     var DAYS    = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
@@ -228,6 +224,17 @@
       .then(function(data){
         ALL = (data.games || []).filter(function(g){ return g.result === "W" || g.result === "L"; });
         SUM = data.summary || {};
+        // Compute series game numbers client-side (bot may not have populated them yet)
+        computeSeriesNumbers(ALL);
+        // Derive oppWinPct from oppRecord string where available
+        ALL.forEach(function(g) {
+          if (g.oppWinPct == null && g.oppRecord) {
+            var parts = String(g.oppRecord).split("-").map(Number);
+            if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1]) && (parts[0]+parts[1]) > 0) {
+              g.oppWinPct = parts[0] / (parts[0] + parts[1]);
+            }
+          }
+        });
         buildFilters();
         render();
       })
@@ -239,7 +246,6 @@
         if (filters.day    !== "all" && g.dayOfWeek !== DAYS_FULL[filters.day]) return false;
         if (filters.ha     !== "all" && g.homeAway  !== filters.ha)  return false;
         if (filters.tod    !== "all" && g.timeOfDay !== filters.tod) return false;
-        if (filters.opp    !== "all" && g.oppAbbr   !== filters.opp) return false;
         if (filters.series !== "all") {
           if (filters.series === "opener" && g.seriesGameNum !== 1)  return false;
           if (filters.series === "g2"     && g.seriesGameNum !== 2)  return false;
@@ -295,6 +301,30 @@
     }
 
     // ── build filters ─────────────────────────────────────────────────────────
+    function computeSeriesNumbers(games) {
+      // Games are already sorted by date from the JSON
+      var start = 0;
+      for (var i = 1; i <= games.length; i++) {
+        var newSeries = i === games.length;
+        if (!newSeries) {
+          var sameOpp = games[i].oppAbbr === games[i-1].oppAbbr;
+          var d1 = new Date(games[i-1].date);
+          var d2 = new Date(games[i].date);
+          var daysDiff = Math.abs((d2 - d1) / 86400000);
+          newSeries = !sameOpp || daysDiff > 2;
+        }
+        if (newSeries) {
+          var len = i - start;
+          for (var k = start; k < i; k++) {
+            games[k].seriesGameNum = k - start + 1;
+            games[k].seriesLength  = len;
+            games[k].isSeriesLast  = (k === i - 1);
+          }
+          start = i;
+        }
+      }
+    }
+
     function buildFilters() {
       // Day
       pill("f-day", DAYS.map(function(d){ return {val:d,lbl:d}; }), "day", "");
@@ -307,11 +337,6 @@
         {val:"opener",lbl:"G1 Opener"},{val:"g2",lbl:"G2"},
         {val:"g3plus",lbl:"G3+"},{val:"finale",lbl:"Finale ★"}
       ], "series", "blue");
-      // Opponents (sorted by frequency)
-      var oppCount = {};
-      ALL.forEach(function(g){ oppCount[g.oppAbbr] = (oppCount[g.oppAbbr]||0)+1; });
-      var opps = Object.keys(oppCount).sort(function(a,b){ return oppCount[b]-oppCount[a]; });
-      pill("f-opp", opps.map(function(o){ return {val:o,lbl:o}; }), "opp", "slate");
       // Win pct tiers
       pill("f-winpct", [
         {val:"elite",lbl:"Elite ≥.560"},{val:"above",lbl:"Above .500"},
@@ -349,11 +374,11 @@
     }
 
     window.resetAll = function() {
-      Object.keys(filters).forEach(function(k){ filters[k] = "all"; });
+      filters = { day:"all", ha:"all", tod:"all", series:"all", winpct:"all" };
       minRuns = ""; maxRuns = "";
       document.getElementById("min-runs").value = "";
       document.getElementById("max-runs").value = "";
-      ["f-day","f-ha","f-tod","f-series","f-opp","f-winpct"].forEach(function(id){
+      ["f-day","f-ha","f-tod","f-series","f-winpct"].forEach(function(id){
         document.getElementById(id).querySelectorAll(".gl-pill").forEach(function(b){ b.classList.remove("active"); });
       });
       render();
