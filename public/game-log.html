@@ -105,6 +105,9 @@
     .badge-g1   { display:inline-block;padding:1px 6px;border-radius:4px;background:rgba(3,105,161,.12);color:#0369a1;font-size:.63rem;font-weight:800; }
     .badge-gn   { display:inline-block;padding:1px 6px;border-radius:4px;background:#f1f5f9;color:#475569;font-size:.63rem;font-weight:800; }
     .badge-last { color:var(--orange);margin-left:2px;font-size:.72rem; }
+    .opp-logo-cell { display:inline-flex;align-items:center;gap:5px; }
+    .opp-logo { display:block;flex-shrink:0;object-fit:contain; }
+    .opp-abbr-label { font-size:.72rem;font-weight:700;color:var(--navy); }
     .stat-good  { color:#15803d;font-weight:800; }
     .stat-bad   { color:#b91c1c;font-weight:800; }
     .stat-hi    { background:rgba(22,163,74,.07); }
@@ -563,7 +566,7 @@
           "<td>" + day + "</td>" +
           "<td><span class='" + (g.timeOfDay==="day"?"badge-day":"badge-night") + "'>" + (g.timeOfDay==="day"?"☀":"🌙") + "</span></td>" +
           "<td><span class='" + (g.homeAway==="home"?"badge-h":"badge-a") + "'>" + (g.homeAway==="home"?"H":"A") + "</span></td>" +
-          "<td class='left'><strong>" + (g.oppAbbr||"—") + "</strong></td>" +
+          "<td class='left'><span class='opp-logo-cell'>" + (g.oppTeamId ? "<img src='https://www.mlbstatic.com/team-logos/" + g.oppTeamId + ".svg' alt='" + (g.oppAbbr||"") + "' class='opp-logo' width='20' height='20' loading='lazy'>" : "<strong>" + (g.oppAbbr||"—") + "</strong>") + "<span class='opp-abbr-label'>" + (g.oppAbbr||"") + "</span></span></td>" +
           "<td>" + serBadge + "</td>" +
           "<td class='" + mrBg + "'>" + (g.metsRuns != null ? g.metsRuns : "—") + "</td>" +
           "<td>" + (g.metsHits != null ? g.metsHits : "—") + "</td>" +
