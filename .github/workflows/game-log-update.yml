@@ -29,7 +29,8 @@ jobs:
         run: npm ci
 
       - name: Build game log
-        run: node bot/build-game-log.js
+        working-directory: ./bot
+        run: node build-game-log.js
 
       - name: Commit and push game-log.json
         run: |

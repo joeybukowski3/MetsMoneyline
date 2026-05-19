@@ -2,7 +2,7 @@ name: Social Pulse Update
 
 on:
   schedule:
-    - cron: "0 14 * * *"
+    - cron: "0 14 * * *"   # 10 AM ET daily
   workflow_dispatch:
 
 permissions:
@@ -29,6 +29,7 @@ jobs:
         run: npm ci
 
       - name: Update social pulse data
+        working-directory: ./bot
         env:
           ENABLE_X_SOCIAL_PULSE: ${{ vars.ENABLE_X_SOCIAL_PULSE }}
           X_SOCIAL_POST_LIMIT: ${{ vars.X_SOCIAL_POST_LIMIT }}
@@ -37,7 +38,7 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
-        run: node bot/update-social-pulse.js
+        run: node update-social-pulse.js
 
       - name: Commit updated social pulse data
         run: |
@@ -48,8 +49,6 @@ jobs:
             echo "No social pulse updates to commit."
             exit 0
           fi
-          git commit -m "update social media pulse data"
-          git stash
+          git commit -m "chore: update social media pulse data [skip ci]"
           git pull --rebase origin main
-          git stash pop || true
           git push origin main

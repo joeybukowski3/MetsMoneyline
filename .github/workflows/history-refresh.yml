@@ -2,7 +2,7 @@ name: Postgame History Refresh
 
 on:
   schedule:
-    - cron: "0 4,5,6,7 * * *"
+    - cron: "0 4,5,6,7 * * *"   # UTC 4-7 AM = ET midnight-3 AM
   workflow_dispatch:
 
 permissions:
@@ -19,13 +19,13 @@ jobs:
       - name: Check overnight ET window
         id: gate
         run: |
-          ET_HOUR=$((10#$(TZ=America/New_York date +%H)))
-          if [ "$ET_HOUR" -lt 0 ] || [ "$ET_HOUR" -gt 3 ]; then
-            echo "Current America/New_York hour is ${ET_HOUR}; skipping."
-            echo "should_run=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Current America/New_York hour is ${ET_HOUR}; continuing."
+          ET_HOUR=$(TZ=America/New_York date +%-H)
+          if [ "$ET_HOUR" -ge 0 ] && [ "$ET_HOUR" -le 3 ]; then
+            echo "ET hour ${ET_HOUR} is in overnight window — running."
             echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ET hour ${ET_HOUR} is outside overnight window — skipping."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Check out repository
@@ -63,7 +63,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh pick history [skip ci]"
-          git stash
           git pull --rebase origin main
-          git stash pop || true
           git push origin main

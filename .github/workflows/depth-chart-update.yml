@@ -2,7 +2,7 @@ name: Depth Chart Update
 
 on:
   schedule:
-    - cron: "0 13 * * 1"
+    - cron: "0 13 * * 1"   # Mondays 9 AM ET
   workflow_dispatch:
 
 permissions:
@@ -21,12 +21,20 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+
+      - name: Install bot dependencies
+        working-directory: ./bot
+        run: npm ci
 
       - name: Rebuild depth chart data
-        run: node bot/update-depth-chart.js
+        working-directory: ./bot
+        run: node update-depth-chart.js
 
       - name: Regenerate sitemap
-        run: node bot/generate-sitemap.js
+        working-directory: ./bot
+        run: node generate-sitemap.js
 
       - name: Commit refreshed depth chart artifacts
         run: |
@@ -38,7 +46,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh depth chart artifacts [skip ci]"
-          git stash
           git pull --rebase origin main
-          git stash pop || true
           git push origin main

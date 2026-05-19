@@ -2,8 +2,8 @@ name: X Post
 
 on:
   schedule:
-    # Pregame: 10 AM–1 PM ET (14:00–17:00 UTC) — after morning data refresh
-    # Postgame: 7 PM–2 AM ET (23:00–06:00 UTC) — within ~1hr of game end
+    # Pregame: 10 AM–1 PM ET (14:00–17:00 UTC)
+    # Postgame: 7 PM–2 AM ET (23:00–06:00 UTC)
     - cron: "0 14,15,16,17,23,0,1,2,3,4,5,6 * * *"
   workflow_dispatch:
     inputs:
@@ -45,6 +45,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
 
       - name: Install bot dependencies
         working-directory: ./bot
@@ -105,7 +107,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: record X post state [skip ci]"
-          git stash
           git pull --rebase origin main
-          git stash pop || true
           git push origin main
