@@ -1366,16 +1366,32 @@
         return row.data && (row.data.xba != null || row.data.ops != null);
       });
 
-      const top = rows.filter(function(row) {
-        return (row.data.xba != null && row.data.xba > LEAGUE_AVG.xba) ||
-          (row.data.ops != null && row.data.ops > LEAGUE_AVG.ops);
+      // Percentile thresholds (2026 MLB season estimates)
+      // 60th percentile: clear above-average — qualifies for Top Performers
+      // 40th percentile: clearly below-average — qualifies for Low Performers
+      var TOP_XBA = 0.265;   // ~60th pct
+      var TOP_OPS = 0.760;   // ~60th pct
+      var LOW_XBA = 0.225;   // ~40th pct
+      var LOW_OPS = 0.645;   // ~40th pct
+
+      // A player is "top" if they beat the 60th pct on xBA OR OPS
+      var top = rows.filter(function(row) {
+        var xbaTop = row.data.xba != null && row.data.xba >= TOP_XBA;
+        var opsTop = row.data.ops != null && row.data.ops >= TOP_OPS;
+        return xbaTop || opsTop;
       }).sort(function(a, b) {
         return (b.data.ops || 0) - (a.data.ops || 0);
       });
 
-      const low = rows.filter(function(row) {
-        return (row.data.xba != null && row.data.xba < LEAGUE_AVG.xba) ||
-          (row.data.ops != null && row.data.ops < LEAGUE_AVG.ops);
+      var topIds = new Set(top.map(function(r) { return r.name; }));
+
+      // A player is "low" if they are under the 40th pct on xBA OR OPS,
+      // AND they did not already qualify for top performers
+      var low = rows.filter(function(row) {
+        if (topIds.has(row.name)) return false;
+        var xbaLow = row.data.xba != null && row.data.xba <= LOW_XBA;
+        var opsLow = row.data.ops != null && row.data.ops <= LOW_OPS;
+        return xbaLow || opsLow;
       }).sort(function(a, b) {
         return (a.data.ops || 0) - (b.data.ops || 0);
       });
@@ -1410,7 +1426,7 @@
         );
       }
 
-      panel.innerHTML = renderTable("Top Performers", top) + renderTable("Low Performers", low);
+      panel.innerHTML = renderTable("Top Performers <span style=\"font-size:0.65rem;font-weight:500;opacity:0.6;\">(OPS ≥ .760 or xBA ≥ .265)</span>", top) + renderTable("Low Performers <span style=\"font-size:0.65rem;font-weight:500;opacity:0.6;\">(OPS ≤ .645 or xBA ≤ .225)</span>", low);
     }
 
     function updateButtonStates() {
