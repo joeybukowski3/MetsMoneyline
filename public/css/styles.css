@@ -1735,7 +1735,7 @@ tbody td:first-child { font-weight: 500; }
 /* ── Compact lineup card list — no horizontal scroll ── */
 .lu-header {
   display: grid;
-  grid-template-columns: 1.5rem 1.8rem 1fr auto auto auto;
+  grid-template-columns: 1.5rem 1.8rem 1fr 3rem 3rem 3rem;
   padding: 0.18rem 0;
   font-size: 0.58rem;
   font-weight: 800;
@@ -1744,25 +1744,31 @@ tbody td:first-child { font-weight: 500; }
   color: #94a3b8;
   border-bottom: 1px solid #eef2f7;
   margin-bottom: 0.1rem;
+  gap: 0.2rem;
 }
 .lu-header span {
   text-align: center;
   min-width: 0;
 }
-/* Stat label spans align to stat cells */
-.lu-header span:nth-child(5),
-.lu-header span:nth-child(6),
-.lu-header span:nth-child(7) {
-  min-width: 2.8rem;
-}
-/* Position spacer — hidden on mobile, matches lu-pos width on desktop */
+/* Position spacer — hidden on mobile, shown on desktop */
 .lu-pos-spacer { display: none; }
+
+/* Stat labels: placed in columns 4-6 on mobile, 5-7 on desktop via grid-column */
+.lu-avg-lbl { grid-column: 4; text-align: center; }
+.lu-ops-lbl { grid-column: 5; text-align: center; }
+.lu-xba-lbl { grid-column: 6; text-align: center; }
+
+@media (min-width: 700px) {
+  .lu-avg-lbl { grid-column: 5; }
+  .lu-ops-lbl { grid-column: 6; }
+  .lu-xba-lbl { grid-column: 7; }
+}
 
 .lu-list { display: flex; flex-direction: column; gap: 0; }
 
 .lu-row {
   display: grid;
-  grid-template-columns: 1.5rem 1.8rem 1fr auto auto auto;
+  grid-template-columns: 1.5rem 1.8rem 1fr 3rem 3rem 3rem;
   align-items: center;
   gap: 0.2rem;
   padding: 0.32rem 0;
@@ -1797,9 +1803,9 @@ tbody td:first-child { font-weight: 500; }
   font-size: 0.68rem;
   font-weight: 700;
   text-align: center;
-  min-width: 2.8rem;
   border-radius: 4px;
   padding: 0.08rem 0.15rem;
+  width: 100%;
 }
 .lu-stat.metric-positive { background: rgba(255,89,16,0.1); color: #c2410c; }
 .lu-stat.metric-negative { background: rgba(0,45,114,0.09); color: #002d72; }
@@ -1809,16 +1815,13 @@ tbody td:first-child { font-weight: 500; }
 
 /* Desktop: show position, wider layout */
 @media (min-width: 700px) {
-  .lu-header { grid-template-columns: 1.5rem 1.8rem 1fr 2.2rem auto auto auto; }
-  .lu-header span:nth-child(5),
-  .lu-header span:nth-child(6),
-  .lu-header span:nth-child(7) { min-width: 3rem; }
-  .lu-pos-spacer { display: block; min-width: 2.2rem; }
-  .lu-row { grid-template-columns: 1.5rem 1.8rem 1fr 2.2rem auto auto auto; }
+  .lu-header { grid-template-columns: 1.5rem 1.8rem 1fr 2.2rem 3rem 3rem 3rem; }
+  .lu-row    { grid-template-columns: 1.5rem 1.8rem 1fr 2.2rem 3rem 3rem 3rem; }
+  .lu-pos-spacer { display: block; }
   .lu-pos { display: block; font-size: 0.65rem; color: #64748b; font-weight: 600; text-align: center; }
   .lu-row .player-headshot { width: 26px; height: 26px; }
   .lu-name { font-size: 0.8rem; }
-  .lu-stat { font-size: 0.72rem; min-width: 3rem; }
+  .lu-stat { font-size: 0.72rem; }
 }
 
 /* Lineup two-col: side-by-side always, tighten on mobile */
