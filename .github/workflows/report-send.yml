@@ -83,6 +83,7 @@ jobs:
           fi
 
           git commit -m "chore: report send state update [skip ci]"
+          git add -A || true
           git pull --rebase origin main
           git push origin main
 

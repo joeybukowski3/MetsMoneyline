@@ -46,5 +46,6 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh depth chart artifacts [skip ci]"
+          git add -A || true
           git pull --rebase origin main
           git push origin main

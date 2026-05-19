@@ -87,6 +87,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Stage ALL files the scripts may have written
           git add \
             public/api/mlb/mets/next-game \
             public/api/mlb/mets/live-game \
@@ -106,11 +107,19 @@ jobs:
             public/rss.xml \
             || true
 
+          # Also stage any other files modified by the scripts
+          # (bot/output/, bot/report-send-state.json, etc.)
+          # to prevent "unstaged changes" blocking the rebase
+          git add -A || true
+
           if git diff --staged --quiet; then
             echo "No site data updates to commit."
             exit 0
           fi
 
           git commit -m "chore: refresh daily site data [skip ci]"
+
+          # Pull any concurrent pushes before we push
           git pull --rebase origin main
+
           git push origin main

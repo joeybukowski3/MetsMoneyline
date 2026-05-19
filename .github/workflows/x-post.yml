@@ -107,5 +107,6 @@ jobs:
             exit 0
           fi
           git commit -m "chore: record X post state [skip ci]"
+          git add -A || true
           git pull --rebase origin main
           git push origin main

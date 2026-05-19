@@ -63,5 +63,6 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh pick history [skip ci]"
+          git add -A || true
           git pull --rebase origin main
           git push origin main
