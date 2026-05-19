@@ -1,19 +1,270 @@
 {
-  "gameId": null,
-  "startTime": null,
-  "status": "No upcoming Mets game",
-  "homeTeam": null,
-  "awayTeam": null,
-  "isMetsHome": null,
-  "venue": null,
-  "league": null,
+  "gameId": 822736,
+  "startTime": "2026-05-19T22:45:00Z",
+  "status": "Scheduled",
+  "homeTeam": {
+    "id": 120,
+    "canonicalKey": "nationals",
+    "mlbStatsTeamId": 120,
+    "apiSportsTeamId": 120,
+    "name": "Washington Nationals",
+    "abbreviation": "WSH",
+    "record": null
+  },
+  "awayTeam": {
+    "id": 121,
+    "canonicalKey": "mets",
+    "mlbStatsTeamId": 121,
+    "apiSportsTeamId": 121,
+    "name": "New York Mets",
+    "abbreviation": "NYM",
+    "record": null
+  },
+  "isMetsHome": false,
+  "venue": "Nationals Park",
+  "league": 1,
+  "probablePitchers": {
+    "mets": {
+      "id": 690997,
+      "fullName": "Nolan McLean",
+      "era": "2.92",
+      "fip": null,
+      "whip": "0.96"
+    },
+    "opp": {
+      "id": 656492,
+      "fullName": "Foster Griffin",
+      "era": "3.53",
+      "fip": null,
+      "whip": "1.14"
+    }
+  },
+  "lineups": {
+    "lineupStatus": "not_released",
+    "mets": [],
+    "opp": []
+  },
   "sportsbookSummary": null,
-  "raw": null,
+  "raw": {
+    "gamePk": 822736,
+    "gameGuid": "60cb46ed-6951-4a89-8b9b-59cd30c28b92",
+    "link": "/api/v1.1/game/822736/feed/live",
+    "gameType": "R",
+    "season": "2026",
+    "gameDate": "2026-05-19T22:45:00Z",
+    "officialDate": "2026-05-19",
+    "status": {
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
+      "startTimeTBD": false,
+      "abstractGameCode": "P"
+    },
+    "teams": {
+      "away": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121",
+          "season": 2026,
+          "venue": {
+            "id": 3289,
+            "name": "Citi Field",
+            "link": "/api/v1/venues/3289"
+          },
+          "springVenue": {
+            "id": 2856,
+            "link": "/api/v1/venues/2856"
+          },
+          "teamCode": "nyn",
+          "fileCode": "nym",
+          "abbreviation": "NYM",
+          "teamName": "Mets",
+          "locationName": "Flushing",
+          "firstYearOfPlay": "1962",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 204,
+            "name": "National League East",
+            "link": "/api/v1/divisions/204"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "NY Mets",
+          "franchiseName": "New York",
+          "clubName": "Mets",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 21,
+          "losses": 26,
+          "pct": ".447"
+        },
+        "probablePitcher": {
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
+        },
+        "splitSquad": false,
+        "seriesNumber": 16,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      },
+      "home": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 120,
+          "name": "Washington Nationals",
+          "link": "/api/v1/teams/120",
+          "season": 2026,
+          "venue": {
+            "id": 3309,
+            "name": "Nationals Park",
+            "link": "/api/v1/venues/3309"
+          },
+          "springVenue": {
+            "id": 5000,
+            "link": "/api/v1/venues/5000"
+          },
+          "teamCode": "was",
+          "fileCode": "was",
+          "abbreviation": "WSH",
+          "teamName": "Nationals",
+          "locationName": "Washington",
+          "firstYearOfPlay": "1968",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 204,
+            "name": "National League East",
+            "link": "/api/v1/divisions/204"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Washington",
+          "franchiseName": "Washington",
+          "clubName": "Nationals",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 23,
+          "losses": 25,
+          "pct": ".479"
+        },
+        "probablePitcher": {
+          "id": 656492,
+          "fullName": "Foster Griffin",
+          "link": "/api/v1/people/656492"
+        },
+        "splitSquad": false,
+        "seriesNumber": 16,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      }
+    },
+    "linescore": {
+      "scheduledInnings": 9,
+      "innings": [],
+      "teams": {
+        "home": {},
+        "away": {}
+      },
+      "defense": {
+        "team": {
+          "id": 120,
+          "name": "Washington Nationals",
+          "link": "/api/v1/teams/120"
+        }
+      },
+      "offense": {
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      }
+    },
+    "venue": {
+      "id": 3309,
+      "name": "Nationals Park",
+      "link": "/api/v1/venues/3309",
+      "active": true,
+      "season": "2026"
+    },
+    "content": {
+      "link": "/api/v1/game/822736/content"
+    },
+    "seriesStatus": {
+      "gameNumber": 2,
+      "totalGames": 4,
+      "isTied": true,
+      "isOver": false,
+      "wins": 0,
+      "losses": 0,
+      "description": "Regular Season",
+      "shortDescription": "Season",
+      "shortName": "Season",
+      "abbreviation": "RS"
+    },
+    "gameNumber": 1,
+    "publicFacing": true,
+    "doubleHeader": "N",
+    "gamedayType": "P",
+    "tiebreaker": "N",
+    "calendarEventID": "14-822736-2026-05-19",
+    "seasonDisplay": "2026",
+    "dayNight": "night",
+    "scheduledInnings": 9,
+    "reverseHomeAwayStatus": false,
+    "inningBreakLength": 120,
+    "gamesInSeries": 4,
+    "seriesGameNumber": 2,
+    "seriesDescription": "Regular Season",
+    "recordSource": "S",
+    "ifNecessary": "N",
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
+  },
   "meta": {
-    "provider": "api-sports",
-    "generatedAt": "2026-05-18T22:38:59.687Z",
+    "provider": "mlb-stats-api",
+    "generatedAt": "2026-05-19T04:34:26.097Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-05-18",
-    "cacheKey": "next-game:2026-05-18"
+    "referenceDate": "2026-05-19",
+    "cacheKey": "next-game:2026-05-19"
   }
 }
