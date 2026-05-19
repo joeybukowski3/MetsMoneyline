@@ -70,6 +70,7 @@ jobs:
       # Step 5: Build power rankings (season + L30)
       - name: Build power rankings (season + L30)
         working-directory: ./bot
+        continue-on-error: true
         run: node build-power-rankings.js
 
       # Step 6: Commit everything the above scripts wrote

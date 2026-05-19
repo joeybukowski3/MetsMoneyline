@@ -224,6 +224,10 @@ async function getBullpenRating(window = null) {
 
 /* ── Build ranked teams from raw maps ── */
 function buildRankedTeams(standings, opsMap, xeraMap, bpMap) {
+  if (!Array.isArray(standings) || standings.length === 0) {
+    console.warn("[rankings] buildRankedTeams called with empty standings — skipping");
+    return [];
+  }
   const teams = standings.map(t => ({
     ...t,
     opsPlus:     opsMap[t.teamId]?.opsPlus ?? 100,
@@ -269,44 +273,50 @@ async function main() {
     getBullpenRating(l30),
   ]);
 
-  // Season dataset (xERA is always season from Savant — no rolling endpoint)
+  // Season dataset
   const seasonTeams = buildRankedTeams(standingsSeason, opsSeason, xeraSeason, bpSeason);
 
-  const seasonOutput = {
-    generatedAt: new Date().toISOString(),
-    season: SEASON,
-    window: "season",
-    methodology: "Equal-weighted percentile ranking: OPS+ (25pts) + Starter xERA (25pts) + Bullpen xFIP (25pts) + Run Differential (25pts)",
-    teams: seasonTeams,
-  };
-
-  fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(seasonOutput, null, 2));
-  replaceHtmlBlock(POWER_RANKINGS_HTML_PATH, "SEO_POWER_RANKINGS_SUMMARY", buildPowerRankingsSeoSummary(seasonTeams));
-  console.log(`[rankings] Wrote season → ${OUTPUT_PATH}`);
+  if (seasonTeams.length === 0) {
+    console.warn("[rankings] Season teams empty — preserving existing power-rankings.json");
+  } else {
+    const seasonOutput = {
+      generatedAt: new Date().toISOString(),
+      season: SEASON,
+      window: "season",
+      methodology: "Equal-weighted percentile ranking: OPS+ (25pts) + Starter xERA (25pts) + Bullpen xFIP (25pts) + Run Differential (25pts)",
+      teams: seasonTeams,
+    };
+    fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
+    fs.writeFileSync(OUTPUT_PATH, JSON.stringify(seasonOutput, null, 2));
+    replaceHtmlBlock(POWER_RANKINGS_HTML_PATH, "SEO_POWER_RANKINGS_SUMMARY", buildPowerRankingsSeoSummary(seasonTeams));
+    console.log(`[rankings] Wrote season → ${OUTPUT_PATH}`);
+  }
 
   // L30 dataset — uses L30 OPS and bullpen; xERA falls back to season (Savant has no rolling API)
   const l30Teams = buildRankedTeams(standingsSeason, opsL30, xeraSeason, bpL30);
-  // Annotate with season rank for compare tab
-  const seasonRankMap = {};
-  seasonTeams.forEach((t, i) => { seasonRankMap[t.teamId] = i + 1; });
-  l30Teams.forEach((t, i) => {
-    t.seasonRank = seasonRankMap[t.teamId] ?? null;
-    t.rankDelta  = t.seasonRank != null ? t.seasonRank - (i + 1) : null;
-  });
+  if (l30Teams.length === 0) {
+    console.warn("[rankings] L30 teams empty — preserving existing power-rankings-l30.json");
+  } else {
+    // Annotate with season rank for compare tab
+    const seasonRankMap = {};
+    seasonTeams.forEach((t, i) => { seasonRankMap[t.teamId] = i + 1; });
+    l30Teams.forEach((t, i) => {
+      t.seasonRank = seasonRankMap[t.teamId] ?? null;
+      t.rankDelta  = t.seasonRank != null ? t.seasonRank - (i + 1) : null;
+    });
 
-  const l30Output = {
-    generatedAt: new Date().toISOString(),
-    season: SEASON,
-    window: "last30",
-    startDate: l30.startDate,
-    endDate: l30.endDate,
-    methodology: "Equal-weighted percentile ranking over last 30 days: OPS+ (25pts) + Starter xERA (25pts, season) + Bullpen ERA (25pts) + Run Differential (25pts, season)",
-    teams: l30Teams,
-  };
-
-  fs.writeFileSync(OUTPUT_PATH_L30, JSON.stringify(l30Output, null, 2));
-  console.log(`[rankings] Wrote L30 → ${OUTPUT_PATH_L30}`);
+    const l30Output = {
+      generatedAt: new Date().toISOString(),
+      season: SEASON,
+      window: "last30",
+      startDate: l30.startDate,
+      endDate: l30.endDate,
+      methodology: "Equal-weighted percentile ranking over last 30 days: OPS+ (25pts) + Starter xERA (25pts, season) + Bullpen ERA (25pts) + Run Differential (25pts, season)",
+      teams: l30Teams,
+    };
+    fs.writeFileSync(OUTPUT_PATH_L30, JSON.stringify(l30Output, null, 2));
+    console.log(`[rankings] Wrote L30 → ${OUTPUT_PATH_L30}`);
+  }
 }
 
 main().catch(e => {
