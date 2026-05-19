@@ -1357,7 +1357,7 @@ function buildRow3(game) {
 
   const metsBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
-    : `<div class="lu-header"><span></span><span></span><span></span><span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span></div>
+    : `<div class="lu-header"><span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span></div>
        <div class="lu-list">${lineupCard(metsLineup,
          p => getMetsHitterAVG(p), p => getMetsHitterSeasonOps(p),
          p => p.savant?.xBA ?? p.seasonAVG,
@@ -1365,7 +1365,7 @@ function buildRow3(game) {
 
   const oppBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
-    : `<div class="lu-header"><span></span><span></span><span></span><span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span></div>
+    : `<div class="lu-header"><span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span></div>
        <div class="lu-list">${lineupCard(oppLineup,
          p => p.seasonAVG, p => p.seasonOPS,
          p => p.savant?.xBA ?? p.seasonAVG,
@@ -1829,13 +1829,20 @@ function buildTeamAdvancedCard(game) {
     const hasComparison = mNum != null && oNum != null;
     const mRank = ta.mets.leagueRanks?.[r.rankKey];
     const oRank = ta.opp.leagueRanks?.[r.rankKey];
-    // Determine edge: use raw value first, fall back to league rank when tied
-    let metsLeads = hasComparison && (r.higherBetter ? mNum > oNum : mNum < oNum);
-    let oppLeads  = hasComparison && (r.higherBetter ? oNum > mNum : oNum < mNum);
-    // When values are equal (tie), use league rank to break the tie
-    if (hasComparison && !metsLeads && !oppLeads && mRank != null && oRank != null && mRank !== oRank) {
-      metsLeads = mRank < oRank; // lower rank number = better
+    // Edge: use league rank as primary signal (lower rank = better)
+    // Fall back to raw stat comparison only when both ranks are missing or equal
+    let metsLeads, oppLeads;
+    if (mRank != null && oRank != null && mRank !== oRank) {
+      // Ranks available and differ — rank wins
+      metsLeads = mRank < oRank;
       oppLeads  = oRank < mRank;
+    } else if (hasComparison && mNum !== oNum) {
+      // No ranks or ranks tied — use raw stat
+      metsLeads = r.higherBetter ? mNum > oNum : mNum < oNum;
+      oppLeads  = r.higherBetter ? oNum > mNum : oNum < mNum;
+    } else {
+      metsLeads = false;
+      oppLeads  = false;
     }
     const mStyle = metsLeads ? `font-weight:700;color:${REPORT_PREVIEW_HIGH_COLOR}` : "";
     const oStyle = oppLeads  ? `font-weight:700;color:${REPORT_PREVIEW_LOW_COLOR}` : "";
