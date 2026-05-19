@@ -15,7 +15,6 @@
           <a href="/game-log">Analytics</a>
           <a href="/rankings">Power Rankings</a>
           <a href="/social">Social Score</a>
-          <a href="/on-this-day">On This Day</a>
         </div>
         <div class="footer-link-group">
           <span class="footer-link-heading">Site</span>
