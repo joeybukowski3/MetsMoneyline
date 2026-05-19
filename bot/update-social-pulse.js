@@ -46,8 +46,22 @@ const BLUESKY_ACCOUNT_TERMS = [
 
 const BLUESKY_SEARCH_TERMS = [...BLUESKY_PRIORITY_TERMS, ...BLUESKY_ACCOUNT_TERMS];
 
-const X_QUERY = [
-  '("New York Mets" OR #LGM OR #NYMets OR "Mets bullpen" OR "Mets rotation" OR "Subway Series" OR "Citi Field" OR "Juan Soto" Mets OR "Francisco Lindor" OR "Mark Vientos" OR "Bo Bichette" Mets OR "Carlos Mendoza" Mets)',
+const X_QUERY_MAIN = [
+  '("New York Mets" OR #LGM OR #NYMets OR "Mets bullpen" OR "Mets rotation" OR "Subway Series" OR "Citi Field")',
+  "lang:en",
+  "-is:retweet",
+  "-is:reply",
+].join(" ");
+
+const X_QUERY_PLAYERS = [
+  '("Juan Soto" Mets OR "Francisco Lindor" OR "Mark Vientos" OR "Bo Bichette" Mets OR "Carlos Mendoza" Mets OR "Mets lineup" OR "Mets trade")',
+  "lang:en",
+  "-is:retweet",
+  "-is:reply",
+].join(" ");
+
+const X_QUERY_GAME = [
+  '("Mets game" OR "Mets win" OR "Mets loss" OR "Let\'s go Mets" OR #MetsTwitter OR "Citi Field" OR "Mets starter")',
   "lang:en",
   "-is:retweet",
   "-is:reply",
@@ -595,38 +609,52 @@ async function fetchXPosts(playerUniverse) {
     return [];
   }
 
-  const maxResults = getXLimit();
+  // Free tier caps each search at 10 results — run three targeted queries in parallel
+  // and deduplicate by tweet id to maximise volume.
+  const PER_QUERY = 10; // free tier hard cap
+  const QUERIES = [X_QUERY_MAIN, X_QUERY_PLAYERS, X_QUERY_GAME];
 
-  try {
-    const result = await client.v2.search(X_QUERY, {
-      max_results: maxResults,
-      "tweet.fields": ["author_id", "created_at", "public_metrics", "lang"],
-      "user.fields": ["name", "username"],
-      expansions: ["author_id"],
-      sort_order: "recency"
-    });
+  const searchOpts = {
+    max_results: PER_QUERY,
+    "tweet.fields": ["author_id", "created_at", "public_metrics", "lang"],
+    "user.fields": ["name", "username"],
+    expansions: ["author_id"],
+    sort_order: "recency",
+  };
 
-    const tweets = Array.isArray(result?.data?.data)
-      ? result.data.data
-      : Array.isArray(result?.tweets)
-        ? result.tweets
-        : [];
-    const includes = result?.data?.includes || result?.includes || {};
-    const usersById = new Map(
-      (Array.isArray(includes.users) ? includes.users : []).map((user) => [user.id, user])
-    );
-
-    const normalized = tweets
-      .map((tweet) => normalizeXPost(tweet, usersById, playerUniverse))
-      .filter(Boolean)
-      .slice(0, maxResults);
-
-    console.log(`Fetched ${normalized.length} X posts (limit ${maxResults}).`);
-    return normalized;
-  } catch (error) {
-    console.warn(`X social pulse failed: ${sanitizeText(error.message || error.code || "unknown error")}`);
-    return [];
+  async function runQuery(query) {
+    try {
+      const result = await client.v2.search(query, searchOpts);
+      const tweets = Array.isArray(result?.data?.data)
+        ? result.data.data
+        : Array.isArray(result?.tweets) ? result.tweets : [];
+      const includes = result?.data?.includes || result?.includes || {};
+      const usersById = new Map(
+        (Array.isArray(includes.users) ? includes.users : []).map((u) => [u.id, u])
+      );
+      return tweets.map((t) => normalizeXPost(t, usersById, playerUniverse)).filter(Boolean);
+    } catch (error) {
+      console.warn(`X query failed: ${sanitizeText(error.message || error.code || "unknown")}`);
+      return [];
+    }
   }
+
+  const results = await Promise.all(QUERIES.map(runQuery));
+
+  // Deduplicate by tweet id (url contains the id)
+  const seen = new Set();
+  const all = [];
+  for (const batch of results) {
+    for (const post of batch) {
+      const key = post.url || post.text?.slice(0, 60) || Math.random();
+      if (!seen.has(key)) { seen.add(key); all.push(post); }
+    }
+  }
+
+  const maxResults = getXLimit();
+  const final = all.slice(0, maxResults);
+  console.log(`Fetched ${final.length} X posts from ${QUERIES.length} queries (deduped from ${all.length}).`);
+  return final;
 }
 
 function collectPosts(deduped, normalizedPosts) {
