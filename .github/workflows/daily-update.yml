@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: site-data-write
+  cancel-in-progress: false
+
 jobs:
   refresh-site-data:
     runs-on: ubuntu-latest

@@ -256,7 +256,8 @@ function buildRankedTeams(standings, opsMap, xeraMap, bpMap) {
 
 /* ── Main ── */
 async function main() {
-  console.log("[rankings] Starting build — season + L30...");
+  console.log("[rankings] build-power-rankings.js v3 — starting (season + L30)");
+  console.log("[rankings] percentileRank available:", typeof percentileRank === "function");
 
   const l30 = getL30Window();
 
@@ -320,6 +321,7 @@ async function main() {
 }
 
 main().catch(e => {
-  console.error("[rankings] Fatal error:", e);
+  console.error("[rankings] Fatal error:", e.message);
+  console.error(e.stack);
   process.exit(1);
 });
