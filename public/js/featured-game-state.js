@@ -161,9 +161,19 @@
     const sourceStale = Boolean(game?.canonicalGameSource?.stale);
     const authoritativeDate = normalizeGameDate(authoritativeUpcomingGame);
 
+    // Never discard a stale-flagged game
+    if (sourceStale) return true;
+
+    // External sources are always trustworthy
     if (sourceName.startsWith("external/") && !sourceStale) return false;
+
+    // Only discard local/public-data if we have an authoritative game for a DIFFERENT date,
+    // indicating the bot data is for the wrong day. If no authoritative game exists, keep it.
+    if (!authoritativeUpcomingGame) return false;
     if (authoritativeDate && authoritativeDate !== referenceDate) return true;
-    return sourceStale || !sourceName || sourceName.startsWith("local/");
+
+    // If authoritative game is for today, let the merge logic handle it
+    return false;
   }
 
   function selectGameToDisplay(games, options = {}) {

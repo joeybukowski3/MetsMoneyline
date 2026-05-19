@@ -302,7 +302,7 @@ async function fetchApiSportsStandings(config, season) {
 
 async function fetchMlbStatsStandings(season) {
   const payload = await fetchJsonOrNull(
-    `https://statsapi.mlb.com/api/v1/standings?leagueId=${NATIONAL_LEAGUE_ID}&season=${season}&standingsTypes=regularSeason`
+    `https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=${season}&standingsTypes=regularSeason`
   );
   if (!payload) return null;
   return normalizeMlbStandings(payload);
@@ -625,7 +625,9 @@ async function run() {
     odds = await fetchApiSportsOdds(config, resolvedUpcomingGame?.gameId || liveGame?.gameId || null);
   }
 
-  const nextGamePayload = {
+  // ── Next-game: preserve last good data if current fetch returned no game ──
+  const nextGameHasData = Boolean(resolvedUpcomingGame?.gameId || liveGame?.gameId);
+  let resolvedNextGamePayload = {
     ...normalizeNextGame(resolvedUpcomingGame, config.metsTeamId, odds),
     meta: {
       provider: nextGame ? "api-sports" : mlbStatsUpcomingGame ? "mlb-stats-api" : "api-sports",
@@ -635,6 +637,30 @@ async function run() {
       cacheKey: buildDateScopedCacheKey("next-game", referenceDate)
     }
   };
+  if (!nextGameHasData) {
+    const existingNextGamePath = path.join(PUBLIC_API_ROOT, "next-game");
+    try {
+      const existingRaw = fs.readFileSync(existingNextGamePath, "utf8");
+      const existingNextGame = JSON.parse(existingRaw);
+      // Only preserve if the existing data has a real gameId and isn't from a past date
+      const existingDate = existingNextGame?.meta?.referenceDate || existingNextGame?.gameDate;
+      const isStale = existingDate && existingDate < referenceDate;
+      if (existingNextGame?.gameId && !isStale) {
+        console.log(`[next-game] Fetch returned empty — preserving existing next-game (${existingNextGame.gameId})`);
+        resolvedNextGamePayload = {
+          ...existingNextGame,
+          meta: {
+            ...existingNextGame.meta,
+            generatedAt: new Date().toISOString(),
+            note: "preserved from previous cache — live fetch returned empty"
+          }
+        };
+      }
+    } catch {
+      // No existing file — continue with empty next-game
+    }
+  }
+  const nextGamePayload = resolvedNextGamePayload;
 
   const liveGamePayload = {
     ...normalizeLiveGame(liveGame),
@@ -647,12 +673,30 @@ async function run() {
     }
   };
 
+  // ── Standings: preserve last good data if current fetch returned empty ──
+  const standingsHasData = Array.isArray(standings?.teams) && standings.teams.length > 0;
+  let resolvedStandings = standings;
+  if (!standingsHasData) {
+    const existingStandingsPath = path.join(PUBLIC_API_ROOT, "standings");
+    try {
+      const existingRaw = fs.readFileSync(existingStandingsPath, "utf8");
+      const existingStandings = JSON.parse(existingRaw);
+      if (Array.isArray(existingStandings?.teams) && existingStandings.teams.length > 0) {
+        console.log(`[standings] Fetch returned empty — preserving existing standings (${existingStandings.teams.length} teams)`);
+        resolvedStandings = existingStandings;
+      }
+    } catch {
+      // No existing file — continue with empty standings
+    }
+  }
+
   const standingsPayload = {
-    ...(standings || { division: "NL East", season, teams: [] }),
+    ...(resolvedStandings || { division: "NL East", season, teams: [] }),
     meta: {
-      provider: standings?.sourceProvider || "api-sports",
+      provider: resolvedStandings?.sourceProvider || resolvedStandings?.meta?.provider || "api-sports",
       generatedAt: new Date().toISOString(),
-      cacheHint: "standings: 10-15 minutes"
+      cacheHint: "standings: 10-15 minutes",
+      ...(!standingsHasData && resolvedStandings !== standings ? { note: "preserved from previous cache — live fetch returned empty" } : {})
     }
   };
 
