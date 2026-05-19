@@ -1827,12 +1827,18 @@ function buildTeamAdvancedCard(game) {
     const mNum = parseMetricNumber(r.mVal);
     const oNum = parseMetricNumber(r.oVal);
     const hasComparison = mNum != null && oNum != null;
-    const metsLeads = hasComparison && (r.higherBetter ? mNum > oNum : mNum < oNum);
-    const oppLeads  = hasComparison && !metsLeads && mNum !== oNum;
-    const mStyle = metsLeads ? `font-weight:700;color:${REPORT_PREVIEW_HIGH_COLOR}` : "";
-    const oStyle = oppLeads  ? `font-weight:700;color:${REPORT_PREVIEW_LOW_COLOR}` : "";
     const mRank = ta.mets.leagueRanks?.[r.rankKey];
     const oRank = ta.opp.leagueRanks?.[r.rankKey];
+    // Determine edge: use raw value first, fall back to league rank when tied
+    let metsLeads = hasComparison && (r.higherBetter ? mNum > oNum : mNum < oNum);
+    let oppLeads  = hasComparison && (r.higherBetter ? oNum > mNum : oNum < mNum);
+    // When values are equal (tie), use league rank to break the tie
+    if (hasComparison && !metsLeads && !oppLeads && mRank != null && oRank != null && mRank !== oRank) {
+      metsLeads = mRank < oRank; // lower rank number = better
+      oppLeads  = oRank < mRank;
+    }
+    const mStyle = metsLeads ? `font-weight:700;color:${REPORT_PREVIEW_HIGH_COLOR}` : "";
+    const oStyle = oppLeads  ? `font-weight:700;color:${REPORT_PREVIEW_LOW_COLOR}` : "";
     const fmtCell = (val, rank, isLeading) => {
       const statStr = fmt(val);
       if (rank == null) return `<span style="${isLeading ? "font-weight:700;" : ""}">${statStr}</span>`;
@@ -1862,7 +1868,7 @@ function buildTeamAdvancedCard(game) {
           <tbody>${rows}</tbody>
         </table>
       </div>
-      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: FanGraphs ? Baseball Savant ? MLB Stats API</p>
+      <p style="font-size:0.72rem;color:#9099b0;padding:0.5rem 1rem 0.75rem;">Sources: FanGraphs &middot; Baseball Savant &middot; MLB Stats API</p>
     </div>`;
 }
 
