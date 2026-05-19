@@ -221,26 +221,146 @@ async function main() {
     if (eraMap[tid]) g.oppSeasonEra = eraMap[tid];
   }
 
-  // ── 6. Compute series game numbers ────────────────────────────────────────────
-  let seriesStart = 0;
-  for (let i = 1; i <= games.length; i++) {
-    const daysDiff = i < games.length
-      ? (new Date(games[i].date) - new Date(games[i-1].date)) / 86400000
-      : 999;
-    const newSeries = i === games.length
-      || games[i].oppTeamId !== games[i-1].oppTeamId
-      || daysDiff > 2;
+  // ── 6. Fetch full-season schedule (past + future) to correctly detect series ───
+  // We already have completed games through today. Now get the ENTIRE schedule
+  // so series boundaries are computed from the real schedule, not just results.
+  // This prevents the last completed game of an ongoing series being mislabeled
+  // as the series finale.
+  console.log("[game-log] Fetching full season schedule for series context…");
+  const endDate = `${SEASON}-11-30`;
+  let fullSched;
+  try {
+    fullSched = await fetchJson(
+      `https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=${METS_TEAM_ID}` +
+      `&startDate=${startDate}&endDate=${endDate}&gameType=R&hydrate=team`
+    );
+  } catch (e) {
+    console.warn("[game-log] Full schedule fetch failed — falling back to completed-only series detection:", e.message);
+    fullSched = null;
+  }
 
-    if (newSeries) {
-      const len = i - seriesStart;
-      for (let k = seriesStart; k < i; k++) {
-        games[k].seriesGameNum = k - seriesStart + 1;
-        games[k].seriesLength  = len;
-        games[k].isSeriesLast  = k === i - 1;
+  // Build an ordered list of ALL scheduled regular-season games (date + oppTeamId)
+  // This includes rainouts/postponements as "Postponed" which we track separately.
+  const fullSchedule = []; // { date, oppTeamId, oppAbbr, homeAway, status }
+  if (fullSched) {
+    for (const dateEntry of fullSched?.dates || []) {
+      for (const game of dateEntry.games || []) {
+        const isHome  = game?.teams?.home?.team?.id === METS_TEAM_ID;
+        const oppTeam = isHome ? game.teams.away : game.teams.home;
+        const oppId   = oppTeam?.team?.id;
+        const state   = game?.status?.detailedState || "";
+        const isPostponed = state.toLowerCase().includes("postponed") ||
+                            state.toLowerCase().includes("cancelled");
+        if (oppId) {
+          fullSchedule.push({
+            date:      dateEntry.date,
+            oppTeamId: oppId,
+            oppAbbr:   TEAM_ABBR[oppId] || oppTeam?.team?.abbreviation || "???",
+            homeAway:  isHome ? "home" : "away",
+            status:    isPostponed ? "postponed" : state,
+            gamePk:    game.gamePk,
+          });
+        }
       }
-      seriesStart = i;
+    }
+    fullSchedule.sort((a, b) => a.date.localeCompare(b.date));
+    console.log(`[game-log] Full schedule: ${fullSchedule.length} games`);
+  }
+
+  // ── Compute series boundaries from the FULL schedule ─────────────────────────
+  // Group consecutive games vs same opponent (allowing ≤1 day travel gap).
+  // Each group knows its true length so we never falsely flag series finale.
+  const seriesGroupByDate = {}; // date → { gameNum, seriesLength, isSeriesLast, seriesOppId }
+
+  if (fullSchedule.length > 0) {
+    let sStart = 0;
+    for (let i = 1; i <= fullSchedule.length; i++) {
+      const curr = fullSchedule[i] || null;
+      const prev = fullSchedule[i - 1];
+      const daysDiff = curr
+        ? (new Date(curr.date) - new Date(prev.date)) / 86400000
+        : 999;
+      const newSeries = !curr
+        || curr.oppTeamId !== prev.oppTeamId
+        || daysDiff > 2;
+
+      if (newSeries) {
+        const len = i - sStart;
+        for (let k = sStart; k < i; k++) {
+          const g = fullSchedule[k];
+          seriesGroupByDate[g.date + "_" + g.oppTeamId] = {
+            gameNum:      k - sStart + 1,
+            seriesLength: len,
+            isSeriesLast: k === i - 1,
+          };
+        }
+        sStart = i;
+      }
     }
   }
+
+  // Apply series info to completed games using the full-schedule groups.
+  // Fall back to completed-only logic if full schedule wasn't available.
+  if (fullSchedule.length > 0) {
+    for (const g of games) {
+      const key = g.date + "_" + g.oppTeamId;
+      const sg  = seriesGroupByDate[key];
+      if (sg) {
+        g.seriesGameNum  = sg.gameNum;
+        g.seriesLength   = sg.seriesLength;
+        g.isSeriesLast   = sg.isSeriesLast;
+      } else {
+        // Game not found in full schedule (rare edge case — doubleheader, etc.)
+        g.seriesGameNum  = 1;
+        g.seriesLength   = 1;
+        g.isSeriesLast   = false;
+      }
+    }
+  } else {
+    // Fallback: compute from completed games only (original logic)
+    let seriesStart = 0;
+    for (let i = 1; i <= games.length; i++) {
+      const daysDiff = i < games.length
+        ? (new Date(games[i].date) - new Date(games[i-1].date)) / 86400000
+        : 999;
+      const newSeries = i === games.length
+        || games[i].oppTeamId !== games[i-1].oppTeamId
+        || daysDiff > 2;
+
+      if (newSeries) {
+        const len = i - seriesStart;
+        for (let k = seriesStart; k < i; k++) {
+          games[k].seriesGameNum = k - seriesStart + 1;
+          games[k].seriesLength  = len;
+          // Only mark finale if this is truly the last game in the full schedule too
+          games[k].isSeriesLast  = k === i - 1;
+        }
+        seriesStart = i;
+      }
+    }
+  }
+
+  // ── Build upcoming scheduled games (same structure, no scores) ────────────────
+  // Include future games so the frontend can show the rest of an ongoing series.
+  const today2 = new Date().toISOString().slice(0, 10);
+  const upcomingGames = fullSchedule
+    .filter(g => g.date > today2 && g.status !== "postponed")
+    .slice(0, 30)   // next 30 scheduled games
+    .map(g => {
+      const sg = seriesGroupByDate[g.date + "_" + g.oppTeamId] || {};
+      return {
+        date:         g.date,
+        dayOfWeek:    dayOfWeek(g.date),
+        homeAway:     g.homeAway,
+        opponent:     null,   // team name not critical for upcoming display
+        oppAbbr:      g.oppAbbr,
+        oppTeamId:    g.oppTeamId,
+        status:       g.status || "Scheduled",
+        seriesGameNum:  sg.gameNum    || null,
+        seriesLength:   sg.seriesLength || null,
+        isSeriesLast:   sg.isSeriesLast || false,
+      };
+    });
 
   // ── 7. Season summary ─────────────────────────────────────────────────────────
   const avg = (arr, fn) => {
@@ -267,6 +387,7 @@ async function main() {
     season:      SEASON,
     summary,
     games,
+    upcomingGames,
   };
 
   fs.writeFileSync(OUTPUT, JSON.stringify(output, null, 2) + "\n");
