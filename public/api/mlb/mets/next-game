@@ -1,7 +1,7 @@
 {
   "gameId": 822736,
   "startTime": "2026-05-19T22:45:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 120,
     "canonicalKey": "nationals",
@@ -40,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 695578,
+        "name": "James Wood",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 671277,
+        "name": "Luis García Jr.",
+        "pos": "1B"
+      },
+      {
+        "order": 3,
+        "playerId": 677588,
+        "name": "José Tena",
+        "pos": "DH"
+      },
+      {
+        "order": 4,
+        "playerId": 682928,
+        "name": "CJ Abrams",
+        "pos": "SS"
+      },
+      {
+        "order": 5,
+        "playerId": 695734,
+        "name": "Daylen Lile",
+        "pos": "LF"
+      },
+      {
+        "order": 6,
+        "playerId": 686611,
+        "name": "Dylan Crews",
+        "pos": "CF"
+      },
+      {
+        "order": 7,
+        "playerId": 678391,
+        "name": "Jorbit Vivas",
+        "pos": "3B"
+      },
+      {
+        "order": 8,
+        "playerId": 686452,
+        "name": "Drew Millas",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 683083,
+        "name": "Nasim Nuñez",
+        "pos": "2B"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +110,9 @@
     "officialDate": "2026-05-19",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -206,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 120,
-          "name": "Washington Nationals",
-          "link": "/api/v1/teams/120"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 120,
+          "name": "Washington Nationals",
+          "link": "/api/v1/teams/120"
         }
       }
     },
@@ -232,12 +287,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 120,
+        "name": "Washington Nationals",
+        "link": "/api/v1/teams/120"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -258,11 +338,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 695578,
+          "fullName": "James Wood",
+          "link": "/api/v1/people/695578",
+          "firstName": "James",
+          "lastName": "Wood",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "James"
+        },
+        {
+          "id": 671277,
+          "fullName": "Luis García Jr.",
+          "link": "/api/v1/people/671277",
+          "firstName": "Luis",
+          "lastName": "García",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Luis"
+        },
+        {
+          "id": 677588,
+          "fullName": "José Tena",
+          "link": "/api/v1/people/677588",
+          "firstName": "José",
+          "lastName": "Tena",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "José"
+        },
+        {
+          "id": 682928,
+          "fullName": "CJ Abrams",
+          "link": "/api/v1/people/682928",
+          "firstName": "Paul",
+          "lastName": "Abrams",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "CJ"
+        },
+        {
+          "id": 695734,
+          "fullName": "Daylen Lile",
+          "link": "/api/v1/people/695734",
+          "firstName": "Daylen",
+          "lastName": "Lile",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Daylen"
+        },
+        {
+          "id": 686611,
+          "fullName": "Dylan Crews",
+          "link": "/api/v1/people/686611",
+          "firstName": "Dylan",
+          "lastName": "Crews",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Dylan"
+        },
+        {
+          "id": 678391,
+          "fullName": "Jorbit Vivas",
+          "link": "/api/v1/people/678391",
+          "firstName": "Jorbit",
+          "lastName": "Vivas",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Jorbit"
+        },
+        {
+          "id": 686452,
+          "fullName": "Drew Millas",
+          "link": "/api/v1/people/686452",
+          "firstName": "Andrew",
+          "lastName": "Millas",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Drew"
+        },
+        {
+          "id": 683083,
+          "fullName": "Nasim Nuñez",
+          "link": "/api/v1/people/683083",
+          "firstName": "Nasim",
+          "lastName": "Nuñez",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Nasim"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-19T17:24:27.227Z",
+    "generatedAt": "2026-05-19T19:24:56.817Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-19",
     "cacheKey": "next-game:2026-05-19"
