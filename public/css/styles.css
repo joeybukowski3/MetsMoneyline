@@ -2237,8 +2237,22 @@ footer {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 0.8rem 1rem;
-  margin: 0 0 0.85rem;
+  gap: 1.5rem 2.5rem;
+  margin: 0 0 1rem;
+}
+.footer-link-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  align-items: center;
+}
+.footer-link-heading {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 0.2rem;
 }
 .footer-links a {
   color: rgba(255,255,255,0.82);

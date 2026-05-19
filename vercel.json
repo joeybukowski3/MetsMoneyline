@@ -149,6 +149,11 @@
       "source": "/disclaimer.html",
       "destination": "/disclaimer",
       "permanent": true
+    },
+    {
+      "source": "/analytics.html",
+      "destination": "/game-log",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -229,6 +234,10 @@
       "destination": "/game-log.html"
     },
     {
+      "source": "/analytics",
+      "destination": "/game-log.html"
+    },
+    {
       "source": "/social-pulse",
       "destination": "/social-pulse.html"
     },
@@ -271,7 +280,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://img.mlbstatic.com https://www.mlbstatic.com https://lh3.googleusercontent.com https://pbs.twimg.com https://cdn.bsky.app; connect-src 'self' https://www.google-analytics.com https://*.supabase.co https://api.bsky.app https://statsapi.mlb.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.jsdelivr.net https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://www.googleadservices.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://img.mlbstatic.com https://www.mlbstatic.com https://lh3.googleusercontent.com https://pbs.twimg.com https://cdn.bsky.app https://pagead2.googlesyndication.com https://www.google.com https://googleads.g.doubleclick.net; connect-src 'self' https://www.google-analytics.com https://*.supabase.co https://api.bsky.app https://statsapi.mlb.com https://pagead2.googlesyndication.com; frame-src https://googleads.g.doubleclick.net https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://buttondown.com https://buttondown.email"
         }
       ]
     },
