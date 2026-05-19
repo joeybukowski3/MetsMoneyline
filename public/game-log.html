@@ -190,12 +190,10 @@
                 <th data-col="oppWinPct"      title="Opponent win percentage">Opp W%</th>
                 <th data-col="oppHomeRecord"  title="Opponent home record">Opp H</th>
                 <th data-col="oppRoadRecord"  title="Opponent road record">Opp A</th>
-                <th data-col="oppSeasonAvg"   title="Opponent team batting average">Opp AVG</th>
-                <th data-col="oppSeasonEra"   title="Opponent team ERA">Opp ERA</th>
               </tr>
             </thead>
             <tbody id="gl-tbody">
-              <tr><td colspan="21" class="gl-empty">Loading game log…</td></tr>
+              <tr><td colspan="19" class="gl-empty">Loading game log…</td></tr>
             </tbody>
           </table>
         </div>
@@ -238,7 +236,7 @@
         buildFilters();
         render();
       })
-      .catch(function(){ document.getElementById("gl-tbody").innerHTML = '<tr><td colspan="21" class="gl-empty">Game log data not available yet. Check back after tonight\'s update.</td></tr>'; });
+      .catch(function(){ document.getElementById("gl-tbody").innerHTML = '<tr><td colspan="19" class="gl-empty">Game log data not available yet. Check back after tonight\'s update.</td></tr>'; });
 
     // ── filter logic ──────────────────────────────────────────────────────────
     function filtered() {
@@ -525,7 +523,7 @@
       var tbody  = document.getElementById("gl-tbody");
 
       if (!sorted.length) {
-        tbody.innerHTML = '<tr><td colspan="21" class="gl-empty">No games match the current filters.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="19" class="gl-empty">No games match the current filters.</td></tr>';
         return;
       }
 
@@ -539,15 +537,6 @@
         var serBadge = '<span class="' + (g.seriesGameNum===1 ? "badge-g1" : "badge-gn") + '">G' + (g.seriesGameNum||"?") + '</span>' +
           (g.isSeriesLast ? '<span class="badge-last" title="Series finale">★</span>' : "");
 
-        // Opp AVG coloring
-        var avgVal = g.oppSeasonAvg;
-        var avgNum = avgVal ? parseFloat(avgVal) : NaN;
-        var avgCls = !isNaN(avgNum) ? (avgNum >= 0.255 ? " stat-good stat-hi" : avgNum <= 0.230 ? " stat-bad stat-lo" : "") : "";
-
-        // Opp ERA coloring (lower = better for us, so high ERA = good for Mets)
-        var eraVal = g.oppSeasonEra;
-        var eraNum = eraVal ? parseFloat(eraVal) : NaN;
-        var eraCls = !isNaN(eraNum) ? (eraNum >= 4.75 ? " stat-good stat-hi" : eraNum <= 3.50 ? " stat-bad stat-lo" : "") : "";
 
         // Opp win% coloring
         var wpNum  = g.oppWinPct;
@@ -574,8 +563,6 @@
           "<td class='" + wpCls + "'>" + wpStr + "</td>" +
           "<td>" + (g.oppHomeRecord||"—") + "</td>" +
           "<td>" + (g.oppRoadRecord||"—") + "</td>" +
-          "<td class='" + avgCls + "'>" + (avgVal||"—") + "</td>" +
-          "<td class='" + eraCls + "'>" + (eraVal||"—") + "</td>" +
           "</tr>";
       }).join("");
     }
