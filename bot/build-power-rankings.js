@@ -21,8 +21,20 @@ const { parse } = require("csv-parse/sync");
 const replaceHtmlBlock = require("./lib/replace-html-block");
 
 const SEASON = new Date().getFullYear();
-const OUTPUT_PATH = path.join(__dirname, "../public/data/power-rankings.json");
+const OUTPUT_PATH      = path.join(__dirname, "../public/data/power-rankings.json");
+const OUTPUT_PATH_L30  = path.join(__dirname, "../public/data/power-rankings-l30.json");
 const POWER_RANKINGS_HTML_PATH = path.join(__dirname, "../public/power-rankings.html");
+
+/* ── Date helpers ── */
+function isoDate(d) {
+  return d.toISOString().slice(0, 10).replace(/-/g, "/");
+}
+function getL30Window() {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - 30);
+  return { startDate: isoDate(start), endDate: isoDate(end) };
+}
 
 async function fetchJson(url) {
   try {
@@ -73,7 +85,8 @@ function inningsToDecimal(value) {
 }
 
 /* ── MLB Stats API: standings for all teams ── */
-async function getStandings() {
+async function getStandings(window = null) {
+  // Standings don't support date ranges — always full season for W/L/RunDiff
   const data = await fetchJson(
     `https://statsapi.mlb.com/api/v1/standings?leagueId=103,104&season=${SEASON}`
   );
@@ -98,11 +111,12 @@ async function getStandings() {
 }
 
 /* ── MLB Stats API: team OPS+ (using team stats endpoint) ── */
-async function getTeamOpsPlus() {
-  // MLB API doesn't directly expose OPS+, so we'll compute it relative to league
-  // Or use the team stats endpoint for OPS and normalize
+async function getTeamOpsPlus(window = null) {
+  const dateParams = window
+    ? `&startDate=${window.startDate}&endDate=${window.endDate}`
+    : "";
   const data = await fetchJson(
-    `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1`
+    `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=hitting&sportIds=1${dateParams}`
   );
   if (!data?.stats?.[0]?.splits) return {};
 
@@ -177,11 +191,14 @@ async function getStarterXera() {
 }
 
 /* ── Baseball Savant: bullpen xFIP (use MLB API pitching stats as fallback) ── */
-async function getBullpenRating() {
+async function getBullpenRating(window = null) {
   // Use MLB API team pitching stats (relief specifically isn't easy to split)
   // We'll use the team ERA as a proxy and supplement with Savant data
+  const dateParams = window
+    ? `&startDate=${window.startDate}&endDate=${window.endDate}`
+    : "";
   const data = await fetchJson(
-    `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=pitching&sportIds=1`
+    `https://statsapi.mlb.com/api/v1/teams/stats?stats=season&season=${SEASON}&group=pitching&sportIds=1${dateParams}`
   );
   if (!data?.stats?.[0]?.splits) return {};
 
@@ -195,67 +212,91 @@ async function getBullpenRating() {
   return map;
 }
 
-/* ── Percentile rank (0-25 scale) ── */
-function percentileRank(values, value, higherIsBetter = true) {
-  const sorted = [...values].sort((a, b) => a - b);
-  const rank = sorted.indexOf(value);
-  const pct = rank / (sorted.length - 1 || 1);
-  const score = higherIsBetter ? pct * 25 : (1 - pct) * 25;
-  return parseFloat(score.toFixed(1));
-}
-
-/* ── Main ── */
-async function main() {
-  console.log("[rankings] Starting build...");
-
-  const [standings, opsMap, xeraMap, bpMap] = await Promise.all([
-    getStandings(),
-    getTeamOpsPlus(),
-    getStarterXera(),
-    getBullpenRating(),
-  ]);
-
-  console.log(`[rankings] ${standings.length} teams from standings`);
-
-  // Merge all data
+/* ── Build ranked teams from raw maps ── */
+function buildRankedTeams(standings, opsMap, xeraMap, bpMap) {
   const teams = standings.map(t => ({
     ...t,
-    opsPlus: opsMap[t.teamId]?.opsPlus ?? 100,
+    opsPlus:     opsMap[t.teamId]?.opsPlus ?? 100,
     starterXera: xeraMap[t.teamId] ?? null,
     bullpenXfip: bpMap[t.teamId] ?? 4.50,
   }));
 
-  // Compute composite scores
   const opsPlusValues = teams.map(t => t.opsPlus);
-  const xeraValues = teams.map(t => t.starterXera).filter(v => typeof v === "number" && Number.isFinite(v));
-  const bpValues = teams.map(t => t.bullpenXfip);
-  const rdValues = teams.map(t => t.runDiff);
+  const xeraValues    = teams.map(t => t.starterXera).filter(v => typeof v === "number" && Number.isFinite(v));
+  const bpValues      = teams.map(t => t.bullpenXfip);
+  const rdValues      = teams.map(t => t.runDiff);
 
   teams.forEach(t => {
     const s1 = percentileRank(opsPlusValues, t.opsPlus, true);
-    const starterXeraForScore = typeof t.starterXera === "number" && Number.isFinite(t.starterXera)
-      ? t.starterXera
-      : 4.50;
-    const s2 = percentileRank(xeraValues, starterXeraForScore, false); // lower ERA = better
+    const xeraForScore = typeof t.starterXera === "number" && Number.isFinite(t.starterXera)
+      ? t.starterXera : 4.50;
+    const s2 = percentileRank(xeraValues, xeraForScore, false);
     const s3 = percentileRank(bpValues, t.bullpenXfip, false);
     const s4 = percentileRank(rdValues, t.runDiff, true);
     t.composite = parseFloat((s1 + s2 + s3 + s4).toFixed(1));
   });
 
-  // Sort by composite descending
   teams.sort((a, b) => b.composite - a.composite);
+  return teams;
+}
 
-  const output = {
+/* ── Main ── */
+async function main() {
+  console.log("[rankings] Starting build — season + L30...");
+
+  const l30 = getL30Window();
+
+  // Fetch both windows in parallel
+  const [
+    standingsSeason, opsSeason, xeraSeason, bpSeason,
+    opsL30, bpL30,
+  ] = await Promise.all([
+    getStandings(),
+    getTeamOpsPlus(),
+    getStarterXera(),
+    getBullpenRating(),
+    getTeamOpsPlus(l30),
+    getBullpenRating(l30),
+  ]);
+
+  // Season dataset (xERA is always season from Savant — no rolling endpoint)
+  const seasonTeams = buildRankedTeams(standingsSeason, opsSeason, xeraSeason, bpSeason);
+
+  const seasonOutput = {
     generatedAt: new Date().toISOString(),
     season: SEASON,
+    window: "season",
     methodology: "Equal-weighted percentile ranking: OPS+ (25pts) + Starter xERA (25pts) + Bullpen xFIP (25pts) + Run Differential (25pts)",
-    teams,
+    teams: seasonTeams,
   };
 
   fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(output, null, 2));
-  replaceHtmlBlock(POWER_RANKINGS_HTML_PATH, "SEO_POWER_RANKINGS_SUMMARY", buildPowerRankingsSeoSummary(teams));
-  console.log(`[rankings] Wrote ${OUTPUT_PATH}`);
+  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(seasonOutput, null, 2));
+  replaceHtmlBlock(POWER_RANKINGS_HTML_PATH, "SEO_POWER_RANKINGS_SUMMARY", buildPowerRankingsSeoSummary(seasonTeams));
+  console.log(`[rankings] Wrote season → ${OUTPUT_PATH}`);
+
+  // L30 dataset — uses L30 OPS and bullpen; xERA falls back to season (Savant has no rolling API)
+  const l30Teams = buildRankedTeams(standingsSeason, opsL30, xeraSeason, bpL30);
+  // Annotate with season rank for compare tab
+  const seasonRankMap = {};
+  seasonTeams.forEach((t, i) => { seasonRankMap[t.teamId] = i + 1; });
+  l30Teams.forEach((t, i) => {
+    t.seasonRank = seasonRankMap[t.teamId] ?? null;
+    t.rankDelta  = t.seasonRank != null ? t.seasonRank - (i + 1) : null;
+  });
+
+  const l30Output = {
+    generatedAt: new Date().toISOString(),
+    season: SEASON,
+    window: "last30",
+    startDate: l30.startDate,
+    endDate: l30.endDate,
+    methodology: "Equal-weighted percentile ranking over last 30 days: OPS+ (25pts) + Starter xERA (25pts, season) + Bullpen ERA (25pts) + Run Differential (25pts, season)",
+    teams: l30Teams,
+  };
+
+  fs.writeFileSync(OUTPUT_PATH_L30, JSON.stringify(l30Output, null, 2));
+  console.log(`[rankings] Wrote L30 → ${OUTPUT_PATH_L30}`);
 }
 
 main().catch(e => {

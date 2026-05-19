@@ -51,6 +51,9 @@ jobs:
         env:
           NODE_ENV: production
 
+      - name: Build power rankings (season + L30)
+        run: node bot/build-power-rankings.js
+
       - name: Commit and push updated site data artifacts
         run: |
           git config user.name "github-actions[bot]"
@@ -65,13 +68,14 @@ jobs:
                   public/data/odds-history.json \
                   public/data/trends.json \
                   public/data/prospects.json \
-                  public/report.html
+                  public/data/power-rankings.json \
+                  public/data/power-rankings-l30.json \
+                  public/report.html \
+                  public/power-rankings.html
           if git diff --staged --quiet; then
             echo "No site data updates to commit."
             exit 0
           fi
           git commit -m "chore: refresh daily site data [skip ci]"
-          git stash
           git pull --rebase origin main
-          git stash pop || true
           git push origin main
