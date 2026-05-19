@@ -938,11 +938,59 @@
       const cumulativeXba = sliceVisibleSeries(normalized.cumulativeXba, getVisiblePointCount());
       const cumulativeOps = sliceVisibleSeries(normalized.cumulativeOps, getVisiblePointCount());
       const datasets = [];
-      let yMin = BA_XBA_Y_MIN;
-      let yMax = BA_XBA_Y_MAX;
       let tickFormatter = fmtDecimal;
-
       let avgValue = null;
+
+      // ── Dynamic Y-axis: captures all data points while keeping MLB avg visible ──
+      function dynamicYAxis(dataSeries, leagueAvg, opts) {
+        opts = opts || {};
+        var hardMin = opts.hardMin != null ? opts.hardMin : 0;
+        var minSpan = opts.minSpan || 0.15;
+        var padFraction = opts.padFraction || 0.12;
+
+        var vals = (dataSeries || []).filter(function(v) { return v != null && Number.isFinite(v); });
+        var allVals = leagueAvg != null && Number.isFinite(leagueAvg) ? vals.concat(leagueAvg) : vals.slice();
+
+        if (!allVals.length) {
+          var mid = leagueAvg || 0.700;
+          return { min: Math.max(hardMin, mid - minSpan/2), max: mid + minSpan/2 };
+        }
+
+        var dataMin = Math.min.apply(null, allVals);
+        var dataMax = Math.max.apply(null, allVals);
+        var dataRange = dataMax - dataMin;
+
+        // Padding: 12% of range or at least minSpan*0.2
+        var pad = Math.max(dataRange * padFraction, minSpan * 0.2);
+        var rawMin = dataMin - pad;
+        var rawMax = dataMax + pad;
+
+        // Enforce minimum span
+        if (rawMax - rawMin < minSpan) {
+          var center = (rawMin + rawMax) / 2;
+          rawMin = center - minSpan / 2;
+          rawMax = center + minSpan / 2;
+        }
+
+        // Try to shift so league avg sits at ~40% from bottom (slightly below center)
+        // but ONLY if doing so doesn't push any data point out of range
+        if (leagueAvg != null && Number.isFinite(leagueAvg) && vals.length > 0) {
+          var span = rawMax - rawMin;
+          var targetMin = leagueAvg - span * 0.40;
+          var targetMax = targetMin + span;
+          // Only apply the shift if all data stays within the shifted range
+          var allFit = allVals.every(function(v) { return v >= targetMin - 0.001 && v <= targetMax + 0.001; });
+          if (allFit) {
+            rawMin = targetMin;
+            rawMax = targetMax;
+          }
+        }
+
+        return {
+          min: Math.max(hardMin, parseFloat(rawMin.toFixed(3))),
+          max: parseFloat(rawMax.toFixed(3))
+        };
+      }
 
       if (statKey === "ba") {
         datasets.push({
@@ -960,8 +1008,6 @@
           fill: true,
           order: 1
         });
-        yMin = BA_XBA_Y_MIN;
-        yMax = BA_XBA_Y_MAX;
         avgValue = LEAGUE_AVG.ba || null;
       } else if (statKey === "xba") {
         datasets.push({
@@ -979,8 +1025,6 @@
           fill: true,
           order: 1
         });
-        yMin = BA_XBA_Y_MIN;
-        yMax = BA_XBA_Y_MAX;
         avgValue = LEAGUE_AVG.xba || null;
       } else if (statKey === "ops") {
         datasets.push({
@@ -998,10 +1042,18 @@
           fill: false,
           order: 1
         });
-        yMin = 0.5;
-        yMax = 0.95;
         avgValue = LEAGUE_AVG.ops || null;
       }
+
+      // Compute dynamic Y range based on actual data
+      var activeSeries = statKey === "xba" ? cumulativeXba : (statKey === "ops" ? cumulativeOps : cumulativeBa);
+      var yRange = dynamicYAxis(activeSeries, avgValue, {
+        hardMin: 0,
+        minSpan: statKey === "ops" ? 0.20 : 0.12,
+        padFraction: 0.10
+      });
+      var yMin = yRange.min;
+      var yMax = yRange.max;
 
       if (avgValue != null) {
         datasets.push({
