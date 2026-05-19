@@ -27,13 +27,23 @@ const POWER_RANKINGS_HTML_PATH = path.join(__dirname, "../public/power-rankings.
 
 /* ── Date helpers ── */
 function isoDate(d) {
-  return d.toISOString().slice(0, 10).replace(/-/g, "/");
+  return d.toISOString().slice(0, 10); // YYYY-MM-DD — MLB API requires dashes
 }
 function getL30Window() {
   const end = new Date();
   const start = new Date();
   start.setDate(start.getDate() - 30);
   return { startDate: isoDate(start), endDate: isoDate(end) };
+}
+
+/* ── Percentile rank (0-25 scale) ── */
+function percentileRank(values, value, higherIsBetter = true) {
+  const sorted = [...values].filter(v => v != null && Number.isFinite(v)).sort((a, b) => a - b);
+  if (!sorted.length) return 12.5; // neutral mid-point if no data
+  const rank = sorted.findIndex(v => v >= value);
+  const pct = rank < 0 ? 1 : rank / (sorted.length - 1 || 1);
+  const score = higherIsBetter ? pct * 25 : (1 - pct) * 25;
+  return parseFloat(score.toFixed(1));
 }
 
 async function fetchJson(url) {
