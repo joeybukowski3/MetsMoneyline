@@ -24,7 +24,13 @@
   "venue": "Nationals Park",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 804267,
+      "fullName": "Zach Thornton",
+      "era": null,
+      "fip": null,
+      "whip": null
+    },
     "opp": {
       "id": 641793,
       "fullName": "Zack Littell",
@@ -108,6 +114,11 @@
           "wins": 21,
           "losses": 27,
           "pct": ".438"
+        },
+        "probablePitcher": {
+          "id": 804267,
+          "fullName": "Zach Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
         "seriesNumber": 16,
@@ -195,16 +206,16 @@
       },
       "defense": {
         "team": {
-          "id": 120,
-          "name": "Washington Nationals",
-          "link": "/api/v1/teams/120"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 120,
+          "name": "Washington Nationals",
+          "link": "/api/v1/teams/120"
         }
       }
     },
@@ -223,10 +234,11 @@
       "totalGames": 4,
       "isTied": true,
       "isOver": false,
-      "wins": 0,
-      "losses": 0,
+      "wins": 1,
+      "losses": 1,
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -251,9 +263,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-20T02:38:51.080Z",
+    "generatedAt": "2026-05-20T05:51:06.598Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-05-19",
-    "cacheKey": "next-game:2026-05-19"
+    "referenceDate": "2026-05-20",
+    "cacheKey": "next-game:2026-05-20"
   }
 }
