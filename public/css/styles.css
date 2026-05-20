@@ -826,7 +826,7 @@ main, .page-content {
 }
 
 .lineup-two-col .card { margin-bottom: 0; min-width: 0; }
-.lineup-card { padding: 0 0.95rem 0.9rem; min-width: 0; }
+.lineup-card { padding: 0 0.95rem 0.9rem; min-width: 0; max-width: 340px; }
 .lineup-divider { background: var(--border); }
 
 .lineup-team-header {
@@ -1736,39 +1736,33 @@ tbody td:first-child { font-weight: 500; }
 /* ── Compact lineup card list — no horizontal scroll ── */
 .lu-header {
   display: grid;
-  grid-template-columns: 1.35rem 1.75rem minmax(0, 1fr) 2.75rem 2.75rem 2.75rem;
-  gap: 0.18rem;
+  grid-template-columns: 1.2rem 1.6rem 1fr 3.2rem 3.2rem 3.2rem;
+  gap: 0.25rem;
   padding: 0.08rem 0 0.18rem;
   font-size: 0.58rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #94a3b8;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 2px solid #eef2f7;
   margin-bottom: 0;
 }
-/* On mobile: 6 cols — header has 7 children but col 4 (lu-pos spacer) has display:none equivalent via zero width */
 .lu-header span { text-align: center; min-width: 0; }
-/* The 4th span is a pos spacer — hide it on mobile same as lu-pos */
 .lu-header span:nth-child(4) { display: none; }
-.lu-avg-lbl { text-align: center; }
-.lu-ops-lbl { text-align: center; }
-.lu-xba-lbl { text-align: center; }
+.lu-avg-lbl, .lu-ops-lbl, .lu-xba-lbl { text-align: center; }
 
 .lu-list { display: flex; flex-direction: column; gap: 0; margin-top: 0.08rem; }
 
 .lu-row {
   display: grid;
-  /* Mobile: no position column — 6 cols: order photo name avg ops xba */
-  grid-template-columns: 1.35rem 1.75rem minmax(0, 1fr) 2.75rem 2.75rem 2.75rem;
+  grid-template-columns: 1.2rem 1.6rem 1fr 3.2rem 3.2rem 3.2rem;
   align-items: center;
-  gap: 0.18rem;
+  gap: 0.25rem;
   min-height: 1.9rem;
   padding: 0.18rem 0;
   border-top: 1px solid #f0f4f8;
 }
 .lu-row:first-child { border-top: none; }
-/* Remove lu-pos from grid flow entirely on mobile */
 .lu-pos { display: none; }
 
 .lu-order {
@@ -1777,9 +1771,9 @@ tbody td:first-child { font-weight: 500; }
   color: #94a3b8;
   text-align: center;
 }
-.lu-row .player-headshot { width: 24px; height: 24px; }
+.lu-row .player-headshot { width: 22px; height: 22px; }
 .lu-name {
-  font-size: 0.73rem;
+  font-size: 0.72rem;
   font-weight: 700;
   color: var(--navy);
   white-space: nowrap;
@@ -1788,15 +1782,14 @@ tbody td:first-child { font-weight: 500; }
   min-width: 0;
 }
 .lu-stat {
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-align: center;
   line-height: 1.2;
   border-radius: 4px;
-  padding: 0.12rem 0.18rem;
+  padding: 0.1rem 0;
   width: 100%;
   box-sizing: border-box;
-  justify-self: stretch;
 }
 .lu-stat.metric-positive { background: rgba(255,89,16,0.1); color: #c2410c; }
 .lu-stat.metric-negative { background: rgba(0,45,114,0.09); color: #002d72; }
@@ -1804,44 +1797,40 @@ tbody td:first-child { font-weight: 500; }
 
 .lu-empty { color: #9099b0; font-size: 0.82rem; text-align: center; padding: 1rem 0; }
 
-/* Desktop ≥700px: add position column — 7 cols */
-@media (min-width: 700px) {
+/* Desktop ≥900px: wider card, add position column */
+@media (min-width: 900px) {
   .lu-header {
-    grid-template-columns: 1.4rem 1.9rem minmax(0, 1fr) 2rem 2.85rem 2.85rem 2.85rem;
+    grid-template-columns: 1.2rem 1.6rem 1fr 2rem 3.2rem 3.2rem 3.2rem;
   }
-  /* Show the 4th span (pos spacer) on desktop */
   .lu-header span:nth-child(4) { display: block; }
   .lu-row {
-    grid-template-columns: 1.4rem 1.9rem minmax(0, 1fr) 2rem 2.85rem 2.85rem 2.85rem;
+    grid-template-columns: 1.2rem 1.6rem 1fr 2rem 3.2rem 3.2rem 3.2rem;
   }
   .lu-pos {
     display: block;
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     color: #64748b;
     font-weight: 600;
     text-align: center;
   }
-  .lu-row .player-headshot { width: 24px; height: 24px; }
-  .lu-name { font-size: 0.78rem; }
-  .lu-stat { font-size: 0.69rem; }
 }
 
 /* Tablet: tighten */
 @media (max-width: 700px) {
   .lineup-two-col { grid-template-columns: 1fr 1fr; gap: 0.35rem; }
-  .lineup-card { padding: 0 0.7rem 0.72rem; }
+  .lineup-card { padding: 0 0.6rem 0.72rem; max-width: 300px; }
   .lineup-team-header { font-size: 0.62rem; padding: 0.38rem 0.7rem; }
-  .lu-stat { font-size: 0.63rem; }
-  .lu-name { font-size: 0.69rem; }
+  .lu-stat { font-size: 0.62rem; }
+  .lu-name { font-size: 0.68rem; }
 }
 
 /* Very small phones */
 @media (max-width: 380px) {
-  .lu-header { grid-template-columns: 1.3rem 1.55rem minmax(0, 1fr) 2.45rem 2.45rem 2.45rem; }
-  .lu-row    { grid-template-columns: 1.3rem 1.55rem minmax(0, 1fr) 2.45rem 2.45rem 2.45rem; }
-  .lu-stat { font-size: 0.58rem; padding: 0.08rem 0.08rem; }
-  .lu-name { font-size: 0.65rem; }
-  .lu-order { font-size: 0.6rem; }
+  .lu-header { grid-template-columns: 1.1rem 1.45rem 1fr 2.8rem 2.8rem 2.8rem; }
+  .lu-row    { grid-template-columns: 1.1rem 1.45rem 1fr 2.8rem 2.8rem 2.8rem; }
+  .lu-stat { font-size: 0.58rem; }
+  .lu-name { font-size: 0.64rem; }
+  .lu-order { font-size: 0.58rem; }
 }
 
 /* =====================
