@@ -1357,7 +1357,10 @@ function buildRow3(game) {
 
   const metsBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
-    : `<div class="lu-header"><span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span></div>
+    : `<div class="lu-header" aria-hidden="true">
+         <span></span><span></span><span></span><span></span>
+         <span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span>
+       </div>
        <div class="lu-list">${lineupCard(metsLineup,
          p => getMetsHitterAVG(p), p => getMetsHitterSeasonOps(p),
          p => p.savant?.xBA ?? p.seasonAVG,
@@ -1365,7 +1368,10 @@ function buildRow3(game) {
 
   const oppBattingBlock = notReleased
     ? `<div class="lineup-pending"><span class="stat-year">📋 Lineup not yet released</span></div>`
-    : `<div class="lu-header"><span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span></div>
+    : `<div class="lu-header" aria-hidden="true">
+         <span></span><span></span><span></span><span></span>
+         <span class="lu-avg-lbl">AVG</span><span class="lu-ops-lbl">OPS</span><span class="lu-xba-lbl">xBA</span>
+       </div>
        <div class="lu-list">${lineupCard(oppLineup,
          p => p.seasonAVG, p => p.seasonOPS,
          p => p.savant?.xBA ?? p.seasonAVG,
