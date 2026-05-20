@@ -6436,6 +6436,13 @@ function buildCompactDailyReportEmailHtml(game) {
   const displayPickLabel = pickLabel.replace(/^Official Pick:\s*/i, "");
   const confidenceLabel = pick?.confidenceLabel || "N/A";
   const oddsEdge = /mets/i.test(pickLabel) ? "Mets" : new RegExp(opponentShort, "i").test(pickLabel) ? opponentShort : "N/A";
+
+  // Moneyline odds for display
+  const metsMLRaw = game?.moneyline?.mets ?? game?.emailData?.moneylineMets ?? null;
+  const oppMLRaw  = game?.moneyline?.opp  ?? game?.emailData?.moneylineOpp  ?? null;
+  const fmtML = (v) => { const n = parseInt(v); return isNaN(n) ? "N/A" : (n > 0 ? `+${n}` : String(n)); };
+  const metsMLStr = fmtML(metsMLRaw);
+  const oppMLStr  = fmtML(oppMLRaw);
   const splitRows = [splits?.timeOfDay, splits?.dayOfWeek, splits?.homeAway, splits?.vsOpponent, splits?.combined]
     .filter((row) => row && row.label)
     .slice(0, 2)
@@ -6596,7 +6603,7 @@ function buildCompactDailyReportEmailHtml(game) {
           ${compactRow(metsL5, "Last 5 Record", oppL5)}
           ${compactRow(metsHARecord, "Home/Away Record", oppHARecord)}
           ${compactRow(seriesStr, "Season Series", oppSeriesStr)}
-          ${compactRow(oddsEdge === "Mets" ? "Mets" : "N/A", "Odds Edge", oddsEdge === opponentShort ? opponentShort : "N/A", { leftTone: oddsEdge === "Mets" ? "#002d72" : "#111827", rightTone: oddsEdge === opponentShort ? "#9a3412" : "#111827" })}
+          ${compactRow(metsMLStr, "Odds", oppMLStr, { leftTone: oddsEdge === "Mets" ? "#002d72" : "#111827", rightTone: oddsEdge === opponentShort ? "#9a3412" : "#111827" })}
         </tbody>
       </table>
     </div>
@@ -6605,55 +6612,40 @@ function buildCompactDailyReportEmailHtml(game) {
       <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;table-layout:fixed;">
         <thead>
           <tr>
-            <th style="padding:7px 6px;background:#f8fafc;color:#475569;font-size:10px;text-align:left;">Stat</th>
-            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;">Mets Season</th>
-            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;">Mets L20</th>
-            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;">Mets Trend</th>
-            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;">${escapeHtml(opponentShort)} Season</th>
-            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;">${escapeHtml(opponentShort)} L20</th>
-            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;">${escapeHtml(opponentShort)} Trend</th>
-            <th style="padding:7px 6px;background:#f8fafc;color:#475569;font-size:10px;text-align:center;">Edge</th>
+            <th style="padding:7px 6px;background:#f8fafc;color:#475569;font-size:10px;text-align:left;width:18%;">Stat</th>
+            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;width:18%;">NYM Szn</th>
+            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;width:18%;">NYM L20</th>
+            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;width:18%;">${escapeHtml(opponentShort)} L20</th>
+            <th style="padding:7px 6px;background:#f8fafc;color:#475569;font-size:10px;text-align:center;width:28%;">Edge</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">OPS</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtOps(metsOpsRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;color:#374151;">${escapeHtml(fmtOps(metsOpsRow?.seasonValue))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtOps(metsOpsL20))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsOpsRow))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtOps(oppOpsRow?.seasonValue))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtOps(oppOpsL20))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppOpsRow))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(edgeHigher(metsOpsL20, oppOpsL20))}</td>
           </tr>
           <tr>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">AVG</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtAvg(metsAvgRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;color:#374151;">${escapeHtml(fmtAvg(metsAvgRow?.seasonValue))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtAvg(metsAvgL20))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsAvgRow))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtAvg(oppAvgRow?.seasonValue))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtAvg(oppAvgL20))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppAvgRow))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(edgeHigher(metsAvgL20, oppAvgL20, 0.003))}</td>
           </tr>
           <tr>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">K%</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtPct(metsKRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;color:#374151;">${escapeHtml(fmtPct(metsKRow?.seasonValue))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(metsKL20))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsKRow, { inverse: true }))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtPct(oppKRow?.seasonValue))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(oppKL20))}</td>
-            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppKRow, { inverse: true }))}</td>
             <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(edgeLower(metsKL20, oppKL20, 0.005))}</td>
           </tr>
           <tr>
             <td style="padding:7px 6px;color:#111827;font-size:11px;font-weight:800;">BB%</td>
-            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(fmtPct(metsBBRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;color:#374151;">${escapeHtml(fmtPct(metsBBRow?.seasonValue))}</td>
             <td style="padding:7px 6px;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(metsBBL20))}</td>
-            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsBBRow))}</td>
-            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(fmtPct(oppBBRow?.seasonValue))}</td>
             <td style="padding:7px 6px;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(oppBBL20))}</td>
-            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppBBRow))}</td>
             <td style="padding:7px 6px;text-align:center;font-size:11px;">${compareEdgeText(edgeHigher(metsBBL20, oppBBL20, 0.005))}</td>
           </tr>
         </tbody>
