@@ -331,69 +331,92 @@ function buildPregameAngles(game) {
 }
 
 function buildPregameSingleTweet(game) {
-  const opponent   = cleanText(game?.opponent);
-  const oppShort   = opponentShortName(opponent) || opponent;
-  const report     = game?.writeup?.report || {};
-  const metsCard   = report?.startingPitchersComparison?.metsCard  || {};
-  const oppCard    = report?.startingPitchersComparison?.oppCard   || {};
-  const metsPitcher = game?.pitching?.mets || {};
-  const oppPitcher  = game?.pitching?.opp  || {};
+  const opponent    = cleanText(game?.opponent);
+  const oppShort    = opponentShortName(opponent) || opponent;
+  const report      = game?.writeup?.report || {};
+  const pick        = normalizePick(game);
+  const pickLabel   = cleanText(pick?.label || "Mets ML").replace(/^Official Pick:\s*/i, "");
 
-  // Pitcher names
-  const metsName = lastName(metsPitcher.name || metsCard.name || "");
-  const oppName  = lastName(oppPitcher.name  || oppCard.name  || "");
+  // ── Pitcher matchup (compact) ──────────────────────────────────────────
+  const metsPitcher  = game?.pitching?.mets || {};
+  const oppPitcher   = game?.pitching?.opp  || {};
+  const metsName     = lastName(metsPitcher.name || report?.startingPitchersComparison?.metsCard?.name || "");
+  const oppName      = lastName(oppPitcher.name  || report?.startingPitchersComparison?.oppCard?.name  || "");
+  const metsXERA     = formatStatNumber(metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA);
+  const oppXERA      = formatStatNumber(oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA);
+  const spLine       = (metsName && oppName)
+    ? `${metsName} (${metsXERA || "—"} xERA) vs ${oppName} (${oppXERA || "—"} xERA)`
+    : (metsName || oppName)
+    ? `SP: ${metsName || "TBD"} vs ${oppName || "TBD"}`
+    : null;
 
-  // Records (W-L) — prefer SP card, fall back to pitching object
-  const metsRec = cleanText(metsCard.record || metsPitcher.record || "");
-  const oppRec  = cleanText(oppCard.record  || oppPitcher.record  || "");
+  // ── Matchup snapshot stats ────────────────────────────────────────────
+  const metsForm  = report?.recentFormReport?.mets;
+  const oppForm   = report?.recentFormReport?.opp;
+  const metsOpsL20 = metsForm?.rows?.find(r => r.statKey === "ops")?.recentValue;
+  const oppOpsL20  = oppForm?.rows?.find(r  => r.statKey === "ops")?.recentValue;
+  const fmtOps = v => { const n = parseFloat(v); return isNaN(n) ? null : n.toFixed(3); };
+  const metsOpsStr = fmtOps(metsOpsL20);
+  const oppOpsStr  = fmtOps(oppOpsL20);
+  const opsLine    = (metsOpsStr && oppOpsStr)
+    ? `L20 OPS: NYM ${metsOpsStr} · ${oppShort} ${oppOpsStr}`
+    : null;
 
-  // ERA — prefer xERA from Savant, fall back to season ERA
-  const metsEra = formatStatNumber(
-    metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA ?? metsPitcher.era
-  );
-  const oppEra = formatStatNumber(
-    oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA  ?? oppPitcher.era
-  );
-
-  // Pitching matchup line
-  function spSummary(name, rec, era, isXera) {
-    if (!name) return null;
-    const eraSuffix = era ? ` ${era} ${isXera ? "xERA" : "ERA"}` : "";
-    const recPart   = rec ? ` (${rec})` : "";
-    return `${name}${recPart}${eraSuffix}`;
-  }
-  const hasXera = (metsPitcher.savant?.xERA != null || metsPitcher.seasonXERA != null);
-  const metsSP  = spSummary(metsName, metsRec, metsEra, hasXera);
-  const oppSP   = spSummary(oppName,  oppRec,  oppEra,  hasXera);
-  const pitcherLine = (metsSP && oppSP) ? `${metsSP} vs ${oppSP}` : (metsSP || oppSP || null);
-
-  // Key angles — fill to budget
-  const rawAngles = buildPregameAngles(game);
-  const fixedParts = [
-    `Mets vs ${oppShort}`,
-    pitcherLine,
-    "Today's Pick: Mets ML",
-    "Go to metsmoneyline.com for the full analytical breakdown ⚾ #LGM"
-  ].filter(Boolean);
-  const fixedLength = fixedParts.join("\n").length + fixedParts.length - 1;
-  const budget = MAX_TWEET_LENGTH - fixedLength - 2; // 2 extra newlines for angle block
-
-  const bullets = [];
-  for (const raw of rawAngles.slice(0, 3)) {
-    const bullet = `• ${clip(raw, 65)}`;
-    const blockLen = bullets.concat(bullet).join("\n").length;
-    if (blockLen <= budget) bullets.push(bullet);
+  // ── Key edge (bullpen xERA gap is most meaningful) ────────────────────
+  const metsBpXERA = parseFloat(game?.pitching?.metsBullpen?.seasonXERAAverage);
+  const oppBpXERA  = parseFloat(game?.pitching?.oppBullpen?.seasonXERAAverage);
+  let edgeLine = null;
+  if (!isNaN(metsBpXERA) && !isNaN(oppBpXERA)) {
+    const gap = Math.abs(metsBpXERA - oppBpXERA).toFixed(2);
+    const edgeTeam = metsBpXERA < oppBpXERA ? "NYM" : oppShort;
+    edgeLine = `Bullpen edge: ${edgeTeam} (${Math.min(metsBpXERA, oppBpXERA).toFixed(2)} vs ${Math.max(metsBpXERA, oppBpXERA).toFixed(2)} xERA, ${gap} gap)`;
+  } else if (pick?.metsEdges?.[0]) {
+    // Fall back to first model edge
+    edgeLine = clip(cleanText(String(pick.metsEdges[0])), 70);
   }
 
-  const allParts = [
-    `Mets vs ${oppShort}`,
-    pitcherLine,
-    bullets.length ? bullets.join("\n") : null,
-    "Today's Pick: Mets ML",
-    "Go to metsmoneyline.com for the full analytical breakdown ⚾ #LGM"
+  // ── Moneyline odds ─────────────────────────────────────────────────────
+  const metsML = game?.moneyline?.mets;
+  const fmtML  = v => { const n = parseInt(v); return isNaN(n) ? null : (n > 0 ? `+${n}` : String(n)); };
+  const mlStr  = fmtML(metsML);
+
+  // ── Assemble under 280 chars ──────────────────────────────────────────
+  // Template (ordered by priority — drop last lines if needed):
+  //   Line 1: 🔵 Mets vs [OPP] | [Time]
+  //   Line 2: SP: [pitcher matchup]
+  //   Line 3: [L20 OPS comparison]
+  //   Line 4: [Key edge]
+  //   Line 5: Pick: [label] [ML odds] — full breakdown 👇
+  //   Line 6: metsmoneyline.com #LGM #Mets
+
+  const LIMIT = MAX_TWEET_LENGTH;
+  const CTA   = "metsmoneyline.com #LGM #Mets";
+  const gameTime = cleanText(game?.time || game?.writeup?.gameDetails?.time || "");
+
+  const header   = `🔵 Mets vs ${oppShort}${gameTime ? " | " + gameTime : ""}`;
+  const pickLine = `Pick: ${pickLabel}${mlStr ? " (" + mlStr + ")" : ""} — full breakdown 👇`;
+
+  // Build from must-haves outward
+  const candidates = [
+    header,
+    spLine    ? `SP: ${spLine}`    : null,
+    opsLine,
+    edgeLine,
+    pickLine,
+    CTA,
   ].filter(Boolean);
 
-  return cleanText(allParts.join("\n"));
+  // Drop middle lines if over budget
+  function join(parts) { return parts.join("\n"); }
+  let parts = [...candidates];
+  while (join(parts).length > LIMIT && parts.length > 3) {
+    // Drop the line just before pickLine (index length-3)
+    const dropIdx = parts.length - 3;
+    if (dropIdx >= 1) parts.splice(dropIdx, 1);
+    else break;
+  }
+
+  return cleanText(join(parts));
 }
 
 function validatePregameGame(game, targetDate, state) {
