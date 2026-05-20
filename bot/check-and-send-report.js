@@ -334,26 +334,31 @@ async function main() {
   console.log(`[send] Building email HTML…`);
   let bodyHtml;
   try {
-    bodyHtml = buildEmailHtml(game);
+    // Use the structured card-based email template for Buttondown
+    bodyHtml = buildCondensedEmailHtml(game);
   } catch (htmlErr) {
-    throw new Error(`[send] buildEmailHtml threw: ${htmlErr.message}`);
+    // Fallback to full report HTML if condensed fails
+    console.warn(`[send] buildCondensedEmailHtml failed, falling back to full HTML: ${htmlErr.message}`);
+    try {
+      bodyHtml = buildEmailHtml(game);
+    } catch (fallbackErr) {
+      throw new Error(`[send] Both email builders failed: ${fallbackErr.message}`);
+    }
   }
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to generate blank report`);
   }
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
 
-  // Build condensed email HTML and write to disk (debug artifact — non-critical).
-  // Wrapped in try-catch so a runtime error here never blocks the actual send.
+  // Also write the condensed HTML as a debug artifact
   try {
-    const condensedHtml = buildCondensedEmailHtml(game);
     const condensedDir = path.join(__dirname, "output");
     const condensedPath = path.join(condensedDir, `${gameId}-email-condensed.html`);
     fs.mkdirSync(condensedDir, { recursive: true });
-    fs.writeFileSync(condensedPath, condensedHtml, "utf8");
-    console.log(`[send] Wrote condensed email HTML to ${condensedPath}`);
-  } catch (condensedErr) {
-    console.warn(`[send] buildCondensedEmailHtml failed (non-fatal, send continues): ${condensedErr.message}`);
+    fs.writeFileSync(condensedPath, bodyHtml, "utf8");
+    console.log(`[send] Wrote email HTML to ${condensedPath}`);
+  } catch (writeErr) {
+    console.warn(`[send] Could not write debug artifact: ${writeErr.message}`);
   }
 
   const bodyText = buildPlainTextEmail(game);
