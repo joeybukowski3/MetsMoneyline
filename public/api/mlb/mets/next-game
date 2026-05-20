@@ -1,7 +1,7 @@
 {
   "gameId": 822735,
   "startTime": "2026-05-20T22:45:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 120,
     "canonicalKey": "nationals",
@@ -40,9 +40,119 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
-    "opp": []
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "LF"
+      },
+      {
+        "order": 4,
+        "playerId": 668901,
+        "name": "Mark Vientos",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 669004,
+        "name": "MJ Melendez",
+        "pos": "DH"
+      },
+      {
+        "order": 6,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "3B"
+      },
+      {
+        "order": 7,
+        "playerId": 543760,
+        "name": "Marcus Semien",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 9,
+        "playerId": 663584,
+        "name": "Hayden Senger",
+        "pos": "C"
+      }
+    ],
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 695578,
+        "name": "James Wood",
+        "pos": "DH"
+      },
+      {
+        "order": 2,
+        "playerId": 678554,
+        "name": "Curtis Mead",
+        "pos": "3B"
+      },
+      {
+        "order": 3,
+        "playerId": 665953,
+        "name": "Andrés Chaparro",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 682928,
+        "name": "CJ Abrams",
+        "pos": "SS"
+      },
+      {
+        "order": 5,
+        "playerId": 686611,
+        "name": "Dylan Crews",
+        "pos": "RF"
+      },
+      {
+        "order": 6,
+        "playerId": 695734,
+        "name": "Daylen Lile",
+        "pos": "LF"
+      },
+      {
+        "order": 7,
+        "playerId": 696285,
+        "name": "Jacob Young",
+        "pos": "CF"
+      },
+      {
+        "order": 8,
+        "playerId": 683083,
+        "name": "Nasim Nuñez",
+        "pos": "2B"
+      },
+      {
+        "order": 9,
+        "playerId": 660688,
+        "name": "Keibert Ruiz",
+        "pos": "C"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +165,9 @@
     "officialDate": "2026-05-20",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -116,6 +226,7 @@
           "ties": 0,
           "pct": ".438"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 804267,
           "fullName": "Zach Thornton",
@@ -184,6 +295,7 @@
           "ties": 0,
           "pct": ".490"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 641793,
           "fullName": "Zack Littell",
@@ -200,26 +312,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 641793,
+          "fullName": "Zack Littell",
+          "link": "/api/v1/people/641793"
+        },
+        "catcher": {
+          "id": 660688,
+          "fullName": "Keibert Ruiz",
+          "link": "/api/v1/people/660688"
+        },
+        "first": {
+          "id": 665953,
+          "fullName": "Andrés Chaparro",
+          "link": "/api/v1/people/665953"
+        },
+        "second": {
+          "id": 683083,
+          "fullName": "Nasim Nuñez",
+          "link": "/api/v1/people/683083"
+        },
+        "third": {
+          "id": 678554,
+          "fullName": "Curtis Mead",
+          "link": "/api/v1/people/678554"
+        },
+        "shortstop": {
+          "id": 682928,
+          "fullName": "CJ Abrams",
+          "link": "/api/v1/people/682928"
+        },
+        "left": {
+          "id": 695734,
+          "fullName": "Daylen Lile",
+          "link": "/api/v1/people/695734"
+        },
+        "center": {
+          "id": 696285,
+          "fullName": "Jacob Young",
+          "link": "/api/v1/people/696285"
+        },
+        "right": {
+          "id": 686611,
+          "fullName": "Dylan Crews",
+          "link": "/api/v1/people/686611"
+        },
+        "batter": {
+          "id": 695578,
+          "fullName": "James Wood",
+          "link": "/api/v1/people/695578"
+        },
+        "onDeck": {
+          "id": 678554,
+          "fullName": "Curtis Mead",
+          "link": "/api/v1/people/678554"
+        },
+        "inHole": {
+          "id": 665953,
+          "fullName": "Andrés Chaparro",
+          "link": "/api/v1/people/665953"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 120,
+          "name": "Washington Nationals",
+          "link": "/api/v1/teams/120"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "pitcher": {
+          "id": 804267,
+          "fullName": "Zach Thornton",
+          "link": "/api/v1/people/804267"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
       },
-      "offense": {
-        "team": {
-          "id": 120,
-          "name": "Washington Nationals",
-          "link": "/api/v1/teams/120"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3309,
@@ -261,11 +488,268 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 695578,
+          "fullName": "James Wood",
+          "link": "/api/v1/people/695578",
+          "firstName": "James",
+          "lastName": "Wood",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "James"
+        },
+        {
+          "id": 678554,
+          "fullName": "Curtis Mead",
+          "link": "/api/v1/people/678554",
+          "firstName": "Curtis",
+          "lastName": "Mead",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Curtis"
+        },
+        {
+          "id": 665953,
+          "fullName": "Andrés Chaparro",
+          "link": "/api/v1/people/665953",
+          "firstName": "Andrés",
+          "lastName": "Chaparro",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Andrés"
+        },
+        {
+          "id": 682928,
+          "fullName": "CJ Abrams",
+          "link": "/api/v1/people/682928",
+          "firstName": "Paul",
+          "lastName": "Abrams",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "CJ"
+        },
+        {
+          "id": 686611,
+          "fullName": "Dylan Crews",
+          "link": "/api/v1/people/686611",
+          "firstName": "Dylan",
+          "lastName": "Crews",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Dylan"
+        },
+        {
+          "id": 695734,
+          "fullName": "Daylen Lile",
+          "link": "/api/v1/people/695734",
+          "firstName": "Daylen",
+          "lastName": "Lile",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Daylen"
+        },
+        {
+          "id": 696285,
+          "fullName": "Jacob Young",
+          "link": "/api/v1/people/696285",
+          "firstName": "Jacob",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Jacob"
+        },
+        {
+          "id": 683083,
+          "fullName": "Nasim Nuñez",
+          "link": "/api/v1/people/683083",
+          "firstName": "Nasim",
+          "lastName": "Nuñez",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Nasim"
+        },
+        {
+          "id": 660688,
+          "fullName": "Keibert Ruiz",
+          "link": "/api/v1/people/660688",
+          "firstName": "Keibert",
+          "lastName": "Ruiz",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Keibert"
+        }
+      ],
+      "awayPlayers": [
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901",
+          "firstName": "Mark",
+          "lastName": "Vientos",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Mark"
+        },
+        {
+          "id": 669004,
+          "fullName": "MJ Melendez",
+          "link": "/api/v1/people/669004",
+          "firstName": "Mervyl",
+          "lastName": "Melendez",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "MJ"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760",
+          "firstName": "Marcus",
+          "lastName": "Semien",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Marcus"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 663584,
+          "fullName": "Hayden Senger",
+          "link": "/api/v1/people/663584",
+          "firstName": "Hayden",
+          "lastName": "Senger",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Hayden"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-20T18:13:42.262Z",
+    "generatedAt": "2026-05-20T20:30:48.741Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-20",
     "cacheKey": "next-game:2026-05-20"
