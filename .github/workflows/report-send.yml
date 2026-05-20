@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+    inputs:
+      force_draft:
+        description: "Force a Buttondown draft right now (skip send window)"
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 permissions:
   contents: write
@@ -57,7 +66,13 @@ jobs:
           API_SPORTS_BASE_URL: ${{ secrets.API_SPORTS_BASE_URL }}
           API_SPORTS_MLB_LEAGUE_ID: ${{ secrets.API_SPORTS_MLB_LEAGUE_ID }}
           API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
-        run: node check-and-send-report.js
+        run: |
+          EXTRA_FLAGS=""
+          if [ "${{ github.event.inputs.force_draft }}" = "true" ]; then
+            EXTRA_FLAGS="--skip-window --allow-duplicate"
+            echo "Force draft mode: skipping send window and duplicate check"
+          fi
+          node check-and-send-report.js $EXTRA_FLAGS
 
       # Always commit any changed data files back to the repo
       - name: Commit updated report data
