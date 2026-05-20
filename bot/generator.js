@@ -6676,12 +6676,13 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
   const plainText = String(bodyText || "").trim();
 
   if (condensedMode) {
-    // In condensed mode we let Buttondown treat `body` as the full HTML payload.
-    // This keeps behavior closest to "what we render is what subscribers see".
+    // Must use body_html for Buttondown to render HTML — sending HTML in `body`
+    // causes it to be displayed as raw text/code.
     return {
       subject,
       status,
-      body: bodyHtml,
+      body: String(bodyText || "").trim() || "See the full report at metsmoneyline.com",
+      body_html: bodyHtml,
       email_type: "public"
     };
   }
