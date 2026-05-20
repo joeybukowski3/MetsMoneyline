@@ -6302,7 +6302,436 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     `)}`;
 }
 
+function buildCompactDailyReportEmailHtml(game) {
+  const report = game?.writeup?.report || buildPresentationReport(game);
+  const header = report?.header || {};
+  const pick = report?.officialPick || {};
+  const opponent = game?.opponent || "Opponent";
+  const opponentShort = opponent.split(" ").pop();
+  const oppAbbr = TEAM_NAME_TO_ABBR[opponent] || opponentShort.toUpperCase().slice(0, 3);
+  const metsLogo = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
+  const oppLogo = header?.oppLogoUrl || "";
+  const metsRecord = sanitizeRecord(game?.metsRecord || game?.standings?.metsRecord, "N/A");
+  const oppRecord = sanitizeRecord(game?.oppRecord || game?.standings?.oppRecord, "N/A");
+  const heroMetaLine = [header?.date || game?.date, header?.time || game?.time, header?.ballpark || game?.ballpark].filter(Boolean).join(" | ");
+  const rs = game?.recordSplits || {};
+  const isHome = (game?.homeAway || "").toLowerCase() === "home";
+  const metsHARecord = isHome ? (rs.metsHome ? `${rs.metsHome} home` : "N/A") : (rs.metsRoad ? `${rs.metsRoad} away` : "N/A");
+  const oppHARecord = isHome ? (rs.oppRoad ? `${rs.oppRoad} away` : "N/A") : (rs.oppHome ? `${rs.oppHome} home` : "N/A");
+  const metsCard = report?.startingPitchersComparison?.metsCard;
+  const oppCard = report?.startingPitchersComparison?.oppCard;
+  const metsBullpen = report?.bullpenReport?.mets;
+  const oppBullpen = report?.bullpenReport?.opp;
+  const metsRecentForm = report?.recentFormReport?.mets;
+  const oppRecentForm = report?.recentFormReport?.opp;
+  const splits = game?.situationalSplits || null;
+
+  const D = (v) => (v == null || v === "") ? "N/A" : String(v);
+  const fmt = (v, d = 2) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? n.toFixed(d) : "N/A";
+  };
+  const fmtPct = (v) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? `${n.toFixed(1)}%` : "N/A";
+  };
+  const fmtAvg = (v) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? `.${String(Math.round(n * 1000)).padStart(3, "0")}` : "N/A";
+  };
+  const fmtOps = (v) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? n.toFixed(3) : "N/A";
+  };
+  const fmtSplitNum = (v) => {
+    const n = parseFloat(String(v ?? ""));
+    return Number.isFinite(n) ? n.toFixed(1) : "N/A";
+  };
+  const escapeHtml = (value) => String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+  const edgeLower = (a, b, tol = 0.01) => !Number.isFinite(a) || !Number.isFinite(b) ? "N/A" : a < b - tol ? "Mets" : b < a - tol ? opponentShort : "Even";
+  const edgeHigher = (a, b, tol = 0.005) => !Number.isFinite(a) || !Number.isFinite(b) ? "N/A" : a > b + tol ? "Mets" : b > a + tol ? opponentShort : "Even";
+  const formatTrendDelta = (row, { inverse = false } = {}) => {
+    if (!row) return "N/A";
+    if (inverse) {
+      if (row.recentValue == null || row.seasonValue == null) return "N/A";
+      if (row.recentValue < row.seasonValue - 0.05) return "Better";
+      if (row.recentValue > row.seasonValue + 0.05) return "Worse";
+      return "Flat";
+    }
+    const pct = parseFloat(String(row.differencePct ?? ""));
+    if (!Number.isFinite(pct)) return "N/A";
+    return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
+  };
+  const compareEdgeText = (value) => {
+    if (!value || value === "N/A") return `<span style="color:#94a3b8;font-weight:700;">N/A</span>`;
+    if (value === "Mets") return `<span style="color:#002d72;font-weight:800;">Mets</span>`;
+    if (value === opponentShort) return `<span style="color:#9a3412;font-weight:800;">${escapeHtml(opponentShort)}</span>`;
+    return `<span style="color:#475569;font-weight:700;">${escapeHtml(value)}</span>`;
+  };
+  const compactRow = (left, label, right, { leftTone = "#111827", rightTone = "#111827" } = {}) => `
+    <tr>
+      <td style="padding:7px 8px;background:#f8fbff;border-bottom:1px solid #e5e7eb;color:${leftTone};font-size:12px;font-weight:800;">${escapeHtml(left)}</td>
+      <td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;color:#475569;font-size:11px;font-weight:700;text-align:center;">${escapeHtml(label)}</td>
+      <td style="padding:7px 8px;background:#fff8f2;border-bottom:1px solid #e5e7eb;color:${rightTone};font-size:12px;font-weight:800;text-align:right;">${escapeHtml(right)}</td>
+    </tr>`;
+  const recordFromGames = (games) => {
+    if (!Array.isArray(games) || !games.length) return "N/A";
+    const lastFive = games.slice(-5);
+    let wins = 0;
+    let losses = 0;
+    lastFive.forEach((gameRow) => {
+      const result = String(gameRow?.result || "").toUpperCase();
+      if (result === "W") wins += 1;
+      if (result === "L") losses += 1;
+    });
+    return `${wins}-${losses}`;
+  };
+
+  const wx = game?.weather || {};
+  const wxStr = [wx.temp ? `${Math.round(wx.temp)}°` : null, wx.condition || null, wx.windSpeed ? `Wind ${Math.round(wx.windSpeed)} mph ${wx.windDir || ""}`.trim() : null].filter(Boolean).join(" · ");
+  const metsXERA = parseFloat(String(game?.pitching?.mets?.savant?.xERA ?? ""));
+  const oppXERA = parseFloat(String(game?.pitching?.opp?.savant?.xERA ?? ""));
+  const metsERA = parseFloat(String(metsCard?.stats?.era ?? ""));
+  const oppERA = parseFloat(String(oppCard?.stats?.era ?? ""));
+  const metsWHIP = parseFloat(String(metsCard?.stats?.whip ?? ""));
+  const oppWHIP = parseFloat(String(oppCard?.stats?.whip ?? ""));
+  const metsKPct = parseFloat(String(metsCard?.stats?.kPct ?? ""));
+  const oppKPct = parseFloat(String(oppCard?.stats?.kPct ?? ""));
+  const metsBpXERA = parseFloat(String(game?.pitching?.metsBullpen?.seasonXERAAverage ?? ""));
+  const oppBpXERA = parseFloat(String(game?.pitching?.oppBullpen?.seasonXERAAverage ?? ""));
+  const metsBpERA = parseFloat(String(metsBullpen?.statsRow?.seasonEra ?? ""));
+  const oppBpERA = parseFloat(String(oppBullpen?.statsRow?.seasonEra ?? ""));
+  const metsBpFinal = Number.isFinite(metsBpXERA) ? metsBpXERA : metsBpERA;
+  const oppBpFinal = Number.isFinite(oppBpXERA) ? oppBpXERA : oppBpERA;
+  const metsOpsRow = metsRecentForm?.rows?.find((row) => row.statKey === "ops");
+  const oppOpsRow = oppRecentForm?.rows?.find((row) => row.statKey === "ops");
+  const metsAvgRow = metsRecentForm?.rows?.find((row) => row.statKey === "avg");
+  const oppAvgRow = oppRecentForm?.rows?.find((row) => row.statKey === "avg");
+  const metsKRow = metsRecentForm?.rows?.find((row) => row.statKey === "kPct");
+  const oppKRow = oppRecentForm?.rows?.find((row) => row.statKey === "kPct");
+  const metsBBRow = metsRecentForm?.rows?.find((row) => row.statKey === "bbPct");
+  const oppBBRow = oppRecentForm?.rows?.find((row) => row.statKey === "bbPct");
+  const metsOpsL20 = metsOpsRow?.recentValue ?? null;
+  const oppOpsL20 = oppOpsRow?.recentValue ?? null;
+  const metsAvgL20 = metsAvgRow?.recentValue ?? null;
+  const oppAvgL20 = oppAvgRow?.recentValue ?? null;
+  const metsKL20 = metsKRow?.recentValue ?? null;
+  const oppKL20 = oppKRow?.recentValue ?? null;
+  const metsBBL20 = metsBBRow?.recentValue ?? null;
+  const oppBBL20 = oppBBRow?.recentValue ?? null;
+  const metsFormGames = metsRecentForm?.games || game?.gameContext?.metsRecentGames || [];
+  const oppFormGames = oppRecentForm?.games || game?.gameContext?.oppRecentGames || [];
+  const metsL5 = recordFromGames(metsFormGames);
+  const oppL5 = recordFromGames(oppFormGames);
+  const h2h = game?.gameContext?.headToHead || null;
+  const metsSeriesW = h2h?.wins ?? null;
+  const oppSeriesW = h2h?.losses ?? null;
+  const seriesStr = (metsSeriesW != null && oppSeriesW != null) ? `${metsSeriesW}-${oppSeriesW}` : "N/A";
+  const oppSeriesStr = (metsSeriesW != null && oppSeriesW != null) ? `${oppSeriesW}-${metsSeriesW}` : "N/A";
+  const pickLabel = pick?.label || pick?.headline || "Mets ML";
+  const displayPickLabel = pickLabel.replace(/^Official Pick:\s*/i, "");
+  const confidenceLabel = pick?.confidenceLabel || "N/A";
+  const oddsEdge = /mets/i.test(pickLabel) ? "Mets" : new RegExp(opponentShort, "i").test(pickLabel) ? opponentShort : "N/A";
+  const splitRows = [splits?.timeOfDay, splits?.dayOfWeek, splits?.homeAway, splits?.vsOpponent, splits?.combined]
+    .filter((row) => row && row.label)
+    .slice(0, 2)
+    .map((row) => `
+      <tr>
+        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;font-weight:700;">${escapeHtml(row.label)}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(`${row.w ?? 0}-${row.l ?? 0}`)}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(`${row.pct ?? "N/A"}%`)}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(fmtSplitNum(row.avgR))}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(fmtSplitNum(row.avgA))}</td>
+      </tr>`)
+    .join("");
+  const offenseFormEdge = edgeHigher(metsOpsL20, oppOpsL20);
+  const bullpenEdge = edgeLower(metsBpFinal, oppBpFinal);
+  const spEdgeStr = edgeLower(Number.isFinite(metsXERA) ? metsXERA : metsERA, Number.isFinite(oppXERA) ? oppXERA : oppERA);
+  let regressionRead = "Mixed";
+  const metsEraXeraGap = (Number.isFinite(metsERA) && Number.isFinite(metsXERA)) ? metsXERA - metsERA : null;
+  const oppEraXeraGap = (Number.isFinite(oppERA) && Number.isFinite(oppXERA)) ? oppXERA - oppERA : null;
+  if (metsEraXeraGap != null && oppEraXeraGap != null) {
+    regressionRead = (metsEraXeraGap < oppEraXeraGap - 0.2) ? "Mets" : (oppEraXeraGap < metsEraXeraGap - 0.2) ? opponentShort : "Neutral";
+  }
+  const bullpenRead = (teamKey) => {
+    if (teamKey === "mets") {
+      if (bullpenEdge === "Mets") return "Read: Better current form";
+      if (bullpenEdge === opponentShort) return "Read: Chasing opponent edge";
+      return "Read: Mixed profile";
+    }
+    if (bullpenEdge === opponentShort) return "Read: Better current form";
+    if (bullpenEdge === "Mets") return "Read: Chasing opponent edge";
+    return "Read: Mixed profile";
+  };
+  const renderBullpenPanel = (card, teamKey) => {
+    if (!card) return "";
+    const teamColor = teamKey === "mets" ? "#002d72" : "#9a3412";
+    const basePitching = teamKey === "mets" ? game?.pitching?.metsBullpen : game?.pitching?.oppBullpen;
+    const closer = card.closer || null;
+    const closerHeadshot = closer?.playerId
+      ? `https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_80,q_auto:best/v1/people/${closer.playerId}/headshot/67/current`
+      : null;
+    const closerSummary = closer
+      ? `${closer.saves ?? "N/A"}/${closer.saveOpportunities ?? "N/A"}, ${Number.isFinite(closer.saveConversionPct) ? `${closer.saveConversionPct.toFixed(1)}%` : "N/A"}`
+      : "N/A";
+    const usageSummary = closer
+      ? `${closer.last7DaysAppearances ?? "N/A"} app, ${closer.last7DaysInningsPitched ?? "N/A"} IP`
+      : "N/A";
+    return `
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;border-radius:14px;overflow:hidden;background:#ffffff;">
+        <tr>
+          <td style="padding:10px 12px;background:${teamKey === "mets" ? "#eff6ff" : "#fff7ed"};border-bottom:1px solid #d9e1ee;">
+            <div style="font-size:14px;font-weight:900;color:${teamColor};">${escapeHtml(card.teamName || (teamKey === "mets" ? "Mets Bullpen" : `${opponentShort} Bullpen`))}</div>
+            <div style="font-size:11px;color:#475569;margin-top:2px;font-weight:700;">${bullpenRead(teamKey)}</div>
+          </td>
+        </tr>
+        ${closer ? `<tr>
+          <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;">
+            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+              <tr>
+                ${closerHeadshot ? `<td style="width:42px;padding:0 10px 0 0;vertical-align:middle;"><img src="${closerHeadshot}" alt="${escapeHtml(closer.name)}" width="36" height="36" style="display:block;width:36px;height:36px;border-radius:50%;border:1px solid #d6dde8;object-fit:cover;"></td>` : ""}
+                <td style="vertical-align:middle;">
+                  <div style="font-size:12px;color:#111827;font-weight:800;">Closer: ${escapeHtml(closer.name)}</div>
+                  <div style="font-size:11px;color:#64748b;">SV: ${escapeHtml(closerSummary)} | ERA: ${escapeHtml(fmt(closer.era))}</div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>` : ""}
+        <tr><td style="padding:0;">
+          <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#475569;font-size:11px;font-weight:700;">Season ERA</td><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#111827;font-size:12px;font-weight:800;text-align:right;">${escapeHtml(fmt(card?.statsRow?.seasonEra))}</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#475569;font-size:11px;font-weight:700;">Season WHIP</td><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#111827;font-size:12px;font-weight:800;text-align:right;">${escapeHtml(fmt(card?.statsRow?.seasonWhip))}</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#475569;font-size:11px;font-weight:700;">Last 20 Days ERA</td><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#111827;font-size:12px;font-weight:800;text-align:right;">${escapeHtml(fmt(card?.statsRow?.last20Era))}</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#475569;font-size:11px;font-weight:700;">Bullpen xERA</td><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#111827;font-size:12px;font-weight:800;text-align:right;">${escapeHtml(fmt(basePitching?.seasonXERAAverage))}</td></tr>
+            <tr><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#475569;font-size:11px;font-weight:700;">Closer SV</td><td style="padding:7px 12px;border-bottom:1px solid #eef2f7;color:#111827;font-size:12px;font-weight:800;text-align:right;">${escapeHtml(closerSummary)}</td></tr>
+            <tr><td style="padding:7px 12px;color:#475569;font-size:11px;font-weight:700;">Last 7 Usage</td><td style="padding:7px 12px;color:#111827;font-size:12px;font-weight:800;text-align:right;">${escapeHtml(usageSummary)}</td></tr>
+          </table>
+        </td></tr>
+      </table>`;
+  };
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${formatButtondownSubject(game)}</title>
+<style>
+  body,table,td{font-family:Arial,Helvetica,sans-serif;}
+  @media(max-width:640px){
+    .em-shell{width:100%!important;}
+    .em-pad{padding:14px!important;}
+    .stack-col{display:block!important;width:100%!important;padding:0 0 12px 0!important;}
+    .hero-col{display:block!important;width:100%!important;text-align:center!important;padding:0 0 10px 0!important;}
+    .compact-table th,.compact-table td{padding:6px 5px!important;font-size:10px!important;line-height:1.25!important;}
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:#eef2f7;color:#111827;line-height:1.5;">
+<div style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;max-height:0;max-width:0;">
+  ${DAILY_REPORT_EMAIL_PREHEADER}
+</div>
+<table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;">
+<tr><td align="center" style="padding:12px 8px;">
+<table role="presentation" class="em-shell" style="width:100%;max-width:640px;border-collapse:collapse;background:#fff;border:1px solid #dde4ef;border-radius:16px;overflow:hidden;">
+  <tr>
+    <td style="background:linear-gradient(135deg,#001e5a 0%,#002d72 100%);padding:14px 14px 10px;">
+      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9fb5dd;font-weight:700;margin:0 0 8px 0;text-align:center;">MetsMoneyline</div>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td class="hero-col" align="center" style="width:28%;padding:0 6px 0 0;">
+            <img src="${metsLogo}" alt="Mets logo" width="54" height="54" style="display:block;border:0;width:54px;height:54px;object-fit:contain;margin:0 auto;">
+            <div style="color:#d7e6ff;font-size:11px;font-weight:700;margin-top:4px;">New York Mets</div>
+            <div style="color:#9fb5dd;font-size:10px;font-weight:600;margin-top:2px;">${escapeHtml(metsRecord)}</div>
+          </td>
+          <td class="hero-col" align="center" style="width:44%;padding:0 6px;">
+            <div style="color:#ff5910;font-size:20px;font-weight:900;letter-spacing:0.06em;">METS VS ${escapeHtml(oppAbbr)}</div>
+            <div style="color:#d7e6ff;font-size:13px;font-weight:800;margin-top:4px;">${escapeHtml(heroMetaLine)}</div>
+            ${wxStr ? `<div style="color:#b8c9e8;font-size:11px;margin-top:3px;">${escapeHtml(wxStr)}</div>` : ""}
+            <div style="margin-top:8px;background:#ff5910;border-radius:999px;padding:8px 12px;display:inline-block;">
+              <span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.82);">Official Pick</span>
+              <span style="display:block;font-size:18px;font-weight:900;color:#ffffff;line-height:1.2;margin-top:2px;">${escapeHtml(displayPickLabel)}</span>
+              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.82);margin-top:2px;">${escapeHtml(confidenceLabel)} Matchup Snapshot</span>
+            </div>
+          </td>
+          <td class="hero-col" align="center" style="width:28%;padding:0 0 0 6px;">
+            ${oppLogo ? `<img src="${oppLogo}" alt="${escapeHtml(opponent)} logo" width="54" height="54" style="display:block;border:0;width:54px;height:54px;object-fit:contain;margin:0 auto;">` : `<div style="width:54px;height:54px;background:#1a4a9e;border-radius:50%;text-align:center;line-height:54px;font-size:12px;font-weight:700;color:#fff;margin:0 auto;">${escapeHtml(oppAbbr)}</div>`}
+            <div style="color:#d7e6ff;font-size:11px;font-weight:700;margin-top:4px;">${escapeHtml(opponent)}</div>
+            <div style="color:#9fb5dd;font-size:10px;font-weight:600;margin-top:2px;">${escapeHtml(oppRecord)}</div>
+          </td>
+        </tr>
+      </table>
+      ${splitRows ? `<table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;margin-top:10px;border:1px solid #315491;background:rgba(255,255,255,0.05);">
+        <thead>
+          <tr>
+            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:left;letter-spacing:0.04em;text-transform:uppercase;">Situation</th>
+            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Record</th>
+            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Win %</th>
+            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Runs Scored</th>
+            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Runs Against</th>
+          </tr>
+        </thead>
+        <tbody>${splitRows}</tbody>
+      </table>` : ""}
+    </td>
+  </tr>
+  <tr><td class="em-pad" style="padding:14px 14px 8px;">
+    <div style="margin:0 0 12px 0;">
+      <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Matchup Snapshot</div>
+      <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;table-layout:fixed;">
+        <thead>
+          <tr>
+            <th style="padding:7px 8px;background:#eaf2ff;color:#002d72;font-size:11px;text-align:left;">Mets</th>
+            <th style="padding:7px 8px;background:#f8fafc;color:#475569;font-size:11px;text-align:center;">Category</th>
+            <th style="padding:7px 8px;background:#fff3e8;color:#9a3412;font-size:11px;text-align:right;">${escapeHtml(opponentShort)}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${compactRow(metsRecord, "Season Record", oppRecord)}
+          ${compactRow(metsL5, "Last 5 Record", oppL5)}
+          ${compactRow(metsHARecord, "Home/Away Record", oppHARecord)}
+          ${compactRow(seriesStr, "Season Series", oppSeriesStr)}
+          ${compactRow(oddsEdge === "Mets" ? "Mets" : "N/A", "Odds Edge", oddsEdge === opponentShort ? opponentShort : "N/A", { leftTone: oddsEdge === "Mets" ? "#002d72" : "#111827", rightTone: oddsEdge === opponentShort ? "#9a3412" : "#111827" })}
+        </tbody>
+      </table>
+    </div>
+    <div style="margin:0 0 12px 0;">
+      <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Last 20 Game Trend</div>
+      <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;table-layout:fixed;">
+        <thead>
+          <tr>
+            <th style="padding:7px 6px;background:#f8fafc;color:#475569;font-size:10px;text-align:left;">Stat</th>
+            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;">Mets Season</th>
+            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;">Mets L20</th>
+            <th style="padding:7px 6px;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;">Mets Trend</th>
+            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;">${escapeHtml(opponentShort)} Season</th>
+            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;">${escapeHtml(opponentShort)} L20</th>
+            <th style="padding:7px 6px;background:#fff3e8;color:#9a3412;font-size:10px;text-align:center;">${escapeHtml(opponentShort)} Trend</th>
+            <th style="padding:7px 6px;background:#f8fafc;color:#475569;font-size:10px;text-align:center;">Edge</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">OPS</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtOps(metsOpsRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtOps(metsOpsL20))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsOpsRow))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtOps(oppOpsRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtOps(oppOpsL20))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppOpsRow))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(edgeHigher(metsOpsL20, oppOpsL20))}</td>
+          </tr>
+          <tr>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">AVG</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtAvg(metsAvgRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtAvg(metsAvgL20))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsAvgRow))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtAvg(oppAvgRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtAvg(oppAvgL20))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppAvgRow))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(edgeHigher(metsAvgL20, oppAvgL20, 0.003))}</td>
+          </tr>
+          <tr>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">K%</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtPct(metsKRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(metsKL20))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsKRow, { inverse: true }))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(fmtPct(oppKRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(oppKL20))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppKRow, { inverse: true }))}</td>
+            <td style="padding:7px 6px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(edgeLower(metsKL20, oppKL20, 0.005))}</td>
+          </tr>
+          <tr>
+            <td style="padding:7px 6px;color:#111827;font-size:11px;font-weight:800;">BB%</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(fmtPct(metsBBRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(metsBBL20))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(metsBBRow))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(fmtPct(oppBBRow?.seasonValue))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;font-weight:800;">${escapeHtml(fmtPct(oppBBL20))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;">${escapeHtml(formatTrendDelta(oppBBRow))}</td>
+            <td style="padding:7px 6px;text-align:center;font-size:11px;">${compareEdgeText(edgeHigher(metsBBL20, oppBBL20, 0.005))}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin:0 0 12px 0;">
+      <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Bullpen Trend</div>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td class="stack-col" valign="top" style="width:50%;padding:0 6px 0 0;">${renderBullpenPanel(metsBullpen, "mets")}</td>
+          <td class="stack-col" valign="top" style="width:50%;padding:0 0 0 6px;">${renderBullpenPanel(oppBullpen, "opp")}</td>
+        </tr>
+      </table>
+    </div>
+    <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;margin:0 0 12px 0;">
+      <tr>
+        <td class="stack-col" valign="top" style="width:60%;padding:0 6px 0 0;">
+          <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Starting Pitcher Matchup</div>
+          <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;table-layout:fixed;">
+            <thead>
+              <tr>
+                <th style="padding:7px 8px;background:#eaf2ff;color:#002d72;font-size:11px;text-align:left;">Mets Starter</th>
+                <th style="padding:7px 8px;background:#f8fafc;color:#475569;font-size:11px;text-align:center;">Category</th>
+                <th style="padding:7px 8px;background:#fff3e8;color:#9a3412;font-size:11px;text-align:right;">${escapeHtml(opponentShort)} Starter</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${compactRow(D(metsCard?.name), "Starter", D(oppCard?.name))}
+              ${compactRow(metsCard?.hand ? `${metsCard.hand}HP` : "N/A", "Hand", oppCard?.hand ? `${oppCard.hand}HP` : "N/A")}
+              ${compactRow(fmt(metsERA), "ERA", fmt(oppERA))}
+              ${compactRow(fmt(metsXERA), "xERA", fmt(oppXERA))}
+              ${compactRow(fmt(metsWHIP), "WHIP", fmt(oppWHIP))}
+              ${compactRow(fmtPct(metsKPct), "K%", fmtPct(oppKPct))}
+            </tbody>
+          </table>
+        </td>
+        <td class="stack-col" valign="top" style="width:40%;padding:0 0 0 6px;">
+          <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Model Read</div>
+          <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;table-layout:fixed;">
+            <thead>
+              <tr>
+                <th style="padding:7px 8px;background:#f8fafc;color:#475569;font-size:11px;text-align:left;">Factor</th>
+                <th style="padding:7px 8px;background:#f8fafc;color:#475569;font-size:11px;text-align:center;">Edge</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">Offense Form</td><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(offenseFormEdge)}</td></tr>
+              <tr><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">Bullpen Edge</td><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(bullpenEdge)}</td></tr>
+              <tr><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">Starter Certainty</td><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(spEdgeStr)}</td></tr>
+              <tr><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;color:#111827;font-size:11px;font-weight:800;">Regression Signal</td><td style="padding:7px 8px;border-bottom:1px solid #e5e7eb;text-align:center;font-size:11px;">${compareEdgeText(regressionRead)}</td></tr>
+              <tr><td style="padding:7px 8px;color:#111827;font-size:11px;font-weight:800;">Overall Confidence</td><td style="padding:7px 8px;text-align:center;font-size:11px;font-weight:800;color:#111827;">${escapeHtml(confidenceLabel)}</td></tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px;margin:0 0 14px 0;">
+      <div style="font-size:12px;font-weight:800;color:#111827;margin-bottom:4px;">Pick Summary</div>
+      <div style="font-size:11px;color:#475569;">${escapeHtml(pick?.summary || pick?.explanation || "See the full breakdown at MetsMoneyline.com")}</div>
+    </div>
+    <div style="text-align:center;padding:0 0 10px;">
+      <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#f97316;color:#fff;font-size:13px;font-weight:800;padding:10px 22px;border-radius:8px;text-decoration:none;">Read Full Report</a>
+    </div>
+  </td></tr>
+  <tr>
+    <td style="background:#f8fafc;border-top:1px solid #e5e7eb;padding:10px 14px;text-align:center;font-size:10px;color:#9099b0;line-height:1.5;">
+      For entertainment purposes only. Always gamble responsibly.<br>
+      © 2026 MetsMoneyline · Not affiliated with the New York Mets or MLB
+    </td>
+  </tr>
+</table>
+</td></tr></table>
+</body>
+</html>`;
+}
+
 function buildDailyReportEmailHtml(game) {
+  return buildCompactDailyReportEmailHtml(game);
   const report = game?.writeup?.report || buildPresentationReport(game);
   if (!report) throw new Error("[buildDailyReportEmailHtml] report is null — buildPresentationReport returned nothing");
   if (!report.header) console.warn("[buildDailyReportEmailHtml] WARNING: report.header is missing — email banner will be blank");
