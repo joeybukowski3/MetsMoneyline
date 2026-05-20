@@ -8,9 +8,8 @@ const {
   resolveMetsGameForDate,
   generateOutputPackage,
   persistGeneratedOutput,
-  buildEmailHtml,
+  buildDailyReportEmailHtml,
   buildPlainTextEmail,
-  buildButtondownPayload,
   buildPresentationReport,
   formatButtondownSubject,
   formatPreliminaryButtondownSubject,
@@ -21,6 +20,8 @@ const {
 } = require("./generator");
 
 const STATE_PATH = path.join(__dirname, "report-send-state.json");
+const OUTPUT_DIR = path.join(__dirname, "output");
+const LATEST_EMAIL_PREVIEW_PATH = path.join(OUTPUT_DIR, "latest-email-preview.html");
 const WINDOW_MIN_MINUTES = 90;
 const WINDOW_MAX_MINUTES = 130;
 
@@ -217,6 +218,11 @@ function applyPreliminaryLabels(game, lineupPlan) {
   return game;
 }
 
+function writeLatestEmailPreview(bodyHtml) {
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.writeFileSync(LATEST_EMAIL_PREVIEW_PATH, bodyHtml, "utf8");
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   console.log(`Checking Mets report send window for ${args.date}${args.dryRun ? " (dry run)" : ""}${args.skipWindow ? " (skip window)" : ""}${args.allowDuplicate ? " (allow duplicate)" : ""}${args.testSend ? " (test send)" : ""}${args.allowProjected ? " (allow projected)" : ""}...`);
@@ -331,25 +337,25 @@ async function main() {
     ? formatPreliminaryButtondownSubject(game, lineupPlan?.sourceLabel || "projected lineups")
     : formatButtondownSubject(game);
 
+  // Goal: send the designed HTML matchup snapshot through Buttondown, not the legacy text summary.
   // Build the full HTML report for the email body.
   console.log(`[send] Building email HTML…`);
   let bodyHtml;
   try {
-    // Use the structured card-based email template for Buttondown
-    bodyHtml = buildCondensedEmailHtml(game);
+    bodyHtml = buildDailyReportEmailHtml(game);
   } catch (htmlErr) {
-    // Fallback to full report HTML if condensed fails
-    console.warn(`[send] buildCondensedEmailHtml failed, falling back to full HTML: ${htmlErr.message}`);
-    try {
-      bodyHtml = buildEmailHtml(game);
-    } catch (fallbackErr) {
-      throw new Error(`[send] Both email builders failed: ${fallbackErr.message}`);
-    }
+    throw new Error(`[send] buildDailyReportEmailHtml threw: ${htmlErr.message}`);
   }
   if (!bodyHtml || bodyHtml.trim().length < 1000) {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to generate blank report`);
   }
+  writeLatestEmailPreview(bodyHtml);
   console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
+  console.log(`[send] body starts with doctype/html: ${/^\s*(<!doctype html>|<html)/i.test(bodyHtml) ? "yes" : "no"}`);
+  console.log(`[send] includes "Matchup Snapshot": ${bodyHtml.includes("Matchup Snapshot") ? "yes" : "no"}`);
+  console.log(`[send] includes "Last 20 Game Trend": ${bodyHtml.includes("Last 20 Game Trend") ? "yes" : "no"}`);
+  console.log(`[send] includes "Bullpen Trend": ${bodyHtml.includes("Bullpen Trend") ? "yes" : "no"}`);
+  console.log(`[send] Wrote HTML preview to ${LATEST_EMAIL_PREVIEW_PATH}`);
 
   // Also write the condensed HTML as a debug artifact
   try {
@@ -373,7 +379,7 @@ async function main() {
   }
 
   if (!gameState[emailIdKey]) {
-    const created = await createButtondownEmail({ game, status: "draft", subject });
+    const created = await createButtondownEmail({ game, status: "draft", subject, body: bodyHtml });
     if (!created?.id) {
       throw new Error("Buttondown draft creation did not return an id.");
     }
@@ -385,8 +391,7 @@ async function main() {
 
   await updateButtondownEmail(gameState[emailIdKey], {
     subject,
-    body_html: bodyHtml,
-    body: bodyText,
+    body: bodyHtml,
     status: "about_to_send"
   });
 

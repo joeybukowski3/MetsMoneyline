@@ -61,6 +61,11 @@ Always verify which path the relevant page or workflow actually uses.
 - `api/mlb/mets/odds.json` is the generated static odds artifact and can be fetched safely from the frontend.
 - `/api/mlb/mets/next-game` currently resolves to the live handler in deployment, not the generated artifact, so do not use it as a static frontend dependency without confirming env support and route precedence.
 
+### Buttondown email caution
+
+- For Buttondown email sends, treat the `body` field as the canonical content source. If a later update request writes legacy plain text into `body`, it can override an earlier HTML draft even when `body_html` is also present.
+- When sending rich HTML through Buttondown in this repo, build one final email document and send that same HTML in both the initial draft/create path and the final update/send path.
+
 ## Documentation habit
 
 For non-trivial changes, read:

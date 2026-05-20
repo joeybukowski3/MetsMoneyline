@@ -762,13 +762,24 @@ function parseArgs(argv) {
 
 function formatButtondownSubject(game) {
   if (!game) return "MetsMoneyline";
-  return `MetsMoneyline - ${game.date}: New York Mets vs ${game.opponent}`;
+  const report = game?.writeup?.report || buildPresentationReport(game);
+  const pickLabel = String(report?.officialPick?.label || report?.officialPick?.headline || "Mets ML")
+    .replace(/^Official Pick:\s*/i, "")
+    .trim();
+  const opponentWords = String(game?.opponent || "Opponent").trim().split(/\s+/).filter(Boolean);
+  const opponent = ["Red Sox", "White Sox", "Blue Jays"].includes(opponentWords.slice(-2).join(" "))
+    ? opponentWords.slice(-2).join(" ")
+    : opponentWords.slice(-1).join(" ") || "Opponent";
+  const confidenceLabel = String(report?.officialPick?.confidenceLabel || "Lean").trim();
+  return `MetsMoneyline: ${pickLabel} vs ${opponent} — ${confidenceLabel} Confidence Matchup Snapshot`;
 }
 
 function formatPreliminaryButtondownSubject(game, lineupSourceLabel = "projected lineups") {
   if (!game) return "[TEST] MetsMoneyline";
-  return `[TEST] MetsMoneyline - ${lineupSourceLabel} - New York Mets vs ${game.opponent}`;
+  return `[TEST] ${formatButtondownSubject(game)} (${lineupSourceLabel})`;
 }
+
+const DAILY_REPORT_EMAIL_PREHEADER = "Bullpen edge, last-20 trend lines, starter matchup, and model read for today's Mets game.";
 
 function buildPlainTextEmail(game) {
   const report = game?.writeup?.report;
@@ -6291,19 +6302,35 @@ function buildReportMarkup(report, { mode = "email" } = {}) {
     `)}`;
 }
 
-function buildEmailHtml(game) {
+function buildDailyReportEmailHtml(game) {
   const report = game?.writeup?.report || buildPresentationReport(game);
-  if (!report) throw new Error("[buildEmailHtml] report is null — buildPresentationReport returned nothing");
-  if (!report.header) console.warn("[buildEmailHtml] WARNING: report.header is missing — email banner will be blank");
-  if (!report.startingPitchersComparison) console.warn("[buildEmailHtml] WARNING: report.startingPitchersComparison is missing");
-  if (!report.projectedLineupComparison) console.warn("[buildEmailHtml] WARNING: report.projectedLineupComparison is missing");
+  if (!report) throw new Error("[buildDailyReportEmailHtml] report is null — buildPresentationReport returned nothing");
+  if (!report.header) console.warn("[buildDailyReportEmailHtml] WARNING: report.header is missing — email banner will be blank");
+  if (!report.startingPitchersComparison) console.warn("[buildDailyReportEmailHtml] WARNING: report.startingPitchersComparison is missing");
+  if (!report.projectedLineupComparison) console.warn("[buildDailyReportEmailHtml] WARNING: report.projectedLineupComparison is missing");
 
-  const reportMarkup = buildReportMarkup(report, { mode: "email" });
+  const reportMarkup = buildReportMarkup(report, { mode: "email" })
+    .replace(">Matchup Details</h2>", ">Matchup Snapshot</h2>")
+    .replace(">Starting Pitchers Comparison</h2>", ">Starting Pitcher Matchup</h2>")
+    .replace(">Bullpen Report</h2>", ">Bullpen Trend</h2>")
+    .replace(">Recent Form &mdash; Last 20 Games vs Season</h2>", ">Last 20 Game Trend</h2>")
+    .replace(">Game Analysis</h2>", ">Model Read</h2>");
   if (!reportMarkup || reportMarkup.trim().length < 500) {
-    throw new Error(`[buildEmailHtml] reportMarkup is too short (${reportMarkup?.length ?? 0} chars) — buildReportMarkup produced nothing`);
+    throw new Error(`[buildDailyReportEmailHtml] reportMarkup is too short (${reportMarkup?.length ?? 0} chars) — buildReportMarkup produced nothing`);
   }
 
-  return `<style>
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${formatButtondownSubject(game)}</title>
+  </head>
+  <body style="margin:0;padding:0;background:#eef2f7;">
+    <div style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;max-height:0;max-width:0;">
+      ${DAILY_REPORT_EMAIL_PREHEADER}
+    </div>
+    <style>
       @media only screen and (max-width: 700px) {
         .email-shell { width:100% !important; }
         .email-pad { padding:16px !important; }
@@ -6345,14 +6372,20 @@ function buildEmailHtml(game) {
                 ${reportMarkup}
                 <div style="margin-top:20px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
                   <p style="margin:0 0 8px 0;font-size:13px;color:#475569;">See the full interactive breakdown with charts and lineup stats</p>
-                  <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+                  <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">Read Full Report →</a>
                 </div>
               </td>
             </tr>
           </table>
         </td>
       </tr>
-    </table>`;
+    </table>
+  </body>
+</html>`;
+}
+
+function buildEmailHtml(game) {
+  return buildDailyReportEmailHtml(game);
 }
 
 function buildSiteReportHtml(game) {
@@ -6669,20 +6702,18 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
   if (bodyHtml.includes("<pre><code>")) {
     throw new Error("[buttondown] bodyHtml contains <pre><code> — code block wrapping detected, refusing to send");
   }
-  if (!/^\s*(<(!DOCTYPE|html|style|table|div))/i.test(bodyHtml)) {
-    throw new Error(`[buttondown] bodyHtml does not start with a valid HTML element — first 80 chars: ${bodyHtml.slice(0, 80)}`);
+  if (!/^\s*(<!doctype html>|<html|<(style|table|div))/i.test(bodyHtml)) {
+    throw new Error(`[buttondown] bodyHtml does not start with <!doctype html>, <html, <style>, <table>, or <div> — first 80 chars: ${bodyHtml.slice(0, 80)}`);
   }
 
   const plainText = String(bodyText || "").trim();
+  const richBody = `<!-- buttondown-editor-mode: fancy -->\n${bodyHtml}`;
 
   if (condensedMode) {
-    // Must use body_html for Buttondown to render HTML — sending HTML in `body`
-    // causes it to be displayed as raw text/code.
     return {
       subject,
       status,
-      body: String(bodyText || "").trim() || "See the full report at metsmoneyline.com",
-      body_html: bodyHtml,
+      body: richBody,
       email_type: "public"
     };
   }
@@ -6690,7 +6721,7 @@ function buildButtondownPayload(bodyHtml, { subject, status, bodyText = null, co
   return {
     subject,
     status,
-    body: plainText || bodyHtml,
+    body: richBody,
     email_type: "public"
   };
 }
@@ -7263,11 +7294,13 @@ async function createButtondownDraft(output) {
   if (!game) return;
 
   const subject = formatButtondownSubject(game);
-  const bodyHtml = buildCondensedEmailHtml(game);
+  const bodyHtml = buildDailyReportEmailHtml(game);
   const bodyText = buildPlainTextEmail(game);
   const payload = buildButtondownPayload(bodyHtml, { subject, status: "draft", bodyText, condensedMode: true });
 
-  console.log(`[buttondown] createButtondownDraft POST — keys: ${Object.keys(payload).join(", ")}`);
+  console.log(`[buttondown] createButtondownDraft POST — subject: ${payload.subject}`);
+  console.log(`[buttondown] createButtondownDraft POST — status: ${payload.status}, publish_date: ${payload.publish_date || "(none)"}, metadata: ${payload.metadata ? "present" : "(none)"}`);
+  console.log(`[buttondown] createButtondownDraft POST — body length: ${payload.body?.length ?? 0}, starts fancy: ${payload.body?.startsWith("<!-- buttondown-editor-mode: fancy -->") ? "yes" : "no"}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
@@ -7297,11 +7330,13 @@ async function createButtondownEmail({ game, status = "draft", subject: subjectO
   }
 
   const subject = subjectOverride || formatButtondownSubject(game);
-  const bodyHtml = bodyOverride || buildCondensedEmailHtml(game);
+  const bodyHtml = bodyOverride || buildDailyReportEmailHtml(game);
   const bodyText = buildPlainTextEmail(game);
   const payload = buildButtondownPayload(bodyHtml, { subject, status, bodyText, condensedMode: true });
 
-  console.log(`[buttondown] createButtondownEmail POST — keys: ${Object.keys(payload).join(", ")}`);
+  console.log(`[buttondown] createButtondownEmail POST — subject: ${payload.subject}`);
+  console.log(`[buttondown] createButtondownEmail POST — status: ${payload.status}, publish_date: ${payload.publish_date || "(none)"}, metadata: ${payload.metadata ? "present" : "(none)"}`);
+  console.log(`[buttondown] createButtondownEmail POST — body length: ${payload.body?.length ?? 0}, starts fancy: ${payload.body?.startsWith("<!-- buttondown-editor-mode: fancy -->") ? "yes" : "no"}`);
   try {
     const response = await axios.post(
       "https://api.buttondown.com/v1/emails",
@@ -7333,9 +7368,13 @@ async function updateButtondownEmail(emailId, payload = {}) {
   }
 
   const doRequest = async (extraFields = {}) => {
+    const finalPayload = { ...payload, ...extraFields };
+    console.log(`[buttondown] PATCH ${emailId} request — subject: ${finalPayload.subject || "(unchanged)"}`);
+    console.log(`[buttondown] PATCH ${emailId} request — status: ${finalPayload.status || "(unchanged)"}, publish_date: ${finalPayload.publish_date || "(none)"}, metadata: ${finalPayload.metadata ? "present" : "(none)"}`);
+    console.log(`[buttondown] PATCH ${emailId} request — body length: ${finalPayload.body?.length ?? 0}, starts fancy: ${finalPayload.body?.startsWith("<!-- buttondown-editor-mode: fancy -->") ? "yes" : "no"}`);
     const response = await axios.patch(
       `https://api.buttondown.com/v1/emails/${emailId}`,
-      { ...payload, ...extraFields },
+      finalPayload,
       {
         timeout: 15000,
         headers: {
@@ -7496,6 +7535,7 @@ module.exports = {
   buildDeterministicTodayPick,
   normalizeTodayPickPayload,
   applyTodayPickToWriteup,
+  buildDailyReportEmailHtml,
   buildEmailHtml,
   buildSiteReportHtml,
   loadPreviousOutput,
