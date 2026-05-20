@@ -9,14 +9,12 @@ const {
   generateOutputPackage,
   persistGeneratedOutput,
   buildDailyReportEmailHtml,
-  buildPlainTextEmail,
   buildPresentationReport,
   formatButtondownSubject,
   formatPreliminaryButtondownSubject,
   createButtondownEmail,
   updateButtondownEmail,
-  getMostRecentConfirmedLineup,
-  buildCondensedEmailHtml
+  getMostRecentConfirmedLineup
 } = require("./generator");
 
 const STATE_PATH = path.join(__dirname, "report-send-state.json");
@@ -33,7 +31,9 @@ function parseArgs(argv) {
     allowDuplicate: false,
     debugAnalysis: false,
     testSend: false,
-    allowProjected: false
+    allowProjected: false,
+    draftOnly: false,
+    forceSend: false
   };
 
   for (let i = 0; i < argv.length; i += 1) {
@@ -53,9 +53,17 @@ function parseArgs(argv) {
       args.testSend = true;
     } else if (token === "--allow-projected") {
       args.allowProjected = true;
+    } else if (token === "--draft-only") {
+      args.draftOnly = true;
+    } else if (token === "--force-send") {
+      args.forceSend = true;
     } else {
       throw new Error(`Unknown argument: ${token}`);
     }
+  }
+
+  if (args.draftOnly && args.forceSend) {
+    throw new Error("Choose either --draft-only or --force-send, not both.");
   }
 
   return args;
@@ -223,9 +231,49 @@ function writeLatestEmailPreview(bodyHtml) {
   fs.writeFileSync(LATEST_EMAIL_PREVIEW_PATH, bodyHtml, "utf8");
 }
 
+function getRunMode(args) {
+  if (args.draftOnly) return "draft-only";
+  if (args.forceSend) return "force-send";
+  return "scheduled";
+}
+
+function logEmailDebugInfo({ mode, subject, status, bodyHtml }) {
+  const startsFancy = bodyHtml.startsWith("<!-- buttondown-editor-mode: fancy -->");
+  const startsHtml = /^\s*(<!doctype html>|<html)/i.test(bodyHtml);
+  const includesLegacyMarker = bodyHtml.includes("TONIGHT'S PICK");
+
+  console.log(`[send] mode: ${mode}`);
+  console.log(`[send] subject: ${subject}`);
+  console.log(`[send] Buttondown status: ${status}`);
+  console.log(`[send] body length: ${bodyHtml.length} chars`);
+  console.log(`[send] body starts with fancy editor comment: ${startsFancy ? "yes" : "no"}`);
+  console.log(`[send] body starts with HTML: ${startsHtml ? "yes" : "no"}`);
+  console.log(`[send] includes "Matchup Snapshot": ${bodyHtml.includes("Matchup Snapshot") ? "true" : "false"}`);
+  console.log(`[send] includes "Last 20 Game Trend": ${bodyHtml.includes("Last 20 Game Trend") ? "true" : "false"}`);
+  console.log(`[send] includes "Bullpen Trend": ${bodyHtml.includes("Bullpen Trend") ? "true" : "false"}`);
+  console.log(`[send] includes "Model Read": ${bodyHtml.includes("Model Read") ? "true" : "false"}`);
+  console.log(`[send] includes legacy marker "TONIGHT'S PICK": ${includesLegacyMarker ? "true" : "false"}`);
+  if (includesLegacyMarker) {
+    console.warn("[send] WARNING: legacy plain-text marker detected in HTML body.");
+  }
+}
+
+function getDraftReference(emailRecord) {
+  if (!emailRecord) return "(unknown draft)";
+  return (
+    emailRecord.absolute_url
+    || emailRecord.admin_url
+    || emailRecord.url
+    || emailRecord.web_url
+    || emailRecord.id
+    || "(unknown draft)"
+  );
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  console.log(`Checking Mets report send window for ${args.date}${args.dryRun ? " (dry run)" : ""}${args.skipWindow ? " (skip window)" : ""}${args.allowDuplicate ? " (allow duplicate)" : ""}${args.testSend ? " (test send)" : ""}${args.allowProjected ? " (allow projected)" : ""}...`);
+  const mode = getRunMode(args);
+  console.log(`Checking Mets report send window for ${args.date}${args.dryRun ? " (dry run)" : ""}${args.skipWindow ? " (skip window)" : ""}${args.allowDuplicate ? " (allow duplicate)" : ""}${args.testSend ? " (test send)" : ""}${args.allowProjected ? " (allow projected)" : ""}${args.draftOnly ? " (draft only)" : ""}${args.forceSend ? " (force send)" : ""}...`);
 
   const resolvedGame = await resolveMetsGameForDate(args.date, {
     allowSeriesContinuation: true,
@@ -279,7 +327,7 @@ async function main() {
         lineupsConfirmed,
         pitchersReady,
         alreadySent,
-        skipWindow: args.skipWindow
+        skipWindow: args.skipWindow || args.draftOnly || args.forceSend
       });
 
   console.log(`Game: ${gameId}`);
@@ -350,11 +398,6 @@ async function main() {
     throw new Error(`[send] bodyHtml is too short (${bodyHtml?.length ?? 0} chars) — refusing to generate blank report`);
   }
   writeLatestEmailPreview(bodyHtml);
-  console.log(`[send] bodyHtml length: ${bodyHtml.length} chars`);
-  console.log(`[send] body starts with doctype/html: ${/^\s*(<!doctype html>|<html)/i.test(bodyHtml) ? "yes" : "no"}`);
-  console.log(`[send] includes "Matchup Snapshot": ${bodyHtml.includes("Matchup Snapshot") ? "yes" : "no"}`);
-  console.log(`[send] includes "Last 20 Game Trend": ${bodyHtml.includes("Last 20 Game Trend") ? "yes" : "no"}`);
-  console.log(`[send] includes "Bullpen Trend": ${bodyHtml.includes("Bullpen Trend") ? "yes" : "no"}`);
   console.log(`[send] Wrote HTML preview to ${LATEST_EMAIL_PREVIEW_PATH}`);
 
   // Also write the condensed HTML as a debug artifact
@@ -368,31 +411,55 @@ async function main() {
     console.warn(`[send] Could not write debug artifact: ${writeErr.message}`);
   }
 
-  const bodyText = buildPlainTextEmail(game);
-  console.log(`[send] bodyText length: ${bodyText.length} chars`);
-
   const emailIdKey = args.testSend ? "buttondownEmailIdTest" : "buttondownEmailIdFinal";
   const forceFreshDraft = Boolean(args.allowDuplicate);
+  const createStatus = "draft";
+  const finalStatus = args.draftOnly ? "draft" : "about_to_send";
 
   if (forceFreshDraft) {
     gameState[emailIdKey] = null;
   }
 
+  logEmailDebugInfo({
+    mode,
+    subject,
+    status: !gameState[emailIdKey] ? createStatus : finalStatus,
+    bodyHtml
+  });
+
+  let emailRecord = null;
   if (!gameState[emailIdKey]) {
+    console.log(`[send] Creating Buttondown email in ${createStatus} status.`);
     const created = await createButtondownEmail({ game, status: "draft", subject, body: bodyHtml });
     if (!created?.id) {
       throw new Error("Buttondown draft creation did not return an id.");
     }
+    emailRecord = created;
     gameState[emailIdKey] = created.id;
     state.games[gameId] = gameState;
     saveState(state);
-    console.log(`Created Buttondown draft ${created.id}.`);
+    console.log(`Created Buttondown draft ${getDraftReference(created)}.`);
   }
 
+  if (args.draftOnly) {
+    console.log("[send] Draft-only mode active. Updating draft and exiting before any send/publish status.");
+    emailRecord = await updateButtondownEmail(gameState[emailIdKey], {
+      subject,
+      body: bodyHtml,
+      status: "draft"
+    });
+    gameState.updatedAt = new Date().toISOString();
+    state.games[gameId] = gameState;
+    saveState(state);
+    console.log(`Buttondown draft ready: ${getDraftReference(emailRecord)}`);
+    return;
+  }
+
+  console.log(`[send] Updating Buttondown email ${gameState[emailIdKey]} to ${finalStatus}.`);
   await updateButtondownEmail(gameState[emailIdKey], {
     subject,
     body: bodyHtml,
-    status: "about_to_send"
+    status: finalStatus
   });
 
   if (args.testSend) {

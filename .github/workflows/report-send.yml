@@ -6,7 +6,15 @@ on:
   workflow_dispatch:
     inputs:
       force_draft:
-        description: "Force a Buttondown draft right now (skip send window)"
+        description: "Create a Buttondown draft only. Do not send."
+        required: false
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+      force_send:
+        description: "Force a live Buttondown send/publish now. Use only for testing."
         required: false
         default: "false"
         type: choice
@@ -68,9 +76,16 @@ jobs:
           API_SPORTS_METS_TEAM_ID: ${{ secrets.API_SPORTS_METS_TEAM_ID }}
         run: |
           EXTRA_FLAGS=""
+          if [ "${{ github.event.inputs.force_draft }}" = "true" ] && [ "${{ github.event.inputs.force_send }}" = "true" ]; then
+            echo "Choose either force_draft or force_send, not both."
+            exit 1
+          fi
           if [ "${{ github.event.inputs.force_draft }}" = "true" ]; then
-            EXTRA_FLAGS="--skip-window --allow-duplicate"
-            echo "Force draft mode: skipping send window and duplicate check"
+            EXTRA_FLAGS="--skip-window --allow-duplicate --draft-only"
+            echo "Draft-only mode: skipping send window, allowing duplicate drafts, and not sending."
+          elif [ "${{ github.event.inputs.force_send }}" = "true" ]; then
+            EXTRA_FLAGS="--skip-window --allow-duplicate --force-send"
+            echo "Force-send mode: skipping send window and allowing duplicate send."
           fi
           node check-and-send-report.js $EXTRA_FLAGS
 

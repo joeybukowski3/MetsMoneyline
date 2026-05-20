@@ -65,6 +65,7 @@ Always verify which path the relevant page or workflow actually uses.
 
 - For Buttondown email sends, treat the `body` field as the canonical content source. If a later update request writes legacy plain text into `body`, it can override an earlier HTML draft even when `body_html` is also present.
 - When sending rich HTML through Buttondown in this repo, build one final email document and send that same HTML in both the initial draft/create path and the final update/send path.
+- Keep workflow-dispatch testing flags aligned with the actual Buttondown status transition. A “force draft” input is unsafe if the script still advances the draft to `about_to_send`; draft-only testing must terminate with `status: "draft"` all the way through the last API call.
 
 ## Documentation habit
 
