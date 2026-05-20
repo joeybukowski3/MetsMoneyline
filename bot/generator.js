@@ -6793,8 +6793,18 @@ function buildCondensedEmailHtml(game) {
   const oppAbbr      = TEAM_NAME_TO_ABBR[opponent] || opponent.split(" ").pop().toUpperCase().slice(0, 3);
   const metsLogo     = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
   const oppLogo      = header?.oppLogoUrl  || "";
-  const metsRecord   = sanitizeRecord(game?.standings?.metsRecord, "");
-  const oppRecord    = sanitizeRecord(game?.standings?.oppRecord, "");
+  const metsRecord   = sanitizeRecord(game?.metsRecord || game?.standings?.metsRecord, "");
+  const oppRecord    = sanitizeRecord(game?.oppRecord  || game?.standings?.oppRecord,  "");
+
+  // Home/away split records
+  const rs = game?.recordSplits || {};
+  const isHome = (game?.homeAway || "").toLowerCase() === "home";
+  const metsHARecord = isHome
+    ? (rs.metsHome ? `${rs.metsHome} home` : "")
+    : (rs.metsRoad ? `${rs.metsRoad} away` : "");
+  const oppHARecord  = isHome
+    ? (rs.oppRoad  ? `${rs.oppRoad}  away` : "")
+    : (rs.oppHome  ? `${rs.oppHome}  home` : "");
 
   const metsCard      = report?.startingPitchersComparison?.metsCard;
   const oppCard       = report?.startingPitchersComparison?.oppCard;
@@ -6871,35 +6881,25 @@ function buildCondensedEmailHtml(game) {
   const splits = game?.situationalSplits || null;
 
   /* ── W/L dots last 5 ── */
-  const wlDots = (form) => {
-    const games = Array.isArray(form?.games) ? form.games : [];
+  const wlDots = (games) => {
+    if (!Array.isArray(games) || !games.length) return "";
     return games.slice(-5).map(g => {
-      const w = g.result === "W", l = g.result === "L";
+      const w = (g.result||"").toUpperCase() === "W";
+      const l = (g.result||"").toUpperCase() === "L";
       const bg = w ? "#16a34a" : l ? "#dc2626" : "#9ca3af";
       return `<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:${bg};color:#fff;font-size:9px;font-weight:900;margin-right:2px;">${w?"W":l?"L":"?"}</span>`;
     }).join("");
   };
-  const metsL5  = wlDots(metsRecentForm) || wlDots({ games: game?.gameContext?.metsLast5 || [] });
-  const oppL5   = wlDots(oppRecentForm)  || wlDots({ games: game?.gameContext?.oppLast5  || [] });
+  const metsFormGames = (metsRecentForm?.games || game?.gameContext?.metsRecentGames || []);
+  const oppFormGames  = (oppRecentForm?.games  || game?.gameContext?.oppRecentGames  || []);
+  const metsL5  = wlDots(metsFormGames);
+  const oppL5   = wlDots(oppFormGames);
 
-  /* ── Home/Away records ── */
-  let metsHARecord = "", oppHARecord = "";
-  const isHome = (game?.homeAway || "").toLowerCase() === "home";
-  try {
-    if (isHome) {
-      metsHARecord = `${game?.standings?.metsHomeRecord || "—"} home`;
-      oppHARecord  = `${game?.standings?.oppRoadRecord  || "—"} away`;
-    } else {
-      metsHARecord = `${game?.standings?.metsRoadRecord || "—"} away`;
-      oppHARecord  = `${game?.standings?.oppHomeRecord  || "—"} home`;
-    }
-  } catch(_) {}
-
-  /* ── Season series ── */
-  const seriesRecord = game?.gameContext?.seasonSeriesRecord || null;
-  const metsSeriesW = seriesRecord?.metsWins ?? null;
-  const oppSeriesW  = seriesRecord?.oppWins  ?? null;
-  const seriesStr   = (metsSeriesW != null && oppSeriesW != null) ? `${metsSeriesW}-${oppSeriesW}` : null;
+  /* ── Season series (from headToHead) ── */
+  const h2h = game?.gameContext?.headToHead || null;
+  const metsSeriesW = h2h?.wins   ?? null;
+  const oppSeriesW  = h2h?.losses ?? null;
+  const seriesStr    = (metsSeriesW != null && oppSeriesW != null) ? `${metsSeriesW}-${oppSeriesW}` : null;
   const oppSeriesStr = (metsSeriesW != null && oppSeriesW != null) ? `${oppSeriesW}-${metsSeriesW}` : null;
 
   /* ── Pick ── */
