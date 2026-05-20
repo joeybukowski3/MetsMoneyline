@@ -1326,7 +1326,7 @@ function buildRow3(game) {
 
   const headshotImg = (p) => {
     const pid = p.playerId || p.id || 0;
-    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name} headshot for Mets lineup analysis" width="28" height="28" loading="lazy" decoding="async" onerror="this.style.display='none'">`;
+    return `<img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_60,q_auto:best/v1/people/${pid}/headshot/67/current" class="player-headshot" alt="${p.name} headshot for Mets lineup analysis" width="24" height="24" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.opacity='0';">`;
   };
 
   const statCell = (label, value) => `<td class="metric-cell ${metricValueClass(label, value)}">${value ?? "N/A"}</td>`;
