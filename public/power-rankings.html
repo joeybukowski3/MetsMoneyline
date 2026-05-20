@@ -3,500 +3,295 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MLB Power Rankings 2026 — Composite Stat Rankings | MetsMoneyline</title>
-  <meta name="description" content="Data-driven MLB power rankings for 2026. Every team ranked by a composite of OPS+, rotation xERA, bullpen xFIP, and run differential. Where do the Mets stack up?">
-  <meta name="keywords" content="MLB power rankings 2026, Mets power ranking, MLB team rankings, MLB OPS+, MLB xERA rankings">
+  <title>MLB Power Rankings 2026 — Weighted Model | MetsMoneyline</title>
+  <meta name="description" content="Weekly MLB power rankings for 2026 using a 7-category weighted model: offense, pitching, bullpen, run differential, recent form, defense, and schedule strength.">
+  <meta name="keywords" content="MLB power rankings 2026, Mets power ranking, MLB team rankings weekly, best MLB teams 2026">
   <link rel="canonical" href="https://www.metsmoneyline.com/rankings">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.metsmoneyline.com/rankings">
   <meta property="og:title" content="MLB Power Rankings 2026 | MetsMoneyline">
-  <meta property="og:description" content="All 30 teams ranked by OPS+, rotation xERA, bullpen xFIP, and run differential. Where do the Mets land?">
+  <meta property="og:description" content="All 30 teams ranked by a weighted model of offense, pitching, bullpen, run diff, recent form, and defense. Where do the Mets land?">
   <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="MLB Power Rankings 2026 | MetsMoneyline">
-  <meta name="twitter:description" content="All 30 teams ranked by composite score — OPS+, xERA, bullpen, run diff.">
+  <meta name="twitter:description" content="Weekly model-based MLB power rankings — all 30 teams, updated every morning.">
   <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebPage","name":"MLB Power Rankings 2026","url":"https://www.metsmoneyline.com/rankings","isPartOf":{"@type":"WebSite","name":"MetsMoneyline","url":"https://www.metsmoneyline.com"}}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/jpeg" href="/favicon.jpg">
   <link rel="stylesheet" href="/css/styles.css">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-VV13077MN0');</script>
-  <script type="application/ld+json">
-    {"@context":"https://schema.org","@type":"WebPage","name":"MLB Power Rankings 2026","url":"https://www.metsmoneyline.com/rankings","isPartOf":{"@type":"WebSite","name":"Mets Moneyline","url":"https://www.metsmoneyline.com"}}
-  </script>
   <style>
-    /* ── Shell & header ── */
-    .pr-shell { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem 3rem; }
-    .pr-header { padding: 1.5rem 0 0.75rem; }
-    .pr-header h1 { font-family: "Oswald", sans-serif; font-size: 1.7rem; font-weight: 700; color: var(--navy); margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.03em; }
-    .pr-header p { color: var(--text-muted); font-size: 0.85rem; }
+    .pr2-shell { max-width: 1060px; margin: 0 auto; padding: 0 1.25rem 3rem; }
 
-    /* ── Tab strip ── */
-    .pr-tabs {
-      display: flex;
-      gap: 0.35rem;
-      border-bottom: 2px solid #e5eaf2;
-      margin-bottom: 1.1rem;
+    /* ── Hero ── */
+    .pr2-hero { padding: 1.4rem 0 0.6rem; }
+    .pr2-hero h1 { font-family: "Oswald", sans-serif; font-size: 1.75rem; font-weight: 700;
+      color: var(--navy); text-transform: uppercase; letter-spacing: 0.03em; margin: 0 0 0.2rem; }
+    .pr2-hero p { color: var(--text-muted); font-size: 0.82rem; margin: 0; }
+
+    /* ── SEO block ── */
+    .pr2-seo { font-size: 0.82rem; color: #475569; line-height: 1.6;
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 10px;
+      padding: 0.7rem 1rem; margin: 0.75rem 0; }
+
+    /* ── Model card ── */
+    .pr2-model-card { background: #fff; border: 1px solid var(--border); border-radius: 14px;
+      box-shadow: var(--shadow); padding: 1rem 1.1rem; margin-bottom: 1rem; }
+    .pr2-model-card h2 { font-size: 0.72rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--navy); margin: 0 0 0.65rem; }
+    .pr2-weights { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.4rem 1rem; }
+    .pr2-weight-row { display: flex; align-items: center; gap: 0.5rem; }
+    .pr2-weight-bar-wrap { flex: 1; background: #eef2f7; border-radius: 3px; height: 5px; }
+    .pr2-weight-bar { height: 5px; border-radius: 3px; background: var(--orange); }
+    .pr2-weight-label { font-size: 0.72rem; font-weight: 600; color: var(--navy); white-space: nowrap; min-width: 120px; }
+    .pr2-weight-pct { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); min-width: 28px; text-align: right; }
+    .pr2-model-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.65rem; line-height: 1.5; }
+
+    /* ── Table ── */
+    .pr2-table-wrap { border-radius: 14px; border: 1px solid var(--border); box-shadow: var(--shadow);
+      overflow: hidden; background: #fff; }
+    .pr2-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .pr2-table thead th { background: var(--navy); color: #fff; padding: 0.65rem 0.6rem;
+      font-size: 0.64rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      text-align: center; white-space: nowrap; cursor: pointer; user-select: none; }
+    .pr2-table thead th:hover { background: #003d8f; }
+    .pr2-table thead th:nth-child(2) { text-align: left; }
+    .pr2-table thead th .sa { font-size: 0.55rem; margin-left: 2px; opacity: 0.5; }
+    .pr2-table thead th.sorted .sa { opacity: 1; }
+
+    .pr2-table tbody td { padding: 0.55rem 0.6rem; text-align: center;
+      border-bottom: 1px solid #f0f4f8; }
+    .pr2-table tbody tr:last-child td { border-bottom: none; }
+    .pr2-table tbody td:nth-child(2) { text-align: left; }
+
+    /* Mets row highlight */
+    .pr2-table tbody tr.is-mets { background: rgba(255,89,16,0.05); }
+    .pr2-table tbody tr.is-mets td { font-weight: 700; }
+    .pr2-table tbody tr:hover { background: #f8fafc; }
+    .pr2-table tbody tr.is-mets:hover { background: rgba(255,89,16,0.09); }
+
+    /* Rank cell */
+    .pr2-rank { font-weight: 900; font-size: 0.88rem; color: var(--navy); }
+    .pr2-table tbody tr.is-mets .pr2-rank { color: var(--orange); }
+
+    /* Team cell */
+    .pr2-team-cell { display: flex; align-items: center; gap: 0.4rem; }
+    .pr2-team-cell img { width: 20px; height: 20px; flex-shrink: 0; }
+    .pr2-team-name { font-weight: 700; color: #1e293b; font-size: 0.82rem; }
+    .pr2-record { font-size: 0.68rem; color: var(--text-muted); font-weight: 500; }
+
+    /* Score */
+    .pr2-score { font-weight: 800; font-size: 0.88rem; }
+    .score-hi { color: #15803d; }
+    .score-md { color: #92400e; }
+    .score-lo { color: #dc2626; }
+
+    /* Delta */
+    .pr2-delta { font-size: 0.74rem; font-weight: 700; white-space: nowrap; }
+    .delta-up   { color: #16a34a; }
+    .delta-down { color: #dc2626; }
+    .delta-flat { color: #94a3b8; }
+
+    /* Rank delta arrow */
+    .rk-up   { color: #16a34a; font-size: 0.8rem; }
+    .rk-down { color: #dc2626; font-size: 0.8rem; }
+    .rk-flat { color: #94a3b8; }
+
+    /* Update note */
+    .pr2-note { font-size: 0.72rem; color: var(--text-muted); text-align: center;
+      margin-top: 0.75rem; }
+
+    /* Loading */
+    .pr2-loading { text-align: center; color: var(--text-muted); padding: 3rem 0; font-size: 0.9rem; }
+
+    @media (max-width: 680px) {
+      .pr2-shell { padding: 0 0.5rem 2rem; }
+      .pr2-table { font-size: 0.76rem; }
+      .pr2-table thead th { padding: 0.5rem 0.35rem; font-size: 0.57rem; }
+      .pr2-table tbody td { padding: 0.45rem 0.3rem; }
+      .pr2-team-cell img { width: 16px; height: 16px; }
+      .pr2-team-name { font-size: 0.76rem; }
+      .pr2-weights { grid-template-columns: 1fr 1fr; }
+      /* Hide last-20 and score delta on very small screens */
+      .pr2-col-l20, .pr2-col-lw { display: none; }
     }
-    .pr-tab {
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
-      padding: 0.55rem 1.1rem;
-      font-family: inherit;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      transition: color 0.15s, border-color 0.15s;
-      white-space: nowrap;
-    }
-    .pr-tab:hover { color: var(--navy); }
-    .pr-tab.active { color: var(--navy); border-bottom-color: var(--orange); }
-
-    /* ── Methodology note ── */
-    .pr-method {
-      background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
-      padding: 0.75rem 1rem; margin-bottom: 1rem;
-      font-size: 0.8rem; color: var(--text-muted); line-height: 1.55;
-    }
-    .pr-method strong { color: var(--navy); }
-
-    .pr-seo-summary {
-      max-width: 960px; margin: 0 0 1rem;
-      padding: 0.8rem 1rem; background: #f8fafc;
-      border: 1px solid var(--border); border-radius: 12px;
-      color: #475569; font-size: 0.82rem; line-height: 1.6;
-    }
-
-    /* ── Shared table styles ── */
-    .pr-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow); }
-    .pr-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: #fff; }
-
-    .pr-table thead th {
-      position: sticky; top: 0; z-index: 1;
-      background: var(--navy); color: #fff;
-      padding: 0.7rem 0.6rem;
-      font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
-      text-align: center; white-space: nowrap; cursor: pointer; user-select: none;
-    }
-    .pr-table thead th:hover { background: #003d8f; }
-    .pr-table thead th:nth-child(2) { text-align: left; min-width: 155px; }
-    .pr-table thead th .sa { font-size: 0.58rem; margin-left: 3px; opacity: 0.45; }
-    .pr-table thead th.sorted .sa { opacity: 1; }
-    .pr-table thead th[data-nosort] { cursor: default; }
-    .pr-table thead th[data-nosort]:hover { background: var(--navy); }
-
-    .pr-table tbody td { padding: 0.58rem 0.6rem; text-align: center; border-bottom: 1px solid #f0f2f6; font-weight: 600; }
-    .pr-table tbody td:first-child { font-weight: 900; color: var(--navy); font-size: 0.88rem; }
-    .pr-table tbody td:nth-child(2) { text-align: left; }
-
-    .pr-table tbody tr.is-mets { background: rgba(255,89,16,0.06); }
-    .pr-table tbody tr.is-mets td { font-weight: 800; }
-    .pr-table tbody tr.is-mets td:first-child { color: var(--orange); }
-    .pr-table tbody tr:hover { background: #f8fafc; }
-    .pr-table tbody tr.is-mets:hover { background: rgba(255,89,16,0.1); }
-
-    /* ── Team cell ── */
-    .team-cell { display: flex; align-items: center; gap: 0.45rem; }
-    .team-cell img { width: 22px; height: 22px; flex-shrink: 0; }
-    .team-name { font-weight: 700; color: var(--text-main); white-space: nowrap; }
-    .team-record { font-size: 0.7rem; color: var(--text-muted); font-weight: 500; }
-
-    /* ── Score pills ── */
-    .score-pill { display: inline-block; padding: 0.18rem 0.48rem; border-radius: 6px; font-size: 0.76rem; font-weight: 800; }
-    .score-top { background: rgba(22,163,74,0.12); color: #15803d; }
-    .score-mid { background: rgba(245,158,11,0.12); color: #b45309; }
-    .score-bot { background: rgba(220,38,38,0.1); color: #dc2626; }
-
-    /* ── Delta cell (Compare tab) ── */
-    .delta-pill {
-      display: inline-flex; align-items: center; gap: 0.2rem;
-      padding: 0.18rem 0.45rem; border-radius: 6px;
-      font-size: 0.74rem; font-weight: 800;
-    }
-    .delta-up   { background: rgba(22,163,74,0.1);  color: #15803d; }
-    .delta-down { background: rgba(220,38,38,0.08); color: #dc2626; }
-    .delta-flat { background: #f1f5f9; color: #64748b; }
-    .delta-score-up   { background: rgba(22,163,74,0.08);  color: #15803d; }
-    .delta-score-down { background: rgba(220,38,38,0.06); color: #dc2626; }
-    .delta-score-flat { background: #f8fafc; color: #64748b; }
-
-    /* ── Compare header annotations ── */
-    .col-group { font-size: 0.55rem; display: block; opacity: 0.7; font-weight: 500; letter-spacing: 0; text-transform: none; }
-
-    /* ── Loading / empty ── */
-    .loading-msg { text-align: center; color: var(--text-muted); padding: 3rem 0; font-size: 0.9rem; }
-
-    /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .pr-shell { padding: 0 0.5rem 2rem; }
-      .pr-table { font-size: 0.78rem; }
-      .pr-table thead th { padding: 0.55rem 0.35rem; font-size: 0.6rem; }
-      .pr-table tbody td { padding: 0.5rem 0.3rem; }
-      .team-cell img { width: 18px; height: 18px; }
-      .pr-tab { padding: 0.45rem 0.75rem; font-size: 0.75rem; }
-    }
-    @media (max-width: 480px) {
-      .pr-header h1 { font-size: 1.3rem; }
-      .pr-tabs { gap: 0.15rem; }
-      .pr-tab { padding: 0.4rem 0.6rem; font-size: 0.7rem; }
+    @media (max-width: 400px) {
+      .pr2-weights { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="alert-banner">Live 2026 season mode &mdash; stats and records are current-season only</div>
+  <div class="alert-banner">Power rankings update every morning &mdash; model scores reflect current season data</div>
   <header></header>
-  <noscript>
-    <section class="pr-seo-summary" style="margin:1rem auto;">
-      <p>The MLB power rankings page compares all 30 teams using offense, rotation quality, bullpen quality, and run differential. JavaScript is required for the sortable live rankings table.</p>
-    </section>
-  </noscript>
 
   <main>
-    <div class="pr-shell">
-
-      <div class="pr-header">
+    <div class="pr2-shell">
+      <div class="pr2-hero">
         <h1>MLB Power Rankings</h1>
-        <p>Last updated: <span id="last-updated">Loading…</span> &nbsp;·&nbsp; All 30 teams. Updated daily.</p>
+        <p>Updated daily &nbsp;·&nbsp; Last updated: <span id="pr2-updated">Loading…</span></p>
       </div>
 
-      <section id="seo-content" class="pr-seo-summary">
+      <section class="pr2-seo" id="pr2-seo">
         <!-- SEO_POWER_RANKINGS_SUMMARY:START -->
-<p>The Mets currently rank #13 in these 2026 MLB power rankings. The top three teams are 1. Dodgers; 2. Braves; 3. Yankees. Rankings blend OPS+, starter xERA, bullpen xFIP, and run differential into one composite score.</p>
+<p>The Mets currently rank in these 2026 MLB power rankings. Rankings use a weighted model of offense, pitching, bullpen, run differential, recent form, and defense.</p>
 <!-- SEO_POWER_RANKINGS_SUMMARY:END -->
       </section>
 
-      <!-- Tab strip -->
-      <div class="pr-tabs" role="tablist">
-        <button class="pr-tab active" data-tab="season" role="tab" aria-selected="true">Season</button>
-        <button class="pr-tab" data-tab="l30" role="tab" aria-selected="false">Last 30 Days</button>
-        <button class="pr-tab" data-tab="compare" role="tab" aria-selected="false">Compare</button>
+      <div class="pr2-model-card">
+        <h2>How the Model Works</h2>
+        <div class="pr2-weights" id="pr2-weight-bars"></div>
+        <p class="pr2-model-note">
+          Each category is scored 0–100 via percentile rank across all 30 teams (higher is always better — ERA/WHIP/errors are inverted).
+          Weighted scores are summed to produce a final 0–100 power score. <strong>Recent Form</strong> is based on each team's last 20 games W/L.
+          <strong>Score Δ</strong> shows the change from the previous run. <strong>Strength of Schedule</strong> is approximated by division
+          (AL/NL East toughest; Central softest) — a known limitation noted in the methodology.
+          Injury adjustment is reserved for a future enhancement and currently contributes a neutral 50 pts.
+        </p>
       </div>
 
-      <!-- Methodology (updates per tab) -->
-      <div class="pr-method" id="pr-method-text">
-        <strong>How it works:</strong> Each team gets a composite score (0–100) from four equal categories:
-        <strong>OPS+</strong>, <strong>Starter xERA</strong>, <strong>Bullpen xFIP</strong>, and <strong>Run Differential</strong>.
-        Higher is better. Click any column to re-sort.
+      <div class="pr2-table-wrap" id="pr2-container">
+        <div class="pr2-loading">Loading power rankings…</div>
       </div>
 
-      <!-- Main container -->
-      <div id="pr-container">
-        <div class="loading-msg">Loading power rankings&hellip;</div>
-      </div>
-
+      <p class="pr2-note">Rankings update daily at 2:00 AM ET &nbsp;·&nbsp; Model v4 &nbsp;·&nbsp; Sources: MLB Stats API</p>
     </div>
   </main>
 
-  <footer>
-    <div class="footer-brand"><span class="brand-mets">METS</span><span class="brand-mono">MONEYLINE</span></div>
-    <p class="footer-disclaimer">For entertainment purposes only. Always gamble responsibly.</p>
-    <p class="footer-copy">&copy; 2026 MetsMoneyline. Not affiliated with the New York Mets or MLB.</p>
-  </footer>
-
+  <footer></footer>
   <script defer src="/js/site-header.js"></script>
   <script defer src="/js/site-footer.js"></script>
   <script>
-  (function () {
-    let seasonData = null;
-    let l30Data    = null;
-    let activeTab  = 'season';
-
-    // Per-tab sort state
-    const sortState = {
-      season:  { col: 'composite', asc: false },
-      l30:     { col: 'composite', asc: false },
-      compare: { col: 'rankDelta',  asc: false },
-    };
-
-    const SEASON_COLS = [
-      { key: 'rank',        label: '#',        nosort: true },
-      { key: 'team',        label: 'Team',     nosort: true },
-      { key: 'composite',   label: 'Score'     },
-      { key: 'opsPlus',     label: 'OPS+'      },
-      { key: 'starterXera', label: 'SP xERA'   },
-      { key: 'bullpenXfip', label: 'BP xFIP'   },
-      { key: 'runDiff',     label: 'Run Diff'  },
-      { key: 'record',      label: 'Record', nosort: true },
+  (function() {
+    var WEIGHTS = [
+      { key:"offense",  label:"Offense",         pct:25, tip:"Team OPS+ (higher = better)" },
+      { key:"spitch",   label:"Starting Pitching",pct:22, tip:"ERA + WHIP (lower = better score)" },
+      { key:"bullpen",  label:"Bullpen",          pct:15, tip:"Team ERA proxy for relief pitchers" },
+      { key:"runDiff",  label:"Run Differential", pct:13, tip:"Runs scored minus runs allowed" },
+      { key:"form",     label:"Recent Form",      pct:10, tip:"Last 20 games W/L%" },
+      { key:"defense",  label:"Defense",          pct:8,  tip:"Errors per game (lower = better)" },
+      { key:"sos",      label:"Strength of Sched",pct:5,  tip:"Division-based schedule difficulty" },
+      { key:"injury",   label:"Injury Adj.",      pct:2,  tip:"Reserved — currently neutral" },
     ];
 
-    const COMPARE_COLS = [
-      { key: 'seasonRank', label: 'Season Rank', nosort: true },
-      { key: 'team',       label: 'Team',        nosort: true },
-      { key: 'rankDelta',  label: 'Rank 0394', sub: 'L30 vs Season' },
-      { key: 'compositeDelta', label: 'Score 0394', sub: 'L30 vs Season' },
-      { key: 'opsPlusDelta',   label: 'OPS+ 0394'  },
-      { key: 'xeraDelta',      label: 'xERA 0394', sub: 'lower=better' },
-      { key: 'bpDelta',        label: 'BP 0394', sub: 'lower=better' },
-    ];
-
-    /* ── Tier helpers ── */
-    function scoreTier(v) {
-      return v >= 70 ? 'score-top' : v >= 40 ? 'score-mid' : 'score-bot';
-    }
-    function pitchTier(v, inv) {
-      if (inv) return v <= 3.5 ? 'score-top' : v <= 4.2 ? 'score-mid' : 'score-bot';
-      return v >= 102 ? 'score-top' : v >= 95 ? 'score-mid' : 'score-bot';
+    // Render weight bars
+    var barsEl = document.getElementById("pr2-weight-bars");
+    if (barsEl) {
+      barsEl.innerHTML = WEIGHTS.map(function(w) {
+        return '<div class="pr2-weight-row" title="' + w.tip + '">' +
+          '<span class="pr2-weight-label">' + w.label + '</span>' +
+          '<div class="pr2-weight-bar-wrap"><div class="pr2-weight-bar" style="width:' + (w.pct * 4) + '%"></div></div>' +
+          '<span class="pr2-weight-pct">' + w.pct + '%</span></div>';
+      }).join("");
     }
 
-    /* ── Team cell ── */
-    function teamCell(t) {
-      const logo = `https://www.mlbstatic.com/team-logos/${t.teamId}.svg`;
-      return `<div class="team-cell">
-        <img src="${logo}" alt="${t.team}" width="22" height="22" loading="lazy">
-        <div>
-          <div class="team-name">${t.team}</div>
-          <div class="team-record">${t.record || ''}</div>
-        </div>
-      </div>`;
+    var sortState = { col: "rank", asc: true };
+
+    function scoreClass(v) {
+      return v >= 65 ? "score-hi" : v >= 40 ? "score-md" : "score-lo";
     }
 
-    /* ── Sort helper ── */
-    function sortTeams(teams, col, asc, tab) {
-      const ranked = [...teams].sort((a, b) => b.composite - a.composite);
-      ranked.forEach((t, i) => t._rank = i + 1);
-      if (!col || col === 'rank' || col === 'seasonRank') return ranked;
-      return ranked.sort((a, b) => {
-        const va = a[col], vb = b[col];
-        if (va == null && vb == null) return 0;
-        if (va == null) return 1;
-        if (vb == null) return -1;
-        if (typeof va === 'string') return asc ? va.localeCompare(vb) : vb.localeCompare(va);
-        // Pitching: lower is better — flip natural sort
-        if (['starterXera','bullpenXfip','xeraDelta','bpDelta'].includes(col)) {
-          return asc ? vb - va : va - vb;
-        }
+    function arrow(col) {
+      if (col !== sortState.col) return '<span class="sa">↕</span>';
+      return '<span class="sa">' + (sortState.asc ? "▲" : "▼") + '</span>';
+    }
+
+    function sortTeams(teams) {
+      var col = sortState.col, asc = sortState.asc;
+      return teams.slice().sort(function(a, b) {
+        var va = col === "team" ? a.team : (col === "rank" ? a.rank : (col === "record" ? a.wins : (col === "last20" ? parseInt(a.last20Record||"0") : (a[col] ?? 0))));
+        var vb = col === "team" ? b.team : (col === "rank" ? b.rank : (col === "record" ? b.wins : (col === "last20" ? parseInt(b.last20Record||"0") : (b[col] ?? 0))));
+        if (typeof va === "string") return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+        // For rank: lower number = better, so ascending = normal order
         return asc ? va - vb : vb - va;
       });
     }
 
-    /* ── Sort arrow ── */
-    function arrow(col, activeCol, asc) {
-      if (col === activeCol) return `<span class="sa">${asc ? '▲' : '▼'}</span>`;
-      return `<span class="sa">↕</span>`;
-    }
-
-    /* ── Render season/L30 table ── */
-    function renderRankingTable(teams, tab) {
-      const { col, asc } = sortState[tab];
-      const sorted = sortTeams(teams, col, asc, tab);
-      const cols = SEASON_COLS;
-
-      const header = cols.map(c =>
-        `<th class="${c.key === col ? 'sorted' : ''}" ${c.nosort ? 'data-nosort' : `data-col="${c.key}"`}>
-          ${c.label}${c.nosort ? '' : arrow(c.key, col, asc)}
-        </th>`
-      ).join('');
-
-      const body = sorted.map(t => {
-        const isMets = t.teamId === 121;
-        const rd = t.runDiff > 0 ? `+${t.runDiff}` : String(t.runDiff);
-        const rdColor = t.runDiff >= 0 ? '#16a34a' : '#dc2626';
-        return `<tr class="${isMets ? 'is-mets' : ''}">
-          <td>${t._rank}</td>
-          <td>${teamCell(t)}</td>
-          <td><span class="score-pill ${scoreTier(t.composite)}">${t.composite.toFixed(1)}</span></td>
-          <td><span class="score-pill ${pitchTier(t.opsPlus, false)}">${t.opsPlus}</span></td>
-          <td><span class="score-pill ${pitchTier(t.starterXera ?? 4.5, true)}">${t.starterXera != null ? t.starterXera.toFixed(2) : '—'}</span></td>
-          <td><span class="score-pill ${pitchTier(t.bullpenXfip, true)}">${t.bullpenXfip.toFixed(2)}</span></td>
-          <td style="font-weight:800;color:${rdColor}">${rd}</td>
-          <td style="color:var(--text-muted);font-weight:500">${t.record || '—'}</td>
-        </tr>`;
-      }).join('');
-
-      return `<div class="pr-table-wrap">
-        <table class="pr-table" id="pr-table-${tab}">
-          <thead><tr>${header}</tr></thead>
-          <tbody>${body}</tbody>
-        </table>
-      </div>`;
-    }
-
-    /* ── Render compare table ── */
-    function renderCompareTable(season, l30) {
-      const { col, asc } = sortState.compare;
-
-      // Build merged dataset
-      const l30Map = {};
-      l30.teams.forEach((t, i) => { l30Map[t.teamId] = { ...t, l30Rank: i + 1 }; });
-
-      const rows = season.teams.map((st, si) => {
-        const lt = l30Map[st.teamId] || {};
-        const seasonRank = si + 1;
-        const l30Rank = lt.l30Rank ?? seasonRank;
-        return {
-          teamId:        st.teamId,
-          team:          st.team,
-          record:        st.record,
-          seasonRank,
-          l30Rank,
-          rankDelta:     seasonRank - l30Rank,          // positive = moved up in L30
-          compositeDelta: parseFloat(((lt.composite ?? st.composite) - st.composite).toFixed(1)),
-          opsPlusDelta:  (lt.opsPlus ?? st.opsPlus) - st.opsPlus,
-          xeraDelta:     parseFloat(((lt.starterXera ?? st.starterXera ?? 0) - (st.starterXera ?? 0)).toFixed(2)),
-          bpDelta:       parseFloat(((lt.bullpenXfip ?? st.bullpenXfip) - st.bullpenXfip).toFixed(2)),
-        };
-      });
-
-      // Sort
-      const sorted = [...rows];
-      if (col && col !== 'seasonRank' && col !== 'team') {
-        sorted.sort((a, b) => {
-          const va = a[col], vb = b[col];
-          if (va == null && vb == null) return 0;
-          if (va == null) return 1;
-          if (vb == null) return -1;
-          // For pitching deltas, more negative = improvement = sort first when asc=false
-          return asc ? va - vb : vb - va;
-        });
+    function render(teams) {
+      var sorted = sortTeams(teams);
+      function th(col, label, cls) {
+        var isSorted = sortState.col === col;
+        return '<th class="' + (isSorted ? "sorted " : "") + (cls||"") + '" data-col="' + col + '">' + label + arrow(col) + '</th>';
       }
+      var thead = '<thead><tr>' +
+        th("rank","Rank") +
+        th("team","Team") +
+        th("record","Record") +
+        th("last20","Last 20","pr2-col-l20") +
+        th("powerScore","Score") +
+        th("scoreDelta","Wk Δ","pr2-col-lw") +
+        '<th data-nosort title="Rank movement">Trend</th>' +
+        '</tr></thead>';
 
-      function deltaPill(val, invert = false) {
-        if (val == null) return '—';
-        const improved = invert ? val < 0 : val > 0;
-        const declined = invert ? val > 0 : val < 0;
-        const sign = val > 0 ? '+' : '';
-        const cls = improved ? 'delta-up' : declined ? 'delta-down' : 'delta-flat';
-        const icon = improved ? '▲' : declined ? '▼' : '';
-        return `<span class="delta-pill ${cls}">${icon} ${sign}${val}</span>`;
-      }
-      function scoreDeltaPill(val) {
-        if (val == null) return '—';
-        const sign = val > 0 ? '+' : '';
-        const cls = val > 0.4 ? 'delta-score-up' : val < -0.4 ? 'delta-score-down' : 'delta-score-flat';
-        return `<span class="delta-pill ${cls}">${sign}${val.toFixed(1)}</span>`;
-      }
-      function rankDeltaPill(val) {
-        if (val == null) return '—';
-        const sign = val > 0 ? '+' : '';
-        const cls = val > 0 ? 'delta-up' : val < 0 ? 'delta-down' : 'delta-flat';
-        const icon = val > 0 ? '▲' : val < 0 ? '▼' : '—';
-        return `<span class="delta-pill ${cls}">${icon} ${sign}${val}</span>`;
-      }
+      var tbody = "<tbody>" + sorted.map(function(t) {
+        var isMets = t.teamId === 121;
+        var logo = "https://www.mlbstatic.com/team-logos/" + t.teamId + ".svg";
+        var teamCell = '<td><div class="pr2-team-cell">' +
+          '<img src="' + logo + '" alt="' + t.team + '" width="20" height="20" loading="lazy">' +
+          '<div><div class="pr2-team-name">' + t.team + '</div>' +
+          '<div class="pr2-record">' + t.record + '</div></div></div></td>';
 
-      const header = COMPARE_COLS.map(c =>
-        `<th class="${c.key === col ? 'sorted' : ''}" ${c.nosort ? 'data-nosort' : `data-col="${c.key}"`}>
-          ${c.label}${c.sub ? `<span class="col-group">${c.sub}</span>` : ''}
-          ${c.nosort ? '' : arrow(c.key, col, asc)}
-        </th>`
-      ).join('');
+        var scCls = scoreClass(t.powerScore);
+        var scoreCell = '<td><span class="pr2-score ' + scCls + '">' + t.powerScore.toFixed(1) + '</span></td>';
 
-      const body = sorted.map(r => {
-        const isMets = r.teamId === 121;
-        return `<tr class="${isMets ? 'is-mets' : ''}">
-          <td style="font-size:0.78rem;">
-            <span style="font-weight:900;color:var(--navy);">#${r.seasonRank}</span>
-            <span style="color:var(--text-muted);font-size:0.68rem;margin-left:4px;">→ #${r.l30Rank}</span>
-          </td>
-          <td>${teamCell(r)}</td>
-          <td>${rankDeltaPill(r.rankDelta)}</td>
-          <td>${scoreDeltaPill(r.compositeDelta)}</td>
-          <td>${deltaPill(r.opsPlusDelta)}</td>
-          <td>${deltaPill(r.xeraDelta, true)}</td>
-          <td>${deltaPill(r.bpDelta, true)}</td>
-        </tr>`;
-      }).join('');
+        var delta = "—";
+        if (t.scoreDelta != null) {
+          var sign = t.scoreDelta > 0 ? "+" : "";
+          var cls2 = t.scoreDelta > 0.2 ? "delta-up" : t.scoreDelta < -0.2 ? "delta-down" : "delta-flat";
+          delta = '<span class="pr2-delta ' + cls2 + '">' + sign + t.scoreDelta.toFixed(1) + '</span>';
+        }
 
-      return `<div class="pr-table-wrap">
-        <table class="pr-table" id="pr-table-compare">
-          <thead><tr>${header}</tr></thead>
-          <tbody>${body}</tbody>
-        </table>
-      </div>`;
-    }
+        var trend = "—";
+        if (t.rankDelta != null) {
+          if (t.rankDelta > 0)      trend = '<span class="rk-up">▲' + t.rankDelta + '</span>';
+          else if (t.rankDelta < 0) trend = '<span class="rk-down">▼' + Math.abs(t.rankDelta) + '</span>';
+          else                      trend = '<span class="rk-flat">→</span>';
+        }
 
-    /* ── Bind sort clicks ── */
-    function bindSort(tab) {
-      document.querySelectorAll(`#pr-table-${tab} thead th[data-col]`).forEach(th => {
-        th.addEventListener('click', () => {
-          const c = th.dataset.col;
-          const st = sortState[tab];
-          if (st.col === c) st.asc = !st.asc;
-          else { st.col = c; st.asc = false; }
-          renderActive();
+        return '<tr class="' + (isMets ? "is-mets" : "") + '">' +
+          '<td class="pr2-rank">' + t.rank + '</td>' +
+          teamCell +
+          '<td>' + t.record + '</td>' +
+          '<td class="pr2-col-l20">' + (t.last20Record || "—") + '</td>' +
+          scoreCell +
+          '<td class="pr2-col-lw">' + delta + '</td>' +
+          '<td>' + trend + '</td>' +
+          '</tr>';
+      }).join("") + "</tbody>";
+
+      var container = document.getElementById("pr2-container");
+      container.innerHTML = '<table class="pr2-table" id="pr2-tbl">' + thead + tbody + '</table>';
+
+      // Sort clicks
+      document.querySelectorAll(".pr2-table thead th[data-col]").forEach(function(th) {
+        th.addEventListener("click", function() {
+          var c = th.dataset.col;
+          if (sortState.col === c) sortState.asc = !sortState.asc;
+          else { sortState.col = c; sortState.asc = (c === "rank"); }
+          render(teams);
         });
       });
     }
 
-    /* ── Method text per tab ── */
-    const METHOD = {
-      season:  '<strong>Season rankings:</strong> Each team scores 0–100 from four equally-weighted categories: <strong>OPS+</strong>, <strong>Starter xERA</strong>, <strong>Bullpen xFIP</strong>, and <strong>Run Differential</strong>. Click any column to re-sort.',
-      l30:     '<strong>Last 30 days:</strong> Same composite methodology, but OPS+ and bullpen ERA are scoped to the last 30 days. Starter xERA uses season data (no rolling Savant endpoint). Reflects recent form, not full-season standing.',
-      compare: '<strong>Compare view:</strong> Season rank vs. Last-30 rank side by side. <strong>Rank Δ</strong> is positive when a team ranked higher in L30 than season overall. <strong>Score Δ</strong> is the raw composite difference. Click any column to sort.',
-    };
-
-    /* ── Main render ── */
-    function renderActive() {
-      const container = document.getElementById('pr-container');
-      const methodEl  = document.getElementById('pr-method-text');
-      if (!container) return;
-
-      if (!seasonData) {
-        container.innerHTML = '<div class="loading-msg">Loading…</div>';
-        return;
-      }
-
-      methodEl.innerHTML = METHOD[activeTab];
-
-      if (activeTab === 'season') {
-        container.innerHTML = renderRankingTable(seasonData.teams, 'season');
-        bindSort('season');
-      } else if (activeTab === 'l30') {
-        if (!l30Data) {
-          container.innerHTML = '<div class="loading-msg">Loading last 30 days data…</div>';
-          return;
+    fetch("/data/power-rankings.json")
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (!d?.teams?.length) throw new Error("empty");
+        var updEl = document.getElementById("pr2-updated");
+        if (updEl && d.generatedAt) {
+          updEl.textContent = new Date(d.generatedAt).toLocaleString();
         }
-        container.innerHTML = renderRankingTable(l30Data.teams, 'l30');
-        bindSort('l30');
-      } else {
-        if (!l30Data) {
-          container.innerHTML = '<div class="loading-msg">Loading comparison data…</div>';
-          return;
-        }
-        container.innerHTML = renderCompareTable(seasonData, l30Data);
-        bindSort('compare');
-      }
-    }
-
-    /* ── Tab wiring ── */
-    document.querySelectorAll('.pr-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.pr-tab').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-        btn.classList.add('active');
-        btn.setAttribute('aria-selected','true');
-        activeTab = btn.dataset.tab;
-        renderActive();
+        render(d.teams);
+      })
+      .catch(function() {
+        document.getElementById("pr2-container").innerHTML =
+          '<div class="pr2-loading">Rankings temporarily unavailable. Please try again later.</div>';
       });
-    });
-
-    /* ── Load data ── */
-    async function init() {
-      try {
-        const [r1, r2] = await Promise.all([
-          fetch('/data/power-rankings.json'),
-          fetch('/data/power-rankings-l30.json'),
-        ]);
-        seasonData = await r1.json();
-        if (r2.ok) l30Data = await r2.json();
-
-        if (seasonData?.generatedAt) {
-          document.getElementById('last-updated').textContent =
-            new Date(seasonData.generatedAt).toLocaleString();
-        }
-        renderActive();
-      } catch (e) {
-        document.getElementById('pr-container').innerHTML =
-          '<div class="loading-msg">Data temporarily unavailable. Please try again later.</div>';
-      }
-    }
-
-    init();
   })();
   </script>
 </body>
