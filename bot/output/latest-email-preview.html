@@ -1,1059 +1,293 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetsMoneyline: Mets ML vs Nationals — Low Confidence Matchup Snapshot</title>
-  </head>
-  <body style="margin:0;padding:0;background:#eef2f7;">
-    <div style="display:none!important;visibility:hidden;opacity:0;color:transparent;height:0;width:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;max-height:0;max-width:0;">
-      Bullpen edge, last-20 trend lines, starter matchup, and model read for today's Mets game.
-    </div>
-    <style>
-      @media only screen and (max-width: 700px) {
-        .email-shell { width:100% !important; }
-        .email-pad { padding:16px !important; }
-        .report-pitcher-col { margin-bottom:14px !important; }
-        .email-stack-col { display:block !important; width:100% !important; padding:0 0 12px 0 !important; }
-        .report-sheet-table { width:100% !important; table-layout:fixed !important; }
-        .report-sheet-table th, .report-sheet-table td { padding:6px 5px !important; font-size:11px !important; line-height:1.25 !important; }
-        .report-heat-pill { min-width:0 !important; max-width:100% !important; padding:5px 4px !important; font-size:11px !important; line-height:1.25 !important; }
-        .report-banner-logo { width:72px !important; height:72px !important; }
-        .report-banner-vs { font-size:18px !important; }
-        .pitcher-img-panel, .pitcher-stats-panel { display:block !important; width:100% !important; }
-        .pitcher-stats-panel { padding-top:12px !important; }
-        .email-adv-label { padding:7px 8px !important; font-size:10px !important; line-height:1.2 !important; }
-        .email-adv-side { display:block !important; width:100% !important; padding:8px 6px !important; }
-      }
-    </style>
-    <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border-spacing:0;background:#eef2f7;font-family:Arial,sans-serif;color:#111827;line-height:1.55;">
-      <tr>
-        <td align="center" style="padding:18px 10px;">
-          <table role="presentation" width="100%" class="email-shell" style="width:100%;max-width:600px;border-collapse:collapse;border-spacing:0;background:#ffffff;border:1px solid #dde4ef;border-radius:20px;overflow:hidden;">
-            <tr>
-              <td class="email-pad" style="padding:22px 24px;">
-                <p style="font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;margin:0 0 12px 0;">MetsMoneyline</p>
-                <div style="margin:0 0 18px 0;background:linear-gradient(180deg,#ffffff 0%,#f7faff 100%);border:1px solid #d9e1ee;border-radius:20px;padding:18px 16px;text-align:center;">
-                  <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border-spacing:0;">
-                    <tr>
-                      <td align="center" style="width:40%;padding:0 6px;">
-                        <img class="report-banner-logo" src="https://www.mlbstatic.com/team-logos/121.svg" alt="New York Mets" style="display:block;border:0;width:96px;height:96px;object-fit:contain;margin:0 auto;">
-                      </td>
-                      <td align="center" class="report-banner-vs" style="width:20%;font-size:20px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#a9b4c7;">vs</td>
-                      <td align="center" style="width:40%;padding:0 6px;">
-                        <img class="report-banner-logo" src="https://www.mlbstatic.com/team-logos/120.svg" alt="Washington Nationals" style="display:block;border:0;width:96px;height:96px;object-fit:contain;margin:0 auto;">
-                      </td>
-                    </tr>
-                  </table>
-                  <p style="margin:12px 0 0 0;color:#5b6477;font-size:14px;line-height:1.5;">May 20th | 6:45 PM ET | Nationals Park | 84° | Cloudy | Wind 7 mph WNW</p>
-                </div>
-                
-                
-    <section style="background:#ffffff;border:1px solid #d9e1ee;border-radius:18px;padding:18px 20px;margin:0 0 18px 0;box-shadow:0 10px 24px rgba(15,23,42,0.06);"><div class="sit-wrap">
-      <div class="sit-title">Mets Situational Record</div>
-      <table class="sit-table">
-        <thead><tr>
-          <th class="sit-th">Situation</th>
-          <th class="sit-th sit-th--center">Record</th>
-          <th class="sit-th sit-th--center">Avg R</th>
-          <th class="sit-th sit-th--center">Avg RA</th>
-        </tr></thead>
-        <tbody><tr class="sit-row">
-        <td class="sit-label">Day games</td>
-        <td class="sit-rec" style="color:#b91c1c;">7-13 <span class="sit-pct sit-pct--bad">35%</span></td>
-        <td class="sit-stat">3.6</td>
-        <td class="sit-stat">4.5</td>
-      </tr><tr class="sit-row">
-        <td class="sit-label">Wednesdays</td>
-        <td class="sit-rec" style="color:#374151;">3-4 <span class="sit-pct">43%</span></td>
-        <td class="sit-stat">3.3</td>
-        <td class="sit-stat">5.7</td>
-      </tr></tbody>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MetsMoneyline Daily Report</title>
+<style>
+  body,table,td{font-family:Arial,Helvetica,sans-serif;}
+  @media(max-width:600px){.em-shell{width:100%!important;}.em-pad{padding:14px!important;}}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#eef2f7;color:#111827;line-height:1.5;">
+<table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;">
+<tr><td align="center" style="padding:14px 8px;">
+<table role="presentation" class="em-shell" style="width:100%;max-width:580px;border-collapse:collapse;background:#fff;border:1px solid #dde4ef;border-radius:14px;overflow:hidden;">
+
+  <!-- HEADER -->
+  <tr>
+    <td style="background:linear-gradient(135deg,#001e5a 0%,#002d72 100%);padding:20px 18px 14px;">
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td align="right" style="width:36%;">
+            <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="NYM" width="64" height="64" style="display:block;margin-left:auto;">
+            <div style="text-align:center;color:#a0bde8;font-size:10px;font-weight:600;margin-top:3px;">21-27</div>
+          </td>
+          <td align="center" style="width:28%;">
+            <div style="color:#ff5910;font-size:22px;font-weight:900;letter-spacing:0.04em;">VS</div>
+            <div style="color:#a0bde8;font-size:10px;font-weight:600;margin-top:2px;"></div>
+            <div style="color:#7a9fd4;font-size:10px;margin-top:3px;">Cloudy</div>
+          </td>
+          <td align="left" style="width:36%;">
+            <img src="https://www.mlbstatic.com/team-logos/120.svg" alt="WSN" width="64" height="64" style="display:block;">
+            <div style="text-align:center;color:#a0bde8;font-size:10px;font-weight:600;margin-top:3px;">24-25</div>
+          </td>
+        </tr>
       </table>
-      <div class="sit-foot">Source: 2026 season game log &bull; <a href="/game-log" class="sit-link">Full trend finder →</a></div>
-    </div></section>
+      <div style="margin-top:6px;text-align:center;color:#a0bde8;font-size:10px;">May 20th | 6:45 PM ET | Nationals Park | 84° | Cloudy | Wind 7 mph WNW</div>
+    </td>
+  </tr>
 
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Matchup Snapshot</h2>
-    <div class="report-sheet-table-wrap" style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-    <table class="report-sheet-table report-summary-table" style="width:100%;height:100%;border-collapse:collapse;font-size:13px;border:1px solid #d6dde8;background:#ffffff;table-layout:fixed;">
-      
-        <thead>
-          <tr>
-            <th style="width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#e9f3ff;color:#0f172a;text-align:left;font-weight:800;">New York Mets</th><th style="width:28%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-weight:700;">Category</th><th style="width:36%;padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fdf1e5;color:#7c2d12;text-align:right;font-weight:800;">Washington Nationals</th>
-          </tr>
-        </thead>
-      <tbody>
-        
-          <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">N/A</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Odds</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">N/A</td>
-          </tr>
-          <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">21-27</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Season Record</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">24-25</td>
-          </tr>
-          <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">3-2</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Last 5 Record</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">3-2</td>
-          </tr>
-          <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">10-14 (away)</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Home/Away Record</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">9-15 (home)</td>
-          </tr>
-          <tr>
-            <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f4f9ff;color:#111827;font-weight:800;">2-3</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#ffffff;color:#475569;text-align:center;font-weight:700;">Season Series Record</td><td style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#fff7ef;color:#111827;text-align:right;font-weight:800;">3-2</td>
-          </tr>
-      </tbody>
-    </table>
-    </div></section>
+  <!-- PICK HERO -->
+  <tr>
+    <td style="background:#ff5910;padding:14px 18px;text-align:center;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.8);margin-bottom:3px;">Tonight's Pick</div>
+      <div style="font-size:22px;font-weight:900;color:#fff;">Official Pick: Mets ML</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.8);margin-top:4px;">Confidence: Low</div>
+    </td>
+  </tr>
 
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Starting Pitcher Matchup</h2><table role="presentation" width="100%" style="width:100%;border-collapse:separate;border-spacing:0;">
-        <tr>
-          <td class="email-stack-col" valign="top" style="width:100%;padding:0 0 16px 0;">
-      <div class="email-pitcher-card" style="margin-bottom:18px;border:1px solid #d9e1ee;border-radius:18px;background:#ffffff;padding:16px;">
+  <tr><td class="em-pad" style="padding:18px 18px 0;">
+
+    <!-- ══ 1. MATCHUP SNAPSHOT ══ -->
+    <div style="margin:0 0 24px 0;">
+      <h2 style="font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;">Matchup Snapshot</h2>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:left;">Category</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Mets</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Nationals</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Edge</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Record</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">21-27</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">24-25</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Last 5</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">L</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">W</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">W</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">W</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">L</span></td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;"><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">W</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">L</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#dc2626;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">L</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">W</span><span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#16a34a;color:#fff;font-size:9px;font-weight:900;margin-right:2px;">W</span></td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#9ca3af;">—</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Home/Away</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">10-14 away</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">9-15  home</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#9ca3af;">—</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Season Series</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">2-3</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">3-2</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ══ 2. LAST 20 GAME TREND ══ -->
+    <div style="margin:0 0 24px 0;">
+      <h2 style="font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;">Last 20 Game Trend</h2>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:left;">Stat</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Mets L20</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Nationals L20</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Edge</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">OPS</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">0.702</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">0.793</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">OPS Rank</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;color:#374151;">#15</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;color:#15803d;">#1</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Batting Avg</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">.243</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">.253</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">BA Rank</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;color:#374151;">#13</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;color:#374151;">#6</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">K%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">19.9%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">21.4%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#002d72;font-weight:800;">Mets</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">BB%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">8.2%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">9.8%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size:12px;color:#374151;margin-top:8px;"><strong>Trend read:</strong> Nationals have the hotter offense. Mets have improved from their season baseline, but Nationals owns the stronger current-form lineup.</div>
+    </div>
+
+    <!-- ══ 3. BULLPEN TREND ══ -->
+    <div style="margin:0 0 24px 0;">
+      <h2 style="font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;">Bullpen Trend</h2>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:left;">Bullpen Stat</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Mets</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Nationals</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Edge</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Season ERA</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">3.81</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">4.06</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#002d72;font-weight:800;">Mets</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Season WHIP</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">1.34</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">1.20</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Last 20 Days ERA</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">2.55</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">4.76</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#002d72;font-weight:800;">Mets</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Bullpen xERA</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">3.69</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">7.98</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#002d72;font-weight:800;">Mets</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size:12px;color:#374151;margin-top:8px;"><strong>Trend read:</strong> This is the clearest Mets advantage. The pick is partly built on New York having the stronger late-game profile.</div>
+    </div>
+
+    <!-- ══ 4. STARTING PITCHER / MATCHUP ══ -->
+    <div style="margin:0 0 24px 0;">
+      <h2 style="font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;">Starting Pitcher / Matchup Notes</h2>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:left;">Category</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Mets Starter</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Nationals Starter</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Starter</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;font-weight:700;">Zach Thornton</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;font-weight:700;">Zack Littell</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Hand</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">LHP</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">RHP</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">ERA</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">N/A</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">6.10</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">xERA</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;font-weight:800;color:#002d72;">N/A</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;font-weight:800;color:#7c2d12;">7.72</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">WHIP</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">N/A</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">1.50</td>
+          </tr>
+          <tr>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">K%</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">N/A</td>
+            <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;">10.6%</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="font-size:12px;color:#374151;margin-top:8px;"><strong>Pitching angle:</strong> Littell 7.72 xERA and 10.6% K-rate face Mets bullpen 3.69 xERA against Nationals 7.98 bullpen xERA. Mets last20 bullpen ERA sits at 2.55 while opponent last20 OPS reaches 0.793. Numbers indicate bullpen advantage offset by 51.7% projected win probability.</div>
+    </div>
+
+    <!-- ══ 5. SITUATIONAL SPLITS (METS) ══ -->
+    <div style="margin:0 0 24px 0;">
+        <h2 style="font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;">Mets Situational Record</h2>
         <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
-          <tr>
-            <td align="center" style="padding:0 0 12px 0;"><img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/804267/headshot/67/current" alt="Zach Thornton headshot for Mets betting report" width="96" height="96" loading="lazy" decoding="async" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;"></td>
-          </tr>
-          <tr>
-            <td align="center" style="padding:0;">
-              <div style="font-size:22px;line-height:1.2;font-weight:800;color:#111827;">Zach Thornton</div>
-              <div style="margin-top:6px;font-size:13px;line-height:1.4;color:#4b5563;font-weight:700;">NYM | L</div>
-            </td>
-          </tr>
-        </table>
-        <div style="margin-top:14px;">
-          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:8px;color:#6b7280;">Traditional Stats</div>
-          <table role="presentation" style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:10px;">
-            <tbody>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 4px 0;white-space:nowrap;vertical-align:middle;">ERA</td>
-          <td style="padding:4px 0;vertical-align:middle;"><span style="font-size:12px;font-weight:700;color:#111827;">N/A</span></td>
-        </tr>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 4px 0;white-space:nowrap;vertical-align:middle;">WHIP</td>
-          <td style="padding:4px 0;vertical-align:middle;"><span style="font-size:12px;font-weight:700;color:#111827;">N/A</span></td>
-        </tr>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 4px 0;white-space:nowrap;vertical-align:middle;">K%</td>
-          <td style="padding:4px 0;vertical-align:middle;"><span style="font-size:12px;font-weight:700;color:#111827;">N/A</span></td>
-        </tr>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 4px 0;white-space:nowrap;vertical-align:middle;">BB%</td>
-          <td style="padding:4px 0;vertical-align:middle;"><span style="font-size:12px;font-weight:700;color:#111827;">N/A</span></td>
-        </tr>
-            </tbody>
-          </table>
-        </div>
-        
-      <div style="margin-top:14px;padding:12px;border:1px solid #d6dde8;border-radius:14px;background:#ffffff;">
-        <div style="margin:0 0 10px 0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">Advanced Stats vs Opponent</div>
-        
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Barrel %</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Barrel %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Barrel %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">9.2</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#14 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">xBA</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xBA</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xBA</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.254</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#5 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Hard Hit %</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Hard Hit %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Hard Hit %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">39.9</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#23 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">xSLG %</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xSLG %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xSLG %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.42</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#8 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-      </div>
-      <div style="margin-top:14px;padding:12px;border:1px solid #d6dde8;border-radius:14px;background:#ffffff;">
-        <div style="margin:0 0 10px 0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">Advanced Stats vs Opponent Splits</div>
-        
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Pitching Hand / vs Split</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Pitching Hand / vs Split</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">Left</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Pitching Hand / vs Split</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">vs Left-handed pitching</span></div>
-                      
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Innings Pitched / Plate Appearances</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Innings Pitched / Plate Appearances</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Innings Pitched / Plate Appearances</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">1182</span></div>
-                      
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">K%</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">K%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">K%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">21.6</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#14 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">BB%</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">NYM Zach Thornton</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">BB%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">WSN Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">BB%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">9.6</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#15 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-      </div>
-        
-      </div></td>
-        </tr>
-        <tr>
-          <td class="email-stack-col" valign="top" style="width:100%;padding:0;">
-      <div class="email-pitcher-card" style="margin-bottom:18px;border:1px solid #d9e1ee;border-radius:18px;background:#ffffff;padding:16px;">
-        <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
-          <tr>
-            <td align="center" style="padding:0 0 12px 0;"><img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_200,q_auto:best/v1/people/641793/headshot/67/current" alt="Zack Littell headshot for Mets betting report" width="96" height="96" loading="lazy" decoding="async" style="display:block;width:96px;height:96px;border-radius:16px;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;margin:0 auto;"></td>
-          </tr>
-          <tr>
-            <td align="center" style="padding:0;">
-              <div style="font-size:22px;line-height:1.2;font-weight:800;color:#111827;">Zack Littell</div>
-              <div style="margin-top:6px;font-size:13px;line-height:1.4;color:#4b5563;font-weight:700;">Washington Nationals | R | Record 2-4</div>
-            </td>
-          </tr>
-        </table>
-        <div style="margin-top:14px;">
-          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:8px;color:#6b7280;">Traditional Stats</div>
-          <table role="presentation" style="width:100%;border-collapse:collapse;border-spacing:0;margin-top:10px;">
-            <tbody>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 8px 0;white-space:nowrap;vertical-align:top;">ERA</td>
-          <td style="padding:4px 0 8px 0;vertical-align:top;">
-            <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px;">6.10</div>
-            <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
-              <tr>
-                <td style="width:6px;height:10px;background:#002d72;border-radius:3px 0 0 3px;font-size:0;line-height:0;">&nbsp;</td>
-                
-                  <td style="width:2px;height:10px;background:#374151;font-size:0;line-height:0;">&nbsp;</td>
-                  <td style="width:112px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
-                
-              </tr>
-            </table>
-            <div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: 4.20</div>
-            <div style="font-size:10px;color:#9099b0;font-weight:600;">5th %ile</div>
-          </td>
-        </tr>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 8px 0;white-space:nowrap;vertical-align:top;">WHIP</td>
-          <td style="padding:4px 0 8px 0;vertical-align:top;">
-            <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px;">1.50</div>
-            <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
-              <tr>
-                <td style="width:40px;height:10px;background:#002d72;border-radius:3px 0 0 3px;font-size:0;line-height:0;">&nbsp;</td>
-                
-                  <td style="width:2px;height:10px;background:#374151;font-size:0;line-height:0;">&nbsp;</td>
-                  <td style="width:78px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
-                
-              </tr>
-            </table>
-            <div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: 1.28</div>
-            <div style="font-size:10px;color:#9099b0;font-weight:600;">33th %ile</div>
-          </td>
-        </tr>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 8px 0;white-space:nowrap;vertical-align:top;">K%</td>
-          <td style="padding:4px 0 8px 0;vertical-align:top;">
-            <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px;">10.6%</div>
-            <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
-              <tr>
-                <td style="width:6px;height:10px;background:#002d72;border-radius:3px 0 0 3px;font-size:0;line-height:0;">&nbsp;</td>
-                
-                  <td style="width:2px;height:10px;background:#374151;font-size:0;line-height:0;">&nbsp;</td>
-                  <td style="width:112px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
-                
-              </tr>
-            </table>
-            <div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: 22.5%</div>
-            <div style="font-size:10px;color:#9099b0;font-weight:600;">5th %ile</div>
-          </td>
-        </tr>
-              
-        <tr>
-          <td style="width:40px;font-size:11px;font-weight:600;color:#6b7280;padding:4px 6px 8px 0;white-space:nowrap;vertical-align:top;">BB%</td>
-          <td style="padding:4px 0 8px 0;vertical-align:top;">
-            <div style="font-size:13px;font-weight:800;color:#111827;margin-bottom:3px;">8%</div>
-            <table role="presentation" style="border-collapse:collapse;border-spacing:0;height:10px;">
-              <tr>
-                <td style="width:72px;height:10px;background:#9ca3af;border-radius:3px 0 0 3px;font-size:0;line-height:0;">&nbsp;</td>
-                
-                  <td style="width:2px;height:10px;background:#374151;font-size:0;line-height:0;">&nbsp;</td>
-                  <td style="width:46px;height:10px;background:#e9ecf3;border-radius:0 3px 3px 0;font-size:0;line-height:0;">&nbsp;</td>
-                
-              </tr>
-            </table>
-            <div style="font-size:9px;color:#9099b0;font-weight:600;margin-top:1px;">Avg: 8.2%</div>
-            <div style="font-size:10px;color:#9099b0;font-weight:600;">60th %ile</div>
-          </td>
-        </tr>
-            </tbody>
-          </table>
-        </div>
-        
-      <div style="margin-top:14px;padding:12px;border:1px solid #d6dde8;border-radius:14px;background:#ffffff;">
-        <div style="margin:0 0 10px 0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">Opponent Advanced Stats vs Mets</div>
-        
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Barrel %</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Barrel %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">13.2%</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">17th %ile</div>
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Barrel %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">8.9</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#8 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">xBA</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xBA</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.308</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">15th %ile</div>
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xBA</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.253</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#10 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Hard Hit %</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Hard Hit %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">50%</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">16th %ile</div>
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Hard Hit %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">42.7</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#9 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">xSLG %</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xSLG %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.601</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">9th %ile</div>
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Offense</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">xSLG %</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.424</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#11 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-      </div>
-      <div style="margin-top:14px;padding:12px;border:1px solid #d6dde8;border-radius:14px;background:#ffffff;">
-        <div style="margin:0 0 10px 0;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:800;">Opponent Advanced Stats vs Mets Splits</div>
-        
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Pitching Hand / vs Split</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Pitching Hand / vs Split</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">Right</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Pitching Hand / vs Split</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">vs Right-handed pitching</span></div>
-                      
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">Innings Pitched / Plate Appearances</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Innings Pitched / Plate Appearances</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">41.1</span></div>
-                      
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">Innings Pitched / Plate Appearances</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">1109</span></div>
-                      
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">K%</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">K%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">10.6%</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">9th %ile</div>
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">K%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">20.7</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#6 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-            <div style="border:1px solid #e5e7eb;border-radius:12px;background:#f8fafc;margin-bottom:10px;overflow:hidden;">
-              <div style="padding:8px 10px;border-bottom:1px solid #e5e7eb;background:#f3f6fb;color:#475569;text-align:center;font-size:11px;font-weight:800;letter-spacing:0.04em;text-transform:uppercase;">BB%</div>
-              <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;">
-                <tr>
-                  <td valign="top" style="width:50%;padding:10px;border-right:1px solid #e5e7eb;background:#f4f9ff;">
-                    <div style="font-size:11px;line-height:1.2;color:#0f172a;font-weight:800;margin-bottom:6px;">WSN Zack Littell</div>
-                    <div style="padding:8px 0;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">BB%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">8%</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">67th %ile</div>
-                    </div>
-                  </td>
-                  <td valign="top" style="width:50%;padding:10px;background:#fff7ef;">
-                    <div style="font-size:11px;line-height:1.2;color:#7c2d12;font-weight:800;margin-bottom:6px;text-align:right;">NYM Profile</div>
-                    <div style="padding:8px 0 8px 8px;vertical-align:top;">
-                      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:4px;color:#6b7280;">BB%</div>
-                      <div><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">8.1</span></div>
-                      <div style="margin-top:4px;font-size:11px;line-height:1.2;color:#6b7280;font-weight:700;white-space:normal;">#26 MLB</div>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          
-      </div>
-        
-      <div style="margin-top:14px;">
-        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:8px;color:#6b7280;">Recent Starts</div>
-        
-          <div style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px;background:#ffffff;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.35;">05-15 vs Baltimore Orioles</div>
-            <div style="margin-top:4px;font-size:12px;line-height:1.4;color:#4b5563;">IP 5.0 | ER 0 | K 3 | W</div>
-          </div>
-        
-          <div style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px;background:#ffffff;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.35;">05-09 vs Miami Marlins</div>
-            <div style="margin-top:4px;font-size:12px;line-height:1.4;color:#4b5563;">IP 4.0 | ER 2 | K 0 | -</div>
-          </div>
-        
-          <div style="padding:8px 10px;border:1px solid #e5e7eb;border-radius:10px;background:#ffffff;margin-bottom:8px;">
-            <div style="font-size:13px;font-weight:700;color:#111827;line-height:1.35;">05-03 vs Milwaukee Brewers</div>
-            <div style="margin-top:4px;font-size:12px;line-height:1.4;color:#4b5563;">IP 3.2 | ER 1 | K 1 | W</div>
-          </div>
-        
-      </div>
-      </div></td>
-        </tr>
-      </table></section>
-
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Bullpen Trend</h2><div class="report-two-col" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;">
-        
-      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;padding:16px;box-shadow:none;">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
-          <div>
-            <div style="margin:0 0 6px 0;font-size:16px;line-height:1.3;color:#002d72;font-weight:800;">New York Mets Bullpen</div>
-            <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:#fff0e8;color:#cc4500;font-size:12px;font-weight:900;letter-spacing:0.06em;text-transform:uppercase;">Low</span>
-          </div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:14px;color:#374151;font-size:13px;font-weight:700;">
-          <span>Season ERA 3.81</span>
-          <span>Season WHIP 1.34</span>
-          <span>Last 20 Days ERA 2.55</span>
-        </div>
-        <div style="margin:0 0 12px 0;padding-top:10px;border-top:1px solid #d6dde8;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;font-weight:800;">Closer</div>
-        
-          <div style="display:flex;align-items:center;gap:12px;">
-            <img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/642207/headshot/67/current" alt="Devin Williams headshot" width="56" height="56" loading="lazy" decoding="async" style="display:block;width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;">
-            <div style="min-width:0;">
-              <div style="font-size:16px;color:#111827;font-weight:800;line-height:1.25;">Devin Williams</div>
-              <div style="margin-top:4px;color:#374151;font-size:13px;font-weight:700;">6 SV / 7 SVO &middot; 85.7% conversion &middot; ERA 4.6</div>
-              <div style="margin-top:4px;color:#64748b;font-size:12px;font-weight:700;">Last 7 days: 3 appearances, 3.0 IP</div>
-            </div>
-          </div>
-      </div>
-        
-      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;padding:16px;box-shadow:none;">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;">
-          <div>
-            <div style="margin:0 0 6px 0;font-size:16px;line-height:1.3;color:#002d72;font-weight:800;">Washington Nationals Bullpen</div>
-            <span style="display:inline-block;padding:6px 10px;border-radius:999px;background:#fff0e8;color:#cc4500;font-size:12px;font-weight:900;letter-spacing:0.06em;text-transform:uppercase;">Low</span>
-          </div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:14px;color:#374151;font-size:13px;font-weight:700;">
-          <span>Season ERA 4.06</span>
-          <span>Season WHIP 1.2</span>
-          <span>Last 20 Days ERA 4.76</span>
-        </div>
-        <div style="margin:0 0 12px 0;padding-top:10px;border-top:1px solid #d6dde8;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:#64748b;font-weight:800;">Closer</div>
-        
-          <div style="display:flex;align-items:center;gap:12px;">
-            <img src="https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/681402/headshot/67/current" alt="Gus Varland headshot" width="56" height="56" loading="lazy" decoding="async" style="display:block;width:56px;height:56px;border-radius:50%;object-fit:cover;border:1px solid #d6dde8;background:#ffffff;">
-            <div style="min-width:0;">
-              <div style="font-size:16px;color:#111827;font-weight:800;line-height:1.25;">Gus Varland</div>
-              <div style="margin-top:4px;color:#374151;font-size:13px;font-weight:700;">4 SV / 6 SVO &middot; 66.7% conversion &middot; ERA 3.86</div>
-              <div style="margin-top:4px;color:#64748b;font-size:12px;font-weight:700;">Last 7 days: 3 appearances, 3.2 IP</div>
-            </div>
-          </div>
-      </div>
-      </div></section>
-
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Last 20 Game Trend</h2><div class="report-two-col" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start;">
-        
-      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;overflow:hidden;box-shadow:none;">
-        <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#002d72;color:#ffffff;">
-          <img src="https://www.mlbstatic.com/team-logos/121.svg" alt="New York Mets logo" width="28" height="28" decoding="async" style="width:28px;height:28px;object-fit:contain;background:#ffffff;border-radius:50%;padding:2px;">
-          <div style="font-size:16px;font-weight:800;line-height:1.25;">New York Mets</div>
-        </div>
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-          <table style="width:100%;border-collapse:collapse;min-width:420px;">
-            <thead>
-              <tr>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:left;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">Stat</th>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">Season</th>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">Last 20 Days</th>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">% Difference</th>
-              </tr>
-            </thead>
-            <tbody>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">OPS Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#30</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.658</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#15</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.702</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+6.7%</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">BA Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#24</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.232</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#13</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.243</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+4.7%</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">K% Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#6</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">20.7%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#6</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">19.9%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+3.9%</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">BB% Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#26</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">8.1%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#20</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">8.2%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+1.2%</td>
+          <thead><tr>
+            <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:left;">Situation</th>
+            <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">W-L</th>
+            <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Win%</th>
+          </tr></thead>
+          <tbody><tr>
+          <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;">Day games</td>
+          <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;font-weight:700;color:#b91c1c;">7-13</td>
+          <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;color:#6b7280;">35%</td>
+        </tr><tr>
+          <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;">Wednesdays</td>
+          <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;font-weight:700;color:#374151;">3-4</td>
+          <td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;text-align:center;color:#6b7280;">43%</td>
         </tr></tbody>
-          </table>
-        </div>
+        </table>
       </div>
-        
-      <div style="border:1px solid #d9e1ee;border-radius:16px;background:#ffffff;overflow:hidden;box-shadow:none;">
-        <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#002d72;color:#ffffff;">
-          <img src="https://www.mlbstatic.com/team-logos/120.svg" alt="Washington Nationals logo" width="28" height="28" decoding="async" style="width:28px;height:28px;object-fit:contain;background:#ffffff;border-radius:50%;padding:2px;">
-          <div style="font-size:16px;font-weight:800;line-height:1.25;">Washington Nationals</div>
-        </div>
-        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-          <table style="width:100%;border-collapse:collapse;min-width:420px;">
-            <thead>
-              <tr>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:left;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">Stat</th>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">Season</th>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">Last 20 Days</th>
-                <th style="padding:10px 12px;border-bottom:1px solid #d6dde8;background:#f8fafc;color:#475569;text-align:center;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;">% Difference</th>
-              </tr>
-            </thead>
-            <tbody>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">OPS Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#5</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.740</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#1</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.793</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+7.2%</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">BA Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#12</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.245</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#6</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">.253</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+3.3%</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">K% Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#14</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">21.6%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#14</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">21.4%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+0.9%</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;font-weight:800;">BB% Rank</td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#16</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">9.6%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#111827;text-align:center;">
-            <div style="font-weight:800;">#11</div>
-            <div style="margin-top:4px;font-size:12px;color:#64748b;font-weight:700;">9.8%</div>
-          </td>
-          <td style="padding:10px 12px;border-bottom:1px solid #d6dde8;color:#ff5910;text-align:center;font-weight:900;">+2.1%</td>
-        </tr></tbody>
-          </table>
-        </div>
-      </div>
-      </div></section>
 
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Projected Lineup Comparison</h2>
-          <div style="margin-bottom:16px;">
-            <div style="padding:8px 10px;background:#e9f3ff;color:#0f172a;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid #d6dde8;">New York Mets</div>
-            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;border:1px solid #d6dde8;border-top:none;">
-              <thead>
-                <tr>
-                  <th style="width:8%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">#</th>
-                  <th style="width:36%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:left;font-size:10px;font-weight:700;color:#6b7280;">Player</th>
-                  <th style="width:18%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">xBA</th>
-                  <th style="width:18%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">K%</th>
-                  <th style="width:20%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">Hard Hit</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">1</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Carson Benge</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.266</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">19.6%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">43.2%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">2</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Bo Bichette</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.283</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">16.3%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">43.8%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">3</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Juan Soto</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.267</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">15.7%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">50%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">4</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Mark Vientos</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.279</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">20.4%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">48.6%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">5</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Marcus Semien</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.248</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">20.2%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">32.4%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">6</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">A.J. Ewing</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">0.294</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">22.6%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">41.2%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">7</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Nick Morabito</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">0.319</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">50.0%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">8</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Brett Baty</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.239</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">27.8%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">40.8%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">9</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Luis Torrens</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.218</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">20.3%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">50%</span></td>
-                  </tr>
-              </tbody>
-            </table>
-          </div>
-          <div style="margin-bottom:16px;">
-            <div style="padding:8px 10px;background:#fdf1e5;color:#0f172a;font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid #d6dde8;">Washington Nationals</div>
-            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;table-layout:fixed;font-size:12px;border:1px solid #d6dde8;border-top:none;">
-              <thead>
-                <tr>
-                  <th style="width:8%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">#</th>
-                  <th style="width:36%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:left;font-size:10px;font-weight:700;color:#6b7280;">Player</th>
-                  <th style="width:18%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">xBA</th>
-                  <th style="width:18%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">K%</th>
-                  <th style="width:20%;padding:7px 6px;border-bottom:1px solid #d6dde8;background:#f8fafc;text-align:center;font-size:10px;font-weight:700;color:#6b7280;">Hard Hit</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">1</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Jacob Young</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.266</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">16.6%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">31.8%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">2</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Luis García Jr.</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.279</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">14.8%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">47.9%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">3</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">José Tena</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.257</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">29.9%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">53.3%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">4</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">CJ Abrams</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.263</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">20.2%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">40.4%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">5</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Daylen Lile</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">0.272</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">18.6%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">38.2%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">6</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Dylan Crews</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.117</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">0.0%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#f3f4f6;color:#374151;border-radius:8px;">N/A</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">7</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Jorbit Vivas</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.24</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#ff5910;color:#ffffff;font-weight:700;border-radius:8px;">12.4%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">23.1%</span></td>
-                  </tr>
-                  <tr style="background:#f9fafb;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">8</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Drew Millas</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.21</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">26.2%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">22.2%</span></td>
-                  </tr>
-                  <tr style="background:#ffffff;">
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;color:#6b7280;font-weight:700;">9</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;font-weight:700;color:#111827;">Nasim Nuñez</td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">0.202</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#9ca3af;color:#10213a;font-weight:700;border-radius:8px;">19.3%</span></td>
-                    <td style="padding:7px 6px;border-bottom:1px solid #d6dde8;text-align:center;"><span class="report-heat-pill" style="display:inline-block;min-width:56px;max-width:100%;padding:6px 8px;text-align:center;box-sizing:border-box;white-space:normal;background:#002d72;color:#ffffff;font-weight:700;border-radius:8px;">17.6%</span></td>
-                  </tr>
-              </tbody>
-            </table>
-          </div></section>
+    <!-- ══ 6. MODEL READ ══ -->
+    <div style="margin:0 0 24px 0;">
+      <h2 style="font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;">Model Read</h2>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <thead><tr>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:left;">Model Factor</th>
+          <th style="padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;text-align:center;">Read</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Offense Form</td><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Nationals</td></tr>
+          <tr><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Bullpen Edge</td><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#002d72;font-weight:800;">Mets</td></tr>
+          <tr><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Starting Pitcher</td><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#9ca3af;">—</td></tr>
+          <tr><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Regression Signal</td><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#991b1b;font-weight:800;">Mixed</td></tr>
+          <tr><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;font-weight:700;">Game Context</td><td style="padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;color:#374151;">Low</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">How This Analysis Is Built</h2>
-      <p style="margin:0 0 10px 0;color:#374151;">MetsMoneyline builds each report from the game context already stored by the site: projected or confirmed lineups, starting pitcher indicators, bullpen form, recent team performance, and the available Mets market price. The goal is to show where the Mets may have a real edge, where the matchup is fragile, and why the official pick is framed the way it is.</p>
-      <p style="margin:0;color:#374151;">This analysis is informational and entertainment-focused only. It is not a guarantee of results, and it should be read as a transparent game breakdown rather than a promise of profit.</p>
-    </section>
+    <!-- ══ 7. BOTTOM LINE ══ -->
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:6px;">Bottom Line</div>
+      <div style="font-size:13px;font-weight:900;color:#ff5910;margin-bottom:6px;">Official Pick: Mets ML</div>
+      <div style="font-size:12px;color:#374151;">Mets hold 21-27 record and 0.702 last20 OPS while Nationals post 24-25 record and 0.793 last20 OPS. Littell carries 7.72 xERA with 13th percentile rating and 10.6% K-rate.</div>
+    </div>
 
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Model Read</h2>
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:6px;">Why the Mets have a case</div>
-      <ul style="margin:8px 0 0 18px;padding:0;color:#111827;"><li style="margin:0 0 8px 0;">Regression: xwOBA 0.321 vs actual wOBA .295 — expected stats above actual production.</li><li style="margin:0 0 8px 0;">Bullpen: Mets BP: 3.81 ERA, 3.77 xFIP, Opp BP: 4.06 ERA, 4.55 xFIP.</li></ul>
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:12px 0 6px 0;">Where the risk is</div>
-      <ul style="margin:8px 0 0 18px;padding:0;color:#111827;"><li style="margin:0 0 8px 0;">Overall lineup quality only: projected WAR 2.4 vs 3.7, projected lineup wRC+ 93.3 vs 96.5, xwOBA 0.321 vs 0.332.</li><li style="margin:0 0 8px 0;">Road/context splits lean against Mets.</li></ul>
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:12px 0 6px 0;">Bottom line</div>
-      <p style="margin:0;color:#374151;">Mixed board. Pick based on strongest individual matchup edge.</p>
-    </section>
+    <!-- CTA -->
+    <div style="text-align:center;padding:0 0 20px;">
+      <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#002d72;color:#fff;font-size:13px;font-weight:800;padding:11px 28px;border-radius:8px;text-decoration:none;">Full Breakdown + Stats →</a>
+      <div style="margin-top:8px;font-size:10px;color:#9ca3af;">Power Rankings · Trends · Analytics · Betting Odds</div>
+    </div>
 
-    <section style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:16px 18px;margin:0 0 18px 0;"><h2 style="margin:0 0 12px 0;font-size:17px;line-height:1.25;color:#111827;">Official MetsMoneyline Pick</h2>
-      <p style="margin:0 0 8px 0;font-size:20px;font-weight:800;color:#f97316;">Littell 7.72 xERA Meets Mets Bullpen 3.69 xERA</p>
-      <p style="margin:0 0 12px 0;color:#374151;">Mets hold 21-27 record and 0.702 last20 OPS while Nationals post 24-25 record and 0.793 last20 OPS. Littell carries 7.72 xERA with 13th percentile rating and 10.6% K-rate.</p>
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin-bottom:6px;">Mets Edges</div>
-      <ul style="margin:8px 0 0 18px;padding:0;color:#111827;"><li style="margin:0 0 8px 0;">Mets bullpen 3.69 xERA versus Nationals 7.98 xERA</li><li style="margin:0 0 8px 0;">Regression signals Mets BA-xBA -0.020 and wOBA-xwOBA -0.028</li><li style="margin:0 0 8px 0;">Model projected win probability 0.517 for Mets</li></ul>
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:12px 0 6px 0;">Risks / What Could Go Wrong</div>
-      <ul style="margin:8px 0 0 18px;padding:0;color:#111827;"><li style="margin:0 0 8px 0;">Opponent lineup wRC+ 108 versus Mets 88</li><li style="margin:0 0 8px 0;">Mets road record 10-14</li></ul>
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#6b7280;font-weight:700;margin:12px 0 6px 0;">Betting Angle</div>
-      <p style="margin:0 0 12px 0;color:#374151;">Littell 7.72 xERA and 10.6% K-rate face Mets bullpen 3.69 xERA against Nationals 7.98 bullpen xERA. Mets last20 bullpen ERA sits at 2.55 while opponent last20 OPS reaches 0.793. Numbers indicate bullpen advantage offset by 51.7% projected win probability.</p>
-      <p style="margin:0 0 6px 0;font-weight:800;color:#111827;">Official Pick: Mets ML</p>
-      <p style="margin:0;color:#5b6477;">Confidence: Low (10/10)</p>
-    </section>
-                <div style="margin-top:20px;padding:14px 16px;background:#f4f9ff;border-radius:12px;text-align:center;border:1px solid #d9e1ee;">
-                  <p style="margin:0 0 8px 0;font-size:13px;color:#475569;">See the full interactive breakdown with charts and lineup stats</p>
-                  <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#f97316;color:#ffffff;font-size:14px;font-weight:800;padding:10px 24px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">Read Full Report →</a>
-                </div>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr>
+    <td style="background:#f8fafc;border-top:1px solid #e5e7eb;padding:12px 18px;text-align:center;font-size:10px;color:#9099b0;line-height:1.6;">
+      For entertainment purposes only. Always gamble responsibly.<br>
+      © 2026 MetsMoneyline · Not affiliated with the New York Mets or MLB
+    </td>
+  </tr>
+
+</table>
+</td></tr></table>
+</body>
 </html>
