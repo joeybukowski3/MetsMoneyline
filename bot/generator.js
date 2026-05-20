@@ -6784,403 +6784,460 @@ function buildSituationalSplitsHtml(game, { mode = "site" } = {}) {
 }
 
 function buildCondensedEmailHtml(game) {
-  const report = game?.writeup?.report || buildPresentationReport(game);
-  const header = report?.header;
-  const pick = report?.officialPick;
-  const meta = header?.metadataLine || "";
-  const opponent = game?.opponent || "Opponent";
-  const oppAbbr = TEAM_NAME_TO_ABBR[opponent] || opponent.split(" ").pop().toUpperCase().slice(0, 3);
-  const metsLogo = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
-  const oppLogo = header?.oppLogoUrl || "";
-  const metsRecord = sanitizeRecord(game?.standings?.metsRecord, "");
-  const oppRecord = sanitizeRecord(game?.standings?.oppRecord, "");
+  /* ── Email data extraction ── */
+  const report       = game?.writeup?.report || buildPresentationReport(game);
+  const header       = report?.header;
+  const pick         = report?.officialPick;
+  const meta         = header?.metadataLine || "";
+  const opponent     = game?.opponent || "Opponent";
+  const oppAbbr      = TEAM_NAME_TO_ABBR[opponent] || opponent.split(" ").pop().toUpperCase().slice(0, 3);
+  const metsLogo     = header?.metsLogoUrl || "https://www.mlbstatic.com/team-logos/121.svg";
+  const oppLogo      = header?.oppLogoUrl  || "";
+  const metsRecord   = sanitizeRecord(game?.standings?.metsRecord, "");
+  const oppRecord    = sanitizeRecord(game?.standings?.oppRecord, "");
 
-  const metsCard = report?.startingPitchersComparison?.metsCard;
-  const oppCard  = report?.startingPitchersComparison?.oppCard;
-  const metsBullpen = report?.bullpenReport?.mets;
-  const oppBullpen  = report?.bullpenReport?.opp;
+  const metsCard      = report?.startingPitchersComparison?.metsCard;
+  const oppCard       = report?.startingPitchersComparison?.oppCard;
+  const metsBullpen   = report?.bullpenReport?.mets;
+  const oppBullpen    = report?.bullpenReport?.opp;
   const metsRecentForm = report?.recentFormReport?.mets;
   const oppRecentForm  = report?.recentFormReport?.opp;
-  const metsLineup = report?.projectedLineupComparison?.mets || [];
-  const oppLineup  = report?.projectedLineupComparison?.opp  || [];
-  const homeAwayEdge = game?.emailData?.homeAwayEdge || null;
+  const metsLineup    = report?.projectedLineupComparison?.mets || [];
+  const oppLineup     = report?.projectedLineupComparison?.opp  || [];
+  const homeAwayEdge  = game?.emailData?.homeAwayEdge || null;
 
-  // Weather
+  /* ── Helpers ── */
+  const D    = (v) => (v == null || v === "") ? "N/A" : v;
+  const fmt  = (v, d = 2) => { const n = parseFloat(String(v ?? "")); return Number.isFinite(n) ? n.toFixed(d) : "N/A"; };
+  const fmtPct = (v) => { const n = parseFloat(String(v ?? "")); return Number.isFinite(n) ? `${n.toFixed(1)}%` : "N/A"; };
+  const fmtAvg = (v) => { const n = parseFloat(String(v ?? "")); return Number.isFinite(n) ? `.${String(Math.round(n*1000)).padStart(3,"0")}` : "N/A"; };
+  const fmtOps = (v) => { const n = parseFloat(String(v ?? "")); return Number.isFinite(n) ? n.toFixed(3) : "N/A"; };
+
+  /* ── Edge logic (lower ERA/WHIP = better; higher OPS/BA = better) ── */
+  const edgeLower  = (a, b, tol = 0.01) => !Number.isFinite(a) || !Number.isFinite(b) ? "—" : a < b - tol ? "Mets" : b < a - tol ? opponent.split(" ").pop() : "Even";
+  const edgeHigher = (a, b, tol = 0.005) => !Number.isFinite(a) || !Number.isFinite(b) ? "—" : a > b + tol ? "Mets" : b > a + tol ? opponent.split(" ").pop() : "Even";
+  const edgeRank   = (a, b) => (a == null || b == null) ? "—" : a < b ? "Mets" : b < a ? opponent.split(" ").pop() : "Even";
+
+  /* ── Weather ── */
   const wx = game?.weather || {};
-  const wxStr = [
-    wx.temp ? `${Math.round(wx.temp)}°F` : null,
-    wx.condition || null,
-    wx.windSpeed ? `Wind ${Math.round(wx.windSpeed)} mph ${wx.windDir || ""}`.trim() : null
-  ].filter(Boolean).join(" · ");
+  const wxStr = [wx.temp ? `${Math.round(wx.temp)}°` : null, wx.condition || null, wx.windSpeed ? `Wind ${Math.round(wx.windSpeed)} mph ${wx.windDir || ""}`.trim() : null].filter(Boolean).join(" · ");
 
-  const dash  = (v) => v == null || v === "" ? "—" : v;
-  const fmt   = (v, d = 2) => { const n = parseFloat(String(v ?? "")); return Number.isFinite(n) ? n.toFixed(d) : "—"; };
-  const fmtPct = (v) => { const n = parseFloat(String(v ?? "")); return Number.isFinite(n) ? `${n.toFixed(1)}%` : "—"; };
+  /* ── Pitching values ── */
+  const metsXERA  = parseFloat(String(game?.pitching?.mets?.savant?.xERA ?? ""));
+  const oppXERA   = parseFloat(String(game?.pitching?.opp?.savant?.xERA  ?? ""));
+  const metsERA   = parseFloat(String(metsCard?.stats?.era  ?? ""));
+  const oppERA    = parseFloat(String(oppCard?.stats?.era   ?? ""));
+  const metsWHIP  = parseFloat(String(metsCard?.stats?.whip ?? ""));
+  const oppWHIP   = parseFloat(String(oppCard?.stats?.whip  ?? ""));
+  const metsKPct  = parseFloat(String(metsCard?.stats?.kPct ?? ""));
+  const oppKPct   = parseFloat(String(oppCard?.stats?.kPct  ?? ""));
 
-  const SL = "font-size:10px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;color:#6b7280;";
+  /* ── Bullpen values ── */
+  const metsBpXERA    = parseFloat(String(game?.pitching?.metsBullpen?.seasonXERAAverage ?? ""));
+  const oppBpXERA     = parseFloat(String(game?.pitching?.oppBullpen?.seasonXERAAverage  ?? ""));
+  const metsBpERA     = parseFloat(String(metsBullpen?.statsRow?.seasonEra  ?? ""));
+  const oppBpERA      = parseFloat(String(oppBullpen?.statsRow?.seasonEra   ?? ""));
+  const metsBpWHIP    = parseFloat(String(metsBullpen?.statsRow?.seasonWhip ?? ""));
+  const oppBpWHIP     = parseFloat(String(oppBullpen?.statsRow?.seasonWhip  ?? ""));
+  const metsBpL20ERA  = parseFloat(String(metsBullpen?.statsRow?.last20Era  ?? ""));
+  const oppBpL20ERA   = parseFloat(String(oppBullpen?.statsRow?.last20Era   ?? ""));
+  const metsBpFinal   = Number.isFinite(metsBpXERA) ? metsBpXERA : metsBpERA;
+  const oppBpFinal    = Number.isFinite(oppBpXERA)  ? oppBpXERA  : oppBpERA;
 
-  // ── SP xERA / ERA ──────────────────────────────────────────────────────────
-  const metsXERA = parseFloat(String(game?.pitching?.mets?.savant?.xERA ?? ""));
-  const oppXERA  = parseFloat(String(game?.pitching?.opp?.savant?.xERA ?? ""));
-  const metsSpVal = Number.isFinite(metsXERA) ? metsXERA : parseFloat(String(metsCard?.stats?.era ?? ""));
-  const oppSpVal  = Number.isFinite(oppXERA)  ? oppXERA  : parseFloat(String(oppCard?.stats?.era ?? ""));
-  const spEdge    = Number.isFinite(metsSpVal) && Number.isFinite(oppSpVal)
-    ? (metsSpVal < oppSpVal - 0.01 ? "NYM" : oppSpVal < metsSpVal - 0.01 ? "opp" : "EVEN") : "EVEN";
-  const metsSpLabel = Number.isFinite(metsXERA) ? `${fmt(metsXERA)} xERA` : (Number.isFinite(metsSpVal) ? `${fmt(metsSpVal)} ERA` : "—");
-  const oppSpLabel  = Number.isFinite(oppXERA)  ? `${fmt(oppXERA)} xERA`  : (Number.isFinite(oppSpVal)  ? `${fmt(oppSpVal)} ERA`  : "—");
+  /* ── Offense / form values ── */
+  const metsOpsRow  = metsRecentForm?.rows?.find(r => r.statKey === "ops");
+  const oppOpsRow   = oppRecentForm?.rows?.find(r  => r.statKey === "ops");
+  const metsAvgRow  = metsRecentForm?.rows?.find(r => r.statKey === "avg");
+  const oppAvgRow   = oppRecentForm?.rows?.find(r  => r.statKey === "avg");
+  const metsKRow    = metsRecentForm?.rows?.find(r => r.statKey === "kPct");
+  const oppKRow     = oppRecentForm?.rows?.find(r  => r.statKey === "kPct");
+  const metsBBRow   = metsRecentForm?.rows?.find(r => r.statKey === "bbPct");
+  const oppBBRow    = oppRecentForm?.rows?.find(r  => r.statKey === "bbPct");
 
-  // ── Bullpen ─────────────────────────────────────────────────────────────────
-  const metsBpXERA = parseFloat(String(game?.pitching?.metsBullpen?.seasonXERAAverage ?? ""));
-  const oppBpXERA  = parseFloat(String(game?.pitching?.oppBullpen?.seasonXERAAverage ?? ""));
-  const metsBpVal  = Number.isFinite(metsBpXERA) ? metsBpXERA : parseFloat(String(metsBullpen?.statsRow?.seasonEra ?? ""));
-  const oppBpVal   = Number.isFinite(oppBpXERA)  ? oppBpXERA  : parseFloat(String(oppBullpen?.statsRow?.seasonEra ?? ""));
-  const bpEdge     = Number.isFinite(metsBpVal) && Number.isFinite(oppBpVal)
-    ? (metsBpVal < oppBpVal - 0.01 ? "NYM" : oppBpVal < metsBpVal - 0.01 ? "opp" : "EVEN") : "EVEN";
-  const metsBpLabel = Number.isFinite(metsBpXERA) ? `${fmt(metsBpXERA)} xERA` : (Number.isFinite(metsBpVal) ? `${fmt(metsBpVal)} ERA` : "—");
-  const oppBpLabel  = Number.isFinite(oppBpXERA)  ? `${fmt(oppBpXERA)} xERA`  : (Number.isFinite(oppBpVal)  ? `${fmt(oppBpVal)} ERA`  : "—");
+  const metsOpsL20  = metsOpsRow?.recentValue  ?? null;
+  const oppOpsL20   = oppOpsRow?.recentValue   ?? null;
+  const metsAvgL20  = metsAvgRow?.recentValue  ?? null;
+  const oppAvgL20   = oppAvgRow?.recentValue   ?? null;
+  const metsKL20    = metsKRow?.recentValue    ?? null;
+  const oppKL20     = oppKRow?.recentValue     ?? null;
+  const metsBBL20   = metsBBRow?.recentValue   ?? null;
+  const oppBBL20    = oppBBRow?.recentValue    ?? null;
+  const metsOpsRank = metsOpsRow?.recentRank   ?? null;
+  const oppOpsRank  = oppOpsRow?.recentRank    ?? null;
+  const metsAvgRank = metsAvgRow?.recentRank   ?? null;
+  const oppAvgRank  = oppAvgRow?.recentRank    ?? null;
 
-  // ── Offense OPS L20 ─────────────────────────────────────────────────────────
-  const metsOpsRow = metsRecentForm?.rows?.find(r => r.statKey === "ops");
-  const oppOpsRow  = oppRecentForm?.rows?.find(r  => r.statKey === "ops");
-  const metsOps = metsOpsRow?.recentValue ?? null;
-  const oppOps  = oppOpsRow?.recentValue  ?? null;
-  const offEdge = metsOps != null && oppOps != null
-    ? (metsOps > oppOps + 0.005 ? "NYM" : oppOps > metsOps + 0.005 ? "opp" : "EVEN") : "EVEN";
+  /* ── Situational splits (Mets) ── */
+  const splits = game?.situationalSplits || null;
 
-  // ── Edge badge ──────────────────────────────────────────────────────────────
-  const edgeBadge = (winner) => {
-    const bg = winner === "NYM" ? "#002d72" : winner === "opp" ? "#991b1b" : "#6b7280";
-    const lbl = winner === "NYM" ? "NYM" : winner === "opp" ? oppAbbr : "EVEN";
-    return `<span style="display:inline-block;padding:2px 9px;border-radius:10px;background:${bg};color:#fff;font-size:11px;font-weight:700;">${lbl}</span>`;
-  };
-
-  // ── Recent form W/L dots (last 5) ───────────────────────────────────────────
+  /* ── W/L dots last 5 ── */
   const wlDots = (form) => {
-    if (!Array.isArray(form?.games)) return "";
-    return form.games.slice(-5).map(g => {
-      const w = g.result === "W";
-      const l = g.result === "L";
+    const games = Array.isArray(form?.games) ? form.games : [];
+    return games.slice(-5).map(g => {
+      const w = g.result === "W", l = g.result === "L";
       const bg = w ? "#16a34a" : l ? "#dc2626" : "#9ca3af";
-      const lbl = w ? "W" : l ? "L" : g.result || "?";
-      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:${bg};color:#fff;font-size:10px;font-weight:900;font-family:Arial,sans-serif;margin-right:3px;">${lbl}</span>`;
+      return `<span style="display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:${bg};color:#fff;font-size:9px;font-weight:900;margin-right:2px;">${w?"W":l?"L":"?"}</span>`;
     }).join("");
   };
-  const metsFormDots = wlDots(metsRecentForm) || wlDots({ games: (game?.gameContext?.metsLast5 || []) });
-  const oppFormDots  = wlDots(oppRecentForm)  || wlDots({ games: (game?.gameContext?.oppLast5  || []) });
+  const metsL5  = wlDots(metsRecentForm) || wlDots({ games: game?.gameContext?.metsLast5 || [] });
+  const oppL5   = wlDots(oppRecentForm)  || wlDots({ games: game?.gameContext?.oppLast5  || [] });
 
-  // ── Hot/Cold alert ──────────────────────────────────────────────────────────
-  const metsHotCold = buildHotColdAlert(metsLineup);
-  const oppHotCold  = buildHotColdAlert(oppLineup);
-  const fmtBA = (v) => v != null && Number.isFinite(v) ? `.${String(Math.round(v * 1000)).padStart(3, "0")}` : null;
-  const hotColdLine = (player, icon, label) => {
-    if (!player) return "";
-    const s = fmtBA(player.seasonAvg);
-    const r = fmtBA(player.recentAvg);
-    const d = player.differencePct != null ? (player.differencePct >= 0 ? `+${player.differencePct.toFixed(1)}%` : `${player.differencePct.toFixed(1)}%`) : "";
-    return `<tr>
-      <td style="padding:4px 6px;font-size:12px;">${icon} <strong>${label}</strong></td>
-      <td style="padding:4px 6px;font-size:12px;font-weight:700;color:#111827;">${player.name}</td>
-      <td style="padding:4px 6px;font-size:11px;color:#6b7280;">${s || "—"} → ${r || "—"}${d ? ` (${d})` : ""}</td>
-    </tr>`;
-  };
-  const hasHotCold = metsHotCold.hot || metsHotCold.cold || oppHotCold.hot || oppHotCold.cold;
-
-  // ── Lineup teaser — top 3 hitters ──────────────────────────────────────────
-  const lineupRow = (p, isOpp) => {
-    if (!p?.name) return "";
-    const avg = isOpp ? (p.seasonAVG ?? "—") : (p.currentSeasonAVG ?? p.seasonAVG ?? "—");
-    const ops = isOpp ? (p.seasonOPS ?? "—") : (p.seasonOPS ?? "—");
-    return `<tr style="border-top:1px solid #f0f4f8;">
-      <td style="padding:5px 6px;font-size:11px;color:#6b7280;width:18px;">${p.order || ""}</td>
-      <td style="padding:5px 6px;font-size:12px;font-weight:700;color:#111827;">${p.name}</td>
-      <td style="padding:5px 6px;font-size:11px;color:#6b7280;text-align:center;">${p.pos || ""}</td>
-      <td style="padding:5px 6px;font-size:12px;font-weight:700;text-align:center;">${avg}</td>
-      <td style="padding:5px 6px;font-size:11px;color:#6b7280;text-align:center;">${ops}</td>
-    </tr>`;
-  };
-  const metsTop3 = metsLineup.slice(0, 3).map(p => lineupRow(p, false)).join("");
-  const oppTop3  = oppLineup.slice(0, 3).map(p => lineupRow(p, true)).join("");
-  const hasLineups = metsTop3 || oppTop3;
-
-  // ── Injuries ────────────────────────────────────────────────────────────────
-  const metsIL = (game?.gameContext?.metsInjuries || []).slice(0, 3);
-  const oppIL  = (game?.gameContext?.oppInjuries  || []).slice(0, 3);
-  const ilChip = (name, status) =>
-    `<span style="display:inline-block;margin:2px 3px 2px 0;padding:2px 8px;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;font-size:10px;font-weight:700;color:#92400e;">${name} ${status || "IL"}</span>`;
-
-  // ── Home/Away edge row ──────────────────────────────────────────────────────
-  let homeAwayRow = "";
+  /* ── Home/Away records ── */
+  let metsHARecord = "", oppHARecord = "";
+  const isHome = (game?.homeAway || "").toLowerCase() === "home";
   try {
-    const metsHA = homeAwayEdge?.metsHome;
-    const oppHA  = homeAwayEdge?.oppRoad;
-    if (metsHA != null && oppHA != null) {
-      const metsDiff = Number(metsHA.differential);
-      const oppDiff  = Number(oppHA.differential);
-      const haEdge   = Math.abs(metsDiff - oppDiff) <= 5 ? "EVEN" : (metsDiff > oppDiff ? "NYM" : "opp");
-      const sign = (n) => n >= 0 ? `+${n}` : String(n);
-      homeAwayRow = `<tr>
-        <td style="padding:7px 10px;border-bottom:1px solid #f0f4f8;font-weight:600;color:#374151;font-size:12px;">Home/Away Edge</td>
-        <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;font-size:12px;">${sign(metsDiff)} runs</td>
-        <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;font-size:12px;">${sign(oppDiff)} runs</td>
-        <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${edgeBadge(haEdge)}</td>
-      </tr>`;
+    if (isHome) {
+      metsHARecord = `${game?.standings?.metsHomeRecord || "—"} home`;
+      oppHARecord  = `${game?.standings?.oppRoadRecord  || "—"} away`;
+    } else {
+      metsHARecord = `${game?.standings?.metsRoadRecord || "—"} away`;
+      oppHARecord  = `${game?.standings?.oppHomeRecord  || "—"} home`;
     }
-  } catch (_) {}
+  } catch(_) {}
 
-  // ── Pick label color ────────────────────────────────────────────────────────
-  const pickLabel = dash(pick?.label);
-  const pickIsOver = /over|o\s*\d/i.test(pickLabel);
-  const pickIsMets = /mets|nym/i.test(pickLabel);
+  /* ── Season series ── */
+  const seriesRecord = game?.gameContext?.seasonSeriesRecord || null;
+  const metsSeriesW = seriesRecord?.metsWins ?? null;
+  const oppSeriesW  = seriesRecord?.oppWins  ?? null;
+  const seriesStr   = (metsSeriesW != null && oppSeriesW != null) ? `${metsSeriesW}-${oppSeriesW}` : null;
+  const oppSeriesStr = (metsSeriesW != null && oppSeriesW != null) ? `${oppSeriesW}-${metsSeriesW}` : null;
+
+  /* ── Pick ── */
+  const pickLabel = pick?.label || pick?.headline || "Mets ML";
+
+  /* ── Shared table cell styles ── */
+  const TH  = `padding:9px 10px;font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#6b7280;border-bottom:2px solid #e5e7eb;`;
+  const TD  = `padding:9px 10px;font-size:13px;color:#111827;border-bottom:1px solid #f0f4f8;`;
+  const TDB = `${TD}font-weight:700;`;
+  const SEC = `margin:0 0 24px 0;`;
+  const SH  = `font-size:15px;font-weight:800;color:#111827;margin:0 0 10px 0;padding-bottom:8px;border-bottom:2px solid #e5e7eb;`;
+
+  /* ── Edge cell helper ── */
+  const edgeCell = (val) => {
+    if (!val || val === "—") return `<td style="${TD}color:#9ca3af;">—</td>`;
+    const isMets = /mets/i.test(val);
+    const isOpp  = !isMets && !/even/i.test(val);
+    const color  = isMets ? "#002d72" : isOpp ? "#991b1b" : "#374151";
+    const weight = (isMets || isOpp) ? "800" : "600";
+    return `<td style="${TD}color:${color};font-weight:${weight};">${val}</td>`;
+  };
+
+  /* ── Rank cell helper ── */
+  const rankCell = (r) => {
+    if (r == null) return `<td style="${TD}color:#9ca3af;">—</td>`;
+    const color = r <= 5 ? "#15803d" : r <= 15 ? "#374151" : "#b91c1c";
+    return `<td style="${TD}font-weight:700;color:${color};">#${r}</td>`;
+  };
+
+  /* ── Section header ── */
+  const sectionHead = (title) => `<h2 style="${SH}">${title}</h2>`;
+
+  /* ── Table wrapper ── */
+  const tableWrap = (content) => `<table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">${content}</table>`;
+
+  /* ── Model read rows ── */
+  const metsOpsSeasonVal = parseFloat(String(metsOpsRow?.seasonValue ?? ""));
+  const oppOpsSeasonVal  = parseFloat(String(oppOpsRow?.seasonValue  ?? ""));
+  const offenseFormEdge  = edgeHigher(metsOpsL20, oppOpsL20);
+  const bullpenEdge      = edgeLower(metsBpFinal, oppBpFinal);
+  const spEdgeStr        = edgeLower(Number.isFinite(metsXERA) ? metsXERA : metsERA, Number.isFinite(oppXERA) ? oppXERA : oppERA);
+  // Regression: if team is outperforming xERA vs ERA, regress toward opp
+  let regressionRead = "Mixed";
+  const metsEraXeraGap = (Number.isFinite(metsERA) && Number.isFinite(metsXERA)) ? metsXERA - metsERA : null;
+  const oppEraXeraGap  = (Number.isFinite(oppERA)  && Number.isFinite(oppXERA))  ? oppXERA  - oppERA  : null;
+  if (metsEraXeraGap != null && oppEraXeraGap != null) {
+    regressionRead = (metsEraXeraGap < oppEraXeraGap - 0.2) ? "Mets" : (oppEraXeraGap < metsEraXeraGap - 0.2) ? opponent.split(" ").pop() : "Neutral";
+  }
 
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MetsMoneyline Game Report</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MetsMoneyline Daily Report</title>
 <style>
-  @media only screen and (max-width: 600px) {
-    .email-outer { padding: 8px !important; }
-    .sp-row td { display: block !important; width: 100% !important; padding: 0 0 8px 0 !important; }
-    .lu-row td { display: block !important; width: 100% !important; }
-  }
+  body,table,td{font-family:Arial,Helvetica,sans-serif;}
+  @media(max-width:600px){.em-shell{width:100%!important;}.em-pad{padding:14px!important;}}
 </style>
 </head>
-<body style="margin:0;padding:0;background:#eef2f7;font-family:Arial,Helvetica,sans-serif;color:#111827;line-height:1.5;">
-
+<body style="margin:0;padding:0;background:#eef2f7;color:#111827;line-height:1.5;">
 <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;background:#eef2f7;">
-<tr><td class="email-outer" align="center" style="padding:16px 8px;">
-<table role="presentation" width="100%" style="width:100%;max-width:600px;border-collapse:collapse;background:#ffffff;border:1px solid #dde4ef;border-radius:16px;overflow:hidden;">
+<tr><td align="center" style="padding:14px 8px;">
+<table role="presentation" class="em-shell" style="width:100%;max-width:580px;border-collapse:collapse;background:#fff;border:1px solid #dde4ef;border-radius:14px;overflow:hidden;">
 
-  <!-- ══ HEADER ══ -->
+  <!-- HEADER -->
   <tr>
-    <td style="background:linear-gradient(135deg,#001e5a 0%,#002d72 60%,#003a8c 100%);padding:24px 20px 18px;">
+    <td style="background:linear-gradient(135deg,#001e5a 0%,#002d72 100%);padding:20px 18px 14px;">
       <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
-          <td align="right" style="width:38%;">
-            <img src="${metsLogo}" alt="NYM" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;margin-left:auto;">
-            ${metsRecord ? `<div style="text-align:center;color:#a0bde8;font-size:11px;font-weight:600;margin-top:4px;">${metsRecord}</div>` : ""}
+          <td align="right" style="width:36%;">
+            <img src="${metsLogo}" alt="NYM" width="64" height="64" style="display:block;margin-left:auto;">
+            <div style="text-align:center;color:#a0bde8;font-size:10px;font-weight:600;margin-top:3px;">${metsRecord}</div>
           </td>
-          <td align="center" style="width:24%;">
-            <div style="color:#ff5910;font-size:24px;font-weight:900;letter-spacing:0.04em;">VS</div>
-            <div style="color:#a0bde8;font-size:11px;font-weight:600;margin-top:2px;">${(game?.startTime ? formatTimeET(game.startTime) : (meta.match(/\d+:\d+\s*(AM|PM)/i)?.[0] || ""))}</div>
+          <td align="center" style="width:28%;">
+            <div style="color:#ff5910;font-size:22px;font-weight:900;letter-spacing:0.04em;">VS</div>
+            <div style="color:#a0bde8;font-size:10px;font-weight:600;margin-top:2px;">${game?.startTime ? formatTimeET(game.startTime) : ""}</div>
+            ${wxStr ? `<div style="color:#7a9fd4;font-size:10px;margin-top:3px;">${wxStr}</div>` : ""}
           </td>
-          <td align="left" style="width:38%;">
-            ${oppLogo
-              ? `<img src="${oppLogo}" alt="${oppAbbr}" width="72" height="72" style="display:block;width:72px;height:72px;object-fit:contain;">`
-              : `<div style="width:72px;height:72px;background:#1a4a9e;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;">${oppAbbr}</div>`}
-            ${oppRecord ? `<div style="text-align:center;color:#a0bde8;font-size:11px;font-weight:600;margin-top:4px;">${oppRecord}</div>` : ""}
+          <td align="left" style="width:36%;">
+            ${oppLogo ? `<img src="${oppLogo}" alt="${oppAbbr}" width="64" height="64" style="display:block;">` : `<div style="width:64px;height:64px;background:#1a4a9e;border-radius:50%;text-align:center;line-height:64px;font-size:13px;font-weight:700;color:#fff;">${oppAbbr}</div>`}
+            <div style="text-align:center;color:#a0bde8;font-size:10px;font-weight:600;margin-top:3px;">${oppRecord}</div>
           </td>
         </tr>
       </table>
-      ${wxStr ? `<div style="margin-top:10px;text-align:center;color:#7a9fd4;font-size:11px;">☁ ${wxStr}</div>` : ""}
-      <div style="margin-top:6px;text-align:center;color:#a0bde8;font-size:11px;">${meta}</div>
+      <div style="margin-top:6px;text-align:center;color:#a0bde8;font-size:10px;">${meta}</div>
     </td>
   </tr>
 
-  <!-- ══ PICK HERO ══ -->
+  <!-- PICK HERO -->
   <tr>
-    <td style="background:#ff5910;padding:16px 20px;text-align:center;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.8);margin-bottom:4px;">Tonight's Official Pick</div>
-      <div style="font-size:26px;font-weight:900;color:#ffffff;margin-bottom:6px;">${pickLabel}</div>
-      ${pick?.summary ? `<div style="font-size:12px;color:rgba(255,255,255,0.88);max-width:480px;margin:0 auto 10px;line-height:1.5;">${pick.summary}</div>` : ""}
-      <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#ffffff;color:#ff5910;font-size:13px;font-weight:800;padding:9px 22px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">View Full Report →</a>
+    <td style="background:#ff5910;padding:14px 18px;text-align:center;">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.8);margin-bottom:3px;">Tonight's Pick</div>
+      <div style="font-size:22px;font-weight:900;color:#fff;">${pickLabel}</div>
+      ${pick?.confidenceLabel ? `<div style="font-size:11px;color:rgba(255,255,255,0.8);margin-top:4px;">Confidence: ${pick.confidenceLabel}</div>` : ""}
     </td>
   </tr>
 
-  <tr><td style="padding:20px 20px 0;">
+  <tr><td class="em-pad" style="padding:18px 18px 0;">
 
-    <!-- ══ STARTING PITCHERS ══ -->
-    <div style="${SL}margin-bottom:8px;">Starting Pitchers</div>
-    <table role="presentation" width="100%" class="sp-row" style="width:100%;border-collapse:collapse;margin-bottom:18px;">
-      <tr>
-        <td style="width:49%;vertical-align:top;padding-right:6px;">
-          <div style="border:1px solid #d8e4f7;border-radius:10px;padding:12px 12px 10px;background:#f0f5ff;">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#002d72;margin-bottom:4px;">NYM</div>
-            <div style="font-size:14px;font-weight:800;color:#002d72;margin-bottom:1px;">${dash(metsCard?.name)}</div>
-            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${((metsCard?.hand ? metsCard.hand + "HP" : "") + " " + (metsCard?.record || "")).trim()}</div>
-            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
-              <tr>
-                <td style="font-size:10px;color:#6b7280;padding:2px 0;width:28%;">ERA</td>
-                <td style="font-size:12px;font-weight:700;text-align:right;padding:2px 0;">${fmt(metsCard?.stats?.era)}</td>
-              </tr>
-              <tr>
-                <td style="font-size:10px;color:#6b7280;padding:2px 0;">WHIP</td>
-                <td style="font-size:12px;font-weight:700;text-align:right;padding:2px 0;">${fmt(metsCard?.stats?.whip)}</td>
-              </tr>
-              <tr>
-                <td style="font-size:10px;color:#6b7280;padding:2px 0;">K%</td>
-                <td style="font-size:12px;font-weight:700;text-align:right;padding:2px 0;">${fmtPct(metsCard?.stats?.kPct)}</td>
-              </tr>
-              ${Number.isFinite(metsXERA) ? `<tr><td style="font-size:10px;color:#002d72;font-weight:700;padding:2px 0;">xERA</td><td style="font-size:13px;font-weight:900;color:#002d72;text-align:right;padding:2px 0;">${fmt(metsXERA)}</td></tr>` : ""}
-            </table>
-            <div style="margin-top:6px;font-size:10px;font-weight:700;color:${spEdge === "NYM" ? "#15803d" : "#9ca3af"};text-align:right;">
-              ${spEdge === "NYM" ? "✓ SP Edge" : ""}
-            </div>
-          </div>
-        </td>
-        <td style="width:49%;vertical-align:top;padding-left:6px;">
-          <div style="border:1px solid #fde8d8;border-radius:10px;padding:12px 12px 10px;background:#fff5f0;">
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#7c2d12;margin-bottom:4px;">${oppAbbr}</div>
-            <div style="font-size:14px;font-weight:800;color:#7c2d12;margin-bottom:1px;">${dash(oppCard?.name)}</div>
-            <div style="font-size:11px;color:#6b7280;margin-bottom:8px;">${((oppCard?.hand ? oppCard.hand + "HP" : "") + " " + (oppCard?.record || "")).trim()}</div>
-            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
-              <tr>
-                <td style="font-size:10px;color:#6b7280;padding:2px 0;width:28%;">ERA</td>
-                <td style="font-size:12px;font-weight:700;text-align:right;padding:2px 0;">${fmt(oppCard?.stats?.era)}</td>
-              </tr>
-              <tr>
-                <td style="font-size:10px;color:#6b7280;padding:2px 0;">WHIP</td>
-                <td style="font-size:12px;font-weight:700;text-align:right;padding:2px 0;">${fmt(oppCard?.stats?.whip)}</td>
-              </tr>
-              <tr>
-                <td style="font-size:10px;color:#6b7280;padding:2px 0;">K%</td>
-                <td style="font-size:12px;font-weight:700;text-align:right;padding:2px 0;">${fmtPct(oppCard?.stats?.kPct)}</td>
-              </tr>
-              ${Number.isFinite(oppXERA) ? `<tr><td style="font-size:10px;color:#7c2d12;font-weight:700;padding:2px 0;">xERA</td><td style="font-size:13px;font-weight:900;color:#7c2d12;text-align:right;padding:2px 0;">${fmt(oppXERA)}</td></tr>` : ""}
-            </table>
-            <div style="margin-top:6px;font-size:10px;font-weight:700;color:${spEdge === "opp" ? "#15803d" : "#9ca3af"};text-align:right;">
-              ${spEdge === "opp" ? "✓ SP Edge" : ""}
-            </div>
-          </div>
-        </td>
-      </tr>
-    </table>
+    <!-- ══ 1. MATCHUP SNAPSHOT ══ -->
+    <div style="${SEC}">
+      ${sectionHead("Matchup Snapshot")}
+      ${tableWrap(`
+        <thead><tr>
+          <th style="${TH}text-align:left;">Category</th>
+          <th style="${TH}text-align:center;">Mets</th>
+          <th style="${TH}text-align:center;">${opponent.split(" ").pop()}</th>
+          <th style="${TH}text-align:center;">Edge</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="${TDB}">Record</td>
+            <td style="${TD}text-align:center;">${metsRecord || "—"}</td>
+            <td style="${TD}text-align:center;">${oppRecord  || "—"}</td>
+            ${edgeCell((() => { const mW=parseInt(metsRecord),oW=parseInt(oppRecord); return !isNaN(mW)&&!isNaN(oW)? (mW>oW?"Mets":oW>mW?opponent.split(" ").pop():"Even"):"—"; })())}
+          </tr>
+          <tr>
+            <td style="${TDB}">Last 5</td>
+            <td style="${TD}text-align:center;">${metsL5 || "—"}</td>
+            <td style="${TD}text-align:center;">${oppL5  || "—"}</td>
+            ${edgeCell("—")}
+          </tr>
+          ${metsHARecord ? `<tr>
+            <td style="${TDB}">Home/Away</td>
+            <td style="${TD}text-align:center;">${metsHARecord}</td>
+            <td style="${TD}text-align:center;">${oppHARecord}</td>
+            ${edgeCell("—")}
+          </tr>` : ""}
+          ${seriesStr ? `<tr>
+            <td style="${TDB}">Season Series</td>
+            <td style="${TD}text-align:center;">${seriesStr}</td>
+            <td style="${TD}text-align:center;">${oppSeriesStr}</td>
+            ${edgeCell(metsSeriesW > oppSeriesW ? "Mets" : oppSeriesW > metsSeriesW ? opponent.split(" ").pop() : "Even")}
+          </tr>` : ""}
+        </tbody>
+      `)}
+    </div>
 
-    <!-- ══ KEY EDGES ══ -->
-    <div style="${SL}margin-bottom:8px;">Key Matchup Edges</div>
-    <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;font-size:12px;margin-bottom:18px;">
-      <thead>
-        <tr style="background:#f8fafc;">
-          <th style="padding:7px 10px;text-align:left;${SL}border-bottom:1px solid #e5e7eb;width:38%;">Category</th>
-          <th style="padding:7px 8px;text-align:center;${SL}border-bottom:1px solid #e5e7eb;width:20%;">NYM</th>
-          <th style="padding:7px 8px;text-align:center;${SL}border-bottom:1px solid #e5e7eb;width:20%;">${oppAbbr}</th>
-          <th style="padding:7px 8px;text-align:center;${SL}border-bottom:1px solid #e5e7eb;width:22%;">Edge</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td style="padding:7px 10px;border-bottom:1px solid #f0f4f8;font-weight:600;color:#374151;">Starting Pitching</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${metsSpLabel}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${oppSpLabel}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${edgeBadge(spEdge)}</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px;border-bottom:1px solid #f0f4f8;font-weight:600;color:#374151;">Bullpen (xERA)</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${metsBpLabel}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${oppBpLabel}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${edgeBadge(bpEdge)}</td>
-        </tr>
-        <tr>
-          <td style="padding:7px 10px;border-bottom:1px solid #f0f4f8;font-weight:600;color:#374151;">Offense (L20 OPS)</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${metsOps != null ? fmt(metsOps, 3) : "—"}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${oppOps != null ? fmt(oppOps, 3) : "—"}</td>
-          <td style="padding:7px 8px;border-bottom:1px solid #f0f4f8;text-align:center;">${edgeBadge(offEdge)}</td>
-        </tr>
-        ${homeAwayRow}
-      </tbody>
-    </table>
+    <!-- ══ 2. LAST 20 GAME TREND ══ -->
+    <div style="${SEC}">
+      ${sectionHead("Last 20 Game Trend")}
+      ${tableWrap(`
+        <thead><tr>
+          <th style="${TH}text-align:left;">Stat</th>
+          <th style="${TH}text-align:center;">Mets L20</th>
+          <th style="${TH}text-align:center;">${opponent.split(" ").pop()} L20</th>
+          <th style="${TH}text-align:center;">Edge</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="${TDB}">OPS</td>
+            <td style="${TD}text-align:center;">${fmtOps(metsOpsL20)}</td>
+            <td style="${TD}text-align:center;">${fmtOps(oppOpsL20)}</td>
+            ${edgeCell(edgeHigher(metsOpsL20, oppOpsL20))}
+          </tr>
+          <tr>
+            <td style="${TDB}">OPS Rank</td>
+            ${rankCell(metsOpsRank)}
+            ${rankCell(oppOpsRank)}
+            ${edgeCell(edgeRank(metsOpsRank, oppOpsRank))}
+          </tr>
+          <tr>
+            <td style="${TDB}">Batting Avg</td>
+            <td style="${TD}text-align:center;">${fmtAvg(metsAvgL20)}</td>
+            <td style="${TD}text-align:center;">${fmtAvg(oppAvgL20)}</td>
+            ${edgeCell(edgeHigher(metsAvgL20, oppAvgL20, 0.003))}
+          </tr>
+          <tr>
+            <td style="${TDB}">BA Rank</td>
+            ${rankCell(metsAvgRank)}
+            ${rankCell(oppAvgRank)}
+            ${edgeCell(edgeRank(metsAvgRank, oppAvgRank))}
+          </tr>
+          <tr>
+            <td style="${TDB}">K%</td>
+            <td style="${TD}text-align:center;">${fmtPct(metsKL20)}</td>
+            <td style="${TD}text-align:center;">${fmtPct(oppKL20)}</td>
+            ${edgeCell(edgeLower(metsKL20, oppKL20, 0.005))}
+          </tr>
+          <tr>
+            <td style="${TDB}">BB%</td>
+            <td style="${TD}text-align:center;">${fmtPct(metsBBL20)}</td>
+            <td style="${TD}text-align:center;">${fmtPct(oppBBL20)}</td>
+            ${edgeCell(edgeHigher(metsBBL20, oppBBL20, 0.005))}
+          </tr>
+        </tbody>
+      `)}
+      ${(metsOpsL20 != null || oppOpsL20 != null) ? `<div style="font-size:12px;color:#374151;margin-top:8px;"><strong>Trend read:</strong> ${offenseFormEdge === "Mets" ? "Mets have the hotter offense over the last 20 games." : offenseFormEdge === "—" ? "Offense trend data unavailable." : `${opponent.split(" ").pop()} have the hotter offense. Mets ${(metsOpsRow?.improving) ? "have improved from their season baseline" : "are below season average"}, but ${opponent.split(" ").pop()} owns the stronger current-form lineup.`}</div>` : ""}
+    </div>
 
-    <!-- ══ RECENT FORM ══ -->
-    <div style="${SL}margin-bottom:8px;">Recent Form — Last 5 Games</div>
-    <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:18px;">
-      <tr>
-        <td style="padding:10px 12px;border-right:1px solid #e5e7eb;width:50%;">
-          <div style="font-size:11px;font-weight:700;color:#002d72;margin-bottom:6px;">NYM</div>
-          <div>${metsFormDots || '<span style="color:#9ca3af;font-size:11px;">No data</span>'}</div>
-        </td>
-        <td style="padding:10px 12px;width:50%;">
-          <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:6px;">${oppAbbr}</div>
-          <div>${oppFormDots || '<span style="color:#9ca3af;font-size:11px;">No data</span>'}</div>
-        </td>
-      </tr>
-    </table>
+    <!-- ══ 3. BULLPEN TREND ══ -->
+    <div style="${SEC}">
+      ${sectionHead("Bullpen Trend")}
+      ${tableWrap(`
+        <thead><tr>
+          <th style="${TH}text-align:left;">Bullpen Stat</th>
+          <th style="${TH}text-align:center;">Mets</th>
+          <th style="${TH}text-align:center;">${opponent.split(" ").pop()}</th>
+          <th style="${TH}text-align:center;">Edge</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="${TDB}">Season ERA</td>
+            <td style="${TD}text-align:center;">${fmt(metsBpERA)}</td>
+            <td style="${TD}text-align:center;">${fmt(oppBpERA)}</td>
+            ${edgeCell(edgeLower(metsBpERA, oppBpERA))}
+          </tr>
+          <tr>
+            <td style="${TDB}">Season WHIP</td>
+            <td style="${TD}text-align:center;">${fmt(metsBpWHIP)}</td>
+            <td style="${TD}text-align:center;">${fmt(oppBpWHIP)}</td>
+            ${edgeCell(edgeLower(metsBpWHIP, oppBpWHIP))}
+          </tr>
+          ${(Number.isFinite(metsBpL20ERA) || Number.isFinite(oppBpL20ERA)) ? `<tr>
+            <td style="${TDB}">Last 20 Days ERA</td>
+            <td style="${TD}text-align:center;">${fmt(metsBpL20ERA)}</td>
+            <td style="${TD}text-align:center;">${fmt(oppBpL20ERA)}</td>
+            ${edgeCell(edgeLower(metsBpL20ERA, oppBpL20ERA))}
+          </tr>` : ""}
+          ${(Number.isFinite(metsBpXERA) || Number.isFinite(oppBpXERA)) ? `<tr>
+            <td style="${TDB}">Bullpen xERA</td>
+            <td style="${TD}text-align:center;">${fmt(metsBpXERA)}</td>
+            <td style="${TD}text-align:center;">${fmt(oppBpXERA)}</td>
+            ${edgeCell(edgeLower(metsBpXERA, oppBpXERA))}
+          </tr>` : ""}
+        </tbody>
+      `)}
+      <div style="font-size:12px;color:#374151;margin-top:8px;"><strong>Trend read:</strong> ${bullpenEdge === "Mets" ? "This is the clearest Mets advantage. The pick is partly built on New York having the stronger late-game profile." : bullpenEdge === "—" ? "Bullpen data unavailable." : `${opponent.split(" ").pop()} hold the bullpen edge tonight.`}</div>
+    </div>
 
-    <!-- ══ HOT / COLD ALERT ══ -->
-    ${hasHotCold ? `
-    <div style="${SL}margin-bottom:8px;">Hot / Cold Alert</div>
-    <div style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:18px;">
-      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:12px;">
-        <tr style="background:#f8fafc;"><td colspan="3" style="padding:6px 10px;${SL}border-bottom:1px solid #e5e7eb;">NYM</td></tr>
-        ${hotColdLine(metsHotCold.hot, "🔥", "HOT")}
-        ${hotColdLine(metsHotCold.cold, "❄️", "COLD")}
-        ${(oppHotCold.hot || oppHotCold.cold) ? `<tr style="background:#f8fafc;"><td colspan="3" style="padding:6px 10px;${SL}border-bottom:1px solid #e5e7eb;">${oppAbbr}</td></tr>` : ""}
-        ${hotColdLine(oppHotCold.hot, "🔥", "HOT")}
-        ${hotColdLine(oppHotCold.cold, "❄️", "COLD")}
-      </table>
-    </div>` : ""}
+    <!-- ══ 4. STARTING PITCHER / MATCHUP ══ -->
+    <div style="${SEC}">
+      ${sectionHead("Starting Pitcher / Matchup Notes")}
+      ${tableWrap(`
+        <thead><tr>
+          <th style="${TH}text-align:left;">Category</th>
+          <th style="${TH}text-align:center;">Mets Starter</th>
+          <th style="${TH}text-align:center;">${opponent.split(" ").pop()} Starter</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="${TDB}">Starter</td>
+            <td style="${TD}text-align:center;font-weight:700;">${D(metsCard?.name)}</td>
+            <td style="${TD}text-align:center;font-weight:700;">${D(oppCard?.name)}</td>
+          </tr>
+          <tr>
+            <td style="${TDB}">Hand</td>
+            <td style="${TD}text-align:center;">${metsCard?.hand ? metsCard.hand+"HP" : "N/A"}</td>
+            <td style="${TD}text-align:center;">${oppCard?.hand  ? oppCard.hand+"HP"  : "N/A"}</td>
+          </tr>
+          <tr>
+            <td style="${TDB}">ERA</td>
+            <td style="${TD}text-align:center;">${fmt(metsERA)}</td>
+            <td style="${TD}text-align:center;">${fmt(oppERA)}</td>
+          </tr>
+          ${(Number.isFinite(metsXERA) || Number.isFinite(oppXERA)) ? `<tr>
+            <td style="${TDB}">xERA</td>
+            <td style="${TD}text-align:center;font-weight:800;color:#002d72;">${fmt(metsXERA)}</td>
+            <td style="${TD}text-align:center;font-weight:800;color:#7c2d12;">${fmt(oppXERA)}</td>
+          </tr>` : ""}
+          <tr>
+            <td style="${TDB}">WHIP</td>
+            <td style="${TD}text-align:center;">${fmt(metsWHIP)}</td>
+            <td style="${TD}text-align:center;">${fmt(oppWHIP)}</td>
+          </tr>
+          <tr>
+            <td style="${TDB}">K%</td>
+            <td style="${TD}text-align:center;">${fmtPct(metsKPct)}</td>
+            <td style="${TD}text-align:center;">${fmtPct(oppKPct)}</td>
+          </tr>
+        </tbody>
+      `)}
+      ${pick?.bettingAngle ? `<div style="font-size:12px;color:#374151;margin-top:8px;"><strong>Pitching angle:</strong> ${pick.bettingAngle}</div>` : ""}
+    </div>
 
-    <!-- ══ LINEUP TEASER ══ -->
-    ${hasLineups ? `
-    <div style="${SL}margin-bottom:8px;">Projected Lineups — Top of Order</div>
-    <table role="presentation" width="100%" class="lu-row" style="width:100%;border-collapse:collapse;margin-bottom:18px;">
-      <tr>
-        <td style="width:49%;vertical-align:top;padding-right:6px;">
-          <div style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
-            <div style="background:#002d72;padding:6px 10px;font-size:11px;font-weight:700;color:#fff;">NYM Batting Order</div>
-            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:12px;">
-              <thead><tr style="background:#f8fafc;">
-                <th style="padding:5px 6px;${SL}font-size:9px;width:16px;">#</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:left;">Player</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:center;">POS</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:center;">AVG</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:center;">OPS</th>
-              </tr></thead>
-              <tbody>${metsTop3}</tbody>
-            </table>
-            <div style="text-align:right;padding:6px 10px;border-top:1px solid #f0f4f8;">
-              <a href="https://www.metsmoneyline.com" style="font-size:10px;color:#002d72;font-weight:700;text-decoration:none;">Full lineup →</a>
-            </div>
-          </div>
-        </td>
-        <td style="width:49%;vertical-align:top;padding-left:6px;">
-          <div style="border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
-            <div style="background:#374151;padding:6px 10px;font-size:11px;font-weight:700;color:#fff;">${oppAbbr} Batting Order</div>
-            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;font-size:12px;">
-              <thead><tr style="background:#f8fafc;">
-                <th style="padding:5px 6px;${SL}font-size:9px;width:16px;">#</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:left;">Player</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:center;">POS</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:center;">AVG</th>
-                <th style="padding:5px 6px;${SL}font-size:9px;text-align:center;">OPS</th>
-              </tr></thead>
-              <tbody>${oppTop3}</tbody>
-            </table>
-            <div style="text-align:right;padding:6px 10px;border-top:1px solid #f0f4f8;">
-              <a href="https://www.metsmoneyline.com" style="font-size:10px;color:#374151;font-weight:700;text-decoration:none;">Full lineup →</a>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </table>` : ""}
+    <!-- ══ 5. SITUATIONAL SPLITS (METS) ══ -->
+    ${splits ? (() => {
+      const rows = [splits.vsOpponent, splits.homeAway, splits.timeOfDay, splits.dayOfWeek, splits.combined].filter(Boolean);
+      if (!rows.length) return "";
+      const rowsHtml = rows.map(r => {
+        const pct = r.pct ?? 0;
+        const color = pct >= 55 ? "#15803d" : pct <= 42 ? "#b91c1c" : "#374151";
+        return `<tr>
+          <td style="${TD}">${r.label || "—"}</td>
+          <td style="${TD}text-align:center;font-weight:700;color:${color};">${r.w ?? 0}-${r.l ?? 0}</td>
+          <td style="${TD}text-align:center;color:#6b7280;">${pct}%</td>
+        </tr>`;
+      }).join("");
+      return `<div style="${SEC}">
+        ${sectionHead("Mets Situational Record")}
+        ${tableWrap(`
+          <thead><tr>
+            <th style="${TH}text-align:left;">Situation</th>
+            <th style="${TH}text-align:center;">W-L</th>
+            <th style="${TH}text-align:center;">Win%</th>
+          </tr></thead>
+          <tbody>${rowsHtml}</tbody>
+        `)}
+      </div>`;
+    })() : ""}
 
-    <!-- ══ INJURY ALERTS ══ -->
-    ${(metsIL.length || oppIL.length) ? `
-    <div style="${SL}margin-bottom:8px;">Injury Report</div>
-    <div style="border:1px solid #fde68a;border-radius:10px;padding:10px 12px;background:#fffbeb;margin-bottom:18px;">
-      ${metsIL.length ? `<div style="margin-bottom:4px;font-size:10px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.06em;">NYM IL</div>
-      <div style="margin-bottom:8px;">${metsIL.map(i => ilChip(i.name, i.status)).join("")}</div>` : ""}
-      ${oppIL.length ? `<div style="margin-bottom:4px;font-size:10px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:0.06em;">${oppAbbr} IL</div>
-      <div>${oppIL.map(i => ilChip(i.name, i.status)).join("")}</div>` : ""}
-    </div>` : ""}
+    <!-- ══ 6. MODEL READ ══ -->
+    <div style="${SEC}">
+      ${sectionHead("Model Read")}
+      ${tableWrap(`
+        <thead><tr>
+          <th style="${TH}text-align:left;">Model Factor</th>
+          <th style="${TH}text-align:center;">Read</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="${TDB}">Offense Form</td>${edgeCell(offenseFormEdge)}</tr>
+          <tr><td style="${TDB}">Bullpen Edge</td>${edgeCell(bullpenEdge)}</tr>
+          <tr><td style="${TDB}">Starting Pitcher</td>${edgeCell(spEdgeStr)}</tr>
+          <tr><td style="${TDB}">Regression Signal</td>${edgeCell(regressionRead)}</tr>
+          <tr><td style="${TDB}">Game Context</td><td style="${TD}color:#374151;">${pick?.confidenceLabel || "Mixed"}</td></tr>
+        </tbody>
+      `)}
+    </div>
 
-    <!-- ══ SITUATIONAL SPLITS ══ -->
-    ${(function(){ try {
-      const sitHtml = buildSituationalSplitsHtml(game, { mode: "email" });
-      return sitHtml ? '<div style="padding:0 20px 0;"><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#6b7280;margin-bottom:6px;">Mets Situational Record</div>' + sitHtml + '</div>' : '';
-    } catch(e) { return ''; } })()}
+    <!-- ══ 7. BOTTOM LINE ══ -->
+    <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:6px;">Bottom Line</div>
+      <div style="font-size:13px;font-weight:900;color:#ff5910;margin-bottom:6px;">${pickLabel}</div>
+      <div style="font-size:12px;color:#374151;">${pick?.summary || pick?.explanation || "See the full breakdown at MetsMoneyline.com"}</div>
+    </div>
 
-    <!-- ══ BOTTOM CTA ══ -->
-    <div style="text-align:center;padding:10px 0 20px;">
-      <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#002d72;color:#ffffff;font-size:13px;font-weight:800;padding:11px 28px;border-radius:8px;text-decoration:none;letter-spacing:0.02em;">Full Breakdown + Stats →</a>
-      <div style="margin-top:8px;font-size:11px;color:#9ca3af;">Power Rankings · Prospects · Trends · Betting Odds</div>
+    <!-- CTA -->
+    <div style="text-align:center;padding:0 0 20px;">
+      <a href="https://www.metsmoneyline.com/report" style="display:inline-block;background:#002d72;color:#fff;font-size:13px;font-weight:800;padding:11px 28px;border-radius:8px;text-decoration:none;">Full Breakdown + Stats →</a>
+      <div style="margin-top:8px;font-size:10px;color:#9ca3af;">Power Rankings · Trends · Analytics · Betting Odds</div>
     </div>
 
   </td></tr>
 
-  <!-- ══ FOOTER ══ -->
+  <!-- FOOTER -->
   <tr>
-    <td style="background:#f8fafc;border-top:1px solid #e5e7eb;padding:12px 20px;text-align:center;font-size:10px;color:#9099b0;line-height:1.6;">
+    <td style="background:#f8fafc;border-top:1px solid #e5e7eb;padding:12px 18px;text-align:center;font-size:10px;color:#9099b0;line-height:1.6;">
       For entertainment purposes only. Always gamble responsibly.<br>
       © 2026 MetsMoneyline · Not affiliated with the New York Mets or MLB
     </td>
