@@ -81,16 +81,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Stage everything that the two scripts above may have written
-          git add --ignore-errors \
-            bot/report-send-state.json \
-            public/data/sample-game.json \
-            public/report.html \
-            public/sitemap.xml \
-            public/rss.xml \
-            "public/api/mlb/mets/" \
-            "public/data/odds-history.json" \
-            || true
+          # Stage ALL files the scripts may have written (bot/output, api cache, etc.)
+          git add -A || true
 
           if git diff --staged --quiet; then
             echo "Nothing changed — no commit needed."
@@ -98,7 +90,6 @@ jobs:
           fi
 
           git commit -m "chore: report send state update [skip ci]"
-          git add -A || true
           git pull --rebase origin main
           git push origin main
 
