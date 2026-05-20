@@ -132,12 +132,13 @@ function getMinutesUntilFirstPitch(gameFacts) {
 }
 
 function describeEligibility({ minutesUntilFirstPitch, lineupsConfirmed, pitchersReady, alreadySent, skipWindow }) {
+  // skipWindow overrides everything except alreadySent (which is cleared by --allow-duplicate)
+  if (skipWindow && !alreadySent) return { eligible: true, reason: "window bypassed manually" };
   if (alreadySent) return { eligible: false, reason: "already sent for this game" };
   if (minutesUntilFirstPitch == null) return { eligible: false, reason: "missing first-pitch timestamp" };
   if (minutesUntilFirstPitch <= 0) return { eligible: false, reason: "first pitch already passed" };
   if (!pitchersReady) return { eligible: false, reason: "starting pitchers are not both announced" };
   if (!lineupsConfirmed) return { eligible: false, reason: "both lineups are not confirmed yet" };
-  if (skipWindow) return { eligible: true, reason: "window bypassed manually" };
   if (minutesUntilFirstPitch >= WINDOW_MIN_MINUTES && minutesUntilFirstPitch <= WINDOW_MAX_MINUTES) {
     return { eligible: true, reason: "inside preferred 90-130 minute send window" };
   }
