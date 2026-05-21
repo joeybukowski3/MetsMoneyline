@@ -24,7 +24,13 @@
   "venue": "Nationals Park",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 656849,
+      "fullName": "David Peterson",
+      "era": "5.40",
+      "fip": null,
+      "whip": "1.57"
+    },
     "opp": {
       "id": 676917,
       "fullName": "Cade Cavalli",
@@ -106,8 +112,13 @@
         },
         "leagueRecord": {
           "wins": 21,
-          "losses": 27,
-          "pct": ".438"
+          "losses": 28,
+          "pct": ".429"
+        },
+        "probablePitcher": {
+          "id": 656849,
+          "fullName": "David Peterson",
+          "link": "/api/v1/people/656849"
         },
         "splitSquad": false,
         "seriesNumber": 16,
@@ -167,9 +178,9 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 24,
+          "wins": 25,
           "losses": 25,
-          "pct": ".490"
+          "pct": ".500"
         },
         "probablePitcher": {
           "id": 676917,
@@ -195,16 +206,16 @@
       },
       "defense": {
         "team": {
-          "id": 120,
-          "name": "Washington Nationals",
-          "link": "/api/v1/teams/120"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 120,
+          "name": "Washington Nationals",
+          "link": "/api/v1/teams/120"
         }
       }
     },
@@ -221,12 +232,37 @@
     "seriesStatus": {
       "gameNumber": 4,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
-      "losses": 0,
+      "wins": 2,
+      "losses": 1,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 120,
+        "name": "Washington Nationals",
+        "link": "/api/v1/teams/120"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "WSH leads 2-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -251,7 +287,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-20T23:40:57.856Z",
+    "generatedAt": "2026-05-21T01:34:15.107Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-20",
     "cacheKey": "next-game:2026-05-20"
