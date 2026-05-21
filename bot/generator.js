@@ -2598,15 +2598,26 @@ function parseNumber(value) {
   return Number.isFinite(num) ? num : null;
 }
 
+function normalizePercentLikeValue(value, digits = 1) {
+  const parsed = parseNumber(value);
+  if (parsed == null) return null;
+  const raw = String(value ?? "").trim();
+  // Some sources emit rates as decimals (0.080) while others already use
+  // percent-like values (8.0 or "8.0%"). Normalize once here so downstream
+  // renderers never have to guess or apply a second multiplication.
+  const normalized = raw.includes("%") || Math.abs(parsed) >= 1 ? parsed : parsed * 100;
+  return Number(normalized.toFixed(digits));
+}
+
 function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, teamAdvanced = null) {
   const metsHardHit = parseNumber(teamAdvanced?.mets?.hardHit);
   const oppHardHit = parseNumber(teamAdvanced?.opp?.hardHit);
   const metsBarrel = parseNumber(teamAdvanced?.mets?.barrelPct);
   const oppBarrel = parseNumber(teamAdvanced?.opp?.barrelPct);
-  const metsWalk = parseNumber(teamAdvanced?.mets?.bbPct);
-  const oppWalk = parseNumber(teamAdvanced?.opp?.bbPct);
-  const metsK = parseNumber(teamAdvanced?.mets?.kPct);
-  const oppK = parseNumber(teamAdvanced?.opp?.kPct);
+  const metsWalk = normalizePercentLikeValue(teamAdvanced?.mets?.bbPct);
+  const oppWalk = normalizePercentLikeValue(teamAdvanced?.opp?.bbPct);
+  const metsK = normalizePercentLikeValue(teamAdvanced?.mets?.kPct);
+  const oppK = normalizePercentLikeValue(teamAdvanced?.opp?.kPct);
   const metsWrc = parseNumber(teamAdvanced?.mets?.wrcPlus);
   const oppWrc = parseNumber(teamAdvanced?.opp?.wrcPlus);
   const metsIso = parseNumber(teamAdvanced?.mets?.iso);
@@ -2664,14 +2675,14 @@ function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, t
     impactContactCard,
     {
       category: "Walk Rate (BB%)",
-      mets: metsWalk == null ? "N/A" : `${(metsWalk * 100).toFixed(1)}%`,
-      opp: oppWalk == null ? "N/A" : `${(oppWalk * 100).toFixed(1)}%`,
+      mets: metsWalk == null ? "N/A" : `${metsWalk.toFixed(1)}%`,
+      opp: oppWalk == null ? "N/A" : `${oppWalk.toFixed(1)}%`,
       edge: edgeForHigher(metsWalk, oppWalk)
     },
     {
       category: "Strikeout Rate (K%)",
-      mets: metsK == null ? sanitizeRecord(metsLast10, "N/A") : `${(metsK * 100).toFixed(1)}%`,
-      opp: oppK == null ? sanitizeRecord(oppLast10, "N/A") : `${(oppK * 100).toFixed(1)}%`,
+      mets: metsK == null ? sanitizeRecord(metsLast10, "N/A") : `${metsK.toFixed(1)}%`,
+      opp: oppK == null ? sanitizeRecord(oppLast10, "N/A") : `${oppK.toFixed(1)}%`,
       edge: metsK == null || oppK == null ? compareRecords(metsLast10, oppLast10) : edgeForLower(metsK, oppK)
     }
   ];
@@ -2935,12 +2946,13 @@ function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantB
   const battingTotal = fangraphsTeam?.battingTeamTotal || {};
   const pitchingTotal = fangraphsTeam?.pitchingTeamTotal || {};
 
-  // Use handedness split for kPct and bbPct when available (most reliable MLB API split stats)
+  // Keep BB% and K% on a consistent percent scale here. Split stats arrive
+  // as decimals, while season-total fallbacks are usually already percent-like.
   const splitBbPct = handednessSplit?.baseOnBalls != null && handednessSplit?.plateAppearances > 0
-    ? handednessSplit.baseOnBalls / handednessSplit.plateAppearances
+    ? computeRatePct(handednessSplit.baseOnBalls, handednessSplit.plateAppearances)
     : null;
   const splitKPct = handednessSplit?.strikeOuts != null && handednessSplit?.plateAppearances > 0
-    ? handednessSplit.strikeOuts / handednessSplit.plateAppearances
+    ? computeRatePct(handednessSplit.strikeOuts, handednessSplit.plateAppearances)
     : null;
   const splitOps = handednessSplit?.ops != null ? parseFloat(handednessSplit.ops) : null;
   const splitAvg = handednessSplit?.avg != null ? parseFloat(handednessSplit.avg) : null;
@@ -2957,7 +2969,7 @@ function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantB
   const fallbackNote = usingSplit ? null : (vsHand ? `season total (no ${vsHand}HP split available)` : "season total");
 
   if (usingSplit) {
-    console.log(`[advanced] Using ${vsHand}HP split: PA=${handednessSplit.plateAppearances} OPS=${splitOps} K%=${splitKPct?.toFixed(3)} BB%=${splitBbPct?.toFixed(3)} wRC+~${splitWrcPlusProxy}`);
+    console.log(`[advanced] Using ${vsHand}HP split: PA=${handednessSplit.plateAppearances} OPS=${splitOps} K%=${splitKPct?.toFixed(1)} BB%=${splitBbPct?.toFixed(1)} wRC+~${splitWrcPlusProxy}`);
   } else {
     console.log(`[advanced] ${fallbackNote} — no split data`);
   }
@@ -2973,8 +2985,8 @@ function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantB
     avg: splitAvg ?? (battingTotal['AVG'] || hittingStat?.avg || null),
     hardHit: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.hard_hit_percent, paFor),
     barrelPct: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.barrel_batted_rate, paFor),
-    bbPct: splitBbPct ?? (battingTotal['BB%'] || pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances)),
-    kPct: splitKPct ?? (battingTotal['K%'] || pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances)),
+    bbPct: normalizePercentLikeValue(splitBbPct ?? battingTotal['BB%'] ?? pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances)),
+    kPct: normalizePercentLikeValue(splitKPct ?? battingTotal['K%'] ?? pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances)),
     rotFip: pitchingTotal['FIP'] || pitchingStat?.fip || null,
     rotXfip: pitchingTotal['xFIP'] || null,
     rotEra: pitchingTotal['ERA'] || pitchingStat?.era || null,

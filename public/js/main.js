@@ -1451,19 +1451,24 @@ function buildRow3(game) {
     </div>`;
 
   return `
-    <div class="section-floating-label">${statusLabel} ${statusNote}</div>
-    <div class="lineup-two-col">
-      <div class="card full-card">
-        <div class="lineup-team-header mets-header">New York Mets</div>
-        ${metsBattingBlock}
+    <div class="lineup-advanced-layout">
+      <div class="lineup-advanced-main">
+        <div class="section-floating-label">${statusLabel} ${statusNote}</div>
+        <div class="lineup-two-col">
+          <div class="card full-card">
+            <div class="lineup-team-header mets-header">New York Mets</div>
+            ${metsBattingBlock}
+          </div>
+          <div class="card full-card">
+            <div class="lineup-team-header opp-header">${game.opponent}</div>
+            ${oppBattingBlock}
+          </div>
+        </div>
       </div>
-      <div class="card full-card">
-        <div class="lineup-team-header opp-header">${game.opponent}</div>
-        ${oppBattingBlock}
+      <div class="lineup-advanced-sidebar">
+        ${advancedMetricsSection}
       </div>
-    </div>
-
-    ${advancedMetricsSection}`;
+    </div>`;
 }
 
 /* Strip pipe-table rows that GPT may have injected into section prose */
