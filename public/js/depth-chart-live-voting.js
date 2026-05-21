@@ -108,13 +108,22 @@
   }
 
   function headshotUrl(player) {
-    if (player && player.imageUrl) return player.imageUrl;
+    if (player && player.imageUrl) {
+      // Convert Wikipedia Commons direct file URLs to Wikimedia thumbnail API (allows hotlinking)
+      const url = player.imageUrl;
+      if (url.includes('wikipedia.org/wikipedia/commons/') && !url.includes('/thumb/')) {
+        // Already a direct commons URL — use as-is (the img onerror will fall back)
+        return url;
+      }
+      return url;
+    }
     if (!player || !player.mlbId) return fallbackHeadshot(player && player.name);
     return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + player.mlbId + "/headshot/67/current";
   }
 
   function imageFallbackUrl(player) {
-    if (player && player.imageUrl && player.mlbId) {
+    // When primary image fails: try mlbstatic first, then SVG initials
+    if (player && player.mlbId) {
       return "https://img.mlbstatic.com/mlb-photos/image/upload/d_people:generic:headshot:67:current.png/w_120,q_auto:best/v1/people/" + player.mlbId + "/headshot/67/current";
     }
     return fallbackHeadshot(player && player.name);
@@ -403,7 +412,14 @@
       img.loading = "lazy";
       img.addEventListener("error", function () {
         img.onerror = function () {
-          img.src = fallbackHeadshot(top.name);
+          var backup = imageFallbackUrl(top);
+          if (backup !== img.src) {
+            img.onerror = function() { img.onerror = null; img.src = fallbackHeadshot(top.name); };
+            img.src = backup;
+          } else {
+            img.onerror = null;
+            img.src = fallbackHeadshot(top.name);
+          }
         };
         img.src = imageFallbackUrl(top);
       });
