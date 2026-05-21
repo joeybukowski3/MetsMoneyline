@@ -1800,12 +1800,29 @@ tbody td:first-child { font-weight: 500; }
 /* Desktop ≥900px: wider card, add position column */
 @media (min-width: 900px) {
   .lu-header {
-    grid-template-columns: 1.2rem 1.6rem 1fr 1.3rem 3.2rem 3.2rem 3.2rem;
+    grid-template-columns: 1.2rem 1.6rem max-content 1.3rem 3.2rem 3.2rem 3.2rem;
+    column-gap: 0.45rem;
+    align-items: center;
   }
-  .lu-header span:nth-child(4) { display: block; }
+
+  .lu-header span:nth-child(4) {
+    display: block;
+  }
+
   .lu-row {
-    grid-template-columns: 1.2rem 1.6rem 1fr 1.3rem 3.2rem 3.2rem 3.2rem;
+    grid-template-columns: 1.2rem 1.6rem max-content 1.3rem 3.2rem 3.2rem 3.2rem;
+    column-gap: 0.45rem;
+    align-items: center;
   }
+
+  .lu-name {
+    width: max-content;
+    max-width: 12rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .lu-pos {
     display: block;
     font-size: 0.6rem;
@@ -1814,7 +1831,6 @@ tbody td:first-child { font-weight: 500; }
     text-align: center;
   }
 }
-
 /* Tablet: tighten */
 @media (max-width: 700px) {
   .lineup-two-col { grid-template-columns: 1fr 1fr; gap: 0.35rem; }
