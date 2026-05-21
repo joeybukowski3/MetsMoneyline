@@ -14,7 +14,7 @@ on:
           - "false"
           - "true"
       force_send:
-        description: "Force a live Buttondown send/publish now. Use only for testing."
+        description: "Send email now as a preview/test. The scheduled send will still fire in the pregame window."
         required: false
         default: "false"
         type: choice
@@ -84,8 +84,8 @@ jobs:
             EXTRA_FLAGS="--skip-window --allow-duplicate --draft-only"
             echo "Draft-only mode: skipping send window, allowing duplicate drafts, and not sending."
           elif [ "${{ github.event.inputs.force_send }}" = "true" ]; then
-            EXTRA_FLAGS="--skip-window --allow-duplicate --force-send"
-            echo "Force-send mode: skipping send window and allowing duplicate send."
+            EXTRA_FLAGS="--skip-window --allow-duplicate --test-send --allow-projected"
+            echo "Force-send mode: sends as test/preview (testSent only) — scheduled final send will still fire in window."
           fi
           node check-and-send-report.js $EXTRA_FLAGS
 
