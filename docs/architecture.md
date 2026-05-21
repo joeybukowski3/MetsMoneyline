@@ -83,7 +83,7 @@ Key page/script relationships:
 - `public/index.html` -> `public/js/main.js`
 - `public/advanced-stats.html` -> `public/js/advanced-stats.js`
 - `public/betting-history.html` -> inline script fetching `public/data/pick-history.json`
-- `public/news.html` -> inline script fetching RSS feeds through a public proxy
+- `public/news.html` -> `public/js/news-page.js`, which loads news through `/api/news`
 - shared nav/header behavior -> `public/js/site-header.js`
 
 Backend bootstrapping starts at each `api/mlb/mets/*.js` handler, which delegates into `api/_lib/mlb-data.js` and helpers.
@@ -140,7 +140,7 @@ The current codebase uses a mix of:
 - generated API cache files in `public/api/*`
 - live serverless JSON endpoints under `api/*`
 - third-party APIs queried by server or bot code
-- RSS feeds queried directly by browser code on the news page
+- RSS feeds queried server-side by `api/news.js`, then consumed by the browser from `/api/news`
 
 ## Generated Artifacts
 

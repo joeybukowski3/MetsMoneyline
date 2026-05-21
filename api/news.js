@@ -1,7 +1,7 @@
 /**
  * /api/news — server-side RSS news proxy
  * Fetches Mets RSS feeds, parses XML natively, filters for Mets articles,
- * and returns up to 8 items sorted newest-first.
+ * and returns newest-first Mets items, with a configurable limit.
  * No third-party proxy or npm packages needed — pure Node built-ins.
  */
 
@@ -17,6 +17,8 @@ const FEEDS = [
 
 const METS_TERMS = ["mets", "new york mets", "nym", "citi field"];
 const CACHE_SECONDS = 300; // 5-minute CDN cache
+const DEFAULT_LIMIT = 8;
+const MAX_LIMIT = 24;
 
 // ── XML helpers ──────────────────────────────────────────────────────────────
 
@@ -89,6 +91,28 @@ function isMetsRelated(article) {
   return METS_TERMS.some(t => text.includes(t));
 }
 
+function dedupeArticles(articles) {
+  const seen = new Set();
+
+  return articles.filter((article) => {
+    const key = (article.link || article.title || "").trim().toLowerCase();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function getRequestedLimit(req) {
+  const rawLimit = req && req.query && req.query.limit;
+  const parsed = Number.parseInt(Array.isArray(rawLimit) ? rawLimit[0] : rawLimit, 10);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return DEFAULT_LIMIT;
+  }
+
+  return Math.min(parsed, MAX_LIMIT);
+}
+
 // ── Handler ──────────────────────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -97,20 +121,27 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    const limit = getRequestedLimit(req);
     const results = await Promise.all(FEEDS.map(fetchFeed));
-    const articles = results
+    const articles = dedupeArticles(results
       .flat()
       .filter(isMetsRelated)
+      .filter((article) => article.title && article.link)
+      .map((article) => ({
+        ...article,
+        source: article.source || "Mets News"
+      }))
       .sort((a, b) => {
         const ta = new Date(a.pubDate).getTime() || 0;
         const tb = new Date(b.pubDate).getTime() || 0;
         return tb - ta;
-      })
-      .slice(0, 8);
+      }));
+    const limitedArticles = articles
+      .slice(0, limit);
 
     res.setHeader("Cache-Control", `public, s-maxage=${CACHE_SECONDS}, stale-while-revalidate=60`);
     res.setHeader("Content-Type", "application/json");
-    return res.status(200).json({ articles });
+    return res.status(200).json({ articles: limitedArticles });
   } catch (err) {
     console.error("[news] Error:", err.message);
     return res.status(500).json({ error: "Failed to load news" });

@@ -52,9 +52,9 @@ That script consumes:
 
 `public/news.html` consumes:
 
-- RSS feeds via a public RSS-to-JSON proxy
+- `/api/news`
 
-This is more browser-direct than the other pages.
+The page now shares the same server-side news proxy as the home page sidebar.
 
 ### Report Page
 

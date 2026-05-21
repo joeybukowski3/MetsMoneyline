@@ -263,34 +263,14 @@
 
   <script defer src="/js/site-header.js"></script>
   <script defer src="/js/site-footer.js"></script>
+  <script src="/js/news-feed.js"></script>
   <script type="module" src="/js/main.js"></script>
   <script>
     // News is fetched via /api/news (server-side RSS proxy — no third-party limits)
+    const newsHelpers = window.MetsNewsFeed;
 
-    function stripHtml(value) {
-      return String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-    }
-
-    function getRelativeTime(dateValue) {
-      const date = new Date(dateValue);
-      if (Number.isNaN(date.getTime())) return "";
-      const diffMs = date.getTime() - Date.now();
-      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-      const minutes = Math.round(diffMs / 60000);
-      if (Math.abs(minutes) < 60) return rtf.format(minutes, "minute");
-      const hours = Math.round(diffMs / 3600000);
-      if (Math.abs(hours) < 24) return rtf.format(hours, "hour");
-      const days = Math.round(diffMs / 86400000);
-      return rtf.format(days, "day");
-    }
-
-    function toSafeExternalUrl(value) {
-      try {
-        const url = new URL(String(value || ""));
-        return /^https?:$/i.test(url.protocol) ? url.toString() : "";
-      } catch (_error) {
-        return "";
-      }
+    if (!newsHelpers) {
+      console.warn("Sidebar news helpers failed to load.");
     }
 
     function renderNewsItems(items) {
@@ -304,11 +284,11 @@
       const cards = items.map((article) => {
         const card = document.createElement("a");
         card.className = "news-card-sm";
-        card.href = toSafeExternalUrl(article.link) || "#";
+        card.href = article.link || "#";
         card.target = "_blank";
-        card.rel = "noopener";
+        card.rel = "noopener noreferrer";
 
-        const thumbnailUrl = toSafeExternalUrl(article.thumbnail);
+        const thumbnailUrl = article.thumbnail;
         if (thumbnailUrl) {
           const img = document.createElement("img");
           img.src = thumbnailUrl;
@@ -332,7 +312,10 @@
 
         const meta = document.createElement("div");
         meta.className = "news-card-sm-meta";
-        meta.textContent = `${article.source} · ${getRelativeTime(article.pubDate)}`;
+        const metaBits = [article.source];
+        const relativeTime = newsHelpers ? newsHelpers.getRelativeTime(article.pubDate) : "";
+        if (relativeTime) metaBits.push(relativeTime);
+        meta.textContent = metaBits.join(" · ");
         body.appendChild(meta);
 
         card.appendChild(body);
@@ -347,7 +330,8 @@
         const response = await fetch("/api/news", { signal: AbortSignal.timeout(12000) });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        renderNewsItems(data.articles || []);
+        const articles = newsHelpers ? newsHelpers.normalizeArticles(data && data.articles) : (data.articles || []);
+        renderNewsItems(articles);
       } catch (err) {
         console.warn("Sidebar news failed:", err.message);
         const container = document.getElementById("sidebar-news");
