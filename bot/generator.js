@@ -762,16 +762,10 @@ function parseArgs(argv) {
 
 function formatButtondownSubject(game) {
   if (!game) return "MetsMoneyline";
-  const report = game?.writeup?.report || buildPresentationReport(game);
-  const pickLabel = String(report?.officialPick?.label || report?.officialPick?.headline || "Mets ML")
-    .replace(/^Official Pick:\s*/i, "")
-    .trim();
-  const opponentWords = String(game?.opponent || "Opponent").trim().split(/\s+/).filter(Boolean);
-  const opponent = ["Red Sox", "White Sox", "Blue Jays"].includes(opponentWords.slice(-2).join(" "))
-    ? opponentWords.slice(-2).join(" ")
-    : opponentWords.slice(-1).join(" ") || "Opponent";
-  const confidenceLabel = String(report?.officialPick?.confidenceLabel || "Lean").trim();
-  return `MetsMoneyline: ${pickLabel} vs ${opponent} — ${confidenceLabel} Confidence Matchup Snapshot`;
+  const opponent = String(game?.opponent || "Opponent").trim();
+  const date = game?.date || "";
+  const time = game?.time || "";
+  return `MetsMoneyline: New York Mets vs ${opponent}${date ? " " + date : ""}${time ? " " + time : ""}`;
 }
 
 function formatPreliminaryButtondownSubject(game, lineupSourceLabel = "projected lineups") {
@@ -3297,8 +3291,12 @@ async function getOddsFacts(game) {
       return { metsMoneyline: null, oppMoneyline: null, runLine: null, total: null };
     }
 
-    const targetHomeTeam = game?.teams?.home?.team?.name || "";
-    const targetAwayTeam = game?.teams?.away?.team?.name || "";
+    // Resolve home/away team names: prefer game.teams structure, fall back to game.opponent + game.homeAway
+    const isGameHome = (game?.homeAway || "").toLowerCase() === "home";
+    const targetHomeTeam = game?.teams?.home?.team?.name
+      || (isGameHome ? TEAM_NAME : game?.opponent || "");
+    const targetAwayTeam = game?.teams?.away?.team?.name
+      || (isGameHome ? game?.opponent || "" : TEAM_NAME);
     const cachedHomeTeam = cachedOdds?.raw?.home_team || "";
     const cachedAwayTeam = cachedOdds?.raw?.away_team || "";
     const cachedGameDateEt = cachedOdds?.raw?.commence_time
@@ -6545,11 +6543,11 @@ function buildCompactDailyReportEmailHtml(game) {
     .slice(0, 2)
     .map((row) => `
       <tr>
-        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;font-weight:700;">${escapeHtml(row.label)}</td>
-        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(`${row.w ?? 0}-${row.l ?? 0}`)}</td>
-        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(`${row.pct ?? "N/A"}%`)}</td>
-        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(fmtSplitNum(row.avgR))}</td>
-        <td style="padding:5px 7px;border-bottom:1px solid #224381;color:#ffffff;font-size:11px;text-align:center;">${escapeHtml(fmtSplitNum(row.avgA))}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #d9e1ee;color:#002d72;font-size:11px;font-weight:700;">${escapeHtml(row.label)}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #d9e1ee;color:#111827;font-size:11px;text-align:center;">${escapeHtml(`${row.w ?? 0}-${row.l ?? 0}`)}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #d9e1ee;color:#111827;font-size:11px;text-align:center;">${escapeHtml(`${row.pct ?? "N/A"}%`)}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #d9e1ee;color:#111827;font-size:11px;text-align:center;">${escapeHtml(fmtSplitNum(row.avgR))}</td>
+        <td style="padding:5px 7px;border-bottom:1px solid #d9e1ee;color:#111827;font-size:11px;text-align:center;">${escapeHtml(fmtSplitNum(row.avgA))}</td>
       </tr>`)
     .join("");
   const offenseFormEdge = edgeHigher(metsOpsL20, oppOpsL20);
@@ -6722,7 +6720,7 @@ function buildCompactDailyReportEmailHtml(game) {
             <div style="color:#9fb5dd;font-size:10px;font-weight:600;margin-top:2px;">${escapeHtml(metsRecord)}</div>
           </td>
           <td class="hero-col" align="center" style="width:44%;padding:0 6px;">
-            <div style="color:#ff5910;font-size:20px;font-weight:900;letter-spacing:0.06em;">METS VS ${escapeHtml(oppAbbr)}</div>
+            <div style="color:#ff5910;font-size:20px;font-weight:900;letter-spacing:0.06em;">METS VS ${escapeHtml(opponentShort.toUpperCase())}</div>
             <div style="color:#d7e6ff;font-size:13px;font-weight:800;margin-top:4px;">${escapeHtml(heroMetaLine)}</div>
             ${wxStr ? `<div style="color:#b8c9e8;font-size:11px;margin-top:3px;">${escapeHtml(wxStr)}</div>` : ""}
             <div style="margin-top:8px;background:#ff5910;border-radius:999px;padding:8px 12px;display:inline-block;">
@@ -6738,14 +6736,14 @@ function buildCompactDailyReportEmailHtml(game) {
           </td>
         </tr>
       </table>
-      ${splitRows ? `<table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;margin-top:10px;border:1px solid #315491;background:rgba(255,255,255,0.05);">
+      ${splitRows ? `<table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;margin-top:10px;border:1px solid #b8cef0;background:#ffffff;border-radius:6px;overflow:hidden;">
         <thead>
           <tr>
-            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:left;letter-spacing:0.04em;text-transform:uppercase;">Situation</th>
-            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Record</th>
-            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Win %</th>
-            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Runs Scored</th>
-            <th style="padding:5px 7px;border-bottom:1px solid #315491;color:#ffffff;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Runs Against</th>
+            <th style="padding:5px 7px;border-bottom:2px solid #002d72;background:#eaf2ff;color:#002d72;font-size:10px;text-align:left;letter-spacing:0.04em;text-transform:uppercase;">Situation</th>
+            <th style="padding:5px 7px;border-bottom:2px solid #002d72;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Record</th>
+            <th style="padding:5px 7px;border-bottom:2px solid #002d72;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Win %</th>
+            <th style="padding:5px 7px;border-bottom:2px solid #002d72;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Runs Scored</th>
+            <th style="padding:5px 7px;border-bottom:2px solid #002d72;background:#eaf2ff;color:#002d72;font-size:10px;text-align:center;letter-spacing:0.04em;text-transform:uppercase;">Runs Against</th>
           </tr>
         </thead>
         <tbody>${splitRows}</tbody>
