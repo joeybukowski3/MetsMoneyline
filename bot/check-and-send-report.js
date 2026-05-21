@@ -20,8 +20,8 @@ const {
 const STATE_PATH = path.join(__dirname, "report-send-state.json");
 const OUTPUT_DIR = path.join(__dirname, "output");
 const LATEST_EMAIL_PREVIEW_PATH = path.join(OUTPUT_DIR, "latest-email-preview.html");
-const WINDOW_MIN_MINUTES = 90;
-const WINDOW_MAX_MINUTES = 130;
+const WINDOW_MIN_MINUTES = 60;
+const WINDOW_MAX_MINUTES = 150;
 
 function parseArgs(argv) {
   const args = {
@@ -113,11 +113,16 @@ function saveState(state) {
 }
 
 function lineupsAreConfirmed(gameFacts) {
-  return gameFacts?.lineups?.status === "confirmed"
-    && Array.isArray(gameFacts?.lineups?.mets)
-    && Array.isArray(gameFacts?.lineups?.opp)
-    && gameFacts.lineups.mets.length >= 9
-    && gameFacts.lineups.opp.length >= 9;
+  const lineups = gameFacts?.lineups;
+  if (!lineups) return false;
+  const hasBothLineups = Array.isArray(lineups.mets)
+    && Array.isArray(lineups.opp)
+    && lineups.mets.length >= 9
+    && lineups.opp.length >= 9;
+  if (!hasBothLineups) return false;
+  // Accept confirmed OR projected — projected with 9+ players is reliable enough
+  const status = lineups.status || lineups.lineupStatus || "";
+  return status === "confirmed" || status === "projected" || hasBothLineups;
 }
 
 function startingPitchersAvailable(gameFacts) {
