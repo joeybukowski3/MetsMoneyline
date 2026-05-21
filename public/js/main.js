@@ -1405,7 +1405,7 @@ function buildRow3(game) {
     const oppPct = rankToPercent(oppRank);
     return `
       <div class="adv-metric-card">
-        <div class="amc-label">${r.category}</div>
+        <div class="amc-label">${r.category}${r.note ? `<span style="display:block;font-size:0.58rem;font-weight:500;color:#94a3b8;letter-spacing:0;text-transform:none;margin-top:1px;">${r.note}</span>` : ""}</div>
         <div class="amc-row">
           <span class="amc-abbr ${nymWins ? "winner" : ""}">NYM</span>
           <div style="display:flex;flex-direction:column;align-items:flex-start;">

@@ -2616,6 +2616,14 @@ function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, t
   const edgeForHigher = (left, right) => left == null || right == null ? "Neutral" : left > right ? "Mets" : right > left ? "Opp" : "Neutral";
   const edgeForLower = (left, right) => left == null || right == null ? "Neutral" : left < right ? "Mets" : right < left ? "Opp" : "Neutral";
 
+  // Build split-aware label for wRC+ card
+  const metsVsHand  = teamAdvanced?.mets?.vsHand;
+  const oppVsHand   = teamAdvanced?.opp?.vsHand;
+  const metsSplitNote = metsVsHand ? `NYM vs ${metsVsHand}HP` : (teamAdvanced?.mets?.fallbackNote ? "NYM (season)" : "NYM");
+  const oppSplitNote  = oppVsHand  ? `OPP vs ${oppVsHand}HP`  : (teamAdvanced?.opp?.fallbackNote  ? "OPP (season)" : "OPP");
+  const wrcCardLabel = `Offense vs SP Hand - wRC+`;
+  const wrcCardNote  = `${metsSplitNote} · ${oppSplitNote}`;
+
   const qualityOfContactCard = metsHardHit != null && oppHardHit != null
     ? {
         category: "Hard-Hit %",
@@ -2646,7 +2654,8 @@ function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, t
 
   return [
     {
-      category: "Offense vs SP Hand - wRC+",
+      category: wrcCardLabel,
+      note: wrcCardNote,
       mets: metsWrc == null ? "N/A" : String(metsWrc),
       opp: oppWrc == null ? "N/A" : String(oppWrc),
       edge: edgeForHigher(metsWrc, oppWrc)
@@ -2655,14 +2664,14 @@ function deriveAdvancedCards(_metsTeamRow, _oppTeamRow, metsLast10, oppLast10, t
     impactContactCard,
     {
       category: "Walk Rate (BB%)",
-      mets: metsWalk == null ? "N/A" : `${metsWalk.toFixed(1)}%`,
-      opp: oppWalk == null ? "N/A" : `${oppWalk.toFixed(1)}%`,
+      mets: metsWalk == null ? "N/A" : `${(metsWalk * 100).toFixed(1)}%`,
+      opp: oppWalk == null ? "N/A" : `${(oppWalk * 100).toFixed(1)}%`,
       edge: edgeForHigher(metsWalk, oppWalk)
     },
     {
       category: "Strikeout Rate (K%)",
-      mets: metsK == null ? sanitizeRecord(metsLast10, "N/A") : `${metsK.toFixed(1)}%`,
-      opp: oppK == null ? sanitizeRecord(oppLast10, "N/A") : `${oppK.toFixed(1)}%`,
+      mets: metsK == null ? sanitizeRecord(metsLast10, "N/A") : `${(metsK * 100).toFixed(1)}%`,
+      opp: oppK == null ? sanitizeRecord(oppLast10, "N/A") : `${(oppK * 100).toFixed(1)}%`,
       edge: metsK == null || oppK == null ? compareRecords(metsLast10, oppLast10) : edgeForLower(metsK, oppK)
     }
   ];
@@ -2674,6 +2683,31 @@ async function getTeamSeasonStats(teamId, group, season) {
     `team ${group} ${teamId} ${season}`
   );
   return data?.stats?.[0]?.splits?.[0]?.stat || null;
+}
+
+/**
+ * Fetch team batting splits vs a specific pitcher hand (L or R).
+ * MLB Stats API: statSplits=vsl (vs left-handed pitchers) or vsr (vs right-handed).
+ * Returns the stat object or null if unavailable.
+ */
+async function getTeamHandednessSplit(teamId, pitcherHand, season) {
+  if (!teamId || !pitcherHand) return null;
+  const splitCode = pitcherHand.toUpperCase() === "L" ? "vsl" : "vsr";
+  const data = await safeGetJson(
+    `https://statsapi.mlb.com/api/v1/teams/${teamId}/stats?stats=statSplits&group=hitting&season=${season}&sitCodes=${splitCode}`,
+    `team hitting split ${splitCode} ${teamId} ${season}`
+  );
+  // statSplits returns an array of split objects; find the correct sitCode match
+  const splits = data?.stats?.[0]?.splits || [];
+  const match = splits.find((s) =>
+    String(s?.split?.code || s?.sitCode || "").toLowerCase() === splitCode
+  ) || splits[0];
+  if (!match?.stat) {
+    console.warn(`[advanced] No ${splitCode} batting split found for teamId ${teamId}`);
+    return null;
+  }
+  console.log(`[advanced] ${splitCode} split for team ${teamId}: PA=${match.stat.plateAppearances} wRC+≈ (from PA/BB/K counts)`);
+  return match.stat;
 }
 
 function pctFromCounts(numerator, denominator) {
@@ -2894,24 +2928,53 @@ function weightedAveragePct(items, getter, weightGetter) {
   return Number(avg).toFixed(1);
 }
 
-function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}, fangraphsTeam = null, leagueRanks = null) {
+function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantBattersByPlayer = {}, savantExpectedBattersByPlayer = {}, fangraphsTeam = null, leagueRanks = null, handednessSplit = null, vsHand = null) {
   const hitters = roster.filter((player) => player.primaryPosition?.abbreviation !== "P");
   const paFor = (player) => Number(player?.stats?.plateAppearances || savantBattersByPlayer[player.id]?.pa || savantExpectedBattersByPlayer[player.id]?.pa || (savantBattersByPlayer[player.id] || savantExpectedBattersByPlayer[player.id] ? 1 : 0));
 
   const battingTotal = fangraphsTeam?.battingTeamTotal || {};
   const pitchingTotal = fangraphsTeam?.pitchingTeamTotal || {};
+
+  // Use handedness split for kPct and bbPct when available (most reliable MLB API split stats)
+  const splitBbPct = handednessSplit?.baseOnBalls != null && handednessSplit?.plateAppearances > 0
+    ? handednessSplit.baseOnBalls / handednessSplit.plateAppearances
+    : null;
+  const splitKPct = handednessSplit?.strikeOuts != null && handednessSplit?.plateAppearances > 0
+    ? handednessSplit.strikeOuts / handednessSplit.plateAppearances
+    : null;
+  const splitOps = handednessSplit?.ops != null ? parseFloat(handednessSplit.ops) : null;
+  const splitAvg = handednessSplit?.avg != null ? parseFloat(handednessSplit.avg) : null;
+
+  // Approximate wRC+ from split: MLB API doesn't return wRC+ directly in split endpoint.
+  // Use OPS as proxy scaled to wRC+ range: league avg OPS ~.710 = wRC+ 100.
+  // Formula: wRC+ ≈ (splitOPS / lgOPS) * 100, where lgOPS = 0.710.
+  const LG_OPS = 0.710;
+  const splitWrcPlusProxy = splitOps != null
+    ? Math.round((splitOps / LG_OPS) * 100)
+    : null;
+
+  const usingSplit = handednessSplit != null;
+  const fallbackNote = usingSplit ? null : (vsHand ? `season total (no ${vsHand}HP split available)` : "season total");
+
+  if (usingSplit) {
+    console.log(`[advanced] Using ${vsHand}HP split: PA=${handednessSplit.plateAppearances} OPS=${splitOps} K%=${splitKPct?.toFixed(3)} BB%=${splitBbPct?.toFixed(3)} wRC+~${splitWrcPlusProxy}`);
+  } else {
+    console.log(`[advanced] ${fallbackNote} — no split data`);
+  }
+
   return {
-    wrcPlus: battingTotal['wRC+'] || deriveApproxWrcPlus(hittingStat),
+    wrcPlus: splitWrcPlusProxy ?? (battingTotal['wRC+'] || deriveApproxWrcPlus(hittingStat)),
     woba: battingTotal['wOBA'] || null,
     iso: battingTotal['ISO'] || null,
     xba: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_ba, paFor) || hittingStat?.avg || null,
     xslg: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_slg, paFor),
     xwoba: weightedAverage(hitters, (player) => savantExpectedBattersByPlayer[player.id]?.est_woba, paFor),
-    ops: battingTotal['OPS'] || hittingStat?.ops || null,
+    ops: splitOps ?? (battingTotal['OPS'] || hittingStat?.ops || null),
+    avg: splitAvg ?? (battingTotal['AVG'] || hittingStat?.avg || null),
     hardHit: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.hard_hit_percent, paFor),
     barrelPct: weightedAveragePct(hitters, (player) => savantBattersByPlayer[player.id]?.barrel_batted_rate, paFor),
-    bbPct: battingTotal['BB%'] || pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances),
-    kPct: battingTotal['K%'] || pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances),
+    bbPct: splitBbPct ?? (battingTotal['BB%'] || pctFromCounts(hittingStat?.baseOnBalls, hittingStat?.plateAppearances)),
+    kPct: splitKPct ?? (battingTotal['K%'] || pctFromCounts(hittingStat?.strikeOuts, hittingStat?.plateAppearances)),
     rotFip: pitchingTotal['FIP'] || pitchingStat?.fip || null,
     rotXfip: pitchingTotal['xFIP'] || null,
     rotEra: pitchingTotal['ERA'] || pitchingStat?.era || null,
@@ -2920,15 +2983,28 @@ function buildSingleTeamAdvanced(hittingStat, pitchingStat, roster = [], savantB
     pitchBBPct: pitchingTotal['BB%'] || null,
     leagueRanks: leagueRanks || null,
     rankScope: leagueRanks ? 'MLB' : null,
-    rankTotal: leagueRanks ? 30 : null
+    rankTotal: leagueRanks ? 30 : null,
+    vsHand: vsHand || null,
+    usingSplit,
+    fallbackNote,
   };
 }
 
-async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
+async function buildTeamAdvancedFacts(metsTeamId, oppTeamId, metsPitcherHand = null, oppPitcherHand = null) {
   const season = String(getEasternYear());
   const metsName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === metsTeamId) || TEAM_NAME;
   const oppName = Object.keys(TEAM_IDS).find((name) => TEAM_IDS[name] === oppTeamId) || null;
-  const [metsHitting, oppHitting, metsPitching, oppPitching, metsRoster, oppRoster, savantBatters, savantExpectedBatters, metsFg, oppFg, battingLeaderboard, pitchingLeaderboard] = await Promise.all([
+
+  // Mets offense faces OPP pitcher; OPP offense faces Mets pitcher
+  const metsVsHand = oppPitcherHand || null;
+  const oppVsHand  = metsPitcherHand || null;
+
+  console.log(`[advanced] Pitcher hands — Mets SP: ${metsPitcherHand || "unknown"}, Opp SP: ${oppPitcherHand || "unknown"}`);
+  console.log(`[advanced] Split context — Mets offense vs ${metsVsHand || "?"}HP, Opp offense vs ${oppVsHand || "?"}HP`);
+
+  const [metsHitting, oppHitting, metsPitching, oppPitching, metsRoster, oppRoster,
+         savantBatters, savantExpectedBatters, metsFg, oppFg, battingLeaderboard, pitchingLeaderboard,
+         metsHittingSplit, oppHittingSplit] = await Promise.all([
     getTeamSeasonStats(metsTeamId, "hitting", season),
     getTeamSeasonStats(oppTeamId, "hitting", season),
     getTeamSeasonStats(metsTeamId, "pitching", season),
@@ -2940,7 +3016,9 @@ async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
     loadFangraphsTeamData(metsName),
     oppName ? loadFangraphsTeamData(oppName) : null,
     loadFangraphsLeaderboard('bat', 1, Number(season)),
-    loadFangraphsLeaderboard('pit', 1, Number(season))
+    loadFangraphsLeaderboard('pit', 1, Number(season)),
+    getTeamHandednessSplit(metsTeamId, metsVsHand, season),
+    getTeamHandednessSplit(oppTeamId, oppVsHand, season),
   ]);
 
   const savantBattersByPlayer = Object.fromEntries(savantBatters.map((row) => [Number(row.player_id), row]));
@@ -2948,8 +3026,8 @@ async function buildTeamAdvancedFacts(metsTeamId, oppTeamId) {
   const leagueRankMap = buildLeagueRankMap(battingLeaderboard, pitchingLeaderboard);
 
   return {
-    mets: buildSingleTeamAdvanced(metsHitting, metsPitching, metsRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg, leagueRankMap.NYM || null),
-    opp: buildSingleTeamAdvanced(oppHitting, oppPitching, oppRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg, leagueRankMap[normalizeTeamAbbr(TEAM_NAME_TO_ABBR[oppName] || oppName)] || null)
+    mets: buildSingleTeamAdvanced(metsHitting, metsPitching, metsRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, metsFg, leagueRankMap.NYM || null, metsHittingSplit, metsVsHand),
+    opp: buildSingleTeamAdvanced(oppHitting, oppPitching, oppRoster, savantBattersByPlayer, savantExpectedBattersByPlayer, oppFg, leagueRankMap[normalizeTeamAbbr(TEAM_NAME_TO_ABBR[oppName] || oppName)] || null, oppHittingSplit, oppVsHand),
   };
 }
 
@@ -3424,15 +3502,22 @@ async function buildGameFacts(targetDate) {
     opp: isHome ? game?.teams?.away?.probablePitcher : game?.teams?.home?.probablePitcher
   };
 
-  const [pitching, lineups, metsBullpen, oppBullpen, teamAdvanced, recentForm, homeAwayEdge, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
-    Promise.all([
-      getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME, resolvedDate),
-      getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name, resolvedDate)
-    ]).then(([metsPitcher, oppPitcher]) => ({ mets: metsPitcher, opp: oppPitcher })),
+  // Resolve pitchers first so we can pass their hands into buildTeamAdvancedFacts
+  const [metsPitcher, oppPitcher] = await Promise.all([
+    getPitcherFacts(probablePitchers.mets?.id, probablePitchers.mets?.fullName, TEAM_NAME, resolvedDate),
+    getPitcherFacts(probablePitchers.opp?.id, probablePitchers.opp?.fullName, oppTeam.name, resolvedDate)
+  ]);
+  const pitching = { mets: metsPitcher, opp: oppPitcher };
+
+  const metsPitcherHand = metsPitcher?.hand || null;
+  const oppPitcherHand  = oppPitcher?.hand  || null;
+  console.log(`[gameFacts] Pitcher hands resolved — Mets: ${metsPitcherHand || "unknown"}, Opp: ${oppPitcherHand || "unknown"}`);
+
+  const [lineups, metsBullpen, oppBullpen, teamAdvanced, recentForm, homeAwayEdge, metsRecentGames, oppRecentGames, headToHead, metsPitcherLog, oppPitcherLog, money, lastMeeting] = await Promise.all([
     buildLineupFacts(feed, oppTeam.id, resolvedDate),
     buildBullpenFacts(TEAM_ID, TEAM_NAME, true),
     buildBullpenFacts(oppTeam.id, oppTeam.name, false),
-    buildTeamAdvancedFacts(TEAM_ID, oppTeam.id),
+    buildTeamAdvancedFacts(TEAM_ID, oppTeam.id, metsPitcherHand, oppPitcherHand),
     buildRecentFormFacts(resolvedDate, oppTeam.id),
     buildHomeAwayEdgeFacts(resolvedDate, oppTeam.id),
     getTeamRecentGames(TEAM_ID, resolvedDate, 5),
