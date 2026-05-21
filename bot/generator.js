@@ -6555,6 +6555,74 @@ function buildCompactDailyReportEmailHtml(game) {
   const offenseFormEdge = edgeHigher(metsOpsL20, oppOpsL20);
   const bullpenEdge = edgeLower(metsBpFinal, oppBpFinal);
   const spEdgeStr = edgeLower(Number.isFinite(metsXERA) ? metsXERA : metsERA, Number.isFinite(oppXERA) ? oppXERA : oppERA);
+
+  // Pitcher Breakdown card
+  const pbMp = game?.pitching?.mets || {};
+  const pbOp = game?.pitching?.opp || {};
+  const pbMLog = (game?.gameContext?.metsPitcherLog || []).slice(0, 3);
+  const pbOLog = (game?.gameContext?.oppPitcherLog || []).slice(0, 3);
+  const pbMName = pbMp.name || 'TBD';
+  const pbOName = pbOp.name || 'TBD';
+  const pbStatRow = (label, mVal, oVal) =>
+    `<tr>
+      <td style="padding:6px 8px;background:#f0f6ff;border-bottom:1px solid #e5e7eb;color:#002d72;font-size:12px;font-weight:800;width:33%;">${escapeHtml(String(mVal ?? 'N/A'))}</td>
+      <td style="padding:6px 8px;background:#f8fafc;border-bottom:1px solid #e5e7eb;color:#475569;font-size:11px;font-weight:700;text-align:center;width:34%;">${escapeHtml(label)}</td>
+      <td style="padding:6px 8px;background:#fff5f0;border-bottom:1px solid #e5e7eb;color:#9a3412;font-size:12px;font-weight:800;text-align:right;width:33%;">${escapeHtml(String(oVal ?? 'N/A'))}</td>
+    </tr>`;
+  const pbLogRows = (log) => {
+    if (!log.length) return `<tr><td colspan="4" style="padding:6px 8px;font-size:11px;color:#94a3b8;text-align:center;">No recent starts</td></tr>`;
+    return log.map(s => {
+      const dateStr = s.date ? (() => { const d = new Date(`${s.date}T12:00:00`); return `${d.getMonth()+1}/${d.getDate()}`; })() : '--';
+      const er = parseInt(s.er);
+      const erColor = isNaN(er) ? '#111827' : er <= 2 ? '#15803d' : er <= 4 ? '#b45309' : '#dc2626';
+      const decColor = s.result === 'W' ? '#15803d' : s.result === 'L' ? '#dc2626' : '#64748b';
+      const decLabel = s.result === 'W' ? 'W' : s.result === 'L' ? 'L' : 'ND';
+      return `<tr>
+        <td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;font-size:11px;color:#475569;">${dateStr}</td>
+        <td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;font-size:11px;color:#111827;text-align:center;">${escapeHtml(String(s.ip ?? '--'))} IP</td>
+        <td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;font-size:11px;color:${erColor};font-weight:800;text-align:center;">${escapeHtml(String(s.er ?? '--'))} ER · ${escapeHtml(String(s.k ?? '--'))} K</td>
+        <td style="padding:5px 8px;border-bottom:1px solid #f1f5f9;font-size:11px;color:${decColor};font-weight:800;text-align:right;">${decLabel}</td>
+      </tr>`;
+    }).join('');
+  };
+  const pitcherBreakdownHtml = `
+    <div style="margin:0 0 12px 0;">
+      <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Pitcher Breakdown</div>
+      <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;table-layout:fixed;margin-bottom:10px;">
+        <thead>
+          <tr>
+            <th style="padding:7px 8px;background:#eaf2ff;color:#002d72;font-size:11px;text-align:left;width:33%;">${escapeHtml(pbMName)}</th>
+            <th style="padding:7px 8px;background:#f8fafc;color:#475569;font-size:11px;text-align:center;width:34%;">Season Stats</th>
+            <th style="padding:7px 8px;background:#fff3e8;color:#9a3412;font-size:11px;text-align:right;width:33%;">${escapeHtml(pbOName)}</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${pbStatRow('ERA', fmt(pbMp.seasonERA), fmt(pbOp.seasonERA))}
+          ${pbStatRow('FIP', fmt(pbMp.seasonFIP), fmt(pbOp.seasonFIP))}
+          ${pbStatRow('WHIP', fmt(pbMp.seasonWHIP), fmt(pbOp.seasonWHIP))}
+          ${pbStatRow('K%', pbMp.savant?.kPct ?? 'N/A', pbOp.savant?.kPct ?? 'N/A')}
+          ${pbStatRow('BB%', pbMp.savant?.bbPct ?? 'N/A', pbOp.savant?.bbPct ?? 'N/A')}
+          ${pbStatRow('xERA', fmt(pbMp.seasonXERA), fmt(pbOp.seasonXERA))}
+          ${pbStatRow('xBA Allowed', pbMp.savant?.xBAAllowed ?? 'N/A', pbOp.savant?.xBAAllowed ?? 'N/A')}
+        </tbody>
+      </table>
+      <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td valign="top" class="stack-col" style="width:50%;padding:0 5px 0 0;">
+            <div style="font-size:11px;font-weight:800;color:#002d72;margin-bottom:4px;">${escapeHtml(pbMName)} — Recent Starts</div>
+            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;">
+              <tbody>${pbLogRows(pbMLog)}</tbody>
+            </table>
+          </td>
+          <td valign="top" class="stack-col" style="width:50%;padding:0 0 0 5px;">
+            <div style="font-size:11px;font-weight:800;color:#9a3412;margin-bottom:4px;">${escapeHtml(pbOName)} — Recent Starts</div>
+            <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;border:1px solid #d9e1ee;">
+              <tbody>${pbLogRows(pbOLog)}</tbody>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>`;
   let regressionRead = "Mixed";
   const metsEraXeraGap = (Number.isFinite(metsERA) && Number.isFinite(metsXERA)) ? metsXERA - metsERA : null;
   const oppEraXeraGap = (Number.isFinite(oppERA) && Number.isFinite(oppXERA)) ? oppXERA - oppERA : null;
@@ -6748,6 +6816,7 @@ function buildCompactDailyReportEmailHtml(game) {
         </tbody>
       </table>
     </div>
+    ${pitcherBreakdownHtml}
     <div style="margin:0 0 12px 0;">
       <div style="font-size:15px;font-weight:900;color:#111827;margin:0 0 8px 0;">Bullpen Trend</div>
       <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
