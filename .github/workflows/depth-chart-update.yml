@@ -17,6 +17,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Rebase on latest main
+        run: git pull --rebase origin main
+
       - name: Set up Node.js
         uses: actions/setup-node@v6
         with:
@@ -46,6 +49,4 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh depth chart artifacts [skip ci]"
-          git add -A || true
-          git pull --rebase origin main
           git push origin main

@@ -65,6 +65,10 @@ Always verify which path the relevant page or workflow actually uses.
 
 - Keep rate stats like `BB%` and `K%` normalized to one percent-scale representation before they reach `advancedMatchup`. The generator currently mixes split data from MLB Stats with season totals from Fangraphs/derived counts; if one path stays decimal (`0.080`) and another path is percent-like (`8.0`), the homepage can silently render absurd values after a second `* 100`.
 
+### Workflow artifact commits
+
+- For generator workflows that commit shared artifacts like `public/sitemap.xml`, rebase or pull onto `origin/main` before regeneration, not after creating the local commit. A post-commit `git pull --rebase` is prone to avoidable conflicts when another automation updated the same generated file during the run.
+
 ### Buttondown email caution
 
 - For Buttondown email sends, treat the `body` field as the canonical content source. If a later update request writes legacy plain text into `body`, it can override an earlier HTML draft even when `body_html` is also present.
