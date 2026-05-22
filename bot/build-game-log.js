@@ -346,7 +346,7 @@ async function main() {
   const today2 = new Date().toISOString().slice(0, 10);
   const upcomingGames = fullSchedule
     .filter(g => g.date > today2 && g.status !== "postponed")
-    .slice(0, 30)   // next 30 scheduled games
+    // no slice — include all remaining games through end of season
     .map(g => {
       const sg = seriesGroupByDate[g.date + "_" + g.oppTeamId] || {};
       const tid2 = g.oppTeamId;
