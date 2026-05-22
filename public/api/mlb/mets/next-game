@@ -24,7 +24,13 @@
   "venue": "loanDepot park",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 668964,
+      "fullName": "Tobias Myers",
+      "era": "3.41",
+      "fip": null,
+      "whip": "1.03"
+    },
     "opp": {
       "id": 691587,
       "fullName": "Eury Pérez",
@@ -109,6 +115,11 @@
           "losses": 28,
           "ties": 0,
           "pct": ".440"
+        },
+        "probablePitcher": {
+          "id": 668964,
+          "fullName": "Tobias Myers",
+          "link": "/api/v1/people/668964"
         },
         "splitSquad": false,
         "seriesNumber": 17,
@@ -253,9 +264,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-22T02:42:11.414Z",
+    "generatedAt": "2026-05-22T04:38:14.385Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-05-21",
-    "cacheKey": "next-game:2026-05-21"
+    "referenceDate": "2026-05-22",
+    "cacheKey": "next-game:2026-05-22"
   }
 }

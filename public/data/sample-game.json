@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-22T02:42:31.544Z",
-  "referenceDate": "2026-05-21",
-  "cacheKey": "sample-game:2026-05-21",
+  "generatedAt": "2026-05-22T04:38:30.836Z",
+  "referenceDate": "2026-05-22",
+  "cacheKey": "sample-game:2026-05-22",
   "games": [
     {
       "id": "2026-05-22-mets-vs-miami-marlins",
@@ -23,17 +23,62 @@
       "status": "upcoming",
       "pitching": {
         "mets": {
-          "name": "TBD",
-          "announced": false,
+          "name": "Tobias Myers",
+          "mlbId": 668964,
+          "announced": true,
+          "hand": "R",
+          "generatedAt": "2026-05-22T04:38:15.872Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "0-1, 3.41 ERA, 1.03 WHIP, 29.0 IP",
+          "seasonRecord": "0-1",
+          "seasonERA": "3.41",
+          "seasonFIP": "4.39",
+          "seasonXERA": "3.02",
+          "seasonWHIP": "1.03",
+          "seasonHR9": "1.55",
+          "last3KBB": "3.83",
+          "kMinusBbPct": 14.8,
+          "note": "2026 - 29.0 IP",
+          "savant": {
+            "xERA": "3.02",
+            "xBAAllowed": "0.231",
+            "xSLGAllowed": "0.375",
+            "xwOBAAllowed": "0.278",
+            "barrelPct": "5.8%",
+            "hardHitPct": "41.9%",
+            "whiffPct": "19.8%",
+            "chasePct": "27.4%",
+            "kPct": "20%",
+            "bbPct": "5.2%",
+            "exitVeloAllowed": 90.3,
+            "launchAngleAllowed": 21.1,
+            "percentiles": {
+              "barrelPct": 72,
+              "hardHitPct": 44,
+              "kPct": 48,
+              "bbPct": 88,
+              "xERA": 83,
+              "xBAAllowed": 69,
+              "xSLGAllowed": 66
+            }
+          },
           "vsRoster": {
-            "PA": 1171,
-            "kPct": 0.17066951323654997,
-            "bbPct": 0.09305465414175917,
-            "AVG": "0.261",
+            "PA": 11,
+            "kPct": 0.2727272727272727,
+            "bbPct": 0.18181818181818182,
+            "AVG": "0.333",
             "wOBA": "0.332",
             "xwOBA": "0.322",
+            "exitVelo": 90.3,
+            "launchAngle": 21.1,
             "xBA": "0.257",
-            "xSLG": "0.386"
+            "xSLG": "0.386",
+            "HR": 2
           }
         },
         "opp": {
@@ -41,7 +86,7 @@
           "mlbId": 691587,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-22T02:42:14.082Z",
+          "generatedAt": "2026-05-22T04:38:15.877Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -99,16 +144,16 @@
           "seasonERA": 3.98,
           "seasonXERAAverage": 3.9,
           "seasonXFIP": "3.78",
-          "last20ERA": 2.74,
-          "last20WHIP": 1.3,
+          "last20ERA": 2.88,
+          "last20WHIP": 1.37,
           "seasonWHIP": 1.35,
           "seasonKPct": "24.3%",
           "seasonBBPct": "9.5%",
           "rating": 83,
           "team": "New York Mets",
           "usage": {
-            "appearances": 19,
-            "appearancesPerPitcherPerDay": 0.21,
+            "appearances": 21,
+            "appearancesPerPitcherPerDay": 0.23,
             "label": "Low",
             "tone": "green"
           },
@@ -120,8 +165,8 @@
             "era": 4.32,
             "whip": 1.44,
             "saveConversionPct": 87.5,
-            "last7DaysAppearances": 2,
-            "last7DaysInningsPitched": "2.0"
+            "last7DaysAppearances": 3,
+            "last7DaysInningsPitched": "3.0"
           },
           "relieverCount": 13
         },
@@ -129,16 +174,16 @@
           "seasonERA": 3.41,
           "seasonXERAAverage": 4.19,
           "seasonXFIP": "4.23",
-          "last20ERA": 3.43,
-          "last20WHIP": 1.05,
+          "last20ERA": 3.06,
+          "last20WHIP": 1.02,
           "seasonWHIP": 1.2,
           "seasonKPct": "22.1%",
           "seasonBBPct": "10.1%",
           "rating": 78,
           "team": "Miami Marlins",
           "usage": {
-            "appearances": 22,
-            "appearancesPerPitcherPerDay": 0.22,
+            "appearances": 20,
+            "appearancesPerPitcherPerDay": 0.2,
             "label": "Low",
             "tone": "green"
           },
@@ -823,7 +868,7 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "note": "NYM vs RHP · OPP (season)",
+          "note": "NYM vs RHP · OPP vs RHP",
           "mets": "89",
           "opp": "97",
           "edge": "Opp"
@@ -932,8 +977,9 @@
           },
           "rankScope": "MLB",
           "rankTotal": 30,
+          "vsHand": "R",
           "usingSplit": false,
-          "fallbackNote": "season total"
+          "fallbackNote": "season total (no RHP split available)"
         }
       },
       "recentForm": {
@@ -1169,7 +1215,48 @@
           "losses": 0,
           "recentGames": []
         },
-        "metsPitcherLog": [],
+        "metsPitcherLog": [
+          {
+            "date": "2026-05-18",
+            "opponent": "Washington Nationals",
+            "ip": "1.1",
+            "er": "1",
+            "k": "1",
+            "h": "2",
+            "bb": "1",
+            "result": "W"
+          },
+          {
+            "date": "2026-05-15",
+            "opponent": "New York Yankees",
+            "ip": "2.0",
+            "er": "0",
+            "k": "1",
+            "h": "0",
+            "bb": "1",
+            "result": "-"
+          },
+          {
+            "date": "2026-05-14",
+            "opponent": "Detroit Tigers",
+            "ip": "1.0",
+            "er": "1",
+            "k": "1",
+            "h": "1",
+            "bb": "0",
+            "result": "W"
+          },
+          {
+            "date": "2026-05-10",
+            "opponent": "Arizona Diamondbacks",
+            "ip": "1.0",
+            "er": "0",
+            "k": "2",
+            "h": "1",
+            "bb": "0",
+            "result": "-"
+          }
+        ],
         "oppPitcherLog": [
           {
             "date": "2026-05-17",
@@ -1214,17 +1301,16 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-05-21",
-          "resolvedDate": "2026-05-22",
-          "bannerText": "OFF DAY — Previewing next game: Miami Marlins on 2026-05-22"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-05-22",
+          "resolvedDate": "2026-05-22"
         }
       },
       "trends": [
@@ -1248,13 +1334,13 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-22T02:42:14.967Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-22\",\"opponent\":\"Miami Marlins\",\"homeAway\":\"road\",\"ballpark\":\"loanDepot park\",\"weather\":{\"temperature\":82.8,\"temperatureDisplay\":\"83°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 10 mph ESE\",\"compact\":\"83° | Cloudy | Wind 10 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-22T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Eury Pérez\",\"handedness\":\"R\",\"era\":5.33,\"xERA\":5.06,\"fip\":5.21,\"whip\":1.41,\"kPct\":25.2,\"bbPct\":12.2,\"kMinusBbPct\":13,\"hardHitPct\":42.9,\"barrelPct\":14.3,\"xBAAllowed\":0.234,\"xSLGAllowed\":0.456,\"xwOBAAllowed\":0.352,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-17\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"5.0\",\"er\":5,\"k\":5,\"h\":5,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-05-12\",\"opponent\":\"Minnesota Twins\",\"ip\":\"6.0\",\"er\":3,\"k\":8,\"h\":3,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-05-06\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.0\",\"er\":5,\"k\":6,\"h\":4,\"bb\":5,\"result\":\"L\"},{\"date\":\"2026-05-01\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"5.0\",\"er\":2,\"k\":6,\"h\":4,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.25,\"avgEarnedRuns\":3.75,\"avgStrikeouts\":6.25,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5.25,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":2.8,\"projectedLineupWRCPlus\":95.7,\"obp\":0.306,\"iso\":0.129,\"kPct\":20.7,\"bbPct\":8,\"xBA\":0.254,\"xSLG\":0.428,\"xwOBA\":0.322,\"hardHitPct\":42.6,\"barrelPct\":9.2,\"battingAverage\":0.241,\"wOBA\":0.305,\"lineup\":{\"totalWAR\":2.8,\"totalWRCPlus\":95.7,\"totalOBP\":0.306,\"totalISO\":0.138,\"totalKPct\":20.7,\"totalBBPct\":8.1,\"totalAVG\":0.241,\"totalWOBA\":0.305,\"totalXBA\":0.258,\"totalXSLG\":0.437,\"totalXWOBA\":0.329,\"totalHardHitPct\":43.9,\"totalBarrelPct\":9.5,\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.024}},\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.024},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":5.1,\"projectedLineupWRCPlus\":109.3,\"obp\":0.342,\"iso\":0.129,\"kPct\":21.6,\"bbPct\":9,\"xBA\":0.238,\"xSLG\":0.366,\"xwOBA\":0.304,\"hardHitPct\":39.1,\"barrelPct\":6.4,\"battingAverage\":0.261,\"wOBA\":0.332,\"lineup\":{\"totalWAR\":5.1,\"totalWRCPlus\":109.3,\"totalOBP\":0.342,\"totalISO\":0.131,\"totalKPct\":17.1,\"totalBBPct\":9.3,\"totalAVG\":0.261,\"totalWOBA\":0.332,\"totalXBA\":0.257,\"totalXSLG\":0.386,\"totalXWOBA\":0.322,\"totalHardHitPct\":40.7,\"totalBarrelPct\":5.7,\"regressionSignals\":{\"baMinusXba\":0.004,\"wobaMinusXwoba\":0.01}},\"regressionSignals\":{\"baMinusXba\":0.004,\"wobaMinusXwoba\":0.01},\"splitContext\":{\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":2.8,\"totalWRCPlus\":95.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":5.1,\"totalWRCPlus\":109.3,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.35,\"kMinusBbPct\":14.8,\"xFIP\":3.78,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":12,\"xFIP\":4.23,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":82.8,\"temperatureDisplay\":\"83°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 10 mph ESE\",\"compact\":\"83° | Cloudy | Wind 10 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-22T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: TBD N/A/N/A vs Eury Pérez 5.06/5.21; K-BB% N/A to 13.0.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.\",\"rawScore\":-3.41,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.78 vs 4.23, WHIP 1.35 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":1.89,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.\",\"rawScore\":8.88,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 51.7%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.517,\"totalWeightedImpact\":1.75,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
-        "headline": "Mets vs Miami Marlins: regression signals is the clearest angle",
-        "synopsis": "TBD vs Eury Pérez sets the matchup, but the strongest supported angle is regression signals. Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50. Several key inputs are still missing, so the read should stay conservative.",
+        "raw": "{\"generatedAt\":\"2026-05-22T04:38:16.829Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-22\",\"opponent\":\"Miami Marlins\",\"homeAway\":\"road\",\"ballpark\":\"loanDepot park\",\"weather\":{\"temperature\":82.8,\"temperatureDisplay\":\"83°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 10 mph ESE\",\"compact\":\"83° | Cloudy | Wind 10 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-22T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Tobias Myers\",\"handedness\":\"R\",\"era\":3.41,\"xERA\":3.02,\"fip\":4.39,\"whip\":1.03,\"kPct\":20,\"bbPct\":5.2,\"kMinusBbPct\":14.8,\"hardHitPct\":41.9,\"barrelPct\":5.8,\"xBAAllowed\":0.231,\"xSLGAllowed\":0.375,\"xwOBAAllowed\":0.278,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-18\",\"opponent\":\"Washington Nationals\",\"ip\":\"1.1\",\"er\":1,\"k\":1,\"h\":2,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-05-15\",\"opponent\":\"New York Yankees\",\"ip\":\"2.0\",\"er\":0,\"k\":1,\"h\":0,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-05-14\",\"opponent\":\"Detroit Tigers\",\"ip\":\"1.0\",\"er\":1,\"k\":1,\"h\":1,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-05-10\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"1.0\",\"er\":0,\"k\":2,\"h\":1,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":1.33,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":1.25,\"daysSinceLastStart\":4},\"workload\":{\"inningsTrend\":1.33,\"daysSinceLastStart\":4},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Eury Pérez\",\"handedness\":\"R\",\"era\":5.33,\"xERA\":5.06,\"fip\":5.21,\"whip\":1.41,\"kPct\":25.2,\"bbPct\":12.2,\"kMinusBbPct\":13,\"hardHitPct\":42.9,\"barrelPct\":14.3,\"xBAAllowed\":0.234,\"xSLGAllowed\":0.456,\"xwOBAAllowed\":0.352,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-17\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"5.0\",\"er\":5,\"k\":5,\"h\":5,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-05-12\",\"opponent\":\"Minnesota Twins\",\"ip\":\"6.0\",\"er\":3,\"k\":8,\"h\":3,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-05-06\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.0\",\"er\":5,\"k\":6,\"h\":4,\"bb\":5,\"result\":\"L\"},{\"date\":\"2026-05-01\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"5.0\",\"er\":2,\"k\":6,\"h\":4,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.25,\"avgEarnedRuns\":3.75,\"avgStrikeouts\":6.25,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5.25,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":2.8,\"projectedLineupWRCPlus\":95.7,\"obp\":0.306,\"iso\":0.129,\"kPct\":20.7,\"bbPct\":8,\"xBA\":0.254,\"xSLG\":0.428,\"xwOBA\":0.322,\"hardHitPct\":42.6,\"barrelPct\":9.2,\"battingAverage\":0.241,\"wOBA\":0.305,\"lineup\":{\"totalWAR\":2.8,\"totalWRCPlus\":95.7,\"totalOBP\":0.306,\"totalISO\":0.138,\"totalKPct\":20.7,\"totalBBPct\":8.1,\"totalAVG\":0.241,\"totalWOBA\":0.305,\"totalXBA\":0.258,\"totalXSLG\":0.437,\"totalXWOBA\":0.329,\"totalHardHitPct\":43.9,\"totalBarrelPct\":9.5,\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.024}},\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.024},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":5.1,\"projectedLineupWRCPlus\":109.3,\"obp\":0.342,\"iso\":0.129,\"kPct\":21.6,\"bbPct\":9,\"xBA\":0.238,\"xSLG\":0.366,\"xwOBA\":0.304,\"hardHitPct\":39.1,\"barrelPct\":6.4,\"battingAverage\":0.261,\"wOBA\":0.332,\"lineup\":{\"totalWAR\":5.1,\"totalWRCPlus\":109.3,\"totalOBP\":0.342,\"totalISO\":0.131,\"totalKPct\":17.1,\"totalBBPct\":9.3,\"totalAVG\":0.261,\"totalWOBA\":0.332,\"totalXBA\":0.257,\"totalXSLG\":0.386,\"totalXWOBA\":0.322,\"totalHardHitPct\":40.7,\"totalBarrelPct\":5.7,\"regressionSignals\":{\"baMinusXba\":0.004,\"wobaMinusXwoba\":0.01}},\"regressionSignals\":{\"baMinusXba\":0.004,\"wobaMinusXwoba\":0.01},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":2.8,\"totalWRCPlus\":95.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":5.1,\"totalWRCPlus\":109.3,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.35,\"kMinusBbPct\":14.8,\"xFIP\":3.78,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":12,\"xFIP\":4.23,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":82.8,\"temperatureDisplay\":\"83°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 10 mph ESE\",\"compact\":\"83° | Cloudy | Wind 10 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-22T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Tobias Myers 3.02/4.39 vs Eury Pérez 5.06/5.21; K-BB% 14.8 to 13.0.\",\"rawScore\":19.77,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.\",\"rawScore\":-3.41,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.78 vs 4.23, WHIP 1.35 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":1.89,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.\",\"rawScore\":1.96,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":25.05,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "headline": "Mets vs Miami Marlins: starting pitching is the clearest angle",
+        "synopsis": "Tobias Myers vs Eury Pérez sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Tobias Myers 3.02/4.39 vs Eury Pérez 5.06/5.21; K-BB% 14.8 to 13.0. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
-          "modelLean": "Mixed",
+          "modelLean": "Mets",
           "officialPick": "Mets ML",
-          "bestEdge": "Regression Signals",
+          "bestEdge": "Starting Pitching",
           "biggestRisk": "Lineup Quality"
         },
         "gameDetails": {
@@ -1270,8 +1356,8 @@
         "edgeSummary": {
           "startingPitching": {
             "category": "Starting Pitching",
-            "verdict": "Even",
-            "strength": "even",
+            "verdict": "Mets edge",
+            "strength": "strong",
             "dataMode": "real"
           },
           "lineupQuality": {
@@ -1289,7 +1375,7 @@
           "regressionSignals": {
             "category": "Regression Signals",
             "verdict": "Mets edge",
-            "strength": "strong",
+            "strength": "slight",
             "dataMode": "real"
           },
           "context": {
@@ -1313,8 +1399,8 @@
           "rows": [
             {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Mets edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             {
@@ -1332,7 +1418,7 @@
             {
               "category": "Regression Signals",
               "verdict": "Mets edge",
-              "strength": "strong",
+              "strength": "slight",
               "dataMode": "real"
             },
             {
@@ -1348,36 +1434,38 @@
               "dataMode": "fallback"
             }
           ],
-          "overallModelLean": "Mixed"
+          "overallModelLean": "Mets"
         },
-        "pitchingEdgeSummary": "Starting pitching grades as essentially even on the current board.",
+        "pitchingEdgeSummary": "Tobias Myers gives the Mets the cleaner underlying starting-pitcher case.",
         "projectedLineupEdgeSummary": "The opponent has the better overall lineup-quality profile on the current inputs.",
         "analysis": {
           "whyMetsHaveACase": [
-            "Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production.",
-            "Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP."
+            "Tobias Myers: 3.41 ERA, 20%% K rate, 4.39 FIP, vs Eury Pérez: 5.33 ERA, 5.21 FIP.",
+            "Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP.",
+            "Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production."
           ],
           "whereTheRiskIs": [
             "Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.",
             "Road/context splits lean against Mets."
           ],
-          "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+          "bottomLine": "Model leans Mets. Primary edge: starting pitching."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
-            "Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production.",
-            "Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP."
+            "Tobias Myers: 3.41 ERA, 20%% K rate, 4.39 FIP, vs Eury Pérez: 5.33 ERA, 5.21 FIP.",
+            "Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP.",
+            "Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production."
           ],
           "whereRiskIs": [
             "Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.",
             "Road/context splits lean against Mets."
           ],
-          "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+          "bottomLine": "Model leans Mets. Primary edge: starting pitching."
         },
         "sections": [
           {
             "heading": "1. Quick Read",
-            "body": "Model Lean: Mixed. Official Pick: Mets ML. Best Edge: Regression Signals. Biggest Risk: Lineup Quality."
+            "body": "Model Lean: Mets. Official Pick: Mets ML. Best Edge: Starting Pitching. Biggest Risk: Lineup Quality."
           },
           {
             "heading": "2. Game Details",
@@ -1385,15 +1473,15 @@
           },
           {
             "heading": "3. Edge Summary",
-            "body": "Starting Pitching: Even | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Mets edge | Context: Opponent edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Mixed."
+            "body": "Starting Pitching: Mets edge | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Mets edge | Context: Opponent edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Mets."
           },
           {
             "heading": "4. Starting Pitchers Comparison",
-            "body": "Starting pitching grades as essentially even on the current board."
+            "body": "Tobias Myers gives the Mets the cleaner underlying starting-pitcher case."
           },
           {
             "heading": "5. Pitcher Contact Profile vs Opponent",
-            "body": "xERA/FIP profile: TBD N/A/N/A vs Eury Pérez 5.06/5.21; K-BB% N/A to 13.0."
+            "body": "xERA/FIP profile: Tobias Myers 3.02/4.39 vs Eury Pérez 5.06/5.21; K-BB% 14.8 to 13.0."
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
@@ -1405,39 +1493,39 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production.\n• Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.\n• Road/context splits lean against Mets. Bottom line\nMixed board. Pick based on strongest individual matchup edge."
+            "body": "Why the Mets have a case\n• Tobias Myers: 3.41 ERA, 20%% K rate, 4.39 FIP, vs Eury Pérez: 5.33 ERA, 5.21 FIP.\n• Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP.\n• Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production. Where the risk is\n• Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.\n• Road/context splits lean against Mets. Bottom line\nModel leans Mets. Primary edge: starting pitching."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50. Bullpen shape: xFIP 3.78 vs 4.23, WHIP 1.35 vs 1.20, last 3-day usage N/A IP vs N/A IP. Note: model does not fully favor Mets. Pick is based on the best supported individual angle."
+            "body": "Primary edge: Tobias Myers's run-prevention metrics. Bullpen shape: xFIP 3.78 vs 4.23, WHIP 1.35 vs 1.20, last 3-day usage N/A IP vs N/A IP."
           }
         ],
-        "pickSummary": "Mets bullpen seasonXERA 3.9 versus Marlins 4.19 creates 0.29-run expected edge. Mets last20OPS 0.693 improves 5.8 percent on season 0.655 while opponent OPS drops to 0.672. Numbers show Mets hold quantified edges in bullpen xERA and regression metrics.",
-        "pickNarrative": "Mets hold BA-xBA -0.017 and wOBA-xwOBA -0.024 regression signals against opponent starter overperformance of 1.50. Bullpen xFIP 3.78 versus 4.23 and last20OPS 0.693 provide additional quantified factors. Mets bullpen seasonXERA 3.9 versus Marlins 4.19 creates 0.29-run expected edge. Mets last20OPS 0.693 improves 5.8 percent on season 0.655 while opponent OPS drops to 0.672. Numbers show Mets hold quantified edges in bullpen xERA and regression metrics.",
+        "pickSummary": "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA creates a 2.04-run expected quality gap. Mets bullpen 3.9 xERA edges opponent 4.19 xERA while last20 OPS shows Mets at 0.693 versus 0.672. Numbers indicate a clear starting pitching advantage that supports the Mets side despite road venue.",
+        "pickNarrative": "Tobias Myers 3.02 xERA in 29 IP faces Eury Pérez 5.06 xERA over 52.1 IP. Mets bullpen season xERA sits at 3.9 against opponent 4.19. Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA creates a 2.04-run expected quality gap. Mets bullpen 3.9 xERA edges opponent 4.19 xERA while last20 OPS shows Mets at 0.693 versus 0.672. Numbers indicate a clear starting pitching advantage that supports the Mets side despite road venue.",
         "todayPick": {
-          "headline": "Mets Bullpen xERA 3.9 vs Pérez 5.06 xERA",
-          "summary": "Mets hold BA-xBA -0.017 and wOBA-xwOBA -0.024 regression signals against opponent starter overperformance of 1.50. Bullpen xFIP 3.78 versus 4.23 and last20OPS 0.693 provide additional quantified factors.",
+          "headline": "Myers 3.02 xERA Versus Pérez 5.06 xERA",
+          "summary": "Tobias Myers 3.02 xERA in 29 IP faces Eury Pérez 5.06 xERA over 52.1 IP. Mets bullpen season xERA sits at 3.9 against opponent 4.19.",
           "metsEdges": [
-            "Mets bullpen seasonXERA 3.9 versus 4.19",
-            "Regression signals Mets BA-xBA -0.017 and wOBA-xwOBA -0.024",
-            "Opponent starter overperformance signal 1.50"
+            "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA with K-BB% 14.8 to 13.0",
+            "Mets bullpen xFIP 3.78 versus 4.23 and last20ERA 2.88",
+            "Mets last20OPS 0.693 up 5.8 percent from season 0.655"
           ],
           "risks": [
             "Opponent projected lineup wRC+ 109.3 versus Mets 95.7",
-            "Mets road record 11-15"
+            "Mets road record 11-15 with homeAway differential -10"
           ],
-          "bettingAngle": "Mets bullpen seasonXERA 3.9 versus Marlins 4.19 creates 0.29-run expected edge. Mets last20OPS 0.693 improves 5.8 percent on season 0.655 while opponent OPS drops to 0.672. Numbers show Mets hold quantified edges in bullpen xERA and regression metrics.",
+          "bettingAngle": "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA creates a 2.04-run expected quality gap. Mets bullpen 3.9 xERA edges opponent 4.19 xERA while last20 OPS shows Mets at 0.693 versus 0.672. Numbers indicate a clear starting pitching advantage that supports the Mets side despite road venue.",
           "officialPick": "Mets ML",
-          "confidenceLabel": "Low",
-          "confidenceScore": 4
+          "confidenceLabel": "Standard",
+          "confidenceScore": 10
         },
         "officialPick": "Official Pick: Mets ML",
         "edgeTable": [
           {
             "category": "Starting Pitching",
-            "edge": "Even",
-            "strength": "even",
-            "reason": "xERA/FIP profile: TBD N/A/N/A vs Eury Pérez 5.06/5.21; K-BB% N/A to 13.0.",
+            "edge": "Mets edge",
+            "strength": "strong",
+            "reason": "xERA/FIP profile: Tobias Myers 3.02/4.39 vs Eury Pérez 5.06/5.21; K-BB% 14.8 to 13.0.",
             "dataMode": "real"
           },
           {
@@ -1457,7 +1545,7 @@
           {
             "category": "Regression Signals",
             "edge": "Mets edge",
-            "strength": "strong",
+            "strength": "slight",
             "reason": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.",
             "dataMode": "real"
           },
@@ -1479,19 +1567,19 @@
             "category": "Market Value",
             "edge": "Limited data",
             "strength": "even",
-            "reason": "Market check: Mets ML N/A implies N/A vs model 51.7%.",
+            "reason": "Market check: Mets ML N/A implies N/A vs model 70.0%.",
             "dataMode": "fallback"
           }
         ],
         "keyAngles": [
-          "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.",
+          "xERA/FIP profile: Tobias Myers 3.02/4.39 vs Eury Pérez 5.06/5.21; K-BB% 14.8 to 13.0.",
           "Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.",
           "Bullpen shape: xFIP 3.78 vs 4.23, WHIP 1.35 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
-          "Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days."
+          "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50."
         ],
         "pick": "Mets ML",
-        "analyticalLean": "Mixed",
-        "confidence": "low",
+        "analyticalLean": "Mets",
+        "confidence": "standard",
         "missingMetrics": [
           "Park factor",
           "Mets team wRC+ vs handedness",
@@ -1525,11 +1613,72 @@
           },
           "pitchers": {
             "mets": {
-              "name": "TBD",
+              "name": "Tobias Myers",
+              "handedness": "R",
+              "era": 3.41,
+              "xERA": 3.02,
+              "fip": 4.39,
+              "whip": 1.03,
+              "kPct": 20,
+              "bbPct": 5.2,
+              "kMinusBbPct": 14.8,
+              "hardHitPct": 41.9,
+              "barrelPct": 5.8,
+              "xBAAllowed": 0.231,
+              "xSLGAllowed": 0.375,
+              "xwOBAAllowed": 0.278,
               "recentStarts": {
-                "starts": []
+                "starts": [
+                  {
+                    "date": "2026-05-18",
+                    "opponent": "Washington Nationals",
+                    "ip": "1.1",
+                    "er": 1,
+                    "k": 1,
+                    "h": 2,
+                    "bb": 1,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-05-15",
+                    "opponent": "New York Yankees",
+                    "ip": "2.0",
+                    "er": 0,
+                    "k": 1,
+                    "h": 0,
+                    "bb": 1,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-05-14",
+                    "opponent": "Detroit Tigers",
+                    "ip": "1.0",
+                    "er": 1,
+                    "k": 1,
+                    "h": 1,
+                    "bb": 0,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-05-10",
+                    "opponent": "Arizona Diamondbacks",
+                    "ip": "1.0",
+                    "er": 0,
+                    "k": 2,
+                    "h": 1,
+                    "bb": 0,
+                    "result": "-"
+                  }
+                ],
+                "avgInnings": 1.33,
+                "avgEarnedRuns": 0.5,
+                "avgStrikeouts": 1.25,
+                "daysSinceLastStart": 4
               },
-              "workload": {},
+              "workload": {
+                "inningsTrend": 1.33,
+                "daysSinceLastStart": 4
+              },
               "opponentHandednessProfile": {
                 "left": 0,
                 "right": 0,
@@ -1691,6 +1840,7 @@
                 "wobaMinusXwoba": 0.01
               },
               "splitContext": {
+                "pitcherHandedness": "R",
                 "splitDataAvailable": false
               }
             }
@@ -1753,11 +1903,11 @@
             {
               "category": "Starting Pitching",
               "weight": 30,
-              "edge": "Even",
-              "strength": "even",
-              "explanation": "xERA/FIP profile: TBD N/A/N/A vs Eury Pérez 5.06/5.21; K-BB% N/A to 13.0.",
-              "rawScore": 0,
-              "weightedImpact": 0,
+              "edge": "Mets edge",
+              "strength": "strong",
+              "explanation": "xERA/FIP profile: Tobias Myers 3.02/4.39 vs Eury Pérez 5.06/5.21; K-BB% 14.8 to 13.0.",
+              "rawScore": 19.77,
+              "weightedImpact": 30,
               "dataMode": "real",
               "supportedBy": [
                 "ERA",
@@ -1815,10 +1965,10 @@
               "category": "Regression Signals",
               "weight": 10,
               "edge": "Mets edge",
-              "strength": "strong",
+              "strength": "slight",
               "explanation": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.",
-              "rawScore": 8.88,
-              "weightedImpact": 10,
+              "rawScore": 1.96,
+              "weightedImpact": 3.3,
               "dataMode": "real",
               "supportedBy": [
                 "BA vs xBA",
@@ -1868,7 +2018,7 @@
               "weight": 5,
               "edge": "Limited data",
               "strength": "even",
-              "explanation": "Market check: Mets ML N/A implies N/A vs model 51.7%.",
+              "explanation": "Market check: Mets ML N/A implies N/A vs model 70.0%.",
               "rawScore": 0,
               "weightedImpact": 0,
               "dataMode": "fallback",
@@ -1878,8 +2028,8 @@
               ]
             }
           ],
-          "projectedWinProbability": 0.517,
-          "totalWeightedImpact": 1.75,
+          "projectedWinProbability": 0.7,
+          "totalWeightedImpact": 25.05,
           "confidence": "low",
           "criticalMissingCount": 6
         },
@@ -1911,9 +2061,9 @@
             }
           },
           "header": {
-            "title": "Mets vs Miami Marlins: regression signals is the clearest angle",
+            "title": "Mets vs Miami Marlins: starting pitching is the clearest angle",
             "matchupTitle": "New York Mets vs Miami Marlins",
-            "tagline": "regression signals is the clearest angle",
+            "tagline": "starting pitching is the clearest angle",
             "date": "2026-05-22",
             "time": "7:10 PM ET",
             "ballpark": "loanDepot park",
@@ -1922,9 +2072,9 @@
             "metadataLine": "May 22nd | 7:10 PM ET | loanDepot park | 83° | Cloudy | Wind 10 mph ESE"
           },
           "quickRead": {
-            "modelLean": "Mixed",
+            "modelLean": "Mets",
             "officialPick": "Mets ML",
-            "bestEdge": "Regression Signals",
+            "bestEdge": "Starting Pitching",
             "biggestRisk": "Lineup Quality"
           },
           "gameDetails": {
@@ -1991,8 +2141,8 @@
           "edgeSummary": {
             "startingPitching": {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Mets edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             "lineupQuality": {
@@ -2010,7 +2160,7 @@
             "regressionSignals": {
               "category": "Regression Signals",
               "verdict": "Mets edge",
-              "strength": "strong",
+              "strength": "slight",
               "dataMode": "real"
             },
             "context": {
@@ -2034,8 +2184,8 @@
             "rows": [
               {
                 "category": "Starting Pitching",
-                "verdict": "Even",
-                "strength": "even",
+                "verdict": "Mets edge",
+                "strength": "strong",
                 "dataMode": "real"
               },
               {
@@ -2053,7 +2203,7 @@
               {
                 "category": "Regression Signals",
                 "verdict": "Mets edge",
-                "strength": "strong",
+                "strength": "slight",
                 "dataMode": "real"
               },
               {
@@ -2069,17 +2219,66 @@
                 "dataMode": "fallback"
               }
             ],
-            "overallModelLean": "Mixed"
+            "overallModelLean": "Mets"
           },
           "startingPitchersComparison": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Tobias Myers",
             "oppPitcher": "Eury Pérez",
             "seasonLabel": "2026",
             "metsCard": {
-              "name": "TBD",
+              "name": "Tobias Myers",
+              "mlbId": 668964,
+              "record": "0-1",
+              "hand": "R",
               "teamLabel": "NYM",
-              "recentStarts": [],
-              "stats": {}
+              "recentStarts": [
+                {
+                  "date": "2026-05-18",
+                  "opponent": "Washington Nationals",
+                  "ip": "1.1",
+                  "er": "1",
+                  "k": "1",
+                  "h": "2",
+                  "bb": "1",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-05-15",
+                  "opponent": "New York Yankees",
+                  "ip": "2.0",
+                  "er": "0",
+                  "k": "1",
+                  "h": "0",
+                  "bb": "1",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-05-14",
+                  "opponent": "Detroit Tigers",
+                  "ip": "1.0",
+                  "er": "1",
+                  "k": "1",
+                  "h": "1",
+                  "bb": "0",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-05-10",
+                  "opponent": "Arizona Diamondbacks",
+                  "ip": "1.0",
+                  "er": "0",
+                  "k": "2",
+                  "h": "1",
+                  "bb": "0",
+                  "result": "-"
+                }
+              ],
+              "stats": {
+                "era": "3.41",
+                "whip": "1.03",
+                "kPct": "20%",
+                "bbPct": "5.2%"
+              }
             },
             "oppCard": {
               "name": "Eury Pérez",
@@ -2139,12 +2338,14 @@
             "advancedMatchupTables": [
               {
                 "title": "Advanced Stats vs Opponent",
-                "leftHeader": "NYM TBD",
+                "leftHeader": "NYM Tobias Myers",
                 "rightHeader": "MIA Offense",
                 "rightTeamKey": "opp",
                 "rows": [
                   {
                     "label": "Barrel %",
+                    "left": "5.8%",
+                    "leftPercentile": 72,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 6.4,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2152,6 +2353,8 @@
                   },
                   {
                     "label": "xBA",
+                    "left": "0.231",
+                    "leftPercentile": 69,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.238,
                     "rightMetricLabel": "Batter xBA",
@@ -2159,6 +2362,8 @@
                   },
                   {
                     "label": "Hard Hit %",
+                    "left": "41.9%",
+                    "leftPercentile": 44,
                     "leftMetricLabel": "Pitcher Hard Hit %",
                     "right": 39.1,
                     "rightMetricLabel": "Batter Hard Hit %",
@@ -2166,6 +2371,8 @@
                   },
                   {
                     "label": "xSLG %",
+                    "left": "0.375",
+                    "leftPercentile": 66,
                     "leftMetricLabel": "Pitcher xSLG %",
                     "right": 0.366,
                     "rightMetricLabel": "Batter xSLG %",
@@ -2219,19 +2426,24 @@
               },
               {
                 "title": "Advanced Stats vs Opponent Splits",
-                "leftHeader": "NYM TBD",
+                "leftHeader": "NYM Tobias Myers",
                 "rightHeader": "MIA Profile",
                 "rightTeamKey": "opp",
                 "rows": [
                   {
-                    "label": "Pitching Hand / vs Split"
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Right",
+                    "right": "vs Right-handed pitching"
                   },
                   {
                     "label": "Innings Pitched / Plate Appearances",
+                    "left": "29.0",
                     "right": "1170"
                   },
                   {
                     "label": "K%",
+                    "left": "20%",
+                    "leftPercentile": 48,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 21.6,
                     "rightMetricLabel": "Batter K%",
@@ -2239,6 +2451,8 @@
                   },
                   {
                     "label": "BB%",
+                    "left": "5.2%",
+                    "leftPercentile": 88,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 9,
                     "rightMetricLabel": "Batter BB%",
@@ -2283,22 +2497,22 @@
                 ]
               }
             ],
-            "summary": "Starting pitching grades as essentially even on the current board."
+            "summary": "Tobias Myers gives the Mets the cleaner underlying starting-pitcher case."
           },
           "bullpenReport": {
             "mets": {
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 19,
-                "appearancesPerPitcherPerDay": 0.21,
+                "appearances": 21,
+                "appearancesPerPitcherPerDay": 0.23,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.98,
                 "seasonWhip": 1.35,
-                "last20Era": 2.74
+                "last20Era": 2.88
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2308,23 +2522,23 @@
                 "saveConversionPct": 87.5,
                 "era": 4.32,
                 "whip": 1.44,
-                "last7DaysAppearances": 2,
-                "last7DaysInningsPitched": "2.0"
+                "last7DaysAppearances": 3,
+                "last7DaysInningsPitched": "3.0"
               }
             },
             "opp": {
               "teamName": "Miami Marlins",
               "teamId": 146,
               "usage": {
-                "appearances": 22,
-                "appearancesPerPitcherPerDay": 0.22,
+                "appearances": 20,
+                "appearancesPerPitcherPerDay": 0.2,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.41,
                 "seasonWhip": 1.2,
-                "last20Era": 3.43
+                "last20Era": 3.06
               },
               "closer": {
                 "name": "Tyler Phillips",
@@ -2426,35 +2640,42 @@
             }
           },
           "pitcherContactProfile": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Tobias Myers",
             "oppPitcher": "Eury Pérez",
             "pitcherRows": [
               {
                 "label": "xERA",
+                "mets": "3.02",
                 "opp": "5.06"
               },
               {
                 "label": "Barrel%",
+                "mets": "5.8%",
                 "opp": "14.3%"
               },
               {
                 "label": "Hard-Hit%",
+                "mets": "41.9%",
                 "opp": "42.9%"
               },
               {
                 "label": "Whiff%",
+                "mets": "19.8%",
                 "opp": "27.7%"
               },
               {
                 "label": "Chase%",
+                "mets": "27.4%",
                 "opp": "29.8%"
               },
               {
                 "label": "K%",
+                "mets": "20%",
                 "opp": "25.2%"
               },
               {
                 "label": "BB%",
+                "mets": "5.2%",
                 "opp": "12.2%"
               }
             ],
@@ -2501,11 +2722,12 @@
             ]
           },
           "pitcherSplitMatchup": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Tobias Myers",
             "oppPitcher": "Eury Pérez",
             "pitcherRows": [
               {
                 "label": "Pitcher Hand",
+                "mets": "R",
                 "opp": "R"
               },
               {
@@ -2534,7 +2756,8 @@
             "opponentRows": [
               {
                 "label": "Pitcher Hand",
-                "mets": "R"
+                "mets": "R",
+                "opp": "R"
               },
               {
                 "label": "Lineup WAR",
@@ -3225,14 +3448,15 @@
           },
           "analysis": {
             "whyMetsHaveACase": [
-              "Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production.",
-              "Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP."
+              "Tobias Myers: 3.41 ERA, 20%% K rate, 4.39 FIP, vs Eury Pérez: 5.33 ERA, 5.21 FIP.",
+              "Bullpen: Mets BP: 3.98 ERA, 3.78 xFIP, Opp BP: 3.41 ERA, 4.23 xFIP.",
+              "Regression: xwOBA 0.322 vs actual wOBA .295 — expected stats above actual production."
             ],
             "whereTheRiskIs": [
               "Overall lineup quality only: projected WAR 2.8 vs 5.1, projected lineup wRC+ 95.7 vs 109.3, xwOBA 0.322 vs 0.304.",
               "Road/context splits lean against Mets."
             ],
-            "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+            "bottomLine": "Model leans Mets. Primary edge: starting pitching."
           },
           "teamAdvanced": {
             "mets": {
@@ -3313,44 +3537,45 @@
               },
               "rankScope": "MLB",
               "rankTotal": 30,
+              "vsHand": "R",
               "usingSplit": false,
-              "fallbackNote": "season total"
+              "fallbackNote": "season total (no RHP split available)"
             }
           },
           "todayPick": {
-            "headline": "Mets Bullpen xERA 3.9 vs Pérez 5.06 xERA",
-            "summary": "Mets hold BA-xBA -0.017 and wOBA-xwOBA -0.024 regression signals against opponent starter overperformance of 1.50. Bullpen xFIP 3.78 versus 4.23 and last20OPS 0.693 provide additional quantified factors.",
+            "headline": "Myers 3.02 xERA Versus Pérez 5.06 xERA",
+            "summary": "Tobias Myers 3.02 xERA in 29 IP faces Eury Pérez 5.06 xERA over 52.1 IP. Mets bullpen season xERA sits at 3.9 against opponent 4.19.",
             "metsEdges": [
-              "Mets bullpen seasonXERA 3.9 versus 4.19",
-              "Regression signals Mets BA-xBA -0.017 and wOBA-xwOBA -0.024",
-              "Opponent starter overperformance signal 1.50"
+              "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA with K-BB% 14.8 to 13.0",
+              "Mets bullpen xFIP 3.78 versus 4.23 and last20ERA 2.88",
+              "Mets last20OPS 0.693 up 5.8 percent from season 0.655"
             ],
             "risks": [
               "Opponent projected lineup wRC+ 109.3 versus Mets 95.7",
-              "Mets road record 11-15"
+              "Mets road record 11-15 with homeAway differential -10"
             ],
-            "bettingAngle": "Mets bullpen seasonXERA 3.9 versus Marlins 4.19 creates 0.29-run expected edge. Mets last20OPS 0.693 improves 5.8 percent on season 0.655 while opponent OPS drops to 0.672. Numbers show Mets hold quantified edges in bullpen xERA and regression metrics.",
+            "bettingAngle": "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA creates a 2.04-run expected quality gap. Mets bullpen 3.9 xERA edges opponent 4.19 xERA while last20 OPS shows Mets at 0.693 versus 0.672. Numbers indicate a clear starting pitching advantage that supports the Mets side despite road venue.",
             "officialPick": "Mets ML",
-            "confidenceLabel": "Low",
-            "confidenceScore": 4
+            "confidenceLabel": "Standard",
+            "confidenceScore": 10
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Mets bullpen seasonXERA 3.9 versus Marlins 4.19 creates 0.29-run expected edge. Mets last20OPS 0.693 improves 5.8 percent on season 0.655 while opponent OPS drops to 0.672. Numbers show Mets hold quantified edges in bullpen xERA and regression metrics.",
-            "headline": "Mets Bullpen xERA 3.9 vs Pérez 5.06 xERA",
-            "summary": "Mets hold BA-xBA -0.017 and wOBA-xwOBA -0.024 regression signals against opponent starter overperformance of 1.50. Bullpen xFIP 3.78 versus 4.23 and last20OPS 0.693 provide additional quantified factors.",
+            "explanation": "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA creates a 2.04-run expected quality gap. Mets bullpen 3.9 xERA edges opponent 4.19 xERA while last20 OPS shows Mets at 0.693 versus 0.672. Numbers indicate a clear starting pitching advantage that supports the Mets side despite road venue.",
+            "headline": "Myers 3.02 xERA Versus Pérez 5.06 xERA",
+            "summary": "Tobias Myers 3.02 xERA in 29 IP faces Eury Pérez 5.06 xERA over 52.1 IP. Mets bullpen season xERA sits at 3.9 against opponent 4.19.",
             "metsEdges": [
-              "Mets bullpen seasonXERA 3.9 versus 4.19",
-              "Regression signals Mets BA-xBA -0.017 and wOBA-xwOBA -0.024",
-              "Opponent starter overperformance signal 1.50"
+              "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA with K-BB% 14.8 to 13.0",
+              "Mets bullpen xFIP 3.78 versus 4.23 and last20ERA 2.88",
+              "Mets last20OPS 0.693 up 5.8 percent from season 0.655"
             ],
             "risks": [
               "Opponent projected lineup wRC+ 109.3 versus Mets 95.7",
-              "Mets road record 11-15"
+              "Mets road record 11-15 with homeAway differential -10"
             ],
-            "bettingAngle": "Mets bullpen seasonXERA 3.9 versus Marlins 4.19 creates 0.29-run expected edge. Mets last20OPS 0.693 improves 5.8 percent on season 0.655 while opponent OPS drops to 0.672. Numbers show Mets hold quantified edges in bullpen xERA and regression metrics.",
-            "confidenceLabel": "Low",
-            "confidence": 4
+            "bettingAngle": "Tobias Myers 3.02 xERA versus Eury Pérez 5.06 xERA creates a 2.04-run expected quality gap. Mets bullpen 3.9 xERA edges opponent 4.19 xERA while last20 OPS shows Mets at 0.693 versus 0.672. Numbers indicate a clear starting pitching advantage that supports the Mets side despite road venue.",
+            "confidenceLabel": "Standard",
+            "confidence": 10
           },
           "meta": {
             "homeAwayLabel": "Away",
