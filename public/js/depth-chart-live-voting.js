@@ -107,13 +107,22 @@
     }).join("") || "NY";
   }
 
+  function wikimediaThumbUrl(url, width) {
+    var raw = String(url || "").trim();
+    var match = raw.match(/^https?:\/\/upload\.wikimedia\.org\/wikipedia\/commons\/(.+)\/([^\/?#]+)$/i);
+    if (!match || /\/thumb\//i.test(raw)) return raw;
+    var path = match[1];
+    var filename = match[2];
+    var targetWidth = Number.isFinite(Number(width)) ? Number(width) : 320;
+    return "https://upload.wikimedia.org/wikipedia/commons/thumb/" + path + "/" + filename + "/" + targetWidth + "px-" + filename;
+  }
+
   function headshotUrl(player) {
     if (player && player.imageUrl) {
-      // Convert Wikipedia Commons direct file URLs to Wikimedia thumbnail API (allows hotlinking)
+      // Convert direct Wikimedia Commons file URLs to stable thumbnail URLs.
       const url = player.imageUrl;
-      if (url.includes('wikipedia.org/wikipedia/commons/') && !url.includes('/thumb/')) {
-        // Already a direct commons URL — use as-is (the img onerror will fall back)
-        return url;
+      if (/upload\.wikimedia\.org\/wikipedia\/commons\//i.test(url)) {
+        return wikimediaThumbUrl(url, 320);
       }
       return url;
     }
