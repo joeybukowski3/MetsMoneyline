@@ -26,6 +26,24 @@ const {
 require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
 const TEAM_ID = 121;
+
+// Resolve a locally-hosted pitcher OG image if one exists in public/images/Xphotos/
+function pitcherOgImageUrl(pitcherName) {
+  if (!pitcherName) return null;
+  const slug = String(pitcherName)
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  const dir = path.join(__dirname, "..", "public", "images", "Xphotos");
+  for (const ext of [".jpg", ".jpeg", ".png", ".webp"]) {
+    if (fs.existsSync(path.join(dir, slug + ext))) {
+      return "https://www.metsmoneyline.com/images/Xphotos/" + slug + ext;
+    }
+  }
+  return null;
+}
 const TEAM_NAME = "New York Mets";
 const TIME_ZONE = "America/New_York";
 const DEFAULT_GROK_MODEL = process.env.GROK_MODEL || "grok-4.3";
@@ -7014,11 +7032,11 @@ function buildSiteReportHtml(game) {
     <meta property="og:url" content="https://www.metsmoneyline.com/report">
     <meta property="og:title" content="${seoTitle}">
     <meta property="og:description" content="${seoDescription}">
-    <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+    <meta property="og:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.mlbstatic.com/team-logos/121.svg'}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${seoTitle}">
     <meta name="twitter:description" content="${seoDescription}">
-    <meta name="twitter:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+    <meta name="twitter:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.mlbstatic.com/team-logos/121.svg'}">
     <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
     <script type="application/ld+json">
       {
