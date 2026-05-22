@@ -42,6 +42,11 @@ function pitcherOgImageUrl(pitcherName) {
       return "https://www.metsmoneyline.com/images/Xphotos/" + slug + ext;
     }
   }
+  // Fall back to default.jpg if it exists
+  const defaultPath = path.join(dir, "default.jpg");
+  if (fs.existsSync(defaultPath)) {
+    return "https://www.metsmoneyline.com/images/Xphotos/default.jpg";
+  }
   return null;
 }
 const TEAM_NAME = "New York Mets";
@@ -7032,11 +7037,11 @@ function buildSiteReportHtml(game) {
     <meta property="og:url" content="https://www.metsmoneyline.com/report">
     <meta property="og:title" content="${seoTitle}">
     <meta property="og:description" content="${seoDescription}">
-    <meta property="og:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.mlbstatic.com/team-logos/121.svg'}">
+    <meta property="og:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.metsmoneyline.com/images/Xphotos/default.jpg'}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${seoTitle}">
     <meta name="twitter:description" content="${seoDescription}">
-    <meta name="twitter:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.mlbstatic.com/team-logos/121.svg'}">
+    <meta name="twitter:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.metsmoneyline.com/images/Xphotos/default.jpg'}">
     <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
     <script type="application/ld+json">
       {
