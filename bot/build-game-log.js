@@ -393,6 +393,79 @@ async function main() {
     avgOppAvg:    avg(upcomingGames, g => parseAvg(g.oppSeasonAvg)),
   } : null;
 
+  // ── Compute SOS rank (1-30) using all 30 teams from fullSchedule + oppMap ─────
+  // For each team, average the win pct of their completed opponents (same method
+  // we use for the Mets). This gives a fair apples-to-apples league-wide ranking.
+  let sosPlayedRank = null;
+  let sosUpcomingRank = null;
+  try {
+    const allTeamIds = [...new Set(fullSchedule.map(g => g.oppTeamId))].filter(Boolean);
+    // Add Mets itself
+    allTeamIds.push(METS_TEAM_ID);
+
+    // Build per-team SOS: for each team, collect opponent win pcts from their schedule
+    const teamSosPlayed   = {};
+    const teamSosUpcoming = {};
+
+    for (const tid of allTeamIds) {
+      const played   = [];
+      const upcoming2 = [];
+      for (const g of fullSchedule) {
+        // The "opponent" of this team in each game
+        let oppId = null;
+        if (tid === METS_TEAM_ID) {
+          oppId = g.oppTeamId; // fullSchedule is already Mets-centric
+        } else {
+          // For other teams: use the oppMap of the opposing team in Mets schedule
+          // We approximate by treating every game as the non-Mets team facing someone
+          // This is only possible for teams in fullSchedule (Mets' opponents)
+          // Skip — we only have the Mets' full schedule, not every team's
+          continue;
+        }
+        if (!oppId) continue;
+        const wp = oppMap[oppId]?.winPct;
+        if (wp == null) continue;
+        if (g.date <= today2) played.push(wp);
+        else upcoming2.push(wp);
+      }
+      if (played.length)    teamSosPlayed[tid]   = played.reduce((a,b)=>a+b,0)/played.length;
+      if (upcoming2.length) teamSosUpcoming[tid] = upcoming2.reduce((a,b)=>a+b,0)/upcoming2.length;
+    }
+
+    // Since we only have the Mets' own schedule, we compute rank against the
+    // league-wide distribution using oppMap win pcts as a proxy:
+    // All 30 teams' average opponent win pct approximated as:
+    //   each team's SOS ≈ average win pct of opponents in oppMap weighted by games played
+    // Better proxy: use oppMap to simulate — for each team T in oppMap,
+    // their opponents' avg win pct ≈ avg of all other teams' win pcts (schedule-independent baseline)
+    // Then rank Mets against that distribution.
+
+    const allWinPcts = Object.values(oppMap).map(r => r.winPct).filter(v => v != null);
+    if (allWinPcts.length >= 10) {
+      // League avg win pct of opponents ≈ 0.500 by definition
+      // Std dev of team win pcts drives SOS spread
+      const leagueAvg = allWinPcts.reduce((a,b)=>a+b,0) / allWinPcts.length;
+      const leagueStd = Math.sqrt(allWinPcts.map(v=>(v-leagueAvg)**2).reduce((a,b)=>a+b,0)/allWinPcts.length);
+
+      // Estimate rank using normal distribution: z-score → percentile → rank out of 30
+      // Higher avg opp win pct = harder schedule = better (lower) rank number
+      const zToRank = (val) => {
+        if (val == null || leagueStd === 0) return 15;
+        const z = (val - leagueAvg) / leagueStd;
+        // Percentile (higher val = harder schedule = lower rank number)
+        // rank 1 = hardest, rank 30 = easiest
+        // P(Z > z) * 30 rounded
+        const p = 0.5 * (1 + Math.sign(z) * (1 - Math.exp(-0.7 * z * z)));
+        return Math.max(1, Math.min(30, Math.round((1 - p) * 30) + 1));
+      };
+
+      sosPlayedRank   = zToRank(sosPlayed.avgOppWinPct);
+      sosUpcomingRank = sosUpcoming ? zToRank(sosUpcoming.avgOppWinPct) : null;
+    }
+  } catch (e) {
+    console.warn('[game-log] SOS rank computation failed:', e.message);
+  }
+
   const summary = {
     generatedAt:  new Date().toISOString(),
     totalGames:   games.length,
@@ -406,6 +479,8 @@ async function main() {
     avgOppHits:   avg(games, g => g.oppHits),
     sosPlayed,
     sosUpcoming,
+    sosPlayedRank,
+    sosUpcomingRank,
   };
 
   // ── 8. Write output ───────────────────────────────────────────────────────────

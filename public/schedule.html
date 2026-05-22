@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>2026 Mets Schedule & Strength of Schedule | MetsMoneyline</title>
-  <meta name="description" content="Full 2026 New York Mets schedule with results, opponent records, ERA, and batting average. Includes strength-of-schedule comparison for games played vs remaining.">
-  <meta name="keywords" content="Mets schedule 2026, Mets strength of schedule, Mets remaining schedule, Mets opponent stats">
+  <meta name="description" content="Full 2026 New York Mets schedule with results, opponent records, ERA, and batting average. Includes strength-of-schedule ranking and comparison for games played vs remaining.">
+  <meta name="keywords" content="Mets schedule 2026, Mets strength of schedule, Mets remaining schedule, Mets SOS rank">
   <link rel="canonical" href="https://www.metsmoneyline.com/schedule">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://www.metsmoneyline.com/schedule">
   <meta property="og:title" content="2026 Mets Schedule & Strength of Schedule | MetsMoneyline">
-  <meta property="og:description" content="Full 2026 Mets schedule with opponent records, ERA, and batting average — past and future.">
+  <meta property="og:description" content="Full 2026 Mets schedule with SOS ranking, opponent records, ERA, and batting average.">
   <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,20 +26,13 @@
     gtag("config", "G-VV13077MN0");
   </script>
   <style>
-    :root {
-      --sch-navy: #002d72;
-      --sch-orange: #ff5910;
-      --sch-border: #d9e1ee;
-      --sch-bg: #f4f7fb;
-    }
-
     .sch-shell { max-width: 1100px; margin: 0 auto; padding: 0 1rem 3rem; }
 
     /* ── HERO ── */
     .sch-hero {
       background: linear-gradient(135deg, #002d72 0%, #003fa8 100%);
       border-radius: 14px;
-      padding: 1.5rem 1.5rem 1.3rem;
+      padding: 1.4rem 1.5rem 1.3rem;
       margin: 1rem 0 1.1rem;
       color: #fff;
       position: relative;
@@ -48,22 +41,22 @@
     .sch-hero::before {
       content: "";
       position: absolute;
-      top: -40px; right: -40px;
-      width: 180px; height: 180px;
-      background: rgba(255,89,16,0.08);
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: rgba(255,89,16,0.07);
       border-radius: 50%;
       pointer-events: none;
     }
-    .sch-hero-top {
+    .hero-top {
       display: flex;
       align-items: center;
       gap: 0.75rem;
       margin-bottom: 1.1rem;
       flex-wrap: wrap;
     }
-    .sch-hero-top h1 {
+    .hero-top h1 {
       font-family: "Oswald", sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -71,96 +64,175 @@
       color: #fff;
     }
     .hero-record {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 800;
-      background: var(--sch-orange);
+      background: #ff5910;
       color: #fff;
-      padding: 0.22rem 0.7rem;
+      padding: 0.2rem 0.65rem;
       border-radius: 6px;
     }
-    .hero-meta {
-      font-size: 0.65rem;
-      color: rgba(255,255,255,0.5);
-      margin-left: auto;
-    }
+    .hero-meta { font-size: 0.62rem; color: rgba(255,255,255,0.4); margin-left: auto; }
 
-    /* SOS comparison grid inside hero */
-    .sos-grid {
+    /* SOS comparison: played | divider | upcoming */
+    .sos-compare {
       display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 0;
-      align-items: center;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 0 1.25rem;
+      align-items: start;
     }
-    .sos-panel { }
+    .sos-divider-v {
+      background: rgba(255,255,255,0.12);
+      height: 100%;
+      min-height: 70px;
+    }
     .sos-panel-title {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.65rem;
     }
-    .sos-panel.played .sos-panel-title { color: rgba(255,255,255,0.55); }
-    .sos-panel.upcoming .sos-panel-title { color: rgba(255,89,16,0.85); }
+    .sos-panel.played .sos-panel-title  { color: rgba(255,255,255,0.5); }
+    .sos-panel.upcoming .sos-panel-title { color: rgba(255,89,16,0.9); }
+
+    /* Rank badge */
+    .sos-rank-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.65rem;
+    }
+    .sos-rank-badge {
+      font-family: "Oswald", sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #fff;
+    }
+    .sos-rank-label {
+      font-size: 0.58rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.3;
+    }
+    .sos-rank-badge.rank-easy   { color: #4ade80; }
+    .sos-rank-badge.rank-mid    { color: #fbbf24; }
+    .sos-rank-badge.rank-hard   { color: #f87171; }
+
+    /* Stat row */
     .sos-stats {
       display: flex;
-      gap: 1.2rem;
+      gap: 1rem;
       flex-wrap: wrap;
     }
-    .sos-stat { }
     .sos-stat-val {
       font-family: "Oswald", sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.15rem;
       font-weight: 700;
       line-height: 1;
       color: #fff;
     }
     .sos-stat-lbl {
-      font-size: 0.56rem;
+      font-size: 0.53rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: rgba(255,255,255,0.45);
-      margin-top: 0.12rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 0.1rem;
     }
-    .sos-divider {
-      width: 1px;
-      height: 60px;
-      background: rgba(255,255,255,0.12);
-      margin: 0 1.25rem;
-    }
-    /* comparison deltas */
     .sos-delta {
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       font-weight: 700;
-      margin-left: 3px;
+      margin-left: 2px;
       vertical-align: middle;
     }
     .sos-delta.harder { color: #f87171; }
     .sos-delta.easier { color: #4ade80; }
-    .sos-delta.same   { color: rgba(255,255,255,0.4); }
 
-    /* ── Column headers ── */
-    .sch-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; align-items: start; }
+    /* ── MOBILE TABS ── */
+    .sch-tabs {
+      display: none; /* hidden on desktop */
+      gap: 0;
+      margin-bottom: 0;
+      border-radius: 8px 8px 0 0;
+      overflow: hidden;
+      border: 1px solid #d9e1ee;
+      border-bottom: none;
+    }
+    .sch-tab {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      text-align: center;
+      cursor: pointer;
+      background: #f0f4f9;
+      color: #64748b;
+      border: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sch-tab.active.played   { background: #002d72; color: #fff; }
+    .sch-tab.active.upcoming { background: #ff5910; color: #fff; }
+
+    /* ── TABLE LAYOUT ── */
+    .sch-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      align-items: start;
+    }
+    .sch-col { }
     .sch-col-head {
       display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.45rem 0.75rem;
+      padding: 0.42rem 0.7rem;
       border-radius: 8px 8px 0 0;
-      font-size: 0.65rem; font-weight: 800;
+      font-size: 0.62rem; font-weight: 800;
       text-transform: uppercase; letter-spacing: 0.07em;
     }
-    .sch-col-head.played   { background: var(--sch-navy); color: #fff; }
-    .sch-col-head.upcoming { background: var(--sch-orange); color: #fff; }
-    .col-count { margin-left: auto; background: rgba(255,255,255,0.2); border-radius: 4px; padding: 0.08rem 0.4rem; font-size: 0.58rem; }
+    .sch-col-head.played   { background: #002d72; color: #fff; }
+    .sch-col-head.upcoming { background: #ff5910; color: #fff; }
+    .col-count {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 0.07rem 0.38rem;
+      font-size: 0.57rem;
+    }
 
-    /* ── Table ── */
-    .sch-table-wrap { border: 1px solid var(--sch-border); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; background: #fff; }
-    .sch-table { width: 100%; border-collapse: collapse; font-size: 0.7rem; }
+    .sch-table-wrap {
+      border: 1px solid #d9e1ee;
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+      background: #fff;
+      /* Fixed height with scroll so both columns stay same height */
+      max-height: 520px;
+      overflow-y: auto;
+    }
+    .sch-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.69rem;
+    }
+    .sch-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
     .sch-table thead th {
-      padding: 0.35rem 0.55rem;
-      background: #f0f4f9; color: #64748b;
-      font-size: 0.57rem; font-weight: 800;
-      text-transform: uppercase; letter-spacing: 0.05em;
-      text-align: left; border-bottom: 1px solid var(--sch-border);
+      padding: 0.32rem 0.5rem;
+      background: #f0f4f9;
+      color: #64748b;
+      font-size: 0.56rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      border-bottom: 1px solid #d9e1ee;
       white-space: nowrap;
     }
     .sch-table thead th.c { text-align: center; }
@@ -169,87 +241,94 @@
       cursor: pointer;
       transition: background 0.1s;
     }
-    .sch-table tbody tr.game-row:hover { background: #f8fafd; }
+    .sch-table tbody tr.game-row:hover  { background: #f8fafd; }
     .sch-table tbody tr.series-end { border-bottom: 2px solid #d9e1ee; }
     .sch-table tbody tr.today-row  { background: rgba(255,89,16,0.04); }
-    .sch-table td { padding: 0.35rem 0.55rem; color: #1e293b; vertical-align: middle; white-space: nowrap; }
+    .sch-table td {
+      padding: 0.32rem 0.5rem;
+      color: #1e293b;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
     .sch-table td.c { text-align: center; }
 
-    /* Expand chevron */
-    .sch-chevron { font-size: 0.6rem; color: #94a3b8; transition: transform 0.18s; display: inline-block; margin-left: 2px; }
-    .game-row.open .sch-chevron { transform: rotate(90deg); }
+    /* Chevron */
+    .sch-chev { font-size: 0.55rem; color: #94a3b8; transition: transform 0.18s; display: inline-block; margin-left: 2px; }
+    .game-row.open .sch-chev { transform: rotate(90deg); }
 
     /* Result badge */
     .res-badge {
       display: inline-block;
-      width: 1.25rem; height: 1.25rem; line-height: 1.25rem;
-      text-align: center; border-radius: 4px;
-      font-size: 0.63rem; font-weight: 900;
+      width: 1.2rem; height: 1.2rem; line-height: 1.2rem;
+      text-align: center; border-radius: 3px;
+      font-size: 0.6rem; font-weight: 900;
     }
     .res-badge.W { background: rgba(21,128,61,0.12); color: #15803d; }
     .res-badge.L { background: rgba(185,28,28,0.1);  color: #b91c1c; }
 
-    /* H/A */
-    .ha-badge { font-size: 0.57rem; font-weight: 700; color: #94a3b8; }
-    .ha-badge.home { color: var(--sch-navy); }
+    .ha-badge     { font-size: 0.56rem; font-weight: 700; color: #94a3b8; }
+    .ha-badge.home{ color: #002d72; }
+    .opp-cell     { font-weight: 700; color: #002d72; }
+    .opp-logo     { width: 13px; height: 13px; vertical-align: middle; margin-right: 3px; object-fit: contain; }
+    .rec-cell     { font-size: 0.62rem; font-weight: 700; color: #475569; }
+    .today-badge  { font-size: 0.52rem; font-weight: 800; color: #ff5910; background: rgba(255,89,16,0.1); border-radius: 3px; padding: 0.05rem 0.25rem; margin-left: 3px; }
 
-    /* Opp cell */
-    .opp-cell { font-weight: 700; color: var(--sch-navy); }
-    .opp-logo { width: 14px; height: 14px; vertical-align: middle; margin-right: 3px; object-fit: contain; }
-
-    /* Record */
-    .rec-cell { font-size: 0.63rem; font-weight: 700; color: #475569; }
-
-    /* Today badge */
-    .today-badge { font-size: 0.55rem; font-weight: 800; color: var(--sch-orange); background: rgba(255,89,16,0.1); border-radius: 3px; padding: 0.06rem 0.28rem; margin-left: 3px; }
-
-    /* ── Inline detail drawer ── */
+    /* ── Detail drawer ── */
     .detail-row { display: none; }
     .detail-row.open { display: table-row; }
     .detail-cell {
-      padding: 0 0.55rem 0.55rem !important;
+      padding: 0 0.5rem 0.5rem !important;
       background: #f8fafd;
       border-bottom: 2px solid #e2e8f0;
     }
     .detail-inner {
       display: flex;
-      gap: 1.2rem;
+      gap: 1rem;
       flex-wrap: wrap;
-      padding: 0.5rem 0.6rem;
+      padding: 0.45rem 0.6rem;
       background: #fff;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      border-radius: 7px;
     }
-    .detail-stat { text-align: center; min-width: 40px; }
-    .detail-stat-val {
-      font-size: 0.82rem;
-      font-weight: 800;
-      line-height: 1.1;
-      color: var(--sch-navy);
-    }
-    .detail-stat-val.era-good  { color: #15803d; }
-    .detail-stat-val.era-mid   { color: #b45309; }
-    .detail-stat-val.era-bad   { color: #b91c1c; }
-    .detail-stat-val.wpct-high { color: #15803d; }
-    .detail-stat-val.wpct-mid  { color: #b45309; }
-    .detail-stat-val.wpct-low  { color: #b91c1c; }
-    .detail-stat-lbl { font-size: 0.52rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-top: 0.1rem; }
-    .detail-divider { width: 1px; background: #e2e8f0; align-self: stretch; }
+    .d-stat { text-align: center; min-width: 38px; }
+    .d-val  { font-size: 0.8rem; font-weight: 800; line-height: 1.1; color: #002d72; }
+    .d-val.era-good  { color: #15803d; }
+    .d-val.era-mid   { color: #b45309; }
+    .d-val.era-bad   { color: #b91c1c; }
+    .d-val.wp-high   { color: #15803d; }
+    .d-val.wp-mid    { color: #b45309; }
+    .d-val.wp-low    { color: #b91c1c; }
+    .d-val.win-score { color: #15803d; }
+    .d-val.loss-score{ color: #b91c1c; }
+    .d-lbl  { font-size: 0.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-top: 0.08rem; }
+    .d-div  { width: 1px; background: #e2e8f0; align-self: stretch; }
 
-    /* Loading / error */
-    .sch-loading { padding: 2rem; text-align: center; color: #94a3b8; font-size: 0.82rem; }
-    .sch-error   { padding: 1rem; text-align: center; color: #b91c1c; font-size: 0.78rem; background: rgba(185,28,28,0.05); border-radius: 8px; }
+    .sch-loading { padding: 2rem; text-align: center; color: #94a3b8; font-size: 0.8rem; }
+    .sch-error   { padding: 1rem; text-align: center; color: #b91c1c; font-size: 0.76rem; background: rgba(185,28,28,0.05); border-radius: 8px; }
 
-    /* ── Mobile ── */
+    /* ── MOBILE (≤650px): tabs replace side-by-side ── */
     @media (max-width: 650px) {
-      .sch-cols    { grid-template-columns: 1fr; }
-      .sos-grid    { grid-template-columns: 1fr; gap: 1rem; }
-      .sos-divider { display: none; }
-      .sch-hero    { padding: 1.1rem; }
-      .sos-stats   { gap: 0.85rem; }
-      .sos-stat-val { font-size: 1.2rem; }
-      .sch-table   { font-size: 0.65rem; }
-      .sch-table td, .sch-table thead th { padding: 0.3rem 0.35rem; }
+      .sch-hero    { padding: 1rem 1rem 1rem; }
+      .sos-compare { grid-template-columns: 1fr; gap: 0.85rem 0; }
+      .sos-divider-v { display: none; }
+
+      .sch-tabs { display: flex; }
+      .sch-cols { grid-template-columns: 1fr; gap: 0; }
+
+      /* On mobile hide the col-head (tabs replace it) and connect to tab bar */
+      .sch-col-head { border-radius: 0; }
+      .sch-col      { display: none; }
+      .sch-col.tab-active { display: block; }
+
+      /* Remove top border-radius on table wrap when below tabs */
+      .sch-col.tab-active .sch-col-head { border-radius: 0; }
+      .sch-col.tab-active .sch-table-wrap { border-radius: 0 0 10px 10px; max-height: 60vh; }
+
+      .sch-table { font-size: 0.63rem; }
+      .sch-table td, .sch-table thead th { padding: 0.28rem 0.35rem; }
+      .hero-top h1 { font-size: 1.2rem; }
+      .sos-stat-val { font-size: 1rem; }
+      .sos-rank-badge { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -260,27 +339,35 @@
 
     <!-- HERO -->
     <div class="sch-hero" id="sch-hero" style="display:none">
-      <div class="sch-hero-top">
+      <div class="hero-top">
         <h1>2026 Mets Schedule</h1>
         <span class="hero-record" id="hero-record">—</span>
         <span class="hero-meta" id="hero-meta"></span>
       </div>
-      <div class="sos-grid">
-        <div class="sos-panel played">
+      <div class="sos-compare">
+        <div class="sos-panel played" id="sos-played-panel">
           <div class="sos-panel-title">⚔ Opponents Faced</div>
-          <div class="sos-stats" id="sos-played"></div>
+          <div class="sos-rank-row" id="sos-played-rank"></div>
+          <div class="sos-stats"   id="sos-played-stats"></div>
         </div>
-        <div class="sos-divider"></div>
-        <div class="sos-panel upcoming">
+        <div class="sos-divider-v"></div>
+        <div class="sos-panel upcoming" id="sos-upcoming-panel">
           <div class="sos-panel-title">📅 Opponents Remaining</div>
-          <div class="sos-stats" id="sos-upcoming"></div>
+          <div class="sos-rank-row" id="sos-upcoming-rank"></div>
+          <div class="sos-stats"   id="sos-upcoming-stats"></div>
         </div>
       </div>
     </div>
 
+    <!-- Mobile tabs -->
+    <div class="sch-tabs" id="sch-tabs">
+      <button class="sch-tab played active"   onclick="switchTab('played')">✓ Played</button>
+      <button class="sch-tab upcoming"         onclick="switchTab('upcoming')">📅 Upcoming</button>
+    </div>
+
     <!-- Tables -->
-    <div class="sch-cols">
-      <div>
+    <div class="sch-cols" id="sch-cols">
+      <div class="sch-col tab-active" id="col-played">
         <div class="sch-col-head played">
           ✓ Games Played <span class="col-count" id="played-count">—</span>
         </div>
@@ -288,7 +375,7 @@
           <div class="sch-loading">Loading…</div>
         </div>
       </div>
-      <div>
+      <div class="sch-col" id="col-upcoming">
         <div class="sch-col-head upcoming">
           📅 Upcoming <span class="col-count" id="upcoming-count">—</span>
         </div>
@@ -303,144 +390,149 @@
   <div id="site-footer-root"></div>
   <script src="/js/site-header.js"></script>
   <script>
+  /* ── Tab switching (mobile) ── */
+  function switchTab(which) {
+    const tabs = document.querySelectorAll(".sch-tab");
+    const cols = { played: document.getElementById("col-played"), upcoming: document.getElementById("col-upcoming") };
+    tabs.forEach(t => t.classList.remove("active"));
+    document.querySelector(`.sch-tab.${which}`).classList.add("active");
+    Object.entries(cols).forEach(([k, el]) => el.classList.toggle("tab-active", k === which));
+  }
+
+  /* ── Toggle detail drawer ── */
+  function toggleDetail(id) {
+    const row    = document.querySelector(`[data-id="${id}"]`);
+    const detail = document.getElementById(`${id}-d`);
+    if (!detail) return;
+    const open = detail.classList.toggle("open");
+    row.classList.toggle("open", open);
+  }
+
   (async () => {
-    const logo = id => `<img src="https://www.mlbstatic.com/team-logos/${id}.svg" class="opp-logo" alt="" onerror="this.style.display='none'">`;
-
-    const fmtDate = d => new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
-
-    const fmtEra  = e => { const n = parseFloat(e); return isNaN(n) ? "—" : n.toFixed(2); };
-    const fmtAvg  = a => { if (!a) return "—"; const n = parseFloat(String(a).replace(/^\./, "0.")); return isNaN(n) ? "—" : "." + Math.round(n*1000).toString().padStart(3,"0"); };
-    const fmtWpct = p => p == null ? "—" : Math.round(p * 100) + "%";
-
+    const logo    = id => `<img src="https://www.mlbstatic.com/team-logos/${id}.svg" class="opp-logo" alt="" onerror="this.style.display='none'">`;
+    const fmtDate = d  => new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
+    const fmtEra  = e  => { const n = parseFloat(e); return isNaN(n) ? "—" : n.toFixed(2); };
+    const fmtAvg  = a  => { if (!a) return "—"; const n = parseFloat(String(a).replace(/^\./, "0.")); return isNaN(n) ? "—" : "." + Math.round(n*1000).toString().padStart(3,"0"); };
+    const fmtWpct = p  => p == null ? "—" : Math.round(p * 100) + "%";
     const eraClass  = e => { const n = parseFloat(e); if (isNaN(n)) return ""; return n < 3.5 ? "era-good" : n < 4.5 ? "era-mid" : "era-bad"; };
-    const wpctClass = p => p == null ? "" : p >= 0.55 ? "wpct-high" : p >= 0.45 ? "wpct-mid" : "wpct-low";
+    const wpClass   = p => p == null ? "" : p >= 0.55 ? "wp-high" : p >= 0.45 ? "wp-mid" : "wp-low";
+    const rankClass = r => r == null ? "" : r <= 10 ? "rank-hard" : r <= 20 ? "rank-mid" : "rank-easy";
+    const rankLabel = r => r == null ? "" : r <= 10 ? "Tough schedule" : r <= 20 ? "Mid-range schedule" : "Soft schedule";
+    const suffix    = n => n == null ? "—" : n + (n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th");
 
-    // Detail drawer HTML (compact, inline)
-    function detailDrawer(g, isPlayed, colspan) {
+    function detailHtml(g, isPlayed, colspan) {
       const parts = [];
       if (isPlayed && g.finalScore) {
-        const cls = g.result === "W" ? "era-good" : "era-bad";
-        parts.push(`<div class="detail-stat"><div class="detail-stat-val ${cls}">${g.finalScore}</div><div class="detail-stat-lbl">Score</div></div>`);
-        parts.push(`<div class="detail-divider"></div>`);
+        parts.push(`<div class="d-stat"><div class="d-val ${g.result==="W"?"win-score":"loss-score"}">${g.finalScore}</div><div class="d-lbl">Score</div></div><div class="d-div"></div>`);
       }
-      if (g.oppWinPct != null) parts.push(`<div class="detail-stat"><div class="detail-stat-val ${wpctClass(g.oppWinPct)}">${fmtWpct(g.oppWinPct)}</div><div class="detail-stat-lbl">Opp W%</div></div>`);
-      if (g.oppSeasonEra)       parts.push(`<div class="detail-stat"><div class="detail-stat-val ${eraClass(g.oppSeasonEra)}">${fmtEra(g.oppSeasonEra)}</div><div class="detail-stat-lbl">Opp ERA</div></div>`);
-      if (g.oppSeasonAvg)       parts.push(`<div class="detail-stat"><div class="detail-stat-val">${fmtAvg(g.oppSeasonAvg)}</div><div class="detail-stat-lbl">Opp AVG</div></div>`);
-      if (!isPlayed && g.seriesGameNum) parts.push(`<div class="detail-stat"><div class="detail-stat-val" style="color:#64748b">G${g.seriesGameNum}/${g.seriesLength||"?"}</div><div class="detail-stat-lbl">Series</div></div>`);
+      if (g.oppWinPct != null) parts.push(`<div class="d-stat"><div class="d-val ${wpClass(g.oppWinPct)}">${fmtWpct(g.oppWinPct)}</div><div class="d-lbl">Opp W%</div></div>`);
+      if (g.oppSeasonEra)       parts.push(`<div class="d-stat"><div class="d-val ${eraClass(g.oppSeasonEra)}">${fmtEra(g.oppSeasonEra)}</div><div class="d-lbl">Opp ERA</div></div>`);
+      if (g.oppSeasonAvg)       parts.push(`<div class="d-stat"><div class="d-val">${fmtAvg(g.oppSeasonAvg)}</div><div class="d-lbl">Opp AVG</div></div>`);
+      if (!isPlayed && g.seriesGameNum) parts.push(`<div class="d-stat"><div class="d-val" style="color:#64748b">G${g.seriesGameNum}/${g.seriesLength||"?"}</div><div class="d-lbl">Series</div></div>`);
       if (!parts.length) return "";
-      return `<tr class="detail-row"><td class="detail-cell" colspan="${colspan}"><div class="detail-inner">${parts.join("")}</div></td></tr>`;
+      return `<tr class="detail-row" id="ROWID-d"><td class="detail-cell" colspan="${colspan}"><div class="detail-inner">${parts.join("")}</div></td></tr>`;
     }
 
     function buildTable(rows, isPlayed) {
-      const cols = isPlayed
-        ? `<th>Date</th><th>H·A</th><th>Opponent</th><th class="c">Rec</th><th class="c">Result</th>`
-        : `<th>Date</th><th>H·A</th><th>Opponent</th><th class="c">Opp Rec</th>`;
+      const hdr = isPlayed
+        ? `<th>Date</th><th>H·A</th><th>Opponent</th><th class="c">Mets Rec</th><th class="c">Result</th>`
+        : `<th>Date</th><th>H·A</th><th>Opponent</th><th class="c">Opp Record</th>`;
       const colspan = isPlayed ? 5 : 4;
       const tbody = rows.map((g, i) => {
-        const id = `gr-${isPlayed ? "p" : "u"}-${i}`;
+        const id  = `gr-${isPlayed ? "p" : "u"}-${i}`;
         const ha  = g.homeAway === "home";
-        const serCls  = g.isSeriesLast ? " series-end" : "";
-        const todayCls = g._isToday ? " today-row" : "";
-        const todayBadge = g._isToday ? `<span class="today-badge">TODAY</span>` : "";
+        const serCls   = g.isSeriesLast ? " series-end" : "";
+        const todayCls = g._today ? " today-row" : "";
+        const todayBadge = g._today ? `<span class="today-badge">TODAY</span>` : "";
         const haHtml  = `<span class="ha-badge ${ha ? "home" : ""}">${ha ? "H" : "A"}</span>`;
         const oppHtml = `<span class="opp-cell">${logo(g.oppTeamId)}${g.opponent || g.oppAbbr || "—"}</span>`;
-        const chevron = `<span class="sch-chevron">▶</span>`;
-
+        const chev    = `<span class="sch-chev">▶</span>`;
         let mainCells;
         if (isPlayed) {
           const res = g.result || "";
-          const recHtml = `<span class="rec-cell">${g.metsRecord || "—"}</span>`;
-          const resBadge = res ? `<span class="res-badge ${res}">${res}</span>` : "—";
-          mainCells = `<td>${fmtDate(g.date)}${todayBadge}</td><td>${haHtml}</td><td>${oppHtml}${chevron}</td><td class="c">${recHtml}</td><td class="c">${resBadge}</td>`;
+          mainCells = `<td>${fmtDate(g.date)}${todayBadge}</td><td>${haHtml}</td><td>${oppHtml}${chev}</td><td class="c"><span class="rec-cell">${g.metsRecord||"—"}</span></td><td class="c"><span class="res-badge ${res}">${res||"—"}</span></td>`;
         } else {
-          const oppRec = `<span class="rec-cell">${g.oppRecord || "—"}</span>`;
-          mainCells = `<td>${fmtDate(g.date)}${todayBadge}</td><td>${haHtml}</td><td>${oppHtml}${chevron}</td><td class="c">${oppRec}</td>`;
+          mainCells = `<td>${fmtDate(g.date)}${todayBadge}</td><td>${haHtml}</td><td>${oppHtml}${chev}</td><td class="c"><span class="rec-cell">${g.oppRecord||"—"}</span></td>`;
         }
-
-        const drawer = detailDrawer(g, isPlayed, colspan);
-        return `<tr class="game-row${serCls}${todayCls}" data-id="${id}" onclick="toggleDetail('${id}')">${mainCells}</tr>${drawer ? drawer.replace('class="detail-row"', `class="detail-row" id="${id}-detail"`) : ""}`;
+        const drawer = detailHtml(g, isPlayed, colspan).replace(/ROWID/g, id);
+        return `<tr class="game-row${serCls}${todayCls}" data-id="${id}" onclick="toggleDetail('${id}')">${mainCells}</tr>${drawer}`;
       }).join("");
-
-      return `<table class="sch-table"><thead><tr>${cols}</tr></thead><tbody>${tbody || `<tr><td colspan="${colspan}" class="sch-loading">No games found</td></tr>`}</tbody></table>`;
+      return `<table class="sch-table"><thead><tr>${hdr}</tr></thead><tbody>${tbody || `<tr><td colspan="${colspan}" class="sch-loading">No games found</td></tr>`}</tbody></table>`;
     }
 
-    // SOS stat block
     function sosStat(val, lbl, delta) {
-      const deltaHtml = delta
-        ? `<span class="sos-delta ${delta.cls}" title="${delta.title}">${delta.arrow}${delta.val}</span>`
-        : "";
-      return `<div class="sos-stat"><div class="sos-stat-val">${val}${deltaHtml}</div><div class="sos-stat-lbl">${lbl}</div></div>`;
+      const d = delta ? `<span class="sos-delta ${delta.cls}">${delta.arrow}${delta.val}</span>` : "";
+      return `<div><div class="sos-stat-val">${val}${d}</div><div class="sos-stat-lbl">${lbl}</div></div>`;
+    }
+
+    function delta(a, b, higherIsHarder) {
+      if (a == null || b == null) return null;
+      const diff = b - a;
+      if (Math.abs(diff) < 0.005) return null;
+      const harder = higherIsHarder ? diff > 0 : diff < 0;
+      return { cls: harder ? "harder" : "easier", arrow: diff > 0 ? "▲" : "▼", val: Math.abs(diff).toFixed(2) };
     }
 
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
     try {
-      const data    = await fetch("/data/game-log.json").then(r => { if (!r.ok) throw new Error("Load failed"); return r.json(); });
-      const summary = data.summary || {};
-      const sos     = summary.sosPlayed || {};
-      const sosU    = summary.sosUpcoming || {};
-      const games   = (data.games || []).map(g => ({ ...g, _isToday: g.date === today })).reverse();
-      const upcoming = (data.upcomingGames || []).filter(g => g.date >= today).map(g => ({ ...g, _isToday: g.date === today }));
+      const data     = await fetch("/data/game-log.json").then(r => { if (!r.ok) throw new Error("Load failed"); return r.json(); });
+      const summary  = data.summary || {};
+      const sos      = summary.sosPlayed   || {};
+      const sosU     = summary.sosUpcoming || {};
+      const games    = (data.games         || []).map(g => ({ ...g, _today: g.date === today })).reverse();
+      const upcoming = (data.upcomingGames || []).filter(g => g.date >= today).map(g => ({ ...g, _today: g.date === today }));
 
-      // Hero
+      /* Hero */
       document.getElementById("sch-hero").style.display = "";
       document.getElementById("hero-record").textContent = summary.record || "—";
       const gen = data.generatedAt ? new Date(data.generatedAt).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
       document.getElementById("hero-meta").textContent = gen ? `Updated ${gen} ET` : "";
 
-      // Delta helper: compare played vs upcoming
-      function delta(playedVal, upcomingVal, higherIsHarder) {
-        if (playedVal == null || upcomingVal == null) return null;
-        const diff = upcomingVal - playedVal;
-        if (Math.abs(diff) < 0.01) return { cls: "same", arrow: "", val: "~", title: "Similar" };
-        const harder = higherIsHarder ? diff > 0 : diff < 0;
-        return {
-          cls: harder ? "harder" : "easier",
-          arrow: diff > 0 ? "▲" : "▼",
-          val: Math.abs(diff).toFixed(2),
-          title: harder ? "Harder remaining" : "Easier remaining"
-        };
-      }
+      const rPlayed   = summary.sosPlayedRank;
+      const rUpcoming = summary.sosUpcomingRank;
 
-      // SOS panels
-      const wpctPlayed   = sos.avgOppWinPct;
-      const wpctUpcoming = sosU.avgOppWinPct;
-      const eraPlayed    = sos.avgOppEra;
-      const eraUpcoming  = sosU.avgOppEra;
-      const avgPlayed    = sos.avgOppAvg ? parseFloat(String(sos.avgOppAvg).replace(/^\./, "0.")) : null;
-      const avgUpcoming  = sosU.avgOppAvg ? parseFloat(String(sosU.avgOppAvg).replace(/^\./, "0.")) : null;
+      /* Played rank block */
+      document.getElementById("sos-played-rank").innerHTML =
+        `<div class="sos-rank-badge ${rankClass(rPlayed)}">${suffix(rPlayed)}</div>
+         <div class="sos-rank-label">of 30<br>${rankLabel(rPlayed)}</div>`;
 
-      document.getElementById("sos-played").innerHTML =
-        sosStat(fmtWpct(wpctPlayed),  "Avg Opp W%") +
-        sosStat(fmtEra(eraPlayed),    "Avg Opp ERA") +
-        sosStat(fmtAvg(sos.avgOppAvg),"Avg Opp AVG");
+      /* Upcoming rank block */
+      document.getElementById("sos-upcoming-rank").innerHTML =
+        `<div class="sos-rank-badge ${rankClass(rUpcoming)}">${suffix(rUpcoming)}</div>
+         <div class="sos-rank-label">of 30<br>${rankLabel(rUpcoming)}</div>`;
 
-      document.getElementById("sos-upcoming").innerHTML =
-        sosStat(fmtWpct(wpctUpcoming),  "Avg Opp W%",  delta(wpctPlayed, wpctUpcoming, true)) +
-        sosStat(fmtEra(eraUpcoming),    "Avg Opp ERA",  delta(eraPlayed, eraUpcoming, false)) +
-        sosStat(fmtAvg(sosU.avgOppAvg), "Avg Opp AVG", delta(avgPlayed, avgUpcoming, true));
+      /* Played stats */
+      const eraP = sos.avgOppEra;
+      const eraU = sosU.avgOppEra;
+      const avgP = sos.avgOppAvg ? parseFloat(String(sos.avgOppAvg).replace(/^\./, "0.")) : null;
+      const avgU = sosU.avgOppAvg ? parseFloat(String(sosU.avgOppAvg).replace(/^\./, "0.")) : null;
 
-      // Tables
+      document.getElementById("sos-played-stats").innerHTML =
+        sosStat(fmtWpct(sos.avgOppWinPct), "Avg Opp W%") +
+        sosStat(fmtEra(eraP),              "Avg Opp ERA") +
+        sosStat(fmtAvg(sos.avgOppAvg),     "Avg Opp AVG");
+
+      document.getElementById("sos-upcoming-stats").innerHTML =
+        sosStat(fmtWpct(sosU.avgOppWinPct), "Avg Opp W%",  delta(sos.avgOppWinPct, sosU.avgOppWinPct, true)) +
+        sosStat(fmtEra(eraU),               "Avg Opp ERA",  delta(eraP, eraU, false)) +
+        sosStat(fmtAvg(sosU.avgOppAvg),     "Avg Opp AVG", delta(avgP, avgU, true));
+
+      /* Tables */
       document.getElementById("played-count").textContent   = games.length;
       document.getElementById("upcoming-count").textContent = upcoming.length;
       document.getElementById("played-wrap").innerHTML   = buildTable(games,    true);
       document.getElementById("upcoming-wrap").innerHTML = buildTable(upcoming, false);
 
+      /* On mobile default to upcoming tab if today's game is upcoming */
+      if (window.innerWidth <= 650 && upcoming.length > 0) switchTab("upcoming");
+
     } catch (err) {
-      document.getElementById("played-wrap").innerHTML   = `<div class="sch-error">Failed to load: ${err.message}</div>`;
-      document.getElementById("upcoming-wrap").innerHTML = `<div class="sch-error">Failed to load: ${err.message}</div>`;
+      ["played-wrap","upcoming-wrap"].forEach(id =>
+        document.getElementById(id).innerHTML = `<div class="sch-error">Failed to load: ${err.message}</div>`
+      );
     }
   })();
-
-  // Toggle detail drawer — global so onclick attr works
-  function toggleDetail(id) {
-    const row    = document.querySelector(`[data-id="${id}"]`);
-    const detail = document.getElementById(`${id}-detail`);
-    if (!detail) return;
-    const isOpen = detail.classList.contains("open");
-    detail.classList.toggle("open", !isOpen);
-    row.classList.toggle("open", !isOpen);
-  }
   </script>
 </body>
 </html>
