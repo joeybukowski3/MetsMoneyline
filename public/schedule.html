@@ -209,9 +209,6 @@
       border-radius: 0 0 10px 10px;
       overflow: hidden;
       background: #fff;
-      /* Fixed height with scroll so both columns stay same height */
-      max-height: 520px;
-      overflow-y: auto;
     }
     .sch-table {
       width: 100%;
@@ -219,9 +216,7 @@
       font-size: 0.69rem;
     }
     .sch-table thead {
-      position: sticky;
-      top: 0;
-      z-index: 2;
+      position: static;
     }
     .sch-table thead th {
       padding: 0.32rem 0.5rem;
@@ -322,7 +317,8 @@
 
       /* Remove top border-radius on table wrap when below tabs */
       .sch-col.tab-active .sch-col-head { border-radius: 0; }
-      .sch-col.tab-active .sch-table-wrap { border-radius: 0 0 10px 10px; max-height: 60vh; }
+      .sch-col.tab-active .sch-table-wrap { border-radius: 0 0 10px 10px; max-height: 60vh; overflow-y: auto; }
+      .sch-table thead { position: sticky; top: 0; z-index: 2; }
 
       .sch-table { font-size: 0.63rem; }
       .sch-table td, .sch-table thead th { padding: 0.28rem 0.35rem; }
@@ -333,8 +329,9 @@
   </style>
 </head>
 <body>
-  <div id="site-header-root"></div>
+  <header></header>
 
+  <main>
   <div class="sch-shell">
 
     <!-- HERO -->
@@ -386,9 +383,11 @@
     </div>
 
   </div>
+  </main>
 
-  <div id="site-footer-root"></div>
-  <script src="/js/site-header.js"></script>
+  <footer></footer>
+  <script defer src="/js/site-header.js"></script>
+  <script defer src="/js/site-footer.js"></script>
   <script>
   /* ── Tab switching (mobile) ── */
   function switchTab(which) {
@@ -413,12 +412,45 @@
     const fmtDate = d  => new Date(d + "T12:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
     const fmtEra  = e  => { const n = parseFloat(e); return isNaN(n) ? "—" : n.toFixed(2); };
     const fmtAvg  = a  => { if (!a) return "—"; const n = parseFloat(String(a).replace(/^\./, "0.")); return isNaN(n) ? "—" : "." + Math.round(n*1000).toString().padStart(3,"0"); };
-    const fmtWpct = p  => p == null ? "—" : Math.round(p * 100) + "%";
+    const fmtWpct = p  => p == null ? "—" : (p * 100).toFixed(1) + "%";
     const eraClass  = e => { const n = parseFloat(e); if (isNaN(n)) return ""; return n < 3.5 ? "era-good" : n < 4.5 ? "era-mid" : "era-bad"; };
     const wpClass   = p => p == null ? "" : p >= 0.55 ? "wp-high" : p >= 0.45 ? "wp-mid" : "wp-low";
     const rankClass = r => r == null ? "" : r <= 10 ? "rank-hard" : r <= 20 ? "rank-mid" : "rank-easy";
     const rankLabel = r => r == null ? "" : r <= 10 ? "Tough schedule" : r <= 20 ? "Mid-range schedule" : "Soft schedule";
     const suffix    = n => n == null ? "—" : n + (n === 1 ? "st" : n === 2 ? "nd" : n === 3 ? "rd" : "th");
+    const parseAvgValue = value => {
+      if (value == null || value === "") return null;
+      const n = parseFloat(String(value).replace(/^\./, "0."));
+      return isNaN(n) ? null : n;
+    };
+    const parseNumeric = value => {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    };
+    const average = (rows, getter) => {
+      const values = rows.map(getter).filter(value => value != null);
+      if (!values.length) return null;
+      return values.reduce((sum, value) => sum + value, 0) / values.length;
+    };
+    const buildCombinedRecord = rows => {
+      const validRows = rows.filter(g => parseNumeric(g.oppWins) != null && parseNumeric(g.oppLosses) != null);
+      if (!validRows.length) return null;
+      const wins = validRows.reduce((sum, g) => sum + parseNumeric(g.oppWins), 0);
+      const losses = validRows.reduce((sum, g) => sum + parseNumeric(g.oppLosses), 0);
+      if (!wins && !losses) return null;
+      return {
+        wins,
+        losses,
+        winPct: wins + losses > 0 ? wins / (wins + losses) : null
+      };
+    };
+    const buildSectionSummary = rows => ({
+      avgOppWinPct: average(rows, g => parseNumeric(g.oppWinPct)),
+      avgOppEra: average(rows, g => parseNumeric(g.oppSeasonEra)),
+      avgOppAvg: average(rows, g => parseAvgValue(g.oppSeasonAvg)),
+      combinedRecord: buildCombinedRecord(rows)
+    });
+    const fmtRecord = record => record ? `${record.wins}-${record.losses}` : "—";
 
     function detailHtml(g, isPlayed, colspan) {
       const parts = [];
@@ -477,11 +509,13 @@
 
     try {
       const data     = await fetch("/data/game-log.json").then(r => { if (!r.ok) throw new Error("Load failed"); return r.json(); });
-      const summary  = data.summary || {};
-      const sos      = summary.sosPlayed   || {};
-      const sosU     = summary.sosUpcoming || {};
-      const games    = (data.games         || []).map(g => ({ ...g, _today: g.date === today })).reverse();
-      const upcoming = (data.upcomingGames || []).filter(g => g.date >= today).map(g => ({ ...g, _today: g.date === today }));
+      const summary      = data.summary || {};
+      const playedRows   = (data.games || []).map(g => ({ ...g, _today: g.date === today }));
+      const upcomingRows = (data.upcomingGames || []).filter(g => g.date >= today).map(g => ({ ...g, _today: g.date === today }));
+      const games        = [...playedRows].reverse();
+      const upcoming     = upcomingRows;
+      const sos          = buildSectionSummary(playedRows);
+      const sosU         = buildSectionSummary(upcomingRows);
 
       /* Hero */
       document.getElementById("sch-hero").style.display = "";
@@ -505,18 +539,22 @@
       /* Played stats */
       const eraP = sos.avgOppEra;
       const eraU = sosU.avgOppEra;
-      const avgP = sos.avgOppAvg ? parseFloat(String(sos.avgOppAvg).replace(/^\./, "0.")) : null;
-      const avgU = sosU.avgOppAvg ? parseFloat(String(sosU.avgOppAvg).replace(/^\./, "0.")) : null;
+      const avgP = sos.avgOppAvg;
+      const avgU = sosU.avgOppAvg;
 
       document.getElementById("sos-played-stats").innerHTML =
+        sosStat(fmtRecord(sos.combinedRecord), "Collective Record") +
+        sosStat(fmtWpct(sos.combinedRecord?.winPct), "Collective W%") +
         sosStat(fmtWpct(sos.avgOppWinPct), "Avg Opp W%") +
         sosStat(fmtEra(eraP),              "Avg Opp ERA") +
-        sosStat(fmtAvg(sos.avgOppAvg),     "Avg Opp AVG");
+        sosStat(fmtAvg(avgP),              "Avg Opp AVG");
 
       document.getElementById("sos-upcoming-stats").innerHTML =
+        sosStat(fmtRecord(sosU.combinedRecord), "Collective Record") +
+        sosStat(fmtWpct(sosU.combinedRecord?.winPct), "Collective W%") +
         sosStat(fmtWpct(sosU.avgOppWinPct), "Avg Opp W%",  delta(sos.avgOppWinPct, sosU.avgOppWinPct, true)) +
         sosStat(fmtEra(eraU),               "Avg Opp ERA",  delta(eraP, eraU, false)) +
-        sosStat(fmtAvg(sosU.avgOppAvg),     "Avg Opp AVG", delta(avgP, avgU, true));
+        sosStat(fmtAvg(avgU),               "Avg Opp AVG", delta(avgP, avgU, true));
 
       /* Tables */
       document.getElementById("played-count").textContent   = games.length;
