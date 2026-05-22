@@ -82,8 +82,25 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      padding: 0.35rem 0.65rem;
+      box-sizing: border-box;
     }
-    .book-badge-logo svg { max-width: 100%; height: auto; }
+    .book-badge-logo img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+    .book-badge-logo-text {
+      font-family: Arial Black, Arial, sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      letter-spacing: 0.03em;
+      text-align: center;
+      line-height: 1.1;
+    }
     /* Live ML odds chip on each badge */
     .book-badge-odds {
       display: flex;
@@ -213,8 +230,23 @@
     }
     .odds-table a:hover { color: #ff5910; }
     .sportsbook-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
       font-weight: 800;
       color: #002d72;
+      line-height: 1.2;
+    }
+    .sportsbook-link-logo {
+      display: block;
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .sportsbook-link-text,
+    .sportsbook-link-fallback {
+      display: inline-block;
     }
     .odds-cell {
       display: inline-flex;
@@ -342,12 +374,19 @@
       line-height: 1.45;
     }
     .prop-book-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
       color: #002d72;
       font-weight: 800;
       text-decoration: none;
     }
     .prop-book-link:hover {
       color: #ff5910;
+    }
+    .prop-book-link .sportsbook-link-logo {
+      width: 18px;
+      height: 18px;
     }
     .prop-pill-copy {
       font-weight: 700;
@@ -399,6 +438,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 0.75rem;
       margin-bottom: 0.6rem;
       padding-bottom: 0.5rem;
       border-bottom: 1px solid #e8edf4;
@@ -492,6 +532,7 @@
 
   <script defer src="/js/site-header.js"></script>
   <script defer src="/js/site-footer.js"></script>
+  <script defer src="/js/sportsbook-branding.js"></script>
   <script defer src="/js/betting.js"></script>
 </body>
 </html>

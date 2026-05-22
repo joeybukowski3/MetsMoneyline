@@ -1,51 +1,11 @@
 (function () {
-  // Sportsbook brand configs with inline SVG logos
-  var BRAND = {
-    Fanatics: {
-      bg: "#111827", text: "#ff5910", accent: "#ff5910", abbr: "FAN",
-      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
-        <rect width="200" height="60" fill="#111827" rx="6"/>
-        <text x="100" y="40" font-family="Arial Black,Arial" font-weight="900" font-size="26" fill="#ff5910" text-anchor="middle" letter-spacing="1">FANATICS</text>
-      </svg>`
-    },
-    DraftKings: {
-      bg: "#0b0e12", text: "#53d337", accent: "#53d337", abbr: "DK",
-      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
-        <rect width="200" height="60" fill="#0b0e12" rx="6"/>
-        <text x="100" y="40" font-family="Arial Black,Arial" font-weight="900" font-size="22" fill="#53d337" text-anchor="middle" letter-spacing="0.5">DRAFTKINGS</text>
-      </svg>`
-    },
-    FanDuel: {
-      bg: "#0f1923", text: "#1493ff", accent: "#1493ff", abbr: "FD",
-      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
-        <rect width="200" height="60" fill="#0f1923" rx="6"/>
-        <text x="100" y="40" font-family="Arial Black,Arial" font-weight="900" font-size="26" fill="#1493ff" text-anchor="middle" letter-spacing="1">FANDUEL</text>
-      </svg>`
-    },
-    BetMGM: {
-      bg: "#000000", text: "#c5a44e", accent: "#c5a44e", abbr: "MGM",
-      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
-        <rect width="200" height="60" fill="#000" rx="6"/>
-        <text x="100" y="42" font-family="Arial Black,Arial" font-weight="900" font-size="30" fill="#c5a44e" text-anchor="middle" letter-spacing="2">BetMGM</text>
-      </svg>`
-    },
-    Caesars: {
-      bg: "#1b3c2a", text: "#c5a44e", accent: "#c5a44e", abbr: "CZR",
-      logo: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" width="120" height="36">
-        <rect width="200" height="60" fill="#1b3c2a" rx="6"/>
-        <text x="100" y="28" font-family="Georgia,serif" font-weight="700" font-size="13" fill="#c5a44e" text-anchor="middle" letter-spacing="3">CAESARS</text>
-        <text x="100" y="46" font-family="Georgia,serif" font-size="11" fill="#a08030" text-anchor="middle" letter-spacing="2">SPORTSBOOK</text>
-      </svg>`
-    }
-  };
-
   var SPORTSBOOK_ORDER = ["Fanatics", "DraftKings", "FanDuel", "BetMGM", "Caesars"];
   var BOOK_ALIASES = {
     Fanatics: ["fanatics"],
     DraftKings: ["draftkings"],
     FanDuel: ["fanduel"],
     BetMGM: ["betmgm"],
-    Caesars: ["caesars", "williamhill", "william hill"]
+    Caesars: ["caesars", "williamhill_us", "williamhill", "william hill"]
   };
 
   var OFFERS_URL = "data/betting-offers.json";
@@ -137,8 +97,64 @@
       .replace(/[^a-z0-9]+/g, "");
   }
 
+  function getSportsbookBrandingApi() {
+    return (typeof window !== "undefined" && window.MML_SPORTSBOOK_BRANDING) || null;
+  }
+
+  function normalizeBrandKey(value) {
+    var api = getSportsbookBrandingApi();
+    if (api && typeof api.normalizeBookmakerKey === "function") {
+      return api.normalizeBookmakerKey(value);
+    }
+    return normalizeNameKey(value);
+  }
+
+  function getBrandAbbr(name) {
+    return String(name || "")
+      .split(/\s+/)
+      .map(function (part) { return part.charAt(0); })
+      .join("")
+      .slice(0, 3)
+      .toUpperCase() || "BOOK";
+  }
+
   function getBrand(name) {
-    return BRAND[name] || { bg: "#002d72", text: "#ffffff", accent: "#ff5910", abbr: String(name || "").slice(0, 3).toUpperCase() };
+    var api = getSportsbookBrandingApi();
+    var entry = api && typeof api.getSportsbookBrand === "function"
+      ? api.getSportsbookBrand(name)
+      : null;
+    var displayName = entry && entry.displayName ? entry.displayName : String(name || "");
+    return {
+      displayName: displayName,
+      bg: entry && entry.preferredBackground ? entry.preferredBackground : "#002d72",
+      text: "#ffffff",
+      accent: "#ff5910",
+      abbr: getBrandAbbr(displayName),
+      assetPath: entry && entry.assetPath ? "/" + String(entry.assetPath).replace(/^\/+/, "") : null,
+      status: entry && entry.status ? entry.status : "fallback-text"
+    };
+  }
+
+  function renderBrandImageMarkup(bookName, className, altText) {
+    var brand = getBrand(bookName);
+    if (!brand.assetPath) return "";
+    return '<img class="' + escapeHtml(className) + '" src="' + escapeHtml(brand.assetPath) + '" alt="' + escapeHtml(altText) + '" loading="lazy" decoding="async">';
+  }
+
+  function renderBadgeBrandLogo(bookName) {
+    var brand = getBrand(bookName);
+    var imageHtml = renderBrandImageMarkup(brand.displayName, "book-badge-logo-img", brand.displayName + " logo");
+    if (imageHtml) return imageHtml;
+    return '<span class="book-badge-logo-text" style="color:' + escapeHtml(brand.text) + ';">' + escapeHtml(brand.displayName) + "</span>";
+  }
+
+  function renderSportsbookLabel(bookName, variant) {
+    var brand = getBrand(bookName);
+    var imageHtml = renderBrandImageMarkup(brand.displayName, "sportsbook-link-logo", brand.displayName + " logo");
+    var textClass = imageHtml ? "sportsbook-link-text" : "sportsbook-link-fallback";
+    var textHtml = '<span class="' + textClass + '">' + escapeHtml(brand.displayName || bookName) + "</span>";
+    if (variant === "text-only") return textHtml;
+    return imageHtml + textHtml;
   }
 
   function getTodayEt() {
@@ -231,7 +247,7 @@
       return (
         '<a class="book-badge"' + openAttrs + ">" +
           '<div class="book-badge-logo" style="background:' + brand.bg + ';">' +
-            (brand.logo || '<span style="color:' + brand.text + ';font-family:Arial Black,sans-serif;font-weight:900;font-size:1.1rem;">' + escapeHtml(book.name) + "</span>") +
+            renderBadgeBrandLogo(book.name) +
           "</div>" +
           oddsHtml +
           '<div class="book-badge-cta">Bet at ' + escapeHtml(brand.abbr) + " &#8599;</div>" +
@@ -272,7 +288,7 @@
   }
 
   function normalizeBookKey(value) {
-    return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    return normalizeBrandKey(value);
   }
 
   function findBookmaker(bookmakers, bookName) {
@@ -379,9 +395,9 @@
 
   function renderBookLink(bookName, referralUrl) {
     if (!referralUrl) {
-      return '<span class="sportsbook-link">' + escapeHtml(bookName) + "</span>";
+      return '<span class="sportsbook-link">' + renderSportsbookLabel(bookName) + "</span>";
     }
-    return '<a class="sportsbook-link" href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">' + escapeHtml(bookName) + "</a>";
+    return '<a class="sportsbook-link" href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">' + renderSportsbookLabel(bookName) + "</a>";
   }
 
   function renderGameOddsTable(oddsData) {
@@ -615,9 +631,10 @@
     }
     var linePart = Number.isFinite(line) ? formatDecimal(line) + " " : "";
     var oddsPart = formatAmericanOdds(odds);
+    var bookBrandLabel = renderSportsbookLabel(bookName);
     var bookLabel = referralUrl
-      ? '<a class="prop-book-link" href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">' + escapeHtml(bookName) + "</a>"
-      : '<span class="prop-book-link">' + escapeHtml(bookName) + "</span>";
+      ? '<a class="prop-book-link" href="' + escapeHtml(referralUrl) + '" target="_blank" rel="sponsored nofollow noopener noreferrer">' + bookBrandLabel + "</a>"
+      : '<span class="prop-book-link">' + bookBrandLabel + "</span>";
     return (
       '<span class="prop-pill">' +
         bookLabel +
