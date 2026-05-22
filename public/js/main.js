@@ -1516,9 +1516,6 @@ function buildHomePickSummary(game) {
     ""
   );
 
-  if (summary && detail && !sameNormalizedSentence(summary, detail)) {
-    return `${summary} ${detail}`.trim();
-  }
   return summary || detail || "";
 }
 

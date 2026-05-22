@@ -273,7 +273,7 @@ const TODAY_PICK_CONFIDENCE_SCORE = {
   Strong: 8
 };
 
-const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a technical MLB analyst generating a structured pre-game breakdown for MetsMoneyline.com. Use only the structured JSON context provided. Never invent or extrapolate stats not present in the input. officialPick must always be \"Mets ML\".\n\nFIELD REQUIREMENTS:\n\nheadline: One short declarative title. No hype. State the primary edge in ≤8 words (e.g. \"Bullpen gap and SP xERA edge favor Mets\").\n\nsummary: Exactly 4–5 sentences. Structure strictly as follows:\n  1. Recent form + schedule context: state record last N games and relevant home/away split.\n  2. Starting pitching edge: list SP names with ERA, xERA, and K% for both sides explicitly.\n  3. Offense comparison: state team OPS or wRC+ last 20 games for both sides with ranks if available.\n  4. Bullpen edge: state bullpen xERA or ERA for both sides, note usage trend if provided.\n  5. Final sentence: state the primary measurable edge and conclude with exactly \"Pick: New York Mets moneyline.\"\nEvery sentence must contain at least one specific number. Use short declarative sentences. No metaphor, narrative, or psychological speculation. If edge is small, write \"Edge: small\" and give the numbers.\n\nbettingAngle: 2–3 sentences of pure technical analysis only. Start with the largest quantified gap (xERA, bullpen ERA, OPS). Add one secondary data point that supports or complicates it. End with the net conclusion using numbers, not adjectives. Every sentence must contain at least one number.\n\nmetsEdges: 3 short strings, each stating one Mets-favorable metric with a number (e.g. \"Bullpen xFIP 3.78 vs 4.53\").\n\nrisks: 2 short strings, each stating one opponent-favorable or Mets-unfavorable metric with a number.\n\nconfidenceLabel: \"Low\", \"Lean\", \"Standard\", or \"Strong\" based on the aggregate edge.\nconfidenceScore: integer 1–10.\n\nBANNED PHRASES — never use: workable, random draw, cleaner spot, process is pointing, the stage is set, analytically unambiguous, backs into, deep end, lean toward, the price is, right direction, free money, lock, can't lose, sure thing, enters this one, mixed run, worth noting, shapes up, live secondary, real margin, comes down to, real separation, as split as it gets, could go either way, might, narrative flair, momentum.\n\nReturn valid JSON only. No markdown.";
+const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a technical MLB analyst generating a structured pre-game breakdown for MetsMoneyline.com. Use only the structured JSON context provided. Never invent or extrapolate stats not present in the input. officialPick must always be \"Mets ML\".\n\nSTYLE RULES:\n- Use short declarative sentences.\n- Every sentence must contain at least one number, a measurable comparison, or a direct technical conclusion.\n- No metaphor, narrative, filler, or subjective phrasing.\n- If the edge is small, say it directly with numbers.\n- Keep the voice aligned with the site’s game-analysis writeup: metrics-first and concise.\n\nFIELD REQUIREMENTS:\n\nheadline: One short declarative title. No hype. State the primary edge in ≤8 words.\n\nsummary: 3–4 sentences max.\n  1. Recent form + schedule context: state record last N games and relevant home/away split.\n  2. Starting pitching, offense, and bullpen: list the key numbers for both sides explicitly.\n  3. Price/value: state the Mets moneyline, implied probability, and model probability or value edge.\n  4. Final sentence: conclude with exactly \"Pick: New York Mets moneyline.\"\n\nbettingAngle: 2–3 sentences of pure technical analysis only. Start with the largest quantified gap (xERA, bullpen ERA, OPS, or value edge). Add one secondary data point that supports or complicates it. End with the net conclusion using numbers, not adjectives.\n\nmetsEdges: 3 short strings, each stating one Mets-favorable metric with a number.\n\nrisks: 2 short strings, each stating one opponent-favorable or Mets-unfavorable metric with a number.\n\nconfidenceLabel: \"Low\", \"Lean\", \"Standard\", or \"Strong\" based on the aggregate edge.\nconfidenceScore: integer 1–10.\n\nBANNED PHRASES — never use: workable, random draw, cleaner spot, process is pointing, the stage is set, analytically unambiguous, backs into, deep end, lean toward, the price is, right direction, free money, lock, can't lose, sure thing, enters this one, mixed run, worth noting, shapes up, live secondary, real margin, comes down to, real separation, as split as it gets, could go either way, might, narrative flair, momentum.\n\nReturn valid JSON only. No markdown.";
 
 const GROK_TODAY_PICK_SCHEMA = {
   type: "object",
@@ -387,40 +387,15 @@ function getTeamPrimaryColor(teamName) {
 }
 
 function buildDeterministicTodayPick(gameFacts, writeup, analysisObject, edgeScoring) {
-  const pickSummary = stripUnsupportedPickLanguage(writeup?.pickSummary || "");
-  const pickNarrative = stripUnsupportedPickLanguage(writeup?.pickNarrative || "");
-  const metsEdges = (edgeScoring?.categories || [])
-    .filter((edge) => edge.edge === "Mets edge")
-    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
-    .slice(0, 3)
-    .map((edge) => stripUnsupportedPickLanguage(edge.explanation));
-  const risks = (edgeScoring?.categories || [])
-    .filter((edge) => edge.edge === "Opponent edge")
-    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
-    .slice(0, 2)
-    .map((edge) => stripUnsupportedPickLanguage(edge.explanation));
+  const copy = buildTodayPickCopy(gameFacts, analysisObject, edgeScoring, {
+    analyticalLean: writeup?.analyticalLean,
+    valueEdge: writeup?.valueEdge
+  });
   const confidenceLabel = mapDeterministicConfidenceToTodayPick(writeup?.analyticalLean, writeup?.confidence);
   const confidenceScore = TODAY_PICK_CONFIDENCE_SCORE[confidenceLabel] || TODAY_PICK_CONFIDENCE_SCORE.Lean;
-  const summary = safeTrimmedString(
-    pickNarrative || pickSummary || `${TEAM_NAME} still has the cleaner moneyline path in the current matchup data.`
-  );
-  const bettingAngle = safeTrimmedString(
-    pickSummary || "The official side stays Mets ML because the best supported matchup angle still points to New York."
-  );
 
   return {
-    headline: "Mets ML Pick",
-    summary,
-    metsEdges: metsEdges.length ? metsEdges : [
-      stripUnsupportedPickLanguage("The Mets still show the best available offensive or run-prevention edge in the local matchup data."),
-      stripUnsupportedPickLanguage("The bullpen and lineup context give New York a realistic path to control the late innings."),
-      stripUnsupportedPickLanguage("The current price keeps the Mets moneyline playable relative to the in-house model read.")
-    ],
-    risks: risks.length ? risks : [
-      stripUnsupportedPickLanguage("The overall board is not clean enough to remove volatility from the Mets side."),
-      stripUnsupportedPickLanguage("If the top Mets edge does not show up early, the game can flip into a coin-flip script.")
-    ],
-    bettingAngle,
+    ...copy,
     officialPick: "Mets ML",
     confidenceLabel,
     confidenceScore
@@ -669,14 +644,11 @@ function normalizeTodayPickPayload(payload, fallbackTodayPick) {
 
 function applyTodayPickToWriteup(writeup, todayPick) {
   const normalized = normalizeTodayPickPayload(todayPick, todayPick);
-  const narrative = normalized.summary === normalized.bettingAngle
-    ? normalized.summary
-    : [normalized.summary, normalized.bettingAngle].filter(Boolean).join(" ");
   return {
     ...writeup,
     todayPick: normalized,
     pickSummary: normalized.bettingAngle,
-    pickNarrative: narrative,
+    pickNarrative: normalized.summary,
     confidence: normalized.confidenceLabel.toLowerCase()
   };
 }
@@ -693,14 +665,24 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
     "- Valid JSON only — no markdown, no commentary outside JSON",
     "- officialPick must be exactly \"Mets ML\"",
     "",
-    "bettingAngle — 2-3 sentences of technical analysis only:",
-    "  1st sentence: The biggest SP or bullpen edge with exact numbers. Example: \"Brazobán 2.73 xERA (92nd pct) vs Rodón 4.50 xERA — 1.77-run gap in expected quality.\"",
-    "  2nd sentence: Secondary data point — offensive OPS differential, bullpen xERA gap, home/road run differential, or a conflicting factor if the data is mixed.",
-    "  3rd sentence (optional): What the numbers say plainly — do they support the line, beat it, or conflict? No verdict language, just the honest read.",
-    "  RULES: Every sentence must contain at least one number. No sentences that work for any game.",
-    "  If trendsContext is provided and a trend is relevant to today's matchup, cite it briefly with the player and stat.",
+    "STYLE RULES:",
+    "  - Use short declarative sentences.",
+    "  - Every sentence must contain at least one number, a measurable comparison, or a direct technical conclusion.",
+    "  - No metaphor, filler, or subjective phrasing.",
+    "  - Keep the voice aligned with the site’s game-analysis writeup: metrics-first and concise.",
     "",
-    "summary field: 1-2 sentences summarizing the key matchup factors. No pick language — just the data summary.",
+    "summary — 3 to 4 sentences max:",
+    "  1st sentence: recent form plus schedule/rest context.",
+    "  2nd sentence: starting pitching, offense, and bullpen numbers for both sides.",
+    "  3rd sentence: Mets moneyline, implied probability, model probability or value edge.",
+    "  4th sentence: conclude with exactly \"Pick: New York Mets moneyline.\"",
+    "",
+    "bettingAngle — 2 to 3 sentences of technical analysis only:",
+    "  Start with the largest quantified gap.",
+    "  Add one secondary data point that supports or complicates it.",
+    "  End with the net conclusion using numbers, not adjectives.",
+    "  If the edge is small, say it directly with numbers.",
+    "",
     "headline field: 6-8 words describing the matchup technically. No hype.",
     "metsEdges: 2-3 bullet points, each starting with a specific number from the context.",
     "risks: 1-2 specific risks with numbers. Honest even if data is thin.",
@@ -4443,7 +4425,7 @@ function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
     } else if (edge.category === "Bullpen") {
       whereRiskIs.push(`Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: ${metsBp.taxLevel || "N/A"}, Opp: ${oppBp.taxLevel || "N/A"}).`);
     } else if (edge.category === "Home/Away Split" || edge.category === "Context") {
-      whereRiskIs.push(`Road/context splits lean against Mets. ${gameFacts.meta.homeAway === "away" ? "Away game." : ""}`);
+      whereRiskIs.push(`Road/context splits lean against Mets. ${(gameFacts.meta?.homeAway || gameFacts.homeAway || "").toLowerCase() === "away" ? "Away game." : ""}`);
     } else {
       whereRiskIs.push(edge.explanation || "Contextual factors slightly favor the opponent.");
     }
@@ -4468,6 +4450,97 @@ function buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick) {
   }
 
   return { whyMetsHaveCase, whereRiskIs, bottomLine };
+}
+
+function buildTodayPickCopy(gameFacts, analysisObject, edgeScoring, pick) {
+  const fmt = (value, digits = 1) => formatMetric(Number(value), digits);
+  const fmtMoneyline = (value) => {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "N/A";
+    return n > 0 ? `+${n}` : `${n}`;
+  };
+  const fmtPercent = (value, digits = 1) => {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return "N/A";
+    return `${n.toFixed(digits)}%`;
+  };
+  const fmtRecord = (wins, losses) => {
+    const w = Number(wins);
+    const l = Number(losses);
+    if (!Number.isFinite(w) || !Number.isFinite(l)) return "N/A";
+    return `${w}-${l}`;
+  };
+
+  const metsRecentGames = (gameFacts?.gameContext?.metsRecentGames || []).slice(0, 5);
+  const wins = metsRecentGames.filter((game) => game.result === "W").length;
+  const losses = metsRecentGames.filter((game) => game.result === "L").length;
+  const restDays = analysisObject?.context?.restDays || {};
+  const mp = gameFacts?.pitching?.mets || {};
+  const op = gameFacts?.pitching?.opp || {};
+  const metsRecent = gameFacts?.recentForm?.mets || {};
+  const oppRecent = gameFacts?.recentForm?.opp || {};
+  const metsTA = gameFacts?.advanced?.teamAdvanced?.mets || {};
+  const oppTA = gameFacts?.advanced?.teamAdvanced?.opp || {};
+  const metsBp = gameFacts?.pitching?.metsBullpen || {};
+  const oppBp = gameFacts?.pitching?.oppBullpen || {};
+  const metsBullpenXera = Number(metsBp.seasonXERAAverage ?? metsBp.seasonXERA ?? metsBp.seasonERA);
+  const oppBullpenXera = Number(oppBp.seasonXERAAverage ?? oppBp.seasonXERA ?? oppBp.seasonERA);
+  const metsMoneyline = Number(analysisObject?.gameInfo?.metsMoneyline ?? gameFacts?.money?.metsMoneyline);
+  const implied = Number(analysisObject?.gameInfo?.impliedProbability);
+  const projected = Number(edgeScoring?.projectedWinProbability);
+  const valueEdge = Number.isFinite(pick?.valueEdge)
+    ? Number(pick.valueEdge)
+    : (Number.isFinite(projected) && Number.isFinite(implied) ? Number(((projected - implied) * 100).toFixed(1)) : null);
+  const valueEdgeLabel = Number.isFinite(valueEdge)
+    ? `${valueEdge > 0 ? "+" : ""}${valueEdge.toFixed(1)} points`
+    : "N/A";
+
+  const metsAngles = (edgeScoring?.categories || [])
+    .filter((edge) => edge.edge === "Mets edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 3);
+  const riskAngles = (edgeScoring?.categories || [])
+    .filter((edge) => edge.edge === "Opponent edge")
+    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
+    .slice(0, 2);
+  const gameAnalysis = buildGameAnalysisBullets(gameFacts, metsAngles, riskAngles, pick);
+
+  const offenseSentence = Number.isFinite(Number(metsRecent.last20OPS)) && Number.isFinite(Number(oppRecent.last20OPS))
+    ? `Offense: Mets last20 OPS ${fmt(metsRecent.last20OPS, 3)} vs ${fmt(oppRecent.last20OPS, 3)}`
+    : Number.isFinite(Number(metsTA.wrcPlus)) && Number.isFinite(Number(oppTA.wrcPlus))
+      ? `Offense: Mets wRC+ ${fmt(metsTA.wrcPlus, 1)} vs ${fmt(oppTA.wrcPlus, 1)}`
+      : `Offense: metrics are limited, so the read stays tied to the strongest available edge`;
+
+  const bullpenSentence = Number.isFinite(metsBullpenXera) && Number.isFinite(oppBullpenXera)
+    ? `Bullpen: Mets xERA ${fmt(metsBullpenXera, 2)} vs ${fmt(oppBullpenXera, 2)}`
+    : `Bullpen: one side is still missing a clean xERA read, so the relief edge is less stable`;
+
+  const starterSentence = `Starting pitching: ${mp.name || "Mets SP"} ${fmt(mp.savant?.xERA ?? mp.seasonXERA, 2)} xERA, ${fmt(mp.seasonERA, 2)} ERA, ${fmt(mp.savant?.kPct ?? mp.kPct, 1)}% K vs ${op.name || "opp SP"} ${fmt(op.savant?.xERA ?? op.seasonXERA, 2)} xERA, ${fmt(op.seasonERA, 2)} ERA, ${fmt(op.savant?.kPct ?? op.kPct, 1)}% K`;
+  const recentSentence = `Recent form: Mets are ${fmtRecord(wins, losses)} in the last ${metsRecentGames.length || 0}; rest is ${Number.isFinite(Number(restDays.mets)) ? Number(restDays.mets) : "N/A"} vs ${Number.isFinite(Number(restDays.opp)) ? Number(restDays.opp) : "N/A"} days.`;
+  const priceSentence = Number.isFinite(metsMoneyline)
+    ? `Price: Mets ML ${fmtMoneyline(metsMoneyline)} implies ${fmtPercent(implied * 100, 1)} vs model ${fmtPercent(projected * 100, 1)}; value edge ${valueEdgeLabel}; Pick: New York Mets moneyline.`
+    : `Price: Mets ML is not available; value edge ${valueEdgeLabel}; Pick: New York Mets moneyline.`;
+
+  const matchupSentence = `${starterSentence}; ${offenseSentence}; ${bullpenSentence}.`;
+  const summary = [recentSentence, matchupSentence, priceSentence]
+    .filter(Boolean)
+    .join(" ");
+
+  const bettingAngle = [
+    `Primary edge: ${mp.name || "the Mets starter"} versus ${op.name || "the opposing starter"} with ${fmt(mp.savant?.xERA ?? mp.seasonXERA, 2)} xERA against ${fmt(op.savant?.xERA ?? op.seasonXERA, 2)}.`,
+    `Secondary checks: offense ${Number.isFinite(Number(metsRecent.last20OPS)) && Number.isFinite(Number(oppRecent.last20OPS)) ? `${fmt(metsRecent.last20OPS, 3)} vs ${fmt(oppRecent.last20OPS, 3)} OPS` : Number.isFinite(Number(metsTA.wrcPlus)) && Number.isFinite(Number(oppTA.wrcPlus)) ? `${fmt(metsTA.wrcPlus, 1)} vs ${fmt(oppTA.wrcPlus, 1)} wRC+` : "metrics are limited"}, bullpen ${Number.isFinite(metsBullpenXera) && Number.isFinite(oppBullpenXera) ? `${fmt(metsBullpenXera, 2)} vs ${fmt(oppBullpenXera, 2)} xERA` : "limited bullpen read"}, value edge ${valueEdgeLabel}.`,
+    `Value check: ${Number.isFinite(metsMoneyline) ? `Mets ML ${fmtMoneyline(metsMoneyline)} with ${fmtPercent(implied * 100, 1)} implied and ${fmtPercent(projected * 100, 1)} model probability` : "price unavailable"}; ${valueEdgeLabel !== "N/A" ? `value edge ${valueEdgeLabel}` : "value edge unavailable"}.`
+  ].filter(Boolean).join(" ");
+
+  return {
+    headline: pick?.analyticalLean === "Mets" || pick?.analyticalLean === "Slight Mets edge"
+      ? "Starter gap and value edge favor Mets"
+      : "Mets ML with measured edge",
+    summary,
+    bettingAngle,
+    metsEdges: gameAnalysis.whyMetsHaveCase.slice(0, 3),
+    risks: gameAnalysis.whereRiskIs.slice(0, 2)
+  };
 }
 
 function buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject) {
@@ -4708,10 +4781,7 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
     .filter((edge) => edge.edge === "Opponent edge")
     .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
     .slice(0, 3);
-  const proMetsOfficialAngles = edgeScoring.categories
-    .filter((edge) => edge.edge === "Mets edge")
-    .sort((a, b) => Math.abs(b.weightedImpact) - Math.abs(a.weightedImpact))
-    .slice(0, 3);
+  const todayPickCopy = buildTodayPickCopy(gameFacts, analysisObject, edgeScoring, pick);
 
   const contextLine = `Series game ${gameFacts.game.seriesGameNumber || 1}. Rest/travel: Mets ${analysisObject.context.restDays.mets ?? "N/A"} days, opponent ${analysisObject.context.restDays.opp ?? "N/A"}; bullpen tax ${analysisObject.bullpen.mets.taxLevel}/${analysisObject.bullpen.opp.taxLevel}.`;
   const whyMets = metsAngles.length
@@ -4754,30 +4824,8 @@ function buildAdvancedWriteup(gameFacts, analysisObject, edgeScoring, missingMet
         : pick.analyticalLean === "Slight opponent edge"
           ? "The weighted board gives the opponent a slight edge, even if the gap is not overwhelming."
           : "The weighted board is mixed, with too many missing inputs to treat either side as a clean analytical play.";
-  const officialPickSummaryParts = [];
-  if (proMetsOfficialAngles[0]) {
-    if (/overall lineup quality|lineup vs handedness/i.test(proMetsOfficialAngles[0].category)) {
-      officialPickSummaryParts.push("Main case: projected lineup grades higher in xwOBA and WAR.");
-    } else if (proMetsOfficialAngles[0].category === "Starting Pitching") {
-      officialPickSummaryParts.push(`Primary edge: ${gameFacts.pitching.mets.name}'s run-prevention metrics.`);
-    } else if (proMetsOfficialAngles[0].category === "Bullpen") {
-      officialPickSummaryParts.push("Secondary edge: Mets bullpen holds a seasonal metrics advantage.");
-    } else {
-      officialPickSummaryParts.push(proMetsOfficialAngles[0].explanation);
-    }
-  }
-  if (proMetsOfficialAngles[1]) {
-    if (proMetsOfficialAngles[1].category === "Regression Signals") {
-      officialPickSummaryParts.push("Supporting factor: contact quality metrics suggest positive regression ahead.");
-    } else {
-      officialPickSummaryParts.push(proMetsOfficialAngles[1].explanation);
-    }
-  }
-  if (pick.analyticalLean === "Opponent" || pick.analyticalLean === "Slight opponent edge" || pick.analyticalLean === "Mixed") {
-    officialPickSummaryParts.push("Note: model does not fully favor Mets. Pick is based on the best supported individual angle.");
-  }
-  const pickSummary = officialPickSummaryParts.filter(Boolean).slice(0, 3).join(" ");
-  const pickNarrative = buildPickNarrative(gameFacts, edgeScoring, pick, analysisObject);
+  const pickSummary = todayPickCopy.summary;
+  const pickNarrative = todayPickCopy.summary;
   const quickRead = buildQuickRead(edgeScoring, pick);
   const edgeSummary = buildEdgeSummary(edgeScoring, pick);
   const gameDetails = buildGameDetailsSummary(gameFacts, analysisObject);
