@@ -2,7 +2,7 @@ name: Game Log Update
 
 on:
   schedule:
-    - cron: "15 11 * * *"   # 7:15 AM ET daily (late games always finished by then)
+    - cron: "0 8 * * *"   # 3 AM ET daily (late games always finished by then)
   workflow_dispatch:         # manual trigger
 
 permissions:
