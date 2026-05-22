@@ -331,92 +331,74 @@ function buildPregameAngles(game) {
 }
 
 function buildPregameSingleTweet(game) {
-  const opponent    = cleanText(game?.opponent);
-  const oppShort    = opponentShortName(opponent) || opponent;
-  const report      = game?.writeup?.report || {};
-  const pick        = normalizePick(game);
-  const pickLabel   = cleanText(pick?.label || "Mets ML").replace(/^Official Pick:\s*/i, "");
+  const opponent   = cleanText(game?.opponent);
+  const oppShort   = opponentShortName(opponent) || opponent;
+  const report     = game?.writeup?.report || {};
+  const pick       = normalizePick(game);
 
-  // ── Pitcher matchup (compact) ──────────────────────────────────────────
-  const metsPitcher  = game?.pitching?.mets || {};
-  const oppPitcher   = game?.pitching?.opp  || {};
-  const metsName     = lastName(metsPitcher.name || report?.startingPitchersComparison?.metsCard?.name || "");
-  const oppName      = lastName(oppPitcher.name  || report?.startingPitchersComparison?.oppCard?.name  || "");
-  const metsXERA     = formatStatNumber(metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA);
-  const oppXERA      = formatStatNumber(oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA);
-  const spLine       = (metsName && oppName)
-    ? `${metsName} (${metsXERA || "—"} xERA) vs ${oppName} (${oppXERA || "—"} xERA)`
-    : (metsName || oppName)
-    ? `SP: ${metsName || "TBD"} vs ${oppName || "TBD"}`
-    : null;
+  // Header: matchup + game time
+  const gameTime    = cleanText(game?.time || game?.writeup?.gameDetails?.time || "");
+  const metsPitcher = game?.pitching?.mets || {};
+  const oppPitcher  = game?.pitching?.opp  || {};
+  const metsName    = lastName(metsPitcher.name || report?.startingPitchersComparison?.metsCard?.name || "");
+  const oppName     = lastName(oppPitcher.name  || report?.startingPitchersComparison?.oppCard?.name  || "");
+  const header      = `\u{1F535} Mets vs ${oppShort}${gameTime ? " | " + gameTime : ""}`;
+  const spLine      = (metsName && oppName) ? `${metsName} vs ${oppName}` : null;
 
-  // ── Matchup snapshot stats ────────────────────────────────────────────
-  const metsForm  = report?.recentFormReport?.mets;
-  const oppForm   = report?.recentFormReport?.opp;
-  const metsOpsL20 = metsForm?.rows?.find(r => r.statKey === "ops")?.recentValue;
-  const oppOpsL20  = oppForm?.rows?.find(r  => r.statKey === "ops")?.recentValue;
-  const fmtOps = v => { const n = parseFloat(v); return isNaN(n) ? null : n.toFixed(3); };
-  const metsOpsStr = fmtOps(metsOpsL20);
-  const oppOpsStr  = fmtOps(oppOpsL20);
-  const opsLine    = (metsOpsStr && oppOpsStr)
-    ? `L20 OPS: NYM ${metsOpsStr} · ${oppShort} ${oppOpsStr}`
-    : null;
+  // Build up to 3 Mets-positive angles
+  // Priority: metsEdges from model first, then stat-derived fallbacks
+  const angles = [];
 
-  // ── Key edge (bullpen xERA gap is most meaningful) ────────────────────
-  const metsBpXERA = parseFloat(game?.pitching?.metsBullpen?.seasonXERAAverage);
-  const oppBpXERA  = parseFloat(game?.pitching?.oppBullpen?.seasonXERAAverage);
-  let edgeLine = null;
-  if (!isNaN(metsBpXERA) && !isNaN(oppBpXERA)) {
-    const gap = Math.abs(metsBpXERA - oppBpXERA).toFixed(2);
-    const edgeTeam = metsBpXERA < oppBpXERA ? "NYM" : oppShort;
-    edgeLine = `Bullpen edge: ${edgeTeam} (${Math.min(metsBpXERA, oppBpXERA).toFixed(2)} vs ${Math.max(metsBpXERA, oppBpXERA).toFixed(2)} xERA, ${gap} gap)`;
-  } else if (pick?.metsEdges?.[0]) {
-    // Fall back to first model edge
-    edgeLine = clip(cleanText(String(pick.metsEdges[0])), 70);
+  // 1. Pull from model metsEdges
+  const rawEdges = Array.isArray(pick?.metsEdges) ? pick.metsEdges : [];
+  for (const edge of rawEdges) {
+    if (angles.length >= 3) break;
+    const cleaned = clip(cleanText(String(edge)), 68);
+    if (cleaned && !looksPlaceholder(cleaned)) angles.push(`\u2705 ${cleaned}`);
   }
 
-  // ── Moneyline odds ─────────────────────────────────────────────────────
-  const metsML = game?.moneyline?.mets;
-  const fmtML  = v => { const n = parseInt(v); return isNaN(n) ? null : (n > 0 ? `+${n}` : String(n)); };
-  const mlStr  = fmtML(metsML);
+  // 2. Stat fallbacks to fill remaining slots
+  if (angles.length < 3) {
+    const metsBpXERA = parseFloat(game?.pitching?.metsBullpen?.seasonXERAAverage);
+    const oppBpXERA  = parseFloat(game?.pitching?.oppBullpen?.seasonXERAAverage);
+    if (!isNaN(metsBpXERA) && !isNaN(oppBpXERA) && metsBpXERA < oppBpXERA) {
+      const gap = Math.abs(metsBpXERA - oppBpXERA).toFixed(2);
+      angles.push(`\u2705 Bullpen edge: NYM ${metsBpXERA.toFixed(2)} vs ${oppShort} ${oppBpXERA.toFixed(2)} xERA (${gap} gap)`);
+    }
+  }
+  if (angles.length < 3) {
+    const metsForm = report?.recentFormReport?.mets;
+    const oppForm  = report?.recentFormReport?.opp;
+    const metsOps  = parseFloat(metsForm?.rows?.find(r => r.statKey === "ops")?.recentValue);
+    const oppOps   = parseFloat(oppForm?.rows?.find(r  => r.statKey === "ops")?.recentValue);
+    if (!isNaN(metsOps) && !isNaN(oppOps) && metsOps > oppOps) {
+      angles.push(`\u2705 L20 OPS: NYM ${metsOps.toFixed(3)} vs ${oppShort} ${oppOps.toFixed(3)}`);
+    }
+  }
+  if (angles.length < 3) {
+    const metsXERA = parseFloat(metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA);
+    const oppXERA  = parseFloat(oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA);
+    if (!isNaN(metsXERA) && !isNaN(oppXERA) && metsXERA < oppXERA) {
+      angles.push(`\u2705 SP edge: ${metsName || "NYM"} ${metsXERA.toFixed(2)} vs ${oppName || oppShort} ${oppXERA.toFixed(2)} xERA`);
+    }
+  }
 
-  // ── Assemble under 280 chars ──────────────────────────────────────────
-  // Template (ordered by priority — drop last lines if needed):
-  //   Line 1: 🔵 Mets vs [OPP] | [Time]
-  //   Line 2: SP: [pitcher matchup]
-  //   Line 3: [L20 OPS comparison]
-  //   Line 4: [Key edge]
-  //   Line 5: Pick: [label] [ML odds] — full breakdown 👇
-  //   Line 6: metsmoneyline.com #LGM #Mets
-
+  // Assemble under 280 chars
+  // Line 1: header  |  Line 2: pitchers  |  Lines 3-5: angles  |  Last: CTA
   const LIMIT = MAX_TWEET_LENGTH;
   const CTA   = "metsmoneyline.com #LGM #Mets";
-  const gameTime = cleanText(game?.time || game?.writeup?.gameDetails?.time || "");
 
-  const header   = `🔵 Mets vs ${oppShort}${gameTime ? " | " + gameTime : ""}`;
-  const pickLine = `Pick: ${pickLabel}${mlStr ? " (" + mlStr + ")" : ""} — full breakdown 👇`;
+  const candidates = [header, spLine, ...angles.slice(0, 3), CTA].filter(Boolean);
 
-  // Build from must-haves outward
-  const candidates = [
-    header,
-    spLine    ? `SP: ${spLine}`    : null,
-    opsLine,
-    edgeLine,
-    pickLine,
-    CTA,
-  ].filter(Boolean);
-
-  // Drop middle lines if over budget
   function join(parts) { return parts.join("\n"); }
   let parts = [...candidates];
   while (join(parts).length > LIMIT && parts.length > 3) {
-    // Drop the line just before pickLine (index length-3)
-    const dropIdx = parts.length - 3;
-    if (dropIdx >= 1) parts.splice(dropIdx, 1);
+    const dropIdx = parts.length - 2;
+    if (dropIdx >= 2) parts.splice(dropIdx, 1);
     else break;
   }
 
-  return cleanText(join(parts));
+  return join(parts);
 }
 
 function validatePregameGame(game, targetDate, state) {
