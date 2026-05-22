@@ -388,7 +388,8 @@ function buildPregameSingleTweet(game) {
   const LIMIT = MAX_TWEET_LENGTH;
   const CTA   = "metsmoneyline.com #LGM #Mets";
 
-  const candidates = [header, spLine, ...angles.slice(0, 3), CTA].filter(Boolean);
+  const whyLine = angles.length > 0 ? "Why the Mets win tonight:" : null;
+  const candidates = [header, spLine, whyLine, ...angles.slice(0, 3), CTA].filter(Boolean);
 
   function join(parts) { return parts.join("\n"); }
   let parts = [...candidates];
