@@ -1859,22 +1859,39 @@ tbody td:first-child { font-weight: 500; }
     text-align: center;
   }
 }
-/* Tablet: tighten */
+/* Mobile: compact rows so both 9-player cards fit without heavy scrolling */
 @media (max-width: 700px) {
-  .lineup-two-col { grid-template-columns: 1fr 1fr; gap: 0.35rem; }
-  .lineup-card { padding: 0 0.6rem 0.72rem; max-width: 300px; }
-  .lineup-team-header { font-size: 0.62rem; padding: 0.38rem 0.7rem; }
-  .lu-stat { font-size: 0.62rem; }
-  .lu-name { font-size: 0.68rem; }
+  .lineup-two-col { grid-template-columns: 1fr 1fr; gap: 0.25rem; }
+  .lineup-card { padding: 0 0.35rem 0.4rem; max-width: 100%; }
+  .lineup-team-header { font-size: 0.58rem; padding: 0.28rem 0.45rem; letter-spacing: 0.05em; }
+
+  /* Drop headshot column entirely — img and matching header span both hidden */
+  .lu-row .player-headshot { display: none; }
+  .lu-header span:nth-child(2) { display: none; }
+
+  /* 5-col grid: order / name / AVG / OPS / xBA */
+  .lu-header,
+  .lu-row {
+    grid-template-columns: 1rem 1fr 2.5rem 2.5rem 2.5rem;
+    gap: 0.15rem;
+  }
+
+  .lu-row { min-height: 1.35rem; padding: 0.08rem 0; }
+  .lu-order { font-size: 0.56rem; }
+  .lu-name  { font-size: 0.6rem; }
+  .lu-stat  { font-size: 0.58rem; padding: 0.05rem 0; border-radius: 3px; }
+  .lu-header { font-size: 0.52rem; padding: 0.06rem 0 0.12rem; border-bottom-width: 1px; }
+  .lu-list  { gap: 0; }
 }
 
 /* Very small phones */
 @media (max-width: 380px) {
-  .lu-header { grid-template-columns: 1.1rem 1.45rem 1fr 2.8rem 2.8rem 2.8rem; }
-  .lu-row    { grid-template-columns: 1.1rem 1.45rem 1fr 2.8rem 2.8rem 2.8rem; }
-  .lu-stat { font-size: 0.58rem; }
-  .lu-name { font-size: 0.64rem; }
-  .lu-order { font-size: 0.58rem; }
+  .lineup-card { padding: 0 0.25rem 0.3rem; }
+  .lu-header,
+  .lu-row { grid-template-columns: 0.9rem 1fr 2.3rem 2.3rem 2.3rem; gap: 0.1rem; }
+  .lu-stat  { font-size: 0.54rem; }
+  .lu-name  { font-size: 0.57rem; }
+  .lu-order { font-size: 0.52rem; }
 }
 
 /* =====================
