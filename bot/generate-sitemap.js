@@ -35,6 +35,7 @@ function generateSitemap() {
     { loc: `${SITE_ORIGIN}/rankings`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/prospects`, lastmod: today, changefreq: "weekly", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/about`, lastmod: today, changefreq: "monthly", priority: "0.4" },
+    { loc: `${SITE_ORIGIN}/schedule`, lastmod: today, changefreq: "daily", priority: "0.8" },
     { loc: `${SITE_ORIGIN}/game-log`, lastmod: today, changefreq: "daily", priority: "0.8" },
     { loc: `${SITE_ORIGIN}/pick-history`, lastmod: today, changefreq: "daily", priority: "0.7" },
     { loc: `${SITE_ORIGIN}/depth-chart`, lastmod: today, changefreq: "weekly", priority: "0.7" },
