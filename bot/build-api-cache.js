@@ -438,13 +438,15 @@ function scoreOddsEventMatch(event, nextGame) {
   if (!event || !nextGame) return -1;
   const homeKey = canonicalTeamKeyFromName(event.home_team);
   const awayKey = canonicalTeamKeyFromName(event.away_team);
-  const nextHomeKey = canonicalTeamKeyFromName(nextGame.home?.name);
-  const nextAwayKey = canonicalTeamKeyFromName(nextGame.away?.name);
+  // next-game cache uses homeTeam/awayTeam, not home/away
+  const nextHomeKey = canonicalTeamKeyFromName(nextGame.homeTeam?.name || nextGame.home?.name);
+  const nextAwayKey = canonicalTeamKeyFromName(nextGame.awayTeam?.name || nextGame.away?.name);
   let score = 0;
   if (homeKey === nextHomeKey) score += 2;
   if (awayKey === nextAwayKey) score += 2;
   const eventTime = event?.commence_time ? new Date(event.commence_time).getTime() : NaN;
-  const nextTime = nextGame?.date ? new Date(nextGame.date).getTime() : NaN;
+  // next-game cache uses startTime, not date
+  const nextTime = (nextGame?.startTime || nextGame?.date) ? new Date(nextGame.startTime || nextGame.date).getTime() : NaN;
   if (Number.isFinite(eventTime) && Number.isFinite(nextTime)) {
     const diffMinutes = Math.abs(eventTime - nextTime) / 60000;
     if (diffMinutes <= 10) score += 2;
@@ -718,9 +720,17 @@ async function run() {
     try {
       const existingRaw = fs.readFileSync(existingOddsPath, "utf8");
       const existingOdds = JSON.parse(existingRaw);
-      if (existingOdds?.gameId && Array.isArray(existingOdds?.markets) && existingOdds.markets.length > 0) {
-        console.log(`[odds] Fetch returned empty — preserving existing valid odds (gameId: ${existingOdds.gameId})`);
+      const existingGameDateEt = existingOdds?.raw?.commence_time
+        ? new Date(existingOdds.raw.commence_time).toLocaleDateString("en-CA", { timeZone: "America/New_York" })
+        : null;
+      const todayEt = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+      // Only preserve if the cached odds are for TODAY's game — never carry over stale game odds
+      const existingIsToday = existingGameDateEt === todayEt;
+      if (existingOdds?.gameId && Array.isArray(existingOdds?.markets) && existingOdds.markets.length > 0 && existingIsToday) {
+        console.log(`[odds] Fetch returned empty — preserving today's existing odds (gameId: ${existingOdds.gameId})`);
         resolvedOdds = existingOdds;
+      } else if (!existingIsToday) {
+        console.log(`[odds] Fetch returned empty and existing cache is stale (${existingGameDateEt} vs today ${todayEt}) — odds will be null`);
       }
     } catch {
       // No existing file or unparseable — continue with empty odds

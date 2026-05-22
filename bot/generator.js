@@ -3302,9 +3302,10 @@ async function getOddsFacts(game) {
     const cachedGameDateEt = cachedOdds?.raw?.commence_time
       ? new Date(cachedOdds.raw.commence_time).toLocaleDateString("en-CA", { timeZone: TIME_ZONE })
       : null;
-    const targetGameDate = game?.officialDate || null;
+    // game.officialDate is not always set — fall back to game.date
+    const targetGameDate = game?.officialDate || game?.date || null;
     const teamsMatch = cachedHomeTeam === targetHomeTeam && cachedAwayTeam === targetAwayTeam;
-    const dateMatches = cachedGameDateEt === targetGameDate;
+    const dateMatches = !cachedGameDateEt || !targetGameDate || cachedGameDateEt === targetGameDate;
 
     if (cachedHomeTeam && cachedAwayTeam && (!teamsMatch || !dateMatches)) {
       console.warn(
@@ -3327,9 +3328,8 @@ async function getOddsFacts(game) {
       ? entry.outcomes.find((outcome) => String(outcome.name || "").toLowerCase().includes(String(teamName).toLowerCase()))
       : null;
 
-    const homeTeam = game?.teams?.home?.team?.name || "";
-    const awayTeam = game?.teams?.away?.team?.name || "";
-    const opponentName = homeTeam === TEAM_NAME ? awayTeam : homeTeam;
+    // game.teams is not always set — derive opponent from game.opponent directly
+    const opponentName = game?.opponent || game?.teams?.away?.team?.name || game?.teams?.home?.team?.name || "";
     const metsOutcome = getOutcome(moneylineMarket, TEAM_NAME);
     const oppOutcome = getOutcome(moneylineMarket, opponentName);
     const metsSpreadOutcome = getOutcome(spreadMarket, TEAM_NAME);
