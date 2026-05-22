@@ -256,6 +256,7 @@ async function main() {
             date:      dateEntry.date,
             oppTeamId: oppId,
             oppAbbr:   TEAM_ABBR[oppId] || oppTeam?.team?.abbreviation || "???",
+            opponent:  oppTeam?.team?.name || null,
             homeAway:  isHome ? "home" : "away",
             status:    isPostponed ? "postponed" : state,
             gamePk:    game.gamePk,
@@ -348,17 +349,26 @@ async function main() {
     .slice(0, 30)   // next 30 scheduled games
     .map(g => {
       const sg = seriesGroupByDate[g.date + "_" + g.oppTeamId] || {};
+      const tid2 = g.oppTeamId;
+      const rec2  = oppMap[tid2] || {};
       return {
-        date:         g.date,
-        dayOfWeek:    dayOfWeek(g.date),
-        homeAway:     g.homeAway,
-        opponent:     null,   // team name not critical for upcoming display
-        oppAbbr:      g.oppAbbr,
-        oppTeamId:    g.oppTeamId,
-        status:       g.status || "Scheduled",
-        seriesGameNum:  sg.gameNum    || null,
-        seriesLength:   sg.seriesLength || null,
-        isSeriesLast:   sg.isSeriesLast || false,
+        date:          g.date,
+        dayOfWeek:     dayOfWeek(g.date),
+        homeAway:      g.homeAway,
+        opponent:      g.opponent || null,
+        oppAbbr:       g.oppAbbr,
+        oppTeamId:     tid2,
+        status:        g.status || "Scheduled",
+        seriesGameNum: sg.gameNum     || null,
+        seriesLength:  sg.seriesLength || null,
+        isSeriesLast:  sg.isSeriesLast || false,
+        // Strength-of-schedule stats for upcoming opponents
+        oppRecord:    rec2.overall || null,
+        oppWins:      rec2.wins    ?? null,
+        oppLosses:    rec2.losses  ?? null,
+        oppWinPct:    rec2.winPct  ?? null,
+        oppSeasonAvg: avgMap[tid2] || null,
+        oppSeasonEra: eraMap[tid2] || null,
       };
     });
 
@@ -367,6 +377,21 @@ async function main() {
     const vals = arr.map(fn).filter(v => v != null && !isNaN(v));
     return vals.length ? +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2) : null;
   };
+
+  // Strength-of-schedule aggregates
+  const parseEra = s => { const n = parseFloat(s); return isNaN(n) ? null : n; };
+  const parseAvg = s => { if (!s) return null; const n = parseFloat(String(s).replace(/^\./,"0.")); return isNaN(n) ? null : n; };
+
+  const sosPlayed = {
+    avgOppWinPct: avg(games, g => g.oppWinPct),
+    avgOppEra:    avg(games, g => parseEra(g.oppSeasonEra)),
+    avgOppAvg:    avg(games, g => parseAvg(g.oppSeasonAvg)),
+  };
+  const sosUpcoming = upcomingGames.length ? {
+    avgOppWinPct: avg(upcomingGames, g => g.oppWinPct),
+    avgOppEra:    avg(upcomingGames, g => parseEra(g.oppSeasonEra)),
+    avgOppAvg:    avg(upcomingGames, g => parseAvg(g.oppSeasonAvg)),
+  } : null;
 
   const summary = {
     generatedAt:  new Date().toISOString(),
@@ -379,6 +404,8 @@ async function main() {
     avgOppRuns:   avg(games, g => g.oppRuns),
     avgMetsHits:  avg(games, g => g.metsHits),
     avgOppHits:   avg(games, g => g.oppHits),
+    sosPlayed,
+    sosUpcoming,
   };
 
   // ── 8. Write output ───────────────────────────────────────────────────────────

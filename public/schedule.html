@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026 Mets Schedule & Strength of Schedule | MetsMoneyline</title>
+  <meta name="description" content="Full 2026 New York Mets schedule with results, opponent records, ERA, and batting average. Includes strength-of-schedule comparison for games played vs remaining.">
+  <meta name="keywords" content="Mets schedule 2026, Mets strength of schedule, Mets remaining schedule, Mets opponent stats">
+  <link rel="canonical" href="https://www.metsmoneyline.com/schedule">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.metsmoneyline.com/schedule">
+  <meta property="og:title" content="2026 Mets Schedule & Strength of Schedule | MetsMoneyline">
+  <meta property="og:description" content="Full 2026 Mets schedule with opponent records, ERA, and batting average — past and future.">
+  <meta property="og:image" content="https://www.mlbstatic.com/team-logos/121.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/jpeg" href="/favicon.jpg">
+  <link rel="stylesheet" href="/css/styles.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VV13077MN0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-VV13077MN0");
+  </script>
+  <style>
+    /* ── Shell ── */
+    .sch-shell { max-width: 1280px; margin: 0 auto; padding: 0 1rem 3rem; }
+
+    /* ── Page header ── */
+    .sch-header {
+      display: flex;
+      align-items: baseline;
+      gap: 0.75rem;
+      padding: 1.1rem 0 0.75rem;
+      border-bottom: 2px solid #e8edf4;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .sch-header h1 {
+      font-family: "Oswald", sans-serif;
+      font-size: 1.55rem;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+    .sch-header .sch-record {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--orange);
+      background: rgba(255,89,16,0.08);
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+    .sch-header .sch-meta {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-left: auto;
+    }
+
+    /* ── SOS Summary strip ── */
+    .sos-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem;
+      margin-bottom: 1.25rem;
+    }
+    .sos-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+    }
+    .sos-card-title {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #94a3b8;
+      margin-bottom: 0.55rem;
+    }
+    .sos-card.played .sos-card-title { color: var(--navy); }
+    .sos-card.upcoming .sos-card-title { color: var(--orange); }
+    .sos-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+    }
+    .sos-stat {
+      text-align: center;
+    }
+    .sos-stat-val {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--navy);
+      line-height: 1.1;
+    }
+    .sos-stat-lbl {
+      font-size: 0.56rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #94a3b8;
+      margin-top: 0.15rem;
+    }
+
+    /* ── Two-column layout ── */
+    .sch-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    /* ── Column headers ── */
+    .sch-col-head {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px 8px 0 0;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0;
+    }
+    .sch-col-head.played { background: var(--navy); color: #fff; }
+    .sch-col-head.upcoming { background: var(--orange); color: #fff; }
+    .sch-col-head .col-count {
+      margin-left: auto;
+      background: rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 0.1rem 0.4rem;
+      font-size: 0.6rem;
+    }
+
+    /* ── Table wrapper ── */
+    .sch-table-wrap {
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      overflow: hidden;
+      background: var(--card-bg);
+    }
+
+    /* ── Schedule table ── */
+    .sch-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+    }
+    .sch-table thead th {
+      padding: 0.38rem 0.5rem;
+      background: #f0f4f9;
+      color: #64748b;
+      font-size: 0.58rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .sch-table thead th.r { text-align: right; }
+    .sch-table thead th.c { text-align: center; }
+    .sch-table tbody tr {
+      border-bottom: 1px solid #f0f4f9;
+      transition: background 0.12s;
+    }
+    .sch-table tbody tr:hover { background: #f8fafd; }
+    .sch-table tbody tr.series-end { border-bottom: 2px solid #d9e1ee; }
+    .sch-table tbody tr.today-game { background: rgba(255,89,16,0.05); }
+    .sch-table td {
+      padding: 0.38rem 0.5rem;
+      color: var(--text);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .sch-table td.r { text-align: right; }
+    .sch-table td.c { text-align: center; }
+
+    /* Result badge */
+    .sch-result {
+      display: inline-block;
+      width: 1.3rem;
+      height: 1.3rem;
+      line-height: 1.3rem;
+      text-align: center;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 900;
+    }
+    .sch-result.W { background: rgba(21,128,61,0.12); color: #15803d; }
+    .sch-result.L { background: rgba(185,28,28,0.1); color: #b91c1c; }
+
+    /* H/A badge */
+    .sch-ha {
+      font-size: 0.58rem;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .sch-ha.home { color: var(--navy); }
+
+    /* Record pill */
+    .sch-rec-pill {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    /* Opp name */
+    .sch-opp {
+      font-weight: 700;
+      color: var(--navy);
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sch-opp .opp-logo {
+      width: 14px;
+      height: 14px;
+      vertical-align: middle;
+      margin-right: 4px;
+      object-fit: contain;
+    }
+
+    /* Score */
+    .sch-score {
+      font-weight: 800;
+      font-size: 0.68rem;
+    }
+    .sch-score.win { color: #15803d; }
+    .sch-score.loss { color: #b91c1c; }
+
+    /* Stat cells */
+    .sch-stat { color: #475569; font-size: 0.67rem; }
+
+    /* ERA color coding */
+    .era-good  { color: #15803d; font-weight: 700; }
+    .era-mid   { color: #b45309; font-weight: 700; }
+    .era-bad   { color: #b91c1c; font-weight: 700; }
+
+    /* Win pct color */
+    .wpct-high { color: #15803d; font-weight: 700; }
+    .wpct-mid  { color: #b45309; font-weight: 700; }
+    .wpct-low  { color: #b91c1c; font-weight: 700; }
+
+    /* Loading / error */
+    .sch-loading {
+      padding: 2.5rem;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+    .sch-error {
+      padding: 1.5rem;
+      text-align: center;
+      color: #b91c1c;
+      font-size: 0.82rem;
+      background: rgba(185,28,28,0.05);
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+
+    /* Today marker */
+    .today-marker {
+      font-size: 0.58rem;
+      font-weight: 800;
+      color: var(--orange);
+      background: rgba(255,89,16,0.1);
+      border-radius: 3px;
+      padding: 0.08rem 0.3rem;
+      margin-left: 2px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 700px) {
+      .sch-columns { grid-template-columns: 1fr; }
+      .sos-strip   { grid-template-columns: 1fr; }
+      .sch-table { font-size: 0.65rem; }
+      .sch-table thead th,
+      .sch-table td { padding: 0.32rem 0.35rem; }
+      .sch-opp { max-width: 70px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="site-header-root"></div>
+
+  <div class="sch-shell">
+    <!-- Page header -->
+    <div class="sch-header">
+      <h1>2026 Schedule</h1>
+      <span class="sch-record" id="sch-record">Loading…</span>
+      <span class="sch-meta" id="sch-meta"></span>
+    </div>
+
+    <!-- SOS summary strip -->
+    <div class="sos-strip" id="sos-strip" style="display:none">
+      <div class="sos-card played">
+        <div class="sos-card-title">⚔️ Strength — Games Played</div>
+        <div class="sos-stats" id="sos-played-stats"></div>
+      </div>
+      <div class="sos-card upcoming">
+        <div class="sos-card-title">📅 Strength — Games Remaining</div>
+        <div class="sos-stats" id="sos-upcoming-stats"></div>
+      </div>
+    </div>
+
+    <!-- Two-column schedule -->
+    <div class="sch-columns">
+      <!-- Left: completed -->
+      <div>
+        <div class="sch-col-head played">
+          ✓ Games Played
+          <span class="col-count" id="played-count">—</span>
+        </div>
+        <div class="sch-table-wrap">
+          <div id="played-body"><div class="sch-loading">Loading schedule…</div></div>
+        </div>
+      </div>
+      <!-- Right: upcoming -->
+      <div>
+        <div class="sch-col-head upcoming">
+          📅 Upcoming Games
+          <span class="col-count" id="upcoming-count">—</span>
+        </div>
+        <div class="sch-table-wrap">
+          <div id="upcoming-body"><div class="sch-loading">Loading schedule…</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="site-footer-root"></div>
+
+  <script src="/js/site-header.js"></script>
+  <script>
+  (async function () {
+    const TEAM_LOGOS = (id) =>
+      `https://www.mlbstatic.com/team-logos/${id}.svg`;
+
+    function fmtDate(d) {
+      const dt = new Date(d + "T12:00:00");
+      return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "short" });
+    }
+
+    function eraClass(era) {
+      const n = parseFloat(era);
+      if (isNaN(n)) return "";
+      if (n < 3.5) return "era-good";
+      if (n < 4.5) return "era-mid";
+      return "era-bad";
+    }
+
+    function wpctClass(pct) {
+      if (pct == null) return "";
+      if (pct >= 0.55) return "wpct-high";
+      if (pct >= 0.45) return "wpct-mid";
+      return "wpct-low";
+    }
+
+    function fmtWpct(p) {
+      if (p == null) return "—";
+      return (p * 100).toFixed(0) + "%";
+    }
+
+    function fmtEra(e) {
+      const n = parseFloat(e);
+      return isNaN(n) ? "—" : n.toFixed(2);
+    }
+
+    function fmtAvg(a) {
+      if (!a) return "—";
+      const n = parseFloat(String(a).replace(/^\./, "0."));
+      return isNaN(n) ? "—" : "." + Math.round(n * 1000).toString().padStart(3, "0");
+    }
+
+    function logoImg(teamId) {
+      return `<img src="${TEAM_LOGOS(teamId)}" class="opp-logo" alt="" onerror="this.style.display='none'">`;
+    }
+
+    function buildTableHeader(isUpcoming) {
+      return `<table class="sch-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>H/A</th>
+            <th>Opponent</th>
+            ${isUpcoming ? "" : '<th class="c">Score</th><th class="c">Result</th>'}
+            <th class="c">Record</th>
+            <th class="r">Opp W%</th>
+            <th class="r">Opp ERA</th>
+            <th class="r">Opp AVG</th>
+          </tr>
+        </thead>
+        <tbody id="${isUpcoming ? "upcoming-rows" : "played-rows"}"></tbody>
+      </table>`;
+    }
+
+    function buildPlayedRow(g, isToday) {
+      const ha = g.homeAway === "home" ? "home" : "away";
+      const haLabel = ha === "home" ? "Home" : "Away";
+      const result = g.result || "";
+      const seriesEnd = g.isSeriesLast ? " series-end" : "";
+      const todayCls  = isToday ? " today-game" : "";
+      return `<tr class="${seriesEnd}${todayCls}">
+        <td>${fmtDate(g.date)}</td>
+        <td><span class="sch-ha ${ha}">${haLabel}</span></td>
+        <td class="sch-opp">${logoImg(g.oppTeamId)}${g.oppAbbr || g.opponent || "—"}</td>
+        <td class="c"><span class="sch-score ${result === "W" ? "win" : "loss"}">${g.finalScore || "—"}</span></td>
+        <td class="c"><span class="sch-result ${result}">${result || "—"}</span></td>
+        <td class="c sch-rec-pill">${g.metsRecord || "—"}</td>
+        <td class="r"><span class="${wpctClass(g.oppWinPct)}">${fmtWpct(g.oppWinPct)}</span></td>
+        <td class="r"><span class="${eraClass(g.oppSeasonEra)}">${fmtEra(g.oppSeasonEra)}</span></td>
+        <td class="r sch-stat">${fmtAvg(g.oppSeasonAvg)}</td>
+      </tr>`;
+    }
+
+    function buildUpcomingRow(g, isToday) {
+      const ha = g.homeAway === "home" ? "home" : "away";
+      const haLabel = ha === "home" ? "Home" : "Away";
+      const seriesEnd = g.isSeriesLast ? " series-end" : "";
+      const todayCls  = isToday ? " today-game" : "";
+      const todayBadge = isToday ? `<span class="today-marker">TODAY</span>` : "";
+      return `<tr class="${seriesEnd}${todayCls}">
+        <td>${fmtDate(g.date)}${todayBadge}</td>
+        <td><span class="sch-ha ${ha}">${haLabel}</span></td>
+        <td class="sch-opp">${logoImg(g.oppTeamId)}${g.opponent || g.oppAbbr || "—"}</td>
+        <td class="c sch-rec-pill">${g.oppRecord || "—"}</td>
+        <td class="r"><span class="${wpctClass(g.oppWinPct)}">${fmtWpct(g.oppWinPct)}</span></td>
+        <td class="r"><span class="${eraClass(g.oppSeasonEra)}">${fmtEra(g.oppSeasonEra)}</span></td>
+        <td class="r sch-stat">${fmtAvg(g.oppSeasonAvg)}</td>
+      </tr>`;
+    }
+
+    function buildSosStat(val, label) {
+      return `<div class="sos-stat">
+        <div class="sos-stat-val">${val}</div>
+        <div class="sos-stat-lbl">${label}</div>
+      </div>`;
+    }
+
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+
+    try {
+      const res = await fetch("/data/game-log.json");
+      if (!res.ok) throw new Error("Failed to load schedule data");
+      const data = await res.json();
+
+      const summary = data.summary || {};
+      const games   = data.games || [];
+      const upcoming = data.upcomingGames || [];
+
+      // Header
+      document.getElementById("sch-record").textContent = summary.record || "—";
+      const genAt = data.generatedAt ? new Date(data.generatedAt).toLocaleString("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+      document.getElementById("sch-meta").textContent = genAt ? `Updated ${genAt} ET` : "";
+
+      // SOS strip
+      const sos = summary.sosPlayed;
+      const sosU = summary.sosUpcoming;
+      if (sos || sosU) {
+        document.getElementById("sos-strip").style.display = "";
+        if (sos) {
+          document.getElementById("sos-played-stats").innerHTML =
+            buildSosStat(fmtWpct(sos.avgOppWinPct), "Avg Opp W%") +
+            buildSosStat(fmtEra(sos.avgOppEra), "Avg Opp ERA") +
+            buildSosStat(fmtAvg(sos.avgOppAvg), "Avg Opp AVG");
+        }
+        if (sosU) {
+          document.getElementById("sos-upcoming-stats").innerHTML =
+            buildSosStat(fmtWpct(sosU.avgOppWinPct), "Avg Opp W%") +
+            buildSosStat(fmtEra(sosU.avgOppEra), "Avg Opp ERA") +
+            buildSosStat(fmtAvg(sosU.avgOppAvg), "Avg Opp AVG");
+        }
+      }
+
+      // Played column — reverse so most recent is at top
+      document.getElementById("played-count").textContent = games.length;
+      const playedHtml = buildTableHeader(false);
+      document.getElementById("played-body").innerHTML = playedHtml;
+      const playedRows = [...games].reverse().map(g => buildPlayedRow(g, g.date === today)).join("");
+      document.getElementById("played-rows").innerHTML = playedRows || `<tr><td colspan="9" class="sch-loading">No completed games yet</td></tr>`;
+
+      // Upcoming column — chronological, today/next game at top
+      const upcomingToShow = upcoming.filter(g => g.date >= today);
+      document.getElementById("upcoming-count").textContent = upcomingToShow.length;
+      const upcomingHtml = buildTableHeader(true);
+      document.getElementById("upcoming-body").innerHTML = upcomingHtml;
+      const upcomingRows = upcomingToShow.map(g => buildUpcomingRow(g, g.date === today)).join("");
+      document.getElementById("upcoming-rows").innerHTML = upcomingRows || `<tr><td colspan="7" class="sch-loading">No upcoming games found</td></tr>`;
+
+    } catch (err) {
+      document.getElementById("played-body").innerHTML = `<div class="sch-error">Failed to load schedule: ${err.message}</div>`;
+      document.getElementById("upcoming-body").innerHTML = `<div class="sch-error">Failed to load schedule: ${err.message}</div>`;
+    }
+  })();
+  </script>
+</body>
+</html>
