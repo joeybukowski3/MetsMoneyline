@@ -123,9 +123,12 @@
 
     /* Stat row */
     .sos-stats {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem 1rem;
+    }
+    .sos-stat {
+      min-width: 0;
     }
     .sos-stat-val {
       font-family: "Oswald", sans-serif;
@@ -306,6 +309,7 @@
       .sch-hero    { padding: 1rem 1rem 1rem; }
       .sos-compare { grid-template-columns: 1fr; gap: 0.85rem 0; }
       .sos-divider-v { display: none; }
+      .sos-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem 0.85rem; }
 
       .sch-tabs { display: flex; }
       .sch-cols { grid-template-columns: 1fr; gap: 0; }
@@ -494,7 +498,7 @@
 
     function sosStat(val, lbl, delta) {
       const d = delta ? `<span class="sos-delta ${delta.cls}">${delta.arrow}${delta.val}</span>` : "";
-      return `<div><div class="sos-stat-val">${val}${d}</div><div class="sos-stat-lbl">${lbl}</div></div>`;
+      return `<div class="sos-stat"><div class="sos-stat-val">${val}${d}</div><div class="sos-stat-lbl">${lbl}</div></div>`;
     }
 
     function delta(a, b, higherIsHarder) {
@@ -508,7 +512,10 @@
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 
     try {
-      const data     = await fetch("/data/game-log.json").then(r => { if (!r.ok) throw new Error("Load failed"); return r.json(); });
+      const [data, powerRankingsData] = await Promise.all([
+        fetch("/data/game-log.json").then(r => { if (!r.ok) throw new Error("Load failed"); return r.json(); }),
+        fetch("/data/power-rankings.json").then(r => r.ok ? r.json() : null).catch(() => null)
+      ]);
       const summary      = data.summary || {};
       const playedRows   = (data.games || []).map(g => ({ ...g, _today: g.date === today }));
       const upcomingRows = (data.upcomingGames || []).filter(g => g.date >= today).map(g => ({ ...g, _today: g.date === today }));
@@ -516,6 +523,24 @@
       const upcoming     = upcomingRows;
       const sos          = buildSectionSummary(playedRows);
       const sosU         = buildSectionSummary(upcomingRows);
+      const powerRankMap = new Map(((powerRankingsData && powerRankingsData.teams) || [])
+        .filter(team => Number.isFinite(Number(team.teamId)) && Number.isFinite(Number(team.rank)))
+        .map(team => [String(team.teamId), Number(team.rank)]));
+      const averagePowerRank = rows => average(rows, g => {
+        const rank = powerRankMap.get(String(g.oppTeamId));
+        return rank == null ? null : rank;
+      });
+      const buildUpcomingSplit = homeAway => {
+        const rows = upcomingRows.filter(g => g.homeAway === homeAway);
+        return {
+          count: rows.length,
+          oppWinPct: average(rows, g => parseNumeric(g.oppWinPct))
+        };
+      };
+      const upcomingHome = buildUpcomingSplit("home");
+      const upcomingAway = buildUpcomingSplit("away");
+      const fmtCount = value => Number.isFinite(Number(value)) ? String(value) : "—";
+      const fmtRankAvg = value => value == null ? "—" : value.toFixed(1);
 
       /* Hero */
       document.getElementById("sch-hero").style.display = "";
@@ -541,20 +566,28 @@
       const eraU = sosU.avgOppEra;
       const avgP = sos.avgOppAvg;
       const avgU = sosU.avgOppAvg;
+      const powerRankPlayed = averagePowerRank(playedRows);
+      const powerRankUpcoming = averagePowerRank(upcomingRows);
 
       document.getElementById("sos-played-stats").innerHTML =
         sosStat(fmtRecord(sos.combinedRecord), "Collective Record") +
-        sosStat(fmtWpct(sos.combinedRecord?.winPct), "Collective W%") +
-        sosStat(fmtWpct(sos.avgOppWinPct), "Avg Opp W%") +
+        sosStat(summary.homeRecord || "—", "Mets Home Record") +
+        sosStat(summary.roadRecord || "—", "Mets Away Record") +
+        sosStat(fmtWpct(sos.avgOppWinPct), "Opponent Win %") +
         sosStat(fmtEra(eraP),              "Avg Opp ERA") +
-        sosStat(fmtAvg(avgP),              "Avg Opp AVG");
+        sosStat(fmtAvg(avgP),              "Avg Opp AVG") +
+        sosStat(fmtRankAvg(powerRankPlayed), "Average Power Ranking");
 
       document.getElementById("sos-upcoming-stats").innerHTML =
         sosStat(fmtRecord(sosU.combinedRecord), "Collective Record") +
-        sosStat(fmtWpct(sosU.combinedRecord?.winPct), "Collective W%") +
-        sosStat(fmtWpct(sosU.avgOppWinPct), "Avg Opp W%",  delta(sos.avgOppWinPct, sosU.avgOppWinPct, true)) +
+        sosStat(fmtCount(upcomingHome.count), "Remaining Home Games") +
+        sosStat(fmtCount(upcomingAway.count), "Remaining Away Games") +
+        sosStat(fmtWpct(sosU.avgOppWinPct), "Opponent Win %",  delta(sos.avgOppWinPct, sosU.avgOppWinPct, true)) +
+        sosStat(fmtWpct(upcomingHome.oppWinPct), "Home Opponent Win %") +
+        sosStat(fmtWpct(upcomingAway.oppWinPct), "Away Opponent Win %") +
         sosStat(fmtEra(eraU),               "Avg Opp ERA",  delta(eraP, eraU, false)) +
-        sosStat(fmtAvg(avgU),               "Avg Opp AVG", delta(avgP, avgU, true));
+        sosStat(fmtAvg(avgU),               "Avg Opp AVG", delta(avgP, avgU, true)) +
+        sosStat(fmtRankAvg(powerRankUpcoming), "Average Power Ranking");
 
       /* Tables */
       document.getElementById("played-count").textContent   = games.length;

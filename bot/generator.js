@@ -3324,12 +3324,16 @@ async function getOddsFacts(game) {
     const spreadMarket = consensusOutcomes.find((entry) => /spread|run/i.test(entry.label || entry.key || ""));
     const totalMarket = consensusOutcomes.find((entry) => /total|over\/under/i.test(entry.label || entry.key || ""));
     const moneylineMarket = market || consensusOutcomes.find((entry) => /moneyline|h2h/i.test(entry.label || entry.key || ""));
-    const getOutcome = (entry, teamName) => Array.isArray(entry?.outcomes)
-      ? entry.outcomes.find((outcome) => String(outcome.name || "").toLowerCase().includes(String(teamName).toLowerCase()))
-      : null;
+    const getOutcome = (entry, teamName) => {
+      const normalizedTeamName = String(teamName || "").trim().toLowerCase();
+      if (!normalizedTeamName || !Array.isArray(entry?.outcomes)) return null;
+      return entry.outcomes.find((outcome) => String(outcome?.name || "").trim().toLowerCase() === normalizedTeamName) || null;
+    };
 
     // game.teams is not always set — derive opponent from game.opponent directly
-    const opponentName = game?.opponent || game?.teams?.away?.team?.name || game?.teams?.home?.team?.name || "";
+    const opponentName = game?.opponent
+      || (isGameHome ? game?.teams?.away?.team?.name : game?.teams?.home?.team?.name)
+      || "";
     const metsOutcome = getOutcome(moneylineMarket, TEAM_NAME);
     const oppOutcome = getOutcome(moneylineMarket, opponentName);
     const metsSpreadOutcome = getOutcome(spreadMarket, TEAM_NAME);
@@ -7141,15 +7145,44 @@ const REPORT_PCTL = {
 };
 
 function reportPctlColor(pct) {
-  if (pct >= 70) return "#ff5910";
-  if (pct >= 40) return "#9ca3af";
-  return "#002d72";
+  const clamped = clampReport(Number(pct), 0, 100);
+  const mix = (start, end, amount) => {
+    const normalized = Math.max(0, Math.min(1, amount));
+    const parse = (hex) => ({
+      r: parseInt(hex.slice(1, 3), 16),
+      g: parseInt(hex.slice(3, 5), 16),
+      b: parseInt(hex.slice(5, 7), 16)
+    });
+    const from = parse(start);
+    const to = parse(end);
+    const channel = (key) => Math.round(from[key] + ((to[key] - from[key]) * normalized));
+    return `rgb(${channel("r")}, ${channel("g")}, ${channel("b")})`;
+  };
+
+  if (Math.abs(clamped - 50) <= 3) return "#9ca3af";
+  if (clamped <= 25) {
+    return mix("#1e4d8f", "#002d72", clamped / 25);
+  }
+  if (clamped < 50) {
+    return mix("#3d73ae", "#9ca3af", (clamped - 25) / 25);
+  }
+  if (clamped < 75) {
+    return mix("#9ca3af", "#ff7a2f", (clamped - 50) / 25);
+  }
+  return mix("#ff7a2f", "#ff5910", (clamped - 75) / 25);
 }
 
 function reportCellToneStyle(pct) {
   const bg = reportPctlColor(pct);
-  const darkText = pct >= 40 && pct < 70;
-  return `background:${bg};color:${darkText ? "#10213a" : "#ffffff"};font-weight:700;border-radius:8px;`;
+  const resolvedPct = clampReport(Number(pct), 0, 100);
+  const darkText = resolvedPct >= 38 && resolvedPct <= 66;
+  const fontWeight = resolvedPct <= 28 || resolvedPct >= 72 ? 800 : 700;
+  const borderColor = darkText
+    ? "rgba(71,85,105,0.22)"
+    : resolvedPct < 50
+      ? "rgba(0,30,80,0.22)"
+      : "rgba(200,60,0,0.22)";
+  return `background:${bg};color:${darkText ? "#10213a" : "#ffffff"};font-weight:${fontWeight};border-radius:8px;box-shadow:inset 0 0 0 1px ${borderColor};`;
 }
 
 function reportWarCellStyle(value) {

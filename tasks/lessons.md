@@ -55,6 +55,8 @@ Always verify which path the relevant page or workflow actually uses.
 
 - `bot/build-api-cache.js` must not hard-fail the entire static odds refresh just because `API_SPORTS_KEY` is missing or flaky.
 - The homepage and report pipeline depend on `public/api/mlb/mets/odds.json`, so the builder needs a fallback path that can still publish today’s odds when schedule/game context can be recovered from MLB Stats and The Odds API.
+- If live odds providers return no usable markets but `public/data/odds-history.json` already has a same-day snapshot, rebuild `public/api/mlb/mets/odds.json` from archived history instead of publishing an empty odds payload. The homepage, betting hub, report page, and generator all consume that shared cache, so an empty `odds.json` becomes a site-wide outage.
+- When a fallback moneyline payload is one-sided (for example Mets-only manual refresh data), consumers must clear any stale opponent price instead of preserving an older value from `sample-game.json` or generated report HTML.
 
 ### Betting page caution
 

@@ -146,7 +146,7 @@ async function main() {
         const splits  = tr?.records?.splitRecords || [];
         const findSp  = (t) => splits.find(s => s.type === t);
         const home    = findSp("home");
-        const road    = findSp("road");
+        const road    = findSp("road") || findSp("away");
         const w       = tr.wins ?? 0;
         const l       = tr.losses ?? 0;
         oppMap[tid]   = {

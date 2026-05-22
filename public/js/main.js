@@ -475,12 +475,14 @@ async function loadGameData() {
       console.warn(`[home] Ignoring stale endpoint matchup ${normalizedGame.date} vs ${normalizedGame.opponent}`);
     } else if (filteredGames.length > 0 && odds) {
       const fallbackMoneyline = mapOddsSummaryToMoneyline(odds, { opponent: filteredGames[0]?.opponent || "" });
+      const oddsHasMoneyline = Array.isArray(odds?.markets)
+        && odds.markets.some((market) => String(market?.key || "").toLowerCase() === "h2h");
       filteredGames[0] = {
         ...filteredGames[0],
         moneyline: {
           ...(filteredGames[0]?.moneyline || {}),
-          mets: fallbackMoneyline.mets ?? filteredGames[0]?.moneyline?.mets ?? null,
-          opp: fallbackMoneyline.opp ?? filteredGames[0]?.moneyline?.opp ?? null
+          mets: oddsHasMoneyline ? (fallbackMoneyline.mets ?? null) : (filteredGames[0]?.moneyline?.mets ?? null),
+          opp: oddsHasMoneyline ? (fallbackMoneyline.opp ?? null) : (filteredGames[0]?.moneyline?.opp ?? null)
         },
         oddsUpdatedAt: odds?.meta?.generatedAt || filteredGames[0]?.oddsUpdatedAt || null
       };
@@ -802,7 +804,7 @@ function buildMatchupStrip(game) {
       <div class="mb-meta">
         ${dateDisplay ? `<span class="mb-meta-item">&#x1F550; ${dateDisplay}</span>` : ""}
         <span class="mb-meta-item">&#x1F4CD; ${game.ballpark}</span>
-        ${metsML != null && oppML != null ? `<span class="mb-meta-item">$ <span class="mb-ml-nym">NYM ${metsML}</span> / OPP ${oppML}</span>` : ""}
+        ${metsML != null || oppML != null ? `<span class="mb-meta-item">$ ${metsML != null ? `<span class="mb-ml-nym">NYM ${metsML}</span>` : ""}${oppML != null ? `${metsML != null ? " / " : ""}OPP ${oppML}` : ""}</span>` : ""}
         ${ouItem}
         ${oddsUpdatedItem}
       </div>

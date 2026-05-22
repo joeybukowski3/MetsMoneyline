@@ -1,4 +1,7 @@
+const fs = require("fs");
+const path = require("path");
 const { apiSportsGet, getApiSportsConfig } = require("./api-sports");
+const { buildArchivedOddsFallbackPayload } = require("../../lib/archived-odds-fallback");
 const { buildUrl, fetchJsonWithRetry } = require("./http");
 const { normalizeTeamIdentity } = require("../../lib/mlb-team-identity");
 const {
@@ -19,6 +22,7 @@ const {
 
 const EASTERN_TIME_ZONE = "America/New_York";
 const ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4";
+const ODDS_HISTORY_PATH = path.join(__dirname, "../../public/data/odds-history.json");
 const DEFAULT_MLB_STATS_TEAM_ID = 121;
 const NATIONAL_LEAGUE_ID = 104;
 const MLB_DIVISION_NAMES = {
@@ -373,6 +377,14 @@ function normalizeTheOddsApiEvent(event) {
   };
 }
 
+function loadArchivedOddsHistory() {
+  try {
+    return JSON.parse(fs.readFileSync(ODDS_HISTORY_PATH, "utf8"));
+  } catch {
+    return null;
+  }
+}
+
 function scoreOddsEventMatch(event, nextGame) {
   if (!event || !nextGame) return -1;
   const homeKey = canonicalTeamKeyFromName(event.home_team);
@@ -624,6 +636,14 @@ async function buildOddsPayload() {
   if (!odds) {
     odds = await fetchApiSportsOdds(bundle.liveGame?.gameId || bundle.nextGame?.gameId || null, bundle.config, bundle.season);
   }
+  let usedArchivedOddsFallback = false;
+  if (!(odds?.gameId && Array.isArray(odds?.markets) && odds.markets.length > 0)) {
+    const archivedFallback = buildArchivedOddsFallbackPayload(loadArchivedOddsHistory(), targetGame);
+    if (archivedFallback) {
+      odds = archivedFallback;
+      usedArchivedOddsFallback = true;
+    }
+  }
 
   const trackedSportsbooks = ["Fanatics", "DraftKings", "FanDuel", "BetMGM", "Caesars"];
   const availableSportsbooks = Array.isArray(odds?.bookmakers)
@@ -643,9 +663,10 @@ async function buildOddsPayload() {
       missingTrackedSportsbooks: trackedSportsbooks.filter((name) => !availableSportsbooks.includes(name))
     },
     meta: {
-      provider,
+      provider: usedArchivedOddsFallback ? "odds-history" : provider,
       generatedAt: new Date().toISOString(),
-      cacheHint: "odds: 2-5 minutes"
+      cacheHint: "odds: 2-5 minutes",
+      ...(usedArchivedOddsFallback ? { note: "rebuilt from archived odds history — live fetch returned empty" } : {})
     }
   };
 }

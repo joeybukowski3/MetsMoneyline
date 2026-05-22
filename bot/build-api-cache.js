@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const axios = require("axios");
+const { buildArchivedOddsFallbackPayload } = require("../lib/archived-odds-fallback");
 const { normalizeTeamIdentity } = require("../lib/mlb-team-identity");
 const {
   addDaysToDateISO,
@@ -548,6 +549,9 @@ function buildGameEndpointPayload(game, config, standings, recentGames, odds) {
 
 function archiveResolvedOdds(targetGame, oddsPayload) {
   if (!targetGame || !oddsPayload) return;
+  if (oddsPayload?.fallbackSource === "odds-history" || oddsPayload?.fallbackSource === "odds-history-manual-backfill") {
+    return;
+  }
 
   const isMetsHome = String(targetGame?.home?.name || "").toLowerCase() === "new york mets";
   const opponent = isMetsHome ? targetGame?.away?.name : targetGame?.home?.name;
@@ -736,17 +740,30 @@ async function run() {
       // No existing file or unparseable — continue with empty odds
     }
   }
+  let usedArchivedOddsFallback = false;
+  if (!(resolvedOdds?.gameId && Array.isArray(resolvedOdds?.markets) && resolvedOdds.markets.length > 0)) {
+    const archivedHistory = loadOddsHistory(ODDS_HISTORY_PATH);
+    const archivedFallback = buildArchivedOddsFallbackPayload(archivedHistory, resolvedUpcomingGame || liveGame || null);
+    if (archivedFallback) {
+      resolvedOdds = archivedFallback;
+      usedArchivedOddsFallback = true;
+      console.log(`[odds] Rebuilt current odds cache from archived odds history (${archivedFallback.consensus?.title || "Archived Consensus"})`);
+    }
+  }
   const oddsPayload = {
     ...resolvedOdds,
     meta: {
       provider:
-        resolvedOdds?.meta?.provider
+        (usedArchivedOddsFallback ? "odds-history" : null)
+        || resolvedOdds?.meta?.provider
+        || (resolvedOdds?.fallbackSource === "odds-history" ? "odds-history" : null)
         || (resolvedOdds?.raw?.sport_key ? "the-odds-api" : null)
         || (odds?.raw?.sport_key ? "the-odds-api" : null)
         || "api-sports",
       generatedAt: new Date().toISOString(),
       cacheHint: "odds: 2-5 minutes",
-      ...((!oddsHasData && resolvedOdds !== odds) ? { note: "preserved from previous cache — live fetch returned empty" } : {})
+      ...(usedArchivedOddsFallback ? { note: "rebuilt from archived odds history — live fetch returned empty" } : {}),
+      ...((!usedArchivedOddsFallback && !oddsHasData && resolvedOdds !== odds) ? { note: "preserved from previous cache — live fetch returned empty" } : {})
     }
   };
 

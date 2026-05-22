@@ -1,12 +1,67 @@
 {
   "gameId": 823863,
-  "markets": [],
-  "bookmakers": [],
-  "consensus": null,
-  "raw": null,
+  "markets": [
+    {
+      "key": "h2h",
+      "label": "Moneyline",
+      "outcomes": [
+        {
+          "name": "New York Mets",
+          "price": 130,
+          "point": null
+        }
+      ]
+    }
+  ],
+  "bookmakers": [
+    {
+      "key": "archived-consensus",
+      "title": "Oddschecker Best",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "Moneyline",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 130,
+              "point": null
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "consensus": {
+    "key": "archived-consensus",
+    "title": "Oddschecker Best",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "Moneyline",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 130,
+            "point": null
+          }
+        ]
+      }
+    ]
+  },
+  "raw": {
+    "commence_time": "2026-05-22T23:10:00Z",
+    "home_team": "Miami Marlins",
+    "away_team": "New York Mets",
+    "source": "odds-history",
+    "archiveKey": "2026-05-22::road::miami-marlins::2310",
+    "captured_at": "2026-05-22T08:02:16.632Z"
+  },
+  "fallbackSource": "odds-history",
   "meta": {
-    "provider": "api-sports",
-    "generatedAt": "2026-05-22T13:42:10.015Z",
-    "cacheHint": "odds: 2-5 minutes"
+    "provider": "odds-history",
+    "generatedAt": "2026-05-22T14:13:53.310Z",
+    "cacheHint": "odds: 2-5 minutes",
+    "note": "preserved from previous cache — live fetch returned empty"
   }
 }

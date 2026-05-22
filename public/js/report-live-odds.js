@@ -42,8 +42,8 @@ async function updateReportOddsRow() {
       .find((row) => row.children?.[1]?.textContent?.trim() === "Odds");
     if (!oddsRow) return;
 
-    if (metsOdds != null) oddsRow.children[0].textContent = formatAmericanOdds(metsOdds);
-    if (oppOdds != null) oddsRow.children[2].textContent = formatAmericanOdds(oppOdds);
+    oddsRow.children[0].textContent = metsOdds != null ? formatAmericanOdds(metsOdds) : "N/A";
+    oddsRow.children[2].textContent = oppOdds != null ? formatAmericanOdds(oppOdds) : "N/A";
   } catch (error) {
     console.warn("Unable to refresh report odds from live cache.", error);
   }

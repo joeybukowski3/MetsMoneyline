@@ -36,6 +36,7 @@
     .gl-tile  { background:#fff;border:1px solid #d6dde8;border-radius:11px;padding:.6rem .6rem;text-align:center; }
     .gl-tile-val { font-size:1.1rem;font-weight:900;color:var(--navy); }
     .gl-tile-lbl { font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-top:2px; }
+    .gl-tile-lbl-short { display:none; }
     .gl-tile-sub { font-size:.62rem;font-weight:700;margin-top:1px; }
     .gl-tile-sub.pos { color:#16a34a; }
     .gl-tile-sub.neg { color:#dc2626; }
@@ -119,6 +120,8 @@
       .gl-hero h1 { font-size:1.3rem; }
       .gl-tiles { grid-template-columns:repeat(3,1fr); }
       .gl-qow-grid { grid-template-columns:1fr; }
+      .gl-tile-lbl-long { display:none; }
+      .gl-tile-lbl-short { display:inline; }
     }
   </style>
 </head>
@@ -446,22 +449,23 @@
 
       var tiles = [
         { val: wl(rows),                                     lbl: "Record" },
-        { val: filtWP != null ? Math.round(filtWP*100)+"%" : "—", lbl: "Win %",
+        { val: filtWP != null ? Math.round(filtWP*100)+"%" : "—", lbl: "Win Percentage", shortLbl: "Win %",
           sub: fil && dWP ? (dWP.val > 0.02 ? "▲ above avg" : dWP.val < -0.02 ? "▼ below avg" : "≈ season avg") : null,
           pos: dWP && dWP.val > 0 },
-        { val: fmtAvg(avgMR),                                lbl: "Avg NYM R",
+        { val: fmtAvg(avgMR),                                lbl: "Average Mets Runs", shortLbl: "Avg NYM R",
           sub: fil && dMR ? (dMR.val > 0.15 ? "▲ above avg" : dMR.val < -0.15 ? "▼ below avg" : "≈ season avg") : null,
           pos: dMR && dMR.val > 0 },
-        { val: fmtAvg(avgOR),                                lbl: "Avg Opp R",
+        { val: fmtAvg(avgOR),                                lbl: "Average Opponent Runs", shortLbl: "Avg Opp R",
           sub: fil && dOR ? (dOR.val > 0.15 ? "▲ giving up less" : dOR.val < -0.15 ? "▼ giving up more" : "≈ season avg") : null,
           pos: dOR && dOR.val > 0 },
-        { val: fmtAvg(mean(rows, function(g){ return g.metsHits; }), 1), lbl: "Avg NYM H" },
-        { val: fmtAvg(mean(rows, function(g){ return g.oppHits;  }), 1), lbl: "Avg Opp H" },
+        { val: fmtAvg(mean(rows, function(g){ return g.metsHits; }), 1), lbl: "Average Mets Hits", shortLbl: "Avg NYM H" },
+        { val: fmtAvg(mean(rows, function(g){ return g.oppHits;  }), 1), lbl: "Average Opponent Hits", shortLbl: "Avg Opp H" },
         { val: rows.length,                                  lbl: "Games" },
       ];
       document.getElementById("gl-tiles").innerHTML = tiles.map(function(t){
+        var shortLabel = t.shortLbl || t.lbl;
         return '<div class="gl-tile"><div class="gl-tile-val">' + t.val + '</div>' +
-          '<div class="gl-tile-lbl">' + t.lbl + '</div>' +
+          '<div class="gl-tile-lbl"><span class="gl-tile-lbl-long">' + t.lbl + '</span><span class="gl-tile-lbl-short">' + shortLabel + '</span></div>' +
           (t.sub ? '<div class="gl-tile-sub ' + (t.pos ? "pos" : "neg") + '">' + t.sub + '</div>' : '') +
           '</div>';
       }).join("");
