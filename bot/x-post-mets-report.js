@@ -331,10 +331,12 @@ function buildPregameAngles(game) {
 }
 
 function buildPregameSingleTweet(game) {
-  const opponent   = cleanText(game?.opponent);
-  const oppShort   = opponentShortName(opponent) || opponent;
-  const report     = game?.writeup?.report || {};
-  const pick       = normalizePick(game);
+  const opponent    = cleanText(game?.opponent);
+  const oppShort    = opponentShortName(opponent) || opponent;
+  const report      = game?.writeup?.report || {};
+  const pick        = normalizePick(game);
+  const ta          = game?.teamAdvanced || {};
+  const splits      = game?.situationalSplits || {};
 
   // Header: matchup + game time
   const gameTime    = cleanText(game?.time || game?.writeup?.gameDetails?.time || "");
@@ -345,61 +347,98 @@ function buildPregameSingleTweet(game) {
   const header      = `\u{1F535} Mets vs ${oppShort}${gameTime ? " | " + gameTime : ""}`;
   const spLine      = (metsName && oppName) ? `${metsName} vs ${oppName}` : null;
 
-  // Build up to 3 Mets-positive angles
-  // Priority: metsEdges from model first, then stat-derived fallbacks
+  // Collect angles — always find at least one
   const angles = [];
+  const add = (s) => { if (s && angles.length < 3) angles.push(`\u2705 ${clip(cleanText(s), 70)}`); };
 
-  // 1. Pull from model metsEdges
-  const rawEdges = Array.isArray(pick?.metsEdges) ? pick.metsEdges : [];
-  for (const edge of rawEdges) {
+  // 1. Model metsEdges (best quality, use first)
+  for (const edge of (Array.isArray(pick?.metsEdges) ? pick.metsEdges : [])) {
     if (angles.length >= 3) break;
-    const cleaned = clip(cleanText(String(edge)), 68);
-    if (cleaned && !looksPlaceholder(cleaned)) angles.push(`\u2705 ${cleaned}`);
+    const c = clip(cleanText(String(edge)), 60);
+    if (c && !looksPlaceholder(c)) angles.push(`\u2705 ${c}`);
   }
 
-  // 2. Stat fallbacks to fill remaining slots
+  // 2. SP xERA edge
   if (angles.length < 3) {
-    const metsBpXERA = parseFloat(game?.pitching?.metsBullpen?.seasonXERAAverage);
-    const oppBpXERA  = parseFloat(game?.pitching?.oppBullpen?.seasonXERAAverage);
-    if (!isNaN(metsBpXERA) && !isNaN(oppBpXERA) && metsBpXERA < oppBpXERA) {
-      const gap = Math.abs(metsBpXERA - oppBpXERA).toFixed(2);
-      angles.push(`\u2705 Bullpen edge: NYM ${metsBpXERA.toFixed(2)} vs ${oppShort} ${oppBpXERA.toFixed(2)} xERA (${gap} gap)`);
-    }
+    const mx = parseFloat(metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA);
+    const ox = parseFloat(oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA);
+    if (!isNaN(mx) && !isNaN(ox) && mx < ox)
+      add(`SP edge: ${metsName || "NYM"} ${mx.toFixed(2)} xERA vs ${oppName || oppShort} ${ox.toFixed(2)}`);
   }
+
+  // 3. Bullpen xERA edge
   if (angles.length < 3) {
-    const metsForm = report?.recentFormReport?.mets;
-    const oppForm  = report?.recentFormReport?.opp;
-    const metsOps  = parseFloat(metsForm?.rows?.find(r => r.statKey === "ops")?.recentValue);
-    const oppOps   = parseFloat(oppForm?.rows?.find(r  => r.statKey === "ops")?.recentValue);
-    if (!isNaN(metsOps) && !isNaN(oppOps) && metsOps > oppOps) {
-      angles.push(`\u2705 L20 OPS: NYM ${metsOps.toFixed(3)} vs ${oppShort} ${oppOps.toFixed(3)}`);
-    }
+    const mb = parseFloat(game?.pitching?.metsBullpen?.seasonXERAAverage);
+    const ob = parseFloat(game?.pitching?.oppBullpen?.seasonXERAAverage);
+    if (!isNaN(mb) && !isNaN(ob) && mb < ob)
+      add(`Bullpen edge: NYM ${mb.toFixed(2)} vs ${oppShort} ${ob.toFixed(2)} xERA`);
   }
+
+  // 4. Season xBA edge
   if (angles.length < 3) {
-    const metsXERA = parseFloat(metsPitcher.savant?.xERA ?? metsPitcher.seasonXERA ?? metsPitcher.seasonERA);
-    const oppXERA  = parseFloat(oppPitcher.savant?.xERA  ?? oppPitcher.seasonXERA  ?? oppPitcher.seasonERA);
-    if (!isNaN(metsXERA) && !isNaN(oppXERA) && metsXERA < oppXERA) {
-      angles.push(`\u2705 SP edge: ${metsName || "NYM"} ${metsXERA.toFixed(2)} vs ${oppName || oppShort} ${oppXERA.toFixed(2)} xERA`);
+    const mx = parseFloat(ta?.mets?.xba);
+    const ox = parseFloat(ta?.opp?.xba);
+    if (!isNaN(mx) && !isNaN(ox) && mx < ox)
+      add(`Season xBA: NYM .${String(Math.round(mx*1000)).padStart(3,"0")} vs ${oppShort} .${String(Math.round(ox*1000)).padStart(3,"0")}`);
+  }
+
+  // 5. L20 OPS — Mets higher or Mets trending up while opp trending down
+  if (angles.length < 3) {
+    const mRow = report?.recentForm?.mets?.rows?.find(r => r.statKey === "ops")
+               || game?.recentForm?.mets?.rows?.find(r => r.statKey === "ops");
+    const oRow = report?.recentForm?.opp?.rows?.find(r => r.statKey === "ops")
+               || game?.recentForm?.opp?.rows?.find(r => r.statKey === "ops");
+    const mo   = parseFloat(mRow?.recentValue);
+    const oo   = parseFloat(oRow?.recentValue);
+    if (!isNaN(mo) && !isNaN(oo) && mo > oo)
+      add(`L20 OPS: NYM ${mo.toFixed(3)} vs ${oppShort} ${oo.toFixed(3)}`);
+    else if (!isNaN(mo) && mRow?.improving && oRow && !oRow?.improving)
+      add(`L20 trend: NYM OPS up ${mRow.differencePct > 0 ? "+" : ""}${parseFloat(mRow.differencePct).toFixed(1)}%, ${oppShort} cooling off`);
+  }
+
+  // 6. Situational record — pick whichest split has better win % (≥50%)
+  if (angles.length < 3) {
+    const candidates = [splits.timeOfDay, splits.dayOfWeek, splits.homeAway]
+      .filter(s => s?.label && typeof s.pct === "number" && s.pct >= 50 && (s.w + s.l) >= 5);
+    const best = candidates.sort((a, b) => b.pct - a.pct)[0];
+    if (best) add(`${best.label}: ${best.w}-${best.l} (${best.pct}% W)`);
+  }
+
+  // 7. L20 xBA or opponent cooling on AVG
+  if (angles.length < 3) {
+    const oAvgRow = game?.recentForm?.opp?.rows?.find(r => r.statKey === "avg");
+    if (oAvgRow && !oAvgRow.improving && oAvgRow.differencePct < -3)
+      add(`${oppShort} batting avg down ${Math.abs(parseFloat(oAvgRow.differencePct)).toFixed(1)}% last 20 games`);
+  }
+
+  // 8. Due for a win — last resort, always fires
+  if (angles.length === 0) {
+    const rec = cleanText(game?.metsRecord || "");
+    const [w, l] = rec.split("-").map(Number);
+    const streak = game?.recentForm?.mets?.streak || game?.gameContext?.metsStreak;
+    if (!isNaN(w) && !isNaN(l) && l > w) {
+      add(`Mets on a tough stretch (${rec}) — regression to the mean due`);
+    } else if (streak && String(streak).startsWith("L")) {
+      add(`Mets in a losing streak — statistically due for a bounce back`);
+    } else {
+      add(`Mets looking to build on their ${rec || "season"} record tonight`);
     }
   }
 
   // Assemble under 280 chars
-  // Line 1: header  |  Line 2: pitchers  |  Lines 3-5: angles  |  Last: CTA
   const LIMIT = MAX_TWEET_LENGTH;
   const CTA   = "metsmoneyline.com #LGM #Mets";
+  const parts = [header, spLine, "Why the Mets win tonight:", ...angles.slice(0, 3), CTA].filter(Boolean);
 
-  const whyLine = angles.length > 0 ? "Why the Mets win tonight:" : null;
-  const candidates = [header, spLine, whyLine, ...angles.slice(0, 3), CTA].filter(Boolean);
-
-  function join(parts) { return parts.join("\n"); }
-  let parts = [...candidates];
-  while (join(parts).length > LIMIT && parts.length > 3) {
-    const dropIdx = parts.length - 2;
-    if (dropIdx >= 2) parts.splice(dropIdx, 1);
+  function join(p) { return p.join("\n"); }
+  let out = [...parts];
+  while (join(out).length > LIMIT && out.length > 4) {
+    const dropIdx = out.length - 2; // drop last angle before CTA
+    if (dropIdx >= 3) out.splice(dropIdx, 1);
     else break;
   }
 
-  return join(parts);
+  return join(out);
 }
 
 function validatePregameGame(game, targetDate, state) {
