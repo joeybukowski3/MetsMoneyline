@@ -10,18 +10,25 @@ const SITE_URL = "https://www.metsmoneyline.com";
 const HISTORY_URL = "https://www.metsmoneyline.com/pick-history";
 const MAX_TWEET_LENGTH = 280;
 const DEFAULT_STAKE = 100;
+const METS_TEAM_ID = 121;
+const X_PHOTOS_DIR = path.join(__dirname, "..", "public", "images", "Xphotos");
+const PREGAME_PITCHER_IMAGE_DIR = path.join(X_PHOTOS_DIR, "pregame", "pitchers");
+const POSTGAME_IMAGE_DIR = path.join(X_PHOTOS_DIR, "postgame");
+const POSTGAME_WIN_FALLBACK = "defaultpostgamewin.jpg";
+const POSTGAME_LOSS_FALLBACK = "metslose.jpg";
 
 function parseArgs(argv) {
   const args = { mode: null, type: "pregame", date: null };
   for (const token of argv) {
     if (token === "--dry-run") args.mode = "dry-run";
     else if (token === "--post") args.mode = "post";
+    else if (token === "--test-image-selection") args.mode = "test-image-selection";
     else if (token.startsWith("--type=")) args.type = cleanText(token.split("=")[1]).toLowerCase();
     else if (token.startsWith("--date=")) args.date = cleanText(token.split("=")[1]);
     else throw new Error(`Unknown argument: ${token}`);
   }
   if (!args.mode) {
-    throw new Error("Usage: node bot/x-post-mets-report.js --dry-run|--post [--type=pregame|postgame] [--date=yesterday|YYYY-MM-DD]");
+    throw new Error("Usage: node bot/x-post-mets-report.js --dry-run|--post|--test-image-selection [--type=pregame|postgame] [--date=yesterday|YYYY-MM-DD]");
   }
   if (!["pregame", "postgame"].includes(args.type)) {
     throw new Error(`Unsupported type: ${args.type}`);
@@ -84,6 +91,57 @@ function slugify(value) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function normalizeImageName(value) {
+  return slugify(
+    String(value || "")
+      .replace(/\b(jr|sr|ii|iii|iv|v)\.?$/i, "")
+      .replace(/[’']/g, "")
+  );
+}
+
+function imagePathFromName(baseDir, name) {
+  const slug = normalizeImageName(name);
+  return slug ? path.join(baseDir, `${slug}.jpg`) : null;
+}
+
+function relativeImagePath(imagePath) {
+  if (!imagePath) return null;
+  return path.relative(path.join(__dirname, ".."), imagePath).replace(/\\/g, "/");
+}
+
+function fileExists(filePath) {
+  return Boolean(filePath) && fs.existsSync(filePath);
+}
+
+function resolveImageWithFallback({ label, candidatePath, fallbackPath }) {
+  if (fileExists(candidatePath)) {
+    console.log(`[image] ${label}: ${relativeImagePath(candidatePath)}`);
+    return candidatePath;
+  }
+  if (candidatePath) {
+    console.warn(`[image] Missing selected image: ${relativeImagePath(candidatePath)}`);
+  }
+  if (fileExists(fallbackPath)) {
+    console.log(`[image] ${label} fallback: ${relativeImagePath(fallbackPath)}`);
+    return fallbackPath;
+  }
+  if (fallbackPath) {
+    console.warn(`[image] Missing fallback image: ${relativeImagePath(fallbackPath)}. Continuing without image.`);
+  }
+  return null;
+}
+
+function selectPregameImage(game) {
+  const pitcherName = cleanText(game?.pitching?.mets?.name);
+  const candidatePath = imagePathFromName(PREGAME_PITCHER_IMAGE_DIR, pitcherName);
+  const fallbackPath = path.join(PREGAME_PITCHER_IMAGE_DIR, "default.jpg");
+  return resolveImageWithFallback({
+    label: pitcherName ? `pregame pitcher ${pitcherName}` : "pregame pitcher",
+    candidatePath,
+    fallbackPath
+  });
 }
 
 function loadJson(filePath) {
@@ -609,6 +667,245 @@ function buildPostgameText(context) {
   ].join("\n"));
 }
 
+function readBoxscoreTeam(boxscoreData, teamId = METS_TEAM_ID) {
+  const teams = boxscoreData?.teams || {};
+  const candidates = [teams.home, teams.away].filter(Boolean);
+  return candidates.find((team) => Number(team?.team?.id) === Number(teamId)) || null;
+}
+
+function boxscorePlayersForTeam(boxscoreData, teamId = METS_TEAM_ID) {
+  const team = readBoxscoreTeam(boxscoreData, teamId);
+  const players = team?.players && typeof team.players === "object" ? Object.values(team.players) : [];
+  return players.map((player, index) => {
+    const batting = player?.stats?.batting || {};
+    const pitching = player?.stats?.pitching || {};
+    return {
+      name: cleanText(player?.person?.fullName),
+      order: Number(player?.battingOrder || index + 1),
+      batting: {
+        homeRuns: parseNumber(batting.homeRuns) || 0,
+        hits: parseNumber(batting.hits) || 0,
+        runs: parseNumber(batting.runs) || 0,
+        rbi: parseNumber(batting.rbi) || 0
+      },
+      pitching: {
+        wins: parseNumber(pitching.wins) || 0,
+        saves: parseNumber(pitching.saves) || 0
+      }
+    };
+  }).filter((player) => player.name);
+}
+
+async function fetchMlbBoxscore(gamePk) {
+  if (!gamePk) return null;
+  const url = `https://statsapi.mlb.com/api/v1/game/${gamePk}/boxscore`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      console.warn(`[image] MLB boxscore fetch failed for gamePk ${gamePk}: HTTP ${response.status}`);
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    console.warn(`[image] MLB boxscore fetch failed for gamePk ${gamePk}: ${error.message}`);
+    return null;
+  }
+}
+
+function chooseTopHomeRunPlayer(players) {
+  return players
+    .filter((player) => player.batting.homeRuns > 0)
+    .sort((a, b) => (
+      (b.batting.homeRuns - a.batting.homeRuns)
+      || (b.batting.rbi - a.batting.rbi)
+      || (a.order - b.order)
+      || a.name.localeCompare(b.name)
+    ))[0] || null;
+}
+
+function chooseTopBigStatPlayer(players) {
+  return players
+    .filter((player) => player.batting.hits >= 3 || player.batting.runs >= 3 || player.batting.rbi >= 3)
+    .sort((a, b) => (
+      (b.batting.rbi - a.batting.rbi)
+      || (b.batting.hits - a.batting.hits)
+      || (b.batting.runs - a.batting.runs)
+      || (a.order - b.order)
+      || a.name.localeCompare(b.name)
+    ))[0] || null;
+}
+
+function choosePostgameImageCandidate(entry, boxscoreData = null) {
+  const result = cleanText(entry?.result).toUpperCase();
+  if (result === "L") {
+    return {
+      reason: "Mets loss",
+      candidatePath: path.join(POSTGAME_IMAGE_DIR, POSTGAME_LOSS_FALLBACK),
+      fallbackPath: path.join(POSTGAME_IMAGE_DIR, POSTGAME_LOSS_FALLBACK)
+    };
+  }
+
+  const winFallback = path.join(POSTGAME_IMAGE_DIR, POSTGAME_WIN_FALLBACK);
+  if (result !== "W") {
+    return { reason: "No final Mets win/loss image rule matched", candidatePath: null, fallbackPath: null };
+  }
+
+  const players = boxscorePlayersForTeam(boxscoreData);
+  const devinSave = players.find((player) => player.name === "Devin Williams" && player.pitching.saves > 0);
+  if (devinSave) {
+    return {
+      reason: "Devin Williams save",
+      candidatePath: imagePathFromName(POSTGAME_IMAGE_DIR, devinSave.name),
+      fallbackPath: winFallback
+    };
+  }
+
+  const homerPlayer = chooseTopHomeRunPlayer(players);
+  if (homerPlayer) {
+    return {
+      reason: `Mets home run: ${homerPlayer.name}`,
+      candidatePath: imagePathFromName(POSTGAME_IMAGE_DIR, homerPlayer.name),
+      fallbackPath: winFallback
+    };
+  }
+
+  const bigStatPlayer = chooseTopBigStatPlayer(players);
+  if (bigStatPlayer) {
+    return {
+      reason: `Mets 3+ stat line: ${bigStatPlayer.name}`,
+      candidatePath: imagePathFromName(POSTGAME_IMAGE_DIR, bigStatPlayer.name),
+      fallbackPath: winFallback
+    };
+  }
+
+  const winningPitcher = players
+    .filter((player) => player.pitching.wins > 0)
+    .sort((a, b) => a.name.localeCompare(b.name))[0] || null;
+  if (winningPitcher) {
+    return {
+      reason: `Mets winning pitcher: ${winningPitcher.name}`,
+      candidatePath: imagePathFromName(POSTGAME_IMAGE_DIR, winningPitcher.name),
+      fallbackPath: winFallback
+    };
+  }
+
+  return {
+    reason: "Mets win default",
+    candidatePath: winFallback,
+    fallbackPath: winFallback
+  };
+}
+
+async function selectPostgameImage(entry) {
+  const needsBoxscore = cleanText(entry?.result).toUpperCase() === "W";
+  const boxscoreData = needsBoxscore ? await fetchMlbBoxscore(entry?.sourceGamePk) : null;
+  if (needsBoxscore && !boxscoreData) {
+    console.warn("[image] No boxscore data available for postgame image priority checks; using win fallback.");
+  }
+  const choice = choosePostgameImageCandidate(entry, boxscoreData);
+  return resolveImageWithFallback({
+    label: `postgame ${choice.reason}`,
+    candidatePath: choice.candidatePath,
+    fallbackPath: choice.fallbackPath
+  });
+}
+
+function buildImageTestBoxscore(players) {
+  const mappedPlayers = {};
+  players.forEach((player, index) => {
+    mappedPlayers[`ID${index + 1}`] = {
+      person: { fullName: player.name },
+      battingOrder: player.order == null ? String((index + 1) * 100) : String(player.order),
+      stats: {
+        batting: {
+          homeRuns: player.homeRuns || 0,
+          hits: player.hits || 0,
+          runs: player.runs || 0,
+          rbi: player.rbi || 0
+        },
+        pitching: {
+          wins: player.wins || 0,
+          saves: player.saves || 0
+        }
+      }
+    };
+  });
+  return {
+    teams: {
+      home: {
+        team: { id: METS_TEAM_ID },
+        players: mappedPlayers
+      }
+    }
+  };
+}
+
+function assertImageChoice(label, entry, boxscoreData, expectedRelativePath) {
+  const choice = choosePostgameImageCandidate(entry, boxscoreData);
+  const actual = relativeImagePath(choice.candidatePath);
+  if (actual !== expectedRelativePath) {
+    throw new Error(`${label}: expected ${expectedRelativePath}, got ${actual || "(none)"}`);
+  }
+  console.log(`ok - ${label}: ${actual}`);
+}
+
+function runImageSelectionSelfTest() {
+  assertImageChoice(
+    "Mets loss",
+    { result: "L" },
+    null,
+    "public/images/Xphotos/postgame/metslose.jpg"
+  );
+  assertImageChoice(
+    "Devin Williams save",
+    { result: "W" },
+    buildImageTestBoxscore([{ name: "Devin Williams", saves: 1 }]),
+    "public/images/Xphotos/postgame/devin-williams.jpg"
+  );
+  assertImageChoice(
+    "Mets HR player",
+    { result: "W" },
+    buildImageTestBoxscore([
+      { name: "Juan Soto", homeRuns: 1, rbi: 1, order: 300 },
+      { name: "Francisco Lindor", homeRuns: 1, rbi: 3, order: 100 }
+    ]),
+    "public/images/Xphotos/postgame/francisco-lindor.jpg"
+  );
+  assertImageChoice(
+    "Mets 3+ hits/runs/RBI player",
+    { result: "W" },
+    buildImageTestBoxscore([
+      { name: "Juan Soto", hits: 3, runs: 1, rbi: 1, order: 300 },
+      { name: "Francisco Lindor", hits: 1, runs: 1, rbi: 3, order: 100 }
+    ]),
+    "public/images/Xphotos/postgame/francisco-lindor.jpg"
+  );
+  assertImageChoice(
+    "Mets winning pitcher",
+    { result: "W" },
+    buildImageTestBoxscore([{ name: "Kodai Senga", wins: 1 }]),
+    "public/images/Xphotos/postgame/kodai-senga.jpg"
+  );
+  assertImageChoice(
+    "Mets win default",
+    { result: "W" },
+    buildImageTestBoxscore([{ name: "Juan Soto" }]),
+    "public/images/Xphotos/postgame/defaultpostgamewin.jpg"
+  );
+
+  const missingPlayerChoice = choosePostgameImageCandidate(
+    { result: "W" },
+    buildImageTestBoxscore([{ name: "Missing Player", homeRuns: 1 }])
+  );
+  const resolvedMissing = resolveImageWithFallback({
+    label: "postgame missing player test",
+    candidatePath: missingPlayerChoice.candidatePath,
+    fallbackPath: missingPlayerChoice.fallbackPath
+  });
+  console.log(`ok - Missing player image fallback path attempted: ${relativeImagePath(missingPlayerChoice.fallbackPath)}`);
+  console.log(`ok - Missing player image resolved media: ${relativeImagePath(resolvedMissing) || "(none)"}`);
+}
+
 function validatePostgameEntry(entry, state, targetDate) {
   if (!entry) return { ok: false, reason: `no graded Mets ML result found for ${targetDate}` };
   if (cleanText(entry?.date) !== targetDate) {
@@ -707,11 +1004,26 @@ async function postThread(texts) {
   return tweetIds;
 }
 
-async function postSingle(text) {
+async function uploadTweetImage(client, imagePath) {
+  if (!imagePath) return null;
+  try {
+    const mediaId = await client.v1.uploadMedia(imagePath);
+    console.log(`[image] Uploaded ${relativeImagePath(imagePath)} as media ${mediaId}`);
+    return mediaId;
+  } catch (error) {
+    console.warn(`[image] Failed to upload ${relativeImagePath(imagePath)}: ${error.message}. Continuing without image.`);
+    return null;
+  }
+}
+
+async function postSingle(text, imagePath = null) {
   const env = getRequiredEnv();
   validateEnv(env);
   const client = new TwitterApi(env);
-  const response = await client.v2.tweet(text);
+  const mediaId = await uploadTweetImage(client, imagePath);
+  const response = mediaId
+    ? await client.v2.tweet(text, { media: { media_ids: [mediaId] } })
+    : await client.v2.tweet(text);
   const tweetData = response?.data || response;
   if (!tweetData?.id) {
     throw new Error("X API did not return a tweet id");
@@ -748,13 +1060,16 @@ async function runPregame(args, targetDate) {
     return;
   }
 
+  const imagePath = selectPregameImage(game);
+
   if (args.mode === "dry-run") {
     console.log(`Pregame tweet (${tweetText.length}/${MAX_TWEET_LENGTH}):`);
     console.log(tweetText);
+    console.log(`[image] Dry run media: ${relativeImagePath(imagePath) || "(none)"}`);
     return;
   }
 
-  const tweetId = await postSingle(tweetText);
+  const tweetId = await postSingle(tweetText, imagePath);
   const postedAt = new Date().toISOString();
   state.posts[validation.postKey] = {
     date: targetDate,
@@ -780,13 +1095,16 @@ async function runPostgame(args, targetDate) {
     return;
   }
 
+  const imagePath = await selectPostgameImage(context.entry);
+
   if (args.mode === "dry-run") {
     console.log(`Postgame tweet (${context.postText.length}/${MAX_TWEET_LENGTH})`);
     console.log(context.postText);
+    console.log(`[image] Dry run media: ${relativeImagePath(imagePath) || "(none)"}`);
     return;
   }
 
-  const tweetId = await postSingle(context.postText);
+  const tweetId = await postSingle(context.postText, imagePath);
   const postedAt = new Date().toISOString();
   state.posts[context.postKey] = {
     date: context.entry.date,
@@ -810,6 +1128,11 @@ async function runPostgame(args, targetDate) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  if (args.mode === "test-image-selection") {
+    runImageSelectionSelfTest();
+    return;
+  }
+
   const targetDate = resolveTargetDate(args);
 
   if (args.type === "pregame") {
