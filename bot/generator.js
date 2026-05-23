@@ -51,7 +51,7 @@ function pitcherOgImageUrl(pitcherName) {
 }
 const TEAM_NAME = "New York Mets";
 const TIME_ZONE = "America/New_York";
-const DEFAULT_GROK_MODEL = process.env.GROK_MODEL || "grok-4.3";
+const DEFAULT_GROK_MODEL = process.env.GROK_MODEL || "grok-3";
 const SAMPLE_JSON_PATH = path.join(__dirname, "../public/data/sample-game.json");
 const PICK_HISTORY_PATH = path.join(__dirname, "../public/data/pick-history.json");
 const API_ODDS_PATH = path.join(__dirname, "../public/api/mlb/mets/odds.json");
