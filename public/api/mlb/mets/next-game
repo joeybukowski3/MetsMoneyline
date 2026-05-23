@@ -31,7 +31,13 @@
       "fip": null,
       "whip": "1.47"
     },
-    "opp": null
+    "opp": {
+      "id": 663969,
+      "fullName": "Tyler Phillips",
+      "era": "1.20",
+      "fip": null,
+      "whip": "1.27"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
@@ -178,6 +184,11 @@
           "ties": 0,
           "pct": ".453"
         },
+        "probablePitcher": {
+          "id": 663969,
+          "fullName": "Tyler Phillips",
+          "link": "/api/v1/people/663969"
+        },
         "splitSquad": false,
         "seriesNumber": 17,
         "springLeague": {
@@ -223,12 +234,37 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 146,
+        "name": "Miami Marlins",
+        "link": "/api/v1/teams/146"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "MIA leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -248,11 +284,12 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-23T22:50:38.127Z",
+    "generatedAt": "2026-05-23T23:54:54.167Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-23",
     "cacheKey": "next-game:2026-05-23"

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-23T22:50:48.054Z",
+  "generatedAt": "2026-05-23T23:55:05.275Z",
   "referenceDate": "2026-05-23",
   "cacheKey": "sample-game:2026-05-23",
   "games": [
@@ -27,7 +27,7 @@
           "mlbId": 681035,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-23T22:50:40.278Z",
+          "generatedAt": "2026-05-23T23:54:56.850Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -82,17 +82,62 @@
           }
         },
         "opp": {
-          "name": "TBD",
-          "announced": false,
+          "name": "Tyler Phillips",
+          "mlbId": 663969,
+          "announced": true,
+          "hand": "R",
+          "generatedAt": "2026-05-23T23:54:56.845Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "0-0, 1.20 ERA, 1.27 WHIP, 30.0 IP",
+          "seasonRecord": "0-0",
+          "seasonERA": "1.20",
+          "seasonFIP": "3.43",
+          "seasonXERA": "3.45",
+          "seasonWHIP": "1.27",
+          "seasonHR9": "0.30",
+          "last3KBB": "1.69",
+          "kMinusBbPct": 8.6,
+          "note": "2026 - 30.0 IP",
+          "savant": {
+            "xERA": "3.45",
+            "xBAAllowed": "0.214",
+            "xSLGAllowed": "0.33",
+            "xwOBAAllowed": "0.296",
+            "barrelPct": "7.1%",
+            "hardHitPct": "33.3%",
+            "whiffPct": "29.6%",
+            "chasePct": "36.3%",
+            "kPct": "21.1%",
+            "bbPct": "12.5%",
+            "exitVeloAllowed": 87.5,
+            "launchAngleAllowed": 9.2,
+            "percentiles": {
+              "barrelPct": 60,
+              "hardHitPct": 79,
+              "kPct": 53,
+              "bbPct": 29,
+              "xERA": 75,
+              "xBAAllowed": 79,
+              "xSLGAllowed": 80
+            }
+          },
           "vsRoster": {
-            "PA": 1221,
-            "kPct": 0.20156511056511056,
-            "bbPct": 0.07373791973791974,
-            "AVG": "0.232",
+            "PA": 9,
+            "kPct": 0,
+            "bbPct": 0.1111111111111111,
+            "AVG": "0.250",
             "wOBA": "0.296",
             "xwOBA": "0.326",
+            "exitVelo": 87.5,
+            "launchAngle": 9.2,
             "xBA": "0.255",
-            "xSLG": "0.439"
+            "xSLG": "0.439",
+            "HR": 0
           }
         },
         "metsBullpen": {
@@ -832,7 +877,7 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "note": "NYM (season) · OPP vs RHP",
+          "note": "NYM vs RHP · OPP vs RHP",
           "mets": "87",
           "opp": "96",
           "edge": "Opp"
@@ -900,8 +945,9 @@
           },
           "rankScope": "MLB",
           "rankTotal": 30,
+          "vsHand": "R",
           "usingSplit": false,
-          "fallbackNote": "season total"
+          "fallbackNote": "season total (no RHP split available)"
         },
         "opp": {
           "wrcPlus": "96",
@@ -954,7 +1000,7 @@
               "statKey": "ops",
               "seasonRank": 30,
               "seasonValue": 0.645,
-              "recentRank": 20,
+              "recentRank": 19,
               "recentValue": 0.673,
               "differencePct": 4.3,
               "improving": true
@@ -979,7 +1025,7 @@
             },
             {
               "statKey": "bbPct",
-              "seasonRank": 26,
+              "seasonRank": 25,
               "seasonValue": 7.9,
               "recentRank": 19,
               "recentValue": 8.1,
@@ -994,7 +1040,7 @@
           "rows": [
             {
               "statKey": "ops",
-              "seasonRank": 19,
+              "seasonRank": 18,
               "seasonValue": 0.696,
               "recentRank": 21,
               "recentValue": 0.665,
@@ -1003,7 +1049,7 @@
             },
             {
               "statKey": "avg",
-              "seasonRank": 12,
+              "seasonRank": 11,
               "seasonValue": 0.243,
               "recentRank": 22,
               "recentValue": 0.229,
@@ -1256,7 +1302,48 @@
             "result": "W"
           }
         ],
-        "oppPitcherLog": []
+        "oppPitcherLog": [
+          {
+            "date": "2026-05-20",
+            "opponent": "Atlanta Braves",
+            "ip": "3.0",
+            "er": "0",
+            "k": "2",
+            "h": "2",
+            "bb": "1",
+            "result": "-"
+          },
+          {
+            "date": "2026-05-17",
+            "opponent": "Tampa Bay Rays",
+            "ip": "2.0",
+            "er": "1",
+            "k": "0",
+            "h": "2",
+            "bb": "2",
+            "result": "-"
+          },
+          {
+            "date": "2026-05-13",
+            "opponent": "Minnesota Twins",
+            "ip": "1.1",
+            "er": "0",
+            "k": "1",
+            "h": "0",
+            "bb": "0",
+            "result": "W"
+          },
+          {
+            "date": "2026-05-08",
+            "opponent": "Washington Nationals",
+            "ip": "2.1",
+            "er": "0",
+            "k": "2",
+            "h": "1",
+            "bb": "1",
+            "result": "-"
+          }
+        ]
       },
       "canonicalGameSource": {
         "source": "external/mlb-stats-window",
@@ -1300,11 +1387,11 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-23T22:50:41.144Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-24\",\"opponent\":\"Miami Marlins\",\"homeAway\":\"road\",\"ballpark\":\"loanDepot park\",\"weather\":{\"temperature\":83.9,\"temperatureDisplay\":\"84°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 12 mph ESE\",\"compact\":\"84° | Cloudy | Wind 12 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-24T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":4.12,\"xERA\":4.2,\"fip\":3.66,\"whip\":1.47,\"kPct\":27.8,\"bbPct\":13.3,\"kMinusBbPct\":14.5,\"hardHitPct\":36.7,\"barrelPct\":2,\"xBAAllowed\":0.232,\"xSLGAllowed\":0.327,\"xwOBAAllowed\":0.324,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-18\",\"opponent\":\"Washington Nationals\",\"ip\":\"4.0\",\"er\":3,\"k\":5,\"h\":4,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"ip\":\"4.2\",\"er\":2,\"k\":5,\"h\":7,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"4.2\",\"er\":1,\"k\":6,\"h\":3,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-05-01\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"5.0\",\"er\":2,\"k\":8,\"h\":3,\"bb\":0,\"result\":\"W\"}],\"avgInnings\":4.58,\"avgEarnedRuns\":2,\"avgStrikeouts\":6,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.58,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.7,\"projectedLineupWRCPlus\":90.6,\"obp\":0.295,\"iso\":0.126,\"kPct\":21.2,\"bbPct\":7.9,\"xBA\":0.252,\"xSLG\":0.431,\"xwOBA\":0.322,\"hardHitPct\":42.4,\"barrelPct\":9.5,\"battingAverage\":0.232,\"wOBA\":0.296,\"lineup\":{\"totalWAR\":1.7,\"totalWRCPlus\":90.6,\"totalOBP\":0.295,\"totalISO\":0.136,\"totalKPct\":20.2,\"totalBBPct\":7.4,\"totalAVG\":0.232,\"totalWOBA\":0.296,\"totalXBA\":0.255,\"totalXSLG\":0.439,\"totalXWOBA\":0.326,\"totalHardHitPct\":43.4,\"totalBarrelPct\":9.7,\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.03}},\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.03},\"splitContext\":{\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":5.4,\"projectedLineupWRCPlus\":105.6,\"obp\":0.33,\"iso\":0.132,\"kPct\":21.9,\"bbPct\":8.9,\"xBA\":0.235,\"xSLG\":0.364,\"xwOBA\":0.302,\"hardHitPct\":38.8,\"barrelPct\":6.4,\"battingAverage\":0.253,\"wOBA\":0.325,\"lineup\":{\"totalWAR\":5.4,\"totalWRCPlus\":105.6,\"totalOBP\":0.33,\"totalISO\":0.144,\"totalKPct\":21.7,\"totalBBPct\":8.9,\"totalAVG\":0.253,\"totalWOBA\":0.325,\"totalXBA\":0.238,\"totalXSLG\":0.372,\"totalXWOBA\":0.308,\"totalHardHitPct\":38.7,\"totalBarrelPct\":6.9,\"regressionSignals\":{\"baMinusXba\":0.015,\"wobaMinusXwoba\":0.017}},\"regressionSignals\":{\"baMinusXba\":0.015,\"wobaMinusXwoba\":0.017},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.7,\"totalWRCPlus\":90.6,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":5.4,\"totalWRCPlus\":105.6,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.29,\"kMinusBbPct\":14.6,\"xFIP\":3.77,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.19,\"kMinusBbPct\":12.5,\"xFIP\":4.17,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":83.9,\"temperatureDisplay\":\"84°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 12 mph ESE\",\"compact\":\"84° | Cloudy | Wind 12 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-24T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: Christian Scott 4.20/3.66 vs TBD N/A/N/A; K-BB% 14.5 to N/A.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.\",\"rawScore\":-5.08,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.77 vs 4.17, WHIP 1.29 vs 1.19, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":1.61,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.00.\",\"rawScore\":4.02,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 40.1%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.401,\"totalWeightedImpact\":-9.9,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight opponent edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-23T23:54:57.849Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-24\",\"opponent\":\"Miami Marlins\",\"homeAway\":\"road\",\"ballpark\":\"loanDepot park\",\"weather\":{\"temperature\":83.9,\"temperatureDisplay\":\"84°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 12 mph ESE\",\"compact\":\"84° | Cloudy | Wind 12 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-24T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":4.12,\"xERA\":4.2,\"fip\":3.66,\"whip\":1.47,\"kPct\":27.8,\"bbPct\":13.3,\"kMinusBbPct\":14.5,\"hardHitPct\":36.7,\"barrelPct\":2,\"xBAAllowed\":0.232,\"xSLGAllowed\":0.327,\"xwOBAAllowed\":0.324,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-18\",\"opponent\":\"Washington Nationals\",\"ip\":\"4.0\",\"er\":3,\"k\":5,\"h\":4,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-05-13\",\"opponent\":\"Detroit Tigers\",\"ip\":\"4.2\",\"er\":2,\"k\":5,\"h\":7,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-07\",\"opponent\":\"Colorado Rockies\",\"ip\":\"4.2\",\"er\":1,\"k\":6,\"h\":3,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-05-01\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"5.0\",\"er\":2,\"k\":8,\"h\":3,\"bb\":0,\"result\":\"W\"}],\"avgInnings\":4.58,\"avgEarnedRuns\":2,\"avgStrikeouts\":6,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.58,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Tyler Phillips\",\"handedness\":\"R\",\"era\":1.2,\"xERA\":3.45,\"fip\":3.43,\"whip\":1.27,\"kPct\":21.1,\"bbPct\":12.5,\"kMinusBbPct\":8.6,\"hardHitPct\":33.3,\"barrelPct\":7.1,\"xBAAllowed\":0.214,\"xSLGAllowed\":0.33,\"xwOBAAllowed\":0.296,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-20\",\"opponent\":\"Atlanta Braves\",\"ip\":\"3.0\",\"er\":0,\"k\":2,\"h\":2,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-05-17\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"2.0\",\"er\":1,\"k\":0,\"h\":2,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-05-13\",\"opponent\":\"Minnesota Twins\",\"ip\":\"1.1\",\"er\":0,\"k\":1,\"h\":0,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-05-08\",\"opponent\":\"Washington Nationals\",\"ip\":\"2.1\",\"er\":0,\"k\":2,\"h\":1,\"bb\":1,\"result\":\"-\"}],\"avgInnings\":2.17,\"avgEarnedRuns\":0.25,\"avgStrikeouts\":1.25,\"daysSinceLastStart\":4},\"workload\":{\"inningsTrend\":2.17,\"daysSinceLastStart\":4},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.7,\"projectedLineupWRCPlus\":90.6,\"obp\":0.295,\"iso\":0.126,\"kPct\":21.2,\"bbPct\":7.9,\"xBA\":0.252,\"xSLG\":0.431,\"xwOBA\":0.322,\"hardHitPct\":42.4,\"barrelPct\":9.5,\"battingAverage\":0.232,\"wOBA\":0.296,\"lineup\":{\"totalWAR\":1.7,\"totalWRCPlus\":90.6,\"totalOBP\":0.295,\"totalISO\":0.136,\"totalKPct\":20.2,\"totalBBPct\":7.4,\"totalAVG\":0.232,\"totalWOBA\":0.296,\"totalXBA\":0.255,\"totalXSLG\":0.439,\"totalXWOBA\":0.326,\"totalHardHitPct\":43.4,\"totalBarrelPct\":9.7,\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.03}},\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.03},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":5.4,\"projectedLineupWRCPlus\":105.6,\"obp\":0.33,\"iso\":0.132,\"kPct\":21.9,\"bbPct\":8.9,\"xBA\":0.235,\"xSLG\":0.364,\"xwOBA\":0.302,\"hardHitPct\":38.8,\"barrelPct\":6.4,\"battingAverage\":0.253,\"wOBA\":0.325,\"lineup\":{\"totalWAR\":5.4,\"totalWRCPlus\":105.6,\"totalOBP\":0.33,\"totalISO\":0.144,\"totalKPct\":21.7,\"totalBBPct\":8.9,\"totalAVG\":0.253,\"totalWOBA\":0.325,\"totalXBA\":0.238,\"totalXSLG\":0.372,\"totalXWOBA\":0.308,\"totalHardHitPct\":38.7,\"totalBarrelPct\":6.9,\"regressionSignals\":{\"baMinusXba\":0.015,\"wobaMinusXwoba\":0.017}},\"regressionSignals\":{\"baMinusXba\":0.015,\"wobaMinusXwoba\":0.017},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.7,\"totalWRCPlus\":90.6,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":5.4,\"totalWRCPlus\":105.6,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.29,\"kMinusBbPct\":14.6,\"xFIP\":3.77,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.19,\"kMinusBbPct\":12.5,\"xFIP\":4.17,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":83.9,\"temperatureDisplay\":\"84°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 12 mph ESE\",\"compact\":\"84° | Cloudy | Wind 12 mph ESE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-24T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"xERA/FIP profile: Christian Scott 4.20/3.66 vs Tyler Phillips 3.45/3.43; K-BB% 14.5 to 8.6.\",\"rawScore\":2.88,\"weightedImpact\":9.9,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.\",\"rawScore\":-5.08,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.77 vs 4.17, WHIP 1.29 vs 1.19, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":1.61,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 5.23.\",\"rawScore\":24.94,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 53.4%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.534,\"totalWeightedImpact\":3.4,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight Mets edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Miami Marlins: overall lineup quality is the clearest angle",
-        "synopsis": "Christian Scott vs TBD sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302. Several key inputs are still missing, so the read should stay conservative.",
+        "synopsis": "Christian Scott vs Tyler Phillips sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
-          "modelLean": "Slight opponent edge",
+          "modelLean": "Slight Mets edge",
           "officialPick": "Mets ML",
           "bestEdge": "Regression Signals",
           "biggestRisk": "Lineup Quality"
@@ -1322,8 +1409,8 @@
         "edgeSummary": {
           "startingPitching": {
             "category": "Starting Pitching",
-            "verdict": "Even",
-            "strength": "even",
+            "verdict": "Mets edge",
+            "strength": "slight",
             "dataMode": "real"
           },
           "lineupQuality": {
@@ -1341,7 +1428,7 @@
           "regressionSignals": {
             "category": "Regression Signals",
             "verdict": "Mets edge",
-            "strength": "moderate",
+            "strength": "strong",
             "dataMode": "real"
           },
           "context": {
@@ -1365,8 +1452,8 @@
           "rows": [
             {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Mets edge",
+              "strength": "slight",
               "dataMode": "real"
             },
             {
@@ -1384,7 +1471,7 @@
             {
               "category": "Regression Signals",
               "verdict": "Mets edge",
-              "strength": "moderate",
+              "strength": "strong",
               "dataMode": "real"
             },
             {
@@ -1400,36 +1487,38 @@
               "dataMode": "fallback"
             }
           ],
-          "overallModelLean": "Slight opponent edge"
+          "overallModelLean": "Slight Mets edge"
         },
-        "pitchingEdgeSummary": "Starting pitching grades as essentially even on the current board.",
+        "pitchingEdgeSummary": "Christian Scott gives the Mets the cleaner underlying starting-pitcher case.",
         "projectedLineupEdgeSummary": "The opponent has the better overall lineup-quality profile on the current inputs.",
         "analysis": {
           "whyMetsHaveACase": [
             "Regression: xwOBA 0.322 vs actual wOBA .292 — expected stats above actual production.",
+            "Christian Scott: 4.12 ERA, 27.8%% K rate, 3.66 FIP, vs Tyler Phillips: 1.20 ERA, 3.43 FIP.",
             "Bullpen: Mets BP: 3.5 ERA, 3.77 xFIP, Opp BP: 3.39 ERA, 4.17 xFIP."
           ],
           "whereTheRiskIs": [
             "Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.",
             "Road/context splits lean against Mets."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans Mets. Primary edge: regression signals."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
             "Regression: xwOBA 0.322 vs actual wOBA .292 — expected stats above actual production.",
+            "Christian Scott: 4.12 ERA, 27.8%% K rate, 3.66 FIP, vs Tyler Phillips: 1.20 ERA, 3.43 FIP.",
             "Bullpen: Mets BP: 3.5 ERA, 3.77 xFIP, Opp BP: 3.39 ERA, 4.17 xFIP."
           ],
           "whereRiskIs": [
             "Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.",
             "Road/context splits lean against Mets."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans Mets. Primary edge: regression signals."
         },
         "sections": [
           {
             "heading": "1. Quick Read",
-            "body": "Model Lean: Slight opponent edge. Official Pick: Mets ML. Best Edge: Regression Signals. Biggest Risk: Lineup Quality."
+            "body": "Model Lean: Slight Mets edge. Official Pick: Mets ML. Best Edge: Regression Signals. Biggest Risk: Lineup Quality."
           },
           {
             "heading": "2. Game Details",
@@ -1437,15 +1526,15 @@
           },
           {
             "heading": "3. Edge Summary",
-            "body": "Starting Pitching: Even | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Mets edge | Context: Opponent edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Slight opponent edge."
+            "body": "Starting Pitching: Mets edge | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Mets edge | Context: Opponent edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Slight Mets edge."
           },
           {
             "heading": "4. Starting Pitchers Comparison",
-            "body": "Starting pitching grades as essentially even on the current board."
+            "body": "Christian Scott gives the Mets the cleaner underlying starting-pitcher case."
           },
           {
             "heading": "5. Pitcher Contact Profile vs Opponent",
-            "body": "xERA/FIP profile: Christian Scott 4.20/3.66 vs TBD N/A/N/A; K-BB% 14.5 to N/A."
+            "body": "xERA/FIP profile: Christian Scott 4.20/3.66 vs Tyler Phillips 3.45/3.43; K-BB% 14.5 to 8.6."
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
@@ -1457,39 +1546,39 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Regression: xwOBA 0.322 vs actual wOBA .292 — expected stats above actual production.\n• Bullpen: Mets BP: 3.5 ERA, 3.77 xFIP, Opp BP: 3.39 ERA, 4.17 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.\n• Road/context splits lean against Mets. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
+            "body": "Why the Mets have a case\n• Regression: xwOBA 0.322 vs actual wOBA .292 — expected stats above actual production.\n• Christian Scott: 4.12 ERA, 27.8%% K rate, 3.66 FIP, vs Tyler Phillips: 1.20 ERA, 3.43 FIP.\n• Bullpen: Mets BP: 3.5 ERA, 3.77 xFIP, Opp BP: 3.39 ERA, 4.17 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.\n• Road/context splits lean against Mets. Bottom line\nModel leans Mets. Primary edge: regression signals."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.20 xERA, 4.12 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 87.0 vs 96.0; Bullpen: Mets xERA 4.44 vs 3.83. Price: Mets ML 0 implies 0.0% vs model 40.1%; value edge +40.1 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.20 xERA, 4.12 ERA, N/A% K vs Tyler Phillips 3.45 xERA, 1.20 ERA, N/A% K; Offense: Mets wRC+ 87.0 vs 96.0; Bullpen: Mets xERA 4.44 vs 3.83. Price: Mets ML 0 implies 0.0% vs model 53.4%; value edge +53.4 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge Christian Scott 4.20 xERA versus TBD 0.00. Secondary data point Mets bullpen xFIP 3.77 versus 4.17. Value check Mets ML N/A at 0.0% implied versus 40.1% model yields +40.1 points.",
-        "pickNarrative": "Mets 5-5 last 10 games with 11-17 road record. Starting pitching Christian Scott 4.12 ERA 4.20 xERA versus TBD; Mets offense wRC+ 87 versus 96; bullpen Mets 3.5 ERA versus 3.39. Mets moneyline N/A implies 0.0% versus model 40.1% for +40.1 value edge. Pick: New York Mets moneyline.",
+        "pickSummary": "Primary gap is Mets regression signals with BA-xBA -0.023 and starter overperformance 5.23. Secondary data shows Mets bullpen 4.44 xERA versus 3.83 and offense wRC+ 87 versus 96. Net conclusion is model 53.4% versus null implied probability for +53.4 edge.",
+        "pickNarrative": "Mets are 5-5 in last 10 games with 11-17 road record. Christian Scott 4.20 xERA and 4.12 ERA faces Tyler Phillips 3.45 xERA and 1.20 ERA; Mets wRC+ 87 versus opponent 96; Mets bullpen 4.44 xERA versus 3.83. Mets ML null implies 0.0% versus model 53.4% with +53.4 value edge. Pick: New York Mets moneyline.",
         "todayPick": {
-          "headline": "Mets 40.1% Model Edge Road at loanDepot park",
-          "summary": "Mets 5-5 last 10 games with 11-17 road record. Starting pitching Christian Scott 4.12 ERA 4.20 xERA versus TBD; Mets offense wRC+ 87 versus 96; bullpen Mets 3.5 ERA versus 3.39. Mets moneyline N/A implies 0.0% versus model 40.1% for +40.1 value edge. Pick: New York Mets moneyline.",
+          "headline": "Starter gap and value edge favor Mets",
+          "summary": "Mets are 5-5 in last 10 games with 11-17 road record. Christian Scott 4.20 xERA and 4.12 ERA faces Tyler Phillips 3.45 xERA and 1.20 ERA; Mets wRC+ 87 versus opponent 96; Mets bullpen 4.44 xERA versus 3.83. Mets ML null implies 0.0% versus model 53.4% with +53.4 value edge. Pick: New York Mets moneyline.",
           "metsEdges": [
-            "Regression: xwOBA 0.322 versus actual wOBA .292",
-            "Bullpen: Mets 3.5 ERA 3.77 xFIP versus 3.39 ERA 4.17 xFIP",
-            "Last20 bullpen ERA 1.34"
+            "Regression: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030 with opponent starter overperformance 5.23.",
+            "Christian Scott 4.20 xERA and 3.66 FIP versus Tyler Phillips 3.45 xERA and 3.43 FIP.",
+            "Bullpen Mets 3.77 xFIP versus opponent 4.17 xFIP."
           ],
           "risks": [
-            "Lineup projected WAR 1.7 versus 5.4",
-            "Mets 11-17 road record"
+            "Lineup projected WAR 1.7 versus 5.4 and wRC+ 90.6 versus 105.6.",
+            "Mets road differential -10 in 24 games."
           ],
-          "bettingAngle": "Primary edge Christian Scott 4.20 xERA versus TBD 0.00. Secondary data point Mets bullpen xFIP 3.77 versus 4.17. Value check Mets ML N/A at 0.0% implied versus 40.1% model yields +40.1 points.",
+          "bettingAngle": "Primary gap is Mets regression signals with BA-xBA -0.023 and starter overperformance 5.23. Secondary data shows Mets bullpen 4.44 xERA versus 3.83 and offense wRC+ 87 versus 96. Net conclusion is model 53.4% versus null implied probability for +53.4 edge.",
           "officialPick": "Mets ML",
-          "confidenceLabel": "Low",
-          "confidenceScore": 4
+          "confidenceLabel": "Lean",
+          "confidenceScore": 5
         },
         "officialPick": "Official Pick: Mets ML",
         "edgeTable": [
           {
             "category": "Starting Pitching",
-            "edge": "Even",
-            "strength": "even",
-            "reason": "xERA/FIP profile: Christian Scott 4.20/3.66 vs TBD N/A/N/A; K-BB% 14.5 to N/A.",
+            "edge": "Mets edge",
+            "strength": "slight",
+            "reason": "xERA/FIP profile: Christian Scott 4.20/3.66 vs Tyler Phillips 3.45/3.43; K-BB% 14.5 to 8.6.",
             "dataMode": "real"
           },
           {
@@ -1509,8 +1598,8 @@
           {
             "category": "Regression Signals",
             "edge": "Mets edge",
-            "strength": "moderate",
-            "reason": "Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.00.",
+            "strength": "strong",
+            "reason": "Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 5.23.",
             "dataMode": "real"
           },
           {
@@ -1531,19 +1620,19 @@
             "category": "Market Value",
             "edge": "Limited data",
             "strength": "even",
-            "reason": "Market check: Mets ML N/A implies N/A vs model 40.1%.",
+            "reason": "Market check: Mets ML N/A implies N/A vs model 53.4%.",
             "dataMode": "fallback"
           }
         ],
         "keyAngles": [
           "Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.",
-          "Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.00.",
-          "Bullpen shape: xFIP 3.77 vs 4.17, WHIP 1.29 vs 1.19, last 3-day usage N/A IP vs N/A IP.",
-          "Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days."
+          "Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 5.23.",
+          "xERA/FIP profile: Christian Scott 4.20/3.66 vs Tyler Phillips 3.45/3.43; K-BB% 14.5 to 8.6.",
+          "Bullpen shape: xFIP 3.77 vs 4.17, WHIP 1.29 vs 1.19, last 3-day usage N/A IP vs N/A IP."
         ],
         "pick": "Mets ML",
-        "analyticalLean": "Slight opponent edge",
-        "confidence": "low",
+        "analyticalLean": "Slight Mets edge",
+        "confidence": "lean",
         "missingMetrics": [
           "Park factor",
           "Mets team wRC+ vs handedness",
@@ -1650,11 +1739,72 @@
               }
             },
             "opp": {
-              "name": "TBD",
+              "name": "Tyler Phillips",
+              "handedness": "R",
+              "era": 1.2,
+              "xERA": 3.45,
+              "fip": 3.43,
+              "whip": 1.27,
+              "kPct": 21.1,
+              "bbPct": 12.5,
+              "kMinusBbPct": 8.6,
+              "hardHitPct": 33.3,
+              "barrelPct": 7.1,
+              "xBAAllowed": 0.214,
+              "xSLGAllowed": 0.33,
+              "xwOBAAllowed": 0.296,
               "recentStarts": {
-                "starts": []
+                "starts": [
+                  {
+                    "date": "2026-05-20",
+                    "opponent": "Atlanta Braves",
+                    "ip": "3.0",
+                    "er": 0,
+                    "k": 2,
+                    "h": 2,
+                    "bb": 1,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-05-17",
+                    "opponent": "Tampa Bay Rays",
+                    "ip": "2.0",
+                    "er": 1,
+                    "k": 0,
+                    "h": 2,
+                    "bb": 2,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-05-13",
+                    "opponent": "Minnesota Twins",
+                    "ip": "1.1",
+                    "er": 0,
+                    "k": 1,
+                    "h": 0,
+                    "bb": 0,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-05-08",
+                    "opponent": "Washington Nationals",
+                    "ip": "2.1",
+                    "er": 0,
+                    "k": 2,
+                    "h": 1,
+                    "bb": 1,
+                    "result": "-"
+                  }
+                ],
+                "avgInnings": 2.17,
+                "avgEarnedRuns": 0.25,
+                "avgStrikeouts": 1.25,
+                "daysSinceLastStart": 4
               },
-              "workload": {},
+              "workload": {
+                "inningsTrend": 2.17,
+                "daysSinceLastStart": 4
+              },
               "opponentHandednessProfile": {
                 "left": 0,
                 "right": 0,
@@ -1701,6 +1851,7 @@
                 "wobaMinusXwoba": -0.03
               },
               "splitContext": {
+                "pitcherHandedness": "R",
                 "splitDataAvailable": false
               }
             },
@@ -1805,11 +1956,11 @@
             {
               "category": "Starting Pitching",
               "weight": 30,
-              "edge": "Even",
-              "strength": "even",
-              "explanation": "xERA/FIP profile: Christian Scott 4.20/3.66 vs TBD N/A/N/A; K-BB% 14.5 to N/A.",
-              "rawScore": 0,
-              "weightedImpact": 0,
+              "edge": "Mets edge",
+              "strength": "slight",
+              "explanation": "xERA/FIP profile: Christian Scott 4.20/3.66 vs Tyler Phillips 3.45/3.43; K-BB% 14.5 to 8.6.",
+              "rawScore": 2.88,
+              "weightedImpact": 9.9,
               "dataMode": "real",
               "supportedBy": [
                 "ERA",
@@ -1867,10 +2018,10 @@
               "category": "Regression Signals",
               "weight": 10,
               "edge": "Mets edge",
-              "strength": "moderate",
-              "explanation": "Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 0.00.",
-              "rawScore": 4.02,
-              "weightedImpact": 6.6,
+              "strength": "strong",
+              "explanation": "Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030; opponent starter overperformance signal 5.23.",
+              "rawScore": 24.94,
+              "weightedImpact": 10,
               "dataMode": "real",
               "supportedBy": [
                 "BA vs xBA",
@@ -1920,7 +2071,7 @@
               "weight": 5,
               "edge": "Limited data",
               "strength": "even",
-              "explanation": "Market check: Mets ML N/A implies N/A vs model 40.1%.",
+              "explanation": "Market check: Mets ML N/A implies N/A vs model 53.4%.",
               "rawScore": 0,
               "weightedImpact": 0,
               "dataMode": "fallback",
@@ -1930,8 +2081,8 @@
               ]
             }
           ],
-          "projectedWinProbability": 0.401,
-          "totalWeightedImpact": -9.9,
+          "projectedWinProbability": 0.534,
+          "totalWeightedImpact": 3.4,
           "confidence": "low",
           "criticalMissingCount": 6
         },
@@ -1983,7 +2134,7 @@
             "metadataLine": "May 24th | 1:40 PM ET | loanDepot park | 84° | Cloudy | Wind 12 mph ESE"
           },
           "quickRead": {
-            "modelLean": "Slight opponent edge",
+            "modelLean": "Slight Mets edge",
             "officialPick": "Mets ML",
             "bestEdge": "Regression Signals",
             "biggestRisk": "Lineup Quality"
@@ -2052,8 +2203,8 @@
           "edgeSummary": {
             "startingPitching": {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Mets edge",
+              "strength": "slight",
               "dataMode": "real"
             },
             "lineupQuality": {
@@ -2071,7 +2222,7 @@
             "regressionSignals": {
               "category": "Regression Signals",
               "verdict": "Mets edge",
-              "strength": "moderate",
+              "strength": "strong",
               "dataMode": "real"
             },
             "context": {
@@ -2095,8 +2246,8 @@
             "rows": [
               {
                 "category": "Starting Pitching",
-                "verdict": "Even",
-                "strength": "even",
+                "verdict": "Mets edge",
+                "strength": "slight",
                 "dataMode": "real"
               },
               {
@@ -2114,7 +2265,7 @@
               {
                 "category": "Regression Signals",
                 "verdict": "Mets edge",
-                "strength": "moderate",
+                "strength": "strong",
                 "dataMode": "real"
               },
               {
@@ -2130,11 +2281,11 @@
                 "dataMode": "fallback"
               }
             ],
-            "overallModelLean": "Slight opponent edge"
+            "overallModelLean": "Slight Mets edge"
           },
           "startingPitchersComparison": {
             "metsPitcher": "Christian Scott",
-            "oppPitcher": "TBD",
+            "oppPitcher": "Tyler Phillips",
             "seasonLabel": "2026",
             "metsCard": {
               "name": "Christian Scott",
@@ -2192,10 +2343,59 @@
               }
             },
             "oppCard": {
-              "name": "TBD",
+              "name": "Tyler Phillips",
+              "mlbId": 663969,
+              "record": "0-0",
+              "hand": "R",
               "teamLabel": "Miami Marlins",
-              "recentStarts": [],
-              "stats": {}
+              "recentStarts": [
+                {
+                  "date": "2026-05-20",
+                  "opponent": "Atlanta Braves",
+                  "ip": "3.0",
+                  "er": "0",
+                  "k": "2",
+                  "h": "2",
+                  "bb": "1",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-05-17",
+                  "opponent": "Tampa Bay Rays",
+                  "ip": "2.0",
+                  "er": "1",
+                  "k": "0",
+                  "h": "2",
+                  "bb": "2",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-05-13",
+                  "opponent": "Minnesota Twins",
+                  "ip": "1.1",
+                  "er": "0",
+                  "k": "1",
+                  "h": "0",
+                  "bb": "0",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-05-08",
+                  "opponent": "Washington Nationals",
+                  "ip": "2.1",
+                  "er": "0",
+                  "k": "2",
+                  "h": "1",
+                  "bb": "1",
+                  "result": "-"
+                }
+              ],
+              "stats": {
+                "era": "1.20",
+                "whip": "1.27",
+                "kPct": "21.1%",
+                "bbPct": "12.5%"
+              }
             },
             "advancedMatchupTables": [
               {
@@ -2244,12 +2444,14 @@
               },
               {
                 "title": "Opponent Advanced Stats vs Mets",
-                "leftHeader": "MIA TBD",
+                "leftHeader": "MIA Tyler Phillips",
                 "rightHeader": "NYM Offense",
                 "rightTeamKey": "mets",
                 "rows": [
                   {
                     "label": "Barrel %",
+                    "left": "7.1%",
+                    "leftPercentile": 60,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 9.5,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2257,6 +2459,8 @@
                   },
                   {
                     "label": "xBA",
+                    "left": "0.214",
+                    "leftPercentile": 79,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.252,
                     "rightMetricLabel": "Batter xBA",
@@ -2264,6 +2468,8 @@
                   },
                   {
                     "label": "Hard Hit %",
+                    "left": "33.3%",
+                    "leftPercentile": 79,
                     "leftMetricLabel": "Pitcher Hard Hit %",
                     "right": 42.4,
                     "rightMetricLabel": "Batter Hard Hit %",
@@ -2271,6 +2477,8 @@
                   },
                   {
                     "label": "xSLG %",
+                    "left": "0.33",
+                    "leftPercentile": 80,
                     "leftMetricLabel": "Pitcher xSLG %",
                     "right": 0.431,
                     "rightMetricLabel": "Batter xSLG %",
@@ -2316,19 +2524,24 @@
               },
               {
                 "title": "Opponent Advanced Stats vs Mets Splits",
-                "leftHeader": "MIA TBD",
+                "leftHeader": "MIA Tyler Phillips",
                 "rightHeader": "NYM Profile",
                 "rightTeamKey": "mets",
                 "rows": [
                   {
-                    "label": "Pitching Hand / vs Split"
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Right",
+                    "right": "vs Right-handed pitching"
                   },
                   {
                     "label": "Innings Pitched / Plate Appearances",
+                    "left": "30.0",
                     "right": "1221"
                   },
                   {
                     "label": "K%",
+                    "left": "21.1%",
+                    "leftPercentile": 53,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 21.2,
                     "rightMetricLabel": "Batter K%",
@@ -2336,6 +2549,8 @@
                   },
                   {
                     "label": "BB%",
+                    "left": "12.5%",
+                    "leftPercentile": 29,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 7.9,
                     "rightMetricLabel": "Batter BB%",
@@ -2344,7 +2559,7 @@
                 ]
               }
             ],
-            "summary": "Starting pitching grades as essentially even on the current board."
+            "summary": "Christian Scott gives the Mets the cleaner underlying starting-pitcher case."
           },
           "bullpenReport": {
             "mets": {
@@ -2409,7 +2624,7 @@
                   "statKey": "ops",
                   "seasonRank": 30,
                   "seasonValue": 0.645,
-                  "recentRank": 20,
+                  "recentRank": 19,
                   "recentValue": 0.673,
                   "differencePct": 4.3,
                   "improving": true
@@ -2434,7 +2649,7 @@
                 },
                 {
                   "statKey": "bbPct",
-                  "seasonRank": 26,
+                  "seasonRank": 25,
                   "seasonValue": 7.9,
                   "recentRank": 19,
                   "recentValue": 8.1,
@@ -2449,7 +2664,7 @@
               "rows": [
                 {
                   "statKey": "ops",
-                  "seasonRank": 19,
+                  "seasonRank": 18,
                   "seasonValue": 0.696,
                   "recentRank": 21,
                   "recentValue": 0.665,
@@ -2458,7 +2673,7 @@
                 },
                 {
                   "statKey": "avg",
-                  "seasonRank": 12,
+                  "seasonRank": 11,
                   "seasonValue": 0.243,
                   "recentRank": 22,
                   "recentValue": 0.229,
@@ -2488,35 +2703,42 @@
           },
           "pitcherContactProfile": {
             "metsPitcher": "Christian Scott",
-            "oppPitcher": "TBD",
+            "oppPitcher": "Tyler Phillips",
             "pitcherRows": [
               {
                 "label": "xERA",
-                "mets": "4.20"
+                "mets": "4.20",
+                "opp": "3.45"
               },
               {
                 "label": "Barrel%",
-                "mets": "2%"
+                "mets": "2%",
+                "opp": "7.1%"
               },
               {
                 "label": "Hard-Hit%",
-                "mets": "36.7%"
+                "mets": "36.7%",
+                "opp": "33.3%"
               },
               {
                 "label": "Whiff%",
-                "mets": "21.3%"
+                "mets": "21.3%",
+                "opp": "29.6%"
               },
               {
                 "label": "Chase%",
-                "mets": "26.7%"
+                "mets": "26.7%",
+                "opp": "36.3%"
               },
               {
                 "label": "K%",
-                "mets": "27.8%"
+                "mets": "27.8%",
+                "opp": "21.1%"
               },
               {
                 "label": "BB%",
-                "mets": "13.3%"
+                "mets": "13.3%",
+                "opp": "12.5%"
               }
             ],
             "opponentRows": [
@@ -2563,11 +2785,12 @@
           },
           "pitcherSplitMatchup": {
             "metsPitcher": "Christian Scott",
-            "oppPitcher": "TBD",
+            "oppPitcher": "Tyler Phillips",
             "pitcherRows": [
               {
                 "label": "Pitcher Hand",
-                "mets": "R"
+                "mets": "R",
+                "opp": "R"
               },
               {
                 "label": "Opponent Lineup wRC+",
@@ -2595,6 +2818,7 @@
             "opponentRows": [
               {
                 "label": "Pitcher Hand",
+                "mets": "R",
                 "opp": "R"
               },
               {
@@ -3296,13 +3520,14 @@
           "analysis": {
             "whyMetsHaveACase": [
               "Regression: xwOBA 0.322 vs actual wOBA .292 — expected stats above actual production.",
+              "Christian Scott: 4.12 ERA, 27.8%% K rate, 3.66 FIP, vs Tyler Phillips: 1.20 ERA, 3.43 FIP.",
               "Bullpen: Mets BP: 3.5 ERA, 3.77 xFIP, Opp BP: 3.39 ERA, 4.17 xFIP."
             ],
             "whereTheRiskIs": [
               "Overall lineup quality only: projected WAR 1.7 vs 5.4, projected lineup wRC+ 90.6 vs 105.6, xwOBA 0.322 vs 0.302.",
               "Road/context splits lean against Mets."
             ],
-            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+            "bottomLine": "Model leans Mets. Primary edge: regression signals."
           },
           "teamAdvanced": {
             "mets": {
@@ -3342,8 +3567,9 @@
               },
               "rankScope": "MLB",
               "rankTotal": 30,
+              "vsHand": "R",
               "usingSplit": false,
-              "fallbackNote": "season total"
+              "fallbackNote": "season total (no RHP split available)"
             },
             "opp": {
               "wrcPlus": "96",
@@ -3388,39 +3614,39 @@
             }
           },
           "todayPick": {
-            "headline": "Mets 40.1% Model Edge Road at loanDepot park",
-            "summary": "Mets 5-5 last 10 games with 11-17 road record. Starting pitching Christian Scott 4.12 ERA 4.20 xERA versus TBD; Mets offense wRC+ 87 versus 96; bullpen Mets 3.5 ERA versus 3.39. Mets moneyline N/A implies 0.0% versus model 40.1% for +40.1 value edge. Pick: New York Mets moneyline.",
+            "headline": "Starter gap and value edge favor Mets",
+            "summary": "Mets are 5-5 in last 10 games with 11-17 road record. Christian Scott 4.20 xERA and 4.12 ERA faces Tyler Phillips 3.45 xERA and 1.20 ERA; Mets wRC+ 87 versus opponent 96; Mets bullpen 4.44 xERA versus 3.83. Mets ML null implies 0.0% versus model 53.4% with +53.4 value edge. Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.322 versus actual wOBA .292",
-              "Bullpen: Mets 3.5 ERA 3.77 xFIP versus 3.39 ERA 4.17 xFIP",
-              "Last20 bullpen ERA 1.34"
+              "Regression: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030 with opponent starter overperformance 5.23.",
+              "Christian Scott 4.20 xERA and 3.66 FIP versus Tyler Phillips 3.45 xERA and 3.43 FIP.",
+              "Bullpen Mets 3.77 xFIP versus opponent 4.17 xFIP."
             ],
             "risks": [
-              "Lineup projected WAR 1.7 versus 5.4",
-              "Mets 11-17 road record"
+              "Lineup projected WAR 1.7 versus 5.4 and wRC+ 90.6 versus 105.6.",
+              "Mets road differential -10 in 24 games."
             ],
-            "bettingAngle": "Primary edge Christian Scott 4.20 xERA versus TBD 0.00. Secondary data point Mets bullpen xFIP 3.77 versus 4.17. Value check Mets ML N/A at 0.0% implied versus 40.1% model yields +40.1 points.",
+            "bettingAngle": "Primary gap is Mets regression signals with BA-xBA -0.023 and starter overperformance 5.23. Secondary data shows Mets bullpen 4.44 xERA versus 3.83 and offense wRC+ 87 versus 96. Net conclusion is model 53.4% versus null implied probability for +53.4 edge.",
             "officialPick": "Mets ML",
-            "confidenceLabel": "Low",
-            "confidenceScore": 4
+            "confidenceLabel": "Lean",
+            "confidenceScore": 5
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge Christian Scott 4.20 xERA versus TBD 0.00. Secondary data point Mets bullpen xFIP 3.77 versus 4.17. Value check Mets ML N/A at 0.0% implied versus 40.1% model yields +40.1 points.",
-            "headline": "Mets 40.1% Model Edge Road at loanDepot park",
-            "summary": "Mets 5-5 last 10 games with 11-17 road record. Starting pitching Christian Scott 4.12 ERA 4.20 xERA versus TBD; Mets offense wRC+ 87 versus 96; bullpen Mets 3.5 ERA versus 3.39. Mets moneyline N/A implies 0.0% versus model 40.1% for +40.1 value edge. Pick: New York Mets moneyline.",
+            "explanation": "Primary gap is Mets regression signals with BA-xBA -0.023 and starter overperformance 5.23. Secondary data shows Mets bullpen 4.44 xERA versus 3.83 and offense wRC+ 87 versus 96. Net conclusion is model 53.4% versus null implied probability for +53.4 edge.",
+            "headline": "Starter gap and value edge favor Mets",
+            "summary": "Mets are 5-5 in last 10 games with 11-17 road record. Christian Scott 4.20 xERA and 4.12 ERA faces Tyler Phillips 3.45 xERA and 1.20 ERA; Mets wRC+ 87 versus opponent 96; Mets bullpen 4.44 xERA versus 3.83. Mets ML null implies 0.0% versus model 53.4% with +53.4 value edge. Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.322 versus actual wOBA .292",
-              "Bullpen: Mets 3.5 ERA 3.77 xFIP versus 3.39 ERA 4.17 xFIP",
-              "Last20 bullpen ERA 1.34"
+              "Regression: Mets BA-xBA -0.023 and wOBA-xwOBA -0.030 with opponent starter overperformance 5.23.",
+              "Christian Scott 4.20 xERA and 3.66 FIP versus Tyler Phillips 3.45 xERA and 3.43 FIP.",
+              "Bullpen Mets 3.77 xFIP versus opponent 4.17 xFIP."
             ],
             "risks": [
-              "Lineup projected WAR 1.7 versus 5.4",
-              "Mets 11-17 road record"
+              "Lineup projected WAR 1.7 versus 5.4 and wRC+ 90.6 versus 105.6.",
+              "Mets road differential -10 in 24 games."
             ],
-            "bettingAngle": "Primary edge Christian Scott 4.20 xERA versus TBD 0.00. Secondary data point Mets bullpen xFIP 3.77 versus 4.17. Value check Mets ML N/A at 0.0% implied versus 40.1% model yields +40.1 points.",
-            "confidenceLabel": "Low",
-            "confidence": 4
+            "bettingAngle": "Primary gap is Mets regression signals with BA-xBA -0.023 and starter overperformance 5.23. Secondary data shows Mets bullpen 4.44 xERA versus 3.83 and offense wRC+ 87 versus 96. Net conclusion is model 53.4% versus null implied probability for +53.4 edge.",
+            "confidenceLabel": "Lean",
+            "confidence": 5
           },
           "meta": {
             "homeAwayLabel": "Away",
