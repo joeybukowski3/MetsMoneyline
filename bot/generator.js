@@ -7053,6 +7053,7 @@ function buildSiteReportHtml(game) {
   const reportMarkup = buildReportMarkup(report, { mode: "site" });
   const seoOpponent = game?.opponent || "Opponent";
   const seoDate = report.header?.date || game?.date || "today";
+  const metsPitcherName = game?.pitching?.mets?.name || null;
   const offDayPreview = Boolean(game?.editorial?.previewMode?.isOffDayPreview);
   const previewBannerText = game?.editorial?.previewMode?.bannerText
     || (offDayPreview ? `OFF DAY — Previewing next game: ${seoOpponent} on ${seoDate}` : "");
@@ -7085,11 +7086,11 @@ function buildSiteReportHtml(game) {
     <meta property="og:url" content="https://www.metsmoneyline.com/report">
     <meta property="og:title" content="${seoTitle}">
     <meta property="og:description" content="${seoDescription}">
-    <meta property="og:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.metsmoneyline.com/images/Xphotos/default.jpg'}">
+    <meta property="og:image" content="${pitcherOgImageUrl(metsPitcherName) || 'https://www.metsmoneyline.com/images/Xphotos/default.jpg'}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="${seoTitle}">
     <meta name="twitter:description" content="${seoDescription}">
-    <meta name="twitter:image" content="${pitcherOgImageUrl(gameFacts?.pitching?.mets?.name) || 'https://www.metsmoneyline.com/images/Xphotos/default.jpg'}">
+    <meta name="twitter:image" content="${pitcherOgImageUrl(metsPitcherName) || 'https://www.metsmoneyline.com/images/Xphotos/default.jpg'}">
     <link rel="alternate" type="application/rss+xml" title="Mets Moneyline" href="https://www.metsmoneyline.com/rss.xml">
     <script type="application/ld+json">
       {

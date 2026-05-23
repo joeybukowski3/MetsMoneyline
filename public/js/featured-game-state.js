@@ -291,9 +291,8 @@
       offDay = true;
       const dayDiff = diffCalendarDays(referenceDate, nextUpcomingGame.date);
       if (dayDiff === 1) {
-        kind = "today";
-        displayLabel = "Today's Game";
-        offDay = false;
+        kind = "tomorrow";
+        displayLabel = "Tomorrow's Game";
       } else {
         kind = "next";
         const nextGameDate = parseDateOnlyToUtcMidday(nextUpcomingGame.date);

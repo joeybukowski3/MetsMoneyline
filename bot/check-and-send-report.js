@@ -22,6 +22,16 @@ const OUTPUT_DIR = path.join(__dirname, "output");
 const LATEST_EMAIL_PREVIEW_PATH = path.join(OUTPUT_DIR, "latest-email-preview.html");
 const WINDOW_MIN_MINUTES = 60;
 const WINDOW_MAX_MINUTES = 150;
+const REQUIRED_ENV_BY_PHASE = {
+  generation: [
+    "GROK_API_KEY",
+    "API_SPORTS_KEY",
+    "API_SPORTS_BASE_URL",
+    "API_SPORTS_MLB_LEAGUE_ID",
+    "API_SPORTS_METS_TEAM_ID"
+  ],
+  send: ["BUTTONDOWN_API_KEY"]
+};
 
 function parseArgs(argv) {
   const args = {
@@ -139,6 +149,41 @@ function formatIso(value) {
   return Number.isNaN(date.getTime()) ? null : date.toISOString();
 }
 
+function hasEnv(name) {
+  return Boolean(process.env[name] && String(process.env[name]).trim());
+}
+
+function logEnvPresence({ willAttemptEmail = false } = {}) {
+  console.log("[diagnostics] Required env vars present:");
+  for (const name of REQUIRED_ENV_BY_PHASE.generation) {
+    console.log(`[diagnostics]   ${name}: ${hasEnv(name) ? "yes" : "no"}`);
+  }
+  for (const name of REQUIRED_ENV_BY_PHASE.send) {
+    console.log(`[diagnostics]   ${name}: ${hasEnv(name) ? "yes" : "no"}${willAttemptEmail ? "" : " (only required when sending/drafting)"}`);
+  }
+}
+
+function logGameDiagnostics({ args, resolvedGame, gameFacts, output, gameId, existingState, decision, minutesUntilFirstPitch, lineupsConfirmed, pitchersReady }) {
+  const selectedGame = output ? selectFeaturedGame(output.games, args.date) : null;
+  const lineups = gameFacts?.lineups || {};
+  console.log("[diagnostics] Game/report state:");
+  console.log(`[diagnostics]   requested date: ${args.date}`);
+  console.log(`[diagnostics]   Mets game found: ${resolvedGame ? "yes" : "no"}`);
+  console.log(`[diagnostics]   game id: ${gameId || "(none)"}`);
+  console.log(`[diagnostics]   game source: ${gameFacts?.canonicalGameSource?.source || resolvedGame?.source || "unknown"}`);
+  console.log(`[diagnostics]   first pitch: ${formatIso(gameFacts?.meta?.gameDateTime) || "unknown"}`);
+  console.log(`[diagnostics]   minutes until first pitch: ${minutesUntilFirstPitch == null ? "unknown" : minutesUntilFirstPitch}`);
+  console.log(`[diagnostics]   lineup status: ${lineups.status || lineups.lineupStatus || "unknown"}`);
+  console.log(`[diagnostics]   Mets lineup count: ${Array.isArray(lineups.mets) ? lineups.mets.length : 0}`);
+  console.log(`[diagnostics]   opponent lineup count: ${Array.isArray(lineups.opp) ? lineups.opp.length : 0}`);
+  console.log(`[diagnostics]   lineups confirmed/usable: ${lineupsConfirmed ? "yes" : "no"}`);
+  console.log(`[diagnostics]   starting pitchers announced: ${pitchersReady ? "yes" : "no"}`);
+  console.log(`[diagnostics]   report payload selected: ${selectedGame ? "yes" : "no"}`);
+  console.log(`[diagnostics]   existing test sent: ${existingState?.testSent ? "yes" : "no"}`);
+  console.log(`[diagnostics]   existing final sent: ${existingState?.finalSent ? "yes" : "no"}`);
+  console.log(`[diagnostics]   email decision: ${decision?.eligible ? "sendable" : "hold"} (${decision?.reason || "unknown"})`);
+}
+
 function getMinutesUntilFirstPitch(gameFacts) {
   const firstPitch = gameFacts?.meta?.gameDateTime ? new Date(gameFacts.meta.gameDateTime) : null;
   if (!firstPitch || Number.isNaN(firstPitch.getTime())) return null;
@@ -154,7 +199,7 @@ function describeEligibility({ minutesUntilFirstPitch, lineupsConfirmed, pitcher
   if (!pitchersReady) return { eligible: false, reason: "starting pitchers are not both announced" };
   if (!lineupsConfirmed) return { eligible: false, reason: "both lineups are not confirmed yet" };
   if (minutesUntilFirstPitch >= WINDOW_MIN_MINUTES && minutesUntilFirstPitch <= WINDOW_MAX_MINUTES) {
-    return { eligible: true, reason: "inside preferred 90-130 minute send window" };
+    return { eligible: true, reason: `inside preferred ${WINDOW_MIN_MINUTES}-${WINDOW_MAX_MINUTES} minute send window` };
   }
   if (minutesUntilFirstPitch > 0 && minutesUntilFirstPitch < WINDOW_MIN_MINUTES) {
     return { eligible: true, reason: "lineups confirmed late but still pregame" };
@@ -278,7 +323,9 @@ function getDraftReference(emailRecord) {
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const mode = getRunMode(args);
+  console.log(`[command] node check-and-send-report.js ${process.argv.slice(2).join(" ") || "(no flags)"}`);
   console.log(`Checking Mets report send window for ${args.date}${args.dryRun ? " (dry run)" : ""}${args.skipWindow ? " (skip window)" : ""}${args.allowDuplicate ? " (allow duplicate)" : ""}${args.testSend ? " (test send)" : ""}${args.allowProjected ? " (allow projected)" : ""}${args.draftOnly ? " (draft only)" : ""}${args.forceSend ? " (force send)" : ""}...`);
+  logEnvPresence({ willAttemptEmail: args.skipWindow || args.draftOnly || args.forceSend || args.testSend });
 
   const resolvedGame = await resolveMetsGameForDate(args.date, {
     allowSeriesContinuation: true,
@@ -306,6 +353,7 @@ async function main() {
   // Persist site data unconditionally on every run (not for dry-run or testSend,
   // which use modified lineups and should not overwrite the real-data report).
   if (!args.dryRun && !args.testSend) {
+    console.log("[refresh] Persisting generated site report data.");
     persistGeneratedOutput(output, { referenceDate: args.date });
     console.log(`[refresh] Site report updated for ${args.date}`);
   }
@@ -341,8 +389,21 @@ async function main() {
   console.log(`Lineups confirmed: ${lineupsConfirmed ? "yes" : "no"}`);
   console.log(`Starting pitchers announced: ${pitchersReady ? "yes" : "no"}`);
   console.log(`Decision: ${decision.eligible ? "sendable" : "hold"} (${decision.reason})`);
+  logGameDiagnostics({
+    args,
+    resolvedGame,
+    gameFacts,
+    output,
+    gameId,
+    existingState,
+    decision,
+    minutesUntilFirstPitch,
+    lineupsConfirmed,
+    pitchersReady
+  });
 
   if (!decision.eligible) {
+    console.log("[send] Email conditions were not met; exiting without creating, updating, or sending a Buttondown email.");
     return;
   }
 
