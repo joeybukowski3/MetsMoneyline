@@ -83,6 +83,8 @@ jobs:
 
       # Step 6: Commit everything the above scripts wrote
       - name: Commit and push updated site data
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -121,4 +123,4 @@ jobs:
           # Pull any concurrent pushes before we push
           git pull --rebase origin main
 
-          git push origin main
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
