@@ -15,7 +15,7 @@ const X_PHOTOS_DIR = path.join(__dirname, "..", "public", "images", "Xphotos");
 const PREGAME_PITCHER_IMAGE_DIR = path.join(X_PHOTOS_DIR, "pregame", "pitchers");
 const POSTGAME_IMAGE_DIR = path.join(X_PHOTOS_DIR, "postgame");
 const POSTGAME_WIN_FALLBACK = "defaultpostgamewin.jpg";
-const POSTGAME_LOSS_FALLBACK = "metslose.jpg";
+const POSTGAME_LOSS_FALLBACK = "mets-lose.jpg";
 
 function parseArgs(argv) {
   const args = { mode: null, type: "pregame", date: null };
@@ -172,6 +172,24 @@ function saveState(state) {
 
 function logSkip(reason) {
   console.log(`SKIP: ${reason}`);
+}
+
+function hasPresentValue(value) {
+  return Boolean(cleanText(value));
+}
+
+function logCredentialPresence() {
+  const env = getRequiredEnv();
+  console.log("[diagnostics] X credentials present:", JSON.stringify({
+    appKey: hasPresentValue(env.appKey),
+    appSecret: hasPresentValue(env.appSecret),
+    accessToken: hasPresentValue(env.accessToken),
+    accessSecret: hasPresentValue(env.accessSecret)
+  }));
+}
+
+function logPostDiagnostics(details) {
+  console.log("[diagnostics]", JSON.stringify(details));
 }
 
 function cleanText(value) {
@@ -578,13 +596,14 @@ function parseScore(finalScore) {
 }
 
 function calculateMoneylineProfit(oddsValue, stakeValue, result) {
-  const odds = parseNumber(oddsValue);
   const stake = parseNumber(stakeValue) ?? DEFAULT_STAKE;
   const normalizedResult = cleanText(result).toUpperCase();
-  if (!Number.isFinite(odds) || !Number.isFinite(stake)) return null;
+  if (!Number.isFinite(stake)) return null;
   if (normalizedResult === "L") return -stake;
   if (normalizedResult === "P") return 0;
   if (normalizedResult !== "W") return null;
+  const odds = parseNumber(oddsValue);
+  if (!Number.isFinite(odds)) return null;
   if (odds > 0) return stake * (odds / 100);
   return stake * (100 / Math.abs(odds));
 }
@@ -605,11 +624,13 @@ function formatCurrencyWhole(value) {
 
 function buildSeasonSummary(historyData, filteredEntries) {
   const record = historyData?.record || {};
+  const completed = filteredEntries.filter((entry) => isFinalEntry(entry));
   const useStored =
     parseNumber(record?.wins) != null &&
     parseNumber(record?.losses) != null &&
     parseNumber(record?.profit) != null &&
-    filteredEntries.every((entry) => isMetsMoneylineEntry(entry));
+    filteredEntries.every((entry) => isMetsMoneylineEntry(entry)) &&
+    completed.every((entry) => parseNumber(entry?.profit) != null && cleanText(entry?.gradingStatus).toLowerCase() === "graded");
 
   if (useStored) {
     return {
@@ -619,7 +640,6 @@ function buildSeasonSummary(historyData, filteredEntries) {
     };
   }
 
-  const completed = filteredEntries.filter((entry) => isFinalEntry(entry));
   return completed.reduce((summary, entry) => {
     const result = cleanText(entry?.result).toUpperCase();
     if (result === "W") summary.wins += 1;
@@ -913,8 +933,6 @@ function validatePostgameEntry(entry, state, targetDate) {
   }
   if (!isFinalEntry(entry)) return { ok: false, reason: `latest candidate is not final/graded (status=${entry?.status || "unknown"})` };
   if (!isMetsMoneylineEntry(entry)) return { ok: false, reason: "latest candidate is not a Mets moneyline pick" };
-  if (parseNumber(entry?.odds) == null) return { ok: false, reason: "pick odds are missing for latest completed Mets ML entry" };
-  if (cleanText(entry?.gradingStatus).toLowerCase() !== "graded") return { ok: false, reason: "pick result is not graded yet" };
   if (!cleanText(entry?.finalScore)) return { ok: false, reason: "final score is missing for latest completed Mets ML entry" };
   if (entry?.estimated === true) return { ok: false, reason: "latest completed pick uses estimated data" };
   if (looksPlaceholder(entry?.officialPick) || looksPlaceholder(entry?.opponent)) {
@@ -1037,6 +1055,18 @@ async function runPregame(args, targetDate) {
   const game       = selectTodayGame(sampleData, targetDate);
   const validation = validatePregameGame(game, targetDate, state);
 
+  logCredentialPresence();
+  logPostDiagnostics({
+    selectedDate: targetDate,
+    postType: "pregame",
+    duplicateStateKey: validation.postKey || null,
+    sourceGamePk: game?.sourceGamePk || game?.gamePk || null,
+    gameStatus: cleanText(game?.status || ""),
+    selectedImagePath: null,
+    imageExists: false,
+    usedTextOnlyFallback: true
+  });
+
   if (!validation.ok) {
     logSkip(validation.reason);
     return;
@@ -1089,6 +1119,18 @@ async function runPostgame(args, targetDate) {
   const historyData = loadJson(PICK_HISTORY_PATH);
   const state = loadState();
   const context = buildPostgameContext(historyData, state, targetDate);
+
+  logCredentialPresence();
+  logPostDiagnostics({
+    selectedDate: targetDate,
+    postType: "postgame",
+    duplicateStateKey: context.postKey || null,
+    sourceGamePk: context.entry?.sourceGamePk || null,
+    gameStatus: cleanText(context.entry?.status || context.entry?.gradingStatus || ""),
+    selectedImagePath: null,
+    imageExists: false,
+    usedTextOnlyFallback: true
+  });
 
   if (!context.ok) {
     logSkip(context.reason);
@@ -1147,3 +1189,4 @@ main().catch((error) => {
   console.error("X post script failed:", error.message);
   process.exit(1);
 });
+
