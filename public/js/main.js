@@ -1194,8 +1194,13 @@ function buildPitchingCard(game) {
     return merged;
   };
 
-  const metsVsRoster = mergeVsRoster(aggregateLineupSnapshot(game.lineups?.opp, p.mets.savant), p.mets.vsRoster);
-  const oppVsRoster = mergeVsRoster(aggregateLineupSnapshot(game.lineups?.mets, p.opp.savant), p.opp.vsRoster);
+  const buildVsRosterSnapshot = (pitcher, lineup) => {
+    if (!pitcher || pitcher.announced === false) return null;
+    return mergeVsRoster(aggregateLineupSnapshot(lineup, pitcher.savant), pitcher.vsRoster);
+  };
+
+  const metsVsRoster = buildVsRosterSnapshot(p.mets, game.lineups?.opp);
+  const oppVsRoster = buildVsRosterSnapshot(p.opp, game.lineups?.mets);
   const vsRosterLabel = (p.mets.vsRoster || p.opp.vsRoster)
     ? "Career Matchup - vs. Current Roster"
     : "Current Roster Snapshot";
