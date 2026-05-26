@@ -97,7 +97,62 @@
         "pos": "C"
       }
     ],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 694362,
+        "name": "Blake Dunn",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 682829,
+        "name": "Elly De La Cruz",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 701398,
+        "name": "Sal Stewart",
+        "pos": "DH"
+      },
+      {
+        "order": 4,
+        "playerId": 668715,
+        "name": "Spencer Steer",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 553993,
+        "name": "Eugenio Suárez",
+        "pos": "3B"
+      },
+      {
+        "order": 6,
+        "playerId": 667472,
+        "name": "Dane Myers",
+        "pos": "CF"
+      },
+      {
+        "order": 7,
+        "playerId": 668709,
+        "name": "JJ Bleday",
+        "pos": "LF"
+      },
+      {
+        "order": 8,
+        "playerId": 663886,
+        "name": "Tyler Stephenson",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 680574,
+        "name": "Matt McLain",
+        "pos": "2B"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -171,6 +226,7 @@
           "ties": 0,
           "pct": ".528"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 695505,
           "fullName": "Chase Burns",
@@ -239,6 +295,7 @@
           "ties": 0,
           "pct": ".407"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 656849,
           "fullName": "David Peterson",
@@ -255,26 +312,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 656849,
+          "fullName": "David Peterson",
+          "link": "/api/v1/people/656849"
+        },
+        "catcher": {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443"
+        },
+        "first": {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724"
+        },
+        "second": {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760"
+        },
+        "third": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "shortstop": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "left": {
+          "id": 669004,
+          "fullName": "MJ Melendez",
+          "link": "/api/v1/people/669004"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 694362,
+          "fullName": "Blake Dunn",
+          "link": "/api/v1/people/694362"
+        },
+        "onDeck": {
+          "id": 682829,
+          "fullName": "Elly De La Cruz",
+          "link": "/api/v1/people/682829"
+        },
+        "inHole": {
+          "id": 701398,
+          "fullName": "Sal Stewart",
+          "link": "/api/v1/people/701398"
+        },
+        "pitcher": {
+          "id": 695505,
+          "fullName": "Chase Burns",
+          "link": "/api/v1/people/695505"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 113,
           "name": "Cincinnati Reds",
           "link": "/api/v1/teams/113"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -468,12 +640,140 @@
           },
           "useName": "Luis"
         }
+      ],
+      "awayPlayers": [
+        {
+          "id": 694362,
+          "fullName": "Blake Dunn",
+          "link": "/api/v1/people/694362",
+          "firstName": "Blake",
+          "lastName": "Dunn",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Blake"
+        },
+        {
+          "id": 682829,
+          "fullName": "Elly De La Cruz",
+          "link": "/api/v1/people/682829",
+          "firstName": "Elly",
+          "lastName": "De La Cruz",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Elly"
+        },
+        {
+          "id": 701398,
+          "fullName": "Sal Stewart",
+          "link": "/api/v1/people/701398",
+          "firstName": "Sal",
+          "lastName": "Stewart",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Sal"
+        },
+        {
+          "id": 668715,
+          "fullName": "Spencer Steer",
+          "link": "/api/v1/people/668715",
+          "firstName": "Spencer",
+          "lastName": "Steer",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Spencer"
+        },
+        {
+          "id": 553993,
+          "fullName": "Eugenio Suárez",
+          "link": "/api/v1/people/553993",
+          "firstName": "Eugenio",
+          "lastName": "Suárez",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Eugenio"
+        },
+        {
+          "id": 667472,
+          "fullName": "Dane Myers",
+          "link": "/api/v1/people/667472",
+          "firstName": "Dane",
+          "lastName": "Myers",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Dane"
+        },
+        {
+          "id": 668709,
+          "fullName": "JJ Bleday",
+          "link": "/api/v1/people/668709",
+          "firstName": "Jeffrey",
+          "lastName": "Bleday",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "JJ"
+        },
+        {
+          "id": 663886,
+          "fullName": "Tyler Stephenson",
+          "link": "/api/v1/people/663886",
+          "firstName": "Tyler",
+          "lastName": "Stephenson",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Tyler"
+        },
+        {
+          "id": 680574,
+          "fullName": "Matt McLain",
+          "link": "/api/v1/people/680574",
+          "firstName": "Matthew",
+          "lastName": "McLain",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Matt"
+        }
       ]
     }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-26T19:27:42.375Z",
+    "generatedAt": "2026-05-26T21:10:56.725Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-26",
     "cacheKey": "next-game:2026-05-26"
