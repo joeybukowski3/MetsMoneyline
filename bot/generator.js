@@ -6785,33 +6785,44 @@ function buildCompactDailyReportEmailHtml(game) {
 <tr><td align="center" style="padding:12px 8px;">
 <table role="presentation" class="em-shell" style="width:100%;max-width:640px;border-collapse:collapse;background:#fff;border:1px solid #dde4ef;border-radius:16px;overflow:hidden;">
   <tr>
-    <td style="background:linear-gradient(135deg,#001e5a 0%,#002d72 100%);padding:14px 14px 10px;">
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9fb5dd;font-weight:700;margin:0 0 8px 0;text-align:center;">MetsMoneyline</div>
+    <td style="background:#001e5a;padding:7px 16px;text-align:center;">
+      <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);font-weight:700;">MetsMoneyline</span>
+    </td>
+  </tr>
+  <tr>
+    <td style="background:#ffffff;padding:24px 20px 20px;">
+      <div style="text-align:center;font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:18px;">${escapeHtml(heroMetaLine)}${wxStr ? ` &nbsp;·&nbsp; ${escapeHtml(wxStr)}` : ""}</div>
       <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
-          <td class="hero-col" align="center" style="width:28%;padding:0 6px 0 0;">
-            <img src="${metsLogo}" alt="Mets logo" width="54" height="54" style="display:block;border:0;width:54px;height:54px;object-fit:contain;margin:0 auto;">
-            <div style="color:#d7e6ff;font-size:11px;font-weight:700;margin-top:4px;">New York Mets</div>
-            <div style="color:#9fb5dd;font-size:10px;font-weight:600;margin-top:2px;">${escapeHtml(metsRecord)}</div>
+          <td class="hero-col" align="center" style="width:38%;padding:0;">
+            <img src="${metsLogo}" alt="Mets logo" width="100" height="100" style="display:block;border:0;width:100px;height:100px;object-fit:contain;margin:0 auto;">
+            <div style="font-size:13px;font-weight:800;color:#002d72;margin-top:8px;">New York Mets</div>
+            <div style="font-size:11px;color:#64748b;font-weight:600;margin-top:2px;">${escapeHtml(metsRecord)}</div>
           </td>
-          <td class="hero-col" align="center" style="width:44%;padding:0 6px;">
-            <div style="color:#ff5910;font-size:20px;font-weight:900;letter-spacing:0.06em;">METS VS ${escapeHtml(opponentShort.toUpperCase())}</div>
-            <div style="color:#d7e6ff;font-size:13px;font-weight:800;margin-top:4px;">${escapeHtml(heroMetaLine)}</div>
-            ${wxStr ? `<div style="color:#b8c9e8;font-size:11px;margin-top:3px;">${escapeHtml(wxStr)}</div>` : ""}
-            <div style="margin-top:8px;background:#ff5910;border-radius:999px;padding:8px 12px;display:inline-block;">
-              <span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.82);">Official Pick</span>
-              <span style="display:block;font-size:18px;font-weight:900;color:#ffffff;line-height:1.2;margin-top:2px;">${escapeHtml(displayPickLabel)}</span>
-              <span style="display:block;font-size:10px;color:rgba(255,255,255,0.82);margin-top:2px;">${escapeHtml(confidenceLabel)} Matchup Snapshot</span>
+          <td class="hero-col" align="center" style="width:24%;padding:0;">
+            <div style="font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:0.1em;margin-bottom:10px;">VS</div>
+            <div style="background:#ff5910;border-radius:10px;padding:10px 8px;display:inline-block;min-width:64px;">
+              <div style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.75);">Pick</div>
+              <div style="font-size:15px;font-weight:900;color:#fff;line-height:1.1;margin-top:2px;">${escapeHtml(displayPickLabel)}</div>
             </div>
           </td>
-          <td class="hero-col" align="center" style="width:28%;padding:0 0 0 6px;">
-            ${oppLogo ? `<img src="${oppLogo}" alt="${escapeHtml(opponent)} logo" width="54" height="54" style="display:block;border:0;width:54px;height:54px;object-fit:contain;margin:0 auto;">` : `<div style="width:54px;height:54px;background:#1a4a9e;border-radius:50%;text-align:center;line-height:54px;font-size:12px;font-weight:700;color:#fff;margin:0 auto;">${escapeHtml(oppAbbr)}</div>`}
-            <div style="color:#d7e6ff;font-size:11px;font-weight:700;margin-top:4px;">${escapeHtml(opponent)}</div>
-            <div style="color:#9fb5dd;font-size:10px;font-weight:600;margin-top:2px;">${escapeHtml(oppRecord)}</div>
+          <td class="hero-col" align="center" style="width:38%;padding:0;">
+            ${oppLogo ? `<img src="${oppLogo}" alt="${escapeHtml(opponent)} logo" width="100" height="100" style="display:block;border:0;width:100px;height:100px;object-fit:contain;margin:0 auto;">` : `<div style="width:100px;height:100px;background:#1a4a9e;border-radius:50%;text-align:center;line-height:100px;font-size:18px;font-weight:700;color:#fff;margin:0 auto;">${escapeHtml(oppAbbr)}</div>`}
+            <div style="font-size:13px;font-weight:800;color:#374151;margin-top:8px;">${escapeHtml(opponent)}</div>
+            <div style="font-size:11px;color:#64748b;font-weight:600;margin-top:2px;">${escapeHtml(oppRecord)}</div>
           </td>
         </tr>
       </table>
-      ${splitRows ? `<table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;margin-top:10px;border:1px solid #b8cef0;background:#ffffff;border-radius:6px;overflow:hidden;">
+      <div style="height:1px;background:#e8edf4;margin:20px 0 14px;"></div>
+      <div style="text-align:center;font-size:12px;color:#475569;font-weight:700;">
+        <span style="color:#002d72;font-weight:800;">${escapeHtml(metsCard?.name || "")}</span>
+        ${metsCard?.name && oppCard?.name ? `<span style="color:#94a3b8;font-weight:600;margin:0 6px;">vs</span><span style="color:#374151;font-weight:800;">${escapeHtml(oppCard?.name || "")}</span>` : ""}
+        ${(Number.isFinite(metsXERA) || Number.isFinite(oppXERA)) ? `<span style="color:#94a3b8;font-size:11px;margin-left:8px;">&nbsp;·&nbsp; ${Number.isFinite(metsXERA) ? metsXERA.toFixed(2) : "N/A"} xERA vs ${Number.isFinite(oppXERA) ? oppXERA.toFixed(2) : "N/A"} xERA</span>` : ""}
+      </div>
+    </td>
+  </tr>
+  ${splitRows ? `<tr><td style="padding:0 20px 16px;background:#ffffff;">
+      <table role="presentation" width="100%" class="compact-table" style="width:100%;border-collapse:collapse;border:1px solid #b8cef0;background:#ffffff;border-radius:6px;overflow:hidden;">
         <thead>
           <tr>
             <th style="padding:5px 7px;border-bottom:2px solid #002d72;background:#eaf2ff;color:#002d72;font-size:10px;text-align:left;letter-spacing:0.04em;text-transform:uppercase;">Situation</th>
@@ -6822,8 +6833,10 @@ function buildCompactDailyReportEmailHtml(game) {
           </tr>
         </thead>
         <tbody>${splitRows}</tbody>
-      </table>` : ""}
-    </td>
+      </table>
+    </td></tr>` : ""}
+  <tr>
+    <td style="display:none;">
   </tr>
   <tr><td class="em-pad" style="padding:14px 14px 8px;">
     <div style="margin:0 0 12px 0;">
