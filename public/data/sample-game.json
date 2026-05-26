@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-05-26T02:52:45.238Z",
-  "referenceDate": "2026-05-25",
-  "cacheKey": "sample-game:2026-05-25",
+  "generatedAt": "2026-05-26T06:44:04.458Z",
+  "referenceDate": "2026-05-26",
+  "cacheKey": "sample-game:2026-05-26",
   "games": [
     {
       "id": "2026-05-26-mets-vs-cincinnati-reds",
@@ -41,7 +41,7 @@
           "mlbId": 695505,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-05-26T02:52:38.352Z",
+          "generatedAt": "2026-05-26T06:43:57.425Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -106,8 +106,8 @@
           "rating": 84,
           "team": "New York Mets",
           "usage": {
-            "appearances": 17,
-            "appearancesPerPitcherPerDay": 0.19,
+            "appearances": 15,
+            "appearancesPerPitcherPerDay": 0.16,
             "label": "Low",
             "tone": "green"
           },
@@ -128,16 +128,16 @@
           "seasonERA": 4.08,
           "seasonXERAAverage": 10.13,
           "seasonXFIP": "4.75",
-          "last20ERA": 6.04,
-          "last20WHIP": 1.26,
+          "last20ERA": 5.98,
+          "last20WHIP": 1.24,
           "seasonWHIP": 1.32,
           "seasonKPct": "19.6%",
           "seasonBBPct": "11.9%",
           "rating": 72,
           "team": "Cincinnati Reds",
           "usage": {
-            "appearances": 14,
-            "appearancesPerPitcherPerDay": 0.15,
+            "appearances": 15,
+            "appearancesPerPitcherPerDay": 0.16,
             "label": "Low",
             "tone": "green"
           },
@@ -1256,9 +1256,9 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [
@@ -1270,10 +1270,9 @@
           }
         ],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-05-25",
-          "resolvedDate": "2026-05-26",
-          "bannerText": "OFF DAY — Previewing next game: Cincinnati Reds on 2026-05-26"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-05-26",
+          "resolvedDate": "2026-05-26"
         }
       },
       "trends": [
@@ -1297,7 +1296,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-05-26T02:52:39.113Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-26\",\"opponent\":\"Cincinnati Reds\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":70.7,\"temperatureDisplay\":\"71°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 8 mph SSE\",\"compact\":\"71° | Cloudy | Wind 8 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-26T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Chase Burns\",\"handedness\":\"R\",\"era\":1.83,\"xERA\":2.87,\"fip\":3.37,\"whip\":0.95,\"kPct\":28.2,\"bbPct\":7.9,\"kMinusBbPct\":20.3,\"hardHitPct\":37.5,\"barrelPct\":8,\"xBAAllowed\":0.203,\"xSLGAllowed\":0.341,\"xwOBAAllowed\":0.271,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-19\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"6.0\",\"er\":1,\"k\":9,\"h\":3,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-05-14\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":0,\"k\":7,\"h\":2,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-09\",\"opponent\":\"Houston Astros\",\"ip\":\"6.0\",\"er\":1,\"k\":2,\"h\":4,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-05-03\",\"opponent\":\"Pittsburgh Pirates\",\"ip\":\"7.0\",\"er\":0,\"k\":7,\"h\":3,\"bb\":1,\"result\":\"-\"}],\"avgInnings\":6.25,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":6.25,\"daysSinceLastStart\":7},\"workload\":{\"inningsTrend\":6.25,\"daysSinceLastStart\":7},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":0.7,\"projectedLineupWRCPlus\":80.4,\"obp\":0.288,\"iso\":0.123,\"kPct\":21.4,\"bbPct\":8,\"xBA\":0.249,\"xSLG\":0.421,\"xwOBA\":0.319,\"hardHitPct\":42.2,\"barrelPct\":9.1,\"battingAverage\":0.227,\"wOBA\":0.282,\"lineup\":{\"totalWAR\":0.7,\"totalWRCPlus\":80.4,\"totalOBP\":0.288,\"totalISO\":0.109,\"totalKPct\":22.6,\"totalBBPct\":7.3,\"totalAVG\":0.227,\"totalWOBA\":0.282,\"totalXBA\":0.25,\"totalXSLG\":0.404,\"totalXWOBA\":0.314,\"totalHardHitPct\":42.6,\"totalBarrelPct\":8.2,\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.032}},\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.032},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.1,\"projectedLineupWRCPlus\":113.1,\"obp\":0.335,\"iso\":0.165,\"kPct\":24,\"bbPct\":10.1,\"xBA\":0.251,\"xSLG\":0.449,\"xwOBA\":0.345,\"hardHitPct\":39.3,\"barrelPct\":11.8,\"battingAverage\":0.246,\"wOBA\":0.342,\"lineup\":{\"totalWAR\":6.1,\"totalWRCPlus\":113.1,\"totalOBP\":0.335,\"totalISO\":0.187,\"totalKPct\":23.5,\"totalBBPct\":11.1,\"totalAVG\":0.246,\"totalWOBA\":0.342,\"totalXBA\":0.256,\"totalXSLG\":0.467,\"totalXWOBA\":0.354,\"totalHardHitPct\":40.3,\"totalBarrelPct\":12.7,\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.012}},\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.012},\"splitContext\":{\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":0.7,\"totalWRCPlus\":80.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.1,\"totalWRCPlus\":113.1,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.3,\"kMinusBbPct\":14.5,\"xFIP\":3.78,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.32,\"kMinusBbPct\":7.7,\"xFIP\":4.75,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":70.7,\"temperatureDisplay\":\"71°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 8 mph SSE\",\"compact\":\"71° | Cloudy | Wind 8 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-26T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: TBD N/A/N/A vs Chase Burns 2.87/3.37; K-BB% N/A to 20.3.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 0.7 vs 6.1, projected lineup wRC+ 80.4 vs 113.1, xwOBA 0.319 vs 0.345.\",\"rawScore\":-9.73,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Bullpen shape: xFIP 3.78 vs 4.75, WHIP 1.30 vs 1.32, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":5.14,\"weightedImpact\":9.9,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.032; opponent starter overperformance signal 2.58.\",\"rawScore\":12.04,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 49.9%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.498,\"totalWeightedImpact\":-0.15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-05-26T06:43:58.473Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-05-26\",\"opponent\":\"Cincinnati Reds\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":70.7,\"temperatureDisplay\":\"71°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 8 mph SSE\",\"compact\":\"71° | Cloudy | Wind 8 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-26T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Chase Burns\",\"handedness\":\"R\",\"era\":1.83,\"xERA\":2.87,\"fip\":3.37,\"whip\":0.95,\"kPct\":28.2,\"bbPct\":7.9,\"kMinusBbPct\":20.3,\"hardHitPct\":37.5,\"barrelPct\":8,\"xBAAllowed\":0.203,\"xSLGAllowed\":0.341,\"xwOBAAllowed\":0.271,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-19\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"6.0\",\"er\":1,\"k\":9,\"h\":3,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-05-14\",\"opponent\":\"Washington Nationals\",\"ip\":\"6.0\",\"er\":0,\"k\":7,\"h\":2,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-09\",\"opponent\":\"Houston Astros\",\"ip\":\"6.0\",\"er\":1,\"k\":2,\"h\":4,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-05-03\",\"opponent\":\"Pittsburgh Pirates\",\"ip\":\"7.0\",\"er\":0,\"k\":7,\"h\":3,\"bb\":1,\"result\":\"-\"}],\"avgInnings\":6.25,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":6.25,\"daysSinceLastStart\":7},\"workload\":{\"inningsTrend\":6.25,\"daysSinceLastStart\":7},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":0.7,\"projectedLineupWRCPlus\":80.4,\"obp\":0.288,\"iso\":0.123,\"kPct\":21.4,\"bbPct\":8,\"xBA\":0.249,\"xSLG\":0.421,\"xwOBA\":0.319,\"hardHitPct\":42.2,\"barrelPct\":9.1,\"battingAverage\":0.227,\"wOBA\":0.282,\"lineup\":{\"totalWAR\":0.7,\"totalWRCPlus\":80.4,\"totalOBP\":0.288,\"totalISO\":0.109,\"totalKPct\":22.6,\"totalBBPct\":7.3,\"totalAVG\":0.227,\"totalWOBA\":0.282,\"totalXBA\":0.25,\"totalXSLG\":0.404,\"totalXWOBA\":0.314,\"totalHardHitPct\":42.6,\"totalBarrelPct\":8.2,\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.032}},\"regressionSignals\":{\"baMinusXba\":-0.023,\"wobaMinusXwoba\":-0.032},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.1,\"projectedLineupWRCPlus\":113.1,\"obp\":0.335,\"iso\":0.165,\"kPct\":24,\"bbPct\":10.1,\"xBA\":0.251,\"xSLG\":0.449,\"xwOBA\":0.345,\"hardHitPct\":39.3,\"barrelPct\":11.8,\"battingAverage\":0.246,\"wOBA\":0.342,\"lineup\":{\"totalWAR\":6.1,\"totalWRCPlus\":113.1,\"totalOBP\":0.335,\"totalISO\":0.187,\"totalKPct\":23.5,\"totalBBPct\":11.1,\"totalAVG\":0.246,\"totalWOBA\":0.342,\"totalXBA\":0.256,\"totalXSLG\":0.467,\"totalXWOBA\":0.354,\"totalHardHitPct\":40.3,\"totalBarrelPct\":12.7,\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.012}},\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.012},\"splitContext\":{\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":0.7,\"totalWRCPlus\":80.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.1,\"totalWRCPlus\":113.1,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.3,\"kMinusBbPct\":14.5,\"xFIP\":3.78,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.32,\"kMinusBbPct\":7.7,\"xFIP\":4.75,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":70.7,\"temperatureDisplay\":\"71°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 8 mph SSE\",\"compact\":\"71° | Cloudy | Wind 8 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-05-26T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: TBD N/A/N/A vs Chase Burns 2.87/3.37; K-BB% N/A to 20.3.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 0.7 vs 6.1, projected lineup wRC+ 80.4 vs 113.1, xwOBA 0.319 vs 0.345.\",\"rawScore\":-9.73,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Bullpen shape: xFIP 3.78 vs 4.75, WHIP 1.30 vs 1.32, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":5.14,\"weightedImpact\":9.9,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.023 and wOBA-xwOBA -0.032; opponent starter overperformance signal 2.58.\",\"rawScore\":12.04,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 49.9%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.498,\"totalWeightedImpact\":-0.15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Cincinnati Reds: overall lineup quality is the clearest angle",
         "synopsis": "TBD vs Chase Burns sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 0.7 vs 6.1, projected lineup wRC+ 80.4 vs 113.1, xwOBA 0.319 vs 0.345. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1459,20 +1458,20 @@
             "body": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Chase Burns 2.87 xERA, 1.83 ERA, N/A% K; Offense: Mets wRC+ 86.0 vs 94.0; Bullpen: Mets xERA 2.87 vs 10.13. Price: Mets ML 0 implies 0.0% vs model 49.8%; value edge +49.8 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: bullpen xERA 2.87 vs 10.13. Secondary: Mets regression signals BA-xBA -0.023 and wOBA-xwOBA -0.032 against opponent starter overperformance 2.58. Net value edge +49.8 points at 49.8% model probability.",
-        "pickNarrative": "Recent form: Mets 4-6 last 10 games and 11-14 at home; rest 0 vs 0 days. Starting pitching: TBD N/A xERA vs Chase Burns 2.87 xERA 1.83 ERA; Offense Mets wRC+ 86 vs 94; Bullpen Mets xERA 2.87 vs 10.13. Price: Mets ML null implies 0.0% vs model 49.8%; value edge +49.8 points. Pick: New York Mets moneyline.",
+        "pickSummary": "Primary gap bullpen xERA Mets 2.87 versus Reds 10.13. Secondary data point Mets regression BA-xBA -0.023. Value edge +49.8 points at model 49.8% probability.",
+        "pickNarrative": "Mets are 4-6 in last 10 games and 11-14 at home. Mets starter TBD versus Chase Burns 1.83 ERA 2.87 xERA; Mets offense wRC+ 86 versus 94; Mets bullpen xERA 2.87 versus 10.13. Mets ML null implies 0.0% versus model 49.8% probability. Pick: New York Mets moneyline.",
         "todayPick": {
-          "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets 4-6 last 10 games and 11-14 at home; rest 0 vs 0 days. Starting pitching: TBD N/A xERA vs Chase Burns 2.87 xERA 1.83 ERA; Offense Mets wRC+ 86 vs 94; Bullpen Mets xERA 2.87 vs 10.13. Price: Mets ML null implies 0.0% vs model 49.8%; value edge +49.8 points. Pick: New York Mets moneyline.",
+          "headline": "Mets Bullpen xERA 2.87 Versus Reds 10.13",
+          "summary": "Mets are 4-6 in last 10 games and 11-14 at home. Mets starter TBD versus Chase Burns 1.83 ERA 2.87 xERA; Mets offense wRC+ 86 versus 94; Mets bullpen xERA 2.87 versus 10.13. Mets ML null implies 0.0% versus model 49.8% probability. Pick: New York Mets moneyline.",
           "metsEdges": [
-            "Regression: xwOBA 0.319 vs actual wOBA .289",
-            "Bullpen: Mets 3.62 ERA 3.78 xFIP vs opp 4.08 ERA 4.75 xFIP",
-            "Home: Mets 11-14 home differential -15"
+            "Regression: Mets xwOBA 0.319 versus actual wOBA .289",
+            "Bullpen: Mets 2.87 xERA versus 10.13",
+            "Home record 11-14 with 0 rest days"
           ],
           "risks": [
-            "Lineup quality: projected WAR 0.7 vs 6.1 and wRC+ 80.4 vs 113.1"
+            "Lineup quality: Mets projected wRC+ 80.4 versus 113.1"
           ],
-          "bettingAngle": "Primary edge: bullpen xERA 2.87 vs 10.13. Secondary: Mets regression signals BA-xBA -0.023 and wOBA-xwOBA -0.032 against opponent starter overperformance 2.58. Net value edge +49.8 points at 49.8% model probability.",
+          "bettingAngle": "Primary gap bullpen xERA Mets 2.87 versus Reds 10.13. Secondary data point Mets regression BA-xBA -0.023. Value edge +49.8 points at model 49.8% probability.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -2354,8 +2353,8 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 17,
-                "appearancesPerPitcherPerDay": 0.19,
+                "appearances": 15,
+                "appearancesPerPitcherPerDay": 0.16,
                 "label": "Low",
                 "tone": "green"
               },
@@ -2380,15 +2379,15 @@
               "teamName": "Cincinnati Reds",
               "teamId": 113,
               "usage": {
-                "appearances": 14,
-                "appearancesPerPitcherPerDay": 0.15,
+                "appearances": 15,
+                "appearancesPerPitcherPerDay": 0.16,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 4.08,
                 "seasonWhip": 1.32,
-                "last20Era": 6.04
+                "last20Era": 5.98
               },
               "closer": {
                 "name": "Tony Santillan",
@@ -3390,35 +3389,35 @@
             }
           },
           "todayPick": {
-            "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets 4-6 last 10 games and 11-14 at home; rest 0 vs 0 days. Starting pitching: TBD N/A xERA vs Chase Burns 2.87 xERA 1.83 ERA; Offense Mets wRC+ 86 vs 94; Bullpen Mets xERA 2.87 vs 10.13. Price: Mets ML null implies 0.0% vs model 49.8%; value edge +49.8 points. Pick: New York Mets moneyline.",
+            "headline": "Mets Bullpen xERA 2.87 Versus Reds 10.13",
+            "summary": "Mets are 4-6 in last 10 games and 11-14 at home. Mets starter TBD versus Chase Burns 1.83 ERA 2.87 xERA; Mets offense wRC+ 86 versus 94; Mets bullpen xERA 2.87 versus 10.13. Mets ML null implies 0.0% versus model 49.8% probability. Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.319 vs actual wOBA .289",
-              "Bullpen: Mets 3.62 ERA 3.78 xFIP vs opp 4.08 ERA 4.75 xFIP",
-              "Home: Mets 11-14 home differential -15"
+              "Regression: Mets xwOBA 0.319 versus actual wOBA .289",
+              "Bullpen: Mets 2.87 xERA versus 10.13",
+              "Home record 11-14 with 0 rest days"
             ],
             "risks": [
-              "Lineup quality: projected WAR 0.7 vs 6.1 and wRC+ 80.4 vs 113.1"
+              "Lineup quality: Mets projected wRC+ 80.4 versus 113.1"
             ],
-            "bettingAngle": "Primary edge: bullpen xERA 2.87 vs 10.13. Secondary: Mets regression signals BA-xBA -0.023 and wOBA-xwOBA -0.032 against opponent starter overperformance 2.58. Net value edge +49.8 points at 49.8% model probability.",
+            "bettingAngle": "Primary gap bullpen xERA Mets 2.87 versus Reds 10.13. Secondary data point Mets regression BA-xBA -0.023. Value edge +49.8 points at model 49.8% probability.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: bullpen xERA 2.87 vs 10.13. Secondary: Mets regression signals BA-xBA -0.023 and wOBA-xwOBA -0.032 against opponent starter overperformance 2.58. Net value edge +49.8 points at 49.8% model probability.",
-            "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets 4-6 last 10 games and 11-14 at home; rest 0 vs 0 days. Starting pitching: TBD N/A xERA vs Chase Burns 2.87 xERA 1.83 ERA; Offense Mets wRC+ 86 vs 94; Bullpen Mets xERA 2.87 vs 10.13. Price: Mets ML null implies 0.0% vs model 49.8%; value edge +49.8 points. Pick: New York Mets moneyline.",
+            "explanation": "Primary gap bullpen xERA Mets 2.87 versus Reds 10.13. Secondary data point Mets regression BA-xBA -0.023. Value edge +49.8 points at model 49.8% probability.",
+            "headline": "Mets Bullpen xERA 2.87 Versus Reds 10.13",
+            "summary": "Mets are 4-6 in last 10 games and 11-14 at home. Mets starter TBD versus Chase Burns 1.83 ERA 2.87 xERA; Mets offense wRC+ 86 versus 94; Mets bullpen xERA 2.87 versus 10.13. Mets ML null implies 0.0% versus model 49.8% probability. Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.319 vs actual wOBA .289",
-              "Bullpen: Mets 3.62 ERA 3.78 xFIP vs opp 4.08 ERA 4.75 xFIP",
-              "Home: Mets 11-14 home differential -15"
+              "Regression: Mets xwOBA 0.319 versus actual wOBA .289",
+              "Bullpen: Mets 2.87 xERA versus 10.13",
+              "Home record 11-14 with 0 rest days"
             ],
             "risks": [
-              "Lineup quality: projected WAR 0.7 vs 6.1 and wRC+ 80.4 vs 113.1"
+              "Lineup quality: Mets projected wRC+ 80.4 versus 113.1"
             ],
-            "bettingAngle": "Primary edge: bullpen xERA 2.87 vs 10.13. Secondary: Mets regression signals BA-xBA -0.023 and wOBA-xwOBA -0.032 against opponent starter overperformance 2.58. Net value edge +49.8 points at 49.8% model probability.",
+            "bettingAngle": "Primary gap bullpen xERA Mets 2.87 versus Reds 10.13. Secondary data point Mets regression BA-xBA -0.023. Value edge +49.8 points at model 49.8% probability.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
