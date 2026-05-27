@@ -119,7 +119,7 @@ jobs:
           fi
 
           git commit -m "chore: report send state update [skip ci]"
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main || (git rebase --abort; git fetch origin main; git pull --rebase -X theirs origin main)
           git push origin main
 
       # Bubble up any failure from the send step

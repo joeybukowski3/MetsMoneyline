@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Rebase on latest main
-        run: git pull --rebase origin main
+        run: git pull --rebase -X theirs origin main || (git rebase --abort; git fetch origin main; git pull --rebase -X theirs origin main)
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -55,5 +55,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: refresh depth chart artifacts [skip ci]"
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main || (git rebase --abort; git fetch origin main; git pull --rebase -X theirs origin main)
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main

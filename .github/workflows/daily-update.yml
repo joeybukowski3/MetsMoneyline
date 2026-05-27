@@ -120,7 +120,22 @@ jobs:
 
           git commit -m "chore: refresh daily site data [skip ci]"
 
-          # Pull any concurrent pushes before we push
-          git pull --rebase origin main
+          # Pull any concurrent pushes before we push.
+          # Use -X theirs so our freshly-generated data always wins conflicts
+          # on cache/data files without blocking the rebase.
+          git pull --rebase -X theirs origin main || {
+            echo "Rebase had conflicts — aborting and force-resolving with ours"
+            git rebase --abort 2>/dev/null || true
+            git fetch origin main
+            git reset --soft origin/main
+            git add -A
+            git commit -m "chore: refresh daily site data [skip ci]" --allow-empty
+          }
 
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main
+          # Retry push up to 3 times to handle rare concurrent push races
+          for i in 1 2 3; do
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main && break
+            echo "Push attempt $i failed, retrying in 5s..."
+            sleep 5
+            git pull --rebase -X theirs origin main || true
+          done

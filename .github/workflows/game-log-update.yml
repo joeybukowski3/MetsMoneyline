@@ -43,5 +43,5 @@ jobs:
           fi
           git commit -m "chore: refresh game-log.json [skip ci]"
           git add -A || true
-          git pull --rebase origin main
+          git pull --rebase -X theirs origin main || (git rebase --abort; git fetch origin main; git pull --rebase -X theirs origin main)
           git push origin main
