@@ -24,7 +24,13 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 623211,
+      "fullName": "Huascar Brazobán",
+      "era": "1.73",
+      "fip": null,
+      "whip": "0.92"
+    },
     "opp": {
       "id": 671096,
       "fullName": "Andrew Abbott",
@@ -105,10 +111,10 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 28,
+          "wins": 29,
           "losses": 25,
           "ties": 0,
-          "pct": ".528"
+          "pct": ".537"
         },
         "probablePitcher": {
           "id": 671096,
@@ -174,9 +180,14 @@
         },
         "leagueRecord": {
           "wins": 22,
-          "losses": 32,
+          "losses": 33,
           "ties": 0,
-          "pct": ".407"
+          "pct": ".400"
+        },
+        "probablePitcher": {
+          "id": 623211,
+          "fullName": "Huascar Brazobán",
+          "link": "/api/v1/people/623211"
         },
         "splitSquad": false,
         "seriesNumber": 18,
@@ -223,12 +234,37 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        },
+        "allStarStatus": "N",
+        "id": 113,
+        "name": "Cincinnati Reds",
+        "link": "/api/v1/teams/113"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "CIN leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -253,7 +289,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-26T23:47:39.240Z",
+    "generatedAt": "2026-05-27T03:31:28.443Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-26",
     "cacheKey": "next-game:2026-05-26"
