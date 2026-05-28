@@ -273,7 +273,7 @@ const TODAY_PICK_CONFIDENCE_SCORE = {
   Strong: 8
 };
 
-const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a technical MLB analyst generating a structured pre-game breakdown for MetsMoneyline.com. Use only the structured JSON context provided. Never invent or extrapolate stats not present in the input. officialPick must always be \"Mets ML\".\n\nSTYLE RULES:\n- Use short declarative sentences.\n- Every sentence must contain at least one number, a measurable comparison, or a direct technical conclusion.\n- No metaphor, narrative, filler, or subjective phrasing.\n- If the edge is small, say it directly with numbers.\n- Keep the voice aligned with the site’s game-analysis writeup: metrics-first and concise.\n\nFIELD REQUIREMENTS:\n\nheadline: One short declarative title. No hype. State the primary edge in ≤8 words.\n\nsummary: 3–4 sentences max.\n  1. Recent form + schedule context: state record last N games and relevant home/away split.\n  2. Starting pitching, offense, and bullpen: list the key numbers for both sides explicitly.\n  3. Price/value: state the Mets moneyline, implied probability, and model probability or value edge.\n  4. Final sentence: conclude with exactly \"Pick: New York Mets moneyline.\"\n\nbettingAngle: 2–3 sentences of pure technical analysis only. Start with the largest quantified gap (xERA, bullpen ERA, OPS, or value edge). Add one secondary data point that supports or complicates it. End with the net conclusion using numbers, not adjectives.\n\nmetsEdges: 3 short strings, each stating one Mets-favorable metric with a number.\n\nrisks: 2 short strings, each stating one opponent-favorable or Mets-unfavorable metric with a number.\n\nconfidenceLabel: \"Low\", \"Lean\", \"Standard\", or \"Strong\" based on the aggregate edge.\nconfidenceScore: integer 1–10.\n\nBANNED PHRASES — never use: workable, random draw, cleaner spot, process is pointing, the stage is set, analytically unambiguous, backs into, deep end, lean toward, the price is, right direction, free money, lock, can't lose, sure thing, enters this one, mixed run, worth noting, shapes up, live secondary, real margin, comes down to, real separation, as split as it gets, could go either way, might, narrative flair, momentum.\n\nReturn valid JSON only. No markdown.";
+const GROK_TODAY_PICK_SYSTEM_PROMPT = "You are a technical MLB analyst generating a structured pre-game breakdown for MetsMoneyline.com. Use only the structured JSON context provided. Never invent or extrapolate stats not present in the input. officialPick must always be \"Mets ML\".\n\nSTYLE RULES:\n- Use short declarative sentences.\n- Every sentence must contain at least one number, a measurable comparison, or a direct technical conclusion.\n- No metaphor, narrative, filler, or subjective phrasing.\n- If the edge is small, say it directly with numbers.\n- Keep the voice aligned with the site’s game-analysis writeup: metrics-first and concise.\n\nFIELD REQUIREMENTS:\n\nheadline: One short declarative title. No hype. State the primary edge in ≤8 words.\n\nsummary: 3–4 sentences max.\n  1. Recent form + schedule context: state record last N games and relevant home/away split.\n  2. Starting pitching, offense, and bullpen: list the key numbers for both sides explicitly.\n  3. Final sentence: conclude with exactly \"Pick: New York Mets moneyline.\"\n\nbettingAngle: 2–3 sentences of pure technical analysis only. Start with the largest quantified gap (xERA, bullpen ERA, or OPS). Add one secondary data point that supports or complicates it. End with the net conclusion using numbers, not adjectives.\n\nmetsEdges: 3 short strings, each stating one Mets-favorable metric with a number.\n\nrisks: 2 short strings, each stating one opponent-favorable or Mets-unfavorable metric with a number.\n\nconfidenceLabel: \"Low\", \"Lean\", \"Standard\", or \"Strong\" based on the aggregate edge.\nconfidenceScore: integer 1–10.\n\nBANNED PHRASES — never use: workable, random draw, cleaner spot, process is pointing, the stage is set, analytically unambiguous, backs into, deep end, lean toward, the price is, right direction, free money, lock, can't lose, sure thing, enters this one, mixed run, worth noting, shapes up, live secondary, real margin, comes down to, real separation, as split as it gets, could go either way, might, narrative flair, momentum.\n\nReturn valid JSON only. No markdown.";
 
 const GROK_TODAY_PICK_SCHEMA = {
   type: "object",
@@ -674,7 +674,6 @@ async function requestGrokTodayPick(gameContext, fallbackTodayPick) {
     "summary — 3 to 4 sentences max:",
     "  1st sentence: recent form plus schedule/rest context.",
     "  2nd sentence: starting pitching, offense, and bullpen numbers for both sides.",
-    "  3rd sentence: Mets moneyline, implied probability, model probability or value edge.",
     "  4th sentence: conclude with exactly \"Pick: New York Mets moneyline.\"",
     "",
     "bettingAngle — 2 to 3 sentences of technical analysis only:",
@@ -6794,19 +6793,15 @@ function buildCompactDailyReportEmailHtml(game) {
       <div style="text-align:center;font-size:11px;color:#94a3b8;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:18px;">${escapeHtml(heroMetaLine)}${wxStr ? ` &nbsp;·&nbsp; ${escapeHtml(wxStr)}` : ""}</div>
       <table role="presentation" width="100%" style="width:100%;border-collapse:collapse;">
         <tr>
-          <td class="hero-col" align="center" style="width:38%;padding:0;">
+          <td align="center" style="width:44%;padding:0;">
             <img src="${metsLogo}" alt="Mets logo" width="100" height="100" style="display:block;border:0;width:100px;height:100px;object-fit:contain;margin:0 auto;">
             <div style="font-size:13px;font-weight:800;color:#002d72;margin-top:8px;">New York Mets</div>
             <div style="font-size:11px;color:#64748b;font-weight:600;margin-top:2px;">${escapeHtml(metsRecord)}</div>
           </td>
-          <td class="hero-col" align="center" style="width:24%;padding:0;">
-            <div style="font-size:11px;font-weight:800;color:#94a3b8;letter-spacing:0.1em;margin-bottom:10px;">VS</div>
-            <div style="background:#ff5910;border-radius:10px;padding:10px 8px;display:inline-block;min-width:64px;">
-              <div style="font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.75);">Pick</div>
-              <div style="font-size:15px;font-weight:900;color:#fff;line-height:1.1;margin-top:2px;">${escapeHtml(displayPickLabel)}</div>
-            </div>
+          <td align="center" style="width:12%;padding:0;">
+            <div style="font-size:12px;font-weight:800;color:#94a3b8;letter-spacing:0.08em;">VS</div>
           </td>
-          <td class="hero-col" align="center" style="width:38%;padding:0;">
+          <td align="center" style="width:44%;padding:0;">
             ${oppLogo ? `<img src="${oppLogo}" alt="${escapeHtml(opponent)} logo" width="100" height="100" style="display:block;border:0;width:100px;height:100px;object-fit:contain;margin:0 auto;">` : `<div style="width:100px;height:100px;background:#1a4a9e;border-radius:50%;text-align:center;line-height:100px;font-size:18px;font-weight:700;color:#fff;margin:0 auto;">${escapeHtml(oppAbbr)}</div>`}
             <div style="font-size:13px;font-weight:800;color:#374151;margin-top:8px;">${escapeHtml(opponent)}</div>
             <div style="font-size:11px;color:#64748b;font-weight:600;margin-top:2px;">${escapeHtml(oppRecord)}</div>
