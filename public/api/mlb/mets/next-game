@@ -97,7 +97,62 @@
         "pos": "C"
       }
     ],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 669364,
+        "name": "Xavier Edwards",
+        "pos": "2B"
+      },
+      {
+        "order": 2,
+        "playerId": 689414,
+        "name": "Liam Hicks",
+        "pos": "1B"
+      },
+      {
+        "order": 3,
+        "playerId": 672640,
+        "name": "Otto Lopez",
+        "pos": "SS"
+      },
+      {
+        "order": 4,
+        "playerId": 669065,
+        "name": "Kyle Stowers",
+        "pos": "LF"
+      },
+      {
+        "order": 5,
+        "playerId": 805300,
+        "name": "Jakob Marsee",
+        "pos": "CF"
+      },
+      {
+        "order": 6,
+        "playerId": 681393,
+        "name": "Connor Norby",
+        "pos": "DH"
+      },
+      {
+        "order": 7,
+        "playerId": 683357,
+        "name": "Owen Caissie",
+        "pos": "RF"
+      },
+      {
+        "order": 8,
+        "playerId": 691594,
+        "name": "Javier Sanoja",
+        "pos": "3B"
+      },
+      {
+        "order": 9,
+        "playerId": 691788,
+        "name": "Joe Mack",
+        "pos": "C"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -171,6 +226,7 @@
           "ties": 0,
           "pct": ".456"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 676974,
           "fullName": "Max Meyer",
@@ -239,6 +295,7 @@
           "ties": 0,
           "pct": ".411"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 642547,
           "fullName": "Freddy Peralta",
@@ -255,26 +312,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 642547,
+          "fullName": "Freddy Peralta",
+          "link": "/api/v1/people/642547"
+        },
+        "catcher": {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443"
+        },
+        "first": {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901"
+        },
+        "second": {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760"
+        },
+        "third": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "shortstop": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "left": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 669364,
+          "fullName": "Xavier Edwards",
+          "link": "/api/v1/people/669364"
+        },
+        "onDeck": {
+          "id": 689414,
+          "fullName": "Liam Hicks",
+          "link": "/api/v1/people/689414"
+        },
+        "inHole": {
+          "id": 672640,
+          "fullName": "Otto Lopez",
+          "link": "/api/v1/people/672640"
+        },
+        "pitcher": {
+          "id": 676974,
+          "fullName": "Max Meyer",
+          "link": "/api/v1/people/676974"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 146,
           "name": "Miami Marlins",
           "link": "/api/v1/teams/146"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -443,12 +615,140 @@
           },
           "useName": "Luis"
         }
+      ],
+      "awayPlayers": [
+        {
+          "id": 669364,
+          "fullName": "Xavier Edwards",
+          "link": "/api/v1/people/669364",
+          "firstName": "Xavier",
+          "lastName": "Edwards",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Xavier"
+        },
+        {
+          "id": 689414,
+          "fullName": "Liam Hicks",
+          "link": "/api/v1/people/689414",
+          "firstName": "Liam",
+          "lastName": "Hicks",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Liam"
+        },
+        {
+          "id": 672640,
+          "fullName": "Otto Lopez",
+          "link": "/api/v1/people/672640",
+          "firstName": "Otto",
+          "lastName": "Lopez",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Otto"
+        },
+        {
+          "id": 669065,
+          "fullName": "Kyle Stowers",
+          "link": "/api/v1/people/669065",
+          "firstName": "Kyle",
+          "lastName": "Stowers",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Kyle"
+        },
+        {
+          "id": 805300,
+          "fullName": "Jakob Marsee",
+          "link": "/api/v1/people/805300",
+          "firstName": "Jakob",
+          "lastName": "Marsee",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Jakob"
+        },
+        {
+          "id": 681393,
+          "fullName": "Connor Norby",
+          "link": "/api/v1/people/681393",
+          "firstName": "Connor",
+          "lastName": "Norby",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Connor"
+        },
+        {
+          "id": 683357,
+          "fullName": "Owen Caissie",
+          "link": "/api/v1/people/683357",
+          "firstName": "Owen",
+          "lastName": "Caissie",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Owen"
+        },
+        {
+          "id": 691594,
+          "fullName": "Javier Sanoja",
+          "link": "/api/v1/people/691594",
+          "firstName": "Javier",
+          "lastName": "Sanoja",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Javier"
+        },
+        {
+          "id": 691788,
+          "fullName": "Joe Mack",
+          "link": "/api/v1/people/691788",
+          "firstName": "Joseph",
+          "lastName": "Mack",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Joe"
+        }
       ]
     }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-29T20:41:58.937Z",
+    "generatedAt": "2026-05-29T22:19:27.422Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-29",
     "cacheKey": "next-game:2026-05-29"
