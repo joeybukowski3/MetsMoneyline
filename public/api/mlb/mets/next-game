@@ -32,11 +32,11 @@
       "whip": "1.09"
     },
     "opp": {
-      "id": 676083,
-      "fullName": "Janson Junk",
-      "era": "4.80",
+      "id": 667463,
+      "fullName": "John King",
+      "era": "1.93",
       "fip": null,
-      "whip": "1.30"
+      "whip": "0.69"
     }
   },
   "lineups": {
@@ -117,9 +117,9 @@
           "pct": ".441"
         },
         "probablePitcher": {
-          "id": 676083,
-          "fullName": "Janson Junk",
-          "link": "/api/v1/people/676083"
+          "id": 667463,
+          "fullName": "John King",
+          "link": "/api/v1/people/667463"
         },
         "splitSquad": false,
         "seriesNumber": 19,
@@ -234,12 +234,37 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 146,
+        "name": "Miami Marlins",
+        "link": "/api/v1/teams/146"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYM leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -259,11 +284,12 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-31T12:56:28.328Z",
+    "generatedAt": "2026-05-31T14:45:00.561Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-31",
     "cacheKey": "next-game:2026-05-31"
