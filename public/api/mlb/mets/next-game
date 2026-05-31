@@ -24,7 +24,13 @@
   "venue": "T-Mobile Park",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 681810,
+      "fullName": "Austin Warren",
+      "era": "1.40",
+      "fip": null,
+      "whip": "1.19"
+    },
     "opp": {
       "id": 676106,
       "fullName": "Emerson Hancock",
@@ -109,6 +115,11 @@
           "losses": 33,
           "ties": 0,
           "pct": ".441"
+        },
+        "probablePitcher": {
+          "id": 681810,
+          "fullName": "Austin Warren",
+          "link": "/api/v1/people/681810"
         },
         "splitSquad": false,
         "seriesNumber": 20,
@@ -253,7 +264,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-31T20:56:22.256Z",
+    "generatedAt": "2026-05-31T21:59:29.410Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-31",
     "cacheKey": "next-game:2026-05-31"
