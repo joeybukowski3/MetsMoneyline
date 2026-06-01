@@ -44,7 +44,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 110,
+            "point": null
+          },
+          {
+            "name": "Seattle Mariners",
+            "price": -130,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -220,
+            "point": 1.5
+          },
+          {
+            "name": "Seattle Mariners",
+            "price": 180,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -110,
+            "point": 7
+          },
+          {
+            "name": "Under",
+            "price": -110,
+            "point": 7
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823131,
     "gameGuid": "8bdb1bf7-131b-4de1-a1de-6ea7003376a9",
@@ -264,7 +317,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-05-31T23:10:45.462Z",
+    "generatedAt": "2026-06-01T00:15:18.906Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-05-31",
     "cacheKey": "next-game:2026-05-31"
