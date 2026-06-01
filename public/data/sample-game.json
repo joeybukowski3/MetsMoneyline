@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-01T00:15:35.054Z",
-  "referenceDate": "2026-05-31",
-  "cacheKey": "sample-game:2026-05-31",
+  "generatedAt": "2026-06-01T05:24:11.438Z",
+  "referenceDate": "2026-06-01",
+  "cacheKey": "sample-game:2026-06-01",
   "games": [
     {
       "id": "2026-06-01-mets-vs-seattle-mariners",
@@ -25,7 +25,7 @@
       },
       "runLine": {
         "mets": 1.5,
-        "price": -220
+        "price": -210
       },
       "total": 7,
       "overUnder": 7,
@@ -36,7 +36,7 @@
           "mlbId": 681810,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-01T00:15:21.628Z",
+          "generatedAt": "2026-06-01T05:24:04.783Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -95,7 +95,7 @@
           "mlbId": 676106,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-01T00:15:21.623Z",
+          "generatedAt": "2026-06-01T05:24:04.778Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -161,8 +161,8 @@
           "rating": 84,
           "team": "New York Mets",
           "usage": {
-            "appearances": 20,
-            "appearancesPerPitcherPerDay": 0.22,
+            "appearances": 17,
+            "appearancesPerPitcherPerDay": 0.19,
             "label": "Low",
             "tone": "green"
           },
@@ -174,8 +174,8 @@
             "era": 5.68,
             "whip": 1.63,
             "saveConversionPct": 88.9,
-            "last7DaysAppearances": 3,
-            "last7DaysInningsPitched": "2.1"
+            "last7DaysAppearances": 2,
+            "last7DaysInningsPitched": "2.0"
           },
           "relieverCount": 13
         },
@@ -183,16 +183,16 @@
           "seasonERA": 2.91,
           "seasonXERAAverage": 3.86,
           "seasonXFIP": "3.74",
-          "last20ERA": 2.88,
-          "last20WHIP": 1.38,
+          "last20ERA": 3.11,
+          "last20WHIP": 1.43,
           "seasonWHIP": 1.26,
           "seasonKPct": "23.0%",
           "seasonBBPct": "7.0%",
           "rating": 85,
           "team": "Seattle Mariners",
           "usage": {
-            "appearances": 17,
-            "appearancesPerPitcherPerDay": 0.19,
+            "appearances": 15,
+            "appearancesPerPitcherPerDay": 0.16,
             "label": "Low",
             "tone": "green"
           },
@@ -1060,7 +1060,7 @@
               "statKey": "avg",
               "seasonRank": 21,
               "seasonValue": 0.235,
-              "recentRank": 13,
+              "recentRank": 12,
               "recentValue": 0.246,
               "differencePct": 4.7,
               "improving": true
@@ -1324,17 +1324,16 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-05-31",
-          "resolvedDate": "2026-06-01",
-          "bannerText": "OFF DAY — Previewing next game: Seattle Mariners on 2026-06-01"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-06-01",
+          "resolvedDate": "2026-06-01"
         }
       },
       "trends": [
@@ -1358,7 +1357,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-06-01T00:15:23.261Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-01\",\"opponent\":\"Seattle Mariners\",\"homeAway\":\"road\",\"ballpark\":\"T-Mobile Park\",\"weather\":{\"temperature\":72.4,\"temperatureDisplay\":\"72°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 7 mph N\",\"compact\":\"72° | Cloudy | Wind 7 mph N\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-02T02:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Austin Warren\",\"handedness\":\"R\",\"era\":1.4,\"xERA\":3.63,\"fip\":2.86,\"whip\":1.19,\"kPct\":27.8,\"bbPct\":11.4,\"kMinusBbPct\":16.4,\"hardHitPct\":39.6,\"barrelPct\":8.3,\"xBAAllowed\":0.247,\"xSLGAllowed\":0.349,\"xwOBAAllowed\":0.303,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-30\",\"opponent\":\"Miami Marlins\",\"ip\":\"1.0\",\"er\":0,\"k\":2,\"h\":1,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-05-29\",\"opponent\":\"Miami Marlins\",\"ip\":\"1.0\",\"er\":0,\"k\":1,\"h\":0,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-05-25\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"1.2\",\"er\":0,\"k\":3,\"h\":1,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-05-20\",\"opponent\":\"Washington Nationals\",\"ip\":\"1.0\",\"er\":2,\"k\":0,\"h\":4,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":1.17,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":1.5,\"daysSinceLastStart\":2},\"workload\":{\"inningsTrend\":1.17,\"daysSinceLastStart\":2},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Emerson Hancock\",\"handedness\":\"R\",\"era\":2.78,\"xERA\":4.06,\"fip\":3.56,\"whip\":1.01,\"kPct\":25.1,\"bbPct\":6,\"kMinusBbPct\":19.1,\"hardHitPct\":42.9,\"barrelPct\":9.5,\"xBAAllowed\":0.249,\"xSLGAllowed\":0.43,\"xwOBAAllowed\":0.319,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-26\",\"opponent\":\"Athletics\",\"ip\":\"6.0\",\"er\":0,\"k\":3,\"h\":1,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-20\",\"opponent\":\"Chicago White Sox\",\"ip\":\"5.0\",\"er\":2,\"k\":4,\"h\":5,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-05-15\",\"opponent\":\"San Diego Padres\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"h\":5,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-05-08\",\"opponent\":\"Chicago White Sox\",\"ip\":\"6.0\",\"er\":5,\"k\":4,\"h\":5,\"bb\":3,\"result\":\"W\"}],\"avgInnings\":5.75,\"avgEarnedRuns\":2,\"avgStrikeouts\":4.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.3,\"projectedLineupWRCPlus\":85.5,\"obp\":0.295,\"iso\":0.128,\"kPct\":21.4,\"bbPct\":7.8,\"xBA\":0.254,\"xSLG\":0.433,\"xwOBA\":0.327,\"hardHitPct\":43.2,\"barrelPct\":9.4,\"battingAverage\":0.232,\"wOBA\":0.289,\"lineup\":{\"totalWAR\":1.3,\"totalWRCPlus\":85.5,\"totalOBP\":0.295,\"totalISO\":0.117,\"totalKPct\":23.3,\"totalBBPct\":7.2,\"totalAVG\":0.232,\"totalWOBA\":0.289,\"totalXBA\":0.244,\"totalXSLG\":0.402,\"totalXWOBA\":0.312,\"totalHardHitPct\":42,\"totalBarrelPct\":8.5,\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.9,\"projectedLineupWRCPlus\":121,\"obp\":0.335,\"iso\":0.162,\"kPct\":23.2,\"bbPct\":9.4,\"xBA\":0.256,\"xSLG\":0.43,\"xwOBA\":0.337,\"hardHitPct\":42.2,\"barrelPct\":9.2,\"battingAverage\":0.258,\"wOBA\":0.338,\"lineup\":{\"totalWAR\":6.9,\"totalWRCPlus\":121,\"totalOBP\":0.335,\"totalISO\":0.169,\"totalKPct\":20.9,\"totalBBPct\":8.6,\"totalAVG\":0.258,\"totalWOBA\":0.338,\"totalXBA\":0.265,\"totalXSLG\":0.44,\"totalXWOBA\":0.343,\"totalHardHitPct\":40.6,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.007,\"wobaMinusXwoba\":-0.005}},\"regressionSignals\":{\"baMinusXba\":-0.007,\"wobaMinusXwoba\":-0.005},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.3,\"totalWRCPlus\":85.5,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.9,\"totalWRCPlus\":121,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.37,\"kMinusBbPct\":14.8,\"xFIP\":3.76,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.26,\"kMinusBbPct\":16,\"xFIP\":3.74,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":72.4,\"temperatureDisplay\":\"72°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 7 mph N\",\"compact\":\"72° | Cloudy | Wind 7 mph N\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-02T02:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"xERA/FIP profile: Austin Warren 3.63/2.86 vs Emerson Hancock 4.06/3.56; K-BB% 16.4 to 19.1.\",\"rawScore\":-1.85,\"weightedImpact\":-9.9,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.3 vs 6.9, projected lineup wRC+ 85.5 vs 121.0, xwOBA 0.327 vs 0.337.\",\"rawScore\":-10.02,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.76 vs 3.74, WHIP 1.37 vs 1.26, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.75,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.012 and wOBA-xwOBA -0.023; opponent starter overperformance signal 3.56.\",\"rawScore\":0.76,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Schedule/context: Mets travel home to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-39.85,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-06-01T05:24:05.888Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-01\",\"opponent\":\"Seattle Mariners\",\"homeAway\":\"road\",\"ballpark\":\"T-Mobile Park\",\"weather\":{\"temperature\":73.2,\"temperatureDisplay\":\"73°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 7 mph N\",\"compact\":\"73° | Cloudy | Wind 7 mph N\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-02T02:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Austin Warren\",\"handedness\":\"R\",\"era\":1.4,\"xERA\":3.63,\"fip\":2.86,\"whip\":1.19,\"kPct\":27.8,\"bbPct\":11.4,\"kMinusBbPct\":16.4,\"hardHitPct\":39.6,\"barrelPct\":8.3,\"xBAAllowed\":0.247,\"xSLGAllowed\":0.349,\"xwOBAAllowed\":0.303,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-30\",\"opponent\":\"Miami Marlins\",\"ip\":\"1.0\",\"er\":0,\"k\":2,\"h\":1,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-05-29\",\"opponent\":\"Miami Marlins\",\"ip\":\"1.0\",\"er\":0,\"k\":1,\"h\":0,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-05-25\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"1.2\",\"er\":0,\"k\":3,\"h\":1,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-05-20\",\"opponent\":\"Washington Nationals\",\"ip\":\"1.0\",\"er\":2,\"k\":0,\"h\":4,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":1.17,\"avgEarnedRuns\":0.5,\"avgStrikeouts\":1.5,\"daysSinceLastStart\":2},\"workload\":{\"inningsTrend\":1.17,\"daysSinceLastStart\":2},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Emerson Hancock\",\"handedness\":\"R\",\"era\":2.78,\"xERA\":4.06,\"fip\":3.56,\"whip\":1.01,\"kPct\":25.1,\"bbPct\":6,\"kMinusBbPct\":19.1,\"hardHitPct\":42.9,\"barrelPct\":9.5,\"xBAAllowed\":0.249,\"xSLGAllowed\":0.43,\"xwOBAAllowed\":0.319,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-26\",\"opponent\":\"Athletics\",\"ip\":\"6.0\",\"er\":0,\"k\":3,\"h\":1,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-20\",\"opponent\":\"Chicago White Sox\",\"ip\":\"5.0\",\"er\":2,\"k\":4,\"h\":5,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-05-15\",\"opponent\":\"San Diego Padres\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"h\":5,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-05-08\",\"opponent\":\"Chicago White Sox\",\"ip\":\"6.0\",\"er\":5,\"k\":4,\"h\":5,\"bb\":3,\"result\":\"W\"}],\"avgInnings\":5.75,\"avgEarnedRuns\":2,\"avgStrikeouts\":4.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.3,\"projectedLineupWRCPlus\":85.5,\"obp\":0.295,\"iso\":0.128,\"kPct\":21.4,\"bbPct\":7.8,\"xBA\":0.254,\"xSLG\":0.433,\"xwOBA\":0.327,\"hardHitPct\":43.2,\"barrelPct\":9.4,\"battingAverage\":0.232,\"wOBA\":0.289,\"lineup\":{\"totalWAR\":1.3,\"totalWRCPlus\":85.5,\"totalOBP\":0.295,\"totalISO\":0.117,\"totalKPct\":23.3,\"totalBBPct\":7.2,\"totalAVG\":0.232,\"totalWOBA\":0.289,\"totalXBA\":0.244,\"totalXSLG\":0.402,\"totalXWOBA\":0.312,\"totalHardHitPct\":42,\"totalBarrelPct\":8.5,\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.012,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.9,\"projectedLineupWRCPlus\":121,\"obp\":0.335,\"iso\":0.162,\"kPct\":23.2,\"bbPct\":9.4,\"xBA\":0.256,\"xSLG\":0.43,\"xwOBA\":0.337,\"hardHitPct\":42.2,\"barrelPct\":9.2,\"battingAverage\":0.258,\"wOBA\":0.338,\"lineup\":{\"totalWAR\":6.9,\"totalWRCPlus\":121,\"totalOBP\":0.335,\"totalISO\":0.169,\"totalKPct\":20.9,\"totalBBPct\":8.6,\"totalAVG\":0.258,\"totalWOBA\":0.338,\"totalXBA\":0.265,\"totalXSLG\":0.44,\"totalXWOBA\":0.343,\"totalHardHitPct\":40.6,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.007,\"wobaMinusXwoba\":-0.005}},\"regressionSignals\":{\"baMinusXba\":-0.007,\"wobaMinusXwoba\":-0.005},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.3,\"totalWRCPlus\":85.5,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.9,\"totalWRCPlus\":121,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.37,\"kMinusBbPct\":14.8,\"xFIP\":3.76,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.26,\"kMinusBbPct\":16,\"xFIP\":3.74,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":73.2,\"temperatureDisplay\":\"73°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 7 mph N\",\"compact\":\"73° | Cloudy | Wind 7 mph N\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-02T02:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"xERA/FIP profile: Austin Warren 3.63/2.86 vs Emerson Hancock 4.06/3.56; K-BB% 16.4 to 19.1.\",\"rawScore\":-1.85,\"weightedImpact\":-9.9,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 1.3 vs 6.9, projected lineup wRC+ 85.5 vs 121.0, xwOBA 0.327 vs 0.337.\",\"rawScore\":-10.02,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.76 vs 3.74, WHIP 1.37 vs 1.26, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.75,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.012 and wOBA-xwOBA -0.023; opponent starter overperformance signal 3.56.\",\"rawScore\":0.76,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Schedule/context: Mets travel home to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-39.85,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Seattle Mariners: overall lineup quality is the clearest angle",
         "synopsis": "Austin Warren vs Emerson Hancock sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 1.3 vs 6.9, projected lineup wRC+ 85.5 vs 121.0, xwOBA 0.327 vs 0.337. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1373,7 +1372,7 @@
           "opponent": "Seattle Mariners",
           "homeAway": "road",
           "ballpark": "T-Mobile Park",
-          "weather": "72° | Cloudy | Wind 7 mph N",
+          "weather": "73° | Cloudy | Wind 7 mph N",
           "lineupStatus": "Projected",
           "moneyline": "+110"
         },
@@ -1520,19 +1519,21 @@
             "body": "Recent form: Mets are 4-1 in the last 5; rest is 0 vs 0 days. Starting pitching: Austin Warren 3.63 xERA, 1.40 ERA, N/A% K vs Emerson Hancock 4.06 xERA, 2.78 ERA, N/A% K; Offense: Mets wRC+ 87.0 vs 108.0; Bullpen: Mets xERA 3.85 vs 3.86. Price: Mets ML +110 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Austin Warren versus Emerson Hancock with 3.63 xERA against 4.06. Secondary checks: offense 87.0 vs 108.0 wRC+, bullpen 3.85 vs 3.86 xERA, value edge +35.0 points. Value check: Mets ML +110 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
-        "pickNarrative": "Mets are 5-5 in last 10 games with 11-18 road record. Austin Warren posts 3.63 xERA and 1.40 ERA against Emerson Hancock 4.06 xERA and 2.78 ERA while Mets bullpen xERA 3.85 compares to opponent 3.86 and offense wRC+ 87 versus 108. Pick: New York Mets moneyline.",
+        "pickSummary": "Largest quantified gap is Warren 3.63 xERA versus Hancock 4.06 xERA. Secondary data point is Mets wOBA-xwOBA gap of -0.023. Net conclusion is Mets ML +110 with model probability 35.0%.",
+        "pickNarrative": "Mets are 5-5 in last 10 games and 11-18 on road. Austin Warren 1.40 ERA 3.63 xERA versus Emerson Hancock 2.78 ERA 4.06 xERA; Mets offense wRC+ 87 versus 108; Mets bullpen xERA 3.85 versus 3.86. Pick: New York Mets moneyline.",
         "todayPick": {
-          "headline": "Mets ML with measured edge",
-          "summary": "Mets are 5-5 in last 10 games with 11-18 road record. Austin Warren posts 3.63 xERA and 1.40 ERA against Emerson Hancock 4.06 xERA and 2.78 ERA while Mets bullpen xERA 3.85 compares to opponent 3.86 and offense wRC+ 87 versus 108. Pick: New York Mets moneyline.",
+          "headline": "Mets ML Edge From Pitching Regression Signals",
+          "summary": "Mets are 5-5 in last 10 games and 11-18 on road. Austin Warren 1.40 ERA 3.63 xERA versus Emerson Hancock 2.78 ERA 4.06 xERA; Mets offense wRC+ 87 versus 108; Mets bullpen xERA 3.85 versus 3.86. Pick: New York Mets moneyline.",
           "metsEdges": [
-            "Regression: xwOBA 0.327 vs actual wOBA .290"
+            "Regression: Mets wOBA-xwOBA -0.023",
+            "Bullpen: Mets xERA 3.85 versus 3.86",
+            "Warren K% 27.8 versus Hancock 25.1"
           ],
           "risks": [
-            "Lineup quality projected WAR 1.3 vs 6.9",
-            "Emerson Hancock K% 25.1% vs Warren 27.8%"
+            "Lineup WAR 1.3 versus 6.9",
+            "Opponent wRC+ 108 versus Mets 87"
           ],
-          "bettingAngle": "Primary edge: Austin Warren versus Emerson Hancock with 3.63 xERA against 4.06. Secondary checks: offense 87.0 vs 108.0 wRC+, bullpen 3.85 vs 3.86 xERA, value edge +35.0 points. Value check: Mets ML +110 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+          "bettingAngle": "Largest quantified gap is Warren 3.63 xERA versus Hancock 4.06 xERA. Secondary data point is Mets wOBA-xwOBA gap of -0.023. Net conclusion is Mets ML +110 with model probability 35.0%.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -1620,11 +1621,11 @@
             "homeAway": "road",
             "ballpark": "T-Mobile Park",
             "weather": {
-              "temperature": 72.4,
-              "temperatureDisplay": "72°",
+              "temperature": 73.2,
+              "temperatureDisplay": "73°",
               "condition": "Cloudy",
               "wind": "Wind 7 mph N",
-              "compact": "72° | Cloudy | Wind 7 mph N",
+              "compact": "73° | Cloudy | Wind 7 mph N",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-02T02:00Z"
             }
@@ -1906,11 +1907,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 72.4,
-              "temperatureDisplay": "72°",
+              "temperature": 73.2,
+              "temperatureDisplay": "73°",
               "condition": "Cloudy",
               "wind": "Wind 7 mph N",
-              "compact": "72° | Cloudy | Wind 7 mph N",
+              "compact": "73° | Cloudy | Wind 7 mph N",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-02T02:00Z"
             }
@@ -2087,7 +2088,7 @@
             "ballpark": "T-Mobile Park",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/136.svg",
-            "metadataLine": "June 1st | 9:40 PM ET | T-Mobile Park | 72° | Cloudy | Wind 7 mph N"
+            "metadataLine": "June 1st | 9:40 PM ET | T-Mobile Park | 73° | Cloudy | Wind 7 mph N"
           },
           "quickRead": {
             "modelLean": "Opponent",
@@ -2101,7 +2102,7 @@
             "opponent": "Seattle Mariners",
             "homeAway": "road",
             "ballpark": "T-Mobile Park",
-            "weather": "72° | Cloudy | Wind 7 mph N",
+            "weather": "73° | Cloudy | Wind 7 mph N",
             "lineupStatus": "Projected",
             "moneyline": "+110"
           },
@@ -2117,7 +2118,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "72° | Cloudy | Wind 7 mph N"
+                "value": "73° | Cloudy | Wind 7 mph N"
               },
               {
                 "label": "Mets ML Odds",
@@ -2522,8 +2523,8 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 20,
-                "appearancesPerPitcherPerDay": 0.22,
+                "appearances": 17,
+                "appearancesPerPitcherPerDay": 0.19,
                 "label": "Low",
                 "tone": "green"
               },
@@ -2540,23 +2541,23 @@
                 "saveConversionPct": 88.9,
                 "era": 5.68,
                 "whip": 1.63,
-                "last7DaysAppearances": 3,
-                "last7DaysInningsPitched": "2.1"
+                "last7DaysAppearances": 2,
+                "last7DaysInningsPitched": "2.0"
               }
             },
             "opp": {
               "teamName": "Seattle Mariners",
               "teamId": 136,
               "usage": {
-                "appearances": 17,
-                "appearancesPerPitcherPerDay": 0.19,
+                "appearances": 15,
+                "appearancesPerPitcherPerDay": 0.16,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 2.91,
                 "seasonWhip": 1.26,
-                "last20Era": 2.88
+                "last20Era": 3.11
               },
               "closer": {
                 "name": "Andrés Muñoz",
@@ -2631,7 +2632,7 @@
                   "statKey": "avg",
                   "seasonRank": 21,
                   "seasonValue": 0.235,
-                  "recentRank": 13,
+                  "recentRank": 12,
                   "recentValue": 0.246,
                   "differencePct": 4.7,
                   "improving": true
@@ -3568,33 +3569,37 @@
             }
           },
           "todayPick": {
-            "headline": "Mets ML with measured edge",
-            "summary": "Mets are 5-5 in last 10 games with 11-18 road record. Austin Warren posts 3.63 xERA and 1.40 ERA against Emerson Hancock 4.06 xERA and 2.78 ERA while Mets bullpen xERA 3.85 compares to opponent 3.86 and offense wRC+ 87 versus 108. Pick: New York Mets moneyline.",
+            "headline": "Mets ML Edge From Pitching Regression Signals",
+            "summary": "Mets are 5-5 in last 10 games and 11-18 on road. Austin Warren 1.40 ERA 3.63 xERA versus Emerson Hancock 2.78 ERA 4.06 xERA; Mets offense wRC+ 87 versus 108; Mets bullpen xERA 3.85 versus 3.86. Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.327 vs actual wOBA .290"
+              "Regression: Mets wOBA-xwOBA -0.023",
+              "Bullpen: Mets xERA 3.85 versus 3.86",
+              "Warren K% 27.8 versus Hancock 25.1"
             ],
             "risks": [
-              "Lineup quality projected WAR 1.3 vs 6.9",
-              "Emerson Hancock K% 25.1% vs Warren 27.8%"
+              "Lineup WAR 1.3 versus 6.9",
+              "Opponent wRC+ 108 versus Mets 87"
             ],
-            "bettingAngle": "Primary edge: Austin Warren versus Emerson Hancock with 3.63 xERA against 4.06. Secondary checks: offense 87.0 vs 108.0 wRC+, bullpen 3.85 vs 3.86 xERA, value edge +35.0 points. Value check: Mets ML +110 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Largest quantified gap is Warren 3.63 xERA versus Hancock 4.06 xERA. Secondary data point is Mets wOBA-xwOBA gap of -0.023. Net conclusion is Mets ML +110 with model probability 35.0%.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Austin Warren versus Emerson Hancock with 3.63 xERA against 4.06. Secondary checks: offense 87.0 vs 108.0 wRC+, bullpen 3.85 vs 3.86 xERA, value edge +35.0 points. Value check: Mets ML +110 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
-            "headline": "Mets ML with measured edge",
-            "summary": "Mets are 5-5 in last 10 games with 11-18 road record. Austin Warren posts 3.63 xERA and 1.40 ERA against Emerson Hancock 4.06 xERA and 2.78 ERA while Mets bullpen xERA 3.85 compares to opponent 3.86 and offense wRC+ 87 versus 108. Pick: New York Mets moneyline.",
+            "explanation": "Largest quantified gap is Warren 3.63 xERA versus Hancock 4.06 xERA. Secondary data point is Mets wOBA-xwOBA gap of -0.023. Net conclusion is Mets ML +110 with model probability 35.0%.",
+            "headline": "Mets ML Edge From Pitching Regression Signals",
+            "summary": "Mets are 5-5 in last 10 games and 11-18 on road. Austin Warren 1.40 ERA 3.63 xERA versus Emerson Hancock 2.78 ERA 4.06 xERA; Mets offense wRC+ 87 versus 108; Mets bullpen xERA 3.85 versus 3.86. Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.327 vs actual wOBA .290"
+              "Regression: Mets wOBA-xwOBA -0.023",
+              "Bullpen: Mets xERA 3.85 versus 3.86",
+              "Warren K% 27.8 versus Hancock 25.1"
             ],
             "risks": [
-              "Lineup quality projected WAR 1.3 vs 6.9",
-              "Emerson Hancock K% 25.1% vs Warren 27.8%"
+              "Lineup WAR 1.3 versus 6.9",
+              "Opponent wRC+ 108 versus Mets 87"
             ],
-            "bettingAngle": "Primary edge: Austin Warren versus Emerson Hancock with 3.63 xERA against 4.06. Secondary checks: offense 87.0 vs 108.0 wRC+, bullpen 3.85 vs 3.86 xERA, value edge +35.0 points. Value check: Mets ML +110 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Largest quantified gap is Warren 3.63 xERA versus Hancock 4.06 xERA. Secondary data point is Mets wOBA-xwOBA gap of -0.023. Net conclusion is Mets ML +110 with model probability 35.0%.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
@@ -3607,7 +3612,7 @@
               "strength": "even",
               "dataMode": "fallback"
             },
-            "weatherSummary": "72° | Cloudy | Wind 7 mph N"
+            "weatherSummary": "73° | Cloudy | Wind 7 mph N"
           }
         }
       },
@@ -3617,11 +3622,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 72.4,
-        "temperatureDisplay": "72°",
+        "temperature": 73.2,
+        "temperatureDisplay": "73°",
         "condition": "Cloudy",
         "wind": "Wind 7 mph N",
-        "compact": "72° | Cloudy | Wind 7 mph N",
+        "compact": "73° | Cloudy | Wind 7 mph N",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-06-02T02:00Z"
       },
