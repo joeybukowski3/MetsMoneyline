@@ -44,7 +44,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 108,
+            "point": null
+          },
+          {
+            "name": "San Diego Padres",
+            "price": -126,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -210,
+            "point": 1.5
+          },
+          {
+            "name": "San Diego Padres",
+            "price": 172,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 100,
+            "point": 7.5
+          },
+          {
+            "name": "Under",
+            "price": -122,
+            "point": 7.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823293,
     "gameGuid": "8bc9e5d7-a0d7-45ec-a0c5-02510e22e817",
@@ -264,7 +317,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-04T16:52:14.091Z",
+    "generatedAt": "2026-06-04T19:22:06.666Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-04",
     "cacheKey": "next-game:2026-06-04"
