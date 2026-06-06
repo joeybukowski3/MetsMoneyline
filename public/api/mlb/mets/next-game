@@ -1,7 +1,7 @@
 {
   "gameId": 823292,
   "startTime": "2026-06-07T02:10:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 135,
     "canonicalKey": "padres",
@@ -40,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 665487,
+        "name": "Fernando Tatis Jr.",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 701538,
+        "name": "Jackson Merrill",
+        "pos": "CF"
+      },
+      {
+        "order": 3,
+        "playerId": 664034,
+        "name": "Ty France",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 592518,
+        "name": "Manny Machado",
+        "pos": "3B"
+      },
+      {
+        "order": 5,
+        "playerId": 657757,
+        "name": "Gavin Sheets",
+        "pos": "LF"
+      },
+      {
+        "order": 6,
+        "playerId": 593428,
+        "name": "Xander Bogaerts",
+        "pos": "SS"
+      },
+      {
+        "order": 7,
+        "playerId": 609280,
+        "name": "Miguel Andujar",
+        "pos": "DH"
+      },
+      {
+        "order": 8,
+        "playerId": 823550,
+        "name": "Sung-Mun Song",
+        "pos": "2B"
+      },
+      {
+        "order": 9,
+        "playerId": 666023,
+        "name": "Freddy Fermin",
+        "pos": "C"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +110,9 @@
     "officialDate": "2026-06-06",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -208,16 +263,16 @@
       },
       "defense": {
         "team": {
-          "id": 135,
-          "name": "San Diego Padres",
-          "link": "/api/v1/teams/135"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 135,
+          "name": "San Diego Padres",
+          "link": "/api/v1/teams/135"
         }
       }
     },
@@ -234,12 +289,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        },
+        "allStarStatus": "N",
+        "id": 135,
+        "name": "San Diego Padres",
+        "link": "/api/v1/teams/135"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -260,11 +340,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 665487,
+          "fullName": "Fernando Tatis Jr.",
+          "link": "/api/v1/people/665487",
+          "firstName": "Fernando",
+          "lastName": "Tatis",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Fernando"
+        },
+        {
+          "id": 701538,
+          "fullName": "Jackson Merrill",
+          "link": "/api/v1/people/701538",
+          "firstName": "Jackson",
+          "lastName": "Merrill",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Jackson"
+        },
+        {
+          "id": 664034,
+          "fullName": "Ty France",
+          "link": "/api/v1/people/664034",
+          "firstName": "Tyler",
+          "lastName": "France",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Ty"
+        },
+        {
+          "id": 592518,
+          "fullName": "Manny Machado",
+          "link": "/api/v1/people/592518",
+          "firstName": "Manuel",
+          "lastName": "Machado",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Manny"
+        },
+        {
+          "id": 657757,
+          "fullName": "Gavin Sheets",
+          "link": "/api/v1/people/657757",
+          "firstName": "Gavin",
+          "lastName": "Sheets",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Gavin"
+        },
+        {
+          "id": 593428,
+          "fullName": "Xander Bogaerts",
+          "link": "/api/v1/people/593428",
+          "firstName": "Xander",
+          "lastName": "Bogaerts",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Xander"
+        },
+        {
+          "id": 609280,
+          "fullName": "Miguel Andujar",
+          "link": "/api/v1/people/609280",
+          "firstName": "Miguel",
+          "lastName": "Andujar",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Miguel"
+        },
+        {
+          "id": 823550,
+          "fullName": "Sung-Mun Song",
+          "link": "/api/v1/people/823550",
+          "firstName": "Sung-Mun",
+          "lastName": "Song",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Sung-Mun"
+        },
+        {
+          "id": 666023,
+          "fullName": "Freddy Fermin",
+          "link": "/api/v1/people/666023",
+          "firstName": "Freddy",
+          "lastName": "Fermin",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Freddy"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-06T21:01:23.630Z",
+    "generatedAt": "2026-06-06T22:15:53.555Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-06",
     "cacheKey": "next-game:2026-06-06"
