@@ -1,17 +1,8 @@
 {
-  "gameId": 823291,
-  "startTime": "2026-06-07T20:10:00Z",
-  "status": "Pre-Game",
+  "gameId": 823620,
+  "startTime": "2026-06-09T23:10:00Z",
+  "status": "Scheduled",
   "homeTeam": {
-    "id": 135,
-    "canonicalKey": "padres",
-    "mlbStatsTeamId": 135,
-    "apiSportsTeamId": 135,
-    "name": "San Diego Padres",
-    "abbreviation": "SD",
-    "record": null
-  },
-  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -20,159 +11,115 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "isMetsHome": false,
-  "venue": "Petco Park",
+  "awayTeam": {
+    "id": 138,
+    "canonicalKey": "cardinals",
+    "mlbStatsTeamId": 138,
+    "apiSportsTeamId": 138,
+    "name": "St. Louis Cardinals",
+    "abbreviation": "STL",
+    "record": null
+  },
+  "isMetsHome": true,
+  "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 623211,
-      "fullName": "Huascar Brazobán",
-      "era": "2.25",
+      "id": 642547,
+      "fullName": "Freddy Peralta",
+      "era": "3.63",
       "fip": null,
-      "whip": "1.00"
+      "whip": "1.32"
     },
-    "opp": {
-      "id": 681190,
-      "fullName": "Randy Vásquez",
-      "era": "3.31",
-      "fip": null,
-      "whip": "1.22"
-    }
+    "opp": null
   },
   "lineups": {
-    "lineupStatus": "confirmed",
-    "mets": [
-      {
-        "order": 1,
-        "playerId": 701807,
-        "name": "Carson Benge",
-        "pos": "RF"
-      },
-      {
-        "order": 2,
-        "playerId": 666182,
-        "name": "Bo Bichette",
-        "pos": "SS"
-      },
-      {
-        "order": 3,
-        "playerId": 665742,
-        "name": "Juan Soto",
-        "pos": "DH"
-      },
-      {
-        "order": 4,
-        "playerId": 676724,
-        "name": "Jared Young",
-        "pos": "1B"
-      },
-      {
-        "order": 5,
-        "playerId": 805999,
-        "name": "A.J. Ewing",
-        "pos": "CF"
-      },
-      {
-        "order": 6,
-        "playerId": 543760,
-        "name": "Marcus Semien",
-        "pos": "2B"
-      },
-      {
-        "order": 7,
-        "playerId": 683146,
-        "name": "Brett Baty",
-        "pos": "3B"
-      },
-      {
-        "order": 8,
-        "playerId": 669004,
-        "name": "MJ Melendez",
-        "pos": "LF"
-      },
-      {
-        "order": 9,
-        "playerId": 620443,
-        "name": "Luis Torrens",
-        "pos": "C"
-      }
-    ],
-    "opp": [
-      {
-        "order": 1,
-        "playerId": 665487,
-        "name": "Fernando Tatis Jr.",
-        "pos": "2B"
-      },
-      {
-        "order": 2,
-        "playerId": 701538,
-        "name": "Jackson Merrill",
-        "pos": "CF"
-      },
-      {
-        "order": 3,
-        "playerId": 664034,
-        "name": "Ty France",
-        "pos": "1B"
-      },
-      {
-        "order": 4,
-        "playerId": 592518,
-        "name": "Manny Machado",
-        "pos": "3B"
-      },
-      {
-        "order": 5,
-        "playerId": 593428,
-        "name": "Xander Bogaerts",
-        "pos": "SS"
-      },
-      {
-        "order": 6,
-        "playerId": 609280,
-        "name": "Miguel Andujar",
-        "pos": "DH"
-      },
-      {
-        "order": 7,
-        "playerId": 687749,
-        "name": "Jase Bowen",
-        "pos": "RF"
-      },
-      {
-        "order": 8,
-        "playerId": 669392,
-        "name": "Samad Taylor",
-        "pos": "LF"
-      },
-      {
-        "order": 9,
-        "playerId": 666023,
-        "name": "Freddy Fermin",
-        "pos": "C"
-      }
-    ]
+    "lineupStatus": "not_released",
+    "mets": [],
+    "opp": []
   },
   "sportsbookSummary": null,
   "raw": {
-    "gamePk": 823291,
-    "gameGuid": "301c5b41-48df-40d4-9567-6dac905bcd55",
-    "link": "/api/v1.1/game/823291/feed/live",
+    "gamePk": 823620,
+    "gameGuid": "1f17cad2-a097-49eb-8392-ed05f51a178a",
+    "link": "/api/v1.1/game/823620/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-06-07T20:10:00Z",
-    "officialDate": "2026-06-07",
+    "gameDate": "2026-06-09T23:10:00Z",
+    "officialDate": "2026-06-09",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "P",
-      "detailedState": "Pre-Game",
-      "statusCode": "P",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
     "teams": {
       "away": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 138,
+          "name": "St. Louis Cardinals",
+          "link": "/api/v1/teams/138",
+          "season": 2026,
+          "venue": {
+            "id": 2889,
+            "name": "Busch Stadium",
+            "link": "/api/v1/venues/2889"
+          },
+          "springVenue": {
+            "id": 2520,
+            "link": "/api/v1/venues/2520"
+          },
+          "teamCode": "sln",
+          "fileCode": "stl",
+          "abbreviation": "STL",
+          "teamName": "Cardinals",
+          "locationName": "St. Louis",
+          "firstYearOfPlay": "1892",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 205,
+            "name": "National League Central",
+            "link": "/api/v1/divisions/205"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "St. Louis",
+          "franchiseName": "St. Louis",
+          "clubName": "Cardinals",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 35,
+          "losses": 28,
+          "ties": 0,
+          "pct": ".556"
+        },
+        "splitSquad": false,
+        "seriesNumber": 22,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      },
+      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -226,248 +173,62 @@
           "ties": 0,
           "pct": ".438"
         },
-        "score": 0,
         "probablePitcher": {
-          "id": 623211,
-          "fullName": "Huascar Brazobán",
-          "link": "/api/v1/people/623211"
+          "id": 642547,
+          "fullName": "Freddy Peralta",
+          "link": "/api/v1/people/642547"
         },
         "splitSquad": false,
-        "seriesNumber": 21,
+        "seriesNumber": 22,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
           "link": "/api/v1/league/115",
           "abbreviation": "GL"
         }
-      },
-      "home": {
-        "team": {
-          "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
-          },
-          "allStarStatus": "N",
-          "id": 135,
-          "name": "San Diego Padres",
-          "link": "/api/v1/teams/135",
-          "season": 2026,
-          "venue": {
-            "id": 2680,
-            "name": "Petco Park",
-            "link": "/api/v1/venues/2680"
-          },
-          "springVenue": {
-            "id": 2530,
-            "link": "/api/v1/venues/2530"
-          },
-          "teamCode": "sdn",
-          "fileCode": "sd",
-          "abbreviation": "SD",
-          "teamName": "Padres",
-          "locationName": "San Diego",
-          "firstYearOfPlay": "1968",
-          "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
-          },
-          "division": {
-            "id": 203,
-            "name": "National League West",
-            "link": "/api/v1/divisions/203"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "San Diego",
-          "franchiseName": "San Diego",
-          "clubName": "Padres",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 33,
-          "losses": 30,
-          "ties": 0,
-          "pct": ".524"
-        },
-        "score": 0,
-        "probablePitcher": {
-          "id": 681190,
-          "fullName": "Randy Vásquez",
-          "link": "/api/v1/people/681190"
-        },
-        "splitSquad": false,
-        "seriesNumber": 21,
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        }
       }
     },
     "linescore": {
-      "currentInning": 1,
-      "currentInningOrdinal": "1st",
-      "inningState": "Top",
-      "inningHalf": "Top",
-      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [
-        {
-          "num": 1,
-          "ordinalNum": "1st",
-          "home": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        }
-      ],
+      "innings": [],
       "teams": {
-        "home": {
-          "runs": 0,
-          "hits": 0,
-          "errors": 0,
-          "leftOnBase": 0
-        },
-        "away": {
-          "runs": 0,
-          "hits": 0,
-          "errors": 0,
-          "leftOnBase": 0
-        }
+        "home": {},
+        "away": {}
       },
       "defense": {
-        "pitcher": {
-          "id": 681190,
-          "fullName": "Randy Vásquez",
-          "link": "/api/v1/people/681190"
-        },
-        "catcher": {
-          "id": 666023,
-          "fullName": "Freddy Fermin",
-          "link": "/api/v1/people/666023"
-        },
-        "first": {
-          "id": 664034,
-          "fullName": "Ty France",
-          "link": "/api/v1/people/664034"
-        },
-        "second": {
-          "id": 665487,
-          "fullName": "Fernando Tatis Jr.",
-          "link": "/api/v1/people/665487"
-        },
-        "third": {
-          "id": 592518,
-          "fullName": "Manny Machado",
-          "link": "/api/v1/people/592518"
-        },
-        "shortstop": {
-          "id": 593428,
-          "fullName": "Xander Bogaerts",
-          "link": "/api/v1/people/593428"
-        },
-        "left": {
-          "id": 669392,
-          "fullName": "Samad Taylor",
-          "link": "/api/v1/people/669392"
-        },
-        "center": {
-          "id": 701538,
-          "fullName": "Jackson Merrill",
-          "link": "/api/v1/people/701538"
-        },
-        "right": {
-          "id": 687749,
-          "fullName": "Jase Bowen",
-          "link": "/api/v1/people/687749"
-        },
-        "batter": {
-          "id": 665487,
-          "fullName": "Fernando Tatis Jr.",
-          "link": "/api/v1/people/665487"
-        },
-        "onDeck": {
-          "id": 701538,
-          "fullName": "Jackson Merrill",
-          "link": "/api/v1/people/701538"
-        },
-        "inHole": {
-          "id": 664034,
-          "fullName": "Ty France",
-          "link": "/api/v1/people/664034"
-        },
-        "battingOrder": 1,
         "team": {
-          "id": 135,
-          "name": "San Diego Padres",
-          "link": "/api/v1/teams/135"
+          "id": 138,
+          "name": "St. Louis Cardinals",
+          "link": "/api/v1/teams/138"
         }
       },
       "offense": {
-        "batter": {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807"
-        },
-        "onDeck": {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182"
-        },
-        "inHole": {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742"
-        },
-        "pitcher": {
-          "id": 623211,
-          "fullName": "Huascar Brazobán",
-          "link": "/api/v1/people/623211"
-        },
-        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
-      },
-      "balls": 0,
-      "strikes": 0,
-      "outs": 0
+      }
     },
     "venue": {
-      "id": 2680,
-      "name": "Petco Park",
-      "link": "/api/v1/venues/2680",
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823291/content"
+      "link": "/api/v1/game/823620/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
-      "wins": 1,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -476,280 +237,23 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823291-2026-06-07",
+    "calendarEventID": "14-823620-2026-06-09",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {
-      "homePlayers": [
-        {
-          "id": 665487,
-          "fullName": "Fernando Tatis Jr.",
-          "link": "/api/v1/people/665487",
-          "firstName": "Fernando",
-          "lastName": "Tatis",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Fernando"
-        },
-        {
-          "id": 701538,
-          "fullName": "Jackson Merrill",
-          "link": "/api/v1/people/701538",
-          "firstName": "Jackson",
-          "lastName": "Merrill",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "Jackson"
-        },
-        {
-          "id": 664034,
-          "fullName": "Ty France",
-          "link": "/api/v1/people/664034",
-          "firstName": "Tyler",
-          "lastName": "France",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Ty"
-        },
-        {
-          "id": 592518,
-          "fullName": "Manny Machado",
-          "link": "/api/v1/people/592518",
-          "firstName": "Manuel",
-          "lastName": "Machado",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Manny"
-        },
-        {
-          "id": 593428,
-          "fullName": "Xander Bogaerts",
-          "link": "/api/v1/people/593428",
-          "firstName": "Xander",
-          "lastName": "Bogaerts",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Xander"
-        },
-        {
-          "id": 609280,
-          "fullName": "Miguel Andujar",
-          "link": "/api/v1/people/609280",
-          "firstName": "Miguel",
-          "lastName": "Andujar",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Miguel"
-        },
-        {
-          "id": 687749,
-          "fullName": "Jase Bowen",
-          "link": "/api/v1/people/687749",
-          "firstName": "Jase",
-          "lastName": "Bowen",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Jase"
-        },
-        {
-          "id": 669392,
-          "fullName": "Samad Taylor",
-          "link": "/api/v1/people/669392",
-          "firstName": "Samad",
-          "lastName": "Taylor",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Samad"
-        },
-        {
-          "id": 666023,
-          "fullName": "Freddy Fermin",
-          "link": "/api/v1/people/666023",
-          "firstName": "Freddy",
-          "lastName": "Fermin",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Freddy"
-        }
-      ],
-      "awayPlayers": [
-        {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807",
-          "firstName": "Carson",
-          "lastName": "Benge",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Carson"
-        },
-        {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182",
-          "firstName": "Bo",
-          "lastName": "Bichette",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Bo"
-        },
-        {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742",
-          "firstName": "Juan",
-          "lastName": "Soto",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Juan"
-        },
-        {
-          "id": 676724,
-          "fullName": "Jared Young",
-          "link": "/api/v1/people/676724",
-          "firstName": "Jared",
-          "lastName": "Young",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Jared"
-        },
-        {
-          "id": 805999,
-          "fullName": "A.J. Ewing",
-          "link": "/api/v1/people/805999",
-          "firstName": "Andrew",
-          "lastName": "Ewing",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "A.J."
-        },
-        {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760",
-          "firstName": "Marcus",
-          "lastName": "Semien",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Marcus"
-        },
-        {
-          "id": 683146,
-          "fullName": "Brett Baty",
-          "link": "/api/v1/people/683146",
-          "firstName": "Brett",
-          "lastName": "Baty",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Brett"
-        },
-        {
-          "id": 669004,
-          "fullName": "MJ Melendez",
-          "link": "/api/v1/people/669004",
-          "firstName": "Mervyl",
-          "lastName": "Melendez",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "MJ"
-        },
-        {
-          "id": 620443,
-          "fullName": "Luis Torrens",
-          "link": "/api/v1/people/620443",
-          "firstName": "Luis",
-          "lastName": "Torrens",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Luis"
-        }
-      ]
-    }
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-07T19:45:31.849Z",
+    "generatedAt": "2026-06-07T21:09:50.597Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-07",
     "cacheKey": "next-game:2026-06-07"
