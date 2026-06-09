@@ -549,7 +549,7 @@
     "sourceProvider": "mlb-stats-api",
     "meta": {
       "provider": "mlb-stats-api",
-      "generatedAt": "2026-06-09T17:35:47.866Z",
+      "generatedAt": "2026-06-09T19:47:52.722Z",
       "cacheHint": "standings: 10-15 minutes"
     }
   },
@@ -1933,6 +1933,141 @@
     },
     {
       "person": {
+        "id": 682626,
+        "fullName": "Francisco Alvarez",
+        "link": "/api/v1/people/682626",
+        "firstName": "Francisco",
+        "lastName": "Alvarez",
+        "primaryNumber": "4",
+        "birthDate": "2001-11-19",
+        "currentAge": 24,
+        "birthCity": "Guatire",
+        "birthCountry": "Venezuela",
+        "height": "5' 10\"",
+        "weight": 233,
+        "active": true,
+        "primaryPosition": {
+          "code": "2",
+          "name": "Catcher",
+          "type": "Catcher",
+          "abbreviation": "C"
+        },
+        "useName": "Francisco",
+        "useLastName": "Alvarez",
+        "middleName": "Javier",
+        "boxscoreName": "Alvarez, F",
+        "gender": "M",
+        "nameMatrilineal": "Pulido",
+        "isPlayer": true,
+        "isVerified": true,
+        "stats": [
+          {
+            "type": {
+              "displayName": "season"
+            },
+            "group": {
+              "displayName": "hitting"
+            },
+            "exemptions": [],
+            "splits": [
+              {
+                "season": "2026",
+                "stat": {
+                  "age": 24,
+                  "gamesPlayed": 37,
+                  "groundOuts": 32,
+                  "airOuts": 26,
+                  "runs": 12,
+                  "doubles": 5,
+                  "triples": 0,
+                  "homeRuns": 4,
+                  "strikeOuts": 28,
+                  "baseOnBalls": 11,
+                  "intentionalWalks": 0,
+                  "hits": 27,
+                  "hitByPitch": 2,
+                  "avg": ".241",
+                  "atBats": 112,
+                  "obp": ".317",
+                  "slg": ".393",
+                  "ops": ".710",
+                  "caughtStealing": 0,
+                  "stolenBases": 0,
+                  "stolenBasePercentage": ".---",
+                  "caughtStealingPercentage": ".---",
+                  "groundIntoDoublePlay": 10,
+                  "numberOfPitches": 526,
+                  "plateAppearances": 128,
+                  "totalBases": 44,
+                  "rbi": 10,
+                  "leftOnBase": 49,
+                  "sacBunts": 0,
+                  "sacFlies": 1,
+                  "babip": ".284",
+                  "groundOutsToAirouts": "1.23",
+                  "catchersInterference": 2,
+                  "atBatsPerHomeRun": "28.00"
+                },
+                "team": {
+                  "id": 121,
+                  "name": "New York Mets",
+                  "link": "/api/v1/teams/121"
+                },
+                "player": {
+                  "id": 682626,
+                  "fullName": "Francisco Alvarez",
+                  "link": "/api/v1/people/682626"
+                },
+                "league": {
+                  "id": 104,
+                  "name": "National League",
+                  "link": "/api/v1/league/104"
+                },
+                "sport": {
+                  "id": 1,
+                  "link": "/api/v1/sports/1",
+                  "abbreviation": "MLB"
+                },
+                "gameType": "R"
+              }
+            ]
+          }
+        ],
+        "mlbDebutDate": "2022-09-30",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Francisco Alvarez",
+        "nameSlug": "francisco-alvarez-682626",
+        "firstLastName": "Francisco Alvarez",
+        "lastFirstName": "Alvarez, Francisco",
+        "lastInitName": "Alvarez, F",
+        "initLastName": "F Alvarez",
+        "fullFMLName": "Francisco Javier Alvarez",
+        "fullLFMName": "Alvarez, Francisco Javier",
+        "strikeZoneTop": 3.121,
+        "strikeZoneBottom": 1.575
+      },
+      "jerseyNumber": "4",
+      "position": {
+        "code": "2",
+        "name": "Catcher",
+        "type": "Catcher",
+        "abbreviation": "C"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
         "id": 642547,
         "fullName": "Freddy Peralta",
         "link": "/api/v1/people/642547",
@@ -1986,142 +2121,6 @@
         "name": "Pitcher",
         "type": "Pitcher",
         "abbreviation": "P"
-      },
-      "status": {
-        "code": "A",
-        "description": "Active"
-      },
-      "parentTeamId": 121
-    },
-    {
-      "person": {
-        "id": 663584,
-        "fullName": "Hayden Senger",
-        "link": "/api/v1/people/663584",
-        "firstName": "Hayden",
-        "lastName": "Senger",
-        "primaryNumber": "6",
-        "birthDate": "1997-04-03",
-        "currentAge": 29,
-        "birthCity": "Hamilton",
-        "birthStateProvince": "OH",
-        "birthCountry": "USA",
-        "height": "6' 1\"",
-        "weight": 210,
-        "active": true,
-        "primaryPosition": {
-          "code": "2",
-          "name": "Catcher",
-          "type": "Catcher",
-          "abbreviation": "C"
-        },
-        "useName": "Hayden",
-        "useLastName": "Senger",
-        "middleName": "Craig",
-        "boxscoreName": "Senger",
-        "gender": "M",
-        "isPlayer": true,
-        "isVerified": true,
-        "draftYear": 2018,
-        "stats": [
-          {
-            "type": {
-              "displayName": "season"
-            },
-            "group": {
-              "displayName": "hitting"
-            },
-            "exemptions": [],
-            "splits": [
-              {
-                "season": "2026",
-                "stat": {
-                  "age": 29,
-                  "gamesPlayed": 7,
-                  "groundOuts": 8,
-                  "airOuts": 3,
-                  "runs": 2,
-                  "doubles": 0,
-                  "triples": 0,
-                  "homeRuns": 1,
-                  "strikeOuts": 4,
-                  "baseOnBalls": 0,
-                  "intentionalWalks": 0,
-                  "hits": 2,
-                  "hitByPitch": 0,
-                  "avg": ".133",
-                  "atBats": 15,
-                  "obp": ".133",
-                  "slg": ".333",
-                  "ops": ".466",
-                  "caughtStealing": 0,
-                  "stolenBases": 0,
-                  "stolenBasePercentage": ".---",
-                  "caughtStealingPercentage": ".---",
-                  "groundIntoDoublePlay": 0,
-                  "numberOfPitches": 54,
-                  "plateAppearances": 17,
-                  "totalBases": 5,
-                  "rbi": 2,
-                  "leftOnBase": 11,
-                  "sacBunts": 2,
-                  "sacFlies": 0,
-                  "babip": ".100",
-                  "groundOutsToAirouts": "2.67",
-                  "catchersInterference": 0,
-                  "atBatsPerHomeRun": "15.00"
-                },
-                "team": {
-                  "id": 121,
-                  "name": "New York Mets",
-                  "link": "/api/v1/teams/121"
-                },
-                "player": {
-                  "id": 663584,
-                  "fullName": "Hayden Senger",
-                  "link": "/api/v1/people/663584"
-                },
-                "league": {
-                  "id": 104,
-                  "name": "National League",
-                  "link": "/api/v1/league/104"
-                },
-                "sport": {
-                  "id": 1,
-                  "link": "/api/v1/sports/1",
-                  "abbreviation": "MLB"
-                },
-                "gameType": "R"
-              }
-            ]
-          }
-        ],
-        "mlbDebutDate": "2025-03-27",
-        "batSide": {
-          "code": "R",
-          "description": "Right"
-        },
-        "pitchHand": {
-          "code": "R",
-          "description": "Right"
-        },
-        "nameFirstLast": "Hayden Senger",
-        "nameSlug": "hayden-senger-663584",
-        "firstLastName": "Hayden Senger",
-        "lastFirstName": "Senger, Hayden",
-        "lastInitName": "Senger, H",
-        "initLastName": "H Senger",
-        "fullFMLName": "Hayden Craig Senger",
-        "fullLFMName": "Senger, Hayden Craig",
-        "strikeZoneTop": 3.235,
-        "strikeZoneBottom": 1.633
-      },
-      "jerseyNumber": "6",
-      "position": {
-        "code": "2",
-        "name": "Catcher",
-        "type": "Catcher",
-        "abbreviation": "C"
       },
       "status": {
         "code": "A",
@@ -5120,6 +5119,68 @@
     },
     {
       "person": {
+        "id": 682626,
+        "fullName": "Francisco Alvarez",
+        "link": "/api/v1/people/682626",
+        "firstName": "Francisco",
+        "lastName": "Alvarez",
+        "primaryNumber": "4",
+        "birthDate": "2001-11-19",
+        "currentAge": 24,
+        "birthCity": "Guatire",
+        "birthCountry": "Venezuela",
+        "height": "5' 10\"",
+        "weight": 233,
+        "active": true,
+        "primaryPosition": {
+          "code": "2",
+          "name": "Catcher",
+          "type": "Catcher",
+          "abbreviation": "C"
+        },
+        "useName": "Francisco",
+        "useLastName": "Alvarez",
+        "middleName": "Javier",
+        "boxscoreName": "Alvarez, F",
+        "gender": "M",
+        "nameMatrilineal": "Pulido",
+        "isPlayer": true,
+        "isVerified": true,
+        "mlbDebutDate": "2022-09-30",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Francisco Alvarez",
+        "nameSlug": "francisco-alvarez-682626",
+        "firstLastName": "Francisco Alvarez",
+        "lastFirstName": "Alvarez, Francisco",
+        "lastInitName": "Alvarez, F",
+        "initLastName": "F Alvarez",
+        "fullFMLName": "Francisco Javier Alvarez",
+        "fullLFMName": "Alvarez, Francisco Javier",
+        "strikeZoneTop": 3.121,
+        "strikeZoneBottom": 1.575
+      },
+      "jerseyNumber": "4",
+      "position": {
+        "code": "2",
+        "name": "Catcher",
+        "type": "Catcher",
+        "abbreviation": "C"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
         "id": 642547,
         "fullName": "Freddy Peralta",
         "link": "/api/v1/people/642547",
@@ -5274,69 +5335,6 @@
         "name": "Pitcher",
         "type": "Pitcher",
         "abbreviation": "P"
-      },
-      "status": {
-        "code": "A",
-        "description": "Active"
-      },
-      "parentTeamId": 121
-    },
-    {
-      "person": {
-        "id": 663584,
-        "fullName": "Hayden Senger",
-        "link": "/api/v1/people/663584",
-        "firstName": "Hayden",
-        "lastName": "Senger",
-        "primaryNumber": "6",
-        "birthDate": "1997-04-03",
-        "currentAge": 29,
-        "birthCity": "Hamilton",
-        "birthStateProvince": "OH",
-        "birthCountry": "USA",
-        "height": "6' 1\"",
-        "weight": 210,
-        "active": true,
-        "primaryPosition": {
-          "code": "2",
-          "name": "Catcher",
-          "type": "Catcher",
-          "abbreviation": "C"
-        },
-        "useName": "Hayden",
-        "useLastName": "Senger",
-        "middleName": "Craig",
-        "boxscoreName": "Senger",
-        "gender": "M",
-        "isPlayer": true,
-        "isVerified": true,
-        "draftYear": 2018,
-        "mlbDebutDate": "2025-03-27",
-        "batSide": {
-          "code": "R",
-          "description": "Right"
-        },
-        "pitchHand": {
-          "code": "R",
-          "description": "Right"
-        },
-        "nameFirstLast": "Hayden Senger",
-        "nameSlug": "hayden-senger-663584",
-        "firstLastName": "Hayden Senger",
-        "lastFirstName": "Senger, Hayden",
-        "lastInitName": "Senger, H",
-        "initLastName": "H Senger",
-        "fullFMLName": "Hayden Craig Senger",
-        "fullLFMName": "Senger, Hayden Craig",
-        "strikeZoneTop": 3.235,
-        "strikeZoneBottom": 1.633
-      },
-      "jerseyNumber": "6",
-      "position": {
-        "code": "2",
-        "name": "Catcher",
-        "type": "Catcher",
-        "abbreviation": "C"
       },
       "status": {
         "code": "A",
