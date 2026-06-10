@@ -25,11 +25,11 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 681035,
-      "fullName": "Christian Scott",
-      "era": "2.50",
+      "id": 681810,
+      "fullName": "Austin Warren",
+      "era": "2.01",
       "fip": null,
-      "whip": "1.31"
+      "whip": "1.12"
     },
     "opp": {
       "id": 669467,
@@ -185,9 +185,9 @@
           "pct": ".439"
         },
         "probablePitcher": {
-          "id": 681035,
-          "fullName": "Christian Scott",
-          "link": "/api/v1/people/681035"
+          "id": 681810,
+          "fullName": "Austin Warren",
+          "link": "/api/v1/people/681810"
         },
         "splitSquad": false,
         "seriesNumber": 22,
@@ -208,16 +208,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 138,
+          "name": "St. Louis Cardinals",
+          "link": "/api/v1/teams/138"
         }
       },
       "offense": {
         "team": {
-          "id": 138,
-          "name": "St. Louis Cardinals",
-          "link": "/api/v1/teams/138"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -234,12 +234,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 138,
+        "name": "St. Louis Cardinals",
+        "link": "/api/v1/teams/138"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "STL leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -264,9 +289,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-10T01:35:20.275Z",
+    "generatedAt": "2026-06-10T06:06:23.573Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-06-09",
-    "cacheKey": "next-game:2026-06-09"
+    "referenceDate": "2026-06-10",
+    "cacheKey": "next-game:2026-06-10"
   }
 }
