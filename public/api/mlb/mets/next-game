@@ -97,7 +97,62 @@
         "pos": "C"
       }
     ],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 802139,
+        "name": "JJ Wetherholt",
+        "pos": "2B"
+      },
+      {
+        "order": 2,
+        "playerId": 671056,
+        "name": "Iván Herrera",
+        "pos": "C"
+      },
+      {
+        "order": 3,
+        "playerId": 676475,
+        "name": "Alec Burleson",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 691023,
+        "name": "Jordan Walker",
+        "pos": "DH"
+      },
+      {
+        "order": 5,
+        "playerId": 663457,
+        "name": "Lars Nootbaar",
+        "pos": "RF"
+      },
+      {
+        "order": 6,
+        "playerId": 691026,
+        "name": "Masyn Winn",
+        "pos": "SS"
+      },
+      {
+        "order": 7,
+        "playerId": 676369,
+        "name": "Nelson Velázquez",
+        "pos": "LF"
+      },
+      {
+        "order": 8,
+        "playerId": 701675,
+        "name": "Nathan Church",
+        "pos": "CF"
+      },
+      {
+        "order": 9,
+        "playerId": 665877,
+        "name": "José Fermín",
+        "pos": "3B"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -171,6 +226,7 @@
           "ties": 0,
           "pct": ".563"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 669467,
           "fullName": "Andre Pallante",
@@ -239,6 +295,7 @@
           "ties": 0,
           "pct": ".439"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 681810,
           "fullName": "Austin Warren",
@@ -255,26 +312,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 681810,
+          "fullName": "Austin Warren",
+          "link": "/api/v1/people/681810"
+        },
+        "catcher": {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443"
+        },
+        "first": {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724"
+        },
+        "second": {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760"
+        },
+        "third": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "shortstop": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "left": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 802139,
+          "fullName": "JJ Wetherholt",
+          "link": "/api/v1/people/802139"
+        },
+        "onDeck": {
+          "id": 671056,
+          "fullName": "Iván Herrera",
+          "link": "/api/v1/people/671056"
+        },
+        "inHole": {
+          "id": 676475,
+          "fullName": "Alec Burleson",
+          "link": "/api/v1/people/676475"
+        },
+        "pitcher": {
+          "id": 669467,
+          "fullName": "Andre Pallante",
+          "link": "/api/v1/people/669467"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 138,
           "name": "St. Louis Cardinals",
           "link": "/api/v1/teams/138"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -468,12 +640,140 @@
           },
           "useName": "Luis"
         }
+      ],
+      "awayPlayers": [
+        {
+          "id": 802139,
+          "fullName": "JJ Wetherholt",
+          "link": "/api/v1/people/802139",
+          "firstName": "Jonathan",
+          "lastName": "Wetherholt",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "JJ"
+        },
+        {
+          "id": 671056,
+          "fullName": "Iván Herrera",
+          "link": "/api/v1/people/671056",
+          "firstName": "Ivan",
+          "lastName": "Herrera",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Iván"
+        },
+        {
+          "id": 676475,
+          "fullName": "Alec Burleson",
+          "link": "/api/v1/people/676475",
+          "firstName": "Alec",
+          "lastName": "Burleson",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Alec"
+        },
+        {
+          "id": 691023,
+          "fullName": "Jordan Walker",
+          "link": "/api/v1/people/691023",
+          "firstName": "Jordan",
+          "lastName": "Walker",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Jordan"
+        },
+        {
+          "id": 663457,
+          "fullName": "Lars Nootbaar",
+          "link": "/api/v1/people/663457",
+          "firstName": "Lars",
+          "lastName": "Nootbaar",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Lars"
+        },
+        {
+          "id": 691026,
+          "fullName": "Masyn Winn",
+          "link": "/api/v1/people/691026",
+          "firstName": "Masyn",
+          "lastName": "Winn",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Masyn"
+        },
+        {
+          "id": 676369,
+          "fullName": "Nelson Velázquez",
+          "link": "/api/v1/people/676369",
+          "firstName": "Nelson",
+          "lastName": "Velázquez",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Nelson"
+        },
+        {
+          "id": 701675,
+          "fullName": "Nathan Church",
+          "link": "/api/v1/people/701675",
+          "firstName": "Nathan",
+          "lastName": "Church",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Nathan"
+        },
+        {
+          "id": 665877,
+          "fullName": "José Fermín",
+          "link": "/api/v1/people/665877",
+          "firstName": "José",
+          "lastName": "Fermín",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "José"
+        }
       ]
     }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-10T19:57:11.707Z",
+    "generatedAt": "2026-06-10T22:04:39.249Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-10",
     "cacheKey": "next-game:2026-06-10"
