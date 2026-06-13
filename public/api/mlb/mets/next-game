@@ -106,9 +106,9 @@
         },
         "leagueRecord": {
           "wins": 45,
-          "losses": 23,
+          "losses": 24,
           "ties": 0,
-          "pct": ".662"
+          "pct": ".652"
         },
         "probablePitcher": {
           "id": 527048,
@@ -173,10 +173,10 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 30,
+          "wins": 31,
           "losses": 38,
           "ties": 0,
-          "pct": ".441"
+          "pct": ".449"
         },
         "splitSquad": false,
         "seriesNumber": 23,
@@ -197,16 +197,16 @@
       },
       "defense": {
         "team": {
-          "id": 144,
-          "name": "Atlanta Braves",
-          "link": "/api/v1/teams/144"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 144,
+          "name": "Atlanta Braves",
+          "link": "/api/v1/teams/144"
         }
       }
     },
@@ -223,12 +223,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 144,
+        "name": "Atlanta Braves",
+        "link": "/api/v1/teams/144"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -248,14 +273,13 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "ifNecessaryDescription": "Normal Game"
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-13T00:17:47.184Z",
+    "generatedAt": "2026-06-13T04:59:19.118Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-06-12",
-    "cacheKey": "next-game:2026-06-12"
+    "referenceDate": "2026-06-13",
+    "cacheKey": "next-game:2026-06-13"
   }
 }
