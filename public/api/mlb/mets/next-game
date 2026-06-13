@@ -223,37 +223,12 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
-      "wins": 1,
+      "wins": 0,
       "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 144,
-        "name": "Atlanta Braves",
-        "link": "/api/v1/teams/144"
-      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -273,11 +248,12 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-13T04:59:19.118Z",
+    "generatedAt": "2026-06-13T08:28:46.876Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-13",
     "cacheKey": "next-game:2026-06-13"
