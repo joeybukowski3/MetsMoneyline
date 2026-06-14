@@ -24,7 +24,13 @@
   "venue": "Great American Ball Park",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 668964,
+      "fullName": "Tobias Myers",
+      "era": "4.05",
+      "fip": null,
+      "whip": "1.08"
+    },
     "opp": {
       "id": 695505,
       "fullName": "Chase Burns",
@@ -110,6 +116,11 @@
           "ties": 0,
           "pct": ".451"
         },
+        "probablePitcher": {
+          "id": 668964,
+          "fullName": "Tobias Myers",
+          "link": "/api/v1/people/668964"
+        },
         "splitSquad": false,
         "seriesNumber": 24,
         "springLeague": {
@@ -169,9 +180,9 @@
         },
         "leagueRecord": {
           "wins": 33,
-          "losses": 36,
+          "losses": 37,
           "ties": 0,
-          "pct": ".478"
+          "pct": ".471"
         },
         "probablePitcher": {
           "id": 695505,
@@ -253,7 +264,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-14T20:46:09.540Z",
+    "generatedAt": "2026-06-14T22:06:39.348Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-14",
     "cacheKey": "next-game:2026-06-14"
