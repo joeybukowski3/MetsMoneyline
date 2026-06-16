@@ -1,7 +1,7 @@
 {
   "gameId": 824504,
   "startTime": "2026-06-16T23:10:00Z",
-  "status": "Pre-Game",
+  "status": "Warmup",
   "homeTeam": {
     "id": 113,
     "canonicalKey": "reds",
@@ -41,7 +41,62 @@
   },
   "lineups": {
     "lineupStatus": "confirmed",
-    "mets": [],
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "DH"
+      },
+      {
+        "order": 4,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 6,
+        "playerId": 543760,
+        "name": "Marcus Semien",
+        "pos": "2B"
+      },
+      {
+        "order": 7,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "3B"
+      },
+      {
+        "order": 8,
+        "playerId": 669004,
+        "name": "MJ Melendez",
+        "pos": "LF"
+      },
+      {
+        "order": 9,
+        "playerId": 682626,
+        "name": "Francisco Alvarez",
+        "pos": "C"
+      }
+    ],
     "opp": [
       {
         "order": 1,
@@ -109,12 +164,12 @@
     "gameDate": "2026-06-16T23:10:00Z",
     "officialDate": "2026-06-16",
     "status": {
-      "abstractGameState": "Preview",
+      "abstractGameState": "Live",
       "codedGameState": "P",
-      "detailedState": "Pre-Game",
-      "statusCode": "P",
+      "detailedState": "Warmup",
+      "statusCode": "PW",
       "startTimeTBD": false,
-      "abstractGameCode": "P"
+      "abstractGameCode": "L"
     },
     "teams": {
       "away": {
@@ -171,6 +226,7 @@
           "ties": 0,
           "pct": ".444"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 673540,
           "fullName": "Kodai Senga",
@@ -239,6 +295,7 @@
           "ties": 0,
           "pct": ".479"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 663903,
           "fullName": "Brady Singer",
@@ -255,26 +312,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 663903,
+          "fullName": "Brady Singer",
+          "link": "/api/v1/people/663903"
+        },
+        "catcher": {
+          "id": 663886,
+          "fullName": "Tyler Stephenson",
+          "link": "/api/v1/people/663886"
+        },
+        "first": {
+          "id": 701398,
+          "fullName": "Sal Stewart",
+          "link": "/api/v1/people/701398"
+        },
+        "second": {
+          "id": 695490,
+          "fullName": "Edwin Arroyo",
+          "link": "/api/v1/people/695490"
+        },
+        "third": {
+          "id": 553993,
+          "fullName": "Eugenio Suárez",
+          "link": "/api/v1/people/553993"
+        },
+        "shortstop": {
+          "id": 680574,
+          "fullName": "Matt McLain",
+          "link": "/api/v1/people/680574"
+        },
+        "left": {
+          "id": 668709,
+          "fullName": "JJ Bleday",
+          "link": "/api/v1/people/668709"
+        },
+        "center": {
+          "id": 694362,
+          "fullName": "Blake Dunn",
+          "link": "/api/v1/people/694362"
+        },
+        "right": {
+          "id": 668715,
+          "fullName": "Spencer Steer",
+          "link": "/api/v1/people/668715"
+        },
+        "batter": {
+          "id": 694362,
+          "fullName": "Blake Dunn",
+          "link": "/api/v1/people/694362"
+        },
+        "onDeck": {
+          "id": 668709,
+          "fullName": "JJ Bleday",
+          "link": "/api/v1/people/668709"
+        },
+        "inHole": {
+          "id": 701398,
+          "fullName": "Sal Stewart",
+          "link": "/api/v1/people/701398"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 113,
+          "name": "Cincinnati Reds",
+          "link": "/api/v1/teams/113"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "inHole": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "pitcher": {
+          "id": 673540,
+          "fullName": "Kodai Senga",
+          "link": "/api/v1/people/673540"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
       },
-      "offense": {
-        "team": {
-          "id": 113,
-          "name": "Cincinnati Reds",
-          "link": "/api/v1/teams/113"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 2602,
@@ -468,12 +640,140 @@
           },
           "useName": "Edwin"
         }
+      ],
+      "awayPlayers": [
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760",
+          "firstName": "Marcus",
+          "lastName": "Semien",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Marcus"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 669004,
+          "fullName": "MJ Melendez",
+          "link": "/api/v1/people/669004",
+          "firstName": "Mervyl",
+          "lastName": "Melendez",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "MJ"
+        },
+        {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626",
+          "firstName": "Francisco",
+          "lastName": "Alvarez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Francisco"
+        }
       ]
     }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-16T20:47:07.594Z",
+    "generatedAt": "2026-06-16T22:51:33.295Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-16",
     "cacheKey": "next-game:2026-06-16"
