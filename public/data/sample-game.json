@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-16T02:06:09.284Z",
-  "referenceDate": "2026-06-15",
-  "cacheKey": "sample-game:2026-06-15",
+  "generatedAt": "2026-06-16T07:42:15.334Z",
+  "referenceDate": "2026-06-16",
+  "cacheKey": "sample-game:2026-06-16",
   "games": [
     {
       "id": "2026-06-16-mets-vs-cincinnati-reds",
@@ -27,7 +27,7 @@
           "mlbId": 673540,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-16T02:05:59.263Z",
+          "generatedAt": "2026-06-16T07:42:05.547Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -86,7 +86,7 @@
           "mlbId": 663903,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-16T02:05:59.267Z",
+          "generatedAt": "2026-06-16T07:42:05.552Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -144,16 +144,16 @@
           "seasonERA": 3.22,
           "seasonXERAAverage": 3.78,
           "seasonXFIP": "3.90",
-          "last20ERA": 1.96,
-          "last20WHIP": 0.85,
+          "last20ERA": 3.18,
+          "last20WHIP": 0.96,
           "seasonWHIP": 1.16,
           "seasonKPct": "23.8%",
           "seasonBBPct": "9.4%",
           "rating": 84,
           "team": "New York Mets",
           "usage": {
-            "appearances": 16,
-            "appearancesPerPitcherPerDay": 0.18,
+            "appearances": 18,
+            "appearancesPerPitcherPerDay": 0.2,
             "label": "Low",
             "tone": "green"
           },
@@ -174,16 +174,16 @@
           "seasonERA": 4.36,
           "seasonXERAAverage": 5.22,
           "seasonXFIP": "4.86",
-          "last20ERA": 2.87,
-          "last20WHIP": 1.31,
+          "last20ERA": 3.04,
+          "last20WHIP": 1.39,
           "seasonWHIP": 1.46,
           "seasonKPct": "19.7%",
           "seasonBBPct": "11.5%",
           "rating": 74,
           "team": "Cincinnati Reds",
           "usage": {
-            "appearances": 21,
-            "appearancesPerPitcherPerDay": 0.21,
+            "appearances": 23,
+            "appearancesPerPitcherPerDay": 0.23,
             "label": "Low",
             "tone": "green"
           },
@@ -915,7 +915,7 @@
           "xba": "0.257",
           "xslg": "0.439",
           "xwoba": "0.331",
-          "ops": ".665",
+          "ops": ".664",
           "avg": ".230",
           "hardHit": "43.1",
           "barrelPct": "9.8",
@@ -999,19 +999,19 @@
             {
               "statKey": "ops",
               "seasonRank": 29,
-              "seasonValue": 0.665,
-              "recentRank": 21,
+              "seasonValue": 0.664,
+              "recentRank": 20,
               "recentValue": 0.729,
-              "differencePct": 9.6,
+              "differencePct": 9.8,
               "improving": true
             },
             {
               "statKey": "avg",
-              "seasonRank": 27,
-              "seasonValue": 0.23,
+              "seasonRank": 28,
+              "seasonValue": 0.229,
               "recentRank": 25,
               "recentValue": 0.237,
-              "differencePct": 3,
+              "differencePct": 3.5,
               "improving": true
             },
             {
@@ -1042,14 +1042,14 @@
               "statKey": "ops",
               "seasonRank": 19,
               "seasonValue": 0.709,
-              "recentRank": 22,
+              "recentRank": 21,
               "recentValue": 0.725,
               "differencePct": 2.3,
               "improving": true
             },
             {
               "statKey": "avg",
-              "seasonRank": 28,
+              "seasonRank": 27,
               "seasonValue": 0.229,
               "recentRank": 24,
               "recentValue": 0.238,
@@ -1267,7 +1267,17 @@
           "oppScore": 12,
           "result": "loss",
           "summary": "On 2026-06-15, the Mets lost to the Cincinnati Reds 0-12 at Great American Ball Park.",
-          "recapNotes": []
+          "recapHeadline": "Suárez clobbers 2 HRs (including grand slam) in Reds' shutout rout",
+          "recapNotes": [
+            "CINCINNATI – For a Reds offense that has lacked run production of late, Eugenio Su&#225;rez was the sorely needed double espresso shot on Monday evening.",
+            "The Suárez boost came early when the veteran slugger delivered two home runs in his first two plate appearances – including a second-inning grand slam – during a 12-0 Reds win over the Mets at Great American Ball Park."
+          ],
+          "source": {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Suárez clobbers 2 HRs (including grand slam) in Reds' shutout rout",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/eugenio-suarez-hits-two-homers-in-reds-blowout-win"
+          }
         },
         "metsPitcherLog": [
           {
@@ -1355,17 +1365,23 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
-        "recentSources": [],
+        "recentSources": [
+          {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Suárez clobbers 2 HRs (including grand slam) in Reds' shutout rout",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/eugenio-suarez-hits-two-homers-in-reds-blowout-win"
+          }
+        ],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-06-15",
-          "resolvedDate": "2026-06-16",
-          "bannerText": "OFF DAY — Previewing next game: Cincinnati Reds on 2026-06-16"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-06-16",
+          "resolvedDate": "2026-06-16"
         }
       },
       "trends": [
@@ -1389,7 +1405,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-06-16T02:06:00.259Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-16\",\"opponent\":\"Cincinnati Reds\",\"homeAway\":\"road\",\"ballpark\":\"Great American Ball Park\",\"weather\":{\"temperature\":70.4,\"temperatureDisplay\":\"70°\",\"condition\":\"Partly cloudy\",\"wind\":\"Wind 17 mph NW\",\"compact\":\"70° | Partly cloudy | Wind 17 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-16T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Kodai Senga\",\"handedness\":\"R\",\"era\":9,\"xERA\":4.76,\"fip\":6.15,\"whip\":1.95,\"kPct\":23.7,\"bbPct\":13.4,\"kMinusBbPct\":10.3,\"hardHitPct\":40,\"barrelPct\":10,\"xBAAllowed\":0.247,\"xSLGAllowed\":0.4,\"xwOBAAllowed\":0.339,\"recentStarts\":{\"starts\":[{\"date\":\"2026-04-26\",\"opponent\":\"Colorado Rockies\",\"ip\":\"2.2\",\"er\":3,\"k\":1,\"h\":3,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-04-17\",\"opponent\":\"Chicago Cubs\",\"ip\":\"3.1\",\"er\":6,\"k\":3,\"h\":6,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-04-11\",\"opponent\":\"Athletics\",\"ip\":\"2.1\",\"er\":7,\"k\":3,\"h\":8,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-04-05\",\"opponent\":\"San Francisco Giants\",\"ip\":\"5.2\",\"er\":2,\"k\":7,\"h\":5,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":3.5,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":3.5,\"daysSinceLastStart\":51},\"workload\":{\"inningsTrend\":3.5,\"daysSinceLastStart\":51},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Brady Singer\",\"handedness\":\"R\",\"era\":5.61,\"xERA\":5.8,\"fip\":6.32,\"whip\":1.64,\"kPct\":16.7,\"bbPct\":7.1,\"kMinusBbPct\":9.6,\"hardHitPct\":42.5,\"barrelPct\":11.8,\"xBAAllowed\":0.285,\"xSLGAllowed\":0.512,\"xwOBAAllowed\":0.369,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-10\",\"opponent\":\"San Diego Padres\",\"ip\":\"6.0\",\"er\":2,\"k\":5,\"h\":6,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-06-05\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"4.0\",\"er\":1,\"k\":6,\"h\":4,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-05-30\",\"opponent\":\"Atlanta Braves\",\"ip\":\"5.0\",\"er\":3,\"k\":2,\"h\":4,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-05-17\",\"opponent\":\"Cleveland Guardians\",\"ip\":\"4.0\",\"er\":5,\"k\":6,\"h\":7,\"bb\":1,\"result\":\"L\"}],\"avgInnings\":4.75,\"avgEarnedRuns\":2.75,\"avgStrikeouts\":4.75,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.9,\"projectedLineupWRCPlus\":85.6,\"obp\":0.291,\"iso\":0.141,\"kPct\":22.1,\"bbPct\":7.6,\"xBA\":0.257,\"xSLG\":0.439,\"xwOBA\":0.331,\"hardHitPct\":43.1,\"barrelPct\":9.8,\"battingAverage\":0.234,\"wOBA\":0.291,\"lineup\":{\"totalWAR\":1.9,\"totalWRCPlus\":85.6,\"totalOBP\":0.291,\"totalISO\":0.129,\"totalKPct\":22.7,\"totalBBPct\":6.9,\"totalAVG\":0.234,\"totalWOBA\":0.291,\"totalXBA\":0.261,\"totalXSLG\":0.428,\"totalXWOBA\":0.324,\"totalHardHitPct\":41.4,\"totalBarrelPct\":9.1,\"regressionSignals\":{\"baMinusXba\":-0.027,\"wobaMinusXwoba\":-0.033}},\"regressionSignals\":{\"baMinusXba\":-0.027,\"wobaMinusXwoba\":-0.033},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":3.7,\"projectedLineupWRCPlus\":98.7,\"obp\":0.32,\"iso\":0.165,\"kPct\":24.4,\"bbPct\":10.2,\"xBA\":0.245,\"xSLG\":0.431,\"xwOBA\":0.335,\"hardHitPct\":38.5,\"barrelPct\":10.9,\"battingAverage\":0.236,\"wOBA\":0.322,\"lineup\":{\"totalWAR\":3.7,\"totalWRCPlus\":98.7,\"totalOBP\":0.32,\"totalISO\":0.174,\"totalKPct\":23.4,\"totalBBPct\":10.8,\"totalAVG\":0.236,\"totalWOBA\":0.322,\"totalXBA\":0.244,\"totalXSLG\":0.43,\"totalXWOBA\":0.334,\"totalHardHitPct\":38.6,\"totalBarrelPct\":10.9,\"regressionSignals\":{\"baMinusXba\":-0.008,\"wobaMinusXwoba\":-0.012}},\"regressionSignals\":{\"baMinusXba\":-0.008,\"wobaMinusXwoba\":-0.012},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.9,\"totalWRCPlus\":85.6,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":3.7,\"totalWRCPlus\":98.7,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.16,\"kMinusBbPct\":14.4,\"xFIP\":3.9,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.46,\"kMinusBbPct\":8.2,\"xFIP\":4.86,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":70.4,\"temperatureDisplay\":\"70°\",\"condition\":\"Partly cloudy\",\"wind\":\"Wind 17 mph NW\",\"compact\":\"70° | Partly cloudy | Wind 17 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-16T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Kodai Senga 4.76/6.15 vs Brady Singer 5.80/6.32; K-BB% 10.3 to 9.6.\",\"rawScore\":6.81,\"weightedImpact\":19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 1.9 vs 3.7, projected lineup wRC+ 85.6 vs 98.7, xwOBA 0.331 vs 0.335.\",\"rawScore\":-3.29,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Bullpen shape: xFIP 3.90 vs 4.86, WHIP 1.16 vs 1.46, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":5.52,\"weightedImpact\":9.9,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.027 and wOBA-xwOBA -0.033; opponent starter overperformance signal 3.15.\",\"rawScore\":5.62,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":23.1,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-06-16T07:42:08.340Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-16\",\"opponent\":\"Cincinnati Reds\",\"homeAway\":\"road\",\"ballpark\":\"Great American Ball Park\",\"weather\":{\"temperature\":77.8,\"temperatureDisplay\":\"78°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 9 mph W\",\"compact\":\"78° | Cloudy | Wind 9 mph W\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-16T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Kodai Senga\",\"handedness\":\"R\",\"era\":9,\"xERA\":4.76,\"fip\":6.15,\"whip\":1.95,\"kPct\":23.7,\"bbPct\":13.4,\"kMinusBbPct\":10.3,\"hardHitPct\":40,\"barrelPct\":10,\"xBAAllowed\":0.247,\"xSLGAllowed\":0.4,\"xwOBAAllowed\":0.339,\"recentStarts\":{\"starts\":[{\"date\":\"2026-04-26\",\"opponent\":\"Colorado Rockies\",\"ip\":\"2.2\",\"er\":3,\"k\":1,\"h\":3,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-04-17\",\"opponent\":\"Chicago Cubs\",\"ip\":\"3.1\",\"er\":6,\"k\":3,\"h\":6,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-04-11\",\"opponent\":\"Athletics\",\"ip\":\"2.1\",\"er\":7,\"k\":3,\"h\":8,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-04-05\",\"opponent\":\"San Francisco Giants\",\"ip\":\"5.2\",\"er\":2,\"k\":7,\"h\":5,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":3.5,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":3.5,\"daysSinceLastStart\":51},\"workload\":{\"inningsTrend\":3.5,\"daysSinceLastStart\":51},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Brady Singer\",\"handedness\":\"R\",\"era\":5.61,\"xERA\":5.8,\"fip\":6.32,\"whip\":1.64,\"kPct\":16.7,\"bbPct\":7.1,\"kMinusBbPct\":9.6,\"hardHitPct\":42.5,\"barrelPct\":11.8,\"xBAAllowed\":0.285,\"xSLGAllowed\":0.512,\"xwOBAAllowed\":0.369,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-10\",\"opponent\":\"San Diego Padres\",\"ip\":\"6.0\",\"er\":2,\"k\":5,\"h\":6,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-06-05\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"4.0\",\"er\":1,\"k\":6,\"h\":4,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-05-30\",\"opponent\":\"Atlanta Braves\",\"ip\":\"5.0\",\"er\":3,\"k\":2,\"h\":4,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-05-17\",\"opponent\":\"Cleveland Guardians\",\"ip\":\"4.0\",\"er\":5,\"k\":6,\"h\":7,\"bb\":1,\"result\":\"L\"}],\"avgInnings\":4.75,\"avgEarnedRuns\":2.75,\"avgStrikeouts\":4.75,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":1.9,\"projectedLineupWRCPlus\":85.6,\"obp\":0.291,\"iso\":0.141,\"kPct\":22.1,\"bbPct\":7.6,\"xBA\":0.257,\"xSLG\":0.439,\"xwOBA\":0.331,\"hardHitPct\":43.1,\"barrelPct\":9.8,\"battingAverage\":0.234,\"wOBA\":0.291,\"lineup\":{\"totalWAR\":1.9,\"totalWRCPlus\":85.6,\"totalOBP\":0.291,\"totalISO\":0.129,\"totalKPct\":22.7,\"totalBBPct\":6.9,\"totalAVG\":0.234,\"totalWOBA\":0.291,\"totalXBA\":0.261,\"totalXSLG\":0.428,\"totalXWOBA\":0.324,\"totalHardHitPct\":41.4,\"totalBarrelPct\":9.1,\"regressionSignals\":{\"baMinusXba\":-0.027,\"wobaMinusXwoba\":-0.033}},\"regressionSignals\":{\"baMinusXba\":-0.027,\"wobaMinusXwoba\":-0.033},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":3.7,\"projectedLineupWRCPlus\":98.7,\"obp\":0.32,\"iso\":0.165,\"kPct\":24.4,\"bbPct\":10.2,\"xBA\":0.245,\"xSLG\":0.431,\"xwOBA\":0.335,\"hardHitPct\":38.5,\"barrelPct\":10.9,\"battingAverage\":0.236,\"wOBA\":0.322,\"lineup\":{\"totalWAR\":3.7,\"totalWRCPlus\":98.7,\"totalOBP\":0.32,\"totalISO\":0.174,\"totalKPct\":23.4,\"totalBBPct\":10.8,\"totalAVG\":0.236,\"totalWOBA\":0.322,\"totalXBA\":0.244,\"totalXSLG\":0.43,\"totalXWOBA\":0.334,\"totalHardHitPct\":38.6,\"totalBarrelPct\":10.9,\"regressionSignals\":{\"baMinusXba\":-0.008,\"wobaMinusXwoba\":-0.012}},\"regressionSignals\":{\"baMinusXba\":-0.008,\"wobaMinusXwoba\":-0.012},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":1.9,\"totalWRCPlus\":85.6,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":3.7,\"totalWRCPlus\":98.7,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.16,\"kMinusBbPct\":14.4,\"xFIP\":3.9,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.46,\"kMinusBbPct\":8.2,\"xFIP\":4.86,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":77.8,\"temperatureDisplay\":\"78°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 9 mph W\",\"compact\":\"78° | Cloudy | Wind 9 mph W\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-16T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Kodai Senga 4.76/6.15 vs Brady Singer 5.80/6.32; K-BB% 10.3 to 9.6.\",\"rawScore\":6.81,\"weightedImpact\":19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 1.9 vs 3.7, projected lineup wRC+ 85.6 vs 98.7, xwOBA 0.331 vs 0.335.\",\"rawScore\":-3.29,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Bullpen shape: xFIP 3.90 vs 4.86, WHIP 1.16 vs 1.46, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":5.52,\"weightedImpact\":9.9,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.027 and wOBA-xwOBA -0.033; opponent starter overperformance signal 3.15.\",\"rawScore\":5.62,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":23.1,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Cincinnati Reds: starting pitching is the clearest angle",
         "synopsis": "Kodai Senga vs Brady Singer sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Kodai Senga 4.76/6.15 vs Brady Singer 5.80/6.32; K-BB% 10.3 to 9.6. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1404,7 +1420,7 @@
           "opponent": "Cincinnati Reds",
           "homeAway": "road",
           "ballpark": "Great American Ball Park",
-          "weather": "70° | Partly cloudy | Wind 17 mph NW",
+          "weather": "78° | Cloudy | Wind 9 mph W",
           "lineupStatus": "Projected",
           "moneyline": "N/A"
         },
@@ -1555,11 +1571,11 @@
             "body": "Recent form: Mets are 3-2 in the last 5; rest is 0 vs 0 days. Starting pitching: Kodai Senga 4.76 xERA, 9.00 ERA, N/A% K vs Brady Singer 5.80 xERA, 5.61 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 92.0; Bullpen: Mets xERA 3.78 vs 5.22. Price: Mets ML 0 implies 0.0% vs model 70.0%; value edge +70.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Kodai Senga versus Brady Singer with 4.76 xERA against 5.80. Secondary checks: offense 89.0 vs 92.0 wRC+, bullpen 3.78 vs 5.22 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
-        "pickNarrative": "Mets hold 32-40 record and 5-5 mark in last 10 games while traveling as 14-22 road team. Kodai Senga posts 4.76 xERA against Brady Singer 5.80 xERA with Mets bullpen at 3.78 xERA versus 5.22 and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge Kodai Senga 4.76 xERA versus Brady Singer 5.80 xERA. Offense shows Mets wRC+ 89 against 92 and bullpen Mets 3.78 xERA to 5.22. Model projects 70 percent win probability for Mets ML.",
+        "pickNarrative": "Mets record 5-5 in last 10 games with 14-22 road record. Kodai Senga posts 4.76 xERA and Brady Singer 5.80 xERA while Mets bullpen holds 3.78 xERA against opponent 5.22 xERA and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
         "todayPick": {
           "headline": "Starter gap and value edge favor Mets",
-          "summary": "Mets hold 32-40 record and 5-5 mark in last 10 games while traveling as 14-22 road team. Kodai Senga posts 4.76 xERA against Brady Singer 5.80 xERA with Mets bullpen at 3.78 xERA versus 5.22 and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
+          "summary": "Mets record 5-5 in last 10 games with 14-22 road record. Kodai Senga posts 4.76 xERA and Brady Singer 5.80 xERA while Mets bullpen holds 3.78 xERA against opponent 5.22 xERA and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
           "metsEdges": [
             "Kodai Senga: 9.00 ERA, 23.7% K rate, 6.15 FIP, vs Brady Singer: 5.61 ERA, 6.32 FIP.",
             "Bullpen: Mets BP: 3.22 ERA, 3.90 xFIP, Opp BP: 4.36 ERA, 4.86 xFIP.",
@@ -1569,7 +1585,7 @@
             "Overall lineup quality only: projected WAR 1.9 vs 3.7, projected lineup wRC+ 85.6 vs 98.7, xwOBA 0.331 vs 0.335.",
             "Road/context splits lean against Mets."
           ],
-          "bettingAngle": "Primary edge: Kodai Senga versus Brady Singer with 4.76 xERA against 5.80. Secondary checks: offense 89.0 vs 92.0 wRC+, bullpen 3.78 vs 5.22 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+          "bettingAngle": "Primary edge Kodai Senga 4.76 xERA versus Brady Singer 5.80 xERA. Offense shows Mets wRC+ 89 against 92 and bullpen Mets 3.78 xERA to 5.22. Model projects 70 percent win probability for Mets ML.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Standard",
           "confidenceScore": 6
@@ -1657,11 +1673,11 @@
             "homeAway": "road",
             "ballpark": "Great American Ball Park",
             "weather": {
-              "temperature": 70.4,
-              "temperatureDisplay": "70°",
-              "condition": "Partly cloudy",
-              "wind": "Wind 17 mph NW",
-              "compact": "70° | Partly cloudy | Wind 17 mph NW",
+              "temperature": 77.8,
+              "temperatureDisplay": "78°",
+              "condition": "Cloudy",
+              "wind": "Wind 9 mph W",
+              "compact": "78° | Cloudy | Wind 9 mph W",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-16T23:00Z"
             }
@@ -1943,11 +1959,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 70.4,
-              "temperatureDisplay": "70°",
-              "condition": "Partly cloudy",
-              "wind": "Wind 17 mph NW",
-              "compact": "70° | Partly cloudy | Wind 17 mph NW",
+              "temperature": 77.8,
+              "temperatureDisplay": "78°",
+              "condition": "Cloudy",
+              "wind": "Wind 9 mph W",
+              "compact": "78° | Cloudy | Wind 9 mph W",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-16T23:00Z"
             }
@@ -2133,7 +2149,7 @@
             "ballpark": "Great American Ball Park",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/113.svg",
-            "metadataLine": "June 16th | 7:10 PM ET | Great American Ball Park | 70° | Partly cloudy | Wind 17 mph NW"
+            "metadataLine": "June 16th | 7:10 PM ET | Great American Ball Park | 78° | Cloudy | Wind 9 mph W"
           },
           "quickRead": {
             "modelLean": "Mets",
@@ -2147,7 +2163,7 @@
             "opponent": "Cincinnati Reds",
             "homeAway": "road",
             "ballpark": "Great American Ball Park",
-            "weather": "70° | Partly cloudy | Wind 17 mph NW",
+            "weather": "78° | Cloudy | Wind 9 mph W",
             "lineupStatus": "Projected",
             "moneyline": "N/A"
           },
@@ -2163,7 +2179,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "70° | Partly cloudy | Wind 17 mph NW"
+                "value": "78° | Cloudy | Wind 9 mph W"
               },
               {
                 "label": "Mets ML Odds",
@@ -2568,15 +2584,15 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 16,
-                "appearancesPerPitcherPerDay": 0.18,
+                "appearances": 18,
+                "appearancesPerPitcherPerDay": 0.2,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.22,
                 "seasonWhip": 1.16,
-                "last20Era": 1.96
+                "last20Era": 3.18
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2594,15 +2610,15 @@
               "teamName": "Cincinnati Reds",
               "teamId": 113,
               "usage": {
-                "appearances": 21,
-                "appearancesPerPitcherPerDay": 0.21,
+                "appearances": 23,
+                "appearancesPerPitcherPerDay": 0.23,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 4.36,
                 "seasonWhip": 1.46,
-                "last20Era": 2.87
+                "last20Era": 3.04
               },
               "closer": {
                 "name": "Tony Santillan",
@@ -2625,19 +2641,19 @@
                 {
                   "statKey": "ops",
                   "seasonRank": 29,
-                  "seasonValue": 0.665,
-                  "recentRank": 21,
+                  "seasonValue": 0.664,
+                  "recentRank": 20,
                   "recentValue": 0.729,
-                  "differencePct": 9.6,
+                  "differencePct": 9.8,
                   "improving": true
                 },
                 {
                   "statKey": "avg",
-                  "seasonRank": 27,
-                  "seasonValue": 0.23,
+                  "seasonRank": 28,
+                  "seasonValue": 0.229,
                   "recentRank": 25,
                   "recentValue": 0.237,
-                  "differencePct": 3,
+                  "differencePct": 3.5,
                   "improving": true
                 },
                 {
@@ -2668,14 +2684,14 @@
                   "statKey": "ops",
                   "seasonRank": 19,
                   "seasonValue": 0.709,
-                  "recentRank": 22,
+                  "recentRank": 21,
                   "recentValue": 0.725,
                   "differencePct": 2.3,
                   "improving": true
                 },
                 {
                   "statKey": "avg",
-                  "seasonRank": 28,
+                  "seasonRank": 27,
                   "seasonValue": 0.229,
                   "recentRank": 24,
                   "recentValue": 0.238,
@@ -3539,7 +3555,7 @@
               "xba": "0.257",
               "xslg": "0.439",
               "xwoba": "0.331",
-              "ops": ".665",
+              "ops": ".664",
               "avg": ".230",
               "hardHit": "43.1",
               "barrelPct": "9.8",
@@ -3617,7 +3633,7 @@
           },
           "todayPick": {
             "headline": "Starter gap and value edge favor Mets",
-            "summary": "Mets hold 32-40 record and 5-5 mark in last 10 games while traveling as 14-22 road team. Kodai Senga posts 4.76 xERA against Brady Singer 5.80 xERA with Mets bullpen at 3.78 xERA versus 5.22 and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
+            "summary": "Mets record 5-5 in last 10 games with 14-22 road record. Kodai Senga posts 4.76 xERA and Brady Singer 5.80 xERA while Mets bullpen holds 3.78 xERA against opponent 5.22 xERA and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
             "metsEdges": [
               "Kodai Senga: 9.00 ERA, 23.7% K rate, 6.15 FIP, vs Brady Singer: 5.61 ERA, 6.32 FIP.",
               "Bullpen: Mets BP: 3.22 ERA, 3.90 xFIP, Opp BP: 4.36 ERA, 4.86 xFIP.",
@@ -3627,16 +3643,16 @@
               "Overall lineup quality only: projected WAR 1.9 vs 3.7, projected lineup wRC+ 85.6 vs 98.7, xwOBA 0.331 vs 0.335.",
               "Road/context splits lean against Mets."
             ],
-            "bettingAngle": "Primary edge: Kodai Senga versus Brady Singer with 4.76 xERA against 5.80. Secondary checks: offense 89.0 vs 92.0 wRC+, bullpen 3.78 vs 5.22 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+            "bettingAngle": "Primary edge Kodai Senga 4.76 xERA versus Brady Singer 5.80 xERA. Offense shows Mets wRC+ 89 against 92 and bullpen Mets 3.78 xERA to 5.22. Model projects 70 percent win probability for Mets ML.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Standard",
             "confidenceScore": 6
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Kodai Senga versus Brady Singer with 4.76 xERA against 5.80. Secondary checks: offense 89.0 vs 92.0 wRC+, bullpen 3.78 vs 5.22 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+            "explanation": "Primary edge Kodai Senga 4.76 xERA versus Brady Singer 5.80 xERA. Offense shows Mets wRC+ 89 against 92 and bullpen Mets 3.78 xERA to 5.22. Model projects 70 percent win probability for Mets ML.",
             "headline": "Starter gap and value edge favor Mets",
-            "summary": "Mets hold 32-40 record and 5-5 mark in last 10 games while traveling as 14-22 road team. Kodai Senga posts 4.76 xERA against Brady Singer 5.80 xERA with Mets bullpen at 3.78 xERA versus 5.22 and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
+            "summary": "Mets record 5-5 in last 10 games with 14-22 road record. Kodai Senga posts 4.76 xERA and Brady Singer 5.80 xERA while Mets bullpen holds 3.78 xERA against opponent 5.22 xERA and offense wRC+ 89 versus 92. Pick: New York Mets moneyline.",
             "metsEdges": [
               "Kodai Senga: 9.00 ERA, 23.7% K rate, 6.15 FIP, vs Brady Singer: 5.61 ERA, 6.32 FIP.",
               "Bullpen: Mets BP: 3.22 ERA, 3.90 xFIP, Opp BP: 4.36 ERA, 4.86 xFIP.",
@@ -3646,7 +3662,7 @@
               "Overall lineup quality only: projected WAR 1.9 vs 3.7, projected lineup wRC+ 85.6 vs 98.7, xwOBA 0.331 vs 0.335.",
               "Road/context splits lean against Mets."
             ],
-            "bettingAngle": "Primary edge: Kodai Senga versus Brady Singer with 4.76 xERA against 5.80. Secondary checks: offense 89.0 vs 92.0 wRC+, bullpen 3.78 vs 5.22 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+            "bettingAngle": "Primary edge Kodai Senga 4.76 xERA versus Brady Singer 5.80 xERA. Offense shows Mets wRC+ 89 against 92 and bullpen Mets 3.78 xERA to 5.22. Model projects 70 percent win probability for Mets ML.",
             "confidenceLabel": "Standard",
             "confidence": 6
           },
@@ -3659,7 +3675,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "70° | Partly cloudy | Wind 17 mph NW"
+            "weatherSummary": "78° | Cloudy | Wind 9 mph W"
           }
         }
       },
@@ -3668,11 +3684,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 70.4,
-        "temperatureDisplay": "70°",
-        "condition": "Partly cloudy",
-        "wind": "Wind 17 mph NW",
-        "compact": "70° | Partly cloudy | Wind 17 mph NW",
+        "temperature": 77.8,
+        "temperatureDisplay": "78°",
+        "condition": "Cloudy",
+        "wind": "Wind 9 mph W",
+        "compact": "78° | Cloudy | Wind 9 mph W",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-06-16T23:00Z"
       },
