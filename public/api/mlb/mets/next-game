@@ -1,7 +1,7 @@
 {
   "gameId": 824504,
   "startTime": "2026-06-16T23:10:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 113,
     "canonicalKey": "reds",
@@ -40,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 694362,
+        "name": "Blake Dunn",
+        "pos": "CF"
+      },
+      {
+        "order": 2,
+        "playerId": 668709,
+        "name": "JJ Bleday",
+        "pos": "LF"
+      },
+      {
+        "order": 3,
+        "playerId": 701398,
+        "name": "Sal Stewart",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 663993,
+        "name": "Nathaniel Lowe",
+        "pos": "DH"
+      },
+      {
+        "order": 5,
+        "playerId": 553993,
+        "name": "Eugenio Suárez",
+        "pos": "3B"
+      },
+      {
+        "order": 6,
+        "playerId": 668715,
+        "name": "Spencer Steer",
+        "pos": "RF"
+      },
+      {
+        "order": 7,
+        "playerId": 663886,
+        "name": "Tyler Stephenson",
+        "pos": "C"
+      },
+      {
+        "order": 8,
+        "playerId": 680574,
+        "name": "Matt McLain",
+        "pos": "SS"
+      },
+      {
+        "order": 9,
+        "playerId": 695490,
+        "name": "Edwin Arroyo",
+        "pos": "2B"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +110,9 @@
     "officialDate": "2026-06-16",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -234,12 +289,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        },
+        "allStarStatus": "N",
+        "id": 113,
+        "name": "Cincinnati Reds",
+        "link": "/api/v1/teams/113"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "CIN leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -260,11 +340,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 694362,
+          "fullName": "Blake Dunn",
+          "link": "/api/v1/people/694362",
+          "firstName": "Blake",
+          "lastName": "Dunn",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Blake"
+        },
+        {
+          "id": 668709,
+          "fullName": "JJ Bleday",
+          "link": "/api/v1/people/668709",
+          "firstName": "Jeffrey",
+          "lastName": "Bleday",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "JJ"
+        },
+        {
+          "id": 701398,
+          "fullName": "Sal Stewart",
+          "link": "/api/v1/people/701398",
+          "firstName": "Sal",
+          "lastName": "Stewart",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Sal"
+        },
+        {
+          "id": 663993,
+          "fullName": "Nathaniel Lowe",
+          "link": "/api/v1/people/663993",
+          "firstName": "David",
+          "lastName": "Lowe",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Nathaniel"
+        },
+        {
+          "id": 553993,
+          "fullName": "Eugenio Suárez",
+          "link": "/api/v1/people/553993",
+          "firstName": "Eugenio",
+          "lastName": "Suárez",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Eugenio"
+        },
+        {
+          "id": 668715,
+          "fullName": "Spencer Steer",
+          "link": "/api/v1/people/668715",
+          "firstName": "Spencer",
+          "lastName": "Steer",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Spencer"
+        },
+        {
+          "id": 663886,
+          "fullName": "Tyler Stephenson",
+          "link": "/api/v1/people/663886",
+          "firstName": "Tyler",
+          "lastName": "Stephenson",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Tyler"
+        },
+        {
+          "id": 680574,
+          "fullName": "Matt McLain",
+          "link": "/api/v1/people/680574",
+          "firstName": "Matthew",
+          "lastName": "McLain",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Matt"
+        },
+        {
+          "id": 695490,
+          "fullName": "Edwin Arroyo",
+          "link": "/api/v1/people/695490",
+          "firstName": "Edwin",
+          "lastName": "Arroyo",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Edwin"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-16T17:48:40.042Z",
+    "generatedAt": "2026-06-16T20:47:07.594Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-16",
     "cacheKey": "next-game:2026-06-16"
