@@ -1,7 +1,7 @@
 {
   "gameId": 824503,
   "startTime": "2026-06-17T16:40:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 113,
     "canonicalKey": "reds",
@@ -40,8 +40,63 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 3,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "LF"
+      },
+      {
+        "order": 4,
+        "playerId": 543760,
+        "name": "Marcus Semien",
+        "pos": "2B"
+      },
+      {
+        "order": 5,
+        "playerId": 668901,
+        "name": "Mark Vientos",
+        "pos": "1B"
+      },
+      {
+        "order": 6,
+        "playerId": 682626,
+        "name": "Francisco Alvarez",
+        "pos": "DH"
+      },
+      {
+        "order": 7,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 8,
+        "playerId": 620443,
+        "name": "Luis Torrens",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 670097,
+        "name": "Zack Short",
+        "pos": "SS"
+      }
+    ],
     "opp": []
   },
   "sportsbookSummary": null,
@@ -55,9 +110,9 @@
     "officialDate": "2026-06-17",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -208,16 +263,16 @@
       },
       "defense": {
         "team": {
-          "id": 113,
-          "name": "Cincinnati Reds",
-          "link": "/api/v1/teams/113"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 113,
+          "name": "Cincinnati Reds",
+          "link": "/api/v1/teams/113"
         }
       }
     },
@@ -234,12 +289,37 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        },
+        "allStarStatus": "N",
+        "id": 113,
+        "name": "Cincinnati Reds",
+        "link": "/api/v1/teams/113"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "CIN leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -259,11 +339,141 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {
+      "awayPlayers": [
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760",
+          "firstName": "Marcus",
+          "lastName": "Semien",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Marcus"
+        },
+        {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901",
+          "firstName": "Mark",
+          "lastName": "Vientos",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Mark"
+        },
+        {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626",
+          "firstName": "Francisco",
+          "lastName": "Alvarez",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443",
+          "firstName": "Luis",
+          "lastName": "Torrens",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Luis"
+        },
+        {
+          "id": 670097,
+          "fullName": "Zack Short",
+          "link": "/api/v1/people/670097",
+          "firstName": "Zachary",
+          "lastName": "Short",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Zack"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-17T12:14:25.474Z",
+    "generatedAt": "2026-06-17T14:01:30.232Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-17",
     "cacheKey": "next-game:2026-06-17"
