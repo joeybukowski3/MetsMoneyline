@@ -1,14 +1,14 @@
 {
-  "gameId": 824503,
-  "startTime": "2026-06-17T16:40:00Z",
-  "status": "Pre-Game",
+  "gameId": 823448,
+  "startTime": "2026-06-18T22:40:00Z",
+  "status": "Scheduled",
   "homeTeam": {
-    "id": 113,
-    "canonicalKey": "reds",
-    "mlbStatsTeamId": 113,
-    "apiSportsTeamId": 113,
-    "name": "Cincinnati Reds",
-    "abbreviation": "CIN",
+    "id": 143,
+    "canonicalKey": "phillies",
+    "mlbStatsTeamId": 143,
+    "apiSportsTeamId": 143,
+    "name": "Philadelphia Phillies",
+    "abbreviation": "PHI",
     "record": null
   },
   "awayTeam": {
@@ -21,98 +21,43 @@
     "record": null
   },
   "isMetsHome": false,
-  "venue": "Great American Ball Park",
+  "venue": "Citizens Bank Park",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 690997,
-      "fullName": "Nolan McLean",
-      "era": "4.01",
+      "id": 640455,
+      "fullName": "Sean Manaea",
+      "era": "4.78",
       "fip": null,
-      "whip": "1.14"
+      "whip": "1.35"
     },
     "opp": {
-      "id": 666157,
-      "fullName": "Nick Lodolo",
-      "era": "5.21",
+      "id": 605400,
+      "fullName": "Aaron Nola",
+      "era": "5.86",
       "fip": null,
-      "whip": "1.45"
+      "whip": "1.47"
     }
   },
   "lineups": {
-    "lineupStatus": "confirmed",
-    "mets": [
-      {
-        "order": 1,
-        "playerId": 701807,
-        "name": "Carson Benge",
-        "pos": "RF"
-      },
-      {
-        "order": 2,
-        "playerId": 666182,
-        "name": "Bo Bichette",
-        "pos": "3B"
-      },
-      {
-        "order": 3,
-        "playerId": 665742,
-        "name": "Juan Soto",
-        "pos": "LF"
-      },
-      {
-        "order": 4,
-        "playerId": 543760,
-        "name": "Marcus Semien",
-        "pos": "2B"
-      },
-      {
-        "order": 5,
-        "playerId": 668901,
-        "name": "Mark Vientos",
-        "pos": "1B"
-      },
-      {
-        "order": 6,
-        "playerId": 682626,
-        "name": "Francisco Alvarez",
-        "pos": "DH"
-      },
-      {
-        "order": 7,
-        "playerId": 805999,
-        "name": "A.J. Ewing",
-        "pos": "CF"
-      },
-      {
-        "order": 8,
-        "playerId": 620443,
-        "name": "Luis Torrens",
-        "pos": "C"
-      },
-      {
-        "order": 9,
-        "playerId": 670097,
-        "name": "Zack Short",
-        "pos": "SS"
-      }
-    ],
+    "lineupStatus": "not_released",
+    "mets": [],
     "opp": []
   },
   "sportsbookSummary": null,
   "raw": {
-    "gamePk": 824503,
-    "gameGuid": "58e689d1-5371-4c18-8ea6-31ceab4e7464",
-    "link": "/api/v1.1/game/824503/feed/live",
+    "gamePk": 823448,
+    "gameGuid": "2f481d41-fe06-4670-89de-e6d3755900bb",
+    "link": "/api/v1.1/game/823448/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-06-17T16:40:00Z",
-    "officialDate": "2026-06-17",
+    "gameDate": "2026-06-18T22:40:00Z",
+    "officialDate": "2026-06-18",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "P",
-      "detailedState": "Pre-Game",
-      "statusCode": "P",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -172,12 +117,12 @@
           "pct": ".438"
         },
         "probablePitcher": {
-          "id": 690997,
-          "fullName": "Nolan McLean",
-          "link": "/api/v1/people/690997"
+          "id": 640455,
+          "fullName": "Sean Manaea",
+          "link": "/api/v1/people/640455"
         },
         "splitSquad": false,
-        "seriesNumber": 24,
+        "seriesNumber": 25,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -188,69 +133,69 @@
       "home": {
         "team": {
           "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
           },
           "allStarStatus": "N",
-          "id": 113,
-          "name": "Cincinnati Reds",
-          "link": "/api/v1/teams/113",
+          "id": 143,
+          "name": "Philadelphia Phillies",
+          "link": "/api/v1/teams/143",
           "season": 2026,
           "venue": {
-            "id": 2602,
-            "name": "Great American Ball Park",
-            "link": "/api/v1/venues/2602"
+            "id": 2681,
+            "name": "Citizens Bank Park",
+            "link": "/api/v1/venues/2681"
           },
           "springVenue": {
-            "id": 3834,
-            "link": "/api/v1/venues/3834"
+            "id": 2700,
+            "link": "/api/v1/venues/2700"
           },
-          "teamCode": "cin",
-          "fileCode": "cin",
-          "abbreviation": "CIN",
-          "teamName": "Reds",
-          "locationName": "Cincinnati",
-          "firstYearOfPlay": "1882",
+          "teamCode": "phi",
+          "fileCode": "phi",
+          "abbreviation": "PHI",
+          "teamName": "Phillies",
+          "locationName": "Philadelphia",
+          "firstYearOfPlay": "1883",
           "league": {
             "id": 104,
             "name": "National League",
             "link": "/api/v1/league/104"
           },
           "division": {
-            "id": 205,
-            "name": "National League Central",
-            "link": "/api/v1/divisions/205"
+            "id": 204,
+            "name": "National League East",
+            "link": "/api/v1/divisions/204"
           },
           "sport": {
             "id": 1,
             "link": "/api/v1/sports/1",
             "name": "Major League Baseball"
           },
-          "shortName": "Cincinnati",
-          "franchiseName": "Cincinnati",
-          "clubName": "Reds",
+          "shortName": "Philadelphia",
+          "franchiseName": "Philadelphia",
+          "clubName": "Phillies",
           "active": true
         },
         "leagueRecord": {
-          "wins": 35,
-          "losses": 37,
+          "wins": 40,
+          "losses": 33,
           "ties": 0,
-          "pct": ".486"
+          "pct": ".548"
         },
         "probablePitcher": {
-          "id": 666157,
-          "fullName": "Nick Lodolo",
-          "link": "/api/v1/people/666157"
+          "id": 605400,
+          "fullName": "Aaron Nola",
+          "link": "/api/v1/people/605400"
         },
         "splitSquad": false,
-        "seriesNumber": 24,
+        "seriesNumber": 25,
         "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
         }
       }
     },
@@ -270,56 +215,31 @@
       },
       "offense": {
         "team": {
-          "id": 113,
-          "name": "Cincinnati Reds",
-          "link": "/api/v1/teams/113"
+          "id": 143,
+          "name": "Philadelphia Phillies",
+          "link": "/api/v1/teams/143"
         }
       }
     },
     "venue": {
-      "id": 2602,
-      "name": "Great American Ball Park",
-      "link": "/api/v1/venues/2602",
+      "id": 2681,
+      "name": "Citizens Bank Park",
+      "link": "/api/v1/venues/2681",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/824503/content"
+      "link": "/api/v1/game/823448/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
-      "wins": 2,
+      "wins": 0,
       "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        },
-        "allStarStatus": "N",
-        "id": 113,
-        "name": "Cincinnati Reds",
-        "link": "/api/v1/teams/113"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "CIN leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -328,152 +248,23 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-824503-2026-06-17",
+    "calendarEventID": "14-823448-2026-06-18",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
-    "inningBreakLength": 120,
+    "inningBreakLength": 145,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {
-      "awayPlayers": [
-        {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807",
-          "firstName": "Carson",
-          "lastName": "Benge",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Carson"
-        },
-        {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182",
-          "firstName": "Bo",
-          "lastName": "Bichette",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Bo"
-        },
-        {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742",
-          "firstName": "Juan",
-          "lastName": "Soto",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Juan"
-        },
-        {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760",
-          "firstName": "Marcus",
-          "lastName": "Semien",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Marcus"
-        },
-        {
-          "id": 668901,
-          "fullName": "Mark Vientos",
-          "link": "/api/v1/people/668901",
-          "firstName": "Mark",
-          "lastName": "Vientos",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Mark"
-        },
-        {
-          "id": 682626,
-          "fullName": "Francisco Alvarez",
-          "link": "/api/v1/people/682626",
-          "firstName": "Francisco",
-          "lastName": "Alvarez",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Francisco"
-        },
-        {
-          "id": 805999,
-          "fullName": "A.J. Ewing",
-          "link": "/api/v1/people/805999",
-          "firstName": "Andrew",
-          "lastName": "Ewing",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "A.J."
-        },
-        {
-          "id": 620443,
-          "fullName": "Luis Torrens",
-          "link": "/api/v1/people/620443",
-          "firstName": "Luis",
-          "lastName": "Torrens",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Luis"
-        },
-        {
-          "id": 670097,
-          "fullName": "Zack Short",
-          "link": "/api/v1/people/670097",
-          "firstName": "Zachary",
-          "lastName": "Short",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Zack"
-        }
-      ]
-    }
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-17T14:01:30.232Z",
+    "generatedAt": "2026-06-17T17:22:41.190Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-17",
     "cacheKey": "next-game:2026-06-17"
