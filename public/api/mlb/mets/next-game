@@ -1,7 +1,7 @@
 {
   "gameId": 823448,
   "startTime": "2026-06-18T22:40:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 143,
     "canonicalKey": "phillies",
@@ -40,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 607208,
+        "name": "Trea Turner",
+        "pos": "SS"
+      },
+      {
+        "order": 2,
+        "playerId": 656941,
+        "name": "Kyle Schwarber",
+        "pos": "DH"
+      },
+      {
+        "order": 3,
+        "playerId": 547180,
+        "name": "Bryce Harper",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 664761,
+        "name": "Alec Bohm",
+        "pos": "3B"
+      },
+      {
+        "order": 5,
+        "playerId": 669016,
+        "name": "Brandon Marsh",
+        "pos": "RF"
+      },
+      {
+        "order": 6,
+        "playerId": 624641,
+        "name": "Edmundo Sosa",
+        "pos": "LF"
+      },
+      {
+        "order": 7,
+        "playerId": 681082,
+        "name": "Bryson Stott",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 592663,
+        "name": "J.T. Realmuto",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 656537,
+        "name": "Derek Hill",
+        "pos": "CF"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +110,9 @@
     "officialDate": "2026-06-18",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -260,11 +315,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 607208,
+          "fullName": "Trea Turner",
+          "link": "/api/v1/people/607208",
+          "firstName": "Trea",
+          "lastName": "Turner",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Trea"
+        },
+        {
+          "id": 656941,
+          "fullName": "Kyle Schwarber",
+          "link": "/api/v1/people/656941",
+          "firstName": "Kyle",
+          "lastName": "Schwarber",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Kyle"
+        },
+        {
+          "id": 547180,
+          "fullName": "Bryce Harper",
+          "link": "/api/v1/people/547180",
+          "firstName": "Bryce",
+          "lastName": "Harper",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Bryce"
+        },
+        {
+          "id": 664761,
+          "fullName": "Alec Bohm",
+          "link": "/api/v1/people/664761",
+          "firstName": "Alec",
+          "lastName": "Bohm",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Alec"
+        },
+        {
+          "id": 669016,
+          "fullName": "Brandon Marsh",
+          "link": "/api/v1/people/669016",
+          "firstName": "Brandon",
+          "lastName": "Marsh",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Brandon"
+        },
+        {
+          "id": 624641,
+          "fullName": "Edmundo Sosa",
+          "link": "/api/v1/people/624641",
+          "firstName": "Edmundo",
+          "lastName": "Sosa",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Edmundo"
+        },
+        {
+          "id": 681082,
+          "fullName": "Bryson Stott",
+          "link": "/api/v1/people/681082",
+          "firstName": "Bryson",
+          "lastName": "Stott",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Bryson"
+        },
+        {
+          "id": 592663,
+          "fullName": "J.T. Realmuto",
+          "link": "/api/v1/people/592663",
+          "firstName": "Jacob",
+          "lastName": "Realmuto",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "J.T."
+        },
+        {
+          "id": 656537,
+          "fullName": "Derek Hill",
+          "link": "/api/v1/people/656537",
+          "firstName": "Derek",
+          "lastName": "Hill",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Derek"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-18T17:28:22.665Z",
+    "generatedAt": "2026-06-18T19:39:32.684Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-18",
     "cacheKey": "next-game:2026-06-18"
