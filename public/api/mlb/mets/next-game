@@ -1,17 +1,8 @@
 {
-  "gameId": 823449,
-  "startTime": "2026-06-21T23:20:00Z",
-  "status": "Warmup",
+  "gameId": 823613,
+  "startTime": "2026-06-22T23:10:00Z",
+  "status": "Scheduled",
   "homeTeam": {
-    "id": 143,
-    "canonicalKey": "phillies",
-    "mlbStatsTeamId": 143,
-    "apiSportsTeamId": 143,
-    "name": "Philadelphia Phillies",
-    "abbreviation": "PHI",
-    "record": null
-  },
-  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -20,159 +11,126 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "isMetsHome": false,
-  "venue": "Citizens Bank Park",
+  "awayTeam": {
+    "id": 112,
+    "canonicalKey": "cubs",
+    "mlbStatsTeamId": 112,
+    "apiSportsTeamId": 112,
+    "name": "Chicago Cubs",
+    "abbreviation": "CHC",
+    "record": null
+  },
+  "isMetsHome": true,
+  "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 656849,
-      "fullName": "David Peterson",
-      "era": "5.91",
+      "id": 673540,
+      "fullName": "Kodai Senga",
+      "era": "9.00",
       "fip": null,
-      "whip": "1.63"
+      "whip": "1.88"
     },
     "opp": {
-      "id": 554430,
-      "fullName": "Zack Wheeler",
-      "era": "2.01",
+      "id": 684007,
+      "fullName": "Shota Imanaga",
+      "era": "4.26",
       "fip": null,
-      "whip": "0.85"
+      "whip": "1.06"
     }
   },
   "lineups": {
-    "lineupStatus": "confirmed",
-    "mets": [
-      {
-        "order": 1,
-        "playerId": 701807,
-        "name": "Carson Benge",
-        "pos": "RF"
-      },
-      {
-        "order": 2,
-        "playerId": 666182,
-        "name": "Bo Bichette",
-        "pos": "SS"
-      },
-      {
-        "order": 3,
-        "playerId": 665742,
-        "name": "Juan Soto",
-        "pos": "LF"
-      },
-      {
-        "order": 4,
-        "playerId": 676724,
-        "name": "Jared Young",
-        "pos": "1B"
-      },
-      {
-        "order": 5,
-        "playerId": 805999,
-        "name": "A.J. Ewing",
-        "pos": "CF"
-      },
-      {
-        "order": 6,
-        "playerId": 543760,
-        "name": "Marcus Semien",
-        "pos": "2B"
-      },
-      {
-        "order": 7,
-        "playerId": 683146,
-        "name": "Brett Baty",
-        "pos": "3B"
-      },
-      {
-        "order": 8,
-        "playerId": 682626,
-        "name": "Francisco Alvarez",
-        "pos": "DH"
-      },
-      {
-        "order": 9,
-        "playerId": 620443,
-        "name": "Luis Torrens",
-        "pos": "C"
-      }
-    ],
-    "opp": [
-      {
-        "order": 1,
-        "playerId": 607208,
-        "name": "Trea Turner",
-        "pos": "SS"
-      },
-      {
-        "order": 2,
-        "playerId": 656941,
-        "name": "Kyle Schwarber",
-        "pos": "DH"
-      },
-      {
-        "order": 3,
-        "playerId": 547180,
-        "name": "Bryce Harper",
-        "pos": "1B"
-      },
-      {
-        "order": 4,
-        "playerId": 664761,
-        "name": "Alec Bohm",
-        "pos": "3B"
-      },
-      {
-        "order": 5,
-        "playerId": 624641,
-        "name": "Edmundo Sosa",
-        "pos": "LF"
-      },
-      {
-        "order": 6,
-        "playerId": 669016,
-        "name": "Brandon Marsh",
-        "pos": "RF"
-      },
-      {
-        "order": 7,
-        "playerId": 592663,
-        "name": "J.T. Realmuto",
-        "pos": "C"
-      },
-      {
-        "order": 8,
-        "playerId": 656537,
-        "name": "Derek Hill",
-        "pos": "CF"
-      },
-      {
-        "order": 9,
-        "playerId": 681082,
-        "name": "Bryson Stott",
-        "pos": "2B"
-      }
-    ]
+    "lineupStatus": "not_released",
+    "mets": [],
+    "opp": []
   },
   "sportsbookSummary": null,
   "raw": {
-    "gamePk": 823449,
-    "gameGuid": "caf7b733-397c-4b40-91a0-84beaa9d8471",
-    "link": "/api/v1.1/game/823449/feed/live",
+    "gamePk": 823613,
+    "gameGuid": "ce55b309-545c-4652-806b-da9d13baa7d2",
+    "link": "/api/v1.1/game/823613/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-06-21T23:20:00Z",
-    "officialDate": "2026-06-21",
+    "gameDate": "2026-06-22T23:10:00Z",
+    "officialDate": "2026-06-22",
     "status": {
-      "abstractGameState": "Live",
-      "codedGameState": "P",
-      "detailedState": "Warmup",
-      "statusCode": "PW",
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
       "startTimeTBD": false,
-      "abstractGameCode": "L"
+      "abstractGameCode": "P"
     },
     "teams": {
       "away": {
+        "team": {
+          "springLeague": {
+            "id": 114,
+            "name": "Cactus League",
+            "link": "/api/v1/league/114",
+            "abbreviation": "CL"
+          },
+          "allStarStatus": "N",
+          "id": 112,
+          "name": "Chicago Cubs",
+          "link": "/api/v1/teams/112",
+          "season": 2026,
+          "venue": {
+            "id": 17,
+            "name": "Wrigley Field",
+            "link": "/api/v1/venues/17"
+          },
+          "springVenue": {
+            "id": 4629,
+            "link": "/api/v1/venues/4629"
+          },
+          "teamCode": "chn",
+          "fileCode": "chc",
+          "abbreviation": "CHC",
+          "teamName": "Cubs",
+          "locationName": "Chicago",
+          "firstYearOfPlay": "1874",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 205,
+            "name": "National League Central",
+            "link": "/api/v1/divisions/205"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Chi Cubs",
+          "franchiseName": "Chicago",
+          "clubName": "Cubs",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 40,
+          "losses": 37,
+          "ties": 0,
+          "pct": ".519"
+        },
+        "probablePitcher": {
+          "id": 684007,
+          "fullName": "Shota Imanaga",
+          "link": "/api/v1/people/684007"
+        },
+        "splitSquad": false,
+        "seriesNumber": 26,
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        }
+      },
+      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -226,83 +184,13 @@
           "ties": 0,
           "pct": ".447"
         },
-        "score": 0,
         "probablePitcher": {
-          "id": 656849,
-          "fullName": "David Peterson",
-          "link": "/api/v1/people/656849"
+          "id": 673540,
+          "fullName": "Kodai Senga",
+          "link": "/api/v1/people/673540"
         },
         "splitSquad": false,
-        "seriesNumber": 25,
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        }
-      },
-      "home": {
-        "team": {
-          "springLeague": {
-            "id": 115,
-            "name": "Grapefruit League",
-            "link": "/api/v1/league/115",
-            "abbreviation": "GL"
-          },
-          "allStarStatus": "N",
-          "id": 143,
-          "name": "Philadelphia Phillies",
-          "link": "/api/v1/teams/143",
-          "season": 2026,
-          "venue": {
-            "id": 2681,
-            "name": "Citizens Bank Park",
-            "link": "/api/v1/venues/2681"
-          },
-          "springVenue": {
-            "id": 2700,
-            "link": "/api/v1/venues/2700"
-          },
-          "teamCode": "phi",
-          "fileCode": "phi",
-          "abbreviation": "PHI",
-          "teamName": "Phillies",
-          "locationName": "Philadelphia",
-          "firstYearOfPlay": "1883",
-          "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
-          },
-          "division": {
-            "id": 204,
-            "name": "National League East",
-            "link": "/api/v1/divisions/204"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "Philadelphia",
-          "franchiseName": "Philadelphia",
-          "clubName": "Phillies",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 41,
-          "losses": 35,
-          "ties": 0,
-          "pct": ".539"
-        },
-        "score": 0,
-        "probablePitcher": {
-          "id": 554430,
-          "fullName": "Zack Wheeler",
-          "link": "/api/v1/people/554430"
-        },
-        "splitSquad": false,
-        "seriesNumber": 25,
+        "seriesNumber": 26,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -312,162 +200,46 @@
       }
     },
     "linescore": {
-      "currentInning": 1,
-      "currentInningOrdinal": "1st",
-      "inningState": "Top",
-      "inningHalf": "Top",
-      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [
-        {
-          "num": 1,
-          "ordinalNum": "1st",
-          "home": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        }
-      ],
+      "innings": [],
       "teams": {
-        "home": {
-          "runs": 0,
-          "hits": 0,
-          "errors": 0,
-          "leftOnBase": 0
-        },
-        "away": {
-          "runs": 0,
-          "hits": 0,
-          "errors": 0,
-          "leftOnBase": 0
-        }
+        "home": {},
+        "away": {}
       },
       "defense": {
-        "pitcher": {
-          "id": 554430,
-          "fullName": "Zack Wheeler",
-          "link": "/api/v1/people/554430"
-        },
-        "catcher": {
-          "id": 592663,
-          "fullName": "J.T. Realmuto",
-          "link": "/api/v1/people/592663"
-        },
-        "first": {
-          "id": 547180,
-          "fullName": "Bryce Harper",
-          "link": "/api/v1/people/547180"
-        },
-        "second": {
-          "id": 681082,
-          "fullName": "Bryson Stott",
-          "link": "/api/v1/people/681082"
-        },
-        "third": {
-          "id": 664761,
-          "fullName": "Alec Bohm",
-          "link": "/api/v1/people/664761"
-        },
-        "shortstop": {
-          "id": 607208,
-          "fullName": "Trea Turner",
-          "link": "/api/v1/people/607208"
-        },
-        "left": {
-          "id": 624641,
-          "fullName": "Edmundo Sosa",
-          "link": "/api/v1/people/624641"
-        },
-        "center": {
-          "id": 656537,
-          "fullName": "Derek Hill",
-          "link": "/api/v1/people/656537"
-        },
-        "right": {
-          "id": 669016,
-          "fullName": "Brandon Marsh",
-          "link": "/api/v1/people/669016"
-        },
-        "batter": {
-          "id": 607208,
-          "fullName": "Trea Turner",
-          "link": "/api/v1/people/607208"
-        },
-        "onDeck": {
-          "id": 656941,
-          "fullName": "Kyle Schwarber",
-          "link": "/api/v1/people/656941"
-        },
-        "inHole": {
-          "id": 547180,
-          "fullName": "Bryce Harper",
-          "link": "/api/v1/people/547180"
-        },
-        "battingOrder": 1,
         "team": {
-          "id": 143,
-          "name": "Philadelphia Phillies",
-          "link": "/api/v1/teams/143"
+          "id": 112,
+          "name": "Chicago Cubs",
+          "link": "/api/v1/teams/112"
         }
       },
       "offense": {
-        "batter": {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807"
-        },
-        "onDeck": {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182"
-        },
-        "inHole": {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742"
-        },
-        "pitcher": {
-          "id": 656849,
-          "fullName": "David Peterson",
-          "link": "/api/v1/people/656849"
-        },
-        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
-      },
-      "balls": 0,
-      "strikes": 0,
-      "outs": 0
+      }
     },
     "venue": {
-      "id": 2681,
-      "name": "Citizens Bank Park",
-      "link": "/api/v1/venues/2681",
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823449/content"
+      "link": "/api/v1/game/823613/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
-      "totalGames": 3,
+      "gameNumber": 1,
+      "totalGames": 4,
       "isTied": true,
       "isOver": false,
-      "wins": 1,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -476,280 +248,23 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823449-2026-06-21",
+    "calendarEventID": "14-823613-2026-06-22",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
-    "inningBreakLength": 145,
-    "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "inningBreakLength": 120,
+    "gamesInSeries": 4,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {
-      "homePlayers": [
-        {
-          "id": 607208,
-          "fullName": "Trea Turner",
-          "link": "/api/v1/people/607208",
-          "firstName": "Trea",
-          "lastName": "Turner",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Trea"
-        },
-        {
-          "id": 656941,
-          "fullName": "Kyle Schwarber",
-          "link": "/api/v1/people/656941",
-          "firstName": "Kyle",
-          "lastName": "Schwarber",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Kyle"
-        },
-        {
-          "id": 547180,
-          "fullName": "Bryce Harper",
-          "link": "/api/v1/people/547180",
-          "firstName": "Bryce",
-          "lastName": "Harper",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Bryce"
-        },
-        {
-          "id": 664761,
-          "fullName": "Alec Bohm",
-          "link": "/api/v1/people/664761",
-          "firstName": "Alec",
-          "lastName": "Bohm",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Alec"
-        },
-        {
-          "id": 624641,
-          "fullName": "Edmundo Sosa",
-          "link": "/api/v1/people/624641",
-          "firstName": "Edmundo",
-          "lastName": "Sosa",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Edmundo"
-        },
-        {
-          "id": 669016,
-          "fullName": "Brandon Marsh",
-          "link": "/api/v1/people/669016",
-          "firstName": "Brandon",
-          "lastName": "Marsh",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Brandon"
-        },
-        {
-          "id": 592663,
-          "fullName": "J.T. Realmuto",
-          "link": "/api/v1/people/592663",
-          "firstName": "Jacob",
-          "lastName": "Realmuto",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "J.T."
-        },
-        {
-          "id": 656537,
-          "fullName": "Derek Hill",
-          "link": "/api/v1/people/656537",
-          "firstName": "Derek",
-          "lastName": "Hill",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "Derek"
-        },
-        {
-          "id": 681082,
-          "fullName": "Bryson Stott",
-          "link": "/api/v1/people/681082",
-          "firstName": "Bryson",
-          "lastName": "Stott",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Bryson"
-        }
-      ],
-      "awayPlayers": [
-        {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807",
-          "firstName": "Carson",
-          "lastName": "Benge",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Carson"
-        },
-        {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182",
-          "firstName": "Bo",
-          "lastName": "Bichette",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Bo"
-        },
-        {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742",
-          "firstName": "Juan",
-          "lastName": "Soto",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Juan"
-        },
-        {
-          "id": 676724,
-          "fullName": "Jared Young",
-          "link": "/api/v1/people/676724",
-          "firstName": "Jared",
-          "lastName": "Young",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Jared"
-        },
-        {
-          "id": 805999,
-          "fullName": "A.J. Ewing",
-          "link": "/api/v1/people/805999",
-          "firstName": "Andrew",
-          "lastName": "Ewing",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "A.J."
-        },
-        {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760",
-          "firstName": "Marcus",
-          "lastName": "Semien",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Marcus"
-        },
-        {
-          "id": 683146,
-          "fullName": "Brett Baty",
-          "link": "/api/v1/people/683146",
-          "firstName": "Brett",
-          "lastName": "Baty",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Brett"
-        },
-        {
-          "id": 682626,
-          "fullName": "Francisco Alvarez",
-          "link": "/api/v1/people/682626",
-          "firstName": "Francisco",
-          "lastName": "Alvarez",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Francisco"
-        },
-        {
-          "id": 620443,
-          "fullName": "Luis Torrens",
-          "link": "/api/v1/people/620443",
-          "firstName": "Luis",
-          "lastName": "Torrens",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Luis"
-        }
-      ]
-    }
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-21T23:10:00.086Z",
+    "generatedAt": "2026-06-22T01:40:35.661Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-21",
     "cacheKey": "next-game:2026-06-21"
