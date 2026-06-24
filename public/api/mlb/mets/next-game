@@ -1,7 +1,7 @@
 {
-  "gameId": 823614,
-  "startTime": "2026-06-23T23:10:00Z",
-  "status": "Warmup",
+  "gameId": 823613,
+  "startTime": "2026-06-24T17:10:00Z",
+  "status": "Scheduled",
   "homeTeam": {
     "id": 121,
     "canonicalKey": "mets",
@@ -24,152 +24,32 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": {
-      "id": 673540,
-      "fullName": "Kodai Senga",
-      "era": "9.00",
-      "fip": null,
-      "whip": "1.88"
-    },
-    "opp": {
-      "id": 665795,
-      "fullName": "Edward Cabrera",
-      "era": "5.21",
-      "fip": null,
-      "whip": "1.40"
-    }
+    "mets": null,
+    "opp": null
   },
   "lineups": {
-    "lineupStatus": "confirmed",
-    "mets": [
-      {
-        "order": 1,
-        "playerId": 701807,
-        "name": "Carson Benge",
-        "pos": "RF"
-      },
-      {
-        "order": 2,
-        "playerId": 666182,
-        "name": "Bo Bichette",
-        "pos": "SS"
-      },
-      {
-        "order": 3,
-        "playerId": 665742,
-        "name": "Juan Soto",
-        "pos": "LF"
-      },
-      {
-        "order": 4,
-        "playerId": 676724,
-        "name": "Jared Young",
-        "pos": "1B"
-      },
-      {
-        "order": 5,
-        "playerId": 805999,
-        "name": "A.J. Ewing",
-        "pos": "CF"
-      },
-      {
-        "order": 6,
-        "playerId": 543760,
-        "name": "Marcus Semien",
-        "pos": "2B"
-      },
-      {
-        "order": 7,
-        "playerId": 683146,
-        "name": "Brett Baty",
-        "pos": "3B"
-      },
-      {
-        "order": 8,
-        "playerId": 669004,
-        "name": "MJ Melendez",
-        "pos": "DH"
-      },
-      {
-        "order": 9,
-        "playerId": 682626,
-        "name": "Francisco Alvarez",
-        "pos": "C"
-      }
-    ],
-    "opp": [
-      {
-        "order": 1,
-        "playerId": 691718,
-        "name": "Pete Crow-Armstrong",
-        "pos": "CF"
-      },
-      {
-        "order": 2,
-        "playerId": 608324,
-        "name": "Alex Bregman",
-        "pos": "3B"
-      },
-      {
-        "order": 3,
-        "playerId": 683737,
-        "name": "Michael Busch",
-        "pos": "1B"
-      },
-      {
-        "order": 4,
-        "playerId": 673548,
-        "name": "Seiya Suzuki",
-        "pos": "DH"
-      },
-      {
-        "order": 5,
-        "playerId": 664023,
-        "name": "Ian Happ",
-        "pos": "LF"
-      },
-      {
-        "order": 6,
-        "playerId": 807713,
-        "name": "Matt Shaw",
-        "pos": "RF"
-      },
-      {
-        "order": 7,
-        "playerId": 663538,
-        "name": "Nico Hoerner",
-        "pos": "2B"
-      },
-      {
-        "order": 8,
-        "playerId": 608348,
-        "name": "Carson Kelly",
-        "pos": "C"
-      },
-      {
-        "order": 9,
-        "playerId": 621020,
-        "name": "Dansby Swanson",
-        "pos": "SS"
-      }
-    ]
+    "lineupStatus": "not_released",
+    "mets": [],
+    "opp": []
   },
   "sportsbookSummary": null,
   "raw": {
-    "gamePk": 823614,
-    "gameGuid": "159c2376-21f5-4e3a-9b43-45f232499676",
-    "link": "/api/v1.1/game/823614/feed/live",
+    "gamePk": 823613,
+    "gameGuid": "ce55b309-545c-4652-806b-da9d13baa7d2",
+    "link": "/api/v1.1/game/823613/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-06-23T23:10:00Z",
-    "officialDate": "2026-06-23",
+    "gameDate": "2026-06-24T17:10:00Z",
+    "officialDate": "2026-06-24",
+    "rescheduledFrom": "2026-06-22T23:10:00Z",
+    "rescheduledFromDate": "2026-06-22",
     "status": {
-      "abstractGameState": "Live",
-      "codedGameState": "P",
-      "detailedState": "Warmup",
-      "statusCode": "PW",
+      "abstractGameState": "Preview",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
       "startTimeTBD": false,
-      "abstractGameCode": "L"
+      "abstractGameCode": "P"
     },
     "teams": {
       "away": {
@@ -225,12 +105,6 @@
           "losses": 37,
           "ties": 0,
           "pct": ".519"
-        },
-        "score": 0,
-        "probablePitcher": {
-          "id": 665795,
-          "fullName": "Edward Cabrera",
-          "link": "/api/v1/people/665795"
         },
         "splitSquad": false,
         "seriesNumber": 26,
@@ -295,12 +169,6 @@
           "ties": 0,
           "pct": ".442"
         },
-        "score": 0,
-        "probablePitcher": {
-          "id": 673540,
-          "fullName": "Kodai Senga",
-          "link": "/api/v1/people/673540"
-        },
         "splitSquad": false,
         "seriesNumber": 26,
         "springLeague": {
@@ -312,104 +180,13 @@
       }
     },
     "linescore": {
-      "currentInning": 1,
-      "currentInningOrdinal": "1st",
-      "inningState": "Top",
-      "inningHalf": "Top",
-      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [
-        {
-          "num": 1,
-          "ordinalNum": "1st",
-          "home": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          },
-          "away": {
-            "hits": 0,
-            "errors": 0,
-            "leftOnBase": 0
-          }
-        }
-      ],
+      "innings": [],
       "teams": {
-        "home": {
-          "runs": 0,
-          "hits": 0,
-          "errors": 0,
-          "leftOnBase": 0
-        },
-        "away": {
-          "runs": 0,
-          "hits": 0,
-          "errors": 0,
-          "leftOnBase": 0
-        }
+        "home": {},
+        "away": {}
       },
       "defense": {
-        "pitcher": {
-          "id": 673540,
-          "fullName": "Kodai Senga",
-          "link": "/api/v1/people/673540"
-        },
-        "catcher": {
-          "id": 682626,
-          "fullName": "Francisco Alvarez",
-          "link": "/api/v1/people/682626"
-        },
-        "first": {
-          "id": 676724,
-          "fullName": "Jared Young",
-          "link": "/api/v1/people/676724"
-        },
-        "second": {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760"
-        },
-        "third": {
-          "id": 683146,
-          "fullName": "Brett Baty",
-          "link": "/api/v1/people/683146"
-        },
-        "shortstop": {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182"
-        },
-        "left": {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742"
-        },
-        "center": {
-          "id": 805999,
-          "fullName": "A.J. Ewing",
-          "link": "/api/v1/people/805999"
-        },
-        "right": {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807"
-        },
-        "batter": {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807"
-        },
-        "onDeck": {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182"
-        },
-        "inHole": {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742"
-        },
-        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
@@ -417,36 +194,12 @@
         }
       },
       "offense": {
-        "batter": {
-          "id": 691718,
-          "fullName": "Pete Crow-Armstrong",
-          "link": "/api/v1/people/691718"
-        },
-        "onDeck": {
-          "id": 608324,
-          "fullName": "Alex Bregman",
-          "link": "/api/v1/people/608324"
-        },
-        "inHole": {
-          "id": 683737,
-          "fullName": "Michael Busch",
-          "link": "/api/v1/people/683737"
-        },
-        "pitcher": {
-          "id": 665795,
-          "fullName": "Edward Cabrera",
-          "link": "/api/v1/people/665795"
-        },
-        "battingOrder": 1,
         "team": {
           "id": 112,
           "name": "Chicago Cubs",
           "link": "/api/v1/teams/112"
         }
-      },
-      "balls": 0,
-      "strikes": 0,
-      "outs": 0
+      }
     },
     "venue": {
       "id": 3289,
@@ -456,10 +209,10 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823614/content"
+      "link": "/api/v1/game/823613/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 4,
       "isTied": true,
       "isOver": false,
@@ -472,283 +225,27 @@
     },
     "gameNumber": 1,
     "publicFacing": true,
-    "doubleHeader": "N",
+    "doubleHeader": "S",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823614-2026-06-23",
+    "calendarEventID": "14-823613-2026-06-24",
     "seasonDisplay": "2026",
-    "dayNight": "night",
+    "dayNight": "day",
+    "description": "Makeup of 6/22 PPD",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 4,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {
-      "homePlayers": [
-        {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807",
-          "firstName": "Carson",
-          "lastName": "Benge",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Carson"
-        },
-        {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182",
-          "firstName": "Bo",
-          "lastName": "Bichette",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Bo"
-        },
-        {
-          "id": 665742,
-          "fullName": "Juan Soto",
-          "link": "/api/v1/people/665742",
-          "firstName": "Juan",
-          "lastName": "Soto",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Juan"
-        },
-        {
-          "id": 676724,
-          "fullName": "Jared Young",
-          "link": "/api/v1/people/676724",
-          "firstName": "Jared",
-          "lastName": "Young",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Jared"
-        },
-        {
-          "id": 805999,
-          "fullName": "A.J. Ewing",
-          "link": "/api/v1/people/805999",
-          "firstName": "Andrew",
-          "lastName": "Ewing",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "A.J."
-        },
-        {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760",
-          "firstName": "Marcus",
-          "lastName": "Semien",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Marcus"
-        },
-        {
-          "id": 683146,
-          "fullName": "Brett Baty",
-          "link": "/api/v1/people/683146",
-          "firstName": "Brett",
-          "lastName": "Baty",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Brett"
-        },
-        {
-          "id": 669004,
-          "fullName": "MJ Melendez",
-          "link": "/api/v1/people/669004",
-          "firstName": "Mervyl",
-          "lastName": "Melendez",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "MJ"
-        },
-        {
-          "id": 682626,
-          "fullName": "Francisco Alvarez",
-          "link": "/api/v1/people/682626",
-          "firstName": "Francisco",
-          "lastName": "Alvarez",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Francisco"
-        }
-      ],
-      "awayPlayers": [
-        {
-          "id": 691718,
-          "fullName": "Pete Crow-Armstrong",
-          "link": "/api/v1/people/691718",
-          "firstName": "Pete",
-          "lastName": "Crow-Armstrong",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "Pete"
-        },
-        {
-          "id": 608324,
-          "fullName": "Alex Bregman",
-          "link": "/api/v1/people/608324",
-          "firstName": "Alexander",
-          "lastName": "Bregman",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Alex"
-        },
-        {
-          "id": 683737,
-          "fullName": "Michael Busch",
-          "link": "/api/v1/people/683737",
-          "firstName": "Michael",
-          "lastName": "Busch",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Michael"
-        },
-        {
-          "id": 673548,
-          "fullName": "Seiya Suzuki",
-          "link": "/api/v1/people/673548",
-          "firstName": "Seiya",
-          "lastName": "Suzuki",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Seiya"
-        },
-        {
-          "id": 664023,
-          "fullName": "Ian Happ",
-          "link": "/api/v1/people/664023",
-          "firstName": "Ian",
-          "lastName": "Happ",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Ian"
-        },
-        {
-          "id": 807713,
-          "fullName": "Matt Shaw",
-          "link": "/api/v1/people/807713",
-          "firstName": "Matthew",
-          "lastName": "Shaw",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Matt"
-        },
-        {
-          "id": 663538,
-          "fullName": "Nico Hoerner",
-          "link": "/api/v1/people/663538",
-          "firstName": "Nicholas",
-          "lastName": "Hoerner",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Nico"
-        },
-        {
-          "id": 608348,
-          "fullName": "Carson Kelly",
-          "link": "/api/v1/people/608348",
-          "firstName": "Carson",
-          "lastName": "Kelly",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Carson"
-        },
-        {
-          "id": 621020,
-          "fullName": "Dansby Swanson",
-          "link": "/api/v1/people/621020",
-          "firstName": "James",
-          "lastName": "Swanson",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Dansby"
-        }
-      ]
-    }
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-23T23:07:10.309Z",
+    "generatedAt": "2026-06-24T00:11:12.690Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-23",
     "cacheKey": "next-game:2026-06-23"
