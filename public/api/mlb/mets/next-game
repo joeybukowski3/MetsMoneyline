@@ -24,7 +24,13 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 690997,
+      "fullName": "Nolan McLean",
+      "era": "3.67",
+      "fip": null,
+      "whip": "1.09"
+    },
     "opp": null
   },
   "lineups": {
@@ -101,10 +107,10 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 40,
+          "wins": 41,
           "losses": 37,
           "ties": 0,
-          "pct": ".519"
+          "pct": ".526"
         },
         "splitSquad": false,
         "seriesNumber": 26,
@@ -165,9 +171,14 @@
         },
         "leagueRecord": {
           "wins": 34,
-          "losses": 43,
+          "losses": 44,
           "ties": 0,
-          "pct": ".442"
+          "pct": ".436"
+        },
+        "probablePitcher": {
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
         },
         "splitSquad": false,
         "seriesNumber": 26,
@@ -188,16 +199,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 112,
+          "name": "Chicago Cubs",
+          "link": "/api/v1/teams/112"
         }
       },
       "offense": {
         "team": {
-          "id": 112,
-          "name": "Chicago Cubs",
-          "link": "/api/v1/teams/112"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -214,12 +225,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        },
+        "allStarStatus": "N",
+        "id": 112,
+        "name": "Chicago Cubs",
+        "link": "/api/v1/teams/112"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "CHC leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -245,9 +281,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-24T00:11:12.690Z",
+    "generatedAt": "2026-06-24T04:35:25.380Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-06-23",
-    "cacheKey": "next-game:2026-06-23"
+    "referenceDate": "2026-06-24",
+    "cacheKey": "next-game:2026-06-24"
   }
 }
