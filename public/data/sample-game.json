@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-25T16:00:38.934Z",
+  "generatedAt": "2026-06-25T18:24:51.519Z",
   "referenceDate": "2026-06-25",
   "cacheKey": "sample-game:2026-06-25",
   "games": [
@@ -27,7 +27,7 @@
           "mlbId": 642547,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-25T16:00:37.602Z",
+          "generatedAt": "2026-06-25T18:24:49.602Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -60,7 +60,7 @@
             "percentiles": {
               "barrelPct": 76,
               "hardHitPct": 52,
-              "kPct": 59,
+              "kPct": 58,
               "bbPct": 56,
               "xERA": 69,
               "xBAAllowed": 65,
@@ -86,7 +86,7 @@
           "mlbId": 571510,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-06-25T16:00:37.618Z",
+          "generatedAt": "2026-06-25T18:24:49.606Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -141,19 +141,19 @@
           }
         },
         "metsBullpen": {
-          "seasonERA": 3.42,
-          "seasonXERAAverage": 3.8,
+          "seasonERA": 3.14,
+          "seasonXERAAverage": 3.52,
           "seasonXFIP": "3.94",
-          "last20ERA": 3.56,
-          "last20WHIP": 0.95,
-          "seasonWHIP": 1.16,
+          "last20ERA": 2.43,
+          "last20WHIP": 0.92,
+          "seasonWHIP": 1.17,
           "seasonKPct": "23.8%",
           "seasonBBPct": "9.4%",
           "rating": 79,
           "team": "New York Mets",
           "usage": {
-            "appearances": 19,
-            "appearancesPerPitcherPerDay": 0.19,
+            "appearances": 18,
+            "appearancesPerPitcherPerDay": 0.2,
             "label": "Low",
             "tone": "green"
           },
@@ -168,7 +168,7 @@
             "last7DaysAppearances": 2,
             "last7DaysInningsPitched": "2.0"
           },
-          "relieverCount": 14
+          "relieverCount": 13
         },
         "oppBullpen": {
           "seasonERA": 4.53,
@@ -453,13 +453,6 @@
               "bbPct": "7.2%",
               "kPct": "21.4%",
               "war": "-0.1"
-            },
-            "recent20": {
-              "avg": 0.194,
-              "ops": 0.628,
-              "plateAppearances": 74,
-              "atBats": 67,
-              "hits": 13
             }
           },
           {
@@ -884,13 +877,13 @@
         },
         {
           "category": "Hard-Hit %",
-          "mets": "43.2%",
+          "mets": "44.3%",
           "opp": "40.6%",
           "edge": "Mets"
         },
         {
           "category": "Barrel %",
-          "mets": "9.6%",
+          "mets": "9.8%",
           "opp": "8.1%",
           "edge": "Mets"
         },
@@ -913,12 +906,12 @@
           "woba": ".298",
           "iso": ".145",
           "xba": "0.257",
-          "xslg": "0.436",
+          "xslg": "0.438",
           "xwoba": "0.332",
           "ops": ".674",
           "avg": ".231",
-          "hardHit": "43.2",
-          "barrelPct": "9.6",
+          "hardHit": "44.3",
+          "barrelPct": "9.8",
           "bbPct": 7.9,
           "kPct": 22.4,
           "rotFip": "3.95",
@@ -1007,7 +1000,7 @@
             },
             {
               "statKey": "avg",
-              "seasonRank": 26,
+              "seasonRank": 27,
               "seasonValue": 0.231,
               "recentRank": 19,
               "recentValue": 0.244,
@@ -1172,6 +1165,11 @@
         ],
         "metsInjuries": [
           {
+            "name": "Marcus Semien",
+            "status": "IL",
+            "description": "Marcus Semien (IL) - New York Mets placed 2B Marcus Semien on the 10-day injured list. Left hip flexor strain."
+          },
+          {
             "name": "Jorge Polanco",
             "status": "IL",
             "description": "Jorge Polanco (IL) - New York Mets placed 1B Jorge Polanco on the 60-day injured list. Right wrist contusion."
@@ -1190,11 +1188,6 @@
             "name": "Clay Holmes",
             "status": "IL",
             "description": "Clay Holmes (IL) - New York Mets transferred RHP Clay Holmes from the 15-day injured list to the 60-day injured list. Right fibula fracture."
-          },
-          {
-            "name": "Justin Hagenman",
-            "status": "IL",
-            "description": "Justin Hagenman (IL) - New York Mets placed RHP Justin Hagenman on the 60-day injured list. Rib Fracture."
           }
         ],
         "oppInjuries": [
@@ -1412,7 +1405,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-06-25T16:00:38.747Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-25\",\"opponent\":\"Chicago Cubs\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":74.5,\"temperatureDisplay\":\"75°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 12 mph SSE\",\"compact\":\"75° | Cloudy | Wind 12 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-25T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Freddy Peralta\",\"handedness\":\"R\",\"era\":4.83,\"xERA\":3.83,\"fip\":4.32,\"whip\":1.39,\"kPct\":22.1,\"bbPct\":9,\"kMinusBbPct\":13.1,\"hardHitPct\":39.6,\"barrelPct\":5.5,\"xBAAllowed\":0.237,\"xSLGAllowed\":0.371,\"xwOBAAllowed\":0.306,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-20\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"2.2\",\"er\":10,\"k\":2,\"h\":10,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-06-14\",\"opponent\":\"Atlanta Braves\",\"ip\":\"5.0\",\"er\":1,\"k\":2,\"h\":4,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-09\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"6.0\",\"er\":6,\"k\":5,\"h\":6,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-03\",\"opponent\":\"Seattle Mariners\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"h\":6,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":4.92,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":3.75,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":4.92,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Matthew Boyd\",\"handedness\":\"L\",\"era\":6,\"xERA\":4.28,\"fip\":2.35,\"whip\":1.29,\"kPct\":31,\"bbPct\":6,\"kMinusBbPct\":25,\"hardHitPct\":50.8,\"barrelPct\":9.5,\"xBAAllowed\":0.258,\"xSLGAllowed\":0.443,\"xwOBAAllowed\":0.322,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-03\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"6.0\",\"er\":2,\"k\":5,\"h\":4,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-04-27\",\"opponent\":\"San Diego Padres\",\"ip\":\"4.0\",\"er\":5,\"k\":4,\"h\":8,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-04-22\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.2\",\"er\":2,\"k\":5,\"h\":5,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-04-01\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"5.2\",\"er\":1,\"k\":10,\"h\":2,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":5.08,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":6,\"daysSinceLastStart\":53},\"workload\":{\"inningsTrend\":5.08,\"daysSinceLastStart\":53},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":4.4,\"projectedLineupWRCPlus\":92,\"obp\":0.298,\"iso\":0.145,\"kPct\":22.4,\"bbPct\":7.9,\"xBA\":0.257,\"xSLG\":0.436,\"xwOBA\":0.332,\"hardHitPct\":43.2,\"barrelPct\":9.6,\"battingAverage\":0.235,\"wOBA\":0.3,\"lineup\":{\"totalWAR\":4.4,\"totalWRCPlus\":92,\"totalOBP\":0.298,\"totalISO\":0.144,\"totalKPct\":22.9,\"totalBBPct\":7.1,\"totalAVG\":0.235,\"totalWOBA\":0.3,\"totalXBA\":0.257,\"totalXSLG\":0.425,\"totalXWOBA\":0.324,\"totalHardHitPct\":42.6,\"totalBarrelPct\":9,\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024}},\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":14.6,\"projectedLineupWRCPlus\":115.4,\"obp\":0.343,\"iso\":0.162,\"kPct\":21.2,\"bbPct\":11.2,\"xBA\":0.244,\"xSLG\":0.404,\"xwOBA\":0.33,\"hardHitPct\":40.6,\"barrelPct\":8.1,\"battingAverage\":0.243,\"wOBA\":0.338,\"lineup\":{\"totalWAR\":14.6,\"totalWRCPlus\":115.4,\"totalOBP\":0.343,\"totalISO\":0.176,\"totalKPct\":22.1,\"totalBBPct\":11.6,\"totalAVG\":0.243,\"totalWOBA\":0.338,\"totalXBA\":0.243,\"totalXSLG\":0.411,\"totalXWOBA\":0.333,\"totalHardHitPct\":40.9,\"totalBarrelPct\":8.7,\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":0.005}},\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":0.005},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":4.4,\"totalWRCPlus\":92,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":14.6,\"totalWRCPlus\":115.4,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.16,\"kMinusBbPct\":14.4,\"xFIP\":3.94,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.39,\"kMinusBbPct\":12.9,\"xFIP\":4.2,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":4,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":74.5,\"temperatureDisplay\":\"75°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 12 mph SSE\",\"compact\":\"75° | Cloudy | Wind 12 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-25T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Freddy Peralta 3.83/4.32 vs Matthew Boyd 4.28/2.35; K-BB% 13.1 to 25.0.\",\"rawScore\":-12.11,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330.\",\"rawScore\":-13.96,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.16 vs 1.39, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":1.76,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.022 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.\",\"rawScore\":8.62,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-35.1,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-06-25T18:24:51.384Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-25\",\"opponent\":\"Chicago Cubs\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":74.5,\"temperatureDisplay\":\"75°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 13 mph SSE\",\"compact\":\"75° | Cloudy | Wind 13 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-25T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Freddy Peralta\",\"handedness\":\"R\",\"era\":4.83,\"xERA\":3.83,\"fip\":4.32,\"whip\":1.39,\"kPct\":22.1,\"bbPct\":9,\"kMinusBbPct\":13.1,\"hardHitPct\":39.6,\"barrelPct\":5.5,\"xBAAllowed\":0.237,\"xSLGAllowed\":0.371,\"xwOBAAllowed\":0.306,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-20\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"2.2\",\"er\":10,\"k\":2,\"h\":10,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-06-14\",\"opponent\":\"Atlanta Braves\",\"ip\":\"5.0\",\"er\":1,\"k\":2,\"h\":4,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-09\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"6.0\",\"er\":6,\"k\":5,\"h\":6,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-03\",\"opponent\":\"Seattle Mariners\",\"ip\":\"6.0\",\"er\":1,\"k\":6,\"h\":6,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":4.92,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":3.75,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":4.92,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Matthew Boyd\",\"handedness\":\"L\",\"era\":6,\"xERA\":4.28,\"fip\":2.35,\"whip\":1.29,\"kPct\":31,\"bbPct\":6,\"kMinusBbPct\":25,\"hardHitPct\":50.8,\"barrelPct\":9.5,\"xBAAllowed\":0.258,\"xSLGAllowed\":0.443,\"xwOBAAllowed\":0.322,\"recentStarts\":{\"starts\":[{\"date\":\"2026-05-03\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"6.0\",\"er\":2,\"k\":5,\"h\":4,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-04-27\",\"opponent\":\"San Diego Padres\",\"ip\":\"4.0\",\"er\":5,\"k\":4,\"h\":8,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-04-22\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.2\",\"er\":2,\"k\":5,\"h\":5,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-04-01\",\"opponent\":\"Los Angeles Angels\",\"ip\":\"5.2\",\"er\":1,\"k\":10,\"h\":2,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":5.08,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":6,\"daysSinceLastStart\":53},\"workload\":{\"inningsTrend\":5.08,\"daysSinceLastStart\":53},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":4.4,\"projectedLineupWRCPlus\":92,\"obp\":0.298,\"iso\":0.145,\"kPct\":22.4,\"bbPct\":7.9,\"xBA\":0.257,\"xSLG\":0.438,\"xwOBA\":0.332,\"hardHitPct\":44.3,\"barrelPct\":9.8,\"battingAverage\":0.235,\"wOBA\":0.3,\"lineup\":{\"totalWAR\":4.4,\"totalWRCPlus\":92,\"totalOBP\":0.298,\"totalISO\":0.144,\"totalKPct\":22.9,\"totalBBPct\":7.1,\"totalAVG\":0.235,\"totalWOBA\":0.3,\"totalXBA\":0.257,\"totalXSLG\":0.425,\"totalXWOBA\":0.324,\"totalHardHitPct\":42.6,\"totalBarrelPct\":9,\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024}},\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":14.6,\"projectedLineupWRCPlus\":115.4,\"obp\":0.343,\"iso\":0.162,\"kPct\":21.2,\"bbPct\":11.2,\"xBA\":0.244,\"xSLG\":0.404,\"xwOBA\":0.33,\"hardHitPct\":40.6,\"barrelPct\":8.1,\"battingAverage\":0.243,\"wOBA\":0.338,\"lineup\":{\"totalWAR\":14.6,\"totalWRCPlus\":115.4,\"totalOBP\":0.343,\"totalISO\":0.176,\"totalKPct\":22.1,\"totalBBPct\":11.6,\"totalAVG\":0.243,\"totalWOBA\":0.338,\"totalXBA\":0.243,\"totalXSLG\":0.411,\"totalXWOBA\":0.333,\"totalHardHitPct\":40.9,\"totalBarrelPct\":8.7,\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":0.005}},\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":0.005},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":4.4,\"totalWRCPlus\":92,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":14.6,\"totalWRCPlus\":115.4,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.17,\"kMinusBbPct\":14.4,\"xFIP\":3.94,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.39,\"kMinusBbPct\":12.9,\"xFIP\":4.2,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":4,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":74.5,\"temperatureDisplay\":\"75°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 13 mph SSE\",\"compact\":\"75° | Cloudy | Wind 13 mph SSE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-25T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Freddy Peralta 3.83/4.32 vs Matthew Boyd 4.28/2.35; K-BB% 13.1 to 25.0.\",\"rawScore\":-12.11,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330.\",\"rawScore\":-13.86,\"weightedImpact\":-25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.17 vs 1.39, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":1.74,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.022 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.\",\"rawScore\":8.62,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-35.1,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Chicago Cubs: starting pitching is the clearest angle",
         "synopsis": "Freddy Peralta vs Matthew Boyd sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Freddy Peralta 3.83/4.32 vs Matthew Boyd 4.28/2.35; K-BB% 13.1 to 25.0. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1427,7 +1420,7 @@
           "opponent": "Chicago Cubs",
           "homeAway": "home",
           "ballpark": "Citi Field",
-          "weather": "75° | Cloudy | Wind 12 mph SSE",
+          "weather": "75° | Cloudy | Wind 13 mph SSE",
           "lineupStatus": "Projected",
           "moneyline": "N/A"
         },
@@ -1519,7 +1512,7 @@
         "analysis": {
           "whyMetsHaveACase": [
             "Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.",
-            "Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
+            "Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
           ],
           "whereTheRiskIs": [
             "Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.",
@@ -1530,7 +1523,7 @@
         "gameAnalysis": {
           "whyMetsHaveCase": [
             "Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.",
-            "Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
+            "Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
           ],
           "whereRiskIs": [
             "Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.",
@@ -1569,27 +1562,27 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.\n• Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP. Where the risk is\n• Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.\n• Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
+            "body": "Why the Mets have a case\n• Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.\n• Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP. Where the risk is\n• Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.\n• Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.80 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.52 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.80 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
-        "pickNarrative": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.80 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.52 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+        "pickNarrative": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.52 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
           "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.80 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+          "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.52 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
             "Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.",
-            "Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
+            "Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
           ],
           "risks": [
             "Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.",
             "Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330."
           ],
-          "bettingAngle": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.80 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+          "bettingAngle": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.52 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -1614,7 +1607,7 @@
             "category": "Bullpen",
             "edge": "Mets edge",
             "strength": "slight",
-            "reason": "Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.16 vs 1.39, last 3-day usage N/A IP vs N/A IP.",
+            "reason": "Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.17 vs 1.39, last 3-day usage N/A IP vs N/A IP.",
             "dataMode": "fallback"
           },
           {
@@ -1650,7 +1643,7 @@
           "xERA/FIP profile: Freddy Peralta 3.83/4.32 vs Matthew Boyd 4.28/2.35; K-BB% 13.1 to 25.0.",
           "Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330.",
           "Regression lens: Mets BA-xBA -0.022 and wOBA-xwOBA -0.024; opponent starter overperformance signal 1.50.",
-          "Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.16 vs 1.39, last 3-day usage N/A IP vs N/A IP."
+          "Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.17 vs 1.39, last 3-day usage N/A IP vs N/A IP."
         ],
         "pick": "Mets ML",
         "analyticalLean": "Opponent",
@@ -1680,8 +1673,8 @@
               "temperature": 74.5,
               "temperatureDisplay": "75°",
               "condition": "Cloudy",
-              "wind": "Wind 12 mph SSE",
-              "compact": "75° | Cloudy | Wind 12 mph SSE",
+              "wind": "Wind 13 mph SSE",
+              "compact": "75° | Cloudy | Wind 13 mph SSE",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-25T23:00Z"
             }
@@ -1843,10 +1836,10 @@
               "kPct": 22.4,
               "bbPct": 7.9,
               "xBA": 0.257,
-              "xSLG": 0.436,
+              "xSLG": 0.438,
               "xwOBA": 0.332,
-              "hardHitPct": 43.2,
-              "barrelPct": 9.6,
+              "hardHitPct": 44.3,
+              "barrelPct": 9.8,
               "battingAverage": 0.235,
               "wOBA": 0.3,
               "lineup": {
@@ -1936,7 +1929,7 @@
           },
           "bullpen": {
             "mets": {
-              "whip": 1.16,
+              "whip": 1.17,
               "kMinusBbPct": 14.4,
               "xFIP": 3.94,
               "taxLevel": "normal"
@@ -1966,8 +1959,8 @@
               "temperature": 74.5,
               "temperatureDisplay": "75°",
               "condition": "Cloudy",
-              "wind": "Wind 12 mph SSE",
-              "compact": "75° | Cloudy | Wind 12 mph SSE",
+              "wind": "Wind 13 mph SSE",
+              "compact": "75° | Cloudy | Wind 13 mph SSE",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-25T23:00Z"
             }
@@ -2003,7 +1996,7 @@
               "edge": "Opponent edge",
               "strength": "strong",
               "explanation": "Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330.",
-              "rawScore": -13.96,
+              "rawScore": -13.86,
               "weightedImpact": -25,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2022,8 +2015,8 @@
               "weight": 15,
               "edge": "Mets edge",
               "strength": "slight",
-              "explanation": "Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.16 vs 1.39, last 3-day usage N/A IP vs N/A IP.",
-              "rawScore": 1.76,
+              "explanation": "Bullpen shape: xFIP 3.94 vs 4.20, WHIP 1.17 vs 1.39, last 3-day usage N/A IP vs N/A IP.",
+              "rawScore": 1.74,
               "weightedImpact": 4.95,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2171,7 +2164,7 @@
             "ballpark": "Citi Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/112.svg",
-            "metadataLine": "June 25th | 7:10 PM ET | Citi Field | 75° | Cloudy | Wind 12 mph SSE"
+            "metadataLine": "June 25th | 7:10 PM ET | Citi Field | 75° | Cloudy | Wind 13 mph SSE"
           },
           "quickRead": {
             "modelLean": "Opponent",
@@ -2185,7 +2178,7 @@
             "opponent": "Chicago Cubs",
             "homeAway": "home",
             "ballpark": "Citi Field",
-            "weather": "75° | Cloudy | Wind 12 mph SSE",
+            "weather": "75° | Cloudy | Wind 13 mph SSE",
             "lineupStatus": "Projected",
             "moneyline": "N/A"
           },
@@ -2201,7 +2194,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "75° | Cloudy | Wind 12 mph SSE"
+                "value": "75° | Cloudy | Wind 13 mph SSE"
               },
               {
                 "label": "Mets ML Odds",
@@ -2493,7 +2486,7 @@
                     "left": "9.5%",
                     "leftPercentile": 38,
                     "leftMetricLabel": "Pitcher Barrel %",
-                    "right": 9.6,
+                    "right": 9.8,
                     "rightMetricLabel": "Batter Barrel %",
                     "rightRankKey": "barrelPct"
                   },
@@ -2511,7 +2504,7 @@
                     "left": "50.8%",
                     "leftPercentile": 10,
                     "leftMetricLabel": "Pitcher Hard Hit %",
-                    "right": 43.2,
+                    "right": 44.3,
                     "rightMetricLabel": "Batter Hard Hit %",
                     "rightRankKey": "hardHit"
                   },
@@ -2520,7 +2513,7 @@
                     "left": "0.443",
                     "leftPercentile": 39,
                     "leftMetricLabel": "Pitcher xSLG %",
-                    "right": 0.436,
+                    "right": 0.438,
                     "rightMetricLabel": "Batter xSLG %",
                     "rightRankKey": "xslg"
                   }
@@ -2545,7 +2538,7 @@
                   {
                     "label": "K%",
                     "left": "22.1%",
-                    "leftPercentile": 59,
+                    "leftPercentile": 58,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 21.2,
                     "rightMetricLabel": "Batter K%",
@@ -2606,15 +2599,15 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 19,
-                "appearancesPerPitcherPerDay": 0.19,
+                "appearances": 18,
+                "appearancesPerPitcherPerDay": 0.2,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
-                "seasonEra": 3.42,
-                "seasonWhip": 1.16,
-                "last20Era": 3.56
+                "seasonEra": 3.14,
+                "seasonWhip": 1.17,
+                "last20Era": 2.43
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2671,7 +2664,7 @@
                 },
                 {
                   "statKey": "avg",
-                  "seasonRank": 26,
+                  "seasonRank": 27,
                   "seasonValue": 0.231,
                   "recentRank": 19,
                   "recentValue": 0.244,
@@ -2795,19 +2788,19 @@
               {
                 "label": "xSLG",
                 "mets": 0.404,
-                "opp": 0.436
+                "opp": 0.438
               },
               {
                 "label": "Hard-Hit%",
                 "metricLabel": "Batter Hard-Hit%",
                 "mets": 40.6,
-                "opp": 43.2
+                "opp": 44.3
               },
               {
                 "label": "Barrel%",
                 "metricLabel": "Batter Barrel%",
                 "mets": 8.1,
-                "opp": 9.6
+                "opp": 9.8
               },
               {
                 "label": "K%",
@@ -2874,7 +2867,7 @@
               {
                 "label": "Lineup xSLG",
                 "mets": 0.404,
-                "opp": 0.436
+                "opp": 0.438
               },
               {
                 "label": "Lineup xwOBA",
@@ -3136,13 +3129,6 @@
                   "bbPct": "7.2%",
                   "kPct": "21.4%",
                   "war": "-0.1"
-                },
-                "recent20": {
-                  "avg": 0.194,
-                  "ops": 0.628,
-                  "plateAppearances": 74,
-                  "atBats": 67,
-                  "hits": 13
                 }
               },
               {
@@ -3560,7 +3546,7 @@
           "analysis": {
             "whyMetsHaveACase": [
               "Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.",
-              "Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
+              "Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
             ],
             "whereTheRiskIs": [
               "Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.",
@@ -3574,12 +3560,12 @@
               "woba": ".298",
               "iso": ".145",
               "xba": "0.257",
-              "xslg": "0.436",
+              "xslg": "0.438",
               "xwoba": "0.332",
               "ops": ".674",
               "avg": ".231",
-              "hardHit": "43.2",
-              "barrelPct": "9.6",
+              "hardHit": "44.3",
+              "barrelPct": "9.8",
               "bbPct": 7.9,
               "kPct": 22.4,
               "rotFip": "3.95",
@@ -3654,34 +3640,34 @@
           },
           "todayPick": {
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.80 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.52 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.",
-              "Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
+              "Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
             ],
             "risks": [
               "Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.",
               "Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330."
             ],
-            "bettingAngle": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.80 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.52 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.80 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "explanation": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.52 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.80 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Freddy Peralta 3.83 xERA, 4.83 ERA, N/A% K vs Matthew Boyd 4.28 xERA, 6.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 110.0; Bullpen: Mets xERA 3.52 vs 6.67. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "Regression: xwOBA 0.332 vs actual wOBA .298 — expected stats above actual production.",
-              "Bullpen: Mets BP: 3.42 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
+              "Bullpen: Mets BP: 3.14 ERA, 3.94 xFIP, Opp BP: 4.53 ERA, 4.20 xFIP."
             ],
             "risks": [
               "Matthew Boyd has the better pitching profile: K% 31% vs 22.1%, FIP 2.35 vs 4.32.",
               "Overall lineup quality only: projected WAR 4.4 vs 14.6, projected lineup wRC+ 92.0 vs 115.4, xwOBA 0.332 vs 0.330."
             ],
-            "bettingAngle": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.80 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Freddy Peralta versus Matthew Boyd with 3.83 xERA against 4.28. Secondary checks: offense 90.0 vs 110.0 wRC+, bullpen 3.52 vs 6.67 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
@@ -3694,7 +3680,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "75° | Cloudy | Wind 12 mph SSE"
+            "weatherSummary": "75° | Cloudy | Wind 13 mph SSE"
           }
         }
       },
@@ -3706,8 +3692,8 @@
         "temperature": 74.5,
         "temperatureDisplay": "75°",
         "condition": "Cloudy",
-        "wind": "Wind 12 mph SSE",
-        "compact": "75° | Cloudy | Wind 12 mph SSE",
+        "wind": "Wind 13 mph SSE",
+        "compact": "75° | Cloudy | Wind 13 mph SSE",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-06-25T23:00Z"
       },
