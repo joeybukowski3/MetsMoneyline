@@ -24,7 +24,13 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 681035,
+      "fullName": "Christian Scott",
+      "era": "3.10",
+      "fip": null,
+      "whip": "1.35"
+    },
     "opp": {
       "id": 660604,
       "fullName": "Alan Rangel",
@@ -178,6 +184,11 @@
           "ties": 0,
           "pct": ".415"
         },
+        "probablePitcher": {
+          "id": 681035,
+          "fullName": "Christian Scott",
+          "link": "/api/v1/people/681035"
+        },
         "splitSquad": false,
         "seriesNumber": 27,
         "springLeague": {
@@ -223,12 +234,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 143,
+        "name": "Philadelphia Phillies",
+        "link": "/api/v1/teams/143"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "PHI leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -248,13 +284,14 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-27T01:33:44.111Z",
+    "generatedAt": "2026-06-27T05:38:08.026Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-06-26",
-    "cacheKey": "next-game:2026-06-26"
+    "referenceDate": "2026-06-27",
+    "cacheKey": "next-game:2026-06-27"
   }
 }

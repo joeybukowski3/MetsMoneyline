@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-27T01:33:47.288Z",
-  "referenceDate": "2026-06-26",
-  "cacheKey": "sample-game:2026-06-26",
+  "generatedAt": "2026-06-27T05:38:10.492Z",
+  "referenceDate": "2026-06-27",
+  "cacheKey": "sample-game:2026-06-27",
   "games": [
     {
       "id": "2026-06-27-mets-vs-philadelphia-phillies",
@@ -23,8 +23,50 @@
       "status": "upcoming",
       "pitching": {
         "mets": {
-          "name": "TBD",
-          "announced": false,
+          "name": "Christian Scott",
+          "mlbId": 681035,
+          "announced": true,
+          "hand": "R",
+          "generatedAt": "2026-06-27T05:38:09.712Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "2-0, 3.10 ERA, 1.35 WHIP, 40.2 IP",
+          "seasonRecord": "2-0",
+          "seasonERA": "3.10",
+          "seasonFIP": "3.84",
+          "seasonXERA": "4.46",
+          "seasonWHIP": "1.35",
+          "seasonHR9": "0.89",
+          "last3KBB": "2.47",
+          "kMinusBbPct": 15.7,
+          "note": "2026 - 40.2 IP",
+          "savant": {
+            "xERA": "4.46",
+            "xBAAllowed": "0.246",
+            "xSLGAllowed": "0.384",
+            "xwOBAAllowed": "0.328",
+            "barrelPct": "5.6%",
+            "hardHitPct": "31.8%",
+            "whiffPct": "23%",
+            "chasePct": "27.3%",
+            "kPct": "26.4%",
+            "bbPct": "10.7%",
+            "exitVeloAllowed": 87.8,
+            "launchAngleAllowed": 17.6,
+            "percentiles": {
+              "barrelPct": 75,
+              "hardHitPct": 84,
+              "kPct": 80,
+              "bbPct": 39,
+              "xERA": 53,
+              "xBAAllowed": 55,
+              "xSLGAllowed": 62
+            }
+          },
           "vsRoster": {
             "PA": 2490,
             "kPct": 0.22428594377510044,
@@ -32,6 +74,8 @@
             "AVG": "0.251",
             "wOBA": "0.333",
             "xwOBA": "0.328",
+            "exitVelo": 87.8,
+            "launchAngle": 17.6,
             "xBA": "0.256",
             "xSLG": "0.425"
           }
@@ -41,7 +85,7 @@
           "mlbId": 660604,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-27T01:33:46.080Z",
+          "generatedAt": "2026-06-27T05:38:09.723Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -106,8 +150,8 @@
           "rating": 80,
           "team": "New York Mets",
           "usage": {
-            "appearances": 18,
-            "appearancesPerPitcherPerDay": 0.2,
+            "appearances": 20,
+            "appearancesPerPitcherPerDay": 0.22,
             "label": "Low",
             "tone": "green"
           },
@@ -128,16 +172,16 @@
           "seasonERA": 3.53,
           "seasonXERAAverage": 3.24,
           "seasonXFIP": "3.53",
-          "last20ERA": 4.14,
-          "last20WHIP": 1.2,
+          "last20ERA": 4.23,
+          "last20WHIP": 1.21,
           "seasonWHIP": 1.2,
           "seasonKPct": "25.1%",
           "seasonBBPct": "7.2%",
           "rating": 80,
           "team": "Philadelphia Phillies",
           "usage": {
-            "appearances": 20,
-            "appearancesPerPitcherPerDay": 0.2,
+            "appearances": 22,
+            "appearancesPerPitcherPerDay": 0.22,
             "label": "Low",
             "tone": "green"
           },
@@ -149,8 +193,8 @@
             "era": 1.63,
             "whip": 0.94,
             "saveConversionPct": 95.2,
-            "last7DaysAppearances": 3,
-            "last7DaysInningsPitched": "3.0"
+            "last7DaysAppearances": 4,
+            "last7DaysInningsPitched": "4.0"
           },
           "relieverCount": 14
         }
@@ -831,7 +875,7 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "note": "NYM vs RHP · OPP (season)",
+          "note": "NYM vs RHP · OPP vs RHP",
           "mets": "91",
           "opp": "93",
           "edge": "Opp"
@@ -940,8 +984,9 @@
           },
           "rankScope": "MLB",
           "rankTotal": 30,
+          "vsHand": "R",
           "usingSplit": false,
-          "fallbackNote": "season total"
+          "fallbackNote": "season total (no RHP split available)"
         }
       },
       "recentForm": {
@@ -980,7 +1025,7 @@
               "statKey": "bbPct",
               "seasonRank": 26,
               "seasonValue": 7.9,
-              "recentRank": 9,
+              "recentRank": 10,
               "recentValue": 9.1,
               "differencePct": 15.2,
               "improving": true
@@ -995,7 +1040,7 @@
               "statKey": "ops",
               "seasonRank": 22,
               "seasonValue": 0.703,
-              "recentRank": 12,
+              "recentRank": 10,
               "recentValue": 0.77,
               "differencePct": 9.5,
               "improving": true
@@ -1011,7 +1056,7 @@
             },
             {
               "statKey": "kPct",
-              "seasonRank": 23,
+              "seasonRank": 24,
               "seasonValue": 23.2,
               "recentRank": 27,
               "recentValue": 25.9,
@@ -1152,11 +1197,6 @@
         ],
         "oppInjuries": [
           {
-            "name": "Johan Rojas",
-            "status": "IL",
-            "description": "Johan Rojas (IL) - Philadelphia Phillies placed CF Johan Rojas on the 60-day injured list. Right elbow UCL repair."
-          },
-          {
             "name": "Brad Keller",
             "status": "IL",
             "description": "Brad Keller (IL) - Philadelphia Phillies placed RHP Brad Keller on the 15-day injured list retroactive to June 14, 2026. Right forearm tendinitis."
@@ -1210,9 +1250,60 @@
           "oppScore": 2,
           "result": "loss",
           "summary": "On 2026-06-26, the Mets lost to the Philadelphia Phillies 1-2 at Citi Field.",
-          "recapNotes": []
+          "recapHeadline": "Hill stuns teammates with jaw-dropping home run robbery",
+          "recapNotes": [
+            "It takes a lot to make Zack Wheeler smile on the mound.",
+            "But teammate Derek Hill making a jaw-dropping catch to rob Juan Soto of a home run is enough to do the trick."
+          ],
+          "source": {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Hill stuns teammates with jaw-dropping home run robbery",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/derek-hill-robs-juan-soto-of-home-run"
+          }
         },
-        "metsPitcherLog": [],
+        "metsPitcherLog": [
+          {
+            "date": "2026-06-11",
+            "opponent": "St. Louis Cardinals",
+            "ip": "4.2",
+            "er": "4",
+            "k": "6",
+            "h": "7",
+            "bb": "1",
+            "result": "W"
+          },
+          {
+            "date": "2026-06-05",
+            "opponent": "San Diego Padres",
+            "ip": "5.2",
+            "er": "0",
+            "k": "3",
+            "h": "3",
+            "bb": "2",
+            "result": "W"
+          },
+          {
+            "date": "2026-05-30",
+            "opponent": "Miami Marlins",
+            "ip": "5.0",
+            "er": "1",
+            "k": "8",
+            "h": "5",
+            "bb": "2",
+            "result": "W"
+          },
+          {
+            "date": "2026-05-24",
+            "opponent": "Miami Marlins",
+            "ip": "5.2",
+            "er": "0",
+            "k": "5",
+            "h": "4",
+            "bb": "2",
+            "result": "-"
+          }
+        ],
         "oppPitcherLog": [
           {
             "date": "2026-06-22",
@@ -1237,17 +1328,23 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
-        "recentSources": [],
+        "recentSources": [
+          {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Hill stuns teammates with jaw-dropping home run robbery",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/derek-hill-robs-juan-soto-of-home-run"
+          }
+        ],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-06-26",
-          "resolvedDate": "2026-06-27",
-          "bannerText": "OFF DAY — Previewing next game: Philadelphia Phillies on 2026-06-27"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-06-27",
+          "resolvedDate": "2026-06-27"
         }
       },
       "trends": [
@@ -1271,14 +1368,14 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-06-27T01:33:47.217Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-27\",\"opponent\":\"Philadelphia Phillies\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":81.3,\"temperatureDisplay\":\"81°\",\"condition\":\"Mostly clear\",\"wind\":\"Wind 7 mph S\",\"compact\":\"81° | Mostly clear | Wind 7 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-27T20:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Alan Rangel\",\"handedness\":\"R\",\"era\":2.25,\"xERA\":2.92,\"fip\":2.85,\"whip\":1,\"kPct\":27.3,\"bbPct\":0,\"kMinusBbPct\":27.3,\"hardHitPct\":21.7,\"barrelPct\":4.3,\"xBAAllowed\":0.23,\"xSLGAllowed\":0.363,\"xwOBAAllowed\":0.269,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-22\",\"opponent\":\"Washington Nationals\",\"ip\":\"5.0\",\"er\":1,\"k\":4,\"h\":5,\"bb\":0,\"result\":\"-\"},{\"date\":\"2026-04-22\",\"opponent\":\"Chicago Cubs\",\"ip\":\"3.0\",\"er\":1,\"k\":5,\"h\":3,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":4,\"avgEarnedRuns\":1,\"avgStrikeouts\":4.5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":4,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7.2,\"projectedLineupWRCPlus\":106.5,\"obp\":0.323,\"iso\":0.145,\"kPct\":22.3,\"bbPct\":8,\"xBA\":0.261,\"xSLG\":0.442,\"xwOBA\":0.333,\"hardHitPct\":42.9,\"barrelPct\":9.6,\"battingAverage\":0.251,\"wOBA\":0.322,\"lineup\":{\"totalWAR\":7.2,\"totalWRCPlus\":106.5,\"totalOBP\":0.323,\"totalISO\":0.157,\"totalKPct\":21.4,\"totalBBPct\":8.9,\"totalAVG\":0.251,\"totalWOBA\":0.322,\"totalXBA\":0.27,\"totalXSLG\":0.455,\"totalXWOBA\":0.345,\"totalHardHitPct\":44.1,\"totalBarrelPct\":10.1,\"regressionSignals\":{\"baMinusXba\":-0.019,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.019,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":8,\"projectedLineupWRCPlus\":109,\"obp\":0.323,\"iso\":0.167,\"kPct\":23.2,\"bbPct\":7.8,\"xBA\":0.254,\"xSLG\":0.418,\"xwOBA\":0.322,\"hardHitPct\":41.5,\"barrelPct\":8.5,\"battingAverage\":0.251,\"wOBA\":0.333,\"lineup\":{\"totalWAR\":8,\"totalWRCPlus\":109,\"totalOBP\":0.323,\"totalISO\":0.187,\"totalKPct\":22.8,\"totalBBPct\":8.3,\"totalAVG\":0.251,\"totalWOBA\":0.333,\"totalXBA\":0.256,\"totalXSLG\":0.425,\"totalXWOBA\":0.328,\"totalHardHitPct\":42.3,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.005}},\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.005},\"splitContext\":{\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7.2,\"totalWRCPlus\":106.5,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":8,\"totalWRCPlus\":109,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.18,\"kMinusBbPct\":14.6,\"xFIP\":3.92,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":17.9,\"xFIP\":3.53,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":81.3,\"temperatureDisplay\":\"81°\",\"condition\":\"Mostly clear\",\"wind\":\"Wind 7 mph S\",\"compact\":\"81° | Mostly clear | Wind 7 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-27T20:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: TBD N/A/N/A vs Alan Rangel 2.92/2.85; K-BB% N/A to 27.3.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.\",\"rawScore\":-0.76,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.92 vs 3.53, WHIP 1.18 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-2.22,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.019 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.27.\",\"rawScore\":7.32,\"weightedImpact\":6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 48.4%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.483,\"totalWeightedImpact\":-1.65,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mixed\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
-        "headline": "Mets vs Philadelphia Phillies: overall lineup quality is the clearest angle",
-        "synopsis": "TBD vs Alan Rangel sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322. Several key inputs are still missing, so the read should stay conservative.",
+        "raw": "{\"generatedAt\":\"2026-06-27T05:38:10.345Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-27\",\"opponent\":\"Philadelphia Phillies\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":78.8,\"temperatureDisplay\":\"79°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 2 mph NW\",\"compact\":\"79° | Cloudy | Wind 2 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-27T20:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":3.1,\"xERA\":4.46,\"fip\":3.84,\"whip\":1.35,\"kPct\":26.4,\"bbPct\":10.7,\"kMinusBbPct\":15.7,\"hardHitPct\":31.8,\"barrelPct\":5.6,\"xBAAllowed\":0.246,\"xSLGAllowed\":0.384,\"xwOBAAllowed\":0.328,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-11\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"4.2\",\"er\":4,\"k\":6,\"h\":7,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-05\",\"opponent\":\"San Diego Padres\",\"ip\":\"5.2\",\"er\":0,\"k\":3,\"h\":3,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-30\",\"opponent\":\"Miami Marlins\",\"ip\":\"5.0\",\"er\":1,\"k\":8,\"h\":5,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-05-24\",\"opponent\":\"Miami Marlins\",\"ip\":\"5.2\",\"er\":0,\"k\":5,\"h\":4,\"bb\":2,\"result\":\"-\"}],\"avgInnings\":5.25,\"avgEarnedRuns\":1.25,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":16},\"workload\":{\"inningsTrend\":5.25,\"daysSinceLastStart\":16},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Alan Rangel\",\"handedness\":\"R\",\"era\":2.25,\"xERA\":2.92,\"fip\":2.85,\"whip\":1,\"kPct\":27.3,\"bbPct\":0,\"kMinusBbPct\":27.3,\"hardHitPct\":21.7,\"barrelPct\":4.3,\"xBAAllowed\":0.23,\"xSLGAllowed\":0.363,\"xwOBAAllowed\":0.269,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-22\",\"opponent\":\"Washington Nationals\",\"ip\":\"5.0\",\"er\":1,\"k\":4,\"h\":5,\"bb\":0,\"result\":\"-\"},{\"date\":\"2026-04-22\",\"opponent\":\"Chicago Cubs\",\"ip\":\"3.0\",\"er\":1,\"k\":5,\"h\":3,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":4,\"avgEarnedRuns\":1,\"avgStrikeouts\":4.5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":4,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7.2,\"projectedLineupWRCPlus\":106.5,\"obp\":0.323,\"iso\":0.145,\"kPct\":22.3,\"bbPct\":8,\"xBA\":0.261,\"xSLG\":0.442,\"xwOBA\":0.333,\"hardHitPct\":42.9,\"barrelPct\":9.6,\"battingAverage\":0.251,\"wOBA\":0.322,\"lineup\":{\"totalWAR\":7.2,\"totalWRCPlus\":106.5,\"totalOBP\":0.323,\"totalISO\":0.157,\"totalKPct\":21.4,\"totalBBPct\":8.9,\"totalAVG\":0.251,\"totalWOBA\":0.322,\"totalXBA\":0.27,\"totalXSLG\":0.455,\"totalXWOBA\":0.345,\"totalHardHitPct\":44.1,\"totalBarrelPct\":10.1,\"regressionSignals\":{\"baMinusXba\":-0.019,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.019,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":8,\"projectedLineupWRCPlus\":109,\"obp\":0.323,\"iso\":0.167,\"kPct\":23.2,\"bbPct\":7.8,\"xBA\":0.254,\"xSLG\":0.418,\"xwOBA\":0.322,\"hardHitPct\":41.5,\"barrelPct\":8.5,\"battingAverage\":0.251,\"wOBA\":0.333,\"lineup\":{\"totalWAR\":8,\"totalWRCPlus\":109,\"totalOBP\":0.323,\"totalISO\":0.187,\"totalKPct\":22.8,\"totalBBPct\":8.3,\"totalAVG\":0.251,\"totalWOBA\":0.333,\"totalXBA\":0.256,\"totalXSLG\":0.425,\"totalXWOBA\":0.328,\"totalHardHitPct\":42.3,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.005}},\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.005},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7.2,\"totalWRCPlus\":106.5,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":8,\"totalWRCPlus\":109,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.18,\"kMinusBbPct\":14.6,\"xFIP\":3.92,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.2,\"kMinusBbPct\":17.9,\"xFIP\":3.53,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":78.8,\"temperatureDisplay\":\"79°\",\"condition\":\"Cloudy\",\"wind\":\"Wind 2 mph NW\",\"compact\":\"79° | Cloudy | Wind 2 mph NW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-27T20:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Christian Scott 4.46/3.84 vs Alan Rangel 2.92/2.85; K-BB% 15.7 to 27.3.\",\"rawScore\":-27.65,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.\",\"rawScore\":-0.76,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.92 vs 3.53, WHIP 1.18 vs 1.20, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-2.22,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.019 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.27.\",\"rawScore\":-1.08,\"weightedImpact\":-3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-41.55,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":0,\"oppMajorEdges\":4,\"fallbackHeavy\":true}}",
+        "headline": "Mets vs Philadelphia Phillies: starting pitching is the clearest angle",
+        "synopsis": "Christian Scott vs Alan Rangel sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Christian Scott 4.46/3.84 vs Alan Rangel 2.92/2.85; K-BB% 15.7 to 27.3. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
-          "modelLean": "Mixed",
+          "modelLean": "Opponent",
           "officialPick": "Mets ML",
-          "bestEdge": "Regression Signals",
-          "biggestRisk": "Lineup Quality"
+          "bestEdge": "Home/Away Split",
+          "biggestRisk": "Starting Pitching"
         },
         "gameDetails": {
           "date": "2026-06-27",
@@ -1286,15 +1383,15 @@
           "opponent": "Philadelphia Phillies",
           "homeAway": "home",
           "ballpark": "Citi Field",
-          "weather": "81° | Mostly clear | Wind 7 mph S",
+          "weather": "79° | Cloudy | Wind 2 mph NW",
           "lineupStatus": "Projected",
           "moneyline": "N/A"
         },
         "edgeSummary": {
           "startingPitching": {
             "category": "Starting Pitching",
-            "verdict": "Even",
-            "strength": "even",
+            "verdict": "Opponent edge",
+            "strength": "strong",
             "dataMode": "real"
           },
           "lineupQuality": {
@@ -1311,8 +1408,8 @@
           },
           "regressionSignals": {
             "category": "Regression Signals",
-            "verdict": "Mets edge",
-            "strength": "moderate",
+            "verdict": "Opponent edge",
+            "strength": "slight",
             "dataMode": "real"
           },
           "context": {
@@ -1336,8 +1433,8 @@
           "rows": [
             {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Opponent edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             {
@@ -1354,8 +1451,8 @@
             },
             {
               "category": "Regression Signals",
-              "verdict": "Mets edge",
-              "strength": "moderate",
+              "verdict": "Opponent edge",
+              "strength": "slight",
               "dataMode": "real"
             },
             {
@@ -1371,34 +1468,34 @@
               "dataMode": "fallback"
             }
           ],
-          "overallModelLean": "Mixed"
+          "overallModelLean": "Opponent"
         },
-        "pitchingEdgeSummary": "Starting pitching grades as essentially even on the current board.",
+        "pitchingEdgeSummary": "Alan Rangel holds the steadier underlying pitching profile entering this matchup.",
         "projectedLineupEdgeSummary": "The opponent has the better overall lineup-quality profile on the current inputs.",
         "analysis": {
           "whyMetsHaveACase": [
-            "Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production."
+            "No single dominant Mets edge. Lineup quality is the primary case."
           ],
           "whereTheRiskIs": [
-            "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-            "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+            "Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.",
+            "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322."
           ],
-          "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
-            "Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production."
+            "No single dominant Mets edge. Lineup quality is the primary case."
           ],
           "whereRiskIs": [
-            "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-            "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+            "Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.",
+            "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322."
           ],
-          "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
         },
         "sections": [
           {
             "heading": "1. Quick Read",
-            "body": "Model Lean: Mixed. Official Pick: Mets ML. Best Edge: Regression Signals. Biggest Risk: Lineup Quality."
+            "body": "Model Lean: Opponent. Official Pick: Mets ML. Best Edge: Home/Away Split. Biggest Risk: Starting Pitching."
           },
           {
             "heading": "2. Game Details",
@@ -1406,15 +1503,15 @@
           },
           {
             "heading": "3. Edge Summary",
-            "body": "Starting Pitching: Even | Lineup Quality: Opponent edge (fallback) | Bullpen: Opponent edge (fallback) | Regression Signals: Mets edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Mixed."
+            "body": "Starting Pitching: Opponent edge | Lineup Quality: Opponent edge (fallback) | Bullpen: Opponent edge (fallback) | Regression Signals: Opponent edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Opponent."
           },
           {
             "heading": "4. Starting Pitchers Comparison",
-            "body": "Starting pitching grades as essentially even on the current board."
+            "body": "Alan Rangel holds the steadier underlying pitching profile entering this matchup."
           },
           {
             "heading": "5. Pitcher Contact Profile vs Opponent",
-            "body": "xERA/FIP profile: TBD N/A/N/A vs Alan Rangel 2.92/2.85; K-BB% N/A to 27.3."
+            "body": "xERA/FIP profile: Christian Scott 4.46/3.84 vs Alan Rangel 2.92/2.85; K-BB% 15.7 to 27.3."
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
@@ -1426,26 +1523,26 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production. Where the risk is\n• Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.\n• Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A). Bottom line\nMixed board. Pick based on strongest individual matchup edge."
+            "body": "Why the Mets have a case\n• No single dominant Mets edge. Lineup quality is the primary case. Where the risk is\n• Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.\n• Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 48.3%; value edge +48.3 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.46 xERA, 3.10 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: TBD versus Alan Rangel with 0.00 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +48.3 points. Value check: Mets ML 0 with 0.0% implied and 48.3% model probability; value edge +48.3 points.",
-        "pickNarrative": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 48.3%; value edge +48.3 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Christian Scott versus Alan Rangel with 4.46 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+        "pickNarrative": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.46 xERA, 3.10 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
           "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 48.3%; value edge +48.3 points; Pick: New York Mets moneyline.",
+          "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.46 xERA, 3.10 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
-            "Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production."
+            "No single dominant Mets edge. Lineup quality is the primary case."
           ],
           "risks": [
-            "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-            "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+            "Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.",
+            "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322."
           ],
-          "bettingAngle": "Primary edge: TBD versus Alan Rangel with 0.00 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +48.3 points. Value check: Mets ML 0 with 0.0% implied and 48.3% model probability; value edge +48.3 points.",
+          "bettingAngle": "Primary edge: Christian Scott versus Alan Rangel with 4.46 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -1454,9 +1551,9 @@
         "edgeTable": [
           {
             "category": "Starting Pitching",
-            "edge": "Even",
-            "strength": "even",
-            "reason": "xERA/FIP profile: TBD N/A/N/A vs Alan Rangel 2.92/2.85; K-BB% N/A to 27.3.",
+            "edge": "Opponent edge",
+            "strength": "strong",
+            "reason": "xERA/FIP profile: Christian Scott 4.46/3.84 vs Alan Rangel 2.92/2.85; K-BB% 15.7 to 27.3.",
             "dataMode": "real"
           },
           {
@@ -1475,8 +1572,8 @@
           },
           {
             "category": "Regression Signals",
-            "edge": "Mets edge",
-            "strength": "moderate",
+            "edge": "Opponent edge",
+            "strength": "slight",
             "reason": "Regression lens: Mets BA-xBA -0.019 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.27.",
             "dataMode": "real"
           },
@@ -1498,18 +1595,18 @@
             "category": "Market Value",
             "edge": "Limited data",
             "strength": "even",
-            "reason": "Market check: Mets ML N/A implies N/A vs model 48.4%.",
+            "reason": "Market check: Mets ML N/A implies N/A vs model 35.0%.",
             "dataMode": "fallback"
           }
         ],
         "keyAngles": [
+          "xERA/FIP profile: Christian Scott 4.46/3.84 vs Alan Rangel 2.92/2.85; K-BB% 15.7 to 27.3.",
           "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-          "Regression lens: Mets BA-xBA -0.019 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.27.",
           "Bullpen shape: xFIP 3.92 vs 3.53, WHIP 1.18 vs 1.20, last 3-day usage N/A IP vs N/A IP.",
-          "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days."
+          "Regression lens: Mets BA-xBA -0.019 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.27."
         ],
         "pick": "Mets ML",
-        "analyticalLean": "Mixed",
+        "analyticalLean": "Opponent",
         "confidence": "low",
         "missingMetrics": [
           "Park factor",
@@ -1533,22 +1630,83 @@
             "homeAway": "home",
             "ballpark": "Citi Field",
             "weather": {
-              "temperature": 81.3,
-              "temperatureDisplay": "81°",
-              "condition": "Mostly clear",
-              "wind": "Wind 7 mph S",
-              "compact": "81° | Mostly clear | Wind 7 mph S",
+              "temperature": 78.8,
+              "temperatureDisplay": "79°",
+              "condition": "Cloudy",
+              "wind": "Wind 2 mph NW",
+              "compact": "79° | Cloudy | Wind 2 mph NW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-27T20:00Z"
             }
           },
           "pitchers": {
             "mets": {
-              "name": "TBD",
+              "name": "Christian Scott",
+              "handedness": "R",
+              "era": 3.1,
+              "xERA": 4.46,
+              "fip": 3.84,
+              "whip": 1.35,
+              "kPct": 26.4,
+              "bbPct": 10.7,
+              "kMinusBbPct": 15.7,
+              "hardHitPct": 31.8,
+              "barrelPct": 5.6,
+              "xBAAllowed": 0.246,
+              "xSLGAllowed": 0.384,
+              "xwOBAAllowed": 0.328,
               "recentStarts": {
-                "starts": []
+                "starts": [
+                  {
+                    "date": "2026-06-11",
+                    "opponent": "St. Louis Cardinals",
+                    "ip": "4.2",
+                    "er": 4,
+                    "k": 6,
+                    "h": 7,
+                    "bb": 1,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-06-05",
+                    "opponent": "San Diego Padres",
+                    "ip": "5.2",
+                    "er": 0,
+                    "k": 3,
+                    "h": 3,
+                    "bb": 2,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-05-30",
+                    "opponent": "Miami Marlins",
+                    "ip": "5.0",
+                    "er": 1,
+                    "k": 8,
+                    "h": 5,
+                    "bb": 2,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-05-24",
+                    "opponent": "Miami Marlins",
+                    "ip": "5.2",
+                    "er": 0,
+                    "k": 5,
+                    "h": 4,
+                    "bb": 2,
+                    "result": "-"
+                  }
+                ],
+                "avgInnings": 5.25,
+                "avgEarnedRuns": 1.25,
+                "avgStrikeouts": 5.5,
+                "daysSinceLastStart": 16
               },
-              "workload": {},
+              "workload": {
+                "inningsTrend": 5.25,
+                "daysSinceLastStart": 16
+              },
               "opponentHandednessProfile": {
                 "left": 0,
                 "right": 0,
@@ -1690,6 +1848,7 @@
                 "wobaMinusXwoba": 0.005
               },
               "splitContext": {
+                "pitcherHandedness": "R",
                 "splitDataAvailable": false
               }
             }
@@ -1737,11 +1896,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 81.3,
-              "temperatureDisplay": "81°",
-              "condition": "Mostly clear",
-              "wind": "Wind 7 mph S",
-              "compact": "81° | Mostly clear | Wind 7 mph S",
+              "temperature": 78.8,
+              "temperatureDisplay": "79°",
+              "condition": "Cloudy",
+              "wind": "Wind 2 mph NW",
+              "compact": "79° | Cloudy | Wind 2 mph NW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-27T20:00Z"
             }
@@ -1752,11 +1911,11 @@
             {
               "category": "Starting Pitching",
               "weight": 30,
-              "edge": "Even",
-              "strength": "even",
-              "explanation": "xERA/FIP profile: TBD N/A/N/A vs Alan Rangel 2.92/2.85; K-BB% N/A to 27.3.",
-              "rawScore": 0,
-              "weightedImpact": 0,
+              "edge": "Opponent edge",
+              "strength": "strong",
+              "explanation": "xERA/FIP profile: Christian Scott 4.46/3.84 vs Alan Rangel 2.92/2.85; K-BB% 15.7 to 27.3.",
+              "rawScore": -27.65,
+              "weightedImpact": -30,
               "dataMode": "real",
               "supportedBy": [
                 "ERA",
@@ -1813,11 +1972,11 @@
             {
               "category": "Regression Signals",
               "weight": 10,
-              "edge": "Mets edge",
-              "strength": "moderate",
+              "edge": "Opponent edge",
+              "strength": "slight",
               "explanation": "Regression lens: Mets BA-xBA -0.019 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.27.",
-              "rawScore": 7.32,
-              "weightedImpact": 6.6,
+              "rawScore": -1.08,
+              "weightedImpact": -3.3,
               "dataMode": "real",
               "supportedBy": [
                 "BA vs xBA",
@@ -1867,7 +2026,7 @@
               "weight": 5,
               "edge": "Limited data",
               "strength": "even",
-              "explanation": "Market check: Mets ML N/A implies N/A vs model 48.4%.",
+              "explanation": "Market check: Mets ML N/A implies N/A vs model 35.0%.",
               "rawScore": 0,
               "weightedImpact": 0,
               "dataMode": "fallback",
@@ -1877,8 +2036,8 @@
               ]
             }
           ],
-          "projectedWinProbability": 0.483,
-          "totalWeightedImpact": -1.65,
+          "projectedWinProbability": 0.35,
+          "totalWeightedImpact": -41.55,
           "confidence": "low",
           "criticalMissingCount": 6
         },
@@ -1937,21 +2096,21 @@
             }
           },
           "header": {
-            "title": "Mets vs Philadelphia Phillies: overall lineup quality is the clearest angle",
+            "title": "Mets vs Philadelphia Phillies: starting pitching is the clearest angle",
             "matchupTitle": "New York Mets vs Philadelphia Phillies",
-            "tagline": "overall lineup quality is the clearest angle",
+            "tagline": "starting pitching is the clearest angle",
             "date": "2026-06-27",
             "time": "4:10 PM ET",
             "ballpark": "Citi Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/143.svg",
-            "metadataLine": "June 27th | 4:10 PM ET | Citi Field | 81° | Mostly clear | Wind 7 mph S"
+            "metadataLine": "June 27th | 4:10 PM ET | Citi Field | 79° | Cloudy | Wind 2 mph NW"
           },
           "quickRead": {
-            "modelLean": "Mixed",
+            "modelLean": "Opponent",
             "officialPick": "Mets ML",
-            "bestEdge": "Regression Signals",
-            "biggestRisk": "Lineup Quality"
+            "bestEdge": "Home/Away Split",
+            "biggestRisk": "Starting Pitching"
           },
           "gameDetails": {
             "date": "2026-06-27",
@@ -1959,7 +2118,7 @@
             "opponent": "Philadelphia Phillies",
             "homeAway": "home",
             "ballpark": "Citi Field",
-            "weather": "81° | Mostly clear | Wind 7 mph S",
+            "weather": "79° | Cloudy | Wind 2 mph NW",
             "lineupStatus": "Projected",
             "moneyline": "N/A"
           },
@@ -1975,7 +2134,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "81° | Mostly clear | Wind 7 mph S"
+                "value": "79° | Cloudy | Wind 2 mph NW"
               },
               {
                 "label": "Mets ML Odds",
@@ -2017,8 +2176,8 @@
           "edgeSummary": {
             "startingPitching": {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Opponent edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             "lineupQuality": {
@@ -2035,8 +2194,8 @@
             },
             "regressionSignals": {
               "category": "Regression Signals",
-              "verdict": "Mets edge",
-              "strength": "moderate",
+              "verdict": "Opponent edge",
+              "strength": "slight",
               "dataMode": "real"
             },
             "context": {
@@ -2060,8 +2219,8 @@
             "rows": [
               {
                 "category": "Starting Pitching",
-                "verdict": "Even",
-                "strength": "even",
+                "verdict": "Opponent edge",
+                "strength": "strong",
                 "dataMode": "real"
               },
               {
@@ -2078,8 +2237,8 @@
               },
               {
                 "category": "Regression Signals",
-                "verdict": "Mets edge",
-                "strength": "moderate",
+                "verdict": "Opponent edge",
+                "strength": "slight",
                 "dataMode": "real"
               },
               {
@@ -2095,17 +2254,66 @@
                 "dataMode": "fallback"
               }
             ],
-            "overallModelLean": "Mixed"
+            "overallModelLean": "Opponent"
           },
           "startingPitchersComparison": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Christian Scott",
             "oppPitcher": "Alan Rangel",
             "seasonLabel": "2026",
             "metsCard": {
-              "name": "TBD",
+              "name": "Christian Scott",
+              "mlbId": 681035,
+              "record": "2-0",
+              "hand": "R",
               "teamLabel": "NYM",
-              "recentStarts": [],
-              "stats": {}
+              "recentStarts": [
+                {
+                  "date": "2026-06-11",
+                  "opponent": "St. Louis Cardinals",
+                  "ip": "4.2",
+                  "er": "4",
+                  "k": "6",
+                  "h": "7",
+                  "bb": "1",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-06-05",
+                  "opponent": "San Diego Padres",
+                  "ip": "5.2",
+                  "er": "0",
+                  "k": "3",
+                  "h": "3",
+                  "bb": "2",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-05-30",
+                  "opponent": "Miami Marlins",
+                  "ip": "5.0",
+                  "er": "1",
+                  "k": "8",
+                  "h": "5",
+                  "bb": "2",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-05-24",
+                  "opponent": "Miami Marlins",
+                  "ip": "5.2",
+                  "er": "0",
+                  "k": "5",
+                  "h": "4",
+                  "bb": "2",
+                  "result": "-"
+                }
+              ],
+              "stats": {
+                "era": "3.10",
+                "whip": "1.35",
+                "kPct": "26.4%",
+                "bbPct": "10.7%"
+              }
             },
             "oppCard": {
               "name": "Alan Rangel",
@@ -2145,12 +2353,14 @@
             "advancedMatchupTables": [
               {
                 "title": "Advanced Stats vs Opponent",
-                "leftHeader": "NYM TBD",
+                "leftHeader": "NYM Christian Scott",
                 "rightHeader": "PHI Offense",
                 "rightTeamKey": "opp",
                 "rows": [
                   {
                     "label": "Barrel %",
+                    "left": "5.6%",
+                    "leftPercentile": 75,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 8.5,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2158,6 +2368,8 @@
                   },
                   {
                     "label": "xBA",
+                    "left": "0.246",
+                    "leftPercentile": 55,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.254,
                     "rightMetricLabel": "Batter xBA",
@@ -2165,6 +2377,8 @@
                   },
                   {
                     "label": "Hard Hit %",
+                    "left": "31.8%",
+                    "leftPercentile": 84,
                     "leftMetricLabel": "Pitcher Hard Hit %",
                     "right": 41.5,
                     "rightMetricLabel": "Batter Hard Hit %",
@@ -2172,6 +2386,8 @@
                   },
                   {
                     "label": "xSLG %",
+                    "left": "0.384",
+                    "leftPercentile": 62,
                     "leftMetricLabel": "Pitcher xSLG %",
                     "right": 0.418,
                     "rightMetricLabel": "Batter xSLG %",
@@ -2225,19 +2441,24 @@
               },
               {
                 "title": "Advanced Stats vs Opponent Splits",
-                "leftHeader": "NYM TBD",
+                "leftHeader": "NYM Christian Scott",
                 "rightHeader": "PHI Profile",
                 "rightTeamKey": "opp",
                 "rows": [
                   {
-                    "label": "Pitching Hand / vs Split"
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Right",
+                    "right": "vs Right-handed pitching"
                   },
                   {
                     "label": "Innings Pitched / Plate Appearances",
+                    "left": "40.2",
                     "right": "2490"
                   },
                   {
                     "label": "K%",
+                    "left": "26.4%",
+                    "leftPercentile": 80,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 23.2,
                     "rightMetricLabel": "Batter K%",
@@ -2245,6 +2466,8 @@
                   },
                   {
                     "label": "BB%",
+                    "left": "10.7%",
+                    "leftPercentile": 39,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 7.8,
                     "rightMetricLabel": "Batter BB%",
@@ -2289,15 +2512,15 @@
                 ]
               }
             ],
-            "summary": "Starting pitching grades as essentially even on the current board."
+            "summary": "Alan Rangel holds the steadier underlying pitching profile entering this matchup."
           },
           "bullpenReport": {
             "mets": {
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 18,
-                "appearancesPerPitcherPerDay": 0.2,
+                "appearances": 20,
+                "appearancesPerPitcherPerDay": 0.22,
                 "label": "Low",
                 "tone": "green"
               },
@@ -2322,15 +2545,15 @@
               "teamName": "Philadelphia Phillies",
               "teamId": 143,
               "usage": {
-                "appearances": 20,
-                "appearancesPerPitcherPerDay": 0.2,
+                "appearances": 22,
+                "appearancesPerPitcherPerDay": 0.22,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.53,
                 "seasonWhip": 1.2,
-                "last20Era": 4.14
+                "last20Era": 4.23
               },
               "closer": {
                 "name": "Jhoan Duran",
@@ -2340,8 +2563,8 @@
                 "saveConversionPct": 95.2,
                 "era": 1.63,
                 "whip": 0.94,
-                "last7DaysAppearances": 3,
-                "last7DaysInningsPitched": "3.0"
+                "last7DaysAppearances": 4,
+                "last7DaysInningsPitched": "4.0"
               }
             }
           },
@@ -2381,7 +2604,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 26,
                   "seasonValue": 7.9,
-                  "recentRank": 9,
+                  "recentRank": 10,
                   "recentValue": 9.1,
                   "differencePct": 15.2,
                   "improving": true
@@ -2396,7 +2619,7 @@
                   "statKey": "ops",
                   "seasonRank": 22,
                   "seasonValue": 0.703,
-                  "recentRank": 12,
+                  "recentRank": 10,
                   "recentValue": 0.77,
                   "differencePct": 9.5,
                   "improving": true
@@ -2412,7 +2635,7 @@
                 },
                 {
                   "statKey": "kPct",
-                  "seasonRank": 23,
+                  "seasonRank": 24,
                   "seasonValue": 23.2,
                   "recentRank": 27,
                   "recentValue": 25.9,
@@ -2432,35 +2655,42 @@
             }
           },
           "pitcherContactProfile": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Christian Scott",
             "oppPitcher": "Alan Rangel",
             "pitcherRows": [
               {
                 "label": "xERA",
+                "mets": "4.46",
                 "opp": "2.92"
               },
               {
                 "label": "Barrel%",
+                "mets": "5.6%",
                 "opp": "4.3%"
               },
               {
                 "label": "Hard-Hit%",
+                "mets": "31.8%",
                 "opp": "21.7%"
               },
               {
                 "label": "Whiff%",
+                "mets": "23%",
                 "opp": "22.6%"
               },
               {
                 "label": "Chase%",
+                "mets": "27.3%",
                 "opp": "33.3%"
               },
               {
                 "label": "K%",
+                "mets": "26.4%",
                 "opp": "27.3%"
               },
               {
                 "label": "BB%",
+                "mets": "10.7%",
                 "opp": "0%"
               }
             ],
@@ -2507,11 +2737,12 @@
             ]
           },
           "pitcherSplitMatchup": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Christian Scott",
             "oppPitcher": "Alan Rangel",
             "pitcherRows": [
               {
                 "label": "Pitcher Hand",
+                "mets": "R",
                 "opp": "R"
               },
               {
@@ -2540,7 +2771,8 @@
             "opponentRows": [
               {
                 "label": "Pitcher Hand",
-                "mets": "R"
+                "mets": "R",
+                "opp": "R"
               },
               {
                 "label": "Lineup WAR",
@@ -3240,13 +3472,13 @@
           },
           "analysis": {
             "whyMetsHaveACase": [
-              "Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production."
+              "No single dominant Mets edge. Lineup quality is the primary case."
             ],
             "whereTheRiskIs": [
-              "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-              "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+              "Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.",
+              "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322."
             ],
-            "bottomLine": "Mixed board. Pick based on strongest individual matchup edge."
+            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
           },
           "teamAdvanced": {
             "mets": {
@@ -3327,38 +3559,39 @@
               },
               "rankScope": "MLB",
               "rankTotal": 30,
+              "vsHand": "R",
               "usingSplit": false,
-              "fallbackNote": "season total"
+              "fallbackNote": "season total (no RHP split available)"
             }
           },
           "todayPick": {
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 48.3%; value edge +48.3 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.46 xERA, 3.10 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production."
+              "No single dominant Mets edge. Lineup quality is the primary case."
             ],
             "risks": [
-              "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-              "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+              "Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.",
+              "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322."
             ],
-            "bettingAngle": "Primary edge: TBD versus Alan Rangel with 0.00 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +48.3 points. Value check: Mets ML 0 with 0.0% implied and 48.3% model probability; value edge +48.3 points.",
+            "bettingAngle": "Primary edge: Christian Scott versus Alan Rangel with 4.46 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: TBD versus Alan Rangel with 0.00 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +48.3 points. Value check: Mets ML 0 with 0.0% implied and 48.3% model probability; value edge +48.3 points.",
+            "explanation": "Primary edge: Christian Scott versus Alan Rangel with 4.46 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 48.3%; value edge +48.3 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 0-5 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.46 xERA, 3.10 ERA, N/A% K vs Alan Rangel 2.92 xERA, 2.25 ERA, N/A% K; Offense: Mets wRC+ 91.0 vs 93.0; Bullpen: Mets xERA 3.68 vs 3.24. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Regression: xwOBA 0.333 vs actual wOBA .299 — expected stats above actual production."
+              "No single dominant Mets edge. Lineup quality is the primary case."
             ],
             "risks": [
-              "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322.",
-              "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+              "Alan Rangel has the better pitching profile: K% 27.3% vs 26.4%, FIP 2.85 vs 3.84.",
+              "Overall lineup quality only: projected WAR 7.2 vs 8.0, projected lineup wRC+ 106.5 vs 109.0, xwOBA 0.333 vs 0.322."
             ],
-            "bettingAngle": "Primary edge: TBD versus Alan Rangel with 0.00 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +48.3 points. Value check: Mets ML 0 with 0.0% implied and 48.3% model probability; value edge +48.3 points.",
+            "bettingAngle": "Primary edge: Christian Scott versus Alan Rangel with 4.46 xERA against 2.92. Secondary checks: offense 91.0 vs 93.0 wRC+, bullpen 3.68 vs 3.24 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
@@ -3371,7 +3604,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "81° | Mostly clear | Wind 7 mph S"
+            "weatherSummary": "79° | Cloudy | Wind 2 mph NW"
           }
         }
       },
@@ -3380,11 +3613,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 81.3,
-        "temperatureDisplay": "81°",
-        "condition": "Mostly clear",
-        "wind": "Wind 7 mph S",
-        "compact": "81° | Mostly clear | Wind 7 mph S",
+        "temperature": 78.8,
+        "temperatureDisplay": "79°",
+        "condition": "Cloudy",
+        "wind": "Wind 2 mph NW",
+        "compact": "79° | Cloudy | Wind 2 mph NW",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-06-27T20:00Z"
       },
