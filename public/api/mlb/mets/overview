@@ -549,7 +549,7 @@
     "sourceProvider": "mlb-stats-api",
     "meta": {
       "provider": "mlb-stats-api",
-      "generatedAt": "2026-06-27T15:38:02.701Z",
+      "generatedAt": "2026-06-27T16:45:46.557Z",
       "cacheHint": "standings: 10-15 minutes"
     }
   },
@@ -1462,6 +1462,69 @@
         "name": "Outfielder",
         "type": "Outfielder",
         "abbreviation": "RF"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
+        "id": 681035,
+        "fullName": "Christian Scott",
+        "link": "/api/v1/people/681035",
+        "firstName": "Christian",
+        "lastName": "Scott",
+        "primaryNumber": "45",
+        "birthDate": "1999-06-15",
+        "currentAge": 27,
+        "birthCity": "Coconut Creek",
+        "birthStateProvince": "FL",
+        "birthCountry": "USA",
+        "height": "6' 4\"",
+        "weight": 215,
+        "active": true,
+        "primaryPosition": {
+          "code": "1",
+          "name": "Pitcher",
+          "type": "Pitcher",
+          "abbreviation": "P"
+        },
+        "useName": "Christian",
+        "useLastName": "Scott",
+        "middleName": "David",
+        "boxscoreName": "Scott",
+        "gender": "M",
+        "isPlayer": true,
+        "isVerified": true,
+        "draftYear": 2021,
+        "mlbDebutDate": "2024-05-04",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Christian Scott",
+        "nameSlug": "christian-scott-681035",
+        "firstLastName": "Christian Scott",
+        "lastFirstName": "Scott, Christian",
+        "lastInitName": "Scott, C",
+        "initLastName": "C Scott",
+        "fullFMLName": "Christian David Scott",
+        "fullLFMName": "Scott, Christian David",
+        "strikeZoneTop": 3.388,
+        "strikeZoneBottom": 1.71
+      },
+      "jerseyNumber": "45",
+      "position": {
+        "code": "1",
+        "name": "Pitcher",
+        "type": "Pitcher",
+        "abbreviation": "P"
       },
       "status": {
         "code": "A",
@@ -3406,69 +3469,6 @@
         "description": "Active"
       },
       "parentTeamId": 121
-    },
-    {
-      "person": {
-        "id": 804267,
-        "fullName": "Zach Thornton",
-        "link": "/api/v1/people/804267",
-        "firstName": "Zachary",
-        "lastName": "Thornton",
-        "primaryNumber": "49",
-        "birthDate": "2002-01-17",
-        "currentAge": 24,
-        "birthCity": "Winona",
-        "birthStateProvince": "MN",
-        "birthCountry": "USA",
-        "height": "6' 3\"",
-        "weight": 170,
-        "active": true,
-        "primaryPosition": {
-          "code": "1",
-          "name": "Pitcher",
-          "type": "Pitcher",
-          "abbreviation": "P"
-        },
-        "useName": "Zach",
-        "useLastName": "Thornton",
-        "middleName": "Charles",
-        "boxscoreName": "Thornton",
-        "gender": "M",
-        "isPlayer": true,
-        "isVerified": true,
-        "draftYear": 2023,
-        "mlbDebutDate": "2026-05-20",
-        "batSide": {
-          "code": "L",
-          "description": "Left"
-        },
-        "pitchHand": {
-          "code": "L",
-          "description": "Left"
-        },
-        "nameFirstLast": "Zach Thornton",
-        "nameSlug": "zach-thornton-804267",
-        "firstLastName": "Zach Thornton",
-        "lastFirstName": "Thornton, Zach",
-        "lastInitName": "Thornton, Z",
-        "initLastName": "Z Thornton",
-        "fullFMLName": "Zachary Charles Thornton",
-        "fullLFMName": "Thornton, Zachary Charles",
-        "strikeZoneTop": 3.344,
-        "strikeZoneBottom": 1.688
-      },
-      "jerseyNumber": "49",
-      "position": {
-        "code": "1",
-        "name": "Pitcher",
-        "type": "Pitcher",
-        "abbreviation": "P"
-      },
-      "status": {
-        "code": "A",
-        "description": "Active"
-      },
-      "parentTeamId": 121
     }
   ],
   "pitchers": [
@@ -4212,6 +4212,170 @@
         "name": "Outfielder",
         "type": "Outfielder",
         "abbreviation": "RF"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
+        "id": 681035,
+        "fullName": "Christian Scott",
+        "link": "/api/v1/people/681035",
+        "firstName": "Christian",
+        "lastName": "Scott",
+        "primaryNumber": "45",
+        "birthDate": "1999-06-15",
+        "currentAge": 27,
+        "birthCity": "Coconut Creek",
+        "birthStateProvince": "FL",
+        "birthCountry": "USA",
+        "height": "6' 4\"",
+        "weight": 215,
+        "active": true,
+        "primaryPosition": {
+          "code": "1",
+          "name": "Pitcher",
+          "type": "Pitcher",
+          "abbreviation": "P"
+        },
+        "useName": "Christian",
+        "useLastName": "Scott",
+        "middleName": "David",
+        "boxscoreName": "Scott",
+        "gender": "M",
+        "isPlayer": true,
+        "isVerified": true,
+        "draftYear": 2021,
+        "stats": [
+          {
+            "type": {
+              "displayName": "season"
+            },
+            "group": {
+              "displayName": "pitching"
+            },
+            "exemptions": [],
+            "splits": [
+              {
+                "season": "2026",
+                "stat": {
+                  "age": 27,
+                  "gamesPlayed": 9,
+                  "gamesStarted": 9,
+                  "groundOuts": 25,
+                  "airOuts": 46,
+                  "runs": 15,
+                  "doubles": 9,
+                  "triples": 0,
+                  "homeRuns": 4,
+                  "strikeOuts": 47,
+                  "baseOnBalls": 19,
+                  "intentionalWalks": 0,
+                  "hits": 36,
+                  "hitByPitch": 5,
+                  "avg": ".234",
+                  "atBats": 154,
+                  "obp": ".337",
+                  "slg": ".370",
+                  "ops": ".707",
+                  "caughtStealing": 1,
+                  "stolenBases": 2,
+                  "stolenBasePercentage": ".667",
+                  "caughtStealingPercentage": ".333",
+                  "groundIntoDoublePlay": 3,
+                  "numberOfPitches": 745,
+                  "era": "3.10",
+                  "inningsPitched": "40.2",
+                  "wins": 2,
+                  "losses": 0,
+                  "saves": 0,
+                  "saveOpportunities": 0,
+                  "holds": 0,
+                  "blownSaves": 0,
+                  "earnedRuns": 14,
+                  "whip": "1.35",
+                  "battersFaced": 178,
+                  "outs": 122,
+                  "gamesPitched": 9,
+                  "completeGames": 0,
+                  "shutouts": 0,
+                  "strikes": 471,
+                  "strikePercentage": ".630",
+                  "hitBatsmen": 5,
+                  "balks": 1,
+                  "wildPitches": 0,
+                  "pickoffs": 0,
+                  "totalBases": 57,
+                  "groundOutsToAirouts": "0.54",
+                  "winPercentage": "1.000",
+                  "pitchesPerInning": "18.32",
+                  "gamesFinished": 0,
+                  "strikeoutWalkRatio": "2.47",
+                  "strikeoutsPer9Inn": "10.40",
+                  "walksPer9Inn": "4.20",
+                  "hitsPer9Inn": "7.97",
+                  "runsScoredPer9": "3.32",
+                  "homeRunsPer9": "0.89",
+                  "inheritedRunners": 0,
+                  "inheritedRunnersScored": 0,
+                  "catchersInterference": 0,
+                  "sacBunts": 0,
+                  "sacFlies": 0
+                },
+                "team": {
+                  "id": 121,
+                  "name": "New York Mets",
+                  "link": "/api/v1/teams/121"
+                },
+                "player": {
+                  "id": 681035,
+                  "fullName": "Christian Scott",
+                  "link": "/api/v1/people/681035"
+                },
+                "league": {
+                  "id": 104,
+                  "name": "National League",
+                  "link": "/api/v1/league/104"
+                },
+                "sport": {
+                  "id": 1,
+                  "link": "/api/v1/sports/1",
+                  "abbreviation": "MLB"
+                },
+                "gameType": "R"
+              }
+            ]
+          }
+        ],
+        "mlbDebutDate": "2024-05-04",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Christian Scott",
+        "nameSlug": "christian-scott-681035",
+        "firstLastName": "Christian Scott",
+        "lastFirstName": "Scott, Christian",
+        "lastInitName": "Scott, C",
+        "initLastName": "C Scott",
+        "fullFMLName": "Christian David Scott",
+        "fullLFMName": "Scott, Christian David",
+        "strikeZoneTop": 3.388,
+        "strikeZoneBottom": 1.71
+      },
+      "jerseyNumber": "45",
+      "position": {
+        "code": "1",
+        "name": "Pitcher",
+        "type": "Pitcher",
+        "abbreviation": "P"
       },
       "status": {
         "code": "A",
@@ -6428,170 +6592,6 @@
         "name": "Outfielder",
         "type": "Outfielder",
         "abbreviation": "CF"
-      },
-      "status": {
-        "code": "A",
-        "description": "Active"
-      },
-      "parentTeamId": 121
-    },
-    {
-      "person": {
-        "id": 804267,
-        "fullName": "Zach Thornton",
-        "link": "/api/v1/people/804267",
-        "firstName": "Zachary",
-        "lastName": "Thornton",
-        "primaryNumber": "49",
-        "birthDate": "2002-01-17",
-        "currentAge": 24,
-        "birthCity": "Winona",
-        "birthStateProvince": "MN",
-        "birthCountry": "USA",
-        "height": "6' 3\"",
-        "weight": 170,
-        "active": true,
-        "primaryPosition": {
-          "code": "1",
-          "name": "Pitcher",
-          "type": "Pitcher",
-          "abbreviation": "P"
-        },
-        "useName": "Zach",
-        "useLastName": "Thornton",
-        "middleName": "Charles",
-        "boxscoreName": "Thornton",
-        "gender": "M",
-        "isPlayer": true,
-        "isVerified": true,
-        "draftYear": 2023,
-        "stats": [
-          {
-            "type": {
-              "displayName": "season"
-            },
-            "group": {
-              "displayName": "pitching"
-            },
-            "exemptions": [],
-            "splits": [
-              {
-                "season": "2026",
-                "stat": {
-                  "age": 24,
-                  "gamesPlayed": 2,
-                  "gamesStarted": 2,
-                  "groundOuts": 10,
-                  "airOuts": 10,
-                  "runs": 5,
-                  "doubles": 3,
-                  "triples": 0,
-                  "homeRuns": 1,
-                  "strikeOuts": 10,
-                  "baseOnBalls": 3,
-                  "intentionalWalks": 0,
-                  "hits": 9,
-                  "hitByPitch": 0,
-                  "avg": ".231",
-                  "atBats": 39,
-                  "obp": ".286",
-                  "slg": ".385",
-                  "ops": ".671",
-                  "caughtStealing": 0,
-                  "stolenBases": 1,
-                  "stolenBasePercentage": "1.000",
-                  "caughtStealingPercentage": ".000",
-                  "groundIntoDoublePlay": 1,
-                  "numberOfPitches": 158,
-                  "era": "4.35",
-                  "inningsPitched": "10.1",
-                  "wins": 0,
-                  "losses": 1,
-                  "saves": 0,
-                  "saveOpportunities": 0,
-                  "holds": 0,
-                  "blownSaves": 0,
-                  "earnedRuns": 5,
-                  "whip": "1.16",
-                  "battersFaced": 42,
-                  "outs": 31,
-                  "gamesPitched": 2,
-                  "completeGames": 0,
-                  "shutouts": 0,
-                  "strikes": 107,
-                  "strikePercentage": ".680",
-                  "hitBatsmen": 0,
-                  "balks": 0,
-                  "wildPitches": 0,
-                  "pickoffs": 0,
-                  "totalBases": 15,
-                  "groundOutsToAirouts": "1.00",
-                  "winPercentage": ".000",
-                  "pitchesPerInning": "15.29",
-                  "gamesFinished": 0,
-                  "strikeoutWalkRatio": "3.33",
-                  "strikeoutsPer9Inn": "8.71",
-                  "walksPer9Inn": "2.61",
-                  "hitsPer9Inn": "7.84",
-                  "runsScoredPer9": "4.35",
-                  "homeRunsPer9": "0.87",
-                  "inheritedRunners": 0,
-                  "inheritedRunnersScored": 0,
-                  "catchersInterference": 0,
-                  "sacBunts": 0,
-                  "sacFlies": 0
-                },
-                "team": {
-                  "id": 121,
-                  "name": "New York Mets",
-                  "link": "/api/v1/teams/121"
-                },
-                "player": {
-                  "id": 804267,
-                  "fullName": "Zach Thornton",
-                  "link": "/api/v1/people/804267"
-                },
-                "league": {
-                  "id": 104,
-                  "name": "National League",
-                  "link": "/api/v1/league/104"
-                },
-                "sport": {
-                  "id": 1,
-                  "link": "/api/v1/sports/1",
-                  "abbreviation": "MLB"
-                },
-                "gameType": "R"
-              }
-            ]
-          }
-        ],
-        "mlbDebutDate": "2026-05-20",
-        "batSide": {
-          "code": "L",
-          "description": "Left"
-        },
-        "pitchHand": {
-          "code": "L",
-          "description": "Left"
-        },
-        "nameFirstLast": "Zach Thornton",
-        "nameSlug": "zach-thornton-804267",
-        "firstLastName": "Zach Thornton",
-        "lastFirstName": "Thornton, Zach",
-        "lastInitName": "Thornton, Z",
-        "initLastName": "Z Thornton",
-        "fullFMLName": "Zachary Charles Thornton",
-        "fullLFMName": "Thornton, Zachary Charles",
-        "strikeZoneTop": 3.344,
-        "strikeZoneBottom": 1.688
-      },
-      "jerseyNumber": "49",
-      "position": {
-        "code": "1",
-        "name": "Pitcher",
-        "type": "Pitcher",
-        "abbreviation": "P"
       },
       "status": {
         "code": "A",
