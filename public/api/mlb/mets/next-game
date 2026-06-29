@@ -1,7 +1,7 @@
 {
   "gameId": 822792,
   "startTime": "2026-06-29T23:07:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 141,
     "canonicalKey": "blue-jays",
@@ -40,9 +40,119 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
-    "opp": []
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "LF"
+      },
+      {
+        "order": 3,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 5,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 6,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 7,
+        "playerId": 668901,
+        "name": "Mark Vientos",
+        "pos": "DH"
+      },
+      {
+        "order": 8,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "2B"
+      },
+      {
+        "order": 9,
+        "playerId": 682626,
+        "name": "Francisco Alvarez",
+        "pos": "C"
+      }
+    ],
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 543807,
+        "name": "George Springer",
+        "pos": "DH"
+      },
+      {
+        "order": 2,
+        "playerId": 664770,
+        "name": "Nathan Lukes",
+        "pos": "RF"
+      },
+      {
+        "order": 3,
+        "playerId": 665489,
+        "name": "Vladimir Guerrero Jr.",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 672960,
+        "name": "Kazuma Okamoto",
+        "pos": "3B"
+      },
+      {
+        "order": 5,
+        "playerId": 676391,
+        "name": "Ernie Clement",
+        "pos": "SS"
+      },
+      {
+        "order": 6,
+        "playerId": 678218,
+        "name": "Brandon Valenzuela",
+        "pos": "C"
+      },
+      {
+        "order": 7,
+        "playerId": 649966,
+        "name": "Luis Urías",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 682818,
+        "name": "Yohendrick Piñango",
+        "pos": "LF"
+      },
+      {
+        "order": 9,
+        "playerId": 664702,
+        "name": "Myles Straw",
+        "pos": "CF"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +165,9 @@
     "officialDate": "2026-06-29",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -116,6 +226,7 @@
           "ties": 0,
           "pct": ".417"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 640455,
           "fullName": "Sean Manaea",
@@ -184,6 +295,7 @@
           "ties": 0,
           "pct": ".464"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 702056,
           "fullName": "Trey Yesavage",
@@ -200,13 +312,104 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 702056,
+          "fullName": "Trey Yesavage",
+          "link": "/api/v1/people/702056"
+        },
+        "catcher": {
+          "id": 678218,
+          "fullName": "Brandon Valenzuela",
+          "link": "/api/v1/people/678218"
+        },
+        "first": {
+          "id": 665489,
+          "fullName": "Vladimir Guerrero Jr.",
+          "link": "/api/v1/people/665489"
+        },
+        "second": {
+          "id": 649966,
+          "fullName": "Luis Urías",
+          "link": "/api/v1/people/649966"
+        },
+        "third": {
+          "id": 672960,
+          "fullName": "Kazuma Okamoto",
+          "link": "/api/v1/people/672960"
+        },
+        "shortstop": {
+          "id": 676391,
+          "fullName": "Ernie Clement",
+          "link": "/api/v1/people/676391"
+        },
+        "left": {
+          "id": 682818,
+          "fullName": "Yohendrick Piñango",
+          "link": "/api/v1/people/682818"
+        },
+        "center": {
+          "id": 664702,
+          "fullName": "Myles Straw",
+          "link": "/api/v1/people/664702"
+        },
+        "right": {
+          "id": 664770,
+          "fullName": "Nathan Lukes",
+          "link": "/api/v1/people/664770"
+        },
+        "batter": {
+          "id": 543807,
+          "fullName": "George Springer",
+          "link": "/api/v1/people/543807"
+        },
+        "onDeck": {
+          "id": 664770,
+          "fullName": "Nathan Lukes",
+          "link": "/api/v1/people/664770"
+        },
+        "inHole": {
+          "id": 665489,
+          "fullName": "Vladimir Guerrero Jr.",
+          "link": "/api/v1/people/665489"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 141,
           "name": "Toronto Blue Jays",
@@ -214,12 +417,36 @@
         }
       },
       "offense": {
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "inHole": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "pitcher": {
+          "id": 640455,
+          "fullName": "Sean Manaea",
+          "link": "/api/v1/people/640455"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
-      }
+      },
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 14,
@@ -260,11 +487,268 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 543807,
+          "fullName": "George Springer",
+          "link": "/api/v1/people/543807",
+          "firstName": "George",
+          "lastName": "Springer",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "George"
+        },
+        {
+          "id": 664770,
+          "fullName": "Nathan Lukes",
+          "link": "/api/v1/people/664770",
+          "firstName": "Nathan",
+          "lastName": "Lukes",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Nathan"
+        },
+        {
+          "id": 665489,
+          "fullName": "Vladimir Guerrero Jr.",
+          "link": "/api/v1/people/665489",
+          "firstName": "Vladimir",
+          "lastName": "Guerrero",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Vladimir"
+        },
+        {
+          "id": 672960,
+          "fullName": "Kazuma Okamoto",
+          "link": "/api/v1/people/672960",
+          "firstName": "Kazuma",
+          "lastName": "Okamoto",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Kazuma"
+        },
+        {
+          "id": 676391,
+          "fullName": "Ernie Clement",
+          "link": "/api/v1/people/676391",
+          "firstName": "Ernie",
+          "lastName": "Clement",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Ernie"
+        },
+        {
+          "id": 678218,
+          "fullName": "Brandon Valenzuela",
+          "link": "/api/v1/people/678218",
+          "firstName": "Brandon",
+          "lastName": "Valenzuela",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Brandon"
+        },
+        {
+          "id": 649966,
+          "fullName": "Luis Urías",
+          "link": "/api/v1/people/649966",
+          "firstName": "Luis",
+          "lastName": "Urías",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Luis"
+        },
+        {
+          "id": 682818,
+          "fullName": "Yohendrick Piñango",
+          "link": "/api/v1/people/682818",
+          "firstName": "Yohendrick",
+          "lastName": "Pinango",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Yohendrick"
+        },
+        {
+          "id": 664702,
+          "fullName": "Myles Straw",
+          "link": "/api/v1/people/664702",
+          "firstName": "Myles",
+          "lastName": "Straw",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Myles"
+        }
+      ],
+      "awayPlayers": [
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901",
+          "firstName": "Mark",
+          "lastName": "Vientos",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Mark"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626",
+          "firstName": "Francisco",
+          "lastName": "Alvarez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Francisco"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-29T19:15:29.458Z",
+    "generatedAt": "2026-06-29T21:06:31.751Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-29",
     "cacheKey": "next-game:2026-06-29"
