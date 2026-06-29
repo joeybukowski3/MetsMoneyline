@@ -549,7 +549,7 @@
     "sourceProvider": "mlb-stats-api",
     "meta": {
       "provider": "mlb-stats-api",
-      "generatedAt": "2026-06-29T17:11:48.268Z",
+      "generatedAt": "2026-06-29T19:15:29.459Z",
       "cacheHint": "standings: 10-15 minutes"
     }
   },
@@ -2403,6 +2403,69 @@
     },
     {
       "person": {
+        "id": 680702,
+        "fullName": "Joey Gerber",
+        "link": "/api/v1/people/680702",
+        "firstName": "Joseph",
+        "lastName": "Gerber",
+        "primaryNumber": "56",
+        "birthDate": "1997-05-03",
+        "currentAge": 29,
+        "birthCity": "Maple Grove",
+        "birthStateProvince": "MN",
+        "birthCountry": "USA",
+        "height": "6' 4\"",
+        "weight": 212,
+        "active": true,
+        "primaryPosition": {
+          "code": "1",
+          "name": "Pitcher",
+          "type": "Pitcher",
+          "abbreviation": "P"
+        },
+        "useName": "Joey",
+        "useLastName": "Gerber",
+        "middleName": "Cliff",
+        "boxscoreName": "Gerber, J",
+        "gender": "M",
+        "isPlayer": true,
+        "isVerified": false,
+        "draftYear": 2018,
+        "mlbDebutDate": "2020-08-04",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Joey Gerber",
+        "nameSlug": "joey-gerber-680702",
+        "firstLastName": "Joey Gerber",
+        "lastFirstName": "Gerber, Joey",
+        "lastInitName": "Gerber, J",
+        "initLastName": "J Gerber",
+        "fullFMLName": "Joseph Cliff Gerber",
+        "fullLFMName": "Gerber, Joseph Cliff",
+        "strikeZoneTop": 3.388,
+        "strikeZoneBottom": 1.71
+      },
+      "jerseyNumber": "56",
+      "position": {
+        "code": "1",
+        "name": "Pitcher",
+        "type": "Pitcher",
+        "abbreviation": "P"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
         "id": 665742,
         "fullName": "Juan Soto",
         "link": "/api/v1/people/665742",
@@ -3259,69 +3322,6 @@
         "strikeZoneBottom": 1.733
       },
       "jerseyNumber": "59",
-      "position": {
-        "code": "1",
-        "name": "Pitcher",
-        "type": "Pitcher",
-        "abbreviation": "P"
-      },
-      "status": {
-        "code": "A",
-        "description": "Active"
-      },
-      "parentTeamId": 121
-    },
-    {
-      "person": {
-        "id": 668964,
-        "fullName": "Tobias Myers",
-        "link": "/api/v1/people/668964",
-        "firstName": "Tobias",
-        "lastName": "Myers",
-        "primaryNumber": "32",
-        "birthDate": "1998-08-05",
-        "currentAge": 27,
-        "birthCity": "Winter Haven",
-        "birthStateProvince": "FL",
-        "birthCountry": "USA",
-        "height": "6' 1\"",
-        "weight": 223,
-        "active": true,
-        "primaryPosition": {
-          "code": "1",
-          "name": "Pitcher",
-          "type": "Pitcher",
-          "abbreviation": "P"
-        },
-        "useName": "Tobias",
-        "useLastName": "Myers",
-        "middleName": "Kane",
-        "boxscoreName": "Myers",
-        "gender": "M",
-        "isPlayer": true,
-        "isVerified": false,
-        "draftYear": 2016,
-        "mlbDebutDate": "2024-04-23",
-        "batSide": {
-          "code": "R",
-          "description": "Right"
-        },
-        "pitchHand": {
-          "code": "R",
-          "description": "Right"
-        },
-        "nameFirstLast": "Tobias Myers",
-        "nameSlug": "tobias-myers-668964",
-        "firstLastName": "Tobias Myers",
-        "lastFirstName": "Myers, Tobias",
-        "lastInitName": "Myers, T",
-        "initLastName": "T Myers",
-        "fullFMLName": "Tobias Kane Myers",
-        "fullLFMName": "Myers, Tobias Kane",
-        "strikeZoneTop": 3.255,
-        "strikeZoneBottom": 1.643
-      },
-      "jerseyNumber": "32",
       "position": {
         "code": "1",
         "name": "Pitcher",
@@ -5465,6 +5465,170 @@
     },
     {
       "person": {
+        "id": 680702,
+        "fullName": "Joey Gerber",
+        "link": "/api/v1/people/680702",
+        "firstName": "Joseph",
+        "lastName": "Gerber",
+        "primaryNumber": "56",
+        "birthDate": "1997-05-03",
+        "currentAge": 29,
+        "birthCity": "Maple Grove",
+        "birthStateProvince": "MN",
+        "birthCountry": "USA",
+        "height": "6' 4\"",
+        "weight": 212,
+        "active": true,
+        "primaryPosition": {
+          "code": "1",
+          "name": "Pitcher",
+          "type": "Pitcher",
+          "abbreviation": "P"
+        },
+        "useName": "Joey",
+        "useLastName": "Gerber",
+        "middleName": "Cliff",
+        "boxscoreName": "Gerber, J",
+        "gender": "M",
+        "isPlayer": true,
+        "isVerified": false,
+        "draftYear": 2018,
+        "stats": [
+          {
+            "type": {
+              "displayName": "season"
+            },
+            "group": {
+              "displayName": "pitching"
+            },
+            "exemptions": [],
+            "splits": [
+              {
+                "season": "2026",
+                "stat": {
+                  "age": 29,
+                  "gamesPlayed": 3,
+                  "gamesStarted": 0,
+                  "groundOuts": 1,
+                  "airOuts": 8,
+                  "runs": 1,
+                  "doubles": 3,
+                  "triples": 0,
+                  "homeRuns": 0,
+                  "strikeOuts": 6,
+                  "baseOnBalls": 1,
+                  "intentionalWalks": 0,
+                  "hits": 5,
+                  "hitByPitch": 0,
+                  "avg": ".250",
+                  "atBats": 20,
+                  "obp": ".286",
+                  "slg": ".400",
+                  "ops": ".686",
+                  "caughtStealing": 0,
+                  "stolenBases": 0,
+                  "stolenBasePercentage": ".---",
+                  "caughtStealingPercentage": ".---",
+                  "groundIntoDoublePlay": 0,
+                  "numberOfPitches": 78,
+                  "era": "1.80",
+                  "inningsPitched": "5.0",
+                  "wins": 0,
+                  "losses": 0,
+                  "saves": 0,
+                  "saveOpportunities": 0,
+                  "holds": 0,
+                  "blownSaves": 0,
+                  "earnedRuns": 1,
+                  "whip": "1.20",
+                  "battersFaced": 21,
+                  "outs": 15,
+                  "gamesPitched": 3,
+                  "completeGames": 0,
+                  "shutouts": 0,
+                  "strikes": 53,
+                  "strikePercentage": ".680",
+                  "hitBatsmen": 0,
+                  "balks": 0,
+                  "wildPitches": 0,
+                  "pickoffs": 0,
+                  "totalBases": 8,
+                  "groundOutsToAirouts": "0.13",
+                  "winPercentage": ".---",
+                  "pitchesPerInning": "15.60",
+                  "gamesFinished": 2,
+                  "strikeoutWalkRatio": "6.00",
+                  "strikeoutsPer9Inn": "10.80",
+                  "walksPer9Inn": "1.80",
+                  "hitsPer9Inn": "9.00",
+                  "runsScoredPer9": "1.80",
+                  "homeRunsPer9": "0.00",
+                  "inheritedRunners": 0,
+                  "inheritedRunnersScored": 0,
+                  "catchersInterference": 0,
+                  "sacBunts": 0,
+                  "sacFlies": 0
+                },
+                "team": {
+                  "id": 121,
+                  "name": "New York Mets",
+                  "link": "/api/v1/teams/121"
+                },
+                "player": {
+                  "id": 680702,
+                  "fullName": "Joey Gerber",
+                  "link": "/api/v1/people/680702"
+                },
+                "league": {
+                  "id": 104,
+                  "name": "National League",
+                  "link": "/api/v1/league/104"
+                },
+                "sport": {
+                  "id": 1,
+                  "link": "/api/v1/sports/1",
+                  "abbreviation": "MLB"
+                },
+                "gameType": "R"
+              }
+            ]
+          }
+        ],
+        "mlbDebutDate": "2020-08-04",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Joey Gerber",
+        "nameSlug": "joey-gerber-680702",
+        "firstLastName": "Joey Gerber",
+        "lastFirstName": "Gerber, Joey",
+        "lastInitName": "Gerber, J",
+        "initLastName": "J Gerber",
+        "fullFMLName": "Joseph Cliff Gerber",
+        "fullLFMName": "Gerber, Joseph Cliff",
+        "strikeZoneTop": 3.388,
+        "strikeZoneBottom": 1.71
+      },
+      "jerseyNumber": "56",
+      "position": {
+        "code": "1",
+        "name": "Pitcher",
+        "type": "Pitcher",
+        "abbreviation": "P"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
         "id": 665742,
         "fullName": "Juan Soto",
         "link": "/api/v1/people/665742",
@@ -6360,170 +6524,6 @@
         "strikeZoneBottom": 1.733
       },
       "jerseyNumber": "59",
-      "position": {
-        "code": "1",
-        "name": "Pitcher",
-        "type": "Pitcher",
-        "abbreviation": "P"
-      },
-      "status": {
-        "code": "A",
-        "description": "Active"
-      },
-      "parentTeamId": 121
-    },
-    {
-      "person": {
-        "id": 668964,
-        "fullName": "Tobias Myers",
-        "link": "/api/v1/people/668964",
-        "firstName": "Tobias",
-        "lastName": "Myers",
-        "primaryNumber": "32",
-        "birthDate": "1998-08-05",
-        "currentAge": 27,
-        "birthCity": "Winter Haven",
-        "birthStateProvince": "FL",
-        "birthCountry": "USA",
-        "height": "6' 1\"",
-        "weight": 223,
-        "active": true,
-        "primaryPosition": {
-          "code": "1",
-          "name": "Pitcher",
-          "type": "Pitcher",
-          "abbreviation": "P"
-        },
-        "useName": "Tobias",
-        "useLastName": "Myers",
-        "middleName": "Kane",
-        "boxscoreName": "Myers",
-        "gender": "M",
-        "isPlayer": true,
-        "isVerified": false,
-        "draftYear": 2016,
-        "stats": [
-          {
-            "type": {
-              "displayName": "season"
-            },
-            "group": {
-              "displayName": "pitching"
-            },
-            "exemptions": [],
-            "splits": [
-              {
-                "season": "2026",
-                "stat": {
-                  "age": 27,
-                  "gamesPlayed": 24,
-                  "gamesStarted": 3,
-                  "groundOuts": 40,
-                  "airOuts": 50,
-                  "runs": 31,
-                  "doubles": 13,
-                  "triples": 1,
-                  "homeRuns": 8,
-                  "strikeOuts": 32,
-                  "baseOnBalls": 12,
-                  "intentionalWalks": 1,
-                  "hits": 46,
-                  "hitByPitch": 0,
-                  "avg": ".277",
-                  "atBats": 166,
-                  "obp": ".324",
-                  "slg": ".512",
-                  "ops": ".836",
-                  "caughtStealing": 0,
-                  "stolenBases": 6,
-                  "stolenBasePercentage": "1.000",
-                  "caughtStealingPercentage": ".000",
-                  "groundIntoDoublePlay": 2,
-                  "numberOfPitches": 648,
-                  "era": "6.21",
-                  "inningsPitched": "42.0",
-                  "wins": 0,
-                  "losses": 2,
-                  "saves": 1,
-                  "saveOpportunities": 3,
-                  "holds": 3,
-                  "blownSaves": 2,
-                  "earnedRuns": 29,
-                  "whip": "1.38",
-                  "battersFaced": 180,
-                  "outs": 126,
-                  "gamesPitched": 24,
-                  "completeGames": 0,
-                  "shutouts": 0,
-                  "strikes": 435,
-                  "strikePercentage": ".670",
-                  "hitBatsmen": 0,
-                  "balks": 0,
-                  "wildPitches": 1,
-                  "pickoffs": 1,
-                  "totalBases": 85,
-                  "groundOutsToAirouts": "0.80",
-                  "winPercentage": ".000",
-                  "pitchesPerInning": "15.43",
-                  "gamesFinished": 4,
-                  "strikeoutWalkRatio": "2.67",
-                  "strikeoutsPer9Inn": "6.86",
-                  "walksPer9Inn": "2.57",
-                  "hitsPer9Inn": "9.86",
-                  "runsScoredPer9": "6.64",
-                  "homeRunsPer9": "1.71",
-                  "inheritedRunners": 12,
-                  "inheritedRunnersScored": 4,
-                  "catchersInterference": 0,
-                  "sacBunts": 1,
-                  "sacFlies": 1
-                },
-                "team": {
-                  "id": 121,
-                  "name": "New York Mets",
-                  "link": "/api/v1/teams/121"
-                },
-                "player": {
-                  "id": 668964,
-                  "fullName": "Tobias Myers",
-                  "link": "/api/v1/people/668964"
-                },
-                "league": {
-                  "id": 104,
-                  "name": "National League",
-                  "link": "/api/v1/league/104"
-                },
-                "sport": {
-                  "id": 1,
-                  "link": "/api/v1/sports/1",
-                  "abbreviation": "MLB"
-                },
-                "gameType": "R"
-              }
-            ]
-          }
-        ],
-        "mlbDebutDate": "2024-04-23",
-        "batSide": {
-          "code": "R",
-          "description": "Right"
-        },
-        "pitchHand": {
-          "code": "R",
-          "description": "Right"
-        },
-        "nameFirstLast": "Tobias Myers",
-        "nameSlug": "tobias-myers-668964",
-        "firstLastName": "Tobias Myers",
-        "lastFirstName": "Myers, Tobias",
-        "lastInitName": "Myers, T",
-        "initLastName": "T Myers",
-        "fullFMLName": "Tobias Kane Myers",
-        "fullLFMName": "Myers, Tobias Kane",
-        "strikeZoneTop": 3.255,
-        "strikeZoneBottom": 1.643
-      },
-      "jerseyNumber": "32",
       "position": {
         "code": "1",
         "name": "Pitcher",
