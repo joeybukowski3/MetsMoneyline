@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-06-30T01:48:55.256Z",
-  "referenceDate": "2026-06-29",
-  "cacheKey": "sample-game:2026-06-29",
+  "generatedAt": "2026-06-30T06:08:52.905Z",
+  "referenceDate": "2026-06-30",
+  "cacheKey": "sample-game:2026-06-30",
   "games": [
     {
       "id": "2026-06-30-mets-vs-toronto-blue-jays",
@@ -27,7 +27,7 @@
           "mlbId": 690997,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-30T01:48:53.621Z",
+          "generatedAt": "2026-06-30T06:08:51.580Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -85,7 +85,7 @@
           "mlbId": 592332,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-06-30T01:48:53.627Z",
+          "generatedAt": "2026-06-30T06:08:51.588Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -143,16 +143,16 @@
           "seasonERA": 2.43,
           "seasonXERAAverage": 3.11,
           "seasonXFIP": "3.88",
-          "last20ERA": 1.46,
-          "last20WHIP": 0.81,
-          "seasonWHIP": 1.1,
+          "last20ERA": 1.29,
+          "last20WHIP": 0.8,
+          "seasonWHIP": 1.11,
           "seasonKPct": "23.9%",
           "seasonBBPct": "9.2%",
           "rating": 81,
           "team": "New York Mets",
           "usage": {
-            "appearances": 19,
-            "appearancesPerPitcherPerDay": 0.21,
+            "appearances": 21,
+            "appearancesPerPitcherPerDay": 0.23,
             "label": "Low",
             "tone": "green"
           },
@@ -173,8 +173,8 @@
           "seasonERA": 2.57,
           "seasonXERAAverage": 3.29,
           "seasonXFIP": "4.00",
-          "last20ERA": 2.1,
-          "last20WHIP": 1.37,
+          "last20ERA": 2.05,
+          "last20WHIP": 1.39,
           "seasonWHIP": 1.23,
           "seasonKPct": "23.3%",
           "seasonBBPct": "9.5%",
@@ -1017,7 +1017,7 @@
               "statKey": "kPct",
               "seasonRank": 17,
               "seasonValue": 22.2,
-              "recentRank": 20,
+              "recentRank": 21,
               "recentValue": 23.1,
               "differencePct": -4.1,
               "improving": false
@@ -1026,7 +1026,7 @@
               "statKey": "bbPct",
               "seasonRank": 25,
               "seasonValue": 8.1,
-              "recentRank": 4,
+              "recentRank": 5,
               "recentValue": 9.7,
               "differencePct": 19.8,
               "improving": true
@@ -1041,14 +1041,14 @@
               "statKey": "ops",
               "seasonRank": 24,
               "seasonValue": 0.699,
-              "recentRank": 22,
+              "recentRank": 23,
               "recentValue": 0.702,
               "differencePct": 0.4,
               "improving": true
             },
             {
               "statKey": "avg",
-              "seasonRank": 10,
+              "seasonRank": 11,
               "seasonValue": 0.247,
               "recentRank": 19,
               "recentValue": 0.243,
@@ -1245,7 +1245,17 @@
           "oppScore": 2,
           "result": "loss",
           "summary": "On 2026-06-29, the Mets lost to the Toronto Blue Jays 1-2 at Rogers Centre.",
-          "recapNotes": []
+          "recapHeadline": "Yesavage gets back in control to snap Blue Jays' 6-game skid",
+          "recapNotes": [
+            "Wonderful things can happen when you don’t rush to give up the first run of the ballgame.",
+            "The Blue Jays finally flipped that script and struck first against the Mets Monday thanks to Juan Soto, who whiffed on a bouncing ball from George Springer which allowed Springer to race all the way around the bases and score ."
+          ],
+          "source": {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Yesavage gets back in control to snap Blue Jays' 6-game skid",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/trey-yesavage-blue-jays-beat-mets"
+          }
         },
         "metsPitcherLog": [
           {
@@ -1333,17 +1343,23 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
-        "recentSources": [],
+        "recentSources": [
+          {
+            "source": "MLB.com",
+            "label": "Last meeting recap",
+            "headline": "Yesavage gets back in control to snap Blue Jays' 6-game skid",
+            "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/trey-yesavage-blue-jays-beat-mets"
+          }
+        ],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-06-29",
-          "resolvedDate": "2026-06-30",
-          "bannerText": "OFF DAY — Previewing next game: Toronto Blue Jays on 2026-06-30"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-06-30",
+          "resolvedDate": "2026-06-30"
         }
       },
       "trends": [
@@ -1367,7 +1383,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-06-30T01:48:55.063Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-30\",\"opponent\":\"Toronto Blue Jays\",\"homeAway\":\"road\",\"ballpark\":\"Rogers Centre\",\"weather\":{\"temperature\":84.7,\"temperatureDisplay\":\"85°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph SW\",\"compact\":\"85° | Clear | Wind 11 mph SW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-30T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Nolan McLean\",\"handedness\":\"R\",\"era\":4.03,\"xERA\":3.42,\"fip\":3.69,\"whip\":1.12,\"kPct\":28.5,\"bbPct\":9.1,\"kMinusBbPct\":19.4,\"hardHitPct\":36.2,\"barrelPct\":6.8,\"xBAAllowed\":0.211,\"xSLGAllowed\":0.333,\"xwOBAAllowed\":0.29,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-24\",\"opponent\":\"Chicago Cubs\",\"ip\":\"6.0\",\"er\":6,\"k\":9,\"h\":7,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-17\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"7.0\",\"er\":0,\"k\":9,\"h\":3,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-12\",\"opponent\":\"Atlanta Braves\",\"ip\":\"4.0\",\"er\":2,\"k\":6,\"h\":3,\"bb\":4,\"result\":\"W\"},{\"date\":\"2026-06-06\",\"opponent\":\"San Diego Padres\",\"ip\":\"6.0\",\"er\":1,\"k\":5,\"h\":3,\"bb\":3,\"result\":\"-\"}],\"avgInnings\":5.75,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":7.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Kevin Gausman\",\"handedness\":\"R\",\"era\":4.36,\"xERA\":3.71,\"fip\":3.78,\"whip\":1.19,\"kPct\":23.6,\"bbPct\":5.6,\"kMinusBbPct\":18,\"hardHitPct\":38.1,\"barrelPct\":8.7,\"xBAAllowed\":0.241,\"xSLGAllowed\":0.403,\"xwOBAAllowed\":0.301,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-25\",\"opponent\":\"Texas Rangers\",\"ip\":\"6.0\",\"er\":6,\"k\":4,\"h\":10,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-19\",\"opponent\":\"Chicago Cubs\",\"ip\":\"2.0\",\"er\":7,\"k\":3,\"h\":7,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-06-13\",\"opponent\":\"New York Yankees\",\"ip\":\"7.0\",\"er\":1,\"k\":7,\"h\":1,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-06-07\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.0\",\"er\":4,\"k\":5,\"h\":5,\"bb\":0,\"result\":\"W\"}],\"avgInnings\":5,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":4.75,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":6.5,\"projectedLineupWRCPlus\":104,\"obp\":0.315,\"iso\":0.144,\"kPct\":22.3,\"bbPct\":8.1,\"xBA\":0.259,\"xSLG\":0.438,\"xwOBA\":0.331,\"hardHitPct\":42.4,\"barrelPct\":9.4,\"battingAverage\":0.249,\"wOBA\":0.318,\"lineup\":{\"totalWAR\":6.5,\"totalWRCPlus\":104,\"totalOBP\":0.315,\"totalISO\":0.16,\"totalKPct\":20.2,\"totalBBPct\":8.1,\"totalAVG\":0.249,\"totalWOBA\":0.318,\"totalXBA\":0.269,\"totalXSLG\":0.453,\"totalXWOBA\":0.341,\"totalHardHitPct\":44,\"totalBarrelPct\":9.2,\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":9.4,\"projectedLineupWRCPlus\":103,\"obp\":0.322,\"iso\":0.143,\"kPct\":19.9,\"bbPct\":7.4,\"xBA\":0.249,\"xSLG\":0.379,\"xwOBA\":0.306,\"hardHitPct\":36.2,\"barrelPct\":6.6,\"battingAverage\":0.256,\"wOBA\":0.32,\"lineup\":{\"totalWAR\":9.4,\"totalWRCPlus\":103,\"totalOBP\":0.322,\"totalISO\":0.148,\"totalKPct\":18.7,\"totalBBPct\":7.7,\"totalAVG\":0.256,\"totalWOBA\":0.32,\"totalXBA\":0.25,\"totalXSLG\":0.381,\"totalXWOBA\":0.307,\"totalHardHitPct\":35.6,\"totalBarrelPct\":6.6,\"regressionSignals\":{\"baMinusXba\":0.006,\"wobaMinusXwoba\":0.013}},\"regressionSignals\":{\"baMinusXba\":0.006,\"wobaMinusXwoba\":0.013},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":6.5,\"totalWRCPlus\":104,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":9.4,\"totalWRCPlus\":103,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.1,\"kMinusBbPct\":14.7,\"xFIP\":3.88,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.23,\"kMinusBbPct\":13.8,\"xFIP\":4,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":84.7,\"temperatureDisplay\":\"85°\",\"condition\":\"Clear\",\"wind\":\"Wind 11 mph SW\",\"compact\":\"85° | Clear | Wind 11 mph SW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-30T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Nolan McLean 3.42/3.69 vs Kevin Gausman 3.71/3.78; K-BB% 19.4 to 18.0.\",\"rawScore\":6.41,\"weightedImpact\":19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 6.5 vs 9.4, projected lineup wRC+ 104.0 vs 103.0, xwOBA 0.331 vs 0.306.\",\"rawScore\":-2.42,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.10 vs 1.23, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":0.94,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00.\",\"rawScore\":3.2,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 64.8%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.648,\"totalWeightedImpact\":14.85,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-06-30T06:08:52.754Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-06-30\",\"opponent\":\"Toronto Blue Jays\",\"homeAway\":\"road\",\"ballpark\":\"Rogers Centre\",\"weather\":{\"temperature\":86.3,\"temperatureDisplay\":\"86°\",\"condition\":\"Thunderstorms\",\"wind\":\"Wind 12 mph SSW\",\"compact\":\"86° | Thunderstorms | Wind 12 mph SSW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-30T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Nolan McLean\",\"handedness\":\"R\",\"era\":4.03,\"xERA\":3.42,\"fip\":3.69,\"whip\":1.12,\"kPct\":28.5,\"bbPct\":9.1,\"kMinusBbPct\":19.4,\"hardHitPct\":36.2,\"barrelPct\":6.8,\"xBAAllowed\":0.211,\"xSLGAllowed\":0.333,\"xwOBAAllowed\":0.29,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-24\",\"opponent\":\"Chicago Cubs\",\"ip\":\"6.0\",\"er\":6,\"k\":9,\"h\":7,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-17\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"7.0\",\"er\":0,\"k\":9,\"h\":3,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-12\",\"opponent\":\"Atlanta Braves\",\"ip\":\"4.0\",\"er\":2,\"k\":6,\"h\":3,\"bb\":4,\"result\":\"W\"},{\"date\":\"2026-06-06\",\"opponent\":\"San Diego Padres\",\"ip\":\"6.0\",\"er\":1,\"k\":5,\"h\":3,\"bb\":3,\"result\":\"-\"}],\"avgInnings\":5.75,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":7.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Kevin Gausman\",\"handedness\":\"R\",\"era\":4.36,\"xERA\":3.71,\"fip\":3.78,\"whip\":1.19,\"kPct\":23.6,\"bbPct\":5.6,\"kMinusBbPct\":18,\"hardHitPct\":38.1,\"barrelPct\":8.7,\"xBAAllowed\":0.241,\"xSLGAllowed\":0.403,\"xwOBAAllowed\":0.301,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-25\",\"opponent\":\"Texas Rangers\",\"ip\":\"6.0\",\"er\":6,\"k\":4,\"h\":10,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-19\",\"opponent\":\"Chicago Cubs\",\"ip\":\"2.0\",\"er\":7,\"k\":3,\"h\":7,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-06-13\",\"opponent\":\"New York Yankees\",\"ip\":\"7.0\",\"er\":1,\"k\":7,\"h\":1,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-06-07\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.0\",\"er\":4,\"k\":5,\"h\":5,\"bb\":0,\"result\":\"W\"}],\"avgInnings\":5,\"avgEarnedRuns\":4.5,\"avgStrikeouts\":4.75,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":6.5,\"projectedLineupWRCPlus\":104,\"obp\":0.315,\"iso\":0.144,\"kPct\":22.3,\"bbPct\":8.1,\"xBA\":0.259,\"xSLG\":0.438,\"xwOBA\":0.331,\"hardHitPct\":42.4,\"barrelPct\":9.4,\"battingAverage\":0.249,\"wOBA\":0.318,\"lineup\":{\"totalWAR\":6.5,\"totalWRCPlus\":104,\"totalOBP\":0.315,\"totalISO\":0.16,\"totalKPct\":20.2,\"totalBBPct\":8.1,\"totalAVG\":0.249,\"totalWOBA\":0.318,\"totalXBA\":0.269,\"totalXSLG\":0.453,\"totalXWOBA\":0.341,\"totalHardHitPct\":44,\"totalBarrelPct\":9.2,\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.02,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":9.4,\"projectedLineupWRCPlus\":103,\"obp\":0.322,\"iso\":0.143,\"kPct\":19.9,\"bbPct\":7.4,\"xBA\":0.249,\"xSLG\":0.379,\"xwOBA\":0.306,\"hardHitPct\":36.2,\"barrelPct\":6.6,\"battingAverage\":0.256,\"wOBA\":0.32,\"lineup\":{\"totalWAR\":9.4,\"totalWRCPlus\":103,\"totalOBP\":0.322,\"totalISO\":0.148,\"totalKPct\":18.7,\"totalBBPct\":7.7,\"totalAVG\":0.256,\"totalWOBA\":0.32,\"totalXBA\":0.25,\"totalXSLG\":0.381,\"totalXWOBA\":0.307,\"totalHardHitPct\":35.6,\"totalBarrelPct\":6.6,\"regressionSignals\":{\"baMinusXba\":0.006,\"wobaMinusXwoba\":0.013}},\"regressionSignals\":{\"baMinusXba\":0.006,\"wobaMinusXwoba\":0.013},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":6.5,\"totalWRCPlus\":104,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":9.4,\"totalWRCPlus\":103,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.11,\"kMinusBbPct\":14.7,\"xFIP\":3.88,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.23,\"kMinusBbPct\":13.8,\"xFIP\":4,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":86.3,\"temperatureDisplay\":\"86°\",\"condition\":\"Thunderstorms\",\"wind\":\"Wind 12 mph SSW\",\"compact\":\"86° | Thunderstorms | Wind 12 mph SSW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-06-30T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Nolan McLean 3.42/3.69 vs Kevin Gausman 3.71/3.78; K-BB% 19.4 to 18.0.\",\"rawScore\":6.41,\"weightedImpact\":19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 6.5 vs 9.4, projected lineup wRC+ 104.0 vs 103.0, xwOBA 0.331 vs 0.306.\",\"rawScore\":-2.42,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.11 vs 1.23, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":0.92,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00.\",\"rawScore\":3.2,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 64.8%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.648,\"totalWeightedImpact\":14.85,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":3,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Toronto Blue Jays: starting pitching is the clearest angle",
         "synopsis": "Nolan McLean vs Kevin Gausman sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Nolan McLean 3.42/3.69 vs Kevin Gausman 3.71/3.78; K-BB% 19.4 to 18.0. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1382,7 +1398,7 @@
           "opponent": "Toronto Blue Jays",
           "homeAway": "road",
           "ballpark": "Rogers Centre",
-          "weather": "85° | Clear | Wind 11 mph SW",
+          "weather": "86° | Thunderstorms | Wind 12 mph SSW",
           "lineupStatus": "Projected",
           "moneyline": "N/A"
         },
@@ -1572,7 +1588,7 @@
             "category": "Bullpen",
             "edge": "Mets edge",
             "strength": "slight",
-            "reason": "Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.10 vs 1.23, last 3-day usage N/A IP vs N/A IP.",
+            "reason": "Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.11 vs 1.23, last 3-day usage N/A IP vs N/A IP.",
             "dataMode": "fallback"
           },
           {
@@ -1607,7 +1623,7 @@
         "keyAngles": [
           "xERA/FIP profile: Nolan McLean 3.42/3.69 vs Kevin Gausman 3.71/3.78; K-BB% 19.4 to 18.0.",
           "Overall lineup quality only: projected WAR 6.5 vs 9.4, projected lineup wRC+ 104.0 vs 103.0, xwOBA 0.331 vs 0.306.",
-          "Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.10 vs 1.23, last 3-day usage N/A IP vs N/A IP.",
+          "Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.11 vs 1.23, last 3-day usage N/A IP vs N/A IP.",
           "Regression lens: Mets BA-xBA -0.020 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00."
         ],
         "pick": "Mets ML",
@@ -1635,11 +1651,11 @@
             "homeAway": "road",
             "ballpark": "Rogers Centre",
             "weather": {
-              "temperature": 84.7,
-              "temperatureDisplay": "85°",
-              "condition": "Clear",
-              "wind": "Wind 11 mph SW",
-              "compact": "85° | Clear | Wind 11 mph SW",
+              "temperature": 86.3,
+              "temperatureDisplay": "86°",
+              "condition": "Thunderstorms",
+              "wind": "Wind 12 mph SSW",
+              "compact": "86° | Thunderstorms | Wind 12 mph SSW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-30T23:00Z"
             }
@@ -1894,7 +1910,7 @@
           },
           "bullpen": {
             "mets": {
-              "whip": 1.1,
+              "whip": 1.11,
               "kMinusBbPct": 14.7,
               "xFIP": 3.88,
               "taxLevel": "normal"
@@ -1921,11 +1937,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 84.7,
-              "temperatureDisplay": "85°",
-              "condition": "Clear",
-              "wind": "Wind 11 mph SW",
-              "compact": "85° | Clear | Wind 11 mph SW",
+              "temperature": 86.3,
+              "temperatureDisplay": "86°",
+              "condition": "Thunderstorms",
+              "wind": "Wind 12 mph SSW",
+              "compact": "86° | Thunderstorms | Wind 12 mph SSW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-06-30T23:00Z"
             }
@@ -1980,8 +1996,8 @@
               "weight": 15,
               "edge": "Mets edge",
               "strength": "slight",
-              "explanation": "Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.10 vs 1.23, last 3-day usage N/A IP vs N/A IP.",
-              "rawScore": 0.94,
+              "explanation": "Bullpen shape: xFIP 3.88 vs 4.00, WHIP 1.11 vs 1.23, last 3-day usage N/A IP vs N/A IP.",
+              "rawScore": 0.92,
               "weightedImpact": 4.95,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2102,7 +2118,7 @@
             "ballpark": "Rogers Centre",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/141.svg",
-            "metadataLine": "June 30th | 7:07 PM ET | Rogers Centre | 85° | Clear | Wind 11 mph SW"
+            "metadataLine": "June 30th | 7:07 PM ET | Rogers Centre | 86° | Thunderstorms | Wind 12 mph SSW"
           },
           "quickRead": {
             "modelLean": "Mets",
@@ -2116,7 +2132,7 @@
             "opponent": "Toronto Blue Jays",
             "homeAway": "road",
             "ballpark": "Rogers Centre",
-            "weather": "85° | Clear | Wind 11 mph SW",
+            "weather": "86° | Thunderstorms | Wind 12 mph SSW",
             "lineupStatus": "Projected",
             "moneyline": "N/A"
           },
@@ -2132,7 +2148,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "85° | Clear | Wind 11 mph SW"
+                "value": "86° | Thunderstorms | Wind 12 mph SSW"
               },
               {
                 "label": "Mets ML Odds",
@@ -2537,15 +2553,15 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 19,
-                "appearancesPerPitcherPerDay": 0.21,
+                "appearances": 21,
+                "appearancesPerPitcherPerDay": 0.23,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 2.43,
-                "seasonWhip": 1.1,
-                "last20Era": 1.46
+                "seasonWhip": 1.11,
+                "last20Era": 1.29
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2571,7 +2587,7 @@
               "statsRow": {
                 "seasonEra": 2.57,
                 "seasonWhip": 1.23,
-                "last20Era": 2.1
+                "last20Era": 2.05
               },
               "closer": {
                 "name": "Louis Varland",
@@ -2613,7 +2629,7 @@
                   "statKey": "kPct",
                   "seasonRank": 17,
                   "seasonValue": 22.2,
-                  "recentRank": 20,
+                  "recentRank": 21,
                   "recentValue": 23.1,
                   "differencePct": -4.1,
                   "improving": false
@@ -2622,7 +2638,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 25,
                   "seasonValue": 8.1,
-                  "recentRank": 4,
+                  "recentRank": 5,
                   "recentValue": 9.7,
                   "differencePct": 19.8,
                   "improving": true
@@ -2637,14 +2653,14 @@
                   "statKey": "ops",
                   "seasonRank": 24,
                   "seasonValue": 0.699,
-                  "recentRank": 22,
+                  "recentRank": 23,
                   "recentValue": 0.702,
                   "differencePct": 0.4,
                   "improving": true
                 },
                 {
                   "statKey": "avg",
-                  "seasonRank": 10,
+                  "seasonRank": 11,
                   "seasonValue": 0.247,
                   "recentRank": 19,
                   "recentValue": 0.243,
@@ -3628,7 +3644,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "85° | Clear | Wind 11 mph SW"
+            "weatherSummary": "86° | Thunderstorms | Wind 12 mph SSW"
           }
         }
       },
@@ -3637,11 +3653,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 84.7,
-        "temperatureDisplay": "85°",
-        "condition": "Clear",
-        "wind": "Wind 11 mph SW",
-        "compact": "85° | Clear | Wind 11 mph SW",
+        "temperature": 86.3,
+        "temperatureDisplay": "86°",
+        "condition": "Thunderstorms",
+        "wind": "Wind 12 mph SSW",
+        "compact": "86° | Thunderstorms | Wind 12 mph SSW",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-06-30T23:00Z"
       },
