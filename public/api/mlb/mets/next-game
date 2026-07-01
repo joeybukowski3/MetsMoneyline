@@ -31,7 +31,13 @@
       "fip": null,
       "whip": "1.37"
     },
-    "opp": null
+    "opp": {
+      "id": 680755,
+      "fullName": "Braydon Fisher",
+      "era": "3.48",
+      "fip": null,
+      "whip": "1.14"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
@@ -231,6 +237,11 @@
           "ties": 0,
           "pct": ".465"
         },
+        "probablePitcher": {
+          "id": 680755,
+          "fullName": "Braydon Fisher",
+          "link": "/api/v1/people/680755"
+        },
         "splitSquad": false,
         "seriesNumber": 28,
         "springLeague": {
@@ -276,37 +287,13 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
       "wins": 1,
-      "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 141,
-        "name": "Toronto Blue Jays",
-        "link": "/api/v1/teams/141"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
+      "losses": 1,
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "TOR leads 1-0",
+      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -331,9 +318,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-01T03:32:37.293Z",
+    "generatedAt": "2026-07-01T07:57:53.510Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-06-30",
-    "cacheKey": "next-game:2026-06-30"
+    "referenceDate": "2026-07-01",
+    "cacheKey": "next-game:2026-07-01"
   }
 }
