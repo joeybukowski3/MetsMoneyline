@@ -38,7 +38,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -116,
+            "point": null
+          },
+          {
+            "name": "Toronto Blue Jays",
+            "price": -102,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 146,
+            "point": -1.5
+          },
+          {
+            "name": "Toronto Blue Jays",
+            "price": -176,
+            "point": 1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -122,
+            "point": 8.5
+          },
+          {
+            "name": "Under",
+            "price": 100,
+            "point": 8.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 822791,
     "gameGuid": "1ab52ac9-1059-403f-9f77-ff39fe5d603a",
@@ -105,10 +158,10 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 35,
+          "wins": 36,
           "losses": 50,
           "ties": 0,
-          "pct": ".412"
+          "pct": ".419"
         },
         "probablePitcher": {
           "id": 642547,
@@ -174,9 +227,9 @@
         },
         "leagueRecord": {
           "wins": 40,
-          "losses": 45,
+          "losses": 46,
           "ties": 0,
-          "pct": ".471"
+          "pct": ".465"
         },
         "splitSquad": false,
         "seriesNumber": 28,
@@ -278,7 +331,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-06-30T23:49:00.308Z",
+    "generatedAt": "2026-07-01T03:32:37.293Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-06-30",
     "cacheKey": "next-game:2026-06-30"
