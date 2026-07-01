@@ -1,7 +1,7 @@
 {
   "gameId": 822791,
   "startTime": "2026-07-01T19:07:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 141,
     "canonicalKey": "blue-jays",
@@ -40,9 +40,119 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
-    "opp": []
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "DH"
+      },
+      {
+        "order": 3,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 5,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 6,
+        "playerId": 682626,
+        "name": "Francisco Alvarez",
+        "pos": "C"
+      },
+      {
+        "order": 7,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 8,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "2B"
+      },
+      {
+        "order": 9,
+        "playerId": 621438,
+        "name": "Tyrone Taylor",
+        "pos": "LF"
+      }
+    ],
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 664770,
+        "name": "Nathan Lukes",
+        "pos": "RF"
+      },
+      {
+        "order": 2,
+        "playerId": 665489,
+        "name": "Vladimir Guerrero Jr.",
+        "pos": "1B"
+      },
+      {
+        "order": 3,
+        "playerId": 672960,
+        "name": "Kazuma Okamoto",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 662139,
+        "name": "Daulton Varsho",
+        "pos": "CF"
+      },
+      {
+        "order": 5,
+        "playerId": 672386,
+        "name": "Alejandro Kirk",
+        "pos": "C"
+      },
+      {
+        "order": 6,
+        "playerId": 682818,
+        "name": "Yohendrick Piñango",
+        "pos": "LF"
+      },
+      {
+        "order": 7,
+        "playerId": 676391,
+        "name": "Ernie Clement",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 815873,
+        "name": "Sean Keys",
+        "pos": "DH"
+      },
+      {
+        "order": 9,
+        "playerId": 665926,
+        "name": "Andrés Giménez",
+        "pos": "SS"
+      }
+    ]
   },
   "sportsbookSummary": {
     "key": "fanduel",
@@ -54,12 +164,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -116,
+            "price": -106,
             "point": null
           },
           {
             "name": "Toronto Blue Jays",
-            "price": -102,
+            "price": -110,
             "point": null
           }
         ]
@@ -70,12 +180,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 136,
+            "price": 160,
             "point": -1.5
           },
           {
             "name": "Toronto Blue Jays",
-            "price": -164,
+            "price": -194,
             "point": 1.5
           }
         ]
@@ -86,12 +196,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -124,
+            "price": -120,
             "point": 8.5
           },
           {
             "name": "Under",
-            "price": 102,
+            "price": -102,
             "point": 8.5
           }
         ]
@@ -108,9 +218,9 @@
     "officialDate": "2026-07-01",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -169,6 +279,7 @@
           "ties": 0,
           "pct": ".419"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 642547,
           "fullName": "Freddy Peralta",
@@ -237,6 +348,7 @@
           "ties": 0,
           "pct": ".465"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 680755,
           "fullName": "Braydon Fisher",
@@ -253,26 +365,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 680755,
+          "fullName": "Braydon Fisher",
+          "link": "/api/v1/people/680755"
+        },
+        "catcher": {
+          "id": 672386,
+          "fullName": "Alejandro Kirk",
+          "link": "/api/v1/people/672386"
+        },
+        "first": {
+          "id": 665489,
+          "fullName": "Vladimir Guerrero Jr.",
+          "link": "/api/v1/people/665489"
+        },
+        "second": {
+          "id": 676391,
+          "fullName": "Ernie Clement",
+          "link": "/api/v1/people/676391"
+        },
+        "third": {
+          "id": 672960,
+          "fullName": "Kazuma Okamoto",
+          "link": "/api/v1/people/672960"
+        },
+        "shortstop": {
+          "id": 665926,
+          "fullName": "Andrés Giménez",
+          "link": "/api/v1/people/665926"
+        },
+        "left": {
+          "id": 682818,
+          "fullName": "Yohendrick Piñango",
+          "link": "/api/v1/people/682818"
+        },
+        "center": {
+          "id": 662139,
+          "fullName": "Daulton Varsho",
+          "link": "/api/v1/people/662139"
+        },
+        "right": {
+          "id": 664770,
+          "fullName": "Nathan Lukes",
+          "link": "/api/v1/people/664770"
+        },
+        "batter": {
+          "id": 664770,
+          "fullName": "Nathan Lukes",
+          "link": "/api/v1/people/664770"
+        },
+        "onDeck": {
+          "id": 665489,
+          "fullName": "Vladimir Guerrero Jr.",
+          "link": "/api/v1/people/665489"
+        },
+        "inHole": {
+          "id": 672960,
+          "fullName": "Kazuma Okamoto",
+          "link": "/api/v1/people/672960"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 141,
+          "name": "Toronto Blue Jays",
+          "link": "/api/v1/teams/141"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "onDeck": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "inHole": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "pitcher": {
+          "id": 642547,
+          "fullName": "Freddy Peralta",
+          "link": "/api/v1/people/642547"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
       },
-      "offense": {
-        "team": {
-          "id": 141,
-          "name": "Toronto Blue Jays",
-          "link": "/api/v1/teams/141"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 14,
@@ -314,11 +541,268 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 664770,
+          "fullName": "Nathan Lukes",
+          "link": "/api/v1/people/664770",
+          "firstName": "Nathan",
+          "lastName": "Lukes",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Nathan"
+        },
+        {
+          "id": 665489,
+          "fullName": "Vladimir Guerrero Jr.",
+          "link": "/api/v1/people/665489",
+          "firstName": "Vladimir",
+          "lastName": "Guerrero",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Vladimir"
+        },
+        {
+          "id": 672960,
+          "fullName": "Kazuma Okamoto",
+          "link": "/api/v1/people/672960",
+          "firstName": "Kazuma",
+          "lastName": "Okamoto",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Kazuma"
+        },
+        {
+          "id": 662139,
+          "fullName": "Daulton Varsho",
+          "link": "/api/v1/people/662139",
+          "firstName": "Daulton",
+          "lastName": "Varsho",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Daulton"
+        },
+        {
+          "id": 672386,
+          "fullName": "Alejandro Kirk",
+          "link": "/api/v1/people/672386",
+          "firstName": "Alejandro",
+          "lastName": "Kirk",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Alejandro"
+        },
+        {
+          "id": 682818,
+          "fullName": "Yohendrick Piñango",
+          "link": "/api/v1/people/682818",
+          "firstName": "Yohendrick",
+          "lastName": "Pinango",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Yohendrick"
+        },
+        {
+          "id": 676391,
+          "fullName": "Ernie Clement",
+          "link": "/api/v1/people/676391",
+          "firstName": "Ernie",
+          "lastName": "Clement",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Ernie"
+        },
+        {
+          "id": 815873,
+          "fullName": "Sean Keys",
+          "link": "/api/v1/people/815873",
+          "firstName": "Sean",
+          "lastName": "Keys",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Sean"
+        },
+        {
+          "id": 665926,
+          "fullName": "Andrés Giménez",
+          "link": "/api/v1/people/665926",
+          "firstName": "Andrés",
+          "lastName": "Giménez",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Andrés"
+        }
+      ],
+      "awayPlayers": [
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626",
+          "firstName": "Francisco",
+          "lastName": "Alvarez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 621438,
+          "fullName": "Tyrone Taylor",
+          "link": "/api/v1/people/621438",
+          "firstName": "Tyrone",
+          "lastName": "Taylor",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Tyrone"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-01T13:51:57.009Z",
+    "generatedAt": "2026-07-01T16:24:00.147Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-01",
     "cacheKey": "next-game:2026-07-01"
