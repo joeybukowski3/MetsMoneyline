@@ -1,31 +1,181 @@
 {
-  "gameId": 824904,
+  "gameId": "02a01af3575ee92bb974caaf28f76911",
   "markets": [
     {
       "key": "h2h",
-      "label": "Moneyline",
+      "label": "h2h",
       "outcomes": [
         {
-          "name": "New York Mets",
-          "price": 196,
+          "name": "Atlanta Braves",
+          "price": -112,
           "point": null
+        },
+        {
+          "name": "New York Mets",
+          "price": -104,
+          "point": null
+        }
+      ]
+    },
+    {
+      "key": "spreads",
+      "label": "spreads",
+      "outcomes": [
+        {
+          "name": "Atlanta Braves",
+          "price": -184,
+          "point": 1.5
+        },
+        {
+          "name": "New York Mets",
+          "price": 152,
+          "point": -1.5
+        }
+      ]
+    },
+    {
+      "key": "totals",
+      "label": "totals",
+      "outcomes": [
+        {
+          "name": "Over",
+          "price": 100,
+          "point": 9.5
+        },
+        {
+          "name": "Under",
+          "price": -122,
+          "point": 9.5
         }
       ]
     }
   ],
   "bookmakers": [
     {
-      "key": "archived-consensus",
+      "key": "fanduel",
       "title": "FanDuel",
       "markets": [
         {
           "key": "h2h",
-          "label": "Moneyline",
+          "label": "h2h",
           "outcomes": [
             {
-              "name": "New York Mets",
-              "price": 196,
+              "name": "Atlanta Braves",
+              "price": -112,
               "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -104,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "Atlanta Braves",
+              "price": -184,
+              "point": 1.5
+            },
+            {
+              "name": "New York Mets",
+              "price": 152,
+              "point": -1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": 100,
+              "point": 9.5
+            },
+            {
+              "name": "Under",
+              "price": -122,
+              "point": 9.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "betonlineag",
+      "title": "BetOnline.ag",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "Atlanta Braves",
+              "price": -122,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": 111,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": 105,
+              "point": 9.5
+            },
+            {
+              "name": "Under",
+              "price": -125,
+              "point": 9.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lowvig",
+      "title": "LowVig.ag",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "Atlanta Braves",
+              "price": -122,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": 111,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": 107,
+              "point": 9.5
+            },
+            {
+              "name": "Under",
+              "price": -123,
+              "point": 9.5
             }
           ]
         }
@@ -33,35 +183,199 @@
     }
   ],
   "consensus": {
-    "key": "archived-consensus",
+    "key": "fanduel",
     "title": "FanDuel",
     "markets": [
       {
         "key": "h2h",
-        "label": "Moneyline",
+        "label": "h2h",
         "outcomes": [
           {
-            "name": "New York Mets",
-            "price": 196,
+            "name": "Atlanta Braves",
+            "price": -112,
             "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -104,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Atlanta Braves",
+            "price": -184,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 152,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 100,
+            "point": 9.5
+          },
+          {
+            "name": "Under",
+            "price": -122,
+            "point": 9.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "commence_time": "2026-07-03T23:15:00Z",
+    "id": "02a01af3575ee92bb974caaf28f76911",
+    "sport_key": "baseball_mlb",
+    "sport_title": "MLB",
+    "commence_time": "2026-07-03T23:16:00Z",
     "home_team": "Atlanta Braves",
     "away_team": "New York Mets",
-    "source": "odds-history",
-    "archiveKey": "2026-07-03::road::atlanta-braves::2315",
-    "captured_at": "2026-07-01T20:22:31.690Z"
+    "bookmakers": [
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-07-02T18:55:44Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-07-02T18:55:44Z",
+            "outcomes": [
+              {
+                "name": "Atlanta Braves",
+                "price": -112
+              },
+              {
+                "name": "New York Mets",
+                "price": -104
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-07-02T18:55:44Z",
+            "outcomes": [
+              {
+                "name": "Atlanta Braves",
+                "price": -184,
+                "point": 1.5
+              },
+              {
+                "name": "New York Mets",
+                "price": 152,
+                "point": -1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-07-02T18:55:44Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": 100,
+                "point": 9.5
+              },
+              {
+                "name": "Under",
+                "price": -122,
+                "point": 9.5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betonlineag",
+        "title": "BetOnline.ag",
+        "last_update": "2026-07-02T18:55:16Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-07-02T18:55:16Z",
+            "outcomes": [
+              {
+                "name": "Atlanta Braves",
+                "price": -122
+              },
+              {
+                "name": "New York Mets",
+                "price": 111
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-07-02T18:55:16Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": 105,
+                "point": 9.5
+              },
+              {
+                "name": "Under",
+                "price": -125,
+                "point": 9.5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "lowvig",
+        "title": "LowVig.ag",
+        "last_update": "2026-07-02T18:55:19Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-07-02T18:55:19Z",
+            "outcomes": [
+              {
+                "name": "Atlanta Braves",
+                "price": -122
+              },
+              {
+                "name": "New York Mets",
+                "price": 111
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-07-02T18:55:19Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": 107,
+                "point": 9.5
+              },
+              {
+                "name": "Under",
+                "price": -123,
+                "point": 9.5
+              }
+            ]
+          }
+        ]
+      }
+    ]
   },
-  "fallbackSource": "odds-history",
   "meta": {
-    "provider": "odds-history",
-    "generatedAt": "2026-07-02T17:18:40.017Z",
-    "cacheHint": "odds: 2-5 minutes",
-    "note": "rebuilt from archived odds history — live fetch returned empty"
+    "provider": "the-odds-api",
+    "generatedAt": "2026-07-02T18:55:54.201Z",
+    "cacheHint": "odds: 2-5 minutes"
   }
 }

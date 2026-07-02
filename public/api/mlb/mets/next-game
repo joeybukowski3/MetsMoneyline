@@ -44,7 +44,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Atlanta Braves",
+            "price": -112,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -104,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Atlanta Braves",
+            "price": -184,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 152,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 100,
+            "point": 9.5
+          },
+          {
+            "name": "Under",
+            "price": -122,
+            "point": 9.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 824904,
     "gameGuid": "fa40235e-f4fb-4de0-a601-a5481e8fff7b",
@@ -208,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 144,
-          "name": "Atlanta Braves",
-          "link": "/api/v1/teams/144"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 144,
+          "name": "Atlanta Braves",
+          "link": "/api/v1/teams/144"
         }
       }
     },
@@ -264,7 +317,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-02T17:18:40.015Z",
+    "generatedAt": "2026-07-02T18:55:54.201Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-02",
     "cacheKey": "next-game:2026-07-02"
