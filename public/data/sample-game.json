@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-04T18:13:54.392Z",
+  "generatedAt": "2026-07-04T19:39:16.072Z",
   "referenceDate": "2026-07-04",
   "cacheKey": "sample-game:2026-07-04",
   "games": [
@@ -36,7 +36,7 @@
           "mlbId": 640455,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-07-04T18:13:53.277Z",
+          "generatedAt": "2026-07-04T19:39:14.628Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -95,7 +95,7 @@
           "mlbId": 519242,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-07-04T18:13:53.240Z",
+          "generatedAt": "2026-07-04T19:39:12.624Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -180,12 +180,12 @@
           "relieverCount": 13
         },
         "oppBullpen": {
-          "seasonERA": 2.39,
-          "seasonXERAAverage": 3.48,
+          "seasonERA": 2.27,
+          "seasonXERAAverage": 3.13,
           "seasonXFIP": "4.02",
-          "last20ERA": 4.64,
-          "last20WHIP": 1.24,
-          "seasonWHIP": 0.97,
+          "last20ERA": 4.2,
+          "last20WHIP": 1.17,
+          "seasonWHIP": 0.95,
           "seasonKPct": "23.0%",
           "seasonBBPct": "8.9%",
           "rating": 85,
@@ -894,13 +894,13 @@
         {
           "category": "Hard-Hit %",
           "mets": "42.8%",
-          "opp": "40.5%",
+          "opp": "40.9%",
           "edge": "Mets"
         },
         {
           "category": "Barrel %",
           "mets": "9.5%",
-          "opp": "9.1%",
+          "opp": "9.2%",
           "edge": "Mets"
         },
         {
@@ -962,13 +962,13 @@
           "wrcPlus": "96",
           "woba": ".314",
           "iso": ".160",
-          "xba": "0.252",
-          "xslg": "0.424",
-          "xwoba": "0.323",
+          "xba": "0.255",
+          "xslg": "0.43",
+          "xwoba": "0.326",
           "ops": ".716",
           "avg": ".246",
-          "hardHit": "40.5",
-          "barrelPct": "9.1",
+          "hardHit": "40.9",
+          "barrelPct": "9.2",
           "bbPct": 8,
           "kPct": 21.2,
           "rotFip": "3.98",
@@ -1203,6 +1203,11 @@
         ],
         "oppInjuries": [
           {
+            "name": "Ha-Seong Kim",
+            "status": "IL",
+            "description": "Ha-Seong Kim (IL) - Atlanta Braves placed SS Ha-Seong Kim on the 10-day injured list retroactive to July 1, 2026. Right middle finger inflammation."
+          },
+          {
             "name": "Robert Suarez",
             "status": "IL",
             "description": "Robert Suarez (IL) - Atlanta Braves placed RHP Robert Suarez on the 15-day injured list retroactive to June 23, 2026. Right forearm tightness."
@@ -1221,11 +1226,6 @@
             "name": "Sean Murphy",
             "status": "IL",
             "description": "Sean Murphy (IL) - Atlanta Braves transferred C Sean Murphy from the 10-day injured list to the 60-day injured list. Fractured left middle finger."
-          },
-          {
-            "name": "Joey Wentz",
-            "status": "IL",
-            "description": "Joey Wentz (IL) - Atlanta Braves placed LHP Joey Wentz on the 60-day injured list. Right knee ACL tear."
           }
         ],
         "headToHead": {
@@ -1409,7 +1409,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-07-04T18:13:54.243Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-04\",\"opponent\":\"Atlanta Braves\",\"homeAway\":\"road\",\"ballpark\":\"Truist Park\",\"weather\":{\"temperature\":91.6,\"temperatureDisplay\":\"92°\",\"condition\":\"Clear\",\"wind\":\"Wind 5 mph W\",\"compact\":\"92° | Clear | Wind 5 mph W\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-05T00:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Sean Manaea\",\"handedness\":\"L\",\"era\":4.71,\"xERA\":4.07,\"fip\":3.65,\"whip\":1.37,\"kPct\":22.9,\"bbPct\":7.9,\"kMinusBbPct\":15,\"hardHitPct\":38.5,\"barrelPct\":7,\"xBAAllowed\":0.248,\"xSLGAllowed\":0.387,\"xwOBAAllowed\":0.313,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-29\",\"opponent\":\"Toronto Blue Jays\",\"ip\":\"5.2\",\"er\":2,\"k\":4,\"h\":3,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-24\",\"opponent\":\"Chicago Cubs\",\"ip\":\"3.0\",\"er\":3,\"k\":4,\"h\":6,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-06-18\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"5.1\",\"er\":2,\"k\":5,\"h\":6,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-13\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":6,\"h\":4,\"bb\":0,\"result\":\"L\"}],\"avgInnings\":5,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":4.75,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Chris Sale\",\"handedness\":\"L\",\"era\":2.1,\"xERA\":3.21,\"fip\":2.56,\"whip\":1.08,\"kPct\":29.6,\"bbPct\":6,\"kMinusBbPct\":23.6,\"hardHitPct\":31,\"barrelPct\":5.2,\"xBAAllowed\":0.227,\"xSLGAllowed\":0.332,\"xwOBAAllowed\":0.28,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-28\",\"opponent\":\"San Francisco Giants\",\"ip\":\"6.0\",\"er\":1,\"k\":10,\"h\":8,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-06-20\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"5.2\",\"er\":0,\"k\":7,\"h\":5,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-10\",\"opponent\":\"Chicago White Sox\",\"ip\":\"5.2\",\"er\":2,\"k\":6,\"h\":6,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-06-04\",\"opponent\":\"Toronto Blue Jays\",\"ip\":\"5.2\",\"er\":3,\"k\":6,\"h\":10,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.75,\"avgEarnedRuns\":1.5,\"avgStrikeouts\":7.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7,\"projectedLineupWRCPlus\":98.3,\"obp\":0.311,\"iso\":0.145,\"kPct\":22.3,\"bbPct\":8.1,\"xBA\":0.258,\"xSLG\":0.437,\"xwOBA\":0.33,\"hardHitPct\":42.8,\"barrelPct\":9.5,\"battingAverage\":0.244,\"wOBA\":0.311,\"lineup\":{\"totalWAR\":7,\"totalWRCPlus\":98.3,\"totalOBP\":0.311,\"totalISO\":0.154,\"totalKPct\":20.6,\"totalBBPct\":8.3,\"totalAVG\":0.244,\"totalWOBA\":0.311,\"totalXBA\":0.262,\"totalXSLG\":0.44,\"totalXWOBA\":0.334,\"totalHardHitPct\":43.1,\"totalBarrelPct\":9.7,\"regressionSignals\":{\"baMinusXba\":-0.018,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.018,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":10,\"projectedLineupWRCPlus\":105,\"obp\":0.32,\"iso\":0.16,\"kPct\":21.2,\"bbPct\":8,\"xBA\":0.252,\"xSLG\":0.424,\"xwOBA\":0.323,\"hardHitPct\":40.5,\"barrelPct\":9.1,\"battingAverage\":0.258,\"wOBA\":0.327,\"lineup\":{\"totalWAR\":10,\"totalWRCPlus\":105,\"totalOBP\":0.32,\"totalISO\":0.172,\"totalKPct\":20.5,\"totalBBPct\":7.7,\"totalAVG\":0.258,\"totalWOBA\":0.327,\"totalXBA\":0.257,\"totalXSLG\":0.437,\"totalXWOBA\":0.331,\"totalHardHitPct\":41.6,\"totalBarrelPct\":9.4,\"regressionSignals\":{\"baMinusXba\":0.001,\"wobaMinusXwoba\":-0.004}},\"regressionSignals\":{\"baMinusXba\":0.001,\"wobaMinusXwoba\":-0.004},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7,\"totalWRCPlus\":98.3,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":10,\"totalWRCPlus\":105,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.07,\"kMinusBbPct\":14.7,\"xFIP\":3.91,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":0.97,\"kMinusBbPct\":14.1,\"xFIP\":4.02,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":91.6,\"temperatureDisplay\":\"92°\",\"condition\":\"Clear\",\"wind\":\"Wind 5 mph W\",\"compact\":\"92° | Clear | Wind 5 mph W\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-05T00:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Sean Manaea 4.07/3.65 vs Chris Sale 3.21/2.56; K-BB% 15.0 to 23.6.\",\"rawScore\":-23.38,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323.\",\"rawScore\":-3.91,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.97, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":0.29,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.018 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.57.\",\"rawScore\":8.18,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-28.25,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-07-04T19:39:15.771Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-04\",\"opponent\":\"Atlanta Braves\",\"homeAway\":\"road\",\"ballpark\":\"Truist Park\",\"weather\":{\"temperature\":91.7,\"temperatureDisplay\":\"92°\",\"condition\":\"Clear\",\"wind\":\"Wind 4 mph WSW\",\"compact\":\"92° | Clear | Wind 4 mph WSW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-05T00:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Sean Manaea\",\"handedness\":\"L\",\"era\":4.71,\"xERA\":4.07,\"fip\":3.65,\"whip\":1.37,\"kPct\":22.9,\"bbPct\":7.9,\"kMinusBbPct\":15,\"hardHitPct\":38.5,\"barrelPct\":7,\"xBAAllowed\":0.248,\"xSLGAllowed\":0.387,\"xwOBAAllowed\":0.313,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-29\",\"opponent\":\"Toronto Blue Jays\",\"ip\":\"5.2\",\"er\":2,\"k\":4,\"h\":3,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-24\",\"opponent\":\"Chicago Cubs\",\"ip\":\"3.0\",\"er\":3,\"k\":4,\"h\":6,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-06-18\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"5.1\",\"er\":2,\"k\":5,\"h\":6,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-13\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":6,\"h\":4,\"bb\":0,\"result\":\"L\"}],\"avgInnings\":5,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":4.75,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Chris Sale\",\"handedness\":\"L\",\"era\":2.1,\"xERA\":3.21,\"fip\":2.56,\"whip\":1.08,\"kPct\":29.6,\"bbPct\":6,\"kMinusBbPct\":23.6,\"hardHitPct\":31,\"barrelPct\":5.2,\"xBAAllowed\":0.227,\"xSLGAllowed\":0.332,\"xwOBAAllowed\":0.28,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-28\",\"opponent\":\"San Francisco Giants\",\"ip\":\"6.0\",\"er\":1,\"k\":10,\"h\":8,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-06-20\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"5.2\",\"er\":0,\"k\":7,\"h\":5,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-10\",\"opponent\":\"Chicago White Sox\",\"ip\":\"5.2\",\"er\":2,\"k\":6,\"h\":6,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-06-04\",\"opponent\":\"Toronto Blue Jays\",\"ip\":\"5.2\",\"er\":3,\"k\":6,\"h\":10,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.75,\"avgEarnedRuns\":1.5,\"avgStrikeouts\":7.25,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.75,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7,\"projectedLineupWRCPlus\":98.3,\"obp\":0.311,\"iso\":0.145,\"kPct\":22.3,\"bbPct\":8.1,\"xBA\":0.258,\"xSLG\":0.437,\"xwOBA\":0.33,\"hardHitPct\":42.8,\"barrelPct\":9.5,\"battingAverage\":0.244,\"wOBA\":0.311,\"lineup\":{\"totalWAR\":7,\"totalWRCPlus\":98.3,\"totalOBP\":0.311,\"totalISO\":0.154,\"totalKPct\":20.6,\"totalBBPct\":8.3,\"totalAVG\":0.244,\"totalWOBA\":0.311,\"totalXBA\":0.262,\"totalXSLG\":0.44,\"totalXWOBA\":0.334,\"totalHardHitPct\":43.1,\"totalBarrelPct\":9.7,\"regressionSignals\":{\"baMinusXba\":-0.018,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.018,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":10,\"projectedLineupWRCPlus\":105,\"obp\":0.32,\"iso\":0.16,\"kPct\":21.2,\"bbPct\":8,\"xBA\":0.255,\"xSLG\":0.43,\"xwOBA\":0.326,\"hardHitPct\":40.9,\"barrelPct\":9.2,\"battingAverage\":0.258,\"wOBA\":0.327,\"lineup\":{\"totalWAR\":10,\"totalWRCPlus\":105,\"totalOBP\":0.32,\"totalISO\":0.172,\"totalKPct\":20.5,\"totalBBPct\":7.7,\"totalAVG\":0.258,\"totalWOBA\":0.327,\"totalXBA\":0.257,\"totalXSLG\":0.437,\"totalXWOBA\":0.331,\"totalHardHitPct\":41.6,\"totalBarrelPct\":9.4,\"regressionSignals\":{\"baMinusXba\":0.001,\"wobaMinusXwoba\":-0.004}},\"regressionSignals\":{\"baMinusXba\":0.001,\"wobaMinusXwoba\":-0.004},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7,\"totalWRCPlus\":98.3,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":10,\"totalWRCPlus\":105,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.07,\"kMinusBbPct\":14.7,\"xFIP\":3.91,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":0.95,\"kMinusBbPct\":14.1,\"xFIP\":4.02,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":91.7,\"temperatureDisplay\":\"92°\",\"condition\":\"Clear\",\"wind\":\"Wind 4 mph WSW\",\"compact\":\"92° | Clear | Wind 4 mph WSW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-05T00:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Sean Manaea 4.07/3.65 vs Chris Sale 3.21/2.56; K-BB% 15.0 to 23.6.\",\"rawScore\":-23.38,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326.\",\"rawScore\":-3.97,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.95, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":0.24,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"Regression lens: Mets BA-xBA -0.018 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.57.\",\"rawScore\":8.18,\"weightedImpact\":10,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-28.25,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Atlanta Braves: starting pitching is the clearest angle",
         "synopsis": "Sean Manaea vs Chris Sale sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Sean Manaea 4.07/3.65 vs Chris Sale 3.21/2.56; K-BB% 15.0 to 23.6. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1424,7 +1424,7 @@
           "opponent": "Atlanta Braves",
           "homeAway": "road",
           "ballpark": "Truist Park",
-          "weather": "92° | Clear | Wind 5 mph W",
+          "weather": "92° | Clear | Wind 4 mph WSW",
           "lineupStatus": "Projected",
           "moneyline": "+140"
         },
@@ -1516,22 +1516,22 @@
         "analysis": {
           "whyMetsHaveACase": [
             "Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.",
-            "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP."
+            "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP."
           ],
           "whereTheRiskIs": [
             "Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.",
-            "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323."
+            "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326."
           ],
           "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +140."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
             "Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.",
-            "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP."
+            "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP."
           ],
           "whereRiskIs": [
             "Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.",
-            "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323."
+            "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326."
           ],
           "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +140."
         },
@@ -1558,7 +1558,7 @@
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
-            "body": "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323. Series game 2. Rest/travel: Mets 0 days, opponent 0; bullpen tax normal/normal."
+            "body": "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326. Series game 2. Rest/travel: Mets 0 days, opponent 0; bullpen tax normal/normal."
           },
           {
             "heading": "7. Projected Lineup Comparison",
@@ -1566,27 +1566,27 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.\n• Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP. Where the risk is\n• Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.\n• Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle at +140."
+            "body": "Why the Mets have a case\n• Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.\n• Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP. Where the risk is\n• Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.\n• Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle at +140."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.48. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.13. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.48 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
-        "pickNarrative": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.48. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.13 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+        "pickNarrative": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.13. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
           "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.48. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+          "summary": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.13. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
             "Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.",
-            "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP."
+            "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP."
           ],
           "risks": [
             "Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.",
-            "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323."
+            "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326."
           ],
-          "bettingAngle": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.48 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+          "bettingAngle": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.13 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -1604,14 +1604,14 @@
             "category": "Overall Lineup Quality",
             "edge": "Opponent edge",
             "strength": "slight",
-            "reason": "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323.",
+            "reason": "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326.",
             "dataMode": "fallback"
           },
           {
             "category": "Bullpen",
             "edge": "Mets edge",
             "strength": "slight",
-            "reason": "Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.97, last 3-day usage N/A IP vs N/A IP.",
+            "reason": "Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.95, last 3-day usage N/A IP vs N/A IP.",
             "dataMode": "fallback"
           },
           {
@@ -1646,8 +1646,8 @@
         "keyAngles": [
           "xERA/FIP profile: Sean Manaea 4.07/3.65 vs Chris Sale 3.21/2.56; K-BB% 15.0 to 23.6.",
           "Regression lens: Mets BA-xBA -0.018 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.57.",
-          "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323.",
-          "Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.97, last 3-day usage N/A IP vs N/A IP."
+          "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326.",
+          "Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.95, last 3-day usage N/A IP vs N/A IP."
         ],
         "pick": "Mets ML",
         "analyticalLean": "Opponent",
@@ -1674,11 +1674,11 @@
             "homeAway": "road",
             "ballpark": "Truist Park",
             "weather": {
-              "temperature": 91.6,
+              "temperature": 91.7,
               "temperatureDisplay": "92°",
               "condition": "Clear",
-              "wind": "Wind 5 mph W",
-              "compact": "92° | Clear | Wind 5 mph W",
+              "wind": "Wind 4 mph WSW",
+              "compact": "92° | Clear | Wind 4 mph WSW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-07-05T00:00Z"
             }
@@ -1881,11 +1881,11 @@
               "iso": 0.16,
               "kPct": 21.2,
               "bbPct": 8,
-              "xBA": 0.252,
-              "xSLG": 0.424,
-              "xwOBA": 0.323,
-              "hardHitPct": 40.5,
-              "barrelPct": 9.1,
+              "xBA": 0.255,
+              "xSLG": 0.43,
+              "xwOBA": 0.326,
+              "hardHitPct": 40.9,
+              "barrelPct": 9.2,
               "battingAverage": 0.258,
               "wOBA": 0.327,
               "lineup": {
@@ -1939,7 +1939,7 @@
               "taxLevel": "normal"
             },
             "opp": {
-              "whip": 0.97,
+              "whip": 0.95,
               "kMinusBbPct": 14.1,
               "xFIP": 4.02,
               "taxLevel": "normal"
@@ -1960,11 +1960,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 91.6,
+              "temperature": 91.7,
               "temperatureDisplay": "92°",
               "condition": "Clear",
-              "wind": "Wind 5 mph W",
-              "compact": "92° | Clear | Wind 5 mph W",
+              "wind": "Wind 4 mph WSW",
+              "compact": "92° | Clear | Wind 4 mph WSW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-07-05T00:00Z"
             }
@@ -1999,8 +1999,8 @@
               "weight": 25,
               "edge": "Opponent edge",
               "strength": "slight",
-              "explanation": "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323.",
-              "rawScore": -3.91,
+              "explanation": "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326.",
+              "rawScore": -3.97,
               "weightedImpact": -8.25,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2019,8 +2019,8 @@
               "weight": 15,
               "edge": "Mets edge",
               "strength": "slight",
-              "explanation": "Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.97, last 3-day usage N/A IP vs N/A IP.",
-              "rawScore": 0.29,
+              "explanation": "Bullpen shape: xFIP 3.91 vs 4.02, WHIP 1.07 vs 0.95, last 3-day usage N/A IP vs N/A IP.",
+              "rawScore": 0.24,
               "weightedImpact": 4.95,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2150,7 +2150,7 @@
             "ballpark": "Truist Park",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/144.svg",
-            "metadataLine": "July 4th | 8:08 PM ET | Truist Park | 92° | Clear | Wind 5 mph W"
+            "metadataLine": "July 4th | 8:08 PM ET | Truist Park | 92° | Clear | Wind 4 mph WSW"
           },
           "quickRead": {
             "modelLean": "Opponent",
@@ -2164,7 +2164,7 @@
             "opponent": "Atlanta Braves",
             "homeAway": "road",
             "ballpark": "Truist Park",
-            "weather": "92° | Clear | Wind 5 mph W",
+            "weather": "92° | Clear | Wind 4 mph WSW",
             "lineupStatus": "Projected",
             "moneyline": "+140"
           },
@@ -2180,7 +2180,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "92° | Clear | Wind 5 mph W"
+                "value": "92° | Clear | Wind 4 mph WSW"
               },
               {
                 "label": "Mets ML Odds",
@@ -2428,7 +2428,7 @@
                     "left": "7%",
                     "leftPercentile": 63,
                     "leftMetricLabel": "Pitcher Barrel %",
-                    "right": 9.1,
+                    "right": 9.2,
                     "rightMetricLabel": "Batter Barrel %",
                     "rightRankKey": "barrelPct"
                   },
@@ -2437,7 +2437,7 @@
                     "left": "0.248",
                     "leftPercentile": 52,
                     "leftMetricLabel": "Pitcher xBA",
-                    "right": 0.252,
+                    "right": 0.255,
                     "rightMetricLabel": "Batter xBA",
                     "rightRankKey": "xba"
                   },
@@ -2446,7 +2446,7 @@
                     "left": "38.5%",
                     "leftPercentile": 58,
                     "leftMetricLabel": "Pitcher Hard Hit %",
-                    "right": 40.5,
+                    "right": 40.9,
                     "rightMetricLabel": "Batter Hard Hit %",
                     "rightRankKey": "hardHit"
                   },
@@ -2455,7 +2455,7 @@
                     "left": "0.387",
                     "leftPercentile": 61,
                     "leftMetricLabel": "Pitcher xSLG %",
-                    "right": 0.424,
+                    "right": 0.43,
                     "rightMetricLabel": "Batter xSLG %",
                     "rightRankKey": "xslg"
                   }
@@ -2617,9 +2617,9 @@
                 "tone": "green"
               },
               "statsRow": {
-                "seasonEra": 2.39,
-                "seasonWhip": 0.97,
-                "last20Era": 4.64
+                "seasonEra": 2.27,
+                "seasonWhip": 0.95,
+                "last20Era": 4.2
               },
               "closer": {
                 "name": "Raisel Iglesias",
@@ -2768,24 +2768,24 @@
               },
               {
                 "label": "xwOBA",
-                "mets": 0.323,
+                "mets": 0.326,
                 "opp": 0.33
               },
               {
                 "label": "xSLG",
-                "mets": 0.424,
+                "mets": 0.43,
                 "opp": 0.437
               },
               {
                 "label": "Hard-Hit%",
                 "metricLabel": "Batter Hard-Hit%",
-                "mets": 40.5,
+                "mets": 40.9,
                 "opp": 42.8
               },
               {
                 "label": "Barrel%",
                 "metricLabel": "Batter Barrel%",
-                "mets": 9.1,
+                "mets": 9.2,
                 "opp": 9.5
               },
               {
@@ -2818,7 +2818,7 @@
               },
               {
                 "label": "Opponent xwOBA",
-                "mets": 0.323,
+                "mets": 0.326,
                 "opp": 0.33
               },
               {
@@ -2847,17 +2847,17 @@
               },
               {
                 "label": "Lineup xBA",
-                "mets": 0.252,
+                "mets": 0.255,
                 "opp": 0.258
               },
               {
                 "label": "Lineup xSLG",
-                "mets": 0.424,
+                "mets": 0.43,
                 "opp": 0.437
               },
               {
                 "label": "Lineup xwOBA",
-                "mets": 0.323,
+                "mets": 0.326,
                 "opp": 0.33
               }
             ]
@@ -3539,11 +3539,11 @@
           "analysis": {
             "whyMetsHaveACase": [
               "Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.",
-              "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP."
+              "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP."
             ],
             "whereTheRiskIs": [
               "Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.",
-              "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323."
+              "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326."
             ],
             "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +140."
           },
@@ -3593,13 +3593,13 @@
               "wrcPlus": "96",
               "woba": ".314",
               "iso": ".160",
-              "xba": "0.252",
-              "xslg": "0.424",
-              "xwoba": "0.323",
+              "xba": "0.255",
+              "xslg": "0.43",
+              "xwoba": "0.326",
               "ops": ".716",
               "avg": ".246",
-              "hardHit": "40.5",
-              "barrelPct": "9.1",
+              "hardHit": "40.9",
+              "barrelPct": "9.2",
               "bbPct": 8,
               "kPct": 21.2,
               "rotFip": "3.98",
@@ -3633,34 +3633,34 @@
           },
           "todayPick": {
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.48. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.13. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.",
-              "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP."
+              "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP."
             ],
             "risks": [
               "Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.",
-              "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323."
+              "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326."
             ],
-            "bettingAngle": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.48 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.13 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.48 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "explanation": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.13 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.48. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 1-4 in the last 5; rest is 0 vs 0 days. Starting pitching: Sean Manaea 4.07 xERA, 4.71 ERA, N/A% K vs Chris Sale 3.21 xERA, 2.10 ERA, N/A% K; Offense: Mets wRC+ 89.0 vs 96.0; Bullpen: Mets xERA 3.06 vs 3.13. Price: Mets ML +140 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "Regression: xwOBA 0.33 vs actual wOBA .297 — expected stats above actual production.",
-              "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.39 ERA, 4.02 xFIP."
+              "Bullpen: Mets BP: 2.36 ERA, 3.91 xFIP, Opp BP: 2.27 ERA, 4.02 xFIP."
             ],
             "risks": [
               "Chris Sale has the better pitching profile: K% 29.6% vs 22.9%, FIP 2.56 vs 3.65.",
-              "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.323."
+              "Overall lineup quality only: projected WAR 7.0 vs 10.0, projected lineup wRC+ 98.3 vs 105.0, xwOBA 0.330 vs 0.326."
             ],
-            "bettingAngle": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.48 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Sean Manaea versus Chris Sale with 4.07 xERA against 3.21. Secondary checks: offense 89.0 vs 96.0 wRC+, bullpen 3.06 vs 3.13 xERA, value edge +35.0 points. Value check: Mets ML +140 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
@@ -3673,7 +3673,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "92° | Clear | Wind 5 mph W"
+            "weatherSummary": "92° | Clear | Wind 4 mph WSW"
           }
         }
       },
@@ -3683,11 +3683,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 91.6,
+        "temperature": 91.7,
         "temperatureDisplay": "92°",
         "condition": "Clear",
-        "wind": "Wind 5 mph W",
-        "compact": "92° | Clear | Wind 5 mph W",
+        "wind": "Wind 4 mph WSW",
+        "compact": "92° | Clear | Wind 4 mph WSW",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-07-05T00:00Z"
       },
