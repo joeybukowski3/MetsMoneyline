@@ -1,7 +1,7 @@
 {
   "gameId": 824903,
   "startTime": "2026-07-05T00:08:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 144,
     "canonicalKey": "braves",
@@ -40,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 643289,
+        "name": "Mauricio Dubón",
+        "pos": "LF"
+      },
+      {
+        "order": 2,
+        "playerId": 686948,
+        "name": "Drake Baldwin",
+        "pos": "DH"
+      },
+      {
+        "order": 3,
+        "playerId": 645277,
+        "name": "Ozzie Albies",
+        "pos": "2B"
+      },
+      {
+        "order": 4,
+        "playerId": 621566,
+        "name": "Matt Olson",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 663586,
+        "name": "Austin Riley",
+        "pos": "3B"
+      },
+      {
+        "order": 6,
+        "playerId": 671739,
+        "name": "Michael Harris II",
+        "pos": "CF"
+      },
+      {
+        "order": 7,
+        "playerId": 642201,
+        "name": "Eli White",
+        "pos": "RF"
+      },
+      {
+        "order": 8,
+        "playerId": 663698,
+        "name": "Joey Bart",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 622761,
+        "name": "Jorge Mateo",
+        "pos": "SS"
+      }
+    ]
   },
   "sportsbookSummary": {
     "key": "fanduel",
@@ -108,9 +163,9 @@
     "officialDate": "2026-07-04",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -261,16 +316,16 @@
       },
       "defense": {
         "team": {
-          "id": 144,
-          "name": "Atlanta Braves",
-          "link": "/api/v1/teams/144"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 144,
+          "name": "Atlanta Braves",
+          "link": "/api/v1/teams/144"
         }
       }
     },
@@ -287,12 +342,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 144,
+        "name": "Atlanta Braves",
+        "link": "/api/v1/teams/144"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "ATL leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -313,11 +393,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 643289,
+          "fullName": "Mauricio Dubón",
+          "link": "/api/v1/people/643289",
+          "firstName": "Mauricio",
+          "lastName": "Dubón",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Mauricio"
+        },
+        {
+          "id": 686948,
+          "fullName": "Drake Baldwin",
+          "link": "/api/v1/people/686948",
+          "firstName": "Drake",
+          "lastName": "Baldwin",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Drake"
+        },
+        {
+          "id": 645277,
+          "fullName": "Ozzie Albies",
+          "link": "/api/v1/people/645277",
+          "firstName": "Ozhaino",
+          "lastName": "Albies",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Ozzie"
+        },
+        {
+          "id": 621566,
+          "fullName": "Matt Olson",
+          "link": "/api/v1/people/621566",
+          "firstName": "Matthew",
+          "lastName": "Olson",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Matt"
+        },
+        {
+          "id": 663586,
+          "fullName": "Austin Riley",
+          "link": "/api/v1/people/663586",
+          "firstName": "Michael",
+          "lastName": "Riley",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Austin"
+        },
+        {
+          "id": 671739,
+          "fullName": "Michael Harris II",
+          "link": "/api/v1/people/671739",
+          "firstName": "Michael",
+          "lastName": "Harris",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Michael"
+        },
+        {
+          "id": 642201,
+          "fullName": "Eli White",
+          "link": "/api/v1/people/642201",
+          "firstName": "Elijah",
+          "lastName": "White",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Eli"
+        },
+        {
+          "id": 663698,
+          "fullName": "Joey Bart",
+          "link": "/api/v1/people/663698",
+          "firstName": "Joseph",
+          "lastName": "Bart",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Joey"
+        },
+        {
+          "id": 622761,
+          "fullName": "Jorge Mateo",
+          "link": "/api/v1/people/622761",
+          "firstName": "Jorge",
+          "lastName": "Mateo",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Jorge"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-04T19:39:10.474Z",
+    "generatedAt": "2026-07-04T20:35:17.800Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-04",
     "cacheKey": "next-game:2026-07-04"
