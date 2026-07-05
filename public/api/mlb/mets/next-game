@@ -287,12 +287,37 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 144,
+        "name": "Atlanta Braves",
+        "link": "/api/v1/teams/144"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "ATL leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -317,7 +342,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-05T10:09:04.298Z",
+    "generatedAt": "2026-07-05T10:51:22.144Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-05",
     "cacheKey": "next-game:2026-07-05"
