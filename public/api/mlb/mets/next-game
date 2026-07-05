@@ -54,7 +54,7 @@
         "outcomes": [
           {
             "name": "Atlanta Braves",
-            "price": -120,
+            "price": -119,
             "point": null
           },
           {
@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "Atlanta Braves",
-            "price": 161,
+            "price": 158,
             "point": -1.5
           },
           {
             "name": "New York Mets",
-            "price": -196,
+            "price": -193,
             "point": 1.5
           }
         ]
@@ -91,7 +91,7 @@
           },
           {
             "name": "Under",
-            "price": -109,
+            "price": -108,
             "point": 9
           }
         ]
@@ -287,37 +287,12 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 4,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
-      "wins": 2,
+      "wins": 0,
       "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 144,
-        "name": "Atlanta Braves",
-        "link": "/api/v1/teams/144"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "ATL leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -342,7 +317,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-05T08:30:41.989Z",
+    "generatedAt": "2026-07-05T10:09:04.298Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-05",
     "cacheKey": "next-game:2026-07-05"
