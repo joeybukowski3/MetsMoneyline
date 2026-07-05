@@ -40,9 +40,119 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
-    "opp": []
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 2,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "DH"
+      },
+      {
+        "order": 3,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 668901,
+        "name": "Mark Vientos",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 6,
+        "playerId": 621438,
+        "name": "Tyrone Taylor",
+        "pos": "LF"
+      },
+      {
+        "order": 7,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 8,
+        "playerId": 620443,
+        "name": "Luis Torrens",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "2B"
+      }
+    ],
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 686948,
+        "name": "Drake Baldwin",
+        "pos": "C"
+      },
+      {
+        "order": 2,
+        "playerId": 645277,
+        "name": "Ozzie Albies",
+        "pos": "2B"
+      },
+      {
+        "order": 3,
+        "playerId": 621566,
+        "name": "Matt Olson",
+        "pos": "1B"
+      },
+      {
+        "order": 4,
+        "playerId": 671739,
+        "name": "Michael Harris II",
+        "pos": "CF"
+      },
+      {
+        "order": 5,
+        "playerId": 643289,
+        "name": "Mauricio Dubón",
+        "pos": "LF"
+      },
+      {
+        "order": 6,
+        "playerId": 642086,
+        "name": "Dominic Smith",
+        "pos": "DH"
+      },
+      {
+        "order": 7,
+        "playerId": 663586,
+        "name": "Austin Riley",
+        "pos": "3B"
+      },
+      {
+        "order": 8,
+        "playerId": 573262,
+        "name": "Mike Yastrzemski",
+        "pos": "RF"
+      },
+      {
+        "order": 9,
+        "playerId": 805347,
+        "name": "Jim Jarvis",
+        "pos": "SS"
+      }
+    ]
   },
   "sportsbookSummary": {
     "key": "draftkings",
@@ -54,12 +164,12 @@
         "outcomes": [
           {
             "name": "Atlanta Braves",
-            "price": -118,
+            "price": -105,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -102,
+            "price": -114,
             "point": null
           }
         ]
@@ -70,12 +180,12 @@
         "outcomes": [
           {
             "name": "Atlanta Braves",
-            "price": -195,
+            "price": -175,
             "point": 1.5
           },
           {
             "name": "New York Mets",
-            "price": 160,
+            "price": 144,
             "point": -1.5
           }
         ]
@@ -86,12 +196,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -103,
+            "price": -102,
             "point": 9
           },
           {
             "name": "Under",
-            "price": -117,
+            "price": -119,
             "point": 9
           }
         ]
@@ -169,6 +279,7 @@
           "ties": 0,
           "pct": ".404"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 690997,
           "fullName": "Nolan McLean",
@@ -237,6 +348,7 @@
           "ties": 0,
           "pct": ".598"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 527048,
           "fullName": "Martín Pérez",
@@ -253,26 +365,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 527048,
+          "fullName": "Martín Pérez",
+          "link": "/api/v1/people/527048"
+        },
+        "catcher": {
+          "id": 686948,
+          "fullName": "Drake Baldwin",
+          "link": "/api/v1/people/686948"
+        },
+        "first": {
+          "id": 621566,
+          "fullName": "Matt Olson",
+          "link": "/api/v1/people/621566"
+        },
+        "second": {
+          "id": 645277,
+          "fullName": "Ozzie Albies",
+          "link": "/api/v1/people/645277"
+        },
+        "third": {
+          "id": 663586,
+          "fullName": "Austin Riley",
+          "link": "/api/v1/people/663586"
+        },
+        "shortstop": {
+          "id": 805347,
+          "fullName": "Jim Jarvis",
+          "link": "/api/v1/people/805347"
+        },
+        "left": {
+          "id": 643289,
+          "fullName": "Mauricio Dubón",
+          "link": "/api/v1/people/643289"
+        },
+        "center": {
+          "id": 671739,
+          "fullName": "Michael Harris II",
+          "link": "/api/v1/people/671739"
+        },
+        "right": {
+          "id": 573262,
+          "fullName": "Mike Yastrzemski",
+          "link": "/api/v1/people/573262"
+        },
+        "batter": {
+          "id": 686948,
+          "fullName": "Drake Baldwin",
+          "link": "/api/v1/people/686948"
+        },
+        "onDeck": {
+          "id": 645277,
+          "fullName": "Ozzie Albies",
+          "link": "/api/v1/people/645277"
+        },
+        "inHole": {
+          "id": 621566,
+          "fullName": "Matt Olson",
+          "link": "/api/v1/people/621566"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 144,
+          "name": "Atlanta Braves",
+          "link": "/api/v1/teams/144"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019"
+        },
+        "onDeck": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "inHole": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "pitcher": {
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
       },
-      "offense": {
-        "team": {
-          "id": 144,
-          "name": "Atlanta Braves",
-          "link": "/api/v1/teams/144"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 4705,
@@ -337,11 +564,269 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 686948,
+          "fullName": "Drake Baldwin",
+          "link": "/api/v1/people/686948",
+          "firstName": "Drake",
+          "lastName": "Baldwin",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Drake"
+        },
+        {
+          "id": 645277,
+          "fullName": "Ozzie Albies",
+          "link": "/api/v1/people/645277",
+          "firstName": "Ozhaino",
+          "lastName": "Albies",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Ozzie"
+        },
+        {
+          "id": 621566,
+          "fullName": "Matt Olson",
+          "link": "/api/v1/people/621566",
+          "firstName": "Matthew",
+          "lastName": "Olson",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Matt"
+        },
+        {
+          "id": 671739,
+          "fullName": "Michael Harris II",
+          "link": "/api/v1/people/671739",
+          "firstName": "Michael",
+          "lastName": "Harris",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Michael"
+        },
+        {
+          "id": 643289,
+          "fullName": "Mauricio Dubón",
+          "link": "/api/v1/people/643289",
+          "firstName": "Mauricio",
+          "lastName": "Dubón",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Mauricio"
+        },
+        {
+          "id": 642086,
+          "fullName": "Dominic Smith",
+          "link": "/api/v1/people/642086",
+          "firstName": "Dominic",
+          "lastName": "Smith",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Dominic"
+        },
+        {
+          "id": 663586,
+          "fullName": "Austin Riley",
+          "link": "/api/v1/people/663586",
+          "firstName": "Michael",
+          "lastName": "Riley",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Austin"
+        },
+        {
+          "id": 573262,
+          "fullName": "Mike Yastrzemski",
+          "link": "/api/v1/people/573262",
+          "firstName": "Michael",
+          "lastName": "Yastrzemski",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Mike"
+        },
+        {
+          "id": 805347,
+          "fullName": "Jim Jarvis",
+          "link": "/api/v1/people/805347",
+          "firstName": "James",
+          "lastName": "Jarvis",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Jim"
+        }
+      ],
+      "awayPlayers": [
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 668901,
+          "fullName": "Mark Vientos",
+          "link": "/api/v1/people/668901",
+          "firstName": "Mark",
+          "lastName": "Vientos",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Mark"
+        },
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 621438,
+          "fullName": "Tyrone Taylor",
+          "link": "/api/v1/people/621438",
+          "firstName": "Tyrone",
+          "lastName": "Taylor",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Tyrone"
+        },
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443",
+          "firstName": "Luis",
+          "lastName": "Torrens",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Luis"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Brett"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-05T14:10:38.454Z",
+    "generatedAt": "2026-07-05T15:37:48.251Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-05",
     "cacheKey": "next-game:2026-07-05"
