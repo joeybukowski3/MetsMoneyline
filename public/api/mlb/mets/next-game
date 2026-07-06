@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "Atlanta Braves",
-            "price": -126,
+            "price": -130,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": 108,
+            "price": 110,
             "point": null
           }
         ]
@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "Atlanta Braves",
-            "price": 168,
+            "price": 172,
             "point": -1.5
           },
           {
             "name": "New York Mets",
-            "price": -205,
+            "price": -210,
             "point": 1.5
           }
         ]
@@ -287,12 +287,37 @@
     "seriesStatus": {
       "gameNumber": 4,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 144,
+        "name": "Atlanta Braves",
+        "link": "/api/v1/teams/144"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "ATL leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -312,11 +337,12 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-05T23:44:03.173Z",
+    "generatedAt": "2026-07-06T01:26:02.719Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-05",
     "cacheKey": "next-game:2026-07-05"
