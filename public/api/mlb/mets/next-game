@@ -41,7 +41,62 @@
   },
   "lineups": {
     "lineupStatus": "confirmed",
-    "mets": [],
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 2,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "LF"
+      },
+      {
+        "order": 3,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 5,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 6,
+        "playerId": 593871,
+        "name": "Jorge Polanco",
+        "pos": "DH"
+      },
+      {
+        "order": 7,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 8,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "2B"
+      },
+      {
+        "order": 9,
+        "playerId": 620443,
+        "name": "Luis Torrens",
+        "pos": "C"
+      }
+    ],
     "opp": [
       {
         "order": 1,
@@ -109,12 +164,12 @@
         "outcomes": [
           {
             "name": "Kansas City Royals",
-            "price": 124,
+            "price": 126,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -146,
+            "price": -148,
             "point": null
           }
         ]
@@ -125,12 +180,12 @@
         "outcomes": [
           {
             "name": "Kansas City Royals",
-            "price": -178,
+            "price": -170,
             "point": 1.5
           },
           {
             "name": "New York Mets",
-            "price": 146,
+            "price": 138,
             "point": -1.5
           }
         ]
@@ -141,12 +196,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -106,
+            "price": -110,
             "point": 8.5
           },
           {
             "name": "Under",
-            "price": -114,
+            "price": -110,
             "point": 8.5
           }
         ]
@@ -224,6 +279,7 @@
           "ties": 0,
           "pct": ".407"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 607625,
           "fullName": "Seth Lugo",
@@ -292,6 +348,7 @@
           "ties": 0,
           "pct": ".418"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 672335,
           "fullName": "Cionel Pérez",
@@ -308,26 +365,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 672335,
+          "fullName": "Cionel Pérez",
+          "link": "/api/v1/people/672335"
+        },
+        "catcher": {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443"
+        },
+        "first": {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724"
+        },
+        "second": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "third": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "shortstop": {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019"
+        },
+        "left": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "onDeck": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "inHole": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 695600,
+          "fullName": "Carter Jensen",
+          "link": "/api/v1/people/695600"
+        },
+        "onDeck": {
+          "id": 677951,
+          "fullName": "Bobby Witt Jr.",
+          "link": "/api/v1/people/677951"
+        },
+        "inHole": {
+          "id": 657041,
+          "fullName": "Lane Thomas",
+          "link": "/api/v1/people/657041"
+        },
+        "pitcher": {
+          "id": 607625,
+          "fullName": "Seth Lugo",
+          "link": "/api/v1/people/607625"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 118,
           "name": "Kansas City Royals",
           "link": "/api/v1/teams/118"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -369,6 +541,134 @@
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
     "lineups": {
+      "homePlayers": [
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 593871,
+          "fullName": "Jorge Polanco",
+          "link": "/api/v1/people/593871",
+          "firstName": "Jorge",
+          "lastName": "Polanco",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Jorge"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443",
+          "firstName": "Luis",
+          "lastName": "Torrens",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Luis"
+        }
+      ],
       "awayPlayers": [
         {
           "id": 695600,
@@ -501,7 +801,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-07T20:53:41.020Z",
+    "generatedAt": "2026-07-07T22:09:08.620Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-07",
     "cacheKey": "next-game:2026-07-07"
