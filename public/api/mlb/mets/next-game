@@ -1,7 +1,7 @@
 {
   "gameId": 823607,
   "startTime": "2026-07-07T23:10:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 121,
     "canonicalKey": "mets",
@@ -24,7 +24,13 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 672335,
+      "fullName": "Cionel Pérez",
+      "era": "5.50",
+      "fip": null,
+      "whip": "1.43"
+    },
     "opp": {
       "id": 607625,
       "fullName": "Seth Lugo",
@@ -34,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 695600,
+        "name": "Carter Jensen",
+        "pos": "C"
+      },
+      {
+        "order": 2,
+        "playerId": 677951,
+        "name": "Bobby Witt Jr.",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 657041,
+        "name": "Lane Thomas",
+        "pos": "CF"
+      },
+      {
+        "order": 4,
+        "playerId": 521692,
+        "name": "Salvador Perez",
+        "pos": "DH"
+      },
+      {
+        "order": 5,
+        "playerId": 695506,
+        "name": "Jac Caglianone",
+        "pos": "1B"
+      },
+      {
+        "order": 6,
+        "playerId": 679845,
+        "name": "Nick Loftin",
+        "pos": "3B"
+      },
+      {
+        "order": 7,
+        "playerId": 686555,
+        "name": "Isaac Collins",
+        "pos": "LF"
+      },
+      {
+        "order": 8,
+        "playerId": 686681,
+        "name": "Michael Massey",
+        "pos": "2B"
+      },
+      {
+        "order": 9,
+        "playerId": 686475,
+        "name": "Tyler Tolbert",
+        "pos": "RF"
+      }
+    ]
   },
   "sportsbookSummary": {
     "key": "fanduel",
@@ -64,7 +125,7 @@
         "outcomes": [
           {
             "name": "Kansas City Royals",
-            "price": -176,
+            "price": -178,
             "point": 1.5
           },
           {
@@ -102,9 +163,9 @@
     "officialDate": "2026-07-07",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -231,6 +292,11 @@
           "ties": 0,
           "pct": ".418"
         },
+        "probablePitcher": {
+          "id": 672335,
+          "fullName": "Cionel Pérez",
+          "link": "/api/v1/people/672335"
+        },
         "splitSquad": false,
         "seriesNumber": 30,
         "springLeague": {
@@ -302,11 +368,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "awayPlayers": [
+        {
+          "id": 695600,
+          "fullName": "Carter Jensen",
+          "link": "/api/v1/people/695600",
+          "firstName": "Carter",
+          "lastName": "Jensen",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Carter"
+        },
+        {
+          "id": 677951,
+          "fullName": "Bobby Witt Jr.",
+          "link": "/api/v1/people/677951",
+          "firstName": "Robert",
+          "lastName": "Witt",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Bobby"
+        },
+        {
+          "id": 657041,
+          "fullName": "Lane Thomas",
+          "link": "/api/v1/people/657041",
+          "firstName": "Lane",
+          "lastName": "Thomas",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Lane"
+        },
+        {
+          "id": 521692,
+          "fullName": "Salvador Perez",
+          "link": "/api/v1/people/521692",
+          "firstName": "Salvador",
+          "lastName": "Perez",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Salvador"
+        },
+        {
+          "id": 695506,
+          "fullName": "Jac Caglianone",
+          "link": "/api/v1/people/695506",
+          "firstName": "Jeffrey",
+          "lastName": "Caglianone",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jac"
+        },
+        {
+          "id": 679845,
+          "fullName": "Nick Loftin",
+          "link": "/api/v1/people/679845",
+          "firstName": "Nicholas",
+          "lastName": "Loftin",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Nick"
+        },
+        {
+          "id": 686555,
+          "fullName": "Isaac Collins",
+          "link": "/api/v1/people/686555",
+          "firstName": "Isaac",
+          "lastName": "Collins",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Isaac"
+        },
+        {
+          "id": 686681,
+          "fullName": "Michael Massey",
+          "link": "/api/v1/people/686681",
+          "firstName": "Michael",
+          "lastName": "Massey",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Michael"
+        },
+        {
+          "id": 686475,
+          "fullName": "Tyler Tolbert",
+          "link": "/api/v1/people/686475",
+          "firstName": "Tyler",
+          "lastName": "Tolbert",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Tyler"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-07T18:59:22.583Z",
+    "generatedAt": "2026-07-07T20:53:41.020Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-07",
     "cacheKey": "next-game:2026-07-07"
