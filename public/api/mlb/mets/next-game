@@ -44,7 +44,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Kansas City Royals",
+            "price": 124,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -146,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Kansas City Royals",
+            "price": -176,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 146,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -110,
+            "point": 9
+          },
+          {
+            "name": "Under",
+            "price": -110,
+            "point": 9
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823605,
     "gameGuid": "5dbad19b-1f6a-4d34-80ac-5c830fe227ac",
@@ -289,7 +342,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-08T06:25:16.476Z",
+    "generatedAt": "2026-07-08T09:05:51.684Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-08",
     "cacheKey": "next-game:2026-07-08"
