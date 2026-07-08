@@ -31,7 +31,13 @@
       "fip": null,
       "whip": "1.35"
     },
-    "opp": null
+    "opp": {
+      "id": 674444,
+      "fullName": "Steven Cruz",
+      "era": "5.08",
+      "fip": null,
+      "whip": "1.45"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
@@ -109,6 +115,11 @@
           "losses": 54,
           "ties": 0,
           "pct": ".413"
+        },
+        "probablePitcher": {
+          "id": 674444,
+          "fullName": "Steven Cruz",
+          "link": "/api/v1/people/674444"
         },
         "splitSquad": false,
         "seriesNumber": 30,
@@ -223,12 +234,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        },
+        "allStarStatus": "N",
+        "id": 118,
+        "name": "Kansas City Royals",
+        "link": "/api/v1/teams/118"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "KC leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -253,9 +289,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-08T03:45:34.505Z",
+    "generatedAt": "2026-07-08T06:25:16.476Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-07-07",
-    "cacheKey": "next-game:2026-07-07"
+    "referenceDate": "2026-07-08",
+    "cacheKey": "next-game:2026-07-08"
   }
 }

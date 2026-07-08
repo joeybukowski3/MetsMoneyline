@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-08T03:45:38.268Z",
-  "referenceDate": "2026-07-07",
-  "cacheKey": "sample-game:2026-07-07",
+  "generatedAt": "2026-07-08T06:25:18.924Z",
+  "referenceDate": "2026-07-08",
+  "cacheKey": "sample-game:2026-07-08",
   "games": [
     {
       "id": "2026-07-08-mets-vs-kansas-city-royals",
@@ -27,7 +27,7 @@
           "mlbId": 681035,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-07-08T03:45:36.345Z",
+          "generatedAt": "2026-07-08T06:25:18.057Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -82,33 +82,78 @@
           }
         },
         "opp": {
-          "name": "TBD",
-          "announced": false,
+          "name": "Steven Cruz",
+          "mlbId": 674444,
+          "announced": true,
+          "hand": "R",
+          "generatedAt": "2026-07-08T06:25:18.052Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "2-2, 5.08 ERA, 1.45 WHIP, 28.1 IP",
+          "seasonRecord": "2-2",
+          "seasonERA": "5.08",
+          "seasonFIP": "5.87",
+          "seasonXERA": "4.02",
+          "seasonWHIP": "1.45",
+          "seasonHR9": "2.54",
+          "last3KBB": "2.31",
+          "kMinusBbPct": 16.9,
+          "note": "2026 - 28.1 IP",
+          "savant": {
+            "xERA": "4.02",
+            "xBAAllowed": "0.226",
+            "xSLGAllowed": "0.385",
+            "xwOBAAllowed": "0.311",
+            "barrelPct": "11.3%",
+            "hardHitPct": "33.8%",
+            "whiffPct": "33.8%",
+            "chasePct": "25.5%",
+            "kPct": "29.8%",
+            "bbPct": "12.9%",
+            "exitVeloAllowed": 89.5,
+            "launchAngleAllowed": 15.1,
+            "percentiles": {
+              "barrelPct": 22,
+              "hardHitPct": 77,
+              "kPct": 91,
+              "bbPct": 25,
+              "xERA": 65,
+              "xBAAllowed": 73,
+              "xSLGAllowed": 61
+            }
+          },
           "vsRoster": {
-            "PA": 2080,
-            "kPct": 0.20314326923076925,
-            "bbPct": 0.08923750000000001,
-            "AVG": "0.250",
+            "PA": 4,
+            "kPct": 0.25,
+            "bbPct": 0.5,
+            "AVG": "0.000",
             "wOBA": "0.316",
             "xwOBA": "0.339",
+            "exitVelo": 89.5,
+            "launchAngle": 15.1,
             "xBA": "0.267",
-            "xSLG": "0.438"
+            "xSLG": "0.438",
+            "HR": 0
           }
         },
         "metsBullpen": {
           "seasonERA": 3.09,
           "seasonXERAAverage": 4.99,
           "seasonXFIP": "3.95",
-          "last20ERA": 5.66,
-          "last20WHIP": 1.57,
+          "last20ERA": 5.91,
+          "last20WHIP": 1.58,
           "seasonWHIP": 1.19,
           "seasonKPct": "23.9%",
           "seasonBBPct": "9.2%",
           "rating": 79,
           "team": "New York Mets",
           "usage": {
-            "appearances": 18,
-            "appearancesPerPitcherPerDay": 0.18,
+            "appearances": 20,
+            "appearancesPerPitcherPerDay": 0.2,
             "label": "Low",
             "tone": "green"
           },
@@ -120,8 +165,8 @@
             "era": 4.85,
             "whip": 1.65,
             "saveConversionPct": 86.7,
-            "last7DaysAppearances": 3,
-            "last7DaysInningsPitched": "2.1"
+            "last7DaysAppearances": 2,
+            "last7DaysInningsPitched": "1.1"
           },
           "relieverCount": 14
         },
@@ -129,16 +174,16 @@
           "seasonERA": 4.35,
           "seasonXERAAverage": 5.34,
           "seasonXFIP": "4.52",
-          "last20ERA": 4.68,
-          "last20WHIP": 1.42,
+          "last20ERA": 4.8,
+          "last20WHIP": 1.45,
           "seasonWHIP": 1.4,
           "seasonKPct": "20.1%",
           "seasonBBPct": "10.0%",
           "rating": 73,
           "team": "Kansas City Royals",
           "usage": {
-            "appearances": 19,
-            "appearancesPerPitcherPerDay": 0.19,
+            "appearances": 21,
+            "appearancesPerPitcherPerDay": 0.21,
             "label": "Low",
             "tone": "green"
           },
@@ -832,7 +877,7 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "note": "NYM (season) · OPP vs RHP",
+          "note": "NYM vs RHP · OPP vs RHP",
           "mets": "90",
           "opp": "95",
           "edge": "Opp"
@@ -900,8 +945,9 @@
           },
           "rankScope": "MLB",
           "rankTotal": 30,
+          "vsHand": "R",
           "usingSplit": false,
-          "fallbackNote": "season total"
+          "fallbackNote": "season total (no RHP split available)"
         },
         "opp": {
           "wrcPlus": "95",
@@ -963,7 +1009,7 @@
               "statKey": "avg",
               "seasonRank": 26,
               "seasonValue": 0.233,
-              "recentRank": 15,
+              "recentRank": 14,
               "recentValue": 0.249,
               "differencePct": 6.9,
               "improving": true
@@ -1023,7 +1069,7 @@
               "statKey": "bbPct",
               "seasonRank": 18,
               "seasonValue": 8.7,
-              "recentRank": 26,
+              "recentRank": 25,
               "recentValue": 7.1,
               "differencePct": -18.4,
               "improving": false
@@ -1249,12 +1295,53 @@
             "result": "W"
           }
         ],
-        "oppPitcherLog": []
+        "oppPitcherLog": [
+          {
+            "date": "2026-07-06",
+            "opponent": "Philadelphia Phillies",
+            "ip": "1.0",
+            "er": "0",
+            "k": "2",
+            "h": "1",
+            "bb": "1",
+            "result": "W"
+          },
+          {
+            "date": "2026-07-02",
+            "opponent": "Tampa Bay Rays",
+            "ip": "1.0",
+            "er": "0",
+            "k": "0",
+            "h": "1",
+            "bb": "1",
+            "result": "-"
+          },
+          {
+            "date": "2026-06-30",
+            "opponent": "Tampa Bay Rays",
+            "ip": "1.0",
+            "er": "0",
+            "k": "1",
+            "h": "0",
+            "bb": "0",
+            "result": "-"
+          },
+          {
+            "date": "2026-06-28",
+            "opponent": "Chicago White Sox",
+            "ip": "1.0",
+            "er": "0",
+            "k": "1",
+            "h": "0",
+            "bb": "0",
+            "result": "W"
+          }
+        ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [
@@ -1266,10 +1353,9 @@
           }
         ],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-07-07",
-          "resolvedDate": "2026-07-08",
-          "bannerText": "OFF DAY — Previewing next game: Kansas City Royals on 2026-07-08"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-07-08",
+          "resolvedDate": "2026-07-08"
         }
       },
       "trends": [
@@ -1293,13 +1379,13 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-07-08T03:45:38.091Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-08\",\"opponent\":\"Kansas City Royals\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":76.3,\"temperatureDisplay\":\"76°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"76° | Clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-08T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":3.49,\"xERA\":4.74,\"fip\":4.36,\"whip\":1.35,\"kPct\":28,\"bbPct\":11.7,\"kMinusBbPct\":16.3,\"hardHitPct\":34.7,\"barrelPct\":8.1,\"xBAAllowed\":0.241,\"xSLGAllowed\":0.404,\"xwOBAAllowed\":0.335,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-03\",\"opponent\":\"Atlanta Braves\",\"ip\":\"4.0\",\"er\":3,\"k\":7,\"h\":2,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-06-27\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.1\",\"er\":2,\"k\":6,\"h\":3,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-06-11\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"4.2\",\"er\":4,\"k\":6,\"h\":7,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-05\",\"opponent\":\"San Diego Padres\",\"ip\":\"5.2\",\"er\":0,\"k\":3,\"h\":3,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":4.67,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":4.67,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7.8,\"projectedLineupWRCPlus\":101,\"obp\":0.321,\"iso\":0.147,\"kPct\":22.2,\"bbPct\":8.1,\"xBA\":0.26,\"xSLG\":0.438,\"xwOBA\":0.333,\"hardHitPct\":42.7,\"barrelPct\":9.3,\"battingAverage\":0.25,\"wOBA\":0.316,\"lineup\":{\"totalWAR\":7.8,\"totalWRCPlus\":101,\"totalOBP\":0.321,\"totalISO\":0.149,\"totalKPct\":20.3,\"totalBBPct\":8.9,\"totalAVG\":0.25,\"totalWOBA\":0.316,\"totalXBA\":0.267,\"totalXSLG\":0.438,\"totalXWOBA\":0.339,\"totalHardHitPct\":43.3,\"totalBarrelPct\":8.6,\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":8.4,\"projectedLineupWRCPlus\":99.5,\"obp\":0.319,\"iso\":0.148,\"kPct\":21.3,\"bbPct\":8.5,\"xBA\":0.25,\"xSLG\":0.409,\"xwOBA\":0.321,\"hardHitPct\":43.5,\"barrelPct\":9.1,\"battingAverage\":0.252,\"wOBA\":0.319,\"lineup\":{\"totalWAR\":8.4,\"totalWRCPlus\":99.5,\"totalOBP\":0.319,\"totalISO\":0.159,\"totalKPct\":21.7,\"totalBBPct\":8.6,\"totalAVG\":0.252,\"totalWOBA\":0.319,\"totalXBA\":0.252,\"totalXSLG\":0.414,\"totalXWOBA\":0.325,\"totalHardHitPct\":44.4,\"totalBarrelPct\":9.2,\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":-0.006}},\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":-0.006},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7.8,\"totalWRCPlus\":101,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":8.4,\"totalWRCPlus\":99.5,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.19,\"kMinusBbPct\":14.7,\"xFIP\":3.95,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.4,\"kMinusBbPct\":10.1,\"xFIP\":4.52,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":76.3,\"temperatureDisplay\":\"76°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"76° | Clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-08T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: Christian Scott 4.74/4.36 vs TBD N/A/N/A; K-BB% 16.3 to N/A.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.\",\"rawScore\":-0.59,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.95 vs 4.52, WHIP 1.19 vs 1.40, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":3.69,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00.\",\"rawScore\":-6.78,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 45.1%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.451,\"totalWeightedImpact\":-4.95,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight opponent edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
-        "headline": "Mets vs Kansas City Royals: overall lineup quality is the clearest angle",
-        "synopsis": "Christian Scott vs TBD sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321. Several key inputs are still missing, so the read should stay conservative.",
+        "raw": "{\"generatedAt\":\"2026-07-08T06:25:18.792Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-08\",\"opponent\":\"Kansas City Royals\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":76.3,\"temperatureDisplay\":\"76°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"76° | Clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-08T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Christian Scott\",\"handedness\":\"R\",\"era\":3.49,\"xERA\":4.74,\"fip\":4.36,\"whip\":1.35,\"kPct\":28,\"bbPct\":11.7,\"kMinusBbPct\":16.3,\"hardHitPct\":34.7,\"barrelPct\":8.1,\"xBAAllowed\":0.241,\"xSLGAllowed\":0.404,\"xwOBAAllowed\":0.335,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-03\",\"opponent\":\"Atlanta Braves\",\"ip\":\"4.0\",\"er\":3,\"k\":7,\"h\":2,\"bb\":4,\"result\":\"L\"},{\"date\":\"2026-06-27\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.1\",\"er\":2,\"k\":6,\"h\":3,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-06-11\",\"opponent\":\"St. Louis Cardinals\",\"ip\":\"4.2\",\"er\":4,\"k\":6,\"h\":7,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-05\",\"opponent\":\"San Diego Padres\",\"ip\":\"5.2\",\"er\":0,\"k\":3,\"h\":3,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":4.67,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":5.5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":4.67,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Steven Cruz\",\"handedness\":\"R\",\"era\":5.08,\"xERA\":4.02,\"fip\":5.87,\"whip\":1.45,\"kPct\":29.8,\"bbPct\":12.9,\"kMinusBbPct\":16.9,\"hardHitPct\":33.8,\"barrelPct\":11.3,\"xBAAllowed\":0.226,\"xSLGAllowed\":0.385,\"xwOBAAllowed\":0.311,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-06\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"1.0\",\"er\":0,\"k\":2,\"h\":1,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-07-02\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"1.0\",\"er\":0,\"k\":0,\"h\":1,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-06-30\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"1.0\",\"er\":0,\"k\":1,\"h\":0,\"bb\":0,\"result\":\"-\"},{\"date\":\"2026-06-28\",\"opponent\":\"Chicago White Sox\",\"ip\":\"1.0\",\"er\":0,\"k\":1,\"h\":0,\"bb\":0,\"result\":\"W\"}],\"avgInnings\":1,\"avgEarnedRuns\":0,\"avgStrikeouts\":1,\"daysSinceLastStart\":2},\"workload\":{\"inningsTrend\":1,\"daysSinceLastStart\":2},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7.8,\"projectedLineupWRCPlus\":101,\"obp\":0.321,\"iso\":0.147,\"kPct\":22.2,\"bbPct\":8.1,\"xBA\":0.26,\"xSLG\":0.438,\"xwOBA\":0.333,\"hardHitPct\":42.7,\"barrelPct\":9.3,\"battingAverage\":0.25,\"wOBA\":0.316,\"lineup\":{\"totalWAR\":7.8,\"totalWRCPlus\":101,\"totalOBP\":0.321,\"totalISO\":0.149,\"totalKPct\":20.3,\"totalBBPct\":8.9,\"totalAVG\":0.25,\"totalWOBA\":0.316,\"totalXBA\":0.267,\"totalXSLG\":0.438,\"totalXWOBA\":0.339,\"totalHardHitPct\":43.3,\"totalBarrelPct\":8.6,\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.023}},\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.023},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":8.4,\"projectedLineupWRCPlus\":99.5,\"obp\":0.319,\"iso\":0.148,\"kPct\":21.3,\"bbPct\":8.5,\"xBA\":0.25,\"xSLG\":0.409,\"xwOBA\":0.321,\"hardHitPct\":43.5,\"barrelPct\":9.1,\"battingAverage\":0.252,\"wOBA\":0.319,\"lineup\":{\"totalWAR\":8.4,\"totalWRCPlus\":99.5,\"totalOBP\":0.319,\"totalISO\":0.159,\"totalKPct\":21.7,\"totalBBPct\":8.6,\"totalAVG\":0.252,\"totalWOBA\":0.319,\"totalXBA\":0.252,\"totalXSLG\":0.414,\"totalXWOBA\":0.325,\"totalHardHitPct\":44.4,\"totalBarrelPct\":9.2,\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":-0.006}},\"regressionSignals\":{\"baMinusXba\":0,\"wobaMinusXwoba\":-0.006},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7.8,\"totalWRCPlus\":101,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":8.4,\"totalWRCPlus\":99.5,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.19,\"kMinusBbPct\":14.7,\"xFIP\":3.95,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.4,\"kMinusBbPct\":10.1,\"xFIP\":4.52,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":2,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":76.3,\"temperatureDisplay\":\"76°\",\"condition\":\"Clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"76° | Clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-08T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Christian Scott 4.74/4.36 vs Steven Cruz 4.02/5.87; K-BB% 16.3 to 16.9.\",\"rawScore\":9.43,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.\",\"rawScore\":-0.59,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.95 vs 4.52, WHIP 1.19 vs 1.40, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":3.69,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.54.\",\"rawScore\":-0.62,\"weightedImpact\":-3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 70.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.7,\"totalWeightedImpact\":28.35,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight Mets edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
+        "headline": "Mets vs Kansas City Royals: starting pitching is the clearest angle",
+        "synopsis": "Christian Scott vs Steven Cruz sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Christian Scott 4.74/4.36 vs Steven Cruz 4.02/5.87; K-BB% 16.3 to 16.9. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
-          "modelLean": "Slight opponent edge",
+          "modelLean": "Slight Mets edge",
           "officialPick": "Mets ML",
-          "bestEdge": "Bullpen",
+          "bestEdge": "Starting Pitching",
           "biggestRisk": "Lineup Quality"
         },
         "gameDetails": {
@@ -1315,8 +1401,8 @@
         "edgeSummary": {
           "startingPitching": {
             "category": "Starting Pitching",
-            "verdict": "Even",
-            "strength": "even",
+            "verdict": "Mets edge",
+            "strength": "strong",
             "dataMode": "real"
           },
           "lineupQuality": {
@@ -1334,7 +1420,7 @@
           "regressionSignals": {
             "category": "Regression Signals",
             "verdict": "Opponent edge",
-            "strength": "moderate",
+            "strength": "slight",
             "dataMode": "real"
           },
           "context": {
@@ -1358,8 +1444,8 @@
           "rows": [
             {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Mets edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             {
@@ -1377,7 +1463,7 @@
             {
               "category": "Regression Signals",
               "verdict": "Opponent edge",
-              "strength": "moderate",
+              "strength": "slight",
               "dataMode": "real"
             },
             {
@@ -1393,34 +1479,36 @@
               "dataMode": "fallback"
             }
           ],
-          "overallModelLean": "Slight opponent edge"
+          "overallModelLean": "Slight Mets edge"
         },
-        "pitchingEdgeSummary": "Starting pitching grades as essentially even on the current board.",
+        "pitchingEdgeSummary": "Christian Scott gives the Mets the cleaner underlying starting-pitcher case.",
         "projectedLineupEdgeSummary": "The opponent has the better overall lineup-quality profile on the current inputs.",
         "analysis": {
           "whyMetsHaveACase": [
+            "Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.",
             "Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP."
           ],
           "whereTheRiskIs": [
             "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
             "Expected stats haven't converted to runs yet — production lags contact quality."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans Mets. Primary edge: starting pitching."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
+            "Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.",
             "Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP."
           ],
           "whereRiskIs": [
             "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
             "Expected stats haven't converted to runs yet — production lags contact quality."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans Mets. Primary edge: starting pitching."
         },
         "sections": [
           {
             "heading": "1. Quick Read",
-            "body": "Model Lean: Slight opponent edge. Official Pick: Mets ML. Best Edge: Bullpen. Biggest Risk: Lineup Quality."
+            "body": "Model Lean: Slight Mets edge. Official Pick: Mets ML. Best Edge: Starting Pitching. Biggest Risk: Lineup Quality."
           },
           {
             "heading": "2. Game Details",
@@ -1428,15 +1516,15 @@
           },
           {
             "heading": "3. Edge Summary",
-            "body": "Starting Pitching: Even | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Opponent edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Slight opponent edge."
+            "body": "Starting Pitching: Mets edge | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Opponent edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Slight Mets edge."
           },
           {
             "heading": "4. Starting Pitchers Comparison",
-            "body": "Starting pitching grades as essentially even on the current board."
+            "body": "Christian Scott gives the Mets the cleaner underlying starting-pitcher case."
           },
           {
             "heading": "5. Pitcher Contact Profile vs Opponent",
-            "body": "xERA/FIP profile: Christian Scott 4.74/4.36 vs TBD N/A/N/A; K-BB% 16.3 to N/A."
+            "body": "xERA/FIP profile: Christian Scott 4.74/4.36 vs Steven Cruz 4.02/5.87; K-BB% 16.3 to 16.9."
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
@@ -1448,37 +1536,38 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.\n• Expected stats haven't converted to runs yet — production lags contact quality. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
+            "body": "Why the Mets have a case\n• Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.\n• Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.\n• Expected stats haven't converted to runs yet — production lags contact quality. Bottom line\nModel leans Mets. Primary edge: starting pitching."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 45.1%; value edge +45.1 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs Steven Cruz 4.02 xERA, 5.08 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 70.0%; value edge +70.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Christian Scott versus TBD with 4.74 xERA against 0.00. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +45.1 points. Value check: Mets ML 0 with 0.0% implied and 45.1% model probability; value edge +45.1 points.",
-        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 45.1%; value edge +45.1 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Christian Scott versus Steven Cruz with 4.74 xERA against 4.02. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs Steven Cruz 4.02 xERA, 5.08 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 70.0%; value edge +70.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
-          "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 45.1%; value edge +45.1 points; Pick: New York Mets moneyline.",
+          "headline": "Starter gap and value edge favor Mets",
+          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs Steven Cruz 4.02 xERA, 5.08 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 70.0%; value edge +70.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
+            "Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.",
             "Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP."
           ],
           "risks": [
             "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
             "Expected stats haven't converted to runs yet — production lags contact quality."
           ],
-          "bettingAngle": "Primary edge: Christian Scott versus TBD with 4.74 xERA against 0.00. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +45.1 points. Value check: Mets ML 0 with 0.0% implied and 45.1% model probability; value edge +45.1 points.",
+          "bettingAngle": "Primary edge: Christian Scott versus Steven Cruz with 4.74 xERA against 4.02. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
           "officialPick": "Mets ML",
-          "confidenceLabel": "Low",
-          "confidenceScore": 4
+          "confidenceLabel": "Lean",
+          "confidenceScore": 5
         },
         "officialPick": "Official Pick: Mets ML",
         "edgeTable": [
           {
             "category": "Starting Pitching",
-            "edge": "Even",
-            "strength": "even",
-            "reason": "xERA/FIP profile: Christian Scott 4.74/4.36 vs TBD N/A/N/A; K-BB% 16.3 to N/A.",
+            "edge": "Mets edge",
+            "strength": "strong",
+            "reason": "xERA/FIP profile: Christian Scott 4.74/4.36 vs Steven Cruz 4.02/5.87; K-BB% 16.3 to 16.9.",
             "dataMode": "real"
           },
           {
@@ -1498,8 +1587,8 @@
           {
             "category": "Regression Signals",
             "edge": "Opponent edge",
-            "strength": "moderate",
-            "reason": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00.",
+            "strength": "slight",
+            "reason": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.54.",
             "dataMode": "real"
           },
           {
@@ -1520,19 +1609,19 @@
             "category": "Market Value",
             "edge": "Limited data",
             "strength": "even",
-            "reason": "Market check: Mets ML N/A implies N/A vs model 45.1%.",
+            "reason": "Market check: Mets ML N/A implies N/A vs model 70.0%.",
             "dataMode": "fallback"
           }
         ],
         "keyAngles": [
+          "xERA/FIP profile: Christian Scott 4.74/4.36 vs Steven Cruz 4.02/5.87; K-BB% 16.3 to 16.9.",
           "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
-          "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00.",
           "Bullpen shape: xFIP 3.95 vs 4.52, WHIP 1.19 vs 1.40, last 3-day usage N/A IP vs N/A IP.",
-          "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days."
+          "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.54."
         ],
         "pick": "Mets ML",
-        "analyticalLean": "Slight opponent edge",
-        "confidence": "low",
+        "analyticalLean": "Slight Mets edge",
+        "confidence": "lean",
         "missingMetrics": [
           "Park factor",
           "Mets team wRC+ vs handedness",
@@ -1639,11 +1728,72 @@
               }
             },
             "opp": {
-              "name": "TBD",
+              "name": "Steven Cruz",
+              "handedness": "R",
+              "era": 5.08,
+              "xERA": 4.02,
+              "fip": 5.87,
+              "whip": 1.45,
+              "kPct": 29.8,
+              "bbPct": 12.9,
+              "kMinusBbPct": 16.9,
+              "hardHitPct": 33.8,
+              "barrelPct": 11.3,
+              "xBAAllowed": 0.226,
+              "xSLGAllowed": 0.385,
+              "xwOBAAllowed": 0.311,
               "recentStarts": {
-                "starts": []
+                "starts": [
+                  {
+                    "date": "2026-07-06",
+                    "opponent": "Philadelphia Phillies",
+                    "ip": "1.0",
+                    "er": 0,
+                    "k": 2,
+                    "h": 1,
+                    "bb": 1,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-07-02",
+                    "opponent": "Tampa Bay Rays",
+                    "ip": "1.0",
+                    "er": 0,
+                    "k": 0,
+                    "h": 1,
+                    "bb": 1,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-06-30",
+                    "opponent": "Tampa Bay Rays",
+                    "ip": "1.0",
+                    "er": 0,
+                    "k": 1,
+                    "h": 0,
+                    "bb": 0,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-06-28",
+                    "opponent": "Chicago White Sox",
+                    "ip": "1.0",
+                    "er": 0,
+                    "k": 1,
+                    "h": 0,
+                    "bb": 0,
+                    "result": "W"
+                  }
+                ],
+                "avgInnings": 1,
+                "avgEarnedRuns": 0,
+                "avgStrikeouts": 1,
+                "daysSinceLastStart": 2
               },
-              "workload": {},
+              "workload": {
+                "inningsTrend": 1,
+                "daysSinceLastStart": 2
+              },
               "opponentHandednessProfile": {
                 "left": 0,
                 "right": 0,
@@ -1690,6 +1840,7 @@
                 "wobaMinusXwoba": -0.023
               },
               "splitContext": {
+                "pitcherHandedness": "R",
                 "splitDataAvailable": false
               }
             },
@@ -1794,11 +1945,11 @@
             {
               "category": "Starting Pitching",
               "weight": 30,
-              "edge": "Even",
-              "strength": "even",
-              "explanation": "xERA/FIP profile: Christian Scott 4.74/4.36 vs TBD N/A/N/A; K-BB% 16.3 to N/A.",
-              "rawScore": 0,
-              "weightedImpact": 0,
+              "edge": "Mets edge",
+              "strength": "strong",
+              "explanation": "xERA/FIP profile: Christian Scott 4.74/4.36 vs Steven Cruz 4.02/5.87; K-BB% 16.3 to 16.9.",
+              "rawScore": 9.43,
+              "weightedImpact": 30,
               "dataMode": "real",
               "supportedBy": [
                 "ERA",
@@ -1856,10 +2007,10 @@
               "category": "Regression Signals",
               "weight": 10,
               "edge": "Opponent edge",
-              "strength": "moderate",
-              "explanation": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 0.00.",
-              "rawScore": -6.78,
-              "weightedImpact": -6.6,
+              "strength": "slight",
+              "explanation": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.023; opponent starter overperformance signal 1.54.",
+              "rawScore": -0.62,
+              "weightedImpact": -3.3,
               "dataMode": "real",
               "supportedBy": [
                 "BA vs xBA",
@@ -1909,7 +2060,7 @@
               "weight": 5,
               "edge": "Limited data",
               "strength": "even",
-              "explanation": "Market check: Mets ML N/A implies N/A vs model 45.1%.",
+              "explanation": "Market check: Mets ML N/A implies N/A vs model 70.0%.",
               "rawScore": 0,
               "weightedImpact": 0,
               "dataMode": "fallback",
@@ -1919,8 +2070,8 @@
               ]
             }
           ],
-          "projectedWinProbability": 0.451,
-          "totalWeightedImpact": -4.95,
+          "projectedWinProbability": 0.7,
+          "totalWeightedImpact": 28.35,
           "confidence": "low",
           "criticalMissingCount": 6
         },
@@ -1970,9 +2121,9 @@
             }
           },
           "header": {
-            "title": "Mets vs Kansas City Royals: overall lineup quality is the clearest angle",
+            "title": "Mets vs Kansas City Royals: starting pitching is the clearest angle",
             "matchupTitle": "New York Mets vs Kansas City Royals",
-            "tagline": "overall lineup quality is the clearest angle",
+            "tagline": "starting pitching is the clearest angle",
             "date": "2026-07-08",
             "time": "7:10 PM ET",
             "ballpark": "Citi Field",
@@ -1981,9 +2132,9 @@
             "metadataLine": "July 8th | 7:10 PM ET | Citi Field | 76° | Clear | Wind 9 mph S"
           },
           "quickRead": {
-            "modelLean": "Slight opponent edge",
+            "modelLean": "Slight Mets edge",
             "officialPick": "Mets ML",
-            "bestEdge": "Bullpen",
+            "bestEdge": "Starting Pitching",
             "biggestRisk": "Lineup Quality"
           },
           "gameDetails": {
@@ -2050,8 +2201,8 @@
           "edgeSummary": {
             "startingPitching": {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Mets edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             "lineupQuality": {
@@ -2069,7 +2220,7 @@
             "regressionSignals": {
               "category": "Regression Signals",
               "verdict": "Opponent edge",
-              "strength": "moderate",
+              "strength": "slight",
               "dataMode": "real"
             },
             "context": {
@@ -2093,8 +2244,8 @@
             "rows": [
               {
                 "category": "Starting Pitching",
-                "verdict": "Even",
-                "strength": "even",
+                "verdict": "Mets edge",
+                "strength": "strong",
                 "dataMode": "real"
               },
               {
@@ -2112,7 +2263,7 @@
               {
                 "category": "Regression Signals",
                 "verdict": "Opponent edge",
-                "strength": "moderate",
+                "strength": "slight",
                 "dataMode": "real"
               },
               {
@@ -2128,11 +2279,11 @@
                 "dataMode": "fallback"
               }
             ],
-            "overallModelLean": "Slight opponent edge"
+            "overallModelLean": "Slight Mets edge"
           },
           "startingPitchersComparison": {
             "metsPitcher": "Christian Scott",
-            "oppPitcher": "TBD",
+            "oppPitcher": "Steven Cruz",
             "seasonLabel": "2026",
             "metsCard": {
               "name": "Christian Scott",
@@ -2190,10 +2341,59 @@
               }
             },
             "oppCard": {
-              "name": "TBD",
+              "name": "Steven Cruz",
+              "mlbId": 674444,
+              "record": "2-2",
+              "hand": "R",
               "teamLabel": "Kansas City Royals",
-              "recentStarts": [],
-              "stats": {}
+              "recentStarts": [
+                {
+                  "date": "2026-07-06",
+                  "opponent": "Philadelphia Phillies",
+                  "ip": "1.0",
+                  "er": "0",
+                  "k": "2",
+                  "h": "1",
+                  "bb": "1",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-07-02",
+                  "opponent": "Tampa Bay Rays",
+                  "ip": "1.0",
+                  "er": "0",
+                  "k": "0",
+                  "h": "1",
+                  "bb": "1",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-06-30",
+                  "opponent": "Tampa Bay Rays",
+                  "ip": "1.0",
+                  "er": "0",
+                  "k": "1",
+                  "h": "0",
+                  "bb": "0",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-06-28",
+                  "opponent": "Chicago White Sox",
+                  "ip": "1.0",
+                  "er": "0",
+                  "k": "1",
+                  "h": "0",
+                  "bb": "0",
+                  "result": "W"
+                }
+              ],
+              "stats": {
+                "era": "5.08",
+                "whip": "1.45",
+                "kPct": "29.8%",
+                "bbPct": "12.9%"
+              }
             },
             "advancedMatchupTables": [
               {
@@ -2242,12 +2442,14 @@
               },
               {
                 "title": "Opponent Advanced Stats vs Mets",
-                "leftHeader": "KCR TBD",
+                "leftHeader": "KCR Steven Cruz",
                 "rightHeader": "NYM Offense",
                 "rightTeamKey": "mets",
                 "rows": [
                   {
                     "label": "Barrel %",
+                    "left": "11.3%",
+                    "leftPercentile": 22,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 9.3,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2255,6 +2457,8 @@
                   },
                   {
                     "label": "xBA",
+                    "left": "0.226",
+                    "leftPercentile": 73,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.26,
                     "rightMetricLabel": "Batter xBA",
@@ -2262,6 +2466,8 @@
                   },
                   {
                     "label": "Hard Hit %",
+                    "left": "33.8%",
+                    "leftPercentile": 77,
                     "leftMetricLabel": "Pitcher Hard Hit %",
                     "right": 42.7,
                     "rightMetricLabel": "Batter Hard Hit %",
@@ -2269,6 +2475,8 @@
                   },
                   {
                     "label": "xSLG %",
+                    "left": "0.385",
+                    "leftPercentile": 61,
                     "leftMetricLabel": "Pitcher xSLG %",
                     "right": 0.438,
                     "rightMetricLabel": "Batter xSLG %",
@@ -2314,19 +2522,24 @@
               },
               {
                 "title": "Opponent Advanced Stats vs Mets Splits",
-                "leftHeader": "KCR TBD",
+                "leftHeader": "KCR Steven Cruz",
                 "rightHeader": "NYM Profile",
                 "rightTeamKey": "mets",
                 "rows": [
                   {
-                    "label": "Pitching Hand / vs Split"
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Right",
+                    "right": "vs Right-handed pitching"
                   },
                   {
                     "label": "Innings Pitched / Plate Appearances",
+                    "left": "28.1",
                     "right": "2080"
                   },
                   {
                     "label": "K%",
+                    "left": "29.8%",
+                    "leftPercentile": 91,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 22.2,
                     "rightMetricLabel": "Batter K%",
@@ -2334,6 +2547,8 @@
                   },
                   {
                     "label": "BB%",
+                    "left": "12.9%",
+                    "leftPercentile": 25,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 8.1,
                     "rightMetricLabel": "Batter BB%",
@@ -2342,22 +2557,22 @@
                 ]
               }
             ],
-            "summary": "Starting pitching grades as essentially even on the current board."
+            "summary": "Christian Scott gives the Mets the cleaner underlying starting-pitcher case."
           },
           "bullpenReport": {
             "mets": {
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 18,
-                "appearancesPerPitcherPerDay": 0.18,
+                "appearances": 20,
+                "appearancesPerPitcherPerDay": 0.2,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.09,
                 "seasonWhip": 1.19,
-                "last20Era": 5.66
+                "last20Era": 5.91
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2367,23 +2582,23 @@
                 "saveConversionPct": 86.7,
                 "era": 4.85,
                 "whip": 1.65,
-                "last7DaysAppearances": 3,
-                "last7DaysInningsPitched": "2.1"
+                "last7DaysAppearances": 2,
+                "last7DaysInningsPitched": "1.1"
               }
             },
             "opp": {
               "teamName": "Kansas City Royals",
               "teamId": 118,
               "usage": {
-                "appearances": 19,
-                "appearancesPerPitcherPerDay": 0.19,
+                "appearances": 21,
+                "appearancesPerPitcherPerDay": 0.21,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 4.35,
                 "seasonWhip": 1.4,
-                "last20Era": 4.68
+                "last20Era": 4.8
               },
               "closer": {
                 "name": "Lucas Erceg",
@@ -2416,7 +2631,7 @@
                   "statKey": "avg",
                   "seasonRank": 26,
                   "seasonValue": 0.233,
-                  "recentRank": 15,
+                  "recentRank": 14,
                   "recentValue": 0.249,
                   "differencePct": 6.9,
                   "improving": true
@@ -2476,7 +2691,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 18,
                   "seasonValue": 8.7,
-                  "recentRank": 26,
+                  "recentRank": 25,
                   "recentValue": 7.1,
                   "differencePct": -18.4,
                   "improving": false
@@ -2486,35 +2701,42 @@
           },
           "pitcherContactProfile": {
             "metsPitcher": "Christian Scott",
-            "oppPitcher": "TBD",
+            "oppPitcher": "Steven Cruz",
             "pitcherRows": [
               {
                 "label": "xERA",
-                "mets": "4.74"
+                "mets": "4.74",
+                "opp": "4.02"
               },
               {
                 "label": "Barrel%",
-                "mets": "8.1%"
+                "mets": "8.1%",
+                "opp": "11.3%"
               },
               {
                 "label": "Hard-Hit%",
-                "mets": "34.7%"
+                "mets": "34.7%",
+                "opp": "33.8%"
               },
               {
                 "label": "Whiff%",
-                "mets": "25.6%"
+                "mets": "25.6%",
+                "opp": "33.8%"
               },
               {
                 "label": "Chase%",
-                "mets": "27.6%"
+                "mets": "27.6%",
+                "opp": "25.5%"
               },
               {
                 "label": "K%",
-                "mets": "28%"
+                "mets": "28%",
+                "opp": "29.8%"
               },
               {
                 "label": "BB%",
-                "mets": "11.7%"
+                "mets": "11.7%",
+                "opp": "12.9%"
               }
             ],
             "opponentRows": [
@@ -2561,11 +2783,12 @@
           },
           "pitcherSplitMatchup": {
             "metsPitcher": "Christian Scott",
-            "oppPitcher": "TBD",
+            "oppPitcher": "Steven Cruz",
             "pitcherRows": [
               {
                 "label": "Pitcher Hand",
-                "mets": "R"
+                "mets": "R",
+                "opp": "R"
               },
               {
                 "label": "Opponent Lineup wRC+",
@@ -2593,6 +2816,7 @@
             "opponentRows": [
               {
                 "label": "Pitcher Hand",
+                "mets": "R",
                 "opp": "R"
               },
               {
@@ -3293,13 +3517,14 @@
           },
           "analysis": {
             "whyMetsHaveACase": [
+              "Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.",
               "Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP."
             ],
             "whereTheRiskIs": [
               "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
               "Expected stats haven't converted to runs yet — production lags contact quality."
             ],
-            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+            "bottomLine": "Model leans Mets. Primary edge: starting pitching."
           },
           "teamAdvanced": {
             "mets": {
@@ -3339,8 +3564,9 @@
               },
               "rankScope": "MLB",
               "rankTotal": 30,
+              "vsHand": "R",
               "usingSplit": false,
-              "fallbackNote": "season total"
+              "fallbackNote": "season total (no RHP split available)"
             },
             "opp": {
               "wrcPlus": "95",
@@ -3385,35 +3611,37 @@
             }
           },
           "todayPick": {
-            "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 45.1%; value edge +45.1 points; Pick: New York Mets moneyline.",
+            "headline": "Starter gap and value edge favor Mets",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs Steven Cruz 4.02 xERA, 5.08 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 70.0%; value edge +70.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
+              "Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.",
               "Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP."
             ],
             "risks": [
               "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
               "Expected stats haven't converted to runs yet — production lags contact quality."
             ],
-            "bettingAngle": "Primary edge: Christian Scott versus TBD with 4.74 xERA against 0.00. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +45.1 points. Value check: Mets ML 0 with 0.0% implied and 45.1% model probability; value edge +45.1 points.",
+            "bettingAngle": "Primary edge: Christian Scott versus Steven Cruz with 4.74 xERA against 4.02. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
             "officialPick": "Mets ML",
-            "confidenceLabel": "Low",
-            "confidenceScore": 4
+            "confidenceLabel": "Lean",
+            "confidenceScore": 5
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Christian Scott versus TBD with 4.74 xERA against 0.00. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +45.1 points. Value check: Mets ML 0 with 0.0% implied and 45.1% model probability; value edge +45.1 points.",
-            "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 45.1%; value edge +45.1 points; Pick: New York Mets moneyline.",
+            "explanation": "Primary edge: Christian Scott versus Steven Cruz with 4.74 xERA against 4.02. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+            "headline": "Starter gap and value edge favor Mets",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Christian Scott 4.74 xERA, 3.49 ERA, N/A% K vs Steven Cruz 4.02 xERA, 5.08 ERA, N/A% K; Offense: Mets wRC+ 90.0 vs 95.0; Bullpen: Mets xERA 4.99 vs 5.34. Price: Mets ML 0 implies 0.0% vs model 70.0%; value edge +70.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
+              "Christian Scott: 3.49 ERA, 28%% K rate, 4.36 FIP, vs Steven Cruz: 5.08 ERA, 5.87 FIP.",
               "Bullpen: Mets BP: 3.09 ERA, 3.95 xFIP, Opp BP: 4.35 ERA, 4.52 xFIP."
             ],
             "risks": [
               "Overall lineup quality only: projected WAR 7.8 vs 8.4, projected lineup wRC+ 101.0 vs 99.5, xwOBA 0.333 vs 0.321.",
               "Expected stats haven't converted to runs yet — production lags contact quality."
             ],
-            "bettingAngle": "Primary edge: Christian Scott versus TBD with 4.74 xERA against 0.00. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +45.1 points. Value check: Mets ML 0 with 0.0% implied and 45.1% model probability; value edge +45.1 points.",
-            "confidenceLabel": "Low",
-            "confidence": 4
+            "bettingAngle": "Primary edge: Christian Scott versus Steven Cruz with 4.74 xERA against 4.02. Secondary checks: offense 90.0 vs 95.0 wRC+, bullpen 4.99 vs 5.34 xERA, value edge +70.0 points. Value check: Mets ML 0 with 0.0% implied and 70.0% model probability; value edge +70.0 points.",
+            "confidenceLabel": "Lean",
+            "confidence": 5
           },
           "meta": {
             "homeAwayLabel": "Home",
@@ -111101,11 +111329,20 @@
       "opponent": "Kansas City Royals",
       "homeAway": "home",
       "estimated": false,
-      "status": "pending",
+      "status": "final",
+      "gradingStatus": "graded",
+      "finalScore": "12-16",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
       "odds": -650,
-      "stake": 100
+      "oddsSource": "odds-history",
+      "resultSource": "mlb-stats-schedule",
+      "sourceGamePk": 823607,
+      "startTime": "2026-07-07T23:10:00.000Z",
+      "stake": 100,
+      "result": "L",
+      "profit": -100,
+      "cumulativeProfit": -1163.9
     },
     {
       "gameId": "2026-07-06-mets-vs-atlanta-braves",
