@@ -371,17 +371,34 @@
       "inningHalf": "Top",
       "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
         "home": {
           "runs": 0,
           "hits": 0,
-          "errors": 0
+          "errors": 0,
+          "leftOnBase": 0
         },
         "away": {
           "runs": 0,
           "hits": 0,
-          "errors": 0
+          "errors": 0,
+          "leftOnBase": 0
         }
       },
       "defense": {
@@ -430,6 +447,22 @@
           "fullName": "Carson Benge",
           "link": "/api/v1/people/701807"
         },
+        "batter": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "onDeck": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "inHole": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
@@ -451,6 +484,11 @@
           "id": 695506,
           "fullName": "Jac Caglianone",
           "link": "/api/v1/people/695506"
+        },
+        "pitcher": {
+          "id": 674444,
+          "fullName": "Steven Cruz",
+          "link": "/api/v1/people/674444"
         },
         "battingOrder": 1,
         "team": {
@@ -788,7 +826,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-08T21:30:17.695Z",
+    "generatedAt": "2026-07-08T22:42:56.849Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-08",
     "cacheKey": "next-game:2026-07-08"
