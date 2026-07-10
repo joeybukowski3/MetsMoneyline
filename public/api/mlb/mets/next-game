@@ -1,7 +1,7 @@
 {
   "gameId": 823604,
   "startTime": "2026-07-10T23:15:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 121,
     "canonicalKey": "mets",
@@ -40,8 +40,63 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 2,
+        "playerId": 665742,
+        "name": "Juan Soto",
+        "pos": "LF"
+      },
+      {
+        "order": 3,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 4,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 5,
+        "playerId": 593871,
+        "name": "Jorge Polanco",
+        "pos": "DH"
+      },
+      {
+        "order": 6,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 7,
+        "playerId": 682626,
+        "name": "Francisco Alvarez",
+        "pos": "C"
+      },
+      {
+        "order": 8,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "3B"
+      },
+      {
+        "order": 9,
+        "playerId": 670097,
+        "name": "Zack Short",
+        "pos": "2B"
+      }
+    ],
     "opp": []
   },
   "sportsbookSummary": {
@@ -54,12 +109,12 @@
         "outcomes": [
           {
             "name": "Boston Red Sox",
-            "price": 126,
+            "price": 122,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -148,
+            "price": -144,
             "point": null
           }
         ]
@@ -86,12 +141,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -114,
+            "price": -112,
             "point": 7.5
           },
           {
             "name": "Under",
-            "price": -106,
+            "price": -108,
             "point": 7.5
           }
         ]
@@ -108,9 +163,9 @@
     "officialDate": "2026-07-10",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -261,16 +316,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 111,
+          "name": "Boston Red Sox",
+          "link": "/api/v1/teams/111"
         }
       },
       "offense": {
         "team": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "link": "/api/v1/teams/111"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -313,11 +368,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742",
+          "firstName": "Juan",
+          "lastName": "Soto",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Juan"
+        },
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 593871,
+          "fullName": "Jorge Polanco",
+          "link": "/api/v1/people/593871",
+          "firstName": "Jorge",
+          "lastName": "Polanco",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Jorge"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626",
+          "firstName": "Francisco",
+          "lastName": "Alvarez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 670097,
+          "fullName": "Zack Short",
+          "link": "/api/v1/people/670097",
+          "firstName": "Zachary",
+          "lastName": "Short",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Zack"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-10T18:57:51.545Z",
+    "generatedAt": "2026-07-10T20:25:55.648Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-10",
     "cacheKey": "next-game:2026-07-10"
