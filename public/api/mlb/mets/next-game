@@ -31,7 +31,13 @@
       "fip": null,
       "whip": "1.42"
     },
-    "opp": null
+    "opp": {
+      "id": 700842,
+      "fullName": "Eduardo Rivera",
+      "era": "0.00",
+      "fip": null,
+      "whip": "0.30"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
@@ -163,6 +169,11 @@
           "ties": 0,
           "pct": ".478"
         },
+        "probablePitcher": {
+          "id": 700842,
+          "fullName": "Eduardo Rivera",
+          "link": "/api/v1/people/700842"
+        },
         "splitSquad": false,
         "seriesNumber": 31,
         "springLeague": {
@@ -250,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 111,
+          "name": "Boston Red Sox",
+          "link": "/api/v1/teams/111"
         }
       },
       "offense": {
         "team": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "link": "/api/v1/teams/111"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -276,12 +287,37 @@
     "seriesStatus": {
       "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 111,
+        "name": "Boston Red Sox",
+        "link": "/api/v1/teams/111"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "BOS leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -306,7 +342,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-11T14:49:54.670Z",
+    "generatedAt": "2026-07-11T15:52:57.712Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-11",
     "cacheKey": "next-game:2026-07-11"
