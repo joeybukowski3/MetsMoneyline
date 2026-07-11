@@ -212,6 +212,60 @@
           ]
         }
       ]
+    },
+    {
+      "key": "draftkings",
+      "title": "DraftKings",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "Boston Red Sox",
+              "price": 123,
+              "point": null
+            },
+            {
+              "name": "New York Mets",
+              "price": -149,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "Boston Red Sox",
+              "price": -171,
+              "point": 1.5
+            },
+            {
+              "name": "New York Mets",
+              "price": 141,
+              "point": -1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -110,
+              "point": 8.5
+            },
+            {
+              "name": "Under",
+              "price": -110,
+              "point": 8.5
+            }
+          ]
+        }
+      ]
     }
   ],
   "consensus": {
@@ -279,11 +333,11 @@
       {
         "key": "fanduel",
         "title": "FanDuel",
-        "last_update": "2026-07-11T06:35:06Z",
+        "last_update": "2026-07-11T08:27:10Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-07-11T06:35:06Z",
+            "last_update": "2026-07-11T08:27:10Z",
             "outcomes": [
               {
                 "name": "Boston Red Sox",
@@ -297,7 +351,7 @@
           },
           {
             "key": "spreads",
-            "last_update": "2026-07-11T06:35:06Z",
+            "last_update": "2026-07-11T08:27:10Z",
             "outcomes": [
               {
                 "name": "Boston Red Sox",
@@ -313,7 +367,7 @@
           },
           {
             "key": "totals",
-            "last_update": "2026-07-11T06:35:06Z",
+            "last_update": "2026-07-11T08:27:10Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -332,11 +386,11 @@
       {
         "key": "betrivers",
         "title": "BetRivers",
-        "last_update": "2026-07-11T06:34:33Z",
+        "last_update": "2026-07-11T08:27:10Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-07-11T06:34:33Z",
+            "last_update": "2026-07-11T08:27:10Z",
             "outcomes": [
               {
                 "name": "Boston Red Sox",
@@ -350,7 +404,7 @@
           },
           {
             "key": "spreads",
-            "last_update": "2026-07-11T06:34:33Z",
+            "last_update": "2026-07-11T08:27:10Z",
             "outcomes": [
               {
                 "name": "Boston Red Sox",
@@ -366,7 +420,7 @@
           },
           {
             "key": "totals",
-            "last_update": "2026-07-11T06:34:33Z",
+            "last_update": "2026-07-11T08:27:10Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -385,11 +439,11 @@
       {
         "key": "bovada",
         "title": "Bovada",
-        "last_update": "2026-07-11T06:35:09Z",
+        "last_update": "2026-07-11T08:25:32Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-07-11T06:35:09Z",
+            "last_update": "2026-07-11T08:25:32Z",
             "outcomes": [
               {
                 "name": "Boston Red Sox",
@@ -403,7 +457,7 @@
           },
           {
             "key": "spreads",
-            "last_update": "2026-07-11T06:35:09Z",
+            "last_update": "2026-07-11T08:25:32Z",
             "outcomes": [
               {
                 "name": "Boston Red Sox",
@@ -419,7 +473,60 @@
           },
           {
             "key": "totals",
-            "last_update": "2026-07-11T06:35:09Z",
+            "last_update": "2026-07-11T08:25:32Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -110,
+                "point": 8.5
+              },
+              {
+                "name": "Under",
+                "price": -110,
+                "point": 8.5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-07-11T08:26:35Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-07-11T08:26:35Z",
+            "outcomes": [
+              {
+                "name": "Boston Red Sox",
+                "price": 123
+              },
+              {
+                "name": "New York Mets",
+                "price": -149
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-07-11T08:26:35Z",
+            "outcomes": [
+              {
+                "name": "Boston Red Sox",
+                "price": -171,
+                "point": 1.5
+              },
+              {
+                "name": "New York Mets",
+                "price": 141,
+                "point": -1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-07-11T08:26:35Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -439,7 +546,7 @@
   },
   "meta": {
     "provider": "the-odds-api",
-    "generatedAt": "2026-07-11T06:35:30.030Z",
+    "generatedAt": "2026-07-11T08:27:11.286Z",
     "cacheHint": "odds: 2-5 minutes"
   }
 }
