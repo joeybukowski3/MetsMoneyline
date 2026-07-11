@@ -97,7 +97,62 @@
         "pos": "2B"
       }
     ],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 678011,
+        "name": "Anthony Seigler",
+        "pos": "2B"
+      },
+      {
+        "order": 2,
+        "playerId": 678882,
+        "name": "Ceddanne Rafaela",
+        "pos": "CF"
+      },
+      {
+        "order": 3,
+        "playerId": 677800,
+        "name": "Wilyer Abreu",
+        "pos": "RF"
+      },
+      {
+        "order": 4,
+        "playerId": 702332,
+        "name": "Caleb Durbin",
+        "pos": "3B"
+      },
+      {
+        "order": 5,
+        "playerId": 807799,
+        "name": "Masataka Yoshida",
+        "pos": "DH"
+      },
+      {
+        "order": 6,
+        "playerId": 655316,
+        "name": "Andruw Monasterio",
+        "pos": "1B"
+      },
+      {
+        "order": 7,
+        "playerId": 680776,
+        "name": "Jarren Duran",
+        "pos": "LF"
+      },
+      {
+        "order": 8,
+        "playerId": 665966,
+        "name": "Carlos Narváez",
+        "pos": "C"
+      },
+      {
+        "order": 9,
+        "playerId": 691907,
+        "name": "Tsung-Che Cheng",
+        "pos": "SS"
+      }
+    ]
   },
   "sportsbookSummary": {
     "key": "fanduel",
@@ -109,12 +164,12 @@
         "outcomes": [
           {
             "name": "Boston Red Sox",
-            "price": 128,
+            "price": 132,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -152,
+            "price": -156,
             "point": null
           }
         ]
@@ -224,6 +279,7 @@
           "ties": 0,
           "pct": ".478"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 700842,
           "fullName": "Eduardo Rivera",
@@ -292,6 +348,7 @@
           "ties": 0,
           "pct": ".421"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 642547,
           "fullName": "Freddy Peralta",
@@ -308,26 +365,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 642547,
+          "fullName": "Freddy Peralta",
+          "link": "/api/v1/people/642547"
+        },
+        "catcher": {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626"
+        },
+        "first": {
+          "id": 676572,
+          "fullName": "Eric Wagaman",
+          "link": "/api/v1/people/676572"
+        },
+        "second": {
+          "id": 670097,
+          "fullName": "Zack Short",
+          "link": "/api/v1/people/670097"
+        },
+        "third": {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146"
+        },
+        "shortstop": {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019"
+        },
+        "left": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "center": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "right": {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807"
+        },
+        "batter": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "onDeck": {
+          "id": 665742,
+          "fullName": "Juan Soto",
+          "link": "/api/v1/people/665742"
+        },
+        "inHole": {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 678011,
+          "fullName": "Anthony Seigler",
+          "link": "/api/v1/people/678011"
+        },
+        "onDeck": {
+          "id": 678882,
+          "fullName": "Ceddanne Rafaela",
+          "link": "/api/v1/people/678882"
+        },
+        "inHole": {
+          "id": 677800,
+          "fullName": "Wilyer Abreu",
+          "link": "/api/v1/people/677800"
+        },
+        "pitcher": {
+          "id": 700842,
+          "fullName": "Eduardo Rivera",
+          "link": "/api/v1/people/700842"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 111,
           "name": "Boston Red Sox",
           "link": "/api/v1/teams/111"
         }
       },
-      "offense": {
-        "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 3289,
@@ -521,12 +693,140 @@
           },
           "useName": "Zack"
         }
+      ],
+      "awayPlayers": [
+        {
+          "id": 678011,
+          "fullName": "Anthony Seigler",
+          "link": "/api/v1/people/678011",
+          "firstName": "Anthony",
+          "lastName": "Seigler",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Anthony"
+        },
+        {
+          "id": 678882,
+          "fullName": "Ceddanne Rafaela",
+          "link": "/api/v1/people/678882",
+          "firstName": "Ceddanne",
+          "lastName": "Rafaela",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Ceddanne"
+        },
+        {
+          "id": 677800,
+          "fullName": "Wilyer Abreu",
+          "link": "/api/v1/people/677800",
+          "firstName": "Wilyer",
+          "lastName": "Abreu",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Wilyer"
+        },
+        {
+          "id": 702332,
+          "fullName": "Caleb Durbin",
+          "link": "/api/v1/people/702332",
+          "firstName": "Caleb",
+          "lastName": "Durbin",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Caleb"
+        },
+        {
+          "id": 807799,
+          "fullName": "Masataka Yoshida",
+          "link": "/api/v1/people/807799",
+          "firstName": "Masataka",
+          "lastName": "Yoshida",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Masataka"
+        },
+        {
+          "id": 655316,
+          "fullName": "Andruw Monasterio",
+          "link": "/api/v1/people/655316",
+          "firstName": "Andruw",
+          "lastName": "Monasterio",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Andruw"
+        },
+        {
+          "id": 680776,
+          "fullName": "Jarren Duran",
+          "link": "/api/v1/people/680776",
+          "firstName": "Jarren",
+          "lastName": "Duran",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Jarren"
+        },
+        {
+          "id": 665966,
+          "fullName": "Carlos Narváez",
+          "link": "/api/v1/people/665966",
+          "firstName": "Carlos",
+          "lastName": "Narváez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Carlos"
+        },
+        {
+          "id": 691907,
+          "fullName": "Tsung-Che Cheng",
+          "link": "/api/v1/people/691907",
+          "firstName": "Tsung-Che",
+          "lastName": "Cheng",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Tsung-Che"
+        }
       ]
     }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-11T16:54:01.780Z",
+    "generatedAt": "2026-07-11T17:52:52.063Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-11",
     "cacheKey": "next-game:2026-07-11"
