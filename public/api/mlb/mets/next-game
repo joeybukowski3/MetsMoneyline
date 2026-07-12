@@ -24,7 +24,13 @@
   "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
-    "mets": null,
+    "mets": {
+      "id": 804267,
+      "fullName": "Zach Thornton",
+      "era": "4.35",
+      "fip": null,
+      "whip": "1.16"
+    },
     "opp": {
       "id": 801139,
       "fullName": "Payton Tolle",
@@ -38,7 +44,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Boston Red Sox",
+            "price": -120,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": 102,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Boston Red Sox",
+            "price": 136,
+            "point": -1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": -164,
+            "point": 1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 100,
+            "point": 8.5
+          },
+          {
+            "name": "Under",
+            "price": -122,
+            "point": 8.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823602,
     "gameGuid": "f15edc2c-e4eb-469e-8cc1-e61a7b4b72ae",
@@ -178,6 +237,11 @@
           "ties": 0,
           "pct": ".417"
         },
+        "probablePitcher": {
+          "id": 804267,
+          "fullName": "Zach Thornton",
+          "link": "/api/v1/people/804267"
+        },
         "splitSquad": false,
         "seriesNumber": 31,
         "springLeague": {
@@ -197,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 111,
+          "name": "Boston Red Sox",
+          "link": "/api/v1/teams/111"
         }
       },
       "offense": {
         "team": {
-          "id": 111,
-          "name": "Boston Red Sox",
-          "link": "/api/v1/teams/111"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -223,12 +287,37 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 111,
+        "name": "Boston Red Sox",
+        "link": "/api/v1/teams/111"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "BOS leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -253,7 +342,7 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-12T00:09:45.796Z",
+    "generatedAt": "2026-07-12T03:55:49.626Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-11",
     "cacheKey": "next-game:2026-07-11"

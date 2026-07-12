@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T00:09:53.095Z",
+  "generatedAt": "2026-07-12T03:55:58.211Z",
   "referenceDate": "2026-07-11",
   "cacheKey": "sample-game:2026-07-11",
   "games": [
@@ -19,12 +19,63 @@
         "oppHome": "17-27",
         "oppRoad": "28-21"
       },
-      "moneyline": {},
+      "moneyline": {
+        "mets": 102,
+        "opp": 102
+      },
+      "runLine": {
+        "mets": 1.5,
+        "price": -164
+      },
+      "total": 8.5,
+      "overUnder": 8.5,
       "status": "upcoming",
       "pitching": {
         "mets": {
-          "name": "TBD",
-          "announced": false,
+          "name": "Zach Thornton",
+          "mlbId": 804267,
+          "announced": true,
+          "hand": "L",
+          "generatedAt": "2026-07-12T03:55:51.533Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "computed",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "0-1, 4.35 ERA, 1.16 WHIP, 10.1 IP",
+          "seasonRecord": "0-1",
+          "seasonERA": "4.35",
+          "seasonFIP": "3.41",
+          "seasonXERA": "5.45",
+          "seasonWHIP": "1.16",
+          "seasonHR9": "0.87",
+          "last3KBB": "3.33",
+          "kMinusBbPct": 16.7,
+          "note": "2026 - 10.1 IP",
+          "savant": {
+            "xERA": "5.45",
+            "xBAAllowed": "0.282",
+            "xSLGAllowed": "0.491",
+            "xwOBAAllowed": "0.356",
+            "barrelPct": "10.3%",
+            "hardHitPct": "51.7%",
+            "whiffPct": "23.2%",
+            "chasePct": "31.7%",
+            "kPct": "23.8%",
+            "bbPct": "7.1%",
+            "exitVeloAllowed": 92.1,
+            "launchAngleAllowed": 11.5,
+            "percentiles": {
+              "barrelPct": 28,
+              "hardHitPct": 7,
+              "kPct": 69,
+              "bbPct": 74,
+              "xERA": 33,
+              "xBAAllowed": 25,
+              "xSLGAllowed": 23
+            }
+          },
           "vsRoster": {
             "PA": 2066,
             "kPct": 0.21558470474346564,
@@ -32,6 +83,8 @@
             "AVG": "0.240",
             "wOBA": "0.306",
             "xwOBA": "0.302",
+            "exitVelo": 92.1,
+            "launchAngle": 11.5,
             "xBA": "0.241",
             "xSLG": "0.377"
           }
@@ -41,7 +94,7 @@
           "mlbId": 801139,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-07-12T00:09:51.612Z",
+          "generatedAt": "2026-07-12T03:55:51.544Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -831,7 +884,7 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "note": "NYM vs LHP · OPP (season)",
+          "note": "NYM vs LHP · OPP vs LHP",
           "mets": "93",
           "opp": "93",
           "edge": "Neutral"
@@ -940,8 +993,9 @@
           },
           "rankScope": "MLB",
           "rankTotal": 30,
+          "vsHand": "L",
           "usingSplit": false,
-          "fallbackNote": "season total"
+          "fallbackNote": "season total (no LHP split available)"
         }
       },
       "recentForm": {
@@ -971,7 +1025,7 @@
               "statKey": "kPct",
               "seasonRank": 15,
               "seasonValue": 21.8,
-              "recentRank": 10,
+              "recentRank": 9,
               "recentValue": 20.6,
               "differencePct": 5.5,
               "improving": true
@@ -980,7 +1034,7 @@
               "statKey": "bbPct",
               "seasonRank": 25,
               "seasonValue": 8.3,
-              "recentRank": 3,
+              "recentRank": 4,
               "recentValue": 10.4,
               "differencePct": 25.3,
               "improving": true
@@ -1022,7 +1076,7 @@
               "statKey": "bbPct",
               "seasonRank": 26,
               "seasonValue": 8.1,
-              "recentRank": 7,
+              "recentRank": 6,
               "recentValue": 9.6,
               "differencePct": 18.5,
               "improving": true
@@ -1206,7 +1260,7 @@
           "oppScore": 4,
           "result": "loss",
           "summary": "On 2026-07-11, the Mets lost to the Boston Red Sox 0-4 at Citi Field.",
-          "recapHeadline": "Key takeaways: Red Sox 4, Mets 0",
+          "recapHeadline": "Surging Red Sox blank Mets as winning streak hits 8",
           "recapNotes": [
             "The Red Sox are just one win away from a perfect road trip – one that is going to take them into the All-Star break with a big burst of momentum.",
             "On Saturday, the surging Sox rolled past the Mets, 4-0 , for their eighth straight victory and 13th in the last 15 games."
@@ -1214,11 +1268,32 @@
           "source": {
             "source": "MLB.com",
             "label": "Last meeting recap",
-            "headline": "Key takeaways: Red Sox 4, Mets 0",
+            "headline": "Surging Red Sox blank Mets as winning streak hits 8",
             "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/red-sox-beat-mets-extend-win-streak-to-eight-games"
           }
         },
-        "metsPitcherLog": [],
+        "metsPitcherLog": [
+          {
+            "date": "2026-06-26",
+            "opponent": "Philadelphia Phillies",
+            "ip": "6.0",
+            "er": "1",
+            "k": "7",
+            "h": "5",
+            "bb": "1",
+            "result": "-"
+          },
+          {
+            "date": "2026-05-20",
+            "opponent": "Washington Nationals",
+            "ip": "4.1",
+            "er": "4",
+            "k": "3",
+            "h": "4",
+            "bb": "2",
+            "result": "L"
+          }
+        ],
         "oppPitcherLog": [
           {
             "date": "2026-07-07",
@@ -1272,7 +1347,7 @@
           {
             "source": "MLB.com",
             "label": "Last meeting recap",
-            "headline": "Key takeaways: Red Sox 4, Mets 0",
+            "headline": "Surging Red Sox blank Mets as winning streak hits 8",
             "url": "https://dapi.mlbinfra.com/v2/content/en-us/stories/red-sox-beat-mets-extend-win-streak-to-eight-games"
           }
         ],
@@ -1304,14 +1379,14 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-07-12T00:09:52.924Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-12\",\"opponent\":\"Boston Red Sox\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":87.3,\"temperatureDisplay\":\"87°\",\"condition\":\"Mostly clear\",\"wind\":\"Wind 3 mph E\",\"compact\":\"87° | Mostly clear | Wind 3 mph E\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-12T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Payton Tolle\",\"handedness\":\"L\",\"era\":3.14,\"xERA\":3.07,\"fip\":3.38,\"whip\":1.07,\"kPct\":24.5,\"bbPct\":7.4,\"kMinusBbPct\":17.1,\"hardHitPct\":34.1,\"barrelPct\":6.9,\"xBAAllowed\":0.213,\"xSLGAllowed\":0.34,\"xwOBAAllowed\":0.274,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-07\",\"opponent\":\"Chicago White Sox\",\"ip\":\"6.0\",\"er\":0,\"k\":6,\"h\":2,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-07-01\",\"opponent\":\"Washington Nationals\",\"ip\":\"3.0\",\"er\":6,\"k\":5,\"h\":7,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-06-26\",\"opponent\":\"New York Yankees\",\"ip\":\"7.0\",\"er\":0,\"k\":7,\"h\":1,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-06-21\",\"opponent\":\"Seattle Mariners\",\"ip\":\"6.0\",\"er\":3,\"k\":2,\"h\":6,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.5,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5.5,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":6.6,\"projectedLineupWRCPlus\":108.4,\"obp\":0.328,\"iso\":0.148,\"kPct\":21.8,\"bbPct\":8.2,\"xBA\":0.262,\"xSLG\":0.438,\"xwOBA\":0.336,\"hardHitPct\":41.9,\"barrelPct\":9.3,\"battingAverage\":0.25,\"wOBA\":0.327,\"lineup\":{\"totalWAR\":6.6,\"totalWRCPlus\":108.4,\"totalOBP\":0.328,\"totalISO\":0.166,\"totalKPct\":20.8,\"totalBBPct\":9.5,\"totalAVG\":0.25,\"totalWOBA\":0.327,\"totalXBA\":0.267,\"totalXSLG\":0.459,\"totalXWOBA\":0.347,\"totalHardHitPct\":42.3,\"totalBarrelPct\":10.2,\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.02}},\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.02},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.7,\"projectedLineupWRCPlus\":89.5,\"obp\":0.304,\"iso\":0.144,\"kPct\":22,\"bbPct\":8,\"xBA\":0.24,\"xSLG\":0.376,\"xwOBA\":0.303,\"hardHitPct\":36.4,\"barrelPct\":7.2,\"battingAverage\":0.24,\"wOBA\":0.306,\"lineup\":{\"totalWAR\":6.7,\"totalWRCPlus\":89.5,\"totalOBP\":0.304,\"totalISO\":0.151,\"totalKPct\":21.6,\"totalBBPct\":7.3,\"totalAVG\":0.24,\"totalWOBA\":0.306,\"totalXBA\":0.241,\"totalXSLG\":0.377,\"totalXWOBA\":0.302,\"totalHardHitPct\":36.6,\"totalBarrelPct\":7.4,\"regressionSignals\":{\"baMinusXba\":-0.001,\"wobaMinusXwoba\":0.004}},\"regressionSignals\":{\"baMinusXba\":-0.001,\"wobaMinusXwoba\":0.004},\"splitContext\":{\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":6.6,\"totalWRCPlus\":108.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.7,\"totalWRCPlus\":89.5,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.14,\"kMinusBbPct\":14.5,\"xFIP\":3.98,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.25,\"kMinusBbPct\":15.1,\"xFIP\":3.9,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":87.3,\"temperatureDisplay\":\"87°\",\"condition\":\"Mostly clear\",\"wind\":\"Wind 3 mph E\",\"compact\":\"87° | Mostly clear | Wind 3 mph E\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-12T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: TBD N/A/N/A vs Payton Tolle 3.07/3.38; K-BB% N/A to 17.1.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 6.6 vs 6.7, projected lineup wRC+ 108.4 vs 89.5, xwOBA 0.336 vs 0.303.\",\"rawScore\":2.8,\"weightedImpact\":8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.98 vs 3.90, WHIP 1.14 vs 1.25, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.19,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.020; opponent starter overperformance signal 0.24.\",\"rawScore\":3.04,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 61.5%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.615,\"totalWeightedImpact\":11.55,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Mets\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":1,\"fallbackHeavy\":true}}",
-        "headline": "Mets vs Boston Red Sox: overall lineup quality is the clearest angle",
-        "synopsis": "TBD vs Payton Tolle sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 6.6 vs 6.7, projected lineup wRC+ 108.4 vs 89.5, xwOBA 0.336 vs 0.303. Several key inputs are still missing, so the read should stay conservative.",
+        "raw": "{\"generatedAt\":\"2026-07-12T03:55:57.980Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-12\",\"opponent\":\"Boston Red Sox\",\"homeAway\":\"home\",\"ballpark\":\"Citi Field\",\"weather\":{\"temperature\":84.6,\"temperatureDisplay\":\"85°\",\"condition\":\"Mostly clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"85° | Mostly clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-12T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Zach Thornton\",\"handedness\":\"L\",\"era\":4.35,\"xERA\":5.45,\"fip\":3.41,\"whip\":1.16,\"kPct\":23.8,\"bbPct\":7.1,\"kMinusBbPct\":16.7,\"hardHitPct\":51.7,\"barrelPct\":10.3,\"xBAAllowed\":0.282,\"xSLGAllowed\":0.491,\"xwOBAAllowed\":0.356,\"recentStarts\":{\"starts\":[{\"date\":\"2026-06-26\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"6.0\",\"er\":1,\"k\":7,\"h\":5,\"bb\":1,\"result\":\"-\"},{\"date\":\"2026-05-20\",\"opponent\":\"Washington Nationals\",\"ip\":\"4.1\",\"er\":4,\"k\":3,\"h\":4,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.17,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":5,\"daysSinceLastStart\":16},\"workload\":{\"inningsTrend\":5.17,\"daysSinceLastStart\":16},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Payton Tolle\",\"handedness\":\"L\",\"era\":3.14,\"xERA\":3.07,\"fip\":3.38,\"whip\":1.07,\"kPct\":24.5,\"bbPct\":7.4,\"kMinusBbPct\":17.1,\"hardHitPct\":34.1,\"barrelPct\":6.9,\"xBAAllowed\":0.213,\"xSLGAllowed\":0.34,\"xwOBAAllowed\":0.274,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-07\",\"opponent\":\"Chicago White Sox\",\"ip\":\"6.0\",\"er\":0,\"k\":6,\"h\":2,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-07-01\",\"opponent\":\"Washington Nationals\",\"ip\":\"3.0\",\"er\":6,\"k\":5,\"h\":7,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-06-26\",\"opponent\":\"New York Yankees\",\"ip\":\"7.0\",\"er\":0,\"k\":7,\"h\":1,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-06-21\",\"opponent\":\"Seattle Mariners\",\"ip\":\"6.0\",\"er\":3,\"k\":2,\"h\":6,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":5.5,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":5,\"daysSinceLastStart\":5},\"workload\":{\"inningsTrend\":5.5,\"daysSinceLastStart\":5},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":6.6,\"projectedLineupWRCPlus\":108.4,\"obp\":0.328,\"iso\":0.148,\"kPct\":21.8,\"bbPct\":8.2,\"xBA\":0.262,\"xSLG\":0.438,\"xwOBA\":0.336,\"hardHitPct\":41.9,\"barrelPct\":9.3,\"battingAverage\":0.25,\"wOBA\":0.327,\"lineup\":{\"totalWAR\":6.6,\"totalWRCPlus\":108.4,\"totalOBP\":0.328,\"totalISO\":0.166,\"totalKPct\":20.8,\"totalBBPct\":9.5,\"totalAVG\":0.25,\"totalWOBA\":0.327,\"totalXBA\":0.267,\"totalXSLG\":0.459,\"totalXWOBA\":0.347,\"totalHardHitPct\":42.3,\"totalBarrelPct\":10.2,\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.02}},\"regressionSignals\":{\"baMinusXba\":-0.017,\"wobaMinusXwoba\":-0.02},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":6.7,\"projectedLineupWRCPlus\":89.5,\"obp\":0.304,\"iso\":0.144,\"kPct\":22,\"bbPct\":8,\"xBA\":0.24,\"xSLG\":0.376,\"xwOBA\":0.303,\"hardHitPct\":36.4,\"barrelPct\":7.2,\"battingAverage\":0.24,\"wOBA\":0.306,\"lineup\":{\"totalWAR\":6.7,\"totalWRCPlus\":89.5,\"totalOBP\":0.304,\"totalISO\":0.151,\"totalKPct\":21.6,\"totalBBPct\":7.3,\"totalAVG\":0.24,\"totalWOBA\":0.306,\"totalXBA\":0.241,\"totalXSLG\":0.377,\"totalXWOBA\":0.302,\"totalHardHitPct\":36.6,\"totalBarrelPct\":7.4,\"regressionSignals\":{\"baMinusXba\":-0.001,\"wobaMinusXwoba\":0.004}},\"regressionSignals\":{\"baMinusXba\":-0.001,\"wobaMinusXwoba\":0.004},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":6.6,\"totalWRCPlus\":108.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":6.7,\"totalWRCPlus\":89.5,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.14,\"kMinusBbPct\":14.5,\"xFIP\":3.98,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.25,\"kMinusBbPct\":15.1,\"xFIP\":3.9,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to home\",\"opp\":\"road to road\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":84.6,\"temperatureDisplay\":\"85°\",\"condition\":\"Mostly clear\",\"wind\":\"Wind 9 mph S\",\"compact\":\"85° | Mostly clear | Wind 9 mph S\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-12T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Zach Thornton 5.45/3.41 vs Payton Tolle 3.07/3.38; K-BB% 16.7 to 17.1.\",\"rawScore\":-23.76,\"weightedImpact\":-30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 6.6 vs 6.7, projected lineup wRC+ 108.4 vs 89.5, xwOBA 0.336 vs 0.303.\",\"rawScore\":2.8,\"weightedImpact\":8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.98 vs 3.90, WHIP 1.14 vs 1.25, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.19,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.020; opponent starter overperformance signal 0.24.\",\"rawScore\":-7.36,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days.\",\"rawScore\":1.05,\"weightedImpact\":3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel home to home, opponent travel road to road, bullpen tax normal/normal.\",\"rawScore\":0.6,\"weightedImpact\":1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-28.35,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
+        "headline": "Mets vs Boston Red Sox: starting pitching is the clearest angle",
+        "synopsis": "Zach Thornton vs Payton Tolle sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Zach Thornton 5.45/3.41 vs Payton Tolle 3.07/3.38; K-BB% 16.7 to 17.1. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
-          "modelLean": "Mets",
+          "modelLean": "Opponent",
           "officialPick": "Mets ML",
           "bestEdge": "Lineup Quality",
-          "biggestRisk": "Bullpen"
+          "biggestRisk": "Starting Pitching"
         },
         "gameDetails": {
           "date": "2026-07-12",
@@ -1319,15 +1394,15 @@
           "opponent": "Boston Red Sox",
           "homeAway": "home",
           "ballpark": "Citi Field",
-          "weather": "87° | Mostly clear | Wind 3 mph E",
+          "weather": "85° | Mostly clear | Wind 9 mph S",
           "lineupStatus": "Projected",
-          "moneyline": "N/A"
+          "moneyline": "+102"
         },
         "edgeSummary": {
           "startingPitching": {
             "category": "Starting Pitching",
-            "verdict": "Even",
-            "strength": "even",
+            "verdict": "Opponent edge",
+            "strength": "strong",
             "dataMode": "real"
           },
           "lineupQuality": {
@@ -1344,8 +1419,8 @@
           },
           "regressionSignals": {
             "category": "Regression Signals",
-            "verdict": "Mets edge",
-            "strength": "slight",
+            "verdict": "Opponent edge",
+            "strength": "moderate",
             "dataMode": "real"
           },
           "context": {
@@ -1369,8 +1444,8 @@
           "rows": [
             {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Opponent edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             {
@@ -1387,8 +1462,8 @@
             },
             {
               "category": "Regression Signals",
-              "verdict": "Mets edge",
-              "strength": "slight",
+              "verdict": "Opponent edge",
+              "strength": "moderate",
               "dataMode": "real"
             },
             {
@@ -1404,50 +1479,50 @@
               "dataMode": "fallback"
             }
           ],
-          "overallModelLean": "Mets"
+          "overallModelLean": "Opponent"
         },
-        "pitchingEdgeSummary": "Starting pitching grades as essentially even on the current board.",
+        "pitchingEdgeSummary": "Payton Tolle holds the steadier underlying pitching profile entering this matchup.",
         "projectedLineupEdgeSummary": "The Mets hold the better overall lineup-quality case, even without true split support.",
         "analysis": {
           "whyMetsHaveACase": [
-            "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.",
-            "Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production."
+            "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303."
           ],
           "whereTheRiskIs": [
-            "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+            "Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.",
+            "Expected stats haven't converted to runs yet — production lags contact quality."
           ],
-          "bottomLine": "Model leans Mets. Primary edge: overall lineup quality."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +102."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
-            "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.",
-            "Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production."
+            "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303."
           ],
           "whereRiskIs": [
-            "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+            "Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.",
+            "Expected stats haven't converted to runs yet — production lags contact quality."
           ],
-          "bottomLine": "Model leans Mets. Primary edge: overall lineup quality."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +102."
         },
         "sections": [
           {
             "heading": "1. Quick Read",
-            "body": "Model Lean: Mets. Official Pick: Mets ML. Best Edge: Lineup Quality. Biggest Risk: Bullpen."
+            "body": "Model Lean: Opponent. Official Pick: Mets ML. Best Edge: Lineup Quality. Biggest Risk: Starting Pitching."
           },
           {
             "heading": "2. Game Details",
-            "body": "2026-07-12 | 1:40 PM ET | Citi Field. Mets home game. Lineups: Projected. Mets ML: N/A."
+            "body": "2026-07-12 | 1:40 PM ET | Citi Field. Mets home game. Lineups: Projected. Mets ML: +102."
           },
           {
             "heading": "3. Edge Summary",
-            "body": "Starting Pitching: Even | Lineup Quality: Mets edge (fallback) | Bullpen: Opponent edge (fallback) | Regression Signals: Mets edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Mets."
+            "body": "Starting Pitching: Opponent edge | Lineup Quality: Mets edge (fallback) | Bullpen: Opponent edge (fallback) | Regression Signals: Opponent edge | Context: Mets edge (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Opponent."
           },
           {
             "heading": "4. Starting Pitchers Comparison",
-            "body": "Starting pitching grades as essentially even on the current board."
+            "body": "Payton Tolle holds the steadier underlying pitching profile entering this matchup."
           },
           {
             "heading": "5. Pitcher Contact Profile vs Opponent",
-            "body": "xERA/FIP profile: TBD N/A/N/A vs Payton Tolle 3.07/3.38; K-BB% N/A to 17.1."
+            "body": "xERA/FIP profile: Zach Thornton 5.45/3.41 vs Payton Tolle 3.07/3.38; K-BB% 16.7 to 17.1."
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
@@ -1459,37 +1534,37 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.\n• Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production. Where the risk is\n• Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A). Bottom line\nModel leans Mets. Primary edge: overall lineup quality."
+            "body": "Why the Mets have a case\n• Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303. Where the risk is\n• Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.\n• Expected stats haven't converted to runs yet — production lags contact quality. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle at +102."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML 0 implies 0.0% vs model 61.5%; value edge +61.5 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Zach Thornton 5.45 xERA, 4.35 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML +102 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: TBD versus Payton Tolle with 0.00 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +61.5 points. Value check: Mets ML 0 with 0.0% implied and 61.5% model probability; value edge +61.5 points.",
-        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML 0 implies 0.0% vs model 61.5%; value edge +61.5 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Zach Thornton versus Payton Tolle with 5.45 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +35.0 points. Value check: Mets ML +102 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Zach Thornton 5.45 xERA, 4.35 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML +102 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
-          "headline": "Starter gap and value edge favor Mets",
-          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML 0 implies 0.0% vs model 61.5%; value edge +61.5 points; Pick: New York Mets moneyline.",
+          "headline": "Mets ML with measured edge",
+          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Zach Thornton 5.45 xERA, 4.35 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML +102 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
-            "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.",
-            "Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production."
+            "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303."
           ],
           "risks": [
-            "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+            "Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.",
+            "Expected stats haven't converted to runs yet — production lags contact quality."
           ],
-          "bettingAngle": "Primary edge: TBD versus Payton Tolle with 0.00 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +61.5 points. Value check: Mets ML 0 with 0.0% implied and 61.5% model probability; value edge +61.5 points.",
+          "bettingAngle": "Primary edge: Zach Thornton versus Payton Tolle with 5.45 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +35.0 points. Value check: Mets ML +102 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
           "officialPick": "Mets ML",
-          "confidenceLabel": "Standard",
-          "confidenceScore": 6
+          "confidenceLabel": "Low",
+          "confidenceScore": 4
         },
         "officialPick": "Official Pick: Mets ML",
         "edgeTable": [
           {
             "category": "Starting Pitching",
-            "edge": "Even",
-            "strength": "even",
-            "reason": "xERA/FIP profile: TBD N/A/N/A vs Payton Tolle 3.07/3.38; K-BB% N/A to 17.1.",
+            "edge": "Opponent edge",
+            "strength": "strong",
+            "reason": "xERA/FIP profile: Zach Thornton 5.45/3.41 vs Payton Tolle 3.07/3.38; K-BB% 16.7 to 17.1.",
             "dataMode": "real"
           },
           {
@@ -1508,8 +1583,8 @@
           },
           {
             "category": "Regression Signals",
-            "edge": "Mets edge",
-            "strength": "slight",
+            "edge": "Opponent edge",
+            "strength": "moderate",
             "reason": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.020; opponent starter overperformance signal 0.24.",
             "dataMode": "real"
           },
@@ -1531,19 +1606,19 @@
             "category": "Market Value",
             "edge": "Limited data",
             "strength": "even",
-            "reason": "Market check: Mets ML N/A implies N/A vs model 61.5%.",
+            "reason": "Market check: Mets ML N/A implies N/A vs model 35.0%.",
             "dataMode": "fallback"
           }
         ],
         "keyAngles": [
+          "xERA/FIP profile: Zach Thornton 5.45/3.41 vs Payton Tolle 3.07/3.38; K-BB% 16.7 to 17.1.",
           "Overall lineup quality only: projected WAR 6.6 vs 6.7, projected lineup wRC+ 108.4 vs 89.5, xwOBA 0.336 vs 0.303.",
-          "Bullpen shape: xFIP 3.98 vs 3.90, WHIP 1.14 vs 1.25, last 3-day usage N/A IP vs N/A IP.",
           "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.020; opponent starter overperformance signal 0.24.",
-          "Split context is limited; fallback to venue and rest edge. Mets are home with rest 0 vs opponent 0 days."
+          "Bullpen shape: xFIP 3.98 vs 3.90, WHIP 1.14 vs 1.25, last 3-day usage N/A IP vs N/A IP."
         ],
         "pick": "Mets ML",
-        "analyticalLean": "Mets",
-        "confidence": "standard",
+        "analyticalLean": "Opponent",
+        "confidence": "low",
         "missingMetrics": [
           "Park factor",
           "Mets team wRC+ vs handedness",
@@ -1566,22 +1641,63 @@
             "homeAway": "home",
             "ballpark": "Citi Field",
             "weather": {
-              "temperature": 87.3,
-              "temperatureDisplay": "87°",
+              "temperature": 84.6,
+              "temperatureDisplay": "85°",
               "condition": "Mostly clear",
-              "wind": "Wind 3 mph E",
-              "compact": "87° | Mostly clear | Wind 3 mph E",
+              "wind": "Wind 9 mph S",
+              "compact": "85° | Mostly clear | Wind 9 mph S",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-07-12T18:00Z"
             }
           },
           "pitchers": {
             "mets": {
-              "name": "TBD",
+              "name": "Zach Thornton",
+              "handedness": "L",
+              "era": 4.35,
+              "xERA": 5.45,
+              "fip": 3.41,
+              "whip": 1.16,
+              "kPct": 23.8,
+              "bbPct": 7.1,
+              "kMinusBbPct": 16.7,
+              "hardHitPct": 51.7,
+              "barrelPct": 10.3,
+              "xBAAllowed": 0.282,
+              "xSLGAllowed": 0.491,
+              "xwOBAAllowed": 0.356,
               "recentStarts": {
-                "starts": []
+                "starts": [
+                  {
+                    "date": "2026-06-26",
+                    "opponent": "Philadelphia Phillies",
+                    "ip": "6.0",
+                    "er": 1,
+                    "k": 7,
+                    "h": 5,
+                    "bb": 1,
+                    "result": "-"
+                  },
+                  {
+                    "date": "2026-05-20",
+                    "opponent": "Washington Nationals",
+                    "ip": "4.1",
+                    "er": 4,
+                    "k": 3,
+                    "h": 4,
+                    "bb": 2,
+                    "result": "L"
+                  }
+                ],
+                "avgInnings": 5.17,
+                "avgEarnedRuns": 2.5,
+                "avgStrikeouts": 5,
+                "daysSinceLastStart": 16
               },
-              "workload": {},
+              "workload": {
+                "inningsTrend": 5.17,
+                "daysSinceLastStart": 16
+              },
               "opponentHandednessProfile": {
                 "left": 0,
                 "right": 0,
@@ -1743,6 +1859,7 @@
                 "wobaMinusXwoba": 0.004
               },
               "splitContext": {
+                "pitcherHandedness": "L",
                 "splitDataAvailable": false
               }
             }
@@ -1790,11 +1907,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 87.3,
-              "temperatureDisplay": "87°",
+              "temperature": 84.6,
+              "temperatureDisplay": "85°",
               "condition": "Mostly clear",
-              "wind": "Wind 3 mph E",
-              "compact": "87° | Mostly clear | Wind 3 mph E",
+              "wind": "Wind 9 mph S",
+              "compact": "85° | Mostly clear | Wind 9 mph S",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-07-12T18:00Z"
             }
@@ -1805,11 +1922,11 @@
             {
               "category": "Starting Pitching",
               "weight": 30,
-              "edge": "Even",
-              "strength": "even",
-              "explanation": "xERA/FIP profile: TBD N/A/N/A vs Payton Tolle 3.07/3.38; K-BB% N/A to 17.1.",
-              "rawScore": 0,
-              "weightedImpact": 0,
+              "edge": "Opponent edge",
+              "strength": "strong",
+              "explanation": "xERA/FIP profile: Zach Thornton 5.45/3.41 vs Payton Tolle 3.07/3.38; K-BB% 16.7 to 17.1.",
+              "rawScore": -23.76,
+              "weightedImpact": -30,
               "dataMode": "real",
               "supportedBy": [
                 "ERA",
@@ -1866,11 +1983,11 @@
             {
               "category": "Regression Signals",
               "weight": 10,
-              "edge": "Mets edge",
-              "strength": "slight",
+              "edge": "Opponent edge",
+              "strength": "moderate",
               "explanation": "Regression lens: Mets BA-xBA -0.017 and wOBA-xwOBA -0.020; opponent starter overperformance signal 0.24.",
-              "rawScore": 3.04,
-              "weightedImpact": 3.3,
+              "rawScore": -7.36,
+              "weightedImpact": -6.6,
               "dataMode": "real",
               "supportedBy": [
                 "BA vs xBA",
@@ -1920,7 +2037,7 @@
               "weight": 5,
               "edge": "Limited data",
               "strength": "even",
-              "explanation": "Market check: Mets ML N/A implies N/A vs model 61.5%.",
+              "explanation": "Market check: Mets ML N/A implies N/A vs model 35.0%.",
               "rawScore": 0,
               "weightedImpact": 0,
               "dataMode": "fallback",
@@ -1930,8 +2047,8 @@
               ]
             }
           ],
-          "projectedWinProbability": 0.615,
-          "totalWeightedImpact": 11.55,
+          "projectedWinProbability": 0.35,
+          "totalWeightedImpact": -28.35,
           "confidence": "low",
           "criticalMissingCount": 6
         },
@@ -1990,21 +2107,21 @@
             }
           },
           "header": {
-            "title": "Mets vs Boston Red Sox: overall lineup quality is the clearest angle",
+            "title": "Mets vs Boston Red Sox: starting pitching is the clearest angle",
             "matchupTitle": "New York Mets vs Boston Red Sox",
-            "tagline": "overall lineup quality is the clearest angle",
+            "tagline": "starting pitching is the clearest angle",
             "date": "2026-07-12",
             "time": "1:40 PM ET",
             "ballpark": "Citi Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/111.svg",
-            "metadataLine": "July 12th | 1:40 PM ET | Citi Field | 87° | Mostly clear | Wind 3 mph E"
+            "metadataLine": "July 12th | 1:40 PM ET | Citi Field | 85° | Mostly clear | Wind 9 mph S"
           },
           "quickRead": {
-            "modelLean": "Mets",
+            "modelLean": "Opponent",
             "officialPick": "Mets ML",
             "bestEdge": "Lineup Quality",
-            "biggestRisk": "Bullpen"
+            "biggestRisk": "Starting Pitching"
           },
           "gameDetails": {
             "date": "2026-07-12",
@@ -2012,9 +2129,9 @@
             "opponent": "Boston Red Sox",
             "homeAway": "home",
             "ballpark": "Citi Field",
-            "weather": "87° | Mostly clear | Wind 3 mph E",
+            "weather": "85° | Mostly clear | Wind 9 mph S",
             "lineupStatus": "Projected",
-            "moneyline": "N/A"
+            "moneyline": "+102"
           },
           "gameDetailsTable": {
             "rows": [
@@ -2028,11 +2145,11 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "87° | Mostly clear | Wind 3 mph E"
+                "value": "85° | Mostly clear | Wind 9 mph S"
               },
               {
                 "label": "Mets ML Odds",
-                "value": "N/A"
+                "value": "+102"
               }
             ]
           },
@@ -2042,8 +2159,8 @@
             "rows": [
               {
                 "label": "Odds",
-                "mets": "N/A",
-                "opp": "N/A"
+                "mets": "+102",
+                "opp": "+102"
               },
               {
                 "label": "Season Record",
@@ -2070,8 +2187,8 @@
           "edgeSummary": {
             "startingPitching": {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Opponent edge",
+              "strength": "strong",
               "dataMode": "real"
             },
             "lineupQuality": {
@@ -2088,8 +2205,8 @@
             },
             "regressionSignals": {
               "category": "Regression Signals",
-              "verdict": "Mets edge",
-              "strength": "slight",
+              "verdict": "Opponent edge",
+              "strength": "moderate",
               "dataMode": "real"
             },
             "context": {
@@ -2113,8 +2230,8 @@
             "rows": [
               {
                 "category": "Starting Pitching",
-                "verdict": "Even",
-                "strength": "even",
+                "verdict": "Opponent edge",
+                "strength": "strong",
                 "dataMode": "real"
               },
               {
@@ -2131,8 +2248,8 @@
               },
               {
                 "category": "Regression Signals",
-                "verdict": "Mets edge",
-                "strength": "slight",
+                "verdict": "Opponent edge",
+                "strength": "moderate",
                 "dataMode": "real"
               },
               {
@@ -2148,17 +2265,46 @@
                 "dataMode": "fallback"
               }
             ],
-            "overallModelLean": "Mets"
+            "overallModelLean": "Opponent"
           },
           "startingPitchersComparison": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Zach Thornton",
             "oppPitcher": "Payton Tolle",
             "seasonLabel": "2026",
             "metsCard": {
-              "name": "TBD",
+              "name": "Zach Thornton",
+              "mlbId": 804267,
+              "record": "0-1",
+              "hand": "L",
               "teamLabel": "NYM",
-              "recentStarts": [],
-              "stats": {}
+              "recentStarts": [
+                {
+                  "date": "2026-06-26",
+                  "opponent": "Philadelphia Phillies",
+                  "ip": "6.0",
+                  "er": "1",
+                  "k": "7",
+                  "h": "5",
+                  "bb": "1",
+                  "result": "-"
+                },
+                {
+                  "date": "2026-05-20",
+                  "opponent": "Washington Nationals",
+                  "ip": "4.1",
+                  "er": "4",
+                  "k": "3",
+                  "h": "4",
+                  "bb": "2",
+                  "result": "L"
+                }
+              ],
+              "stats": {
+                "era": "4.35",
+                "whip": "1.16",
+                "kPct": "23.8%",
+                "bbPct": "7.1%"
+              }
             },
             "oppCard": {
               "name": "Payton Tolle",
@@ -2218,12 +2364,14 @@
             "advancedMatchupTables": [
               {
                 "title": "Advanced Stats vs Opponent",
-                "leftHeader": "NYM TBD",
+                "leftHeader": "NYM Zach Thornton",
                 "rightHeader": "BOS Offense",
                 "rightTeamKey": "opp",
                 "rows": [
                   {
                     "label": "Barrel %",
+                    "left": "10.3%",
+                    "leftPercentile": 28,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 7.2,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2231,6 +2379,8 @@
                   },
                   {
                     "label": "xBA",
+                    "left": "0.282",
+                    "leftPercentile": 25,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.24,
                     "rightMetricLabel": "Batter xBA",
@@ -2238,6 +2388,8 @@
                   },
                   {
                     "label": "Hard Hit %",
+                    "left": "51.7%",
+                    "leftPercentile": 7,
                     "leftMetricLabel": "Pitcher Hard Hit %",
                     "right": 36.4,
                     "rightMetricLabel": "Batter Hard Hit %",
@@ -2245,6 +2397,8 @@
                   },
                   {
                     "label": "xSLG %",
+                    "left": "0.491",
+                    "leftPercentile": 23,
                     "leftMetricLabel": "Pitcher xSLG %",
                     "right": 0.376,
                     "rightMetricLabel": "Batter xSLG %",
@@ -2298,19 +2452,24 @@
               },
               {
                 "title": "Advanced Stats vs Opponent Splits",
-                "leftHeader": "NYM TBD",
+                "leftHeader": "NYM Zach Thornton",
                 "rightHeader": "BOS Profile",
                 "rightTeamKey": "opp",
                 "rows": [
                   {
-                    "label": "Pitching Hand / vs Split"
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Left",
+                    "right": "vs Left-handed pitching"
                   },
                   {
                     "label": "Innings Pitched / Plate Appearances",
+                    "left": "10.1",
                     "right": "2066"
                   },
                   {
                     "label": "K%",
+                    "left": "23.8%",
+                    "leftPercentile": 69,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 22,
                     "rightMetricLabel": "Batter K%",
@@ -2318,6 +2477,8 @@
                   },
                   {
                     "label": "BB%",
+                    "left": "7.1%",
+                    "leftPercentile": 74,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 8,
                     "rightMetricLabel": "Batter BB%",
@@ -2362,7 +2523,7 @@
                 ]
               }
             ],
-            "summary": "Starting pitching grades as essentially even on the current board."
+            "summary": "Payton Tolle holds the steadier underlying pitching profile entering this matchup."
           },
           "bullpenReport": {
             "mets": {
@@ -2445,7 +2606,7 @@
                   "statKey": "kPct",
                   "seasonRank": 15,
                   "seasonValue": 21.8,
-                  "recentRank": 10,
+                  "recentRank": 9,
                   "recentValue": 20.6,
                   "differencePct": 5.5,
                   "improving": true
@@ -2454,7 +2615,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 25,
                   "seasonValue": 8.3,
-                  "recentRank": 3,
+                  "recentRank": 4,
                   "recentValue": 10.4,
                   "differencePct": 25.3,
                   "improving": true
@@ -2496,7 +2657,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 26,
                   "seasonValue": 8.1,
-                  "recentRank": 7,
+                  "recentRank": 6,
                   "recentValue": 9.6,
                   "differencePct": 18.5,
                   "improving": true
@@ -2505,35 +2666,42 @@
             }
           },
           "pitcherContactProfile": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Zach Thornton",
             "oppPitcher": "Payton Tolle",
             "pitcherRows": [
               {
                 "label": "xERA",
+                "mets": "5.45",
                 "opp": "3.07"
               },
               {
                 "label": "Barrel%",
+                "mets": "10.3%",
                 "opp": "6.9%"
               },
               {
                 "label": "Hard-Hit%",
+                "mets": "51.7%",
                 "opp": "34.1%"
               },
               {
                 "label": "Whiff%",
+                "mets": "23.2%",
                 "opp": "24.8%"
               },
               {
                 "label": "Chase%",
+                "mets": "31.7%",
                 "opp": "33%"
               },
               {
                 "label": "K%",
+                "mets": "23.8%",
                 "opp": "24.5%"
               },
               {
                 "label": "BB%",
+                "mets": "7.1%",
                 "opp": "7.4%"
               }
             ],
@@ -2580,11 +2748,12 @@
             ]
           },
           "pitcherSplitMatchup": {
-            "metsPitcher": "TBD",
+            "metsPitcher": "Zach Thornton",
             "oppPitcher": "Payton Tolle",
             "pitcherRows": [
               {
                 "label": "Pitcher Hand",
+                "mets": "L",
                 "opp": "L"
               },
               {
@@ -2613,7 +2782,8 @@
             "opponentRows": [
               {
                 "label": "Pitcher Hand",
-                "mets": "L"
+                "mets": "L",
+                "opp": "L"
               },
               {
                 "label": "Lineup WAR",
@@ -3313,13 +3483,13 @@
           },
           "analysis": {
             "whyMetsHaveACase": [
-              "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.",
-              "Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production."
+              "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303."
             ],
             "whereTheRiskIs": [
-              "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+              "Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.",
+              "Expected stats haven't converted to runs yet — production lags contact quality."
             ],
-            "bottomLine": "Model leans Mets. Primary edge: overall lineup quality."
+            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +102."
           },
           "teamAdvanced": {
             "mets": {
@@ -3400,64 +3570,66 @@
               },
               "rankScope": "MLB",
               "rankTotal": 30,
+              "vsHand": "L",
               "usingSplit": false,
-              "fallbackNote": "season total"
+              "fallbackNote": "season total (no LHP split available)"
             }
           },
           "todayPick": {
-            "headline": "Starter gap and value edge favor Mets",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML 0 implies 0.0% vs model 61.5%; value edge +61.5 points; Pick: New York Mets moneyline.",
+            "headline": "Mets ML with measured edge",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Zach Thornton 5.45 xERA, 4.35 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML +102 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.",
-              "Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production."
+              "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303."
             ],
             "risks": [
-              "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+              "Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.",
+              "Expected stats haven't converted to runs yet — production lags contact quality."
             ],
-            "bettingAngle": "Primary edge: TBD versus Payton Tolle with 0.00 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +61.5 points. Value check: Mets ML 0 with 0.0% implied and 61.5% model probability; value edge +61.5 points.",
+            "bettingAngle": "Primary edge: Zach Thornton versus Payton Tolle with 5.45 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +35.0 points. Value check: Mets ML +102 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "officialPick": "Mets ML",
-            "confidenceLabel": "Standard",
-            "confidenceScore": 6
+            "confidenceLabel": "Low",
+            "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: TBD versus Payton Tolle with 0.00 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +61.5 points. Value check: Mets ML 0 with 0.0% implied and 61.5% model probability; value edge +61.5 points.",
-            "headline": "Starter gap and value edge favor Mets",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: TBD 0.00 xERA, 0.00 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML 0 implies 0.0% vs model 61.5%; value edge +61.5 points; Pick: New York Mets moneyline.",
+            "explanation": "Primary edge: Zach Thornton versus Payton Tolle with 5.45 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +35.0 points. Value check: Mets ML +102 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "headline": "Mets ML with measured edge",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 0 vs 0 days. Starting pitching: Zach Thornton 5.45 xERA, 4.35 ERA, N/A% K vs Payton Tolle 3.07 xERA, 3.14 ERA, N/A% K; Offense: Mets wRC+ 93.0 vs 93.0; Bullpen: Mets xERA 4.60 vs 3.66. Price: Mets ML +102 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
-              "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303.",
-              "Regression: xwOBA 0.336 vs actual wOBA .303 — expected stats above actual production."
+              "Lineup: wRC+ 93 vs 93, xwOBA 0.336 vs 0.303."
             ],
             "risks": [
-              "Bullpen edge is not clear-cut. Both sides carrying recent workload (Mets tax: N/A, Opp: N/A)."
+              "Payton Tolle has the better pitching profile: K% 24.5% vs 23.8%, FIP 3.38 vs 3.41.",
+              "Expected stats haven't converted to runs yet — production lags contact quality."
             ],
-            "bettingAngle": "Primary edge: TBD versus Payton Tolle with 0.00 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +61.5 points. Value check: Mets ML 0 with 0.0% implied and 61.5% model probability; value edge +61.5 points.",
-            "confidenceLabel": "Standard",
-            "confidence": 6
+            "bettingAngle": "Primary edge: Zach Thornton versus Payton Tolle with 5.45 xERA against 3.07. Secondary checks: offense 93.0 vs 93.0 wRC+, bullpen 4.60 vs 3.66 xERA, value edge +35.0 points. Value check: Mets ML +102 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "confidenceLabel": "Low",
+            "confidence": 4
           },
           "meta": {
             "homeAwayLabel": "Home",
-            "moneylineValue": "N/A",
+            "moneylineValue": "+102",
             "schedulingSpot": {
               "category": "Scheduling Spot",
               "verdict": "Mets edge",
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "87° | Mostly clear | Wind 3 mph E"
+            "weatherSummary": "85° | Mostly clear | Wind 9 mph S"
           }
         }
       },
       "bettingHistory": {
         "market": "Mets Moneyline",
+        "odds": 102,
         "stake": 100
       },
       "weather": {
-        "temperature": 87.3,
-        "temperatureDisplay": "87°",
+        "temperature": 84.6,
+        "temperatureDisplay": "85°",
         "condition": "Mostly clear",
-        "wind": "Wind 3 mph E",
-        "compact": "87° | Mostly clear | Wind 3 mph E",
+        "wind": "Wind 9 mph S",
+        "compact": "85° | Mostly clear | Wind 9 mph S",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-07-12T18:00Z"
       },
@@ -111065,6 +111237,7 @@
       "status": "pending",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
+      "odds": 102,
       "stake": 100
     },
     {
