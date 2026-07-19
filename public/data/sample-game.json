@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-19T03:52:22.189Z",
-  "referenceDate": "2026-07-18",
-  "cacheKey": "sample-game:2026-07-18",
+  "generatedAt": "2026-07-19T06:27:36.259Z",
+  "referenceDate": "2026-07-19",
+  "cacheKey": "sample-game:2026-07-19",
   "games": [
     {
       "id": "2026-07-19-mets-vs-philadelphia-phillies",
@@ -27,7 +27,7 @@
           "mlbId": 690997,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-07-19T03:52:21.224Z",
+          "generatedAt": "2026-07-19T06:27:35.108Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -86,7 +86,7 @@
           "mlbId": 660604,
           "announced": true,
           "hand": "R",
-          "generatedAt": "2026-07-19T03:52:20.362Z",
+          "generatedAt": "2026-07-19T06:27:35.100Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -144,16 +144,16 @@
           "seasonERA": 2.68,
           "seasonXERAAverage": 5.14,
           "seasonXFIP": "3.99",
-          "last20ERA": 4.91,
-          "last20WHIP": 1.48,
+          "last20ERA": 5.08,
+          "last20WHIP": 1.54,
           "seasonWHIP": 1.15,
           "seasonKPct": "23.7%",
           "seasonBBPct": "9.3%",
           "rating": 79,
           "team": "New York Mets",
           "usage": {
-            "appearances": 10,
-            "appearancesPerPitcherPerDay": 0.1,
+            "appearances": 9,
+            "appearancesPerPitcherPerDay": 0.09,
             "label": "Low",
             "tone": "green"
           },
@@ -174,16 +174,16 @@
           "seasonERA": 3.92,
           "seasonXERAAverage": 3.83,
           "seasonXFIP": "3.55",
-          "last20ERA": 5.65,
-          "last20WHIP": 1.47,
+          "last20ERA": 5.45,
+          "last20WHIP": 1.36,
           "seasonWHIP": 1.25,
           "seasonKPct": "25.7%",
           "seasonBBPct": "7.7%",
           "rating": 79,
           "team": "Philadelphia Phillies",
           "usage": {
-            "appearances": 7,
-            "appearancesPerPitcherPerDay": 0.07,
+            "appearances": 8,
+            "appearancesPerPitcherPerDay": 0.08,
             "label": "Low",
             "tone": "green"
           },
@@ -195,8 +195,8 @@
             "era": 1.38,
             "whip": 0.92,
             "saveConversionPct": 96,
-            "last7DaysAppearances": 1,
-            "last7DaysInningsPitched": "1.0"
+            "last7DaysAppearances": 0,
+            "last7DaysInningsPitched": "0.0"
           },
           "relieverCount": 14
         }
@@ -1362,9 +1362,9 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [
@@ -1376,10 +1376,9 @@
           }
         ],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-07-18",
-          "resolvedDate": "2026-07-19",
-          "bannerText": "OFF DAY — Previewing next game: Philadelphia Phillies on 2026-07-19"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-07-19",
+          "resolvedDate": "2026-07-19"
         }
       },
       "trends": [
@@ -1403,7 +1402,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-07-19T03:52:22.044Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-19\",\"opponent\":\"Philadelphia Phillies\",\"homeAway\":\"road\",\"ballpark\":\"Citizens Bank Park\",\"weather\":{\"temperature\":80.1,\"temperatureDisplay\":\"80°\",\"condition\":\"Clear\",\"wind\":\"Wind 6 mph WNW\",\"compact\":\"80° | Clear | Wind 6 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-19T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Nolan McLean\",\"handedness\":\"R\",\"era\":3.52,\"xERA\":3.48,\"fip\":3.43,\"whip\":1.12,\"kPct\":27.9,\"bbPct\":8.7,\"kMinusBbPct\":19.2,\"hardHitPct\":34.7,\"barrelPct\":6.7,\"xBAAllowed\":0.217,\"xSLGAllowed\":0.336,\"xwOBAAllowed\":0.291,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-10\",\"opponent\":\"Boston Red Sox\",\"ip\":\"6.0\",\"er\":0,\"k\":7,\"h\":5,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-07-05\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":5,\"h\":5,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-30\",\"opponent\":\"Toronto Blue Jays\",\"ip\":\"6.0\",\"er\":0,\"k\":7,\"h\":5,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-06-24\",\"opponent\":\"Chicago Cubs\",\"ip\":\"6.0\",\"er\":6,\"k\":9,\"h\":7,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":6,\"avgEarnedRuns\":2,\"avgStrikeouts\":7,\"daysSinceLastStart\":9},\"workload\":{\"inningsTrend\":6,\"daysSinceLastStart\":9},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Alan Rangel\",\"handedness\":\"R\",\"era\":4.19,\"xERA\":3.48,\"fip\":4.39,\"whip\":1.4,\"kPct\":25.9,\"bbPct\":10.6,\"kMinusBbPct\":15.3,\"hardHitPct\":34,\"barrelPct\":5.7,\"xBAAllowed\":0.213,\"xSLGAllowed\":0.336,\"xwOBAAllowed\":0.291,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-08\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"3.1\",\"er\":3,\"k\":5,\"h\":3,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-07-02\",\"opponent\":\"Pittsburgh Pirates\",\"ip\":\"4.0\",\"er\":0,\"k\":4,\"h\":3,\"bb\":4,\"result\":\"-\"},{\"date\":\"2026-06-27\",\"opponent\":\"New York Mets\",\"ip\":\"4.0\",\"er\":4,\"k\":4,\"h\":4,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-22\",\"opponent\":\"Washington Nationals\",\"ip\":\"5.0\",\"er\":1,\"k\":4,\"h\":5,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":4.08,\"avgEarnedRuns\":2,\"avgStrikeouts\":4.25,\"daysSinceLastStart\":11},\"workload\":{\"inningsTrend\":4.08,\"daysSinceLastStart\":11},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7.7,\"projectedLineupWRCPlus\":105.4,\"obp\":0.32,\"iso\":0.149,\"kPct\":21.9,\"bbPct\":8.3,\"xBA\":0.261,\"xSLG\":0.434,\"xwOBA\":0.333,\"hardHitPct\":41.3,\"barrelPct\":9.2,\"battingAverage\":0.249,\"wOBA\":0.321,\"lineup\":{\"totalWAR\":7.7,\"totalWRCPlus\":105.4,\"totalOBP\":0.32,\"totalISO\":0.166,\"totalKPct\":19.7,\"totalBBPct\":8.8,\"totalAVG\":0.249,\"totalWOBA\":0.321,\"totalXBA\":0.271,\"totalXSLG\":0.458,\"totalXWOBA\":0.345,\"totalHardHitPct\":42.1,\"totalBarrelPct\":9.7,\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024}},\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":8.8,\"projectedLineupWRCPlus\":103.6,\"obp\":0.32,\"iso\":0.162,\"kPct\":23.5,\"bbPct\":7.9,\"xBA\":0.251,\"xSLG\":0.412,\"xwOBA\":0.319,\"hardHitPct\":41.4,\"barrelPct\":8.3,\"battingAverage\":0.249,\"wOBA\":0.327,\"lineup\":{\"totalWAR\":8.8,\"totalWRCPlus\":103.6,\"totalOBP\":0.32,\"totalISO\":0.178,\"totalKPct\":23.3,\"totalBBPct\":8.4,\"totalAVG\":0.249,\"totalWOBA\":0.327,\"totalXBA\":0.254,\"totalXSLG\":0.418,\"totalXWOBA\":0.325,\"totalHardHitPct\":42.2,\"totalBarrelPct\":8.6,\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.002}},\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.002},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7.7,\"totalWRCPlus\":105.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":8.8,\"totalWRCPlus\":103.6,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.15,\"kMinusBbPct\":14.4,\"xFIP\":3.99,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.25,\"kMinusBbPct\":18,\"xFIP\":3.55,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":80.1,\"temperatureDisplay\":\"80°\",\"condition\":\"Clear\",\"wind\":\"Wind 6 mph WNW\",\"compact\":\"80° | Clear | Wind 6 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-19T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Nolan McLean 3.48/3.43 vs Alan Rangel 3.48/4.39; K-BB% 19.2 to 15.3.\",\"rawScore\":11.24,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.7 vs 8.8, projected lineup wRC+ 105.4 vs 103.6, xwOBA 0.333 vs 0.319.\",\"rawScore\":-0.62,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.99 vs 3.55, WHIP 1.15 vs 1.25, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-2.28,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.022 and wOBA-xwOBA -0.024; opponent starter overperformance signal 0.20.\",\"rawScore\":3.04,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 65.1%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.651,\"totalWeightedImpact\":15.15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight Mets edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-07-19T06:27:36.095Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-07-19\",\"opponent\":\"Philadelphia Phillies\",\"homeAway\":\"road\",\"ballpark\":\"Citizens Bank Park\",\"weather\":{\"temperature\":80,\"temperatureDisplay\":\"80°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph WNW\",\"compact\":\"80° | Clear | Wind 8 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-19T18:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Nolan McLean\",\"handedness\":\"R\",\"era\":3.52,\"xERA\":3.48,\"fip\":3.43,\"whip\":1.12,\"kPct\":27.9,\"bbPct\":8.7,\"kMinusBbPct\":19.2,\"hardHitPct\":34.7,\"barrelPct\":6.7,\"xBAAllowed\":0.217,\"xSLGAllowed\":0.336,\"xwOBAAllowed\":0.291,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-10\",\"opponent\":\"Boston Red Sox\",\"ip\":\"6.0\",\"er\":0,\"k\":7,\"h\":5,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-07-05\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":5,\"h\":5,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-06-30\",\"opponent\":\"Toronto Blue Jays\",\"ip\":\"6.0\",\"er\":0,\"k\":7,\"h\":5,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-06-24\",\"opponent\":\"Chicago Cubs\",\"ip\":\"6.0\",\"er\":6,\"k\":9,\"h\":7,\"bb\":2,\"result\":\"L\"}],\"avgInnings\":6,\"avgEarnedRuns\":2,\"avgStrikeouts\":7,\"daysSinceLastStart\":9},\"workload\":{\"inningsTrend\":6,\"daysSinceLastStart\":9},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Alan Rangel\",\"handedness\":\"R\",\"era\":4.19,\"xERA\":3.48,\"fip\":4.39,\"whip\":1.4,\"kPct\":25.9,\"bbPct\":10.6,\"kMinusBbPct\":15.3,\"hardHitPct\":34,\"barrelPct\":5.7,\"xBAAllowed\":0.213,\"xSLGAllowed\":0.336,\"xwOBAAllowed\":0.291,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-08\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"3.1\",\"er\":3,\"k\":5,\"h\":3,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-07-02\",\"opponent\":\"Pittsburgh Pirates\",\"ip\":\"4.0\",\"er\":0,\"k\":4,\"h\":3,\"bb\":4,\"result\":\"-\"},{\"date\":\"2026-06-27\",\"opponent\":\"New York Mets\",\"ip\":\"4.0\",\"er\":4,\"k\":4,\"h\":4,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-06-22\",\"opponent\":\"Washington Nationals\",\"ip\":\"5.0\",\"er\":1,\"k\":4,\"h\":5,\"bb\":0,\"result\":\"-\"}],\"avgInnings\":4.08,\"avgEarnedRuns\":2,\"avgStrikeouts\":4.25,\"daysSinceLastStart\":11},\"workload\":{\"inningsTrend\":4.08,\"daysSinceLastStart\":11},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":7.7,\"projectedLineupWRCPlus\":105.4,\"obp\":0.32,\"iso\":0.149,\"kPct\":21.9,\"bbPct\":8.3,\"xBA\":0.261,\"xSLG\":0.434,\"xwOBA\":0.333,\"hardHitPct\":41.3,\"barrelPct\":9.2,\"battingAverage\":0.249,\"wOBA\":0.321,\"lineup\":{\"totalWAR\":7.7,\"totalWRCPlus\":105.4,\"totalOBP\":0.32,\"totalISO\":0.166,\"totalKPct\":19.7,\"totalBBPct\":8.8,\"totalAVG\":0.249,\"totalWOBA\":0.321,\"totalXBA\":0.271,\"totalXSLG\":0.458,\"totalXWOBA\":0.345,\"totalHardHitPct\":42.1,\"totalBarrelPct\":9.7,\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024}},\"regressionSignals\":{\"baMinusXba\":-0.022,\"wobaMinusXwoba\":-0.024},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":8.8,\"projectedLineupWRCPlus\":103.6,\"obp\":0.32,\"iso\":0.162,\"kPct\":23.5,\"bbPct\":7.9,\"xBA\":0.251,\"xSLG\":0.412,\"xwOBA\":0.319,\"hardHitPct\":41.4,\"barrelPct\":8.3,\"battingAverage\":0.249,\"wOBA\":0.327,\"lineup\":{\"totalWAR\":8.8,\"totalWRCPlus\":103.6,\"totalOBP\":0.32,\"totalISO\":0.178,\"totalKPct\":23.3,\"totalBBPct\":8.4,\"totalAVG\":0.249,\"totalWOBA\":0.327,\"totalXBA\":0.254,\"totalXSLG\":0.418,\"totalXWOBA\":0.325,\"totalHardHitPct\":42.2,\"totalBarrelPct\":8.6,\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.002}},\"regressionSignals\":{\"baMinusXba\":-0.005,\"wobaMinusXwoba\":0.002},\"splitContext\":{\"pitcherHandedness\":\"R\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":7.7,\"totalWRCPlus\":105.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":8.8,\"totalWRCPlus\":103.6,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.15,\"kMinusBbPct\":14.4,\"xFIP\":3.99,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.25,\"kMinusBbPct\":18,\"xFIP\":3.55,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"road to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":0,\"opp\":0},\"seriesGameNumber\":3,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":80,\"temperatureDisplay\":\"80°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph WNW\",\"compact\":\"80° | Clear | Wind 8 mph WNW\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-07-19T18:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Mets edge\",\"strength\":\"strong\",\"explanation\":\"xERA/FIP profile: Nolan McLean 3.48/3.43 vs Alan Rangel 3.48/4.39; K-BB% 19.2 to 15.3.\",\"rawScore\":11.24,\"weightedImpact\":30,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Overall lineup quality only: projected WAR 7.7 vs 8.8, projected lineup wRC+ 105.4 vs 103.6, xwOBA 0.333 vs 0.319.\",\"rawScore\":-0.62,\"weightedImpact\":-8.25,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.99 vs 3.55, WHIP 1.15 vs 1.25, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-2.28,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.022 and wOBA-xwOBA -0.024; opponent starter overperformance signal 0.20.\",\"rawScore\":3.04,\"weightedImpact\":3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 0 vs opponent 0 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Schedule/context: Mets travel road to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":-0.6,\"weightedImpact\":-1.65,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 65.1%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.651,\"totalWeightedImpact\":15.15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Slight Mets edge\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":2,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Philadelphia Phillies: starting pitching is the clearest angle",
         "synopsis": "Nolan McLean vs Alan Rangel sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Nolan McLean 3.48/3.43 vs Alan Rangel 3.48/4.39; K-BB% 19.2 to 15.3. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1418,7 +1417,7 @@
           "opponent": "Philadelphia Phillies",
           "homeAway": "road",
           "ballpark": "Citizens Bank Park",
-          "weather": "80° | Clear | Wind 6 mph WNW",
+          "weather": "80° | Clear | Wind 8 mph WNW",
           "lineupStatus": "Projected",
           "moneyline": "N/A"
         },
@@ -1668,11 +1667,11 @@
             "homeAway": "road",
             "ballpark": "Citizens Bank Park",
             "weather": {
-              "temperature": 80.1,
+              "temperature": 80,
               "temperatureDisplay": "80°",
               "condition": "Clear",
-              "wind": "Wind 6 mph WNW",
-              "compact": "80° | Clear | Wind 6 mph WNW",
+              "wind": "Wind 8 mph WNW",
+              "compact": "80° | Clear | Wind 8 mph WNW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-07-19T18:00Z"
             }
@@ -1954,11 +1953,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 80.1,
+              "temperature": 80,
               "temperatureDisplay": "80°",
               "condition": "Clear",
-              "wind": "Wind 6 mph WNW",
-              "compact": "80° | Clear | Wind 6 mph WNW",
+              "wind": "Wind 8 mph WNW",
+              "compact": "80° | Clear | Wind 8 mph WNW",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-07-19T18:00Z"
             }
@@ -2144,7 +2143,7 @@
             "ballpark": "Citizens Bank Park",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/143.svg",
-            "metadataLine": "July 19th | 1:35 PM ET | Citizens Bank Park | 80° | Clear | Wind 6 mph WNW"
+            "metadataLine": "July 19th | 1:35 PM ET | Citizens Bank Park | 80° | Clear | Wind 8 mph WNW"
           },
           "quickRead": {
             "modelLean": "Slight Mets edge",
@@ -2158,7 +2157,7 @@
             "opponent": "Philadelphia Phillies",
             "homeAway": "road",
             "ballpark": "Citizens Bank Park",
-            "weather": "80° | Clear | Wind 6 mph WNW",
+            "weather": "80° | Clear | Wind 8 mph WNW",
             "lineupStatus": "Projected",
             "moneyline": "N/A"
           },
@@ -2174,7 +2173,7 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "80° | Clear | Wind 6 mph WNW"
+                "value": "80° | Clear | Wind 8 mph WNW"
               },
               {
                 "label": "Mets ML Odds",
@@ -2579,15 +2578,15 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 10,
-                "appearancesPerPitcherPerDay": 0.1,
+                "appearances": 9,
+                "appearancesPerPitcherPerDay": 0.09,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 2.68,
                 "seasonWhip": 1.15,
-                "last20Era": 4.91
+                "last20Era": 5.08
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2605,15 +2604,15 @@
               "teamName": "Philadelphia Phillies",
               "teamId": 143,
               "usage": {
-                "appearances": 7,
-                "appearancesPerPitcherPerDay": 0.07,
+                "appearances": 8,
+                "appearancesPerPitcherPerDay": 0.08,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.92,
                 "seasonWhip": 1.25,
-                "last20Era": 5.65
+                "last20Era": 5.45
               },
               "closer": {
                 "name": "Jhoan Duran",
@@ -2623,8 +2622,8 @@
                 "saveConversionPct": 96,
                 "era": 1.38,
                 "whip": 0.92,
-                "last7DaysAppearances": 1,
-                "last7DaysInningsPitched": "1.0"
+                "last7DaysAppearances": 0,
+                "last7DaysInningsPitched": "0.0"
               }
             }
           },
@@ -3667,7 +3666,7 @@
               "strength": "slight",
               "dataMode": "fallback"
             },
-            "weatherSummary": "80° | Clear | Wind 6 mph WNW"
+            "weatherSummary": "80° | Clear | Wind 8 mph WNW"
           }
         }
       },
@@ -3676,11 +3675,11 @@
         "stake": 100
       },
       "weather": {
-        "temperature": 80.1,
+        "temperature": 80,
         "temperatureDisplay": "80°",
         "condition": "Clear",
-        "wind": "Wind 6 mph WNW",
-        "compact": "80° | Clear | Wind 6 mph WNW",
+        "wind": "Wind 8 mph WNW",
+        "compact": "80° | Clear | Wind 8 mph WNW",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-07-19T18:00Z"
       },
@@ -111247,10 +111246,17 @@
       "opponent": "Philadelphia Phillies",
       "homeAway": "road",
       "estimated": false,
-      "status": "pending",
+      "status": "final",
+      "gradingStatus": "missing_odds",
+      "finalScore": "1-6",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
-      "stake": 100
+      "oddsSource": "missing",
+      "resultSource": "mlb-stats-schedule",
+      "sourceGamePk": 823441,
+      "startTime": "2026-07-18T19:05:00.000Z",
+      "stake": 100,
+      "result": "L"
     },
     {
       "gameId": "2026-07-16-mets-vs-philadelphia-phillies",
