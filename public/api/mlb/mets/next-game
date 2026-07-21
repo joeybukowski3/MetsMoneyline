@@ -1,7 +1,7 @@
 {
   "gameId": 823760,
   "startTime": "2026-07-21T23:40:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 158,
     "canonicalKey": "brewers",
@@ -40,9 +40,64 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
+    "lineupStatus": "confirmed",
     "mets": [],
-    "opp": []
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 694192,
+        "name": "Jackson Chourio",
+        "pos": "LF"
+      },
+      {
+        "order": 2,
+        "playerId": 668930,
+        "name": "Brice Turang",
+        "pos": "2B"
+      },
+      {
+        "order": 3,
+        "playerId": 661388,
+        "name": "William Contreras",
+        "pos": "DH"
+      },
+      {
+        "order": 4,
+        "playerId": 683734,
+        "name": "Andrew Vaughn",
+        "pos": "1B"
+      },
+      {
+        "order": 5,
+        "playerId": 669003,
+        "name": "Garrett Mitchell",
+        "pos": "CF"
+      },
+      {
+        "order": 6,
+        "playerId": 596142,
+        "name": "Gary Sánchez",
+        "pos": "C"
+      },
+      {
+        "order": 7,
+        "playerId": 800325,
+        "name": "Luis Lara",
+        "pos": "RF"
+      },
+      {
+        "order": 8,
+        "playerId": 806198,
+        "name": "Cooper Pratt",
+        "pos": "SS"
+      },
+      {
+        "order": 9,
+        "playerId": 687401,
+        "name": "Joey Ortiz",
+        "pos": "3B"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +110,9 @@
     "officialDate": "2026-07-21",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -208,16 +263,16 @@
       },
       "defense": {
         "team": {
-          "id": 158,
-          "name": "Milwaukee Brewers",
-          "link": "/api/v1/teams/158"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 158,
+          "name": "Milwaukee Brewers",
+          "link": "/api/v1/teams/158"
         }
       }
     },
@@ -285,11 +340,140 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 694192,
+          "fullName": "Jackson Chourio",
+          "link": "/api/v1/people/694192",
+          "firstName": "Jackson",
+          "lastName": "Chourio",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Jackson"
+        },
+        {
+          "id": 668930,
+          "fullName": "Brice Turang",
+          "link": "/api/v1/people/668930",
+          "firstName": "Brice",
+          "lastName": "Turang",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Brice"
+        },
+        {
+          "id": 661388,
+          "fullName": "William Contreras",
+          "link": "/api/v1/people/661388",
+          "firstName": "William",
+          "lastName": "Contreras",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "William"
+        },
+        {
+          "id": 683734,
+          "fullName": "Andrew Vaughn",
+          "link": "/api/v1/people/683734",
+          "firstName": "Andrew",
+          "lastName": "Vaughn",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Andrew"
+        },
+        {
+          "id": 669003,
+          "fullName": "Garrett Mitchell",
+          "link": "/api/v1/people/669003",
+          "firstName": "Garrett",
+          "lastName": "Mitchell",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Garrett"
+        },
+        {
+          "id": 596142,
+          "fullName": "Gary Sánchez",
+          "link": "/api/v1/people/596142",
+          "firstName": "Gary",
+          "lastName": "Sánchez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Gary"
+        },
+        {
+          "id": 800325,
+          "fullName": "Luis Lara",
+          "link": "/api/v1/people/800325",
+          "firstName": "Luis",
+          "lastName": "Lara",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Luis"
+        },
+        {
+          "id": 806198,
+          "fullName": "Cooper Pratt",
+          "link": "/api/v1/people/806198",
+          "firstName": "Cooper",
+          "lastName": "Pratt",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Cooper"
+        },
+        {
+          "id": 687401,
+          "fullName": "Joey Ortiz",
+          "link": "/api/v1/people/687401",
+          "firstName": "Joseph",
+          "lastName": "Ortiz",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Joey"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-21T19:53:31.213Z",
+    "generatedAt": "2026-07-21T21:04:47.760Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-21",
     "cacheKey": "next-game:2026-07-21"
