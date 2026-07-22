@@ -111,10 +111,10 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 42,
+          "wins": 43,
           "losses": 59,
           "ties": 0,
-          "pct": ".416"
+          "pct": ".422"
         },
         "probablePitcher": {
           "id": 681035,
@@ -180,9 +180,9 @@
         },
         "leagueRecord": {
           "wins": 63,
-          "losses": 37,
+          "losses": 38,
           "ties": 0,
-          "pct": ".630"
+          "pct": ".624"
         },
         "probablePitcher": {
           "id": 701656,
@@ -208,16 +208,16 @@
       },
       "defense": {
         "team": {
-          "id": 158,
-          "name": "Milwaukee Brewers",
-          "link": "/api/v1/teams/158"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 158,
+          "name": "Milwaukee Brewers",
+          "link": "/api/v1/teams/158"
         }
       }
     },
@@ -234,37 +234,12 @@
     "seriesStatus": {
       "gameNumber": 3,
       "totalGames": 3,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
-      "wins": 1,
+      "wins": 0,
       "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        },
-        "allStarStatus": "N",
-        "id": 158,
-        "name": "Milwaukee Brewers",
-        "link": "/api/v1/teams/158"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "MIL leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -284,11 +259,12 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-22T00:06:43.175Z",
+    "generatedAt": "2026-07-22T03:44:33.026Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-21",
     "cacheKey": "next-game:2026-07-21"
