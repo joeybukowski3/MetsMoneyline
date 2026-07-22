@@ -1,7 +1,7 @@
 {
   "gameId": 823761,
   "startTime": "2026-07-22T18:10:00Z",
-  "status": "Scheduled",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 158,
     "canonicalKey": "brewers",
@@ -40,9 +40,119 @@
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
-    "opp": []
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 2,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "LF"
+      },
+      {
+        "order": 5,
+        "playerId": 593871,
+        "name": "Jorge Polanco",
+        "pos": "DH"
+      },
+      {
+        "order": 6,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 7,
+        "playerId": 543760,
+        "name": "Marcus Semien",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "RF"
+      },
+      {
+        "order": 9,
+        "playerId": 682626,
+        "name": "Francisco Alvarez",
+        "pos": "C"
+      }
+    ],
+    "opp": [
+      {
+        "order": 1,
+        "playerId": 592885,
+        "name": "Christian Yelich",
+        "pos": "DH"
+      },
+      {
+        "order": 2,
+        "playerId": 694192,
+        "name": "Jackson Chourio",
+        "pos": "LF"
+      },
+      {
+        "order": 3,
+        "playerId": 668930,
+        "name": "Brice Turang",
+        "pos": "2B"
+      },
+      {
+        "order": 4,
+        "playerId": 661388,
+        "name": "William Contreras",
+        "pos": "C"
+      },
+      {
+        "order": 5,
+        "playerId": 669003,
+        "name": "Garrett Mitchell",
+        "pos": "CF"
+      },
+      {
+        "order": 6,
+        "playerId": 683734,
+        "name": "Andrew Vaughn",
+        "pos": "1B"
+      },
+      {
+        "order": 7,
+        "playerId": 641343,
+        "name": "Jake Bauers",
+        "pos": "RF"
+      },
+      {
+        "order": 8,
+        "playerId": 806198,
+        "name": "Cooper Pratt",
+        "pos": "SS"
+      },
+      {
+        "order": 9,
+        "playerId": 687401,
+        "name": "Joey Ortiz",
+        "pos": "3B"
+      }
+    ]
   },
   "sportsbookSummary": null,
   "raw": {
@@ -55,9 +165,9 @@
     "officialDate": "2026-07-22",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -116,6 +226,7 @@
           "ties": 0,
           "pct": ".422"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 681035,
           "fullName": "Christian Scott",
@@ -184,6 +295,7 @@
           "ties": 0,
           "pct": ".624"
         },
+        "score": 0,
         "probablePitcher": {
           "id": 701656,
           "fullName": "Logan Henderson",
@@ -200,26 +312,141 @@
       }
     },
     "linescore": {
+      "currentInning": 1,
+      "currentInningOrdinal": "1st",
+      "inningState": "Top",
+      "inningHalf": "Top",
+      "isTopInning": true,
       "scheduledInnings": 9,
-      "innings": [],
+      "innings": [
+        {
+          "num": 1,
+          "ordinalNum": "1st",
+          "home": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          },
+          "away": {
+            "hits": 0,
+            "errors": 0,
+            "leftOnBase": 0
+          }
+        }
+      ],
       "teams": {
-        "home": {},
-        "away": {}
+        "home": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        },
+        "away": {
+          "runs": 0,
+          "hits": 0,
+          "errors": 0,
+          "leftOnBase": 0
+        }
       },
       "defense": {
+        "pitcher": {
+          "id": 701656,
+          "fullName": "Logan Henderson",
+          "link": "/api/v1/people/701656"
+        },
+        "catcher": {
+          "id": 661388,
+          "fullName": "William Contreras",
+          "link": "/api/v1/people/661388"
+        },
+        "first": {
+          "id": 683734,
+          "fullName": "Andrew Vaughn",
+          "link": "/api/v1/people/683734"
+        },
+        "second": {
+          "id": 668930,
+          "fullName": "Brice Turang",
+          "link": "/api/v1/people/668930"
+        },
+        "third": {
+          "id": 687401,
+          "fullName": "Joey Ortiz",
+          "link": "/api/v1/people/687401"
+        },
+        "shortstop": {
+          "id": 806198,
+          "fullName": "Cooper Pratt",
+          "link": "/api/v1/people/806198"
+        },
+        "left": {
+          "id": 694192,
+          "fullName": "Jackson Chourio",
+          "link": "/api/v1/people/694192"
+        },
+        "center": {
+          "id": 669003,
+          "fullName": "Garrett Mitchell",
+          "link": "/api/v1/people/669003"
+        },
+        "right": {
+          "id": 641343,
+          "fullName": "Jake Bauers",
+          "link": "/api/v1/people/641343"
+        },
+        "batter": {
+          "id": 592885,
+          "fullName": "Christian Yelich",
+          "link": "/api/v1/people/592885"
+        },
+        "onDeck": {
+          "id": 694192,
+          "fullName": "Jackson Chourio",
+          "link": "/api/v1/people/694192"
+        },
+        "inHole": {
+          "id": 668930,
+          "fullName": "Brice Turang",
+          "link": "/api/v1/people/668930"
+        },
+        "battingOrder": 1,
+        "team": {
+          "id": 158,
+          "name": "Milwaukee Brewers",
+          "link": "/api/v1/teams/158"
+        }
+      },
+      "offense": {
+        "batter": {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999"
+        },
+        "onDeck": {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019"
+        },
+        "inHole": {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182"
+        },
+        "pitcher": {
+          "id": 681035,
+          "fullName": "Christian Scott",
+          "link": "/api/v1/people/681035"
+        },
+        "battingOrder": 1,
         "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
       },
-      "offense": {
-        "team": {
-          "id": 158,
-          "name": "Milwaukee Brewers",
-          "link": "/api/v1/teams/158"
-        }
-      }
+      "balls": 0,
+      "strikes": 0,
+      "outs": 0
     },
     "venue": {
       "id": 32,
@@ -236,10 +463,11 @@
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
-      "wins": 0,
-      "losses": 0,
+      "wins": 1,
+      "losses": 1,
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -260,11 +488,268 @@
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 592885,
+          "fullName": "Christian Yelich",
+          "link": "/api/v1/people/592885",
+          "firstName": "Christian",
+          "lastName": "Yelich",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Christian"
+        },
+        {
+          "id": 694192,
+          "fullName": "Jackson Chourio",
+          "link": "/api/v1/people/694192",
+          "firstName": "Jackson",
+          "lastName": "Chourio",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Jackson"
+        },
+        {
+          "id": 668930,
+          "fullName": "Brice Turang",
+          "link": "/api/v1/people/668930",
+          "firstName": "Brice",
+          "lastName": "Turang",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Brice"
+        },
+        {
+          "id": 661388,
+          "fullName": "William Contreras",
+          "link": "/api/v1/people/661388",
+          "firstName": "William",
+          "lastName": "Contreras",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "William"
+        },
+        {
+          "id": 669003,
+          "fullName": "Garrett Mitchell",
+          "link": "/api/v1/people/669003",
+          "firstName": "Garrett",
+          "lastName": "Mitchell",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "Garrett"
+        },
+        {
+          "id": 683734,
+          "fullName": "Andrew Vaughn",
+          "link": "/api/v1/people/683734",
+          "firstName": "Andrew",
+          "lastName": "Vaughn",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Andrew"
+        },
+        {
+          "id": 641343,
+          "fullName": "Jake Bauers",
+          "link": "/api/v1/people/641343",
+          "firstName": "Jakob",
+          "lastName": "Bauers",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Jake"
+        },
+        {
+          "id": 806198,
+          "fullName": "Cooper Pratt",
+          "link": "/api/v1/people/806198",
+          "firstName": "Cooper",
+          "lastName": "Pratt",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Cooper"
+        },
+        {
+          "id": 687401,
+          "fullName": "Joey Ortiz",
+          "link": "/api/v1/people/687401",
+          "firstName": "Joseph",
+          "lastName": "Ortiz",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Joey"
+        }
+      ],
+      "awayPlayers": [
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 593871,
+          "fullName": "Jorge Polanco",
+          "link": "/api/v1/people/593871",
+          "firstName": "Jorge",
+          "lastName": "Polanco",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Jorge"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760",
+          "firstName": "Marcus",
+          "lastName": "Semien",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Marcus"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 682626,
+          "fullName": "Francisco Alvarez",
+          "link": "/api/v1/people/682626",
+          "firstName": "Francisco",
+          "lastName": "Alvarez",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Francisco"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-22T15:03:24.028Z",
+    "generatedAt": "2026-07-22T16:44:19.074Z",
     "cacheHint": "schedule: 15-30 minutes",
     "referenceDate": "2026-07-22",
     "cacheKey": "next-game:2026-07-22"
