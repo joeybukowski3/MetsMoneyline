@@ -1,6 +1,6 @@
 {
-  "gameId": 823593,
-  "startTime": "2026-07-31T23:10:00Z",
+  "gameId": 823594,
+  "startTime": "2026-08-01T20:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,16 +25,16 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 642547,
-      "fullName": "Freddy Peralta",
-      "era": "4.99",
+      "id": 804267,
+      "fullName": "Zac Thornton",
+      "era": "2.43",
       "fip": null,
-      "whip": "1.48"
+      "whip": "0.91"
     },
     "opp": {
-      "id": 676083,
-      "fullName": "Janson Junk",
-      "era": "4.89",
+      "id": 663969,
+      "fullName": "Tyler Phillips",
+      "era": "3.52",
       "fip": null,
       "whip": "1.36"
     }
@@ -44,15 +44,68 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Miami Marlins",
+            "price": 118,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": -126,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Miami Marlins",
+            "price": -184,
+            "point": 1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": 152,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -105,
+            "point": 9
+          },
+          {
+            "name": "Under",
+            "price": -115,
+            "point": 9
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
-    "gamePk": 823593,
-    "gameGuid": "4db22b1b-bc0f-46f0-85d8-5b6408395daf",
-    "link": "/api/v1.1/game/823593/feed/live",
+    "gamePk": 823594,
+    "gameGuid": "cc080c76-edac-4ba5-a03f-73ac7bb24b5b",
+    "link": "/api/v1.1/game/823594/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-07-31T23:10:00Z",
-    "officialDate": "2026-07-31",
+    "gameDate": "2026-08-01T20:10:00Z",
+    "officialDate": "2026-08-01",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -111,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 55,
+          "wins": 56,
           "losses": 55,
           "ties": 0,
-          "pct": ".500"
+          "pct": ".505"
         },
         "probablePitcher": {
-          "id": 676083,
-          "fullName": "Janson Junk",
-          "link": "/api/v1/people/676083"
+          "id": 663969,
+          "fullName": "Tyler Phillips",
+          "link": "/api/v1/people/663969"
         },
         "splitSquad": false,
         "seriesNumber": 36,
@@ -180,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 47,
-          "losses": 63,
+          "losses": 64,
           "ties": 0,
-          "pct": ".427"
+          "pct": ".423"
         },
         "probablePitcher": {
-          "id": 642547,
-          "fullName": "Freddy Peralta",
-          "link": "/api/v1/people/642547"
+          "id": 804267,
+          "fullName": "Zac Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
         "seriesNumber": 36,
@@ -229,17 +282,18 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823593/content"
+      "link": "/api/v1/game/823594/content"
     },
     "seriesStatus": {
-      "gameNumber": 2,
+      "gameNumber": 3,
       "totalGames": 4,
       "isTied": true,
       "isOver": false,
-      "wins": 0,
-      "losses": 0,
+      "wins": 1,
+      "losses": 1,
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -248,14 +302,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823593-2026-07-31",
+    "calendarEventID": "14-823594-2026-08-01",
     "seasonDisplay": "2026",
-    "dayNight": "night",
+    "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 4,
-    "seriesGameNumber": 2,
+    "seriesGameNumber": 3,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -264,9 +318,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-07-31T10:35:17.057Z",
+    "generatedAt": "2026-08-01T09:55:04.044Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-07-31",
-    "cacheKey": "next-game:2026-07-31"
+    "referenceDate": "2026-08-01",
+    "cacheKey": "next-game:2026-08-01"
   }
 }
