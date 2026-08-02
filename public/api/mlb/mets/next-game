@@ -1,6 +1,6 @@
 {
-  "gameId": 823594,
-  "startTime": "2026-08-01T20:10:00Z",
+  "gameId": 823592,
+  "startTime": "2026-08-02T17:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 804267,
-      "fullName": "Zac Thornton",
-      "era": "2.43",
+      "id": 476594,
+      "fullName": "Robert Stock",
+      "era": null,
       "fip": null,
-      "whip": "0.91"
+      "whip": null
     },
     "opp": {
-      "id": 663969,
-      "fullName": "Tyler Phillips",
-      "era": "3.52",
+      "id": 645261,
+      "fullName": "Sandy Alcantara",
+      "era": "3.82",
       "fip": null,
-      "whip": "1.36"
+      "whip": "1.21"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "Miami Marlins",
-            "price": 118,
+            "price": -116,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -126,
+            "price": 108,
             "point": null
           }
         ]
@@ -70,13 +70,13 @@
         "outcomes": [
           {
             "name": "Miami Marlins",
-            "price": -184,
-            "point": 1.5
+            "price": 130,
+            "point": -1.5
           },
           {
             "name": "New York Mets",
-            "price": 152,
-            "point": -1.5
+            "price": -156,
+            "point": 1.5
           }
         ]
       },
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -105,
-            "point": 9
+            "price": -118,
+            "point": 8.5
           },
           {
             "name": "Under",
-            "price": -115,
-            "point": 9
+            "price": -104,
+            "point": 8.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823594,
-    "gameGuid": "cc080c76-edac-4ba5-a03f-73ac7bb24b5b",
-    "link": "/api/v1.1/game/823594/feed/live",
+    "gamePk": 823592,
+    "gameGuid": "6eb52d23-6b16-4b5f-adf8-7d3b9d7e72c6",
+    "link": "/api/v1.1/game/823592/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-01T20:10:00Z",
-    "officialDate": "2026-08-01",
+    "gameDate": "2026-08-02T17:40:00Z",
+    "officialDate": "2026-08-02",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 56,
+          "wins": 57,
           "losses": 55,
           "ties": 0,
-          "pct": ".505"
+          "pct": ".509"
         },
         "probablePitcher": {
-          "id": 663969,
-          "fullName": "Tyler Phillips",
-          "link": "/api/v1/people/663969"
+          "id": 645261,
+          "fullName": "Sandy Alcantara",
+          "link": "/api/v1/people/645261"
         },
         "splitSquad": false,
         "seriesNumber": 36,
@@ -233,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 47,
-          "losses": 64,
+          "losses": 65,
           "ties": 0,
-          "pct": ".423"
+          "pct": ".420"
         },
         "probablePitcher": {
-          "id": 804267,
-          "fullName": "Zac Thornton",
-          "link": "/api/v1/people/804267"
+          "id": 476594,
+          "fullName": "Robert Stock",
+          "link": "/api/v1/people/476594"
         },
         "splitSquad": false,
         "seriesNumber": 36,
@@ -261,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 146,
+          "name": "Miami Marlins",
+          "link": "/api/v1/teams/146"
         }
       },
       "offense": {
         "team": {
-          "id": 146,
-          "name": "Miami Marlins",
-          "link": "/api/v1/teams/146"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -282,18 +282,42 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823594/content"
+      "link": "/api/v1/game/823592/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 4,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 1,
+      "wins": 2,
       "losses": 1,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 146,
+        "name": "Miami Marlins",
+        "link": "/api/v1/teams/146"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "Series tied 1-1",
+      "result": "MIA leads 2-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -302,14 +326,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823594-2026-08-01",
+    "calendarEventID": "14-823592-2026-08-02",
     "seasonDisplay": "2026",
     "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 4,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 4,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -318,9 +342,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-01T09:55:04.044Z",
+    "generatedAt": "2026-08-02T09:53:12.196Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-01",
-    "cacheKey": "next-game:2026-08-01"
+    "referenceDate": "2026-08-02",
+    "cacheKey": "next-game:2026-08-02"
   }
 }
