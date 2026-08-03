@@ -1,8 +1,17 @@
 {
-  "gameId": 823592,
-  "startTime": "2026-08-02T17:40:00Z",
+  "gameId": 824403,
+  "startTime": "2026-08-04T22:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
+    "id": 114,
+    "canonicalKey": "guardians",
+    "mlbStatsTeamId": 114,
+    "apiSportsTeamId": 114,
+    "name": "Cleveland Guardians",
+    "abbreviation": "CLE",
+    "record": null
+  },
+  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -11,32 +20,23 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "awayTeam": {
-    "id": 146,
-    "canonicalKey": "marlins",
-    "mlbStatsTeamId": 146,
-    "apiSportsTeamId": 146,
-    "name": "Miami Marlins",
-    "abbreviation": "MIA",
-    "record": null
-  },
-  "isMetsHome": true,
-  "venue": "Citi Field",
+  "isMetsHome": false,
+  "venue": "Progressive Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 476594,
-      "fullName": "Robert Stock",
-      "era": null,
+      "id": 640455,
+      "fullName": "Sean Manaea",
+      "era": "4.42",
       "fip": null,
-      "whip": null
+      "whip": "1.34"
     },
     "opp": {
-      "id": 645261,
-      "fullName": "Sandy Alcantara",
-      "era": "3.82",
+      "id": 676282,
+      "fullName": "Joey Cantillo",
+      "era": "3.88",
       "fip": null,
-      "whip": "1.21"
+      "whip": "1.45"
     }
   },
   "lineups": {
@@ -44,68 +44,15 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
-    "markets": [
-      {
-        "key": "h2h",
-        "label": "h2h",
-        "outcomes": [
-          {
-            "name": "Miami Marlins",
-            "price": -116,
-            "point": null
-          },
-          {
-            "name": "New York Mets",
-            "price": 108,
-            "point": null
-          }
-        ]
-      },
-      {
-        "key": "spreads",
-        "label": "spreads",
-        "outcomes": [
-          {
-            "name": "Miami Marlins",
-            "price": 130,
-            "point": -1.5
-          },
-          {
-            "name": "New York Mets",
-            "price": -156,
-            "point": 1.5
-          }
-        ]
-      },
-      {
-        "key": "totals",
-        "label": "totals",
-        "outcomes": [
-          {
-            "name": "Over",
-            "price": -118,
-            "point": 8.5
-          },
-          {
-            "name": "Under",
-            "price": -104,
-            "point": 8.5
-          }
-        ]
-      }
-    ]
-  },
+  "sportsbookSummary": null,
   "raw": {
-    "gamePk": 823592,
-    "gameGuid": "6eb52d23-6b16-4b5f-adf8-7d3b9d7e72c6",
-    "link": "/api/v1.1/game/823592/feed/live",
+    "gamePk": 824403,
+    "gameGuid": "38daab8e-2874-45c3-a365-d56d21c751d5",
+    "link": "/api/v1.1/game/824403/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-02T17:40:00Z",
-    "officialDate": "2026-08-02",
+    "gameDate": "2026-08-04T22:40:00Z",
+    "officialDate": "2026-08-04",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -116,74 +63,6 @@
     },
     "teams": {
       "away": {
-        "team": {
-          "springLeague": {
-            "id": 115,
-            "name": "Grapefruit League",
-            "link": "/api/v1/league/115",
-            "abbreviation": "GL"
-          },
-          "allStarStatus": "N",
-          "id": 146,
-          "name": "Miami Marlins",
-          "link": "/api/v1/teams/146",
-          "season": 2026,
-          "venue": {
-            "id": 4169,
-            "name": "loanDepot park",
-            "link": "/api/v1/venues/4169"
-          },
-          "springVenue": {
-            "id": 2520,
-            "link": "/api/v1/venues/2520"
-          },
-          "teamCode": "mia",
-          "fileCode": "mia",
-          "abbreviation": "MIA",
-          "teamName": "Marlins",
-          "locationName": "Miami",
-          "firstYearOfPlay": "1991",
-          "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
-          },
-          "division": {
-            "id": 204,
-            "name": "National League East",
-            "link": "/api/v1/divisions/204"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "Miami",
-          "franchiseName": "Miami",
-          "clubName": "Marlins",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 57,
-          "losses": 55,
-          "ties": 0,
-          "pct": ".509"
-        },
-        "probablePitcher": {
-          "id": 645261,
-          "fullName": "Sandy Alcantara",
-          "link": "/api/v1/people/645261"
-        },
-        "splitSquad": false,
-        "seriesNumber": 36,
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        }
-      },
-      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -233,22 +112,90 @@
         },
         "leagueRecord": {
           "wins": 47,
-          "losses": 65,
+          "losses": 66,
           "ties": 0,
-          "pct": ".420"
+          "pct": ".416"
         },
         "probablePitcher": {
-          "id": 476594,
-          "fullName": "Robert Stock",
-          "link": "/api/v1/people/476594"
+          "id": 640455,
+          "fullName": "Sean Manaea",
+          "link": "/api/v1/people/640455"
         },
         "splitSquad": false,
-        "seriesNumber": 36,
+        "seriesNumber": 37,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
           "link": "/api/v1/league/115",
           "abbreviation": "GL"
+        }
+      },
+      "home": {
+        "team": {
+          "springLeague": {
+            "id": 114,
+            "name": "Cactus League",
+            "link": "/api/v1/league/114",
+            "abbreviation": "CL"
+          },
+          "allStarStatus": "N",
+          "id": 114,
+          "name": "Cleveland Guardians",
+          "link": "/api/v1/teams/114",
+          "season": 2026,
+          "venue": {
+            "id": 5,
+            "name": "Progressive Field",
+            "link": "/api/v1/venues/5"
+          },
+          "springVenue": {
+            "id": 3834,
+            "link": "/api/v1/venues/3834"
+          },
+          "teamCode": "cle",
+          "fileCode": "cle",
+          "abbreviation": "CLE",
+          "teamName": "Guardians",
+          "locationName": "Cleveland",
+          "firstYearOfPlay": "1901",
+          "league": {
+            "id": 103,
+            "name": "American League",
+            "link": "/api/v1/league/103"
+          },
+          "division": {
+            "id": 202,
+            "name": "American League Central",
+            "link": "/api/v1/divisions/202"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Cleveland",
+          "franchiseName": "Cleveland",
+          "clubName": "Guardians",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 57,
+          "losses": 56,
+          "ties": 0,
+          "pct": ".504"
+        },
+        "probablePitcher": {
+          "id": 676282,
+          "fullName": "Joey Cantillo",
+          "link": "/api/v1/people/676282"
+        },
+        "splitSquad": false,
+        "seriesNumber": 37,
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
         }
       }
     },
@@ -261,9 +208,9 @@
       },
       "defense": {
         "team": {
-          "id": 146,
-          "name": "Miami Marlins",
-          "link": "/api/v1/teams/146"
+          "id": 114,
+          "name": "Cleveland Guardians",
+          "link": "/api/v1/teams/114"
         }
       },
       "offense": {
@@ -275,49 +222,24 @@
       }
     },
     "venue": {
-      "id": 3289,
-      "name": "Citi Field",
-      "link": "/api/v1/venues/3289",
+      "id": 5,
+      "name": "Progressive Field",
+      "link": "/api/v1/venues/5",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823592/content"
+      "link": "/api/v1/game/824403/content"
     },
     "seriesStatus": {
-      "gameNumber": 4,
-      "totalGames": 4,
-      "isTied": false,
+      "gameNumber": 1,
+      "totalGames": 3,
+      "isTied": true,
       "isOver": false,
-      "wins": 2,
-      "losses": 1,
-      "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 146,
-        "name": "Miami Marlins",
-        "link": "/api/v1/teams/146"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
+      "wins": 0,
+      "losses": 0,
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "MIA leads 2-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -326,14 +248,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823592-2026-08-02",
+    "calendarEventID": "14-824403-2026-08-04",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
-    "gamesInSeries": 4,
-    "seriesGameNumber": 4,
+    "gamesInSeries": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -342,9 +264,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-02T09:53:12.196Z",
+    "generatedAt": "2026-08-03T11:18:50.163Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-02",
-    "cacheKey": "next-game:2026-08-02"
+    "referenceDate": "2026-08-03",
+    "cacheKey": "next-game:2026-08-03"
   }
 }
