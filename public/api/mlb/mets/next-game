@@ -44,7 +44,60 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "draftkings",
+    "title": "DraftKings",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "Cleveland Guardians",
+            "price": -155,
+            "point": null
+          },
+          {
+            "name": "New York Mets",
+            "price": 128,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "Cleveland Guardians",
+            "price": 139,
+            "point": -1.5
+          },
+          {
+            "name": "New York Mets",
+            "price": -168,
+            "point": 1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -115,
+            "point": 7.5
+          },
+          {
+            "name": "Under",
+            "price": -104,
+            "point": 7.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 824403,
     "gameGuid": "38daab8e-2874-45c3-a365-d56d21c751d5",
@@ -259,14 +312,13 @@
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "ifNecessaryDescription": "Normal Game"
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-03T11:18:50.163Z",
+    "generatedAt": "2026-08-04T10:34:46.597Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-03",
-    "cacheKey": "next-game:2026-08-03"
+    "referenceDate": "2026-08-04",
+    "cacheKey": "next-game:2026-08-04"
   }
 }

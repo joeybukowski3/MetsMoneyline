@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-03T11:18:55.809Z",
-  "referenceDate": "2026-08-03",
-  "cacheKey": "sample-game:2026-08-03",
+  "generatedAt": "2026-08-04T10:34:51.829Z",
+  "referenceDate": "2026-08-04",
+  "cacheKey": "sample-game:2026-08-04",
   "games": [
     {
       "id": "2026-08-04-mets-vs-cleveland-guardians",
@@ -19,7 +19,16 @@
         "oppHome": "28-28",
         "oppRoad": "29-28"
       },
-      "moneyline": {},
+      "moneyline": {
+        "mets": 128,
+        "opp": -155
+      },
+      "runLine": {
+        "mets": 1.5,
+        "price": -168
+      },
+      "total": 7.5,
+      "overUnder": 7.5,
       "status": "upcoming",
       "pitching": {
         "mets": {
@@ -27,7 +36,7 @@
           "mlbId": 640455,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-08-03T11:18:51.878Z",
+          "generatedAt": "2026-08-04T10:34:48.837Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -86,7 +95,7 @@
           "mlbId": 676282,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-08-03T11:18:53.179Z",
+          "generatedAt": "2026-08-04T10:34:48.845Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -141,19 +150,19 @@
           }
         },
         "metsBullpen": {
-          "seasonERA": 2.58,
-          "seasonXERAAverage": 4.97,
+          "seasonERA": 3.65,
+          "seasonXERAAverage": 5.32,
           "seasonXFIP": "3.99",
-          "last20ERA": 1.71,
-          "last20WHIP": 0.79,
-          "seasonWHIP": 1.12,
+          "last20ERA": 2.31,
+          "last20WHIP": 1.03,
+          "seasonWHIP": 1.36,
           "seasonKPct": "23.6%",
           "seasonBBPct": "9.1%",
           "rating": 81,
           "team": "New York Mets",
           "usage": {
-            "appearances": 13,
-            "appearancesPerPitcherPerDay": 0.15,
+            "appearances": 6,
+            "appearancesPerPitcherPerDay": 0.09,
             "label": "Low",
             "tone": "green"
           },
@@ -168,7 +177,7 @@
             "last7DaysAppearances": 3,
             "last7DaysInningsPitched": "3.0"
           },
-          "relieverCount": 12
+          "relieverCount": 10
         },
         "oppBullpen": {
           "seasonERA": 3.29,
@@ -527,13 +536,6 @@
               "bbPct": "5.7%",
               "kPct": "19.5%",
               "war": "0.5"
-            },
-            "recent20": {
-              "avg": 0.36,
-              "ops": 1.387,
-              "plateAppearances": 30,
-              "atBats": 25,
-              "hits": 9
             }
           }
         ],
@@ -714,13 +716,6 @@
               "bbPct": "10.1%",
               "kPct": "32.0%",
               "war": "-0.1"
-            },
-            "recent20": {
-              "avg": 0.214,
-              "ops": 0.783,
-              "plateAppearances": 46,
-              "atBats": 42,
-              "hits": 9
             }
           },
           {
@@ -884,14 +879,14 @@
         },
         {
           "category": "Hard-Hit %",
-          "mets": "40.6%",
-          "opp": "34.9%",
+          "mets": "40.8%",
+          "opp": "34.3%",
           "edge": "Mets"
         },
         {
           "category": "Barrel %",
-          "mets": "8.0%",
-          "opp": "6.4%",
+          "mets": "7.8%",
+          "opp": "5.7%",
           "edge": "Mets"
         },
         {
@@ -912,13 +907,13 @@
           "wrcPlus": "92",
           "woba": ".301",
           "iso": ".147",
-          "xba": "0.25",
-          "xslg": "0.402",
+          "xba": "0.251",
+          "xslg": "0.4",
           "xwoba": "0.316",
           "ops": ".683",
           "avg": ".232",
-          "hardHit": "40.6",
-          "barrelPct": "8.0",
+          "hardHit": "40.8",
+          "barrelPct": "7.8",
           "bbPct": 8.5,
           "kPct": 22.5,
           "rotFip": "4.00",
@@ -932,9 +927,9 @@
             "woba": 29,
             "iso": 24,
             "ops": 28,
-            "xba": 7,
+            "xba": 9,
             "xslg": 5,
-            "xwoba": 12,
+            "xwoba": 14,
             "hardHit": 15,
             "barrelPct": 7,
             "bbPct": 21,
@@ -953,13 +948,13 @@
           "wrcPlus": "93",
           "woba": ".302",
           "iso": ".139",
-          "xba": "0.24",
-          "xslg": "0.37",
-          "xwoba": "0.307",
+          "xba": "0.246",
+          "xslg": "0.375",
+          "xwoba": "0.31",
           "ops": ".680",
           "avg": ".231",
-          "hardHit": "34.9",
-          "barrelPct": "6.4",
+          "hardHit": "34.3",
+          "barrelPct": "5.7",
           "bbPct": 9.6,
           "kPct": 22.2,
           "rotFip": "3.84",
@@ -973,7 +968,7 @@
             "woba": 28,
             "iso": 28,
             "ops": 30,
-            "xba": 30,
+            "xba": 29,
             "xslg": 30,
             "xwoba": 29,
             "hardHit": 29,
@@ -1009,7 +1004,7 @@
               "statKey": "avg",
               "seasonRank": 26,
               "seasonValue": 0.232,
-              "recentRank": 25,
+              "recentRank": 26,
               "recentValue": 0.225,
               "differencePct": -3,
               "improving": false
@@ -1018,7 +1013,7 @@
               "statKey": "kPct",
               "seasonRank": 18,
               "seasonValue": 22.5,
-              "recentRank": 26,
+              "recentRank": 25,
               "recentValue": 26,
               "differencePct": -15.6,
               "improving": false
@@ -1051,7 +1046,7 @@
               "statKey": "avg",
               "seasonRank": 28,
               "seasonValue": 0.231,
-              "recentRank": 16,
+              "recentRank": 15,
               "recentValue": 0.242,
               "differencePct": 4.8,
               "improving": true
@@ -1069,7 +1064,7 @@
               "statKey": "bbPct",
               "seasonRank": 7,
               "seasonValue": 9.6,
-              "recentRank": 10,
+              "recentRank": 11,
               "recentValue": 8.6,
               "differencePct": -10.4,
               "improving": false
@@ -1201,7 +1196,7 @@
           {
             "name": "Shawn Armstrong",
             "status": "IL",
-            "description": "Shawn Armstrong (IL) - Cleveland Guardians placed RHP Shawn Armstrong on the 15-day injured list. Left calf strain."
+            "description": "Shawn Armstrong (IL) - Cleveland Guardians transferred RHP Shawn Armstrong from the 15-day injured list to the 60-day injured list. Left calf strain."
           }
         ],
         "headToHead": {
@@ -1295,17 +1290,16 @@
         ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-08-03",
-          "resolvedDate": "2026-08-04",
-          "bannerText": "OFF DAY — Previewing next game: Cleveland Guardians on 2026-08-04"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-08-04",
+          "resolvedDate": "2026-08-04"
         }
       },
       "trends": [
@@ -1329,7 +1323,7 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-08-03T11:18:55.643Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-08-04\",\"opponent\":\"Cleveland Guardians\",\"homeAway\":\"road\",\"ballpark\":\"Progressive Field\",\"weather\":{\"temperature\":78.7,\"temperatureDisplay\":\"79°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph N\",\"compact\":\"79° | Clear | Wind 8 mph N\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-08-04T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Sean Manaea\",\"handedness\":\"L\",\"era\":4.42,\"xERA\":4.45,\"fip\":4.33,\"whip\":1.34,\"kPct\":21.9,\"bbPct\":7.5,\"kMinusBbPct\":14.4,\"hardHitPct\":40.7,\"barrelPct\":9.2,\"xBAAllowed\":0.252,\"xSLGAllowed\":0.417,\"xwOBAAllowed\":0.325,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-29\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":4,\"h\":5,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-07-24\",\"opponent\":\"Los Angeles Dodgers\",\"ip\":\"6.0\",\"er\":1,\"k\":3,\"h\":6,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-07-18\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.2\",\"er\":4,\"k\":7,\"h\":7,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-07-09\",\"opponent\":\"Kansas City Royals\",\"ip\":\"7.0\",\"er\":2,\"k\":6,\"h\":6,\"bb\":1,\"result\":\"W\"}],\"avgInnings\":5.92,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":5,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.92,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Joey Cantillo\",\"handedness\":\"L\",\"era\":3.88,\"xERA\":3.82,\"fip\":3.88,\"whip\":1.45,\"kPct\":25.2,\"bbPct\":11,\"kMinusBbPct\":14.2,\"hardHitPct\":37.5,\"barrelPct\":7.4,\"xBAAllowed\":0.228,\"xSLGAllowed\":0.362,\"xwOBAAllowed\":0.303,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-29\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"4.0\",\"er\":0,\"k\":8,\"h\":4,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-07-24\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"3.2\",\"er\":5,\"k\":4,\"h\":8,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-07-19\",\"opponent\":\"Pittsburgh Pirates\",\"ip\":\"5.0\",\"er\":4,\"k\":7,\"h\":7,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-07-12\",\"opponent\":\"Miami Marlins\",\"ip\":\"5.0\",\"er\":1,\"k\":9,\"h\":6,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":4.42,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":7,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.42,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":4.8,\"projectedLineupWRCPlus\":91.4,\"obp\":0.302,\"iso\":0.147,\"kPct\":22.5,\"bbPct\":8.5,\"xBA\":0.25,\"xSLG\":0.402,\"xwOBA\":0.316,\"hardHitPct\":40.6,\"barrelPct\":8,\"battingAverage\":0.239,\"wOBA\":0.301,\"lineup\":{\"totalWAR\":4.8,\"totalWRCPlus\":91.4,\"totalOBP\":0.302,\"totalISO\":0.141,\"totalKPct\":21.2,\"totalBBPct\":7.7,\"totalAVG\":0.239,\"totalWOBA\":0.301,\"totalXBA\":0.255,\"totalXSLG\":0.406,\"totalXWOBA\":0.318,\"totalHardHitPct\":40.8,\"totalBarrelPct\":7.4,\"regressionSignals\":{\"baMinusXba\":-0.016,\"wobaMinusXwoba\":-0.017}},\"regressionSignals\":{\"baMinusXba\":-0.016,\"wobaMinusXwoba\":-0.017},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":10.9,\"projectedLineupWRCPlus\":95.2,\"obp\":0.313,\"iso\":0.139,\"kPct\":22.2,\"bbPct\":9.6,\"xBA\":0.24,\"xSLG\":0.37,\"xwOBA\":0.307,\"hardHitPct\":34.9,\"barrelPct\":6.4,\"battingAverage\":0.236,\"wOBA\":0.305,\"lineup\":{\"totalWAR\":10.9,\"totalWRCPlus\":95.2,\"totalOBP\":0.313,\"totalISO\":0.138,\"totalKPct\":20.1,\"totalBBPct\":9,\"totalAVG\":0.236,\"totalWOBA\":0.305,\"totalXBA\":0.246,\"totalXSLG\":0.373,\"totalXWOBA\":0.307,\"totalHardHitPct\":33,\"totalBarrelPct\":5.7,\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.002}},\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.002},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":4.8,\"totalWRCPlus\":91.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":10.9,\"totalWRCPlus\":95.2,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.12,\"kMinusBbPct\":14.5,\"xFIP\":3.99,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.21,\"kMinusBbPct\":15.9,\"xFIP\":3.89,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":1,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":78.7,\"temperatureDisplay\":\"79°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph N\",\"compact\":\"79° | Clear | Wind 8 mph N\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-08-04T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Sean Manaea 4.45/4.33 vs Joey Cantillo 3.82/3.88; K-BB% 14.4 to 14.2.\",\"rawScore\":-5.43,\"weightedImpact\":-19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307.\",\"rawScore\":-6.69,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.12 vs 1.21, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-0.59,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.016 and wOBA-xwOBA -0.017; opponent starter overperformance signal 0.00.\",\"rawScore\":-4.98,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 1 vs opponent 1 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Schedule/context: Mets travel home to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-51.15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":0,\"oppMajorEdges\":4,\"fallbackHeavy\":true}}",
+        "raw": "{\"generatedAt\":\"2026-08-04T10:34:51.742Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-08-04\",\"opponent\":\"Cleveland Guardians\",\"homeAway\":\"road\",\"ballpark\":\"Progressive Field\",\"weather\":{\"temperature\":77.8,\"temperatureDisplay\":\"78°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph NNE\",\"compact\":\"78° | Clear | Wind 8 mph NNE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-08-04T23:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Sean Manaea\",\"handedness\":\"L\",\"era\":4.42,\"xERA\":4.45,\"fip\":4.33,\"whip\":1.34,\"kPct\":21.9,\"bbPct\":7.5,\"kMinusBbPct\":14.4,\"hardHitPct\":40.7,\"barrelPct\":9.2,\"xBAAllowed\":0.252,\"xSLGAllowed\":0.417,\"xwOBAAllowed\":0.325,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-29\",\"opponent\":\"Atlanta Braves\",\"ip\":\"6.0\",\"er\":2,\"k\":4,\"h\":5,\"bb\":2,\"result\":\"W\"},{\"date\":\"2026-07-24\",\"opponent\":\"Los Angeles Dodgers\",\"ip\":\"6.0\",\"er\":1,\"k\":3,\"h\":6,\"bb\":2,\"result\":\"-\"},{\"date\":\"2026-07-18\",\"opponent\":\"Philadelphia Phillies\",\"ip\":\"4.2\",\"er\":4,\"k\":7,\"h\":7,\"bb\":2,\"result\":\"L\"},{\"date\":\"2026-07-09\",\"opponent\":\"Kansas City Royals\",\"ip\":\"7.0\",\"er\":2,\"k\":6,\"h\":6,\"bb\":1,\"result\":\"W\"}],\"avgInnings\":5.92,\"avgEarnedRuns\":2.25,\"avgStrikeouts\":5,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":5.92,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"Joey Cantillo\",\"handedness\":\"L\",\"era\":3.88,\"xERA\":3.82,\"fip\":3.88,\"whip\":1.45,\"kPct\":25.2,\"bbPct\":11,\"kMinusBbPct\":14.2,\"hardHitPct\":37.5,\"barrelPct\":7.4,\"xBAAllowed\":0.228,\"xSLGAllowed\":0.362,\"xwOBAAllowed\":0.303,\"recentStarts\":{\"starts\":[{\"date\":\"2026-07-29\",\"opponent\":\"Cincinnati Reds\",\"ip\":\"4.0\",\"er\":0,\"k\":8,\"h\":4,\"bb\":1,\"result\":\"W\"},{\"date\":\"2026-07-24\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"3.2\",\"er\":5,\"k\":4,\"h\":8,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-07-19\",\"opponent\":\"Pittsburgh Pirates\",\"ip\":\"5.0\",\"er\":4,\"k\":7,\"h\":7,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-07-12\",\"opponent\":\"Miami Marlins\",\"ip\":\"5.0\",\"er\":1,\"k\":9,\"h\":6,\"bb\":2,\"result\":\"W\"}],\"avgInnings\":4.42,\"avgEarnedRuns\":2.5,\"avgStrikeouts\":7,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.42,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":4.8,\"projectedLineupWRCPlus\":91.4,\"obp\":0.302,\"iso\":0.147,\"kPct\":22.5,\"bbPct\":8.5,\"xBA\":0.251,\"xSLG\":0.4,\"xwOBA\":0.316,\"hardHitPct\":40.8,\"barrelPct\":7.8,\"battingAverage\":0.239,\"wOBA\":0.301,\"lineup\":{\"totalWAR\":4.8,\"totalWRCPlus\":91.4,\"totalOBP\":0.302,\"totalISO\":0.141,\"totalKPct\":21.2,\"totalBBPct\":7.7,\"totalAVG\":0.239,\"totalWOBA\":0.301,\"totalXBA\":0.255,\"totalXSLG\":0.406,\"totalXWOBA\":0.318,\"totalHardHitPct\":40.8,\"totalBarrelPct\":7.4,\"regressionSignals\":{\"baMinusXba\":-0.016,\"wobaMinusXwoba\":-0.017}},\"regressionSignals\":{\"baMinusXba\":-0.016,\"wobaMinusXwoba\":-0.017},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":10.9,\"projectedLineupWRCPlus\":95.2,\"obp\":0.313,\"iso\":0.139,\"kPct\":22.2,\"bbPct\":9.6,\"xBA\":0.246,\"xSLG\":0.375,\"xwOBA\":0.31,\"hardHitPct\":34.3,\"barrelPct\":5.7,\"battingAverage\":0.236,\"wOBA\":0.305,\"lineup\":{\"totalWAR\":10.9,\"totalWRCPlus\":95.2,\"totalOBP\":0.313,\"totalISO\":0.138,\"totalKPct\":20.1,\"totalBBPct\":9,\"totalAVG\":0.236,\"totalWOBA\":0.305,\"totalXBA\":0.246,\"totalXSLG\":0.373,\"totalXWOBA\":0.307,\"totalHardHitPct\":33,\"totalBarrelPct\":5.7,\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.002}},\"regressionSignals\":{\"baMinusXba\":-0.01,\"wobaMinusXwoba\":-0.002},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":4.8,\"totalWRCPlus\":91.4,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":10.9,\"totalWRCPlus\":95.2,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.36,\"kMinusBbPct\":14.5,\"xFIP\":3.99,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.21,\"kMinusBbPct\":15.9,\"xFIP\":3.89,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":1,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":77.8,\"temperatureDisplay\":\"78°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph NNE\",\"compact\":\"78° | Clear | Wind 8 mph NNE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-08-04T23:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Sean Manaea 4.45/4.33 vs Joey Cantillo 3.82/3.88; K-BB% 14.4 to 14.2.\",\"rawScore\":-5.43,\"weightedImpact\":-19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310.\",\"rawScore\":-6.61,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":-1.13,\"weightedImpact\":-4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.016 and wOBA-xwOBA -0.017; opponent starter overperformance signal 0.00.\",\"rawScore\":-4.98,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 1 vs opponent 1 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Schedule/context: Mets travel home to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-51.15,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":0,\"oppMajorEdges\":4,\"fallbackHeavy\":true}}",
         "headline": "Mets vs Cleveland Guardians: starting pitching is the clearest angle",
         "synopsis": "Sean Manaea vs Joey Cantillo sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Sean Manaea 4.45/4.33 vs Joey Cantillo 3.82/3.88; K-BB% 14.4 to 14.2. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
@@ -1344,9 +1338,9 @@
           "opponent": "Cleveland Guardians",
           "homeAway": "road",
           "ballpark": "Progressive Field",
-          "weather": "79° | Clear | Wind 8 mph N",
+          "weather": "78° | Clear | Wind 8 mph NNE",
           "lineupStatus": "Projected",
-          "moneyline": "N/A"
+          "moneyline": "+128"
         },
         "edgeSummary": {
           "startingPitching": {
@@ -1439,9 +1433,9 @@
           ],
           "whereTheRiskIs": [
             "Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.",
-            "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307."
+            "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +128."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
@@ -1449,9 +1443,9 @@
           ],
           "whereRiskIs": [
             "Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.",
-            "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307."
+            "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +128."
         },
         "sections": [
           {
@@ -1460,7 +1454,7 @@
           },
           {
             "heading": "2. Game Details",
-            "body": "2026-08-04 | 6:40 PM ET | Progressive Field. Mets road game. Lineups: Projected. Mets ML: N/A."
+            "body": "2026-08-04 | 6:40 PM ET | Progressive Field. Mets road game. Lineups: Projected. Mets ML: +128."
           },
           {
             "heading": "3. Edge Summary",
@@ -1476,7 +1470,7 @@
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
-            "body": "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307. Series game 1. Rest/travel: Mets 1 days, opponent 1; bullpen tax normal/normal."
+            "body": "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310. Series game 1. Rest/travel: Mets 1 days, opponent 1; bullpen tax normal/normal."
           },
           {
             "heading": "7. Projected Lineup Comparison",
@@ -1484,26 +1478,26 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• No single dominant Mets edge. Lineup quality is the primary case. Where the risk is\n• Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.\n• Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
+            "body": "Why the Mets have a case\n• No single dominant Mets edge. Lineup quality is the primary case. Where the risk is\n• Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.\n• Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle at +128."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 4.97 vs 3.81. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 5.32 vs 3.81. Price: Mets ML +128 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 4.97 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
-        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 4.97 vs 3.81. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 5.32 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML +128 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 5.32 vs 3.81. Price: Mets ML +128 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
           "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 4.97 vs 3.81. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 5.32 vs 3.81. Price: Mets ML +128 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
             "No single dominant Mets edge. Lineup quality is the primary case."
           ],
           "risks": [
             "Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.",
-            "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307."
+            "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310."
           ],
-          "bettingAngle": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 4.97 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+          "bettingAngle": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 5.32 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML +128 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -1521,14 +1515,14 @@
             "category": "Overall Lineup Quality",
             "edge": "Opponent edge",
             "strength": "moderate",
-            "reason": "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307.",
+            "reason": "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310.",
             "dataMode": "fallback"
           },
           {
             "category": "Bullpen",
             "edge": "Opponent edge",
             "strength": "slight",
-            "reason": "Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.12 vs 1.21, last 3-day usage N/A IP vs N/A IP.",
+            "reason": "Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP.",
             "dataMode": "fallback"
           },
           {
@@ -1562,9 +1556,9 @@
         ],
         "keyAngles": [
           "xERA/FIP profile: Sean Manaea 4.45/4.33 vs Joey Cantillo 3.82/3.88; K-BB% 14.4 to 14.2.",
-          "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307.",
+          "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310.",
           "Regression lens: Mets BA-xBA -0.016 and wOBA-xwOBA -0.017; opponent starter overperformance signal 0.00.",
-          "Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.12 vs 1.21, last 3-day usage N/A IP vs N/A IP."
+          "Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP."
         ],
         "pick": "Mets ML",
         "analyticalLean": "Opponent",
@@ -1591,11 +1585,11 @@
             "homeAway": "road",
             "ballpark": "Progressive Field",
             "weather": {
-              "temperature": 78.7,
-              "temperatureDisplay": "79°",
+              "temperature": 77.8,
+              "temperatureDisplay": "78°",
               "condition": "Clear",
-              "wind": "Wind 8 mph N",
-              "compact": "79° | Clear | Wind 8 mph N",
+              "wind": "Wind 8 mph NNE",
+              "compact": "78° | Clear | Wind 8 mph NNE",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-08-04T23:00Z"
             }
@@ -1756,11 +1750,11 @@
               "iso": 0.147,
               "kPct": 22.5,
               "bbPct": 8.5,
-              "xBA": 0.25,
-              "xSLG": 0.402,
+              "xBA": 0.251,
+              "xSLG": 0.4,
               "xwOBA": 0.316,
-              "hardHitPct": 40.6,
-              "barrelPct": 8,
+              "hardHitPct": 40.8,
+              "barrelPct": 7.8,
               "battingAverage": 0.239,
               "wOBA": 0.301,
               "lineup": {
@@ -1798,11 +1792,11 @@
               "iso": 0.139,
               "kPct": 22.2,
               "bbPct": 9.6,
-              "xBA": 0.24,
-              "xSLG": 0.37,
-              "xwOBA": 0.307,
-              "hardHitPct": 34.9,
-              "barrelPct": 6.4,
+              "xBA": 0.246,
+              "xSLG": 0.375,
+              "xwOBA": 0.31,
+              "hardHitPct": 34.3,
+              "barrelPct": 5.7,
               "battingAverage": 0.236,
               "wOBA": 0.305,
               "lineup": {
@@ -1850,7 +1844,7 @@
           },
           "bullpen": {
             "mets": {
-              "whip": 1.12,
+              "whip": 1.36,
               "kMinusBbPct": 14.5,
               "xFIP": 3.99,
               "taxLevel": "normal"
@@ -1877,11 +1871,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 78.7,
-              "temperatureDisplay": "79°",
+              "temperature": 77.8,
+              "temperatureDisplay": "78°",
               "condition": "Clear",
-              "wind": "Wind 8 mph N",
-              "compact": "79° | Clear | Wind 8 mph N",
+              "wind": "Wind 8 mph NNE",
+              "compact": "78° | Clear | Wind 8 mph NNE",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-08-04T23:00Z"
             }
@@ -1916,8 +1910,8 @@
               "weight": 25,
               "edge": "Opponent edge",
               "strength": "moderate",
-              "explanation": "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307.",
-              "rawScore": -6.69,
+              "explanation": "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310.",
+              "rawScore": -6.61,
               "weightedImpact": -16.5,
               "dataMode": "fallback",
               "supportedBy": [
@@ -1936,8 +1930,8 @@
               "weight": 15,
               "edge": "Opponent edge",
               "strength": "slight",
-              "explanation": "Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.12 vs 1.21, last 3-day usage N/A IP vs N/A IP.",
-              "rawScore": -0.59,
+              "explanation": "Bullpen shape: xFIP 3.99 vs 3.89, WHIP 1.36 vs 1.21, last 3-day usage N/A IP vs N/A IP.",
+              "rawScore": -1.13,
               "weightedImpact": -4.95,
               "dataMode": "fallback",
               "supportedBy": [
@@ -2027,11 +2021,11 @@
             "timeOfDay": {
               "label": "Day games",
               "w": 21,
-              "l": 25,
-              "pct": 46,
-              "avgR": 4.1,
-              "avgA": 4.1,
-              "games": 46
+              "l": 26,
+              "pct": 45,
+              "avgR": 4,
+              "avgA": 4,
+              "games": 47
             },
             "dayOfWeek": {
               "label": "Tuesdays",
@@ -2058,7 +2052,7 @@
             "ballpark": "Progressive Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/114.svg",
-            "metadataLine": "August 4th | 6:40 PM ET | Progressive Field | 79° | Clear | Wind 8 mph N"
+            "metadataLine": "August 4th | 6:40 PM ET | Progressive Field | 78° | Clear | Wind 8 mph NNE"
           },
           "quickRead": {
             "modelLean": "Opponent",
@@ -2072,9 +2066,9 @@
             "opponent": "Cleveland Guardians",
             "homeAway": "road",
             "ballpark": "Progressive Field",
-            "weather": "79° | Clear | Wind 8 mph N",
+            "weather": "78° | Clear | Wind 8 mph NNE",
             "lineupStatus": "Projected",
-            "moneyline": "N/A"
+            "moneyline": "+128"
           },
           "gameDetailsTable": {
             "rows": [
@@ -2088,11 +2082,11 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "79° | Clear | Wind 8 mph N"
+                "value": "78° | Clear | Wind 8 mph NNE"
               },
               {
                 "label": "Mets ML Odds",
-                "value": "N/A"
+                "value": "+128"
               }
             ]
           },
@@ -2102,8 +2096,8 @@
             "rows": [
               {
                 "label": "Odds",
-                "mets": "N/A",
-                "opp": "N/A"
+                "mets": "+128",
+                "opp": "-155"
               },
               {
                 "label": "Season Record",
@@ -2336,7 +2330,7 @@
                     "left": "9.2%",
                     "leftPercentile": 36,
                     "leftMetricLabel": "Pitcher Barrel %",
-                    "right": 6.4,
+                    "right": 5.7,
                     "rightMetricLabel": "Batter Barrel %",
                     "rightRankKey": "barrelPct"
                   },
@@ -2345,7 +2339,7 @@
                     "left": "0.252",
                     "leftPercentile": 50,
                     "leftMetricLabel": "Pitcher xBA",
-                    "right": 0.24,
+                    "right": 0.246,
                     "rightMetricLabel": "Batter xBA",
                     "rightRankKey": "xba"
                   },
@@ -2354,7 +2348,7 @@
                     "left": "40.7%",
                     "leftPercentile": 44,
                     "leftMetricLabel": "Pitcher Hard Hit %",
-                    "right": 34.9,
+                    "right": 34.3,
                     "rightMetricLabel": "Batter Hard Hit %",
                     "rightRankKey": "hardHit"
                   },
@@ -2363,7 +2357,7 @@
                     "left": "0.417",
                     "leftPercentile": 48,
                     "leftMetricLabel": "Pitcher xSLG %",
-                    "right": 0.37,
+                    "right": 0.375,
                     "rightMetricLabel": "Batter xSLG %",
                     "rightRankKey": "xslg"
                   }
@@ -2380,7 +2374,7 @@
                     "left": "7.4%",
                     "leftPercentile": 56,
                     "leftMetricLabel": "Pitcher Barrel %",
-                    "right": 8,
+                    "right": 7.8,
                     "rightMetricLabel": "Batter Barrel %",
                     "rightRankKey": "barrelPct"
                   },
@@ -2389,7 +2383,7 @@
                     "left": "0.228",
                     "leftPercentile": 72,
                     "leftMetricLabel": "Pitcher xBA",
-                    "right": 0.25,
+                    "right": 0.251,
                     "rightMetricLabel": "Batter xBA",
                     "rightRankKey": "xba"
                   },
@@ -2398,7 +2392,7 @@
                     "left": "37.5%",
                     "leftPercentile": 61,
                     "leftMetricLabel": "Pitcher Hard Hit %",
-                    "right": 40.6,
+                    "right": 40.8,
                     "rightMetricLabel": "Batter Hard Hit %",
                     "rightRankKey": "hardHit"
                   },
@@ -2407,7 +2401,7 @@
                     "left": "0.362",
                     "leftPercentile": 71,
                     "leftMetricLabel": "Pitcher xSLG %",
-                    "right": 0.402,
+                    "right": 0.4,
                     "rightMetricLabel": "Batter xSLG %",
                     "rightRankKey": "xslg"
                   }
@@ -2493,15 +2487,15 @@
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 13,
-                "appearancesPerPitcherPerDay": 0.15,
+                "appearances": 6,
+                "appearancesPerPitcherPerDay": 0.09,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
-                "seasonEra": 2.58,
-                "seasonWhip": 1.12,
-                "last20Era": 1.71
+                "seasonEra": 3.65,
+                "seasonWhip": 1.36,
+                "last20Era": 2.31
               },
               "closer": {
                 "name": "Devin Williams",
@@ -2560,7 +2554,7 @@
                   "statKey": "avg",
                   "seasonRank": 26,
                   "seasonValue": 0.232,
-                  "recentRank": 25,
+                  "recentRank": 26,
                   "recentValue": 0.225,
                   "differencePct": -3,
                   "improving": false
@@ -2569,7 +2563,7 @@
                   "statKey": "kPct",
                   "seasonRank": 18,
                   "seasonValue": 22.5,
-                  "recentRank": 26,
+                  "recentRank": 25,
                   "recentValue": 26,
                   "differencePct": -15.6,
                   "improving": false
@@ -2602,7 +2596,7 @@
                   "statKey": "avg",
                   "seasonRank": 28,
                   "seasonValue": 0.231,
-                  "recentRank": 16,
+                  "recentRank": 15,
                   "recentValue": 0.242,
                   "differencePct": 4.8,
                   "improving": true
@@ -2620,7 +2614,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 7,
                   "seasonValue": 9.6,
-                  "recentRank": 10,
+                  "recentRank": 11,
                   "recentValue": 8.6,
                   "differencePct": -10.4,
                   "improving": false
@@ -2676,25 +2670,25 @@
               },
               {
                 "label": "xwOBA",
-                "mets": 0.307,
+                "mets": 0.31,
                 "opp": 0.316
               },
               {
                 "label": "xSLG",
-                "mets": 0.37,
-                "opp": 0.402
+                "mets": 0.375,
+                "opp": 0.4
               },
               {
                 "label": "Hard-Hit%",
                 "metricLabel": "Batter Hard-Hit%",
-                "mets": 34.9,
-                "opp": 40.6
+                "mets": 34.3,
+                "opp": 40.8
               },
               {
                 "label": "Barrel%",
                 "metricLabel": "Batter Barrel%",
-                "mets": 6.4,
-                "opp": 8
+                "mets": 5.7,
+                "opp": 7.8
               },
               {
                 "label": "K%",
@@ -2726,7 +2720,7 @@
               },
               {
                 "label": "Opponent xwOBA",
-                "mets": 0.307,
+                "mets": 0.31,
                 "opp": 0.316
               },
               {
@@ -2755,17 +2749,17 @@
               },
               {
                 "label": "Lineup xBA",
-                "mets": 0.24,
-                "opp": 0.25
+                "mets": 0.246,
+                "opp": 0.251
               },
               {
                 "label": "Lineup xSLG",
-                "mets": 0.37,
-                "opp": 0.402
+                "mets": 0.375,
+                "opp": 0.4
               },
               {
                 "label": "Lineup xwOBA",
-                "mets": 0.307,
+                "mets": 0.31,
                 "opp": 0.316
               }
             ]
@@ -3097,13 +3091,6 @@
                   "bbPct": "5.7%",
                   "kPct": "19.5%",
                   "war": "0.5"
-                },
-                "recent20": {
-                  "avg": 0.36,
-                  "ops": 1.387,
-                  "plateAppearances": 30,
-                  "atBats": 25,
-                  "hits": 9
                 }
               }
             ],
@@ -3284,13 +3271,6 @@
                   "bbPct": "10.1%",
                   "kPct": "32.0%",
                   "war": "-0.1"
-                },
-                "recent20": {
-                  "avg": 0.214,
-                  "ops": 0.783,
-                  "plateAppearances": 46,
-                  "atBats": 42,
-                  "hits": 9
                 }
               },
               {
@@ -3450,22 +3430,22 @@
             ],
             "whereTheRiskIs": [
               "Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.",
-              "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307."
+              "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310."
             ],
-            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +128."
           },
           "teamAdvanced": {
             "mets": {
               "wrcPlus": "92",
               "woba": ".301",
               "iso": ".147",
-              "xba": "0.25",
-              "xslg": "0.402",
+              "xba": "0.251",
+              "xslg": "0.4",
               "xwoba": "0.316",
               "ops": ".683",
               "avg": ".232",
-              "hardHit": "40.6",
-              "barrelPct": "8.0",
+              "hardHit": "40.8",
+              "barrelPct": "7.8",
               "bbPct": 8.5,
               "kPct": 22.5,
               "rotFip": "4.00",
@@ -3479,9 +3459,9 @@
                 "woba": 29,
                 "iso": 24,
                 "ops": 28,
-                "xba": 7,
+                "xba": 9,
                 "xslg": 5,
-                "xwoba": 12,
+                "xwoba": 14,
                 "hardHit": 15,
                 "barrelPct": 7,
                 "bbPct": 21,
@@ -3500,13 +3480,13 @@
               "wrcPlus": "93",
               "woba": ".302",
               "iso": ".139",
-              "xba": "0.24",
-              "xslg": "0.37",
-              "xwoba": "0.307",
+              "xba": "0.246",
+              "xslg": "0.375",
+              "xwoba": "0.31",
               "ops": ".680",
               "avg": ".231",
-              "hardHit": "34.9",
-              "barrelPct": "6.4",
+              "hardHit": "34.3",
+              "barrelPct": "5.7",
               "bbPct": 9.6,
               "kPct": 22.2,
               "rotFip": "3.84",
@@ -3520,7 +3500,7 @@
                 "woba": 28,
                 "iso": 28,
                 "ops": 30,
-                "xba": 30,
+                "xba": 29,
                 "xslg": 30,
                 "xwoba": 29,
                 "hardHit": 29,
@@ -3540,58 +3520,59 @@
           },
           "todayPick": {
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 4.97 vs 3.81. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 5.32 vs 3.81. Price: Mets ML +128 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "No single dominant Mets edge. Lineup quality is the primary case."
             ],
             "risks": [
               "Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.",
-              "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307."
+              "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310."
             ],
-            "bettingAngle": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 4.97 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 5.32 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML +128 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 4.97 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "explanation": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 5.32 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML +128 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 4.97 vs 3.81. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.45 xERA, 4.42 ERA, N/A% K vs Joey Cantillo 3.82 xERA, 3.88 ERA, N/A% K; Offense: Mets wRC+ 92.0 vs 93.0; Bullpen: Mets xERA 5.32 vs 3.81. Price: Mets ML +128 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "No single dominant Mets edge. Lineup quality is the primary case."
             ],
             "risks": [
               "Joey Cantillo has the better pitching profile: K% 25.2% vs 21.9%, FIP 3.88 vs 4.33.",
-              "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.307."
+              "Overall lineup quality only: projected WAR 4.8 vs 10.9, projected lineup wRC+ 91.4 vs 95.2, xwOBA 0.316 vs 0.310."
             ],
-            "bettingAngle": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 4.97 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Sean Manaea versus Joey Cantillo with 4.45 xERA against 3.82. Secondary checks: offense 92.0 vs 93.0 wRC+, bullpen 5.32 vs 3.81 xERA, value edge +35.0 points. Value check: Mets ML +128 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
           "meta": {
             "homeAwayLabel": "Away",
-            "moneylineValue": "N/A",
+            "moneylineValue": "+128",
             "schedulingSpot": {
               "category": "Scheduling Spot",
               "verdict": "Limited data",
               "strength": "even",
               "dataMode": "fallback"
             },
-            "weatherSummary": "79° | Clear | Wind 8 mph N"
+            "weatherSummary": "78° | Clear | Wind 8 mph NNE"
           }
         }
       },
       "bettingHistory": {
         "market": "Mets Moneyline",
+        "odds": 128,
         "stake": 100
       },
       "weather": {
-        "temperature": 78.7,
-        "temperatureDisplay": "79°",
+        "temperature": 77.8,
+        "temperatureDisplay": "78°",
         "condition": "Clear",
-        "wind": "Wind 8 mph N",
-        "compact": "79° | Clear | Wind 8 mph N",
+        "wind": "Wind 8 mph NNE",
+        "compact": "78° | Clear | Wind 8 mph NNE",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-08-04T23:00Z"
       },
@@ -3599,11 +3580,11 @@
         "timeOfDay": {
           "label": "Day games",
           "w": 21,
-          "l": 25,
-          "pct": 46,
-          "avgR": 4.1,
-          "avgA": 4.1,
-          "games": 46
+          "l": 26,
+          "pct": 45,
+          "avgR": 4,
+          "avgA": 4,
+          "games": 47
         },
         "dayOfWeek": {
           "label": "Tuesdays",
@@ -111233,6 +111214,7 @@
       "status": "pending",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
+      "odds": 128,
       "stake": 100
     },
     {
