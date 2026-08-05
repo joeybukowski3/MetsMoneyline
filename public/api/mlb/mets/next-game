@@ -1,6 +1,6 @@
 {
-  "gameId": 824403,
-  "startTime": "2026-08-04T22:40:00Z",
+  "gameId": 824402,
+  "startTime": "2026-08-05T22:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 114,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 640455,
-      "fullName": "Sean Manaea",
-      "era": "4.42",
+      "id": 681035,
+      "fullName": "Christian Scott",
+      "era": "2.99",
       "fip": null,
-      "whip": "1.34"
+      "whip": "1.24"
     },
     "opp": {
-      "id": 676282,
-      "fullName": "Joey Cantillo",
-      "era": "3.88",
+      "id": 676440,
+      "fullName": "Tanner Bibee",
+      "era": "3.81",
       "fip": null,
-      "whip": "1.45"
+      "whip": "1.15"
     }
   },
   "lineups": {
@@ -45,8 +45,8 @@
     "opp": []
   },
   "sportsbookSummary": {
-    "key": "draftkings",
-    "title": "DraftKings",
+    "key": "fanduel",
+    "title": "FanDuel",
     "markets": [
       {
         "key": "h2h",
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "Cleveland Guardians",
-            "price": -155,
+            "price": -102,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": 128,
+            "price": -116,
             "point": null
           }
         ]
@@ -70,13 +70,13 @@
         "outcomes": [
           {
             "name": "Cleveland Guardians",
-            "price": 139,
-            "point": -1.5
+            "price": -166,
+            "point": 1.5
           },
           {
             "name": "New York Mets",
-            "price": -168,
-            "point": 1.5
+            "price": 138,
+            "point": -1.5
           }
         ]
       },
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -115,
-            "point": 7.5
+            "price": 100,
+            "point": 8.5
           },
           {
             "name": "Under",
-            "price": -104,
-            "point": 7.5
+            "price": -122,
+            "point": 8.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 824403,
-    "gameGuid": "38daab8e-2874-45c3-a365-d56d21c751d5",
-    "link": "/api/v1.1/game/824403/feed/live",
+    "gamePk": 824402,
+    "gameGuid": "b527fb54-f474-4a49-af32-911682886692",
+    "link": "/api/v1.1/game/824402/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-04T22:40:00Z",
-    "officialDate": "2026-08-04",
+    "gameDate": "2026-08-05T22:40:00Z",
+    "officialDate": "2026-08-05",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 47,
+          "wins": 48,
           "losses": 66,
           "ties": 0,
-          "pct": ".416"
+          "pct": ".421"
         },
         "probablePitcher": {
-          "id": 640455,
-          "fullName": "Sean Manaea",
-          "link": "/api/v1/people/640455"
+          "id": 681035,
+          "fullName": "Christian Scott",
+          "link": "/api/v1/people/681035"
         },
         "splitSquad": false,
         "seriesNumber": 37,
@@ -233,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 57,
-          "losses": 56,
+          "losses": 57,
           "ties": 0,
-          "pct": ".504"
+          "pct": ".500"
         },
         "probablePitcher": {
-          "id": 676282,
-          "fullName": "Joey Cantillo",
-          "link": "/api/v1/people/676282"
+          "id": 676440,
+          "fullName": "Tanner Bibee",
+          "link": "/api/v1/people/676440"
         },
         "splitSquad": false,
         "seriesNumber": 37,
@@ -282,10 +282,10 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/824403/content"
+      "link": "/api/v1/game/824402/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,24 +301,25 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-824403-2026-08-04",
+    "calendarEventID": "14-824402-2026-08-05",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-04T10:34:46.597Z",
+    "generatedAt": "2026-08-05T10:31:06.355Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-04",
-    "cacheKey": "next-game:2026-08-04"
+    "referenceDate": "2026-08-05",
+    "cacheKey": "next-game:2026-08-05"
   }
 }
