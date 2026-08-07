@@ -1,14 +1,14 @@
 {
-  "gameId": 824401,
-  "startTime": "2026-08-06T17:10:00Z",
+  "gameId": 823349,
+  "startTime": "2026-08-07T22:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
-    "id": 114,
-    "canonicalKey": "guardians",
-    "mlbStatsTeamId": 114,
-    "apiSportsTeamId": 114,
-    "name": "Cleveland Guardians",
-    "abbreviation": "CLE",
+    "id": 134,
+    "canonicalKey": "pirates",
+    "mlbStatsTeamId": 134,
+    "apiSportsTeamId": 134,
+    "name": "Pittsburgh Pirates",
+    "abbreviation": "PIT",
     "record": null
   },
   "awayTeam": {
@@ -21,22 +21,22 @@
     "record": null
   },
   "isMetsHome": false,
-  "venue": "Progressive Field",
+  "venue": "PNC Park",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 690997,
-      "fullName": "Nolan McLean",
-      "era": "3.29",
+      "id": 804267,
+      "fullName": "Zac Thornton",
+      "era": "2.88",
       "fip": null,
-      "whip": "1.12"
+      "whip": "1.05"
     },
     "opp": {
-      "id": 656492,
-      "fullName": "Foster Griffin",
-      "era": "3.06",
+      "id": 669387,
+      "fullName": "Carmen Mlodzinski",
+      "era": "3.15",
       "fip": null,
-      "whip": "1.07"
+      "whip": "1.31"
     }
   },
   "lineups": {
@@ -53,13 +53,13 @@
         "label": "h2h",
         "outcomes": [
           {
-            "name": "Cleveland Guardians",
-            "price": -106,
+            "name": "New York Mets",
+            "price": 118,
             "point": null
           },
           {
-            "name": "New York Mets",
-            "price": -102,
+            "name": "Pittsburgh Pirates",
+            "price": -138,
             "point": null
           }
         ]
@@ -69,13 +69,13 @@
         "label": "spreads",
         "outcomes": [
           {
-            "name": "Cleveland Guardians",
-            "price": -184,
+            "name": "New York Mets",
+            "price": -192,
             "point": 1.5
           },
           {
-            "name": "New York Mets",
-            "price": 152,
+            "name": "Pittsburgh Pirates",
+            "price": 158,
             "point": -1.5
           }
         ]
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -115,
-            "point": 7.5
+            "price": 102,
+            "point": 8.5
           },
           {
             "name": "Under",
-            "price": -105,
-            "point": 7.5
+            "price": -124,
+            "point": 8.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 824401,
-    "gameGuid": "e69f1cfb-b291-4da3-b6aa-776bf5e2ccfb",
-    "link": "/api/v1.1/game/824401/feed/live",
+    "gamePk": 823349,
+    "gameGuid": "a1b97f0e-cdf7-4075-ae26-ffeff1173ca7",
+    "link": "/api/v1.1/game/823349/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-06T17:10:00Z",
-    "officialDate": "2026-08-06",
+    "gameDate": "2026-08-07T22:40:00Z",
+    "officialDate": "2026-08-07",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,18 +164,18 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 49,
+          "wins": 50,
           "losses": 66,
           "ties": 0,
-          "pct": ".426"
+          "pct": ".431"
         },
         "probablePitcher": {
-          "id": 690997,
-          "fullName": "Nolan McLean",
-          "link": "/api/v1/people/690997"
+          "id": 804267,
+          "fullName": "Zac Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
-        "seriesNumber": 37,
+        "seriesNumber": 38,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -186,69 +186,69 @@
       "home": {
         "team": {
           "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
           },
           "allStarStatus": "N",
-          "id": 114,
-          "name": "Cleveland Guardians",
-          "link": "/api/v1/teams/114",
+          "id": 134,
+          "name": "Pittsburgh Pirates",
+          "link": "/api/v1/teams/134",
           "season": 2026,
           "venue": {
-            "id": 5,
-            "name": "Progressive Field",
-            "link": "/api/v1/venues/5"
+            "id": 31,
+            "name": "PNC Park",
+            "link": "/api/v1/venues/31"
           },
           "springVenue": {
-            "id": 3834,
-            "link": "/api/v1/venues/3834"
+            "id": 2526,
+            "link": "/api/v1/venues/2526"
           },
-          "teamCode": "cle",
-          "fileCode": "cle",
-          "abbreviation": "CLE",
-          "teamName": "Guardians",
-          "locationName": "Cleveland",
-          "firstYearOfPlay": "1901",
+          "teamCode": "pit",
+          "fileCode": "pit",
+          "abbreviation": "PIT",
+          "teamName": "Pirates",
+          "locationName": "Pittsburgh",
+          "firstYearOfPlay": "1882",
           "league": {
-            "id": 103,
-            "name": "American League",
-            "link": "/api/v1/league/103"
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
           },
           "division": {
-            "id": 202,
-            "name": "American League Central",
-            "link": "/api/v1/divisions/202"
+            "id": 205,
+            "name": "National League Central",
+            "link": "/api/v1/divisions/205"
           },
           "sport": {
             "id": 1,
             "link": "/api/v1/sports/1",
             "name": "Major League Baseball"
           },
-          "shortName": "Cleveland",
-          "franchiseName": "Cleveland",
-          "clubName": "Guardians",
+          "shortName": "Pittsburgh",
+          "franchiseName": "Pittsburgh",
+          "clubName": "Pirates",
           "active": true
         },
         "leagueRecord": {
           "wins": 57,
-          "losses": 58,
+          "losses": 60,
           "ties": 0,
-          "pct": ".496"
+          "pct": ".487"
         },
         "probablePitcher": {
-          "id": 656492,
-          "fullName": "Foster Griffin",
-          "link": "/api/v1/people/656492"
+          "id": 669387,
+          "fullName": "Carmen Mlodzinski",
+          "link": "/api/v1/people/669387"
         },
         "splitSquad": false,
-        "seriesNumber": 37,
+        "seriesNumber": 38,
         "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
         }
       }
     },
@@ -268,24 +268,24 @@
       },
       "offense": {
         "team": {
-          "id": 114,
-          "name": "Cleveland Guardians",
-          "link": "/api/v1/teams/114"
+          "id": 134,
+          "name": "Pittsburgh Pirates",
+          "link": "/api/v1/teams/134"
         }
       }
     },
     "venue": {
-      "id": 5,
-      "name": "Progressive Field",
-      "link": "/api/v1/venues/5",
+      "id": 31,
+      "name": "PNC Park",
+      "link": "/api/v1/venues/31",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/824401/content"
+      "link": "/api/v1/game/823349/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,14 +301,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-824401-2026-08-06",
+    "calendarEventID": "14-823349-2026-08-07",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -317,9 +317,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-06T10:35:02.099Z",
+    "generatedAt": "2026-08-07T08:55:12.370Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-06",
-    "cacheKey": "next-game:2026-08-06"
+    "referenceDate": "2026-08-07",
+    "cacheKey": "next-game:2026-08-07"
   }
 }
