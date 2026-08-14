@@ -31,14 +31,73 @@
       "fip": null,
       "whip": "2.13"
     },
-    "opp": null
+    "opp": {
+      "id": 674841,
+      "fullName": "Andrew Alvarez",
+      "era": "3.76",
+      "fip": null,
+      "whip": "1.40"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -124,
+            "point": null
+          },
+          {
+            "name": "Washington Nationals",
+            "price": 106,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 164,
+            "point": -1.5
+          },
+          {
+            "name": "Washington Nationals",
+            "price": -200,
+            "point": 1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -110,
+            "point": 8.5
+          },
+          {
+            "name": "Under",
+            "price": -110,
+            "point": 8.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823591,
     "gameGuid": "63a8b15a-599a-4a50-9f18-e52f0727b4c2",
@@ -105,10 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 59,
+          "wins": 60,
           "losses": 63,
           "ties": 0,
-          "pct": ".484"
+          "pct": ".488"
+        },
+        "probablePitcher": {
+          "id": 674841,
+          "fullName": "Andrew Alvarez",
+          "link": "/api/v1/people/674841"
         },
         "splitSquad": false,
         "seriesNumber": 40,
@@ -253,9 +317,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-13T09:08:24.147Z",
+    "generatedAt": "2026-08-14T09:03:59.153Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-13",
-    "cacheKey": "next-game:2026-08-13"
+    "referenceDate": "2026-08-14",
+    "cacheKey": "next-game:2026-08-14"
   }
 }
