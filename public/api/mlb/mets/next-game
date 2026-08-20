@@ -1,8 +1,17 @@
 {
-  "gameId": 823587,
-  "startTime": "2026-08-19T17:10:00Z",
+  "gameId": 824559,
+  "startTime": "2026-08-21T23:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
+    "id": 145,
+    "canonicalKey": "white-sox",
+    "mlbStatsTeamId": 145,
+    "apiSportsTeamId": 145,
+    "name": "Chicago White Sox",
+    "abbreviation": "CWS",
+    "record": null
+  },
+  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -11,101 +20,33 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "awayTeam": {
-    "id": 135,
-    "canonicalKey": "padres",
-    "mlbStatsTeamId": 135,
-    "apiSportsTeamId": 135,
-    "name": "San Diego Padres",
-    "abbreviation": "SD",
-    "record": null
-  },
-  "isMetsHome": true,
-  "venue": "Citi Field",
+  "isMetsHome": false,
+  "venue": "Rate Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 476594,
-      "fullName": "Robert Stock",
-      "era": "6.57",
+      "id": 640455,
+      "fullName": "Sean Manaea",
+      "era": "4.22",
       "fip": null,
-      "whip": "1.86"
+      "whip": "1.32"
     },
-    "opp": {
-      "id": 650633,
-      "fullName": "Michael King",
-      "era": "3.41",
-      "fip": null,
-      "whip": "1.19"
-    }
+    "opp": null
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
-    "markets": [
-      {
-        "key": "h2h",
-        "label": "h2h",
-        "outcomes": [
-          {
-            "name": "New York Mets",
-            "price": 118,
-            "point": null
-          },
-          {
-            "name": "San Diego Padres",
-            "price": -128,
-            "point": null
-          }
-        ]
-      },
-      {
-        "key": "spreads",
-        "label": "spreads",
-        "outcomes": [
-          {
-            "name": "New York Mets",
-            "price": -152,
-            "point": 1.5
-          },
-          {
-            "name": "San Diego Padres",
-            "price": 126,
-            "point": -1.5
-          }
-        ]
-      },
-      {
-        "key": "totals",
-        "label": "totals",
-        "outcomes": [
-          {
-            "name": "Over",
-            "price": -115,
-            "point": 8.5
-          },
-          {
-            "name": "Under",
-            "price": -105,
-            "point": 8.5
-          }
-        ]
-      }
-    ]
-  },
+  "sportsbookSummary": null,
   "raw": {
-    "gamePk": 823587,
-    "gameGuid": "f2e865ea-7738-40c3-bd91-b5853d04c8d4",
-    "link": "/api/v1.1/game/823587/feed/live",
+    "gamePk": 824559,
+    "gameGuid": "7971cc39-9a0d-4e34-b551-c86ade1be034",
+    "link": "/api/v1.1/game/824559/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-19T17:10:00Z",
-    "officialDate": "2026-08-19",
+    "gameDate": "2026-08-21T23:40:00Z",
+    "officialDate": "2026-08-21",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -116,74 +57,6 @@
     },
     "teams": {
       "away": {
-        "team": {
-          "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
-          },
-          "allStarStatus": "N",
-          "id": 135,
-          "name": "San Diego Padres",
-          "link": "/api/v1/teams/135",
-          "season": 2026,
-          "venue": {
-            "id": 2680,
-            "name": "Petco Park",
-            "link": "/api/v1/venues/2680"
-          },
-          "springVenue": {
-            "id": 2530,
-            "link": "/api/v1/venues/2530"
-          },
-          "teamCode": "sdn",
-          "fileCode": "sd",
-          "abbreviation": "SD",
-          "teamName": "Padres",
-          "locationName": "San Diego",
-          "firstYearOfPlay": "1968",
-          "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
-          },
-          "division": {
-            "id": 203,
-            "name": "National League West",
-            "link": "/api/v1/divisions/203"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "San Diego",
-          "franchiseName": "San Diego",
-          "clubName": "Padres",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 68,
-          "losses": 59,
-          "ties": 0,
-          "pct": ".535"
-        },
-        "probablePitcher": {
-          "id": 650633,
-          "fullName": "Michael King",
-          "link": "/api/v1/people/650633"
-        },
-        "splitSquad": false,
-        "seriesNumber": 41,
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        }
-      },
-      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -232,23 +105,86 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 57,
+          "wins": 58,
           "losses": 70,
           "ties": 0,
-          "pct": ".449"
+          "pct": ".453"
         },
         "probablePitcher": {
-          "id": 476594,
-          "fullName": "Robert Stock",
-          "link": "/api/v1/people/476594"
+          "id": 640455,
+          "fullName": "Sean Manaea",
+          "link": "/api/v1/people/640455"
         },
         "splitSquad": false,
-        "seriesNumber": 41,
+        "seriesNumber": 42,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
           "link": "/api/v1/league/115",
           "abbreviation": "GL"
+        }
+      },
+      "home": {
+        "team": {
+          "springLeague": {
+            "id": 114,
+            "name": "Cactus League",
+            "link": "/api/v1/league/114",
+            "abbreviation": "CL"
+          },
+          "allStarStatus": "N",
+          "id": 145,
+          "name": "Chicago White Sox",
+          "link": "/api/v1/teams/145",
+          "season": 2026,
+          "venue": {
+            "id": 4,
+            "name": "Rate Field",
+            "link": "/api/v1/venues/4"
+          },
+          "springVenue": {
+            "id": 3809,
+            "link": "/api/v1/venues/3809"
+          },
+          "teamCode": "cha",
+          "fileCode": "cws",
+          "abbreviation": "CWS",
+          "teamName": "White Sox",
+          "locationName": "Chicago",
+          "firstYearOfPlay": "1901",
+          "league": {
+            "id": 103,
+            "name": "American League",
+            "link": "/api/v1/league/103"
+          },
+          "division": {
+            "id": 202,
+            "name": "American League Central",
+            "link": "/api/v1/divisions/202"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Chi White Sox",
+          "franchiseName": "Chicago",
+          "clubName": "White Sox",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 66,
+          "losses": 60,
+          "ties": 0,
+          "pct": ".524"
+        },
+        "splitSquad": false,
+        "seriesNumber": 43,
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
         }
       }
     },
@@ -261,31 +197,31 @@
       },
       "defense": {
         "team": {
-          "id": 135,
-          "name": "San Diego Padres",
-          "link": "/api/v1/teams/135"
-        }
-      },
-      "offense": {
-        "team": {
           "id": 121,
           "name": "New York Mets",
           "link": "/api/v1/teams/121"
         }
+      },
+      "offense": {
+        "team": {
+          "id": 145,
+          "name": "Chicago White Sox",
+          "link": "/api/v1/teams/145"
+        }
       }
     },
     "venue": {
-      "id": 3289,
-      "name": "Citi Field",
-      "link": "/api/v1/venues/3289",
+      "id": 4,
+      "name": "Rate Field",
+      "link": "/api/v1/venues/4",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823587/content"
+      "link": "/api/v1/game/824559/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,24 +237,25 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823587-2026-08-19",
+    "calendarEventID": "14-824559-2026-08-21",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-19T08:32:50.186Z",
+    "generatedAt": "2026-08-20T08:33:20.721Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-19",
-    "cacheKey": "next-game:2026-08-19"
+    "referenceDate": "2026-08-20",
+    "cacheKey": "next-game:2026-08-20"
   }
 }
