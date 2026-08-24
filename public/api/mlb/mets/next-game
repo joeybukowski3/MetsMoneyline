@@ -1,17 +1,8 @@
 {
-  "gameId": 824558,
-  "startTime": "2026-08-23T18:10:00Z",
+  "gameId": 823585,
+  "startTime": "2026-08-25T23:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
-    "id": 145,
-    "canonicalKey": "white-sox",
-    "mlbStatsTeamId": 145,
-    "apiSportsTeamId": 145,
-    "name": "Chicago White Sox",
-    "abbreviation": "CWS",
-    "record": null
-  },
-  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -20,23 +11,32 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "isMetsHome": false,
-  "venue": "Rate Field",
+  "awayTeam": {
+    "id": 158,
+    "canonicalKey": "brewers",
+    "mlbStatsTeamId": 158,
+    "apiSportsTeamId": 158,
+    "name": "Milwaukee Brewers",
+    "abbreviation": "MIL",
+    "record": null
+  },
+  "isMetsHome": true,
+  "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 690997,
-      "fullName": "Nolan McLean",
-      "era": "3.34",
+      "id": 804267,
+      "fullName": "Zac Thornton",
+      "era": "3.04",
       "fip": null,
-      "whip": "1.16"
+      "whip": "1.15"
     },
     "opp": {
-      "id": 656794,
-      "fullName": "Sean Newcomb",
-      "era": "2.44",
+      "id": 690986,
+      "fullName": "Kyle Harrison",
+      "era": "2.84",
       "fip": null,
-      "whip": "1.10"
+      "whip": "1.11"
     }
   },
   "lineups": {
@@ -44,68 +44,15 @@
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
-    "markets": [
-      {
-        "key": "h2h",
-        "label": "h2h",
-        "outcomes": [
-          {
-            "name": "Chicago White Sox",
-            "price": 100,
-            "point": null
-          },
-          {
-            "name": "New York Mets",
-            "price": -108,
-            "point": null
-          }
-        ]
-      },
-      {
-        "key": "spreads",
-        "label": "spreads",
-        "outcomes": [
-          {
-            "name": "Chicago White Sox",
-            "price": -176,
-            "point": 1.5
-          },
-          {
-            "name": "New York Mets",
-            "price": 146,
-            "point": -1.5
-          }
-        ]
-      },
-      {
-        "key": "totals",
-        "label": "totals",
-        "outcomes": [
-          {
-            "name": "Over",
-            "price": 102,
-            "point": 8.5
-          },
-          {
-            "name": "Under",
-            "price": -124,
-            "point": 8.5
-          }
-        ]
-      }
-    ]
-  },
+  "sportsbookSummary": null,
   "raw": {
-    "gamePk": 824558,
-    "gameGuid": "519eef9d-9717-4e2d-b1db-fc3846b21a09",
-    "link": "/api/v1.1/game/824558/feed/live",
+    "gamePk": 823585,
+    "gameGuid": "7ef19d96-24b9-4d5e-a495-013198d9cbcf",
+    "link": "/api/v1.1/game/823585/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-23T18:10:00Z",
-    "officialDate": "2026-08-23",
+    "gameDate": "2026-08-25T23:10:00Z",
+    "officialDate": "2026-08-25",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -116,6 +63,74 @@
     },
     "teams": {
       "away": {
+        "team": {
+          "springLeague": {
+            "id": 114,
+            "name": "Cactus League",
+            "link": "/api/v1/league/114",
+            "abbreviation": "CL"
+          },
+          "allStarStatus": "N",
+          "id": 158,
+          "name": "Milwaukee Brewers",
+          "link": "/api/v1/teams/158",
+          "season": 2026,
+          "venue": {
+            "id": 32,
+            "name": "American Family Field",
+            "link": "/api/v1/venues/32"
+          },
+          "springVenue": {
+            "id": 2518,
+            "link": "/api/v1/venues/2518"
+          },
+          "teamCode": "mil",
+          "fileCode": "mil",
+          "abbreviation": "MIL",
+          "teamName": "Brewers",
+          "locationName": "Milwaukee",
+          "firstYearOfPlay": "1968",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 205,
+            "name": "National League Central",
+            "link": "/api/v1/divisions/205"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Milwaukee",
+          "franchiseName": "Milwaukee",
+          "clubName": "Brewers",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 81,
+          "losses": 50,
+          "ties": 0,
+          "pct": ".618"
+        },
+        "probablePitcher": {
+          "id": 690986,
+          "fullName": "Kyle Harrison",
+          "link": "/api/v1/people/690986"
+        },
+        "splitSquad": false,
+        "seriesNumber": 43,
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        }
+      },
+      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -165,90 +180,22 @@
         },
         "leagueRecord": {
           "wins": 59,
-          "losses": 71,
+          "losses": 72,
           "ties": 0,
-          "pct": ".454"
+          "pct": ".450"
         },
         "probablePitcher": {
-          "id": 690997,
-          "fullName": "Nolan McLean",
-          "link": "/api/v1/people/690997"
+          "id": 804267,
+          "fullName": "Zac Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
-        "seriesNumber": 42,
+        "seriesNumber": 43,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
           "link": "/api/v1/league/115",
           "abbreviation": "GL"
-        }
-      },
-      "home": {
-        "team": {
-          "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
-          },
-          "allStarStatus": "N",
-          "id": 145,
-          "name": "Chicago White Sox",
-          "link": "/api/v1/teams/145",
-          "season": 2026,
-          "venue": {
-            "id": 4,
-            "name": "Rate Field",
-            "link": "/api/v1/venues/4"
-          },
-          "springVenue": {
-            "id": 3809,
-            "link": "/api/v1/venues/3809"
-          },
-          "teamCode": "cha",
-          "fileCode": "cws",
-          "abbreviation": "CWS",
-          "teamName": "White Sox",
-          "locationName": "Chicago",
-          "firstYearOfPlay": "1901",
-          "league": {
-            "id": 103,
-            "name": "American League",
-            "link": "/api/v1/league/103"
-          },
-          "division": {
-            "id": 202,
-            "name": "American League Central",
-            "link": "/api/v1/divisions/202"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "Chi White Sox",
-          "franchiseName": "Chicago",
-          "clubName": "White Sox",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 67,
-          "losses": 62,
-          "ties": 0,
-          "pct": ".519"
-        },
-        "probablePitcher": {
-          "id": 656794,
-          "fullName": "Sean Newcomb",
-          "link": "/api/v1/people/656794"
-        },
-        "splitSquad": false,
-        "seriesNumber": 43,
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
         }
       }
     },
@@ -261,39 +208,38 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 158,
+          "name": "Milwaukee Brewers",
+          "link": "/api/v1/teams/158"
         }
       },
       "offense": {
         "team": {
-          "id": 145,
-          "name": "Chicago White Sox",
-          "link": "/api/v1/teams/145"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
     "venue": {
-      "id": 4,
-      "name": "Rate Field",
-      "link": "/api/v1/venues/4",
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/824558/content"
+      "link": "/api/v1/game/823585/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
-      "wins": 1,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -302,14 +248,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-824558-2026-08-23",
+    "calendarEventID": "14-823585-2026-08-25",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -318,9 +264,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-23T08:25:07.983Z",
+    "generatedAt": "2026-08-24T08:43:05.599Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-23",
-    "cacheKey": "next-game:2026-08-23"
+    "referenceDate": "2026-08-24",
+    "cacheKey": "next-game:2026-08-24"
   }
 }
