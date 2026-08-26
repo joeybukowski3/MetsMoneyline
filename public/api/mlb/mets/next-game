@@ -1,6 +1,6 @@
 {
-  "gameId": 823585,
-  "startTime": "2026-08-25T23:10:00Z",
+  "gameId": 823584,
+  "startTime": "2026-08-26T23:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 804267,
-      "fullName": "Zac Thornton",
-      "era": "3.04",
+      "id": 476594,
+      "fullName": "Robert Stock",
+      "era": "5.40",
       "fip": null,
-      "whip": "1.15"
+      "whip": "1.68"
     },
     "opp": {
-      "id": 690986,
-      "fullName": "Kyle Harrison",
-      "era": "2.84",
+      "id": 669160,
+      "fullName": "Dustin May",
+      "era": "4.57",
       "fip": null,
-      "whip": "1.11"
+      "whip": "1.30"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "Milwaukee Brewers",
-            "price": -162,
+            "price": -154,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": 136,
+            "price": 130,
             "point": null
           }
         ]
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -114,
-            "point": 7.5
+            "price": -120,
+            "point": 8
           },
           {
             "name": "Under",
-            "price": -106,
-            "point": 7.5
+            "price": -102,
+            "point": 8
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823585,
-    "gameGuid": "7ef19d96-24b9-4d5e-a495-013198d9cbcf",
-    "link": "/api/v1.1/game/823585/feed/live",
+    "gamePk": 823584,
+    "gameGuid": "c5dd905d-4e57-48b1-b705-dceab360de32",
+    "link": "/api/v1.1/game/823584/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-25T23:10:00Z",
-    "officialDate": "2026-08-25",
+    "gameDate": "2026-08-26T23:10:00Z",
+    "officialDate": "2026-08-26",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -165,14 +165,14 @@
         },
         "leagueRecord": {
           "wins": 81,
-          "losses": 50,
+          "losses": 51,
           "ties": 0,
-          "pct": ".618"
+          "pct": ".614"
         },
         "probablePitcher": {
-          "id": 690986,
-          "fullName": "Kyle Harrison",
-          "link": "/api/v1/people/690986"
+          "id": 669160,
+          "fullName": "Dustin May",
+          "link": "/api/v1/people/669160"
         },
         "splitSquad": false,
         "seriesNumber": 43,
@@ -232,15 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 59,
+          "wins": 60,
           "losses": 72,
           "ties": 0,
-          "pct": ".450"
+          "pct": ".455"
         },
         "probablePitcher": {
-          "id": 804267,
-          "fullName": "Zac Thornton",
-          "link": "/api/v1/people/804267"
+          "id": 476594,
+          "fullName": "Robert Stock",
+          "link": "/api/v1/people/476594"
         },
         "splitSquad": false,
         "seriesNumber": 43,
@@ -282,43 +282,32 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823585/content"
-    },
-    "seriesStatus": {
-      "gameNumber": 1,
-      "totalGames": 3,
-      "isTied": true,
-      "isOver": false,
-      "wins": 0,
-      "losses": 0,
-      "description": "Regular Season",
-      "shortDescription": "Season",
-      "shortName": "Season",
-      "abbreviation": "RS"
+      "link": "/api/v1/game/823584/content"
     },
     "gameNumber": 1,
     "publicFacing": true,
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823585-2026-08-25",
+    "calendarEventID": "14-823584-2026-08-26",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-25T08:37:32.054Z",
+    "generatedAt": "2026-08-26T08:38:33.591Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-25",
-    "cacheKey": "next-game:2026-08-25"
+    "referenceDate": "2026-08-26",
+    "cacheKey": "next-game:2026-08-26"
   }
 }
