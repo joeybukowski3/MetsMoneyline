@@ -1,7 +1,7 @@
 {
-  "gameId": 823581,
-  "startTime": "2026-08-27T23:10:00Z",
-  "status": "Scheduled",
+  "gameId": 823583,
+  "startTime": "2026-08-28T23:10:00Z",
+  "status": "Pre-Game",
   "homeTeam": {
     "id": 121,
     "canonicalKey": "mets",
@@ -12,12 +12,12 @@
     "record": null
   },
   "awayTeam": {
-    "id": 158,
-    "canonicalKey": "brewers",
-    "mlbStatsTeamId": 158,
-    "apiSportsTeamId": 158,
-    "name": "Milwaukee Brewers",
-    "abbreviation": "MIL",
+    "id": 117,
+    "canonicalKey": "astros",
+    "mlbStatsTeamId": 117,
+    "apiSportsTeamId": 117,
+    "name": "Houston Astros",
+    "abbreviation": "HOU",
     "record": null
   },
   "isMetsHome": true,
@@ -25,23 +25,78 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 640455,
-      "fullName": "Sean Manaea",
-      "era": "4.31",
+      "id": 681035,
+      "fullName": "Christian Scott",
+      "era": "3.73",
       "fip": null,
-      "whip": "1.31"
+      "whip": "1.32"
     },
     "opp": {
-      "id": 694819,
-      "fullName": "Jacob Misiorowski",
-      "era": "1.68",
+      "id": 686613,
+      "fullName": "Hunter Brown",
+      "era": "3.51",
       "fip": null,
-      "whip": "0.76"
+      "whip": "1.33"
     }
   },
   "lineups": {
-    "lineupStatus": "not_released",
-    "mets": [],
+    "lineupStatus": "confirmed",
+    "mets": [
+      {
+        "order": 1,
+        "playerId": 805999,
+        "name": "A.J. Ewing",
+        "pos": "CF"
+      },
+      {
+        "order": 2,
+        "playerId": 596019,
+        "name": "Francisco Lindor",
+        "pos": "SS"
+      },
+      {
+        "order": 3,
+        "playerId": 666182,
+        "name": "Bo Bichette",
+        "pos": "3B"
+      },
+      {
+        "order": 4,
+        "playerId": 701807,
+        "name": "Carson Benge",
+        "pos": "RF"
+      },
+      {
+        "order": 5,
+        "playerId": 673357,
+        "name": "Luis Robert Jr.",
+        "pos": "LF"
+      },
+      {
+        "order": 6,
+        "playerId": 676724,
+        "name": "Jared Young",
+        "pos": "1B"
+      },
+      {
+        "order": 7,
+        "playerId": 543760,
+        "name": "Marcus Semien",
+        "pos": "2B"
+      },
+      {
+        "order": 8,
+        "playerId": 683146,
+        "name": "Brett Baty",
+        "pos": "DH"
+      },
+      {
+        "order": 9,
+        "playerId": 620443,
+        "name": "Luis Torrens",
+        "pos": "C"
+      }
+    ],
     "opp": []
   },
   "sportsbookSummary": {
@@ -53,13 +108,13 @@
         "label": "h2h",
         "outcomes": [
           {
-            "name": "Milwaukee Brewers",
-            "price": -194,
+            "name": "Houston Astros",
+            "price": -104,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": 178,
+            "price": -104,
             "point": null
           }
         ]
@@ -69,13 +124,13 @@
         "label": "spreads",
         "outcomes": [
           {
-            "name": "Milwaukee Brewers",
-            "price": -115,
+            "name": "Houston Astros",
+            "price": 146,
             "point": -1.5
           },
           {
             "name": "New York Mets",
-            "price": -104,
+            "price": -176,
             "point": 1.5
           }
         ]
@@ -86,31 +141,31 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -115,
-            "point": 7
+            "price": -122,
+            "point": 7.5
           },
           {
             "name": "Under",
-            "price": -105,
-            "point": 7
+            "price": 100,
+            "point": 7.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823581,
-    "gameGuid": "6bfa8387-dd97-4098-a8d9-bb1744e34cd6",
-    "link": "/api/v1.1/game/823581/feed/live",
+    "gamePk": 823583,
+    "gameGuid": "b1ad8fd4-b90f-428e-9e9b-88bb002c6d19",
+    "link": "/api/v1.1/game/823583/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-27T23:10:00Z",
-    "officialDate": "2026-08-27",
+    "gameDate": "2026-08-28T23:10:00Z",
+    "officialDate": "2026-08-28",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "S",
-      "detailedState": "Scheduled",
-      "statusCode": "S",
+      "codedGameState": "P",
+      "detailedState": "Pre-Game",
+      "statusCode": "P",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -118,69 +173,69 @@
       "away": {
         "team": {
           "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
           },
           "allStarStatus": "N",
-          "id": 158,
-          "name": "Milwaukee Brewers",
-          "link": "/api/v1/teams/158",
+          "id": 117,
+          "name": "Houston Astros",
+          "link": "/api/v1/teams/117",
           "season": 2026,
           "venue": {
-            "id": 32,
-            "name": "American Family Field",
-            "link": "/api/v1/venues/32"
+            "id": 2392,
+            "name": "Daikin Park",
+            "link": "/api/v1/venues/2392"
           },
           "springVenue": {
-            "id": 2518,
-            "link": "/api/v1/venues/2518"
+            "id": 5000,
+            "link": "/api/v1/venues/5000"
           },
-          "teamCode": "mil",
-          "fileCode": "mil",
-          "abbreviation": "MIL",
-          "teamName": "Brewers",
-          "locationName": "Milwaukee",
-          "firstYearOfPlay": "1968",
+          "teamCode": "hou",
+          "fileCode": "hou",
+          "abbreviation": "HOU",
+          "teamName": "Astros",
+          "locationName": "Houston",
+          "firstYearOfPlay": "1962",
           "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
+            "id": 103,
+            "name": "American League",
+            "link": "/api/v1/league/103"
           },
           "division": {
-            "id": 205,
-            "name": "National League Central",
-            "link": "/api/v1/divisions/205"
+            "id": 200,
+            "name": "American League West",
+            "link": "/api/v1/divisions/200"
           },
           "sport": {
             "id": 1,
             "link": "/api/v1/sports/1",
             "name": "Major League Baseball"
           },
-          "shortName": "Milwaukee",
-          "franchiseName": "Milwaukee",
-          "clubName": "Brewers",
+          "shortName": "Houston",
+          "franchiseName": "Houston",
+          "clubName": "Astros",
           "active": true
         },
         "leagueRecord": {
-          "wins": 82,
-          "losses": 51,
+          "wins": 67,
+          "losses": 67,
           "ties": 0,
-          "pct": ".617"
+          "pct": ".500"
         },
         "probablePitcher": {
-          "id": 694819,
-          "fullName": "Jacob Misiorowski",
-          "link": "/api/v1/people/694819"
+          "id": 686613,
+          "fullName": "Hunter Brown",
+          "link": "/api/v1/people/686613"
         },
         "splitSquad": false,
-        "seriesNumber": 43,
+        "seriesNumber": 44,
         "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
         }
       },
       "home": {
@@ -233,17 +288,17 @@
         },
         "leagueRecord": {
           "wins": 60,
-          "losses": 73,
+          "losses": 74,
           "ties": 0,
-          "pct": ".451"
+          "pct": ".448"
         },
         "probablePitcher": {
-          "id": 640455,
-          "fullName": "Sean Manaea",
-          "link": "/api/v1/people/640455"
+          "id": 681035,
+          "fullName": "Christian Scott",
+          "link": "/api/v1/people/681035"
         },
         "splitSquad": false,
-        "seriesNumber": 43,
+        "seriesNumber": 44,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -261,9 +316,9 @@
       },
       "defense": {
         "team": {
-          "id": 158,
-          "name": "Milwaukee Brewers",
-          "link": "/api/v1/teams/158"
+          "id": 117,
+          "name": "Houston Astros",
+          "link": "/api/v1/teams/117"
         }
       },
       "offense": {
@@ -282,18 +337,17 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823581/content"
+      "link": "/api/v1/game/823583/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
-      "wins": 1,
-      "losses": 1,
+      "wins": 0,
+      "losses": 0,
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -302,25 +356,154 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823581-2026-08-27",
+    "calendarEventID": "14-823583-2026-08-28",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "lineups": {
+      "homePlayers": [
+        {
+          "id": 805999,
+          "fullName": "A.J. Ewing",
+          "link": "/api/v1/people/805999",
+          "firstName": "Andrew",
+          "lastName": "Ewing",
+          "primaryPosition": {
+            "code": "8",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "CF"
+          },
+          "useName": "A.J."
+        },
+        {
+          "id": 596019,
+          "fullName": "Francisco Lindor",
+          "link": "/api/v1/people/596019",
+          "firstName": "Francisco",
+          "lastName": "Lindor",
+          "primaryPosition": {
+            "code": "6",
+            "name": "Shortstop",
+            "type": "Infielder",
+            "abbreviation": "SS"
+          },
+          "useName": "Francisco"
+        },
+        {
+          "id": 666182,
+          "fullName": "Bo Bichette",
+          "link": "/api/v1/people/666182",
+          "firstName": "Bo",
+          "lastName": "Bichette",
+          "primaryPosition": {
+            "code": "5",
+            "name": "Third Base",
+            "type": "Infielder",
+            "abbreviation": "3B"
+          },
+          "useName": "Bo"
+        },
+        {
+          "id": 701807,
+          "fullName": "Carson Benge",
+          "link": "/api/v1/people/701807",
+          "firstName": "Carson",
+          "lastName": "Benge",
+          "primaryPosition": {
+            "code": "9",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "RF"
+          },
+          "useName": "Carson"
+        },
+        {
+          "id": 673357,
+          "fullName": "Luis Robert Jr.",
+          "link": "/api/v1/people/673357",
+          "firstName": "Luis",
+          "lastName": "Robert",
+          "primaryPosition": {
+            "code": "7",
+            "name": "Outfielder",
+            "type": "Outfielder",
+            "abbreviation": "LF"
+          },
+          "useName": "Luis"
+        },
+        {
+          "id": 676724,
+          "fullName": "Jared Young",
+          "link": "/api/v1/people/676724",
+          "firstName": "Jared",
+          "lastName": "Young",
+          "primaryPosition": {
+            "code": "3",
+            "name": "First Base",
+            "type": "Infielder",
+            "abbreviation": "1B"
+          },
+          "useName": "Jared"
+        },
+        {
+          "id": 543760,
+          "fullName": "Marcus Semien",
+          "link": "/api/v1/people/543760",
+          "firstName": "Marcus",
+          "lastName": "Semien",
+          "primaryPosition": {
+            "code": "4",
+            "name": "Second Base",
+            "type": "Infielder",
+            "abbreviation": "2B"
+          },
+          "useName": "Marcus"
+        },
+        {
+          "id": 683146,
+          "fullName": "Brett Baty",
+          "link": "/api/v1/people/683146",
+          "firstName": "Brett",
+          "lastName": "Baty",
+          "primaryPosition": {
+            "code": "10",
+            "name": "Designated Hitter",
+            "type": "Hitter",
+            "abbreviation": "DH"
+          },
+          "useName": "Brett"
+        },
+        {
+          "id": 620443,
+          "fullName": "Luis Torrens",
+          "link": "/api/v1/people/620443",
+          "firstName": "Luis",
+          "lastName": "Torrens",
+          "primaryPosition": {
+            "code": "2",
+            "name": "Catcher",
+            "type": "Catcher",
+            "abbreviation": "C"
+          },
+          "useName": "Luis"
+        }
+      ]
+    }
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-27T18:48:10.288Z",
+    "generatedAt": "2026-08-28T19:52:02.771Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-27",
-    "cacheKey": "next-game:2026-08-27"
+    "referenceDate": "2026-08-28",
+    "cacheKey": "next-game:2026-08-28"
   }
 }
