@@ -1,7 +1,7 @@
 {
-  "gameId": 823583,
-  "startTime": "2026-08-28T23:10:00Z",
-  "status": "Pre-Game",
+  "gameId": 823582,
+  "startTime": "2026-08-29T20:10:00Z",
+  "status": "Scheduled",
   "homeTeam": {
     "id": 121,
     "canonicalKey": "mets",
@@ -25,78 +25,23 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 681035,
-      "fullName": "Christian Scott",
-      "era": "3.73",
+      "id": 690997,
+      "fullName": "Nolan McLean",
+      "era": "3.21",
       "fip": null,
-      "whip": "1.32"
+      "whip": "1.14"
     },
     "opp": {
-      "id": 686613,
-      "fullName": "Hunter Brown",
-      "era": "3.51",
+      "id": 656986,
+      "fullName": "Bennett Sousa",
+      "era": "6.27",
       "fip": null,
-      "whip": "1.33"
+      "whip": "1.82"
     }
   },
   "lineups": {
-    "lineupStatus": "confirmed",
-    "mets": [
-      {
-        "order": 1,
-        "playerId": 805999,
-        "name": "A.J. Ewing",
-        "pos": "CF"
-      },
-      {
-        "order": 2,
-        "playerId": 596019,
-        "name": "Francisco Lindor",
-        "pos": "SS"
-      },
-      {
-        "order": 3,
-        "playerId": 666182,
-        "name": "Bo Bichette",
-        "pos": "3B"
-      },
-      {
-        "order": 4,
-        "playerId": 701807,
-        "name": "Carson Benge",
-        "pos": "RF"
-      },
-      {
-        "order": 5,
-        "playerId": 673357,
-        "name": "Luis Robert Jr.",
-        "pos": "LF"
-      },
-      {
-        "order": 6,
-        "playerId": 676724,
-        "name": "Jared Young",
-        "pos": "1B"
-      },
-      {
-        "order": 7,
-        "playerId": 543760,
-        "name": "Marcus Semien",
-        "pos": "2B"
-      },
-      {
-        "order": 8,
-        "playerId": 683146,
-        "name": "Brett Baty",
-        "pos": "DH"
-      },
-      {
-        "order": 9,
-        "playerId": 620443,
-        "name": "Luis Torrens",
-        "pos": "C"
-      }
-    ],
+    "lineupStatus": "not_released",
+    "mets": [],
     "opp": []
   },
   "sportsbookSummary": {
@@ -109,12 +54,12 @@
         "outcomes": [
           {
             "name": "Houston Astros",
-            "price": -104,
+            "price": 126,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -104,
+            "price": -138,
             "point": null
           }
         ]
@@ -125,13 +70,13 @@
         "outcomes": [
           {
             "name": "Houston Astros",
-            "price": 146,
-            "point": -1.5
+            "price": -178,
+            "point": 1.5
           },
           {
             "name": "New York Mets",
-            "price": -176,
-            "point": 1.5
+            "price": 146,
+            "point": -1.5
           }
         ]
       },
@@ -141,31 +86,31 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -122,
-            "point": 7.5
+            "price": -110,
+            "point": 8
           },
           {
             "name": "Under",
-            "price": 100,
-            "point": 7.5
+            "price": -110,
+            "point": 8
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823583,
-    "gameGuid": "b1ad8fd4-b90f-428e-9e9b-88bb002c6d19",
-    "link": "/api/v1.1/game/823583/feed/live",
+    "gamePk": 823582,
+    "gameGuid": "f6c8c977-72b8-49c3-ba74-e1ff86c305d3",
+    "link": "/api/v1.1/game/823582/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-08-28T23:10:00Z",
-    "officialDate": "2026-08-28",
+    "gameDate": "2026-08-29T20:10:00Z",
+    "officialDate": "2026-08-29",
     "status": {
       "abstractGameState": "Preview",
-      "codedGameState": "P",
-      "detailedState": "Pre-Game",
-      "statusCode": "P",
+      "codedGameState": "S",
+      "detailedState": "Scheduled",
+      "statusCode": "S",
       "startTimeTBD": false,
       "abstractGameCode": "P"
     },
@@ -219,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 67,
+          "wins": 68,
           "losses": 67,
           "ties": 0,
-          "pct": ".500"
+          "pct": ".504"
         },
         "probablePitcher": {
-          "id": 686613,
-          "fullName": "Hunter Brown",
-          "link": "/api/v1/people/686613"
+          "id": 656986,
+          "fullName": "Bennett Sousa",
+          "link": "/api/v1/people/656986"
         },
         "splitSquad": false,
         "seriesNumber": 44,
@@ -288,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 60,
-          "losses": 74,
+          "losses": 75,
           "ties": 0,
-          "pct": ".448"
+          "pct": ".444"
         },
         "probablePitcher": {
-          "id": 681035,
-          "fullName": "Christian Scott",
-          "link": "/api/v1/people/681035"
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
         },
         "splitSquad": false,
         "seriesNumber": 44,
@@ -337,17 +282,42 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823583/content"
+      "link": "/api/v1/game/823582/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 117,
+        "name": "Houston Astros",
+        "link": "/api/v1/teams/117"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "HOU leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -356,154 +326,25 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823583-2026-08-28",
+    "calendarEventID": "14-823582-2026-08-29",
     "seasonDisplay": "2026",
-    "dayNight": "night",
+    "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
     "ifNecessaryDescription": "Normal Game",
-    "lineups": {
-      "homePlayers": [
-        {
-          "id": 805999,
-          "fullName": "A.J. Ewing",
-          "link": "/api/v1/people/805999",
-          "firstName": "Andrew",
-          "lastName": "Ewing",
-          "primaryPosition": {
-            "code": "8",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "CF"
-          },
-          "useName": "A.J."
-        },
-        {
-          "id": 596019,
-          "fullName": "Francisco Lindor",
-          "link": "/api/v1/people/596019",
-          "firstName": "Francisco",
-          "lastName": "Lindor",
-          "primaryPosition": {
-            "code": "6",
-            "name": "Shortstop",
-            "type": "Infielder",
-            "abbreviation": "SS"
-          },
-          "useName": "Francisco"
-        },
-        {
-          "id": 666182,
-          "fullName": "Bo Bichette",
-          "link": "/api/v1/people/666182",
-          "firstName": "Bo",
-          "lastName": "Bichette",
-          "primaryPosition": {
-            "code": "5",
-            "name": "Third Base",
-            "type": "Infielder",
-            "abbreviation": "3B"
-          },
-          "useName": "Bo"
-        },
-        {
-          "id": 701807,
-          "fullName": "Carson Benge",
-          "link": "/api/v1/people/701807",
-          "firstName": "Carson",
-          "lastName": "Benge",
-          "primaryPosition": {
-            "code": "9",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "RF"
-          },
-          "useName": "Carson"
-        },
-        {
-          "id": 673357,
-          "fullName": "Luis Robert Jr.",
-          "link": "/api/v1/people/673357",
-          "firstName": "Luis",
-          "lastName": "Robert",
-          "primaryPosition": {
-            "code": "7",
-            "name": "Outfielder",
-            "type": "Outfielder",
-            "abbreviation": "LF"
-          },
-          "useName": "Luis"
-        },
-        {
-          "id": 676724,
-          "fullName": "Jared Young",
-          "link": "/api/v1/people/676724",
-          "firstName": "Jared",
-          "lastName": "Young",
-          "primaryPosition": {
-            "code": "3",
-            "name": "First Base",
-            "type": "Infielder",
-            "abbreviation": "1B"
-          },
-          "useName": "Jared"
-        },
-        {
-          "id": 543760,
-          "fullName": "Marcus Semien",
-          "link": "/api/v1/people/543760",
-          "firstName": "Marcus",
-          "lastName": "Semien",
-          "primaryPosition": {
-            "code": "4",
-            "name": "Second Base",
-            "type": "Infielder",
-            "abbreviation": "2B"
-          },
-          "useName": "Marcus"
-        },
-        {
-          "id": 683146,
-          "fullName": "Brett Baty",
-          "link": "/api/v1/people/683146",
-          "firstName": "Brett",
-          "lastName": "Baty",
-          "primaryPosition": {
-            "code": "10",
-            "name": "Designated Hitter",
-            "type": "Hitter",
-            "abbreviation": "DH"
-          },
-          "useName": "Brett"
-        },
-        {
-          "id": 620443,
-          "fullName": "Luis Torrens",
-          "link": "/api/v1/people/620443",
-          "firstName": "Luis",
-          "lastName": "Torrens",
-          "primaryPosition": {
-            "code": "2",
-            "name": "Catcher",
-            "type": "Catcher",
-            "abbreviation": "C"
-          },
-          "useName": "Luis"
-        }
-      ]
-    }
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-08-28T19:52:02.771Z",
+    "generatedAt": "2026-08-29T13:35:17.300Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-08-28",
-    "cacheKey": "next-game:2026-08-28"
+    "referenceDate": "2026-08-29",
+    "cacheKey": "next-game:2026-08-29"
   }
 }
