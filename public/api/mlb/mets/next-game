@@ -1,6 +1,6 @@
 {
-  "gameId": 822929,
-  "startTime": "2026-09-01T22:40:00Z",
+  "gameId": 822931,
+  "startTime": "2026-09-02T22:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 139,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 640455,
-      "fullName": "Sean Manaea",
-      "era": "4.55",
+      "id": 663795,
+      "fullName": "Justin Hagenman",
+      "era": null,
       "fip": null,
-      "whip": "1.32"
+      "whip": null
     },
     "opp": {
-      "id": 642547,
-      "fullName": "Freddy Peralta",
-      "era": "5.11",
+      "id": 643377,
+      "fullName": "Griffin Jax",
+      "era": "3.63",
       "fip": null,
-      "whip": "1.41"
+      "whip": "1.21"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 114,
+            "price": 138,
             "point": null
           },
           {
             "name": "Tampa Bay Rays",
-            "price": -124,
+            "price": -164,
             "point": null
           }
         ]
@@ -70,13 +70,13 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 172,
-            "point": -1.5
+            "price": -156,
+            "point": 1.5
           },
           {
             "name": "Tampa Bay Rays",
-            "price": -210,
-            "point": 1.5
+            "price": 130,
+            "point": -1.5
           }
         ]
       },
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -122,
-            "point": 7.5
+            "price": -110,
+            "point": 8
           },
           {
             "name": "Under",
-            "price": 100,
-            "point": 7.5
+            "price": -110,
+            "point": 8
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 822929,
-    "gameGuid": "d791d370-fd68-41a1-a50d-7f8eeec19f1c",
-    "link": "/api/v1.1/game/822929/feed/live",
+    "gamePk": 822931,
+    "gameGuid": "384c7956-7aeb-4b5b-9742-6965e4855024",
+    "link": "/api/v1.1/game/822931/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-01T22:40:00Z",
-    "officialDate": "2026-09-01",
+    "gameDate": "2026-09-02T22:40:00Z",
+    "officialDate": "2026-09-02",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -165,14 +165,14 @@
         },
         "leagueRecord": {
           "wins": 62,
-          "losses": 76,
+          "losses": 77,
           "ties": 0,
-          "pct": ".449"
+          "pct": ".446"
         },
         "probablePitcher": {
-          "id": 640455,
-          "fullName": "Sean Manaea",
-          "link": "/api/v1/people/640455"
+          "id": 663795,
+          "fullName": "Justin Hagenman",
+          "link": "/api/v1/people/663795"
         },
         "splitSquad": false,
         "seriesNumber": 45,
@@ -232,15 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 82,
+          "wins": 83,
           "losses": 55,
           "ties": 0,
-          "pct": ".599"
+          "pct": ".601"
         },
         "probablePitcher": {
-          "id": 642547,
-          "fullName": "Freddy Peralta",
-          "link": "/api/v1/people/642547"
+          "id": 643377,
+          "fullName": "Griffin Jax",
+          "link": "/api/v1/people/643377"
         },
         "splitSquad": false,
         "seriesNumber": 45,
@@ -261,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 139,
-          "name": "Tampa Bay Rays",
-          "link": "/api/v1/teams/139"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 139,
+          "name": "Tampa Bay Rays",
+          "link": "/api/v1/teams/139"
         }
       }
     },
@@ -282,17 +282,42 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/822929/content"
+      "link": "/api/v1/game/822931/content"
     },
     "seriesStatus": {
-      "gameNumber": 2,
+      "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 139,
+        "name": "Tampa Bay Rays",
+        "link": "/api/v1/teams/139"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -301,25 +326,24 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-822929-2026-09-01",
+    "calendarEventID": "14-822931-2026-09-02",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 2,
+    "seriesGameNumber": 3,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "ifNecessaryDescription": "Normal Game"
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-01T13:02:47.166Z",
+    "generatedAt": "2026-09-02T12:30:33.044Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-01",
-    "cacheKey": "next-game:2026-09-01"
+    "referenceDate": "2026-09-02",
+    "cacheKey": "next-game:2026-09-02"
   }
 }
