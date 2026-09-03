@@ -1,17 +1,8 @@
 {
-  "gameId": 822931,
-  "startTime": "2026-09-02T22:40:00Z",
+  "gameId": 823579,
+  "startTime": "2026-09-04T23:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
-    "id": 139,
-    "canonicalKey": "rays",
-    "mlbStatsTeamId": 139,
-    "apiSportsTeamId": 139,
-    "name": "Tampa Bay Rays",
-    "abbreviation": "TB",
-    "record": null
-  },
-  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -20,92 +11,42 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "isMetsHome": false,
-  "venue": "Tropicana Field",
+  "awayTeam": {
+    "id": 137,
+    "canonicalKey": "giants",
+    "mlbStatsTeamId": 137,
+    "apiSportsTeamId": 137,
+    "name": "San Francisco Giants",
+    "abbreviation": "SF",
+    "record": null
+  },
+  "isMetsHome": true,
+  "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 663795,
-      "fullName": "Justin Hagenman",
-      "era": null,
+      "id": 690997,
+      "fullName": "Nolan McLean",
+      "era": "3.06",
       "fip": null,
-      "whip": null
+      "whip": "1.12"
     },
-    "opp": {
-      "id": 643377,
-      "fullName": "Griffin Jax",
-      "era": "3.63",
-      "fip": null,
-      "whip": "1.21"
-    }
+    "opp": null
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
-    "markets": [
-      {
-        "key": "h2h",
-        "label": "h2h",
-        "outcomes": [
-          {
-            "name": "New York Mets",
-            "price": 138,
-            "point": null
-          },
-          {
-            "name": "Tampa Bay Rays",
-            "price": -164,
-            "point": null
-          }
-        ]
-      },
-      {
-        "key": "spreads",
-        "label": "spreads",
-        "outcomes": [
-          {
-            "name": "New York Mets",
-            "price": -156,
-            "point": 1.5
-          },
-          {
-            "name": "Tampa Bay Rays",
-            "price": 130,
-            "point": -1.5
-          }
-        ]
-      },
-      {
-        "key": "totals",
-        "label": "totals",
-        "outcomes": [
-          {
-            "name": "Over",
-            "price": -110,
-            "point": 8
-          },
-          {
-            "name": "Under",
-            "price": -110,
-            "point": 8
-          }
-        ]
-      }
-    ]
-  },
+  "sportsbookSummary": null,
   "raw": {
-    "gamePk": 822931,
-    "gameGuid": "384c7956-7aeb-4b5b-9742-6965e4855024",
-    "link": "/api/v1.1/game/822931/feed/live",
+    "gamePk": 823579,
+    "gameGuid": "f6ddd809-5efa-47c7-8b3a-fb45d00eddef",
+    "link": "/api/v1.1/game/823579/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-02T22:40:00Z",
-    "officialDate": "2026-09-02",
+    "gameDate": "2026-09-04T23:10:00Z",
+    "officialDate": "2026-09-04",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -116,6 +57,69 @@
     },
     "teams": {
       "away": {
+        "team": {
+          "springLeague": {
+            "id": 114,
+            "name": "Cactus League",
+            "link": "/api/v1/league/114",
+            "abbreviation": "CL"
+          },
+          "allStarStatus": "N",
+          "id": 137,
+          "name": "San Francisco Giants",
+          "link": "/api/v1/teams/137",
+          "season": 2026,
+          "venue": {
+            "id": 2395,
+            "name": "Oracle Park",
+            "link": "/api/v1/venues/2395"
+          },
+          "springVenue": {
+            "id": 2532,
+            "link": "/api/v1/venues/2532"
+          },
+          "teamCode": "sfn",
+          "fileCode": "sf",
+          "abbreviation": "SF",
+          "teamName": "Giants",
+          "locationName": "San Francisco",
+          "firstYearOfPlay": "1883",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 203,
+            "name": "National League West",
+            "link": "/api/v1/divisions/203"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "San Francisco",
+          "franchiseName": "San Francisco",
+          "clubName": "Giants",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 58,
+          "losses": 82,
+          "ties": 0,
+          "pct": ".414"
+        },
+        "splitSquad": false,
+        "seriesNumber": 47,
+        "springLeague": {
+          "id": 114,
+          "name": "Cactus League",
+          "link": "/api/v1/league/114",
+          "abbreviation": "CL"
+        }
+      },
+      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -164,86 +168,18 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 62,
+          "wins": 63,
           "losses": 77,
           "ties": 0,
-          "pct": ".446"
+          "pct": ".450"
         },
         "probablePitcher": {
-          "id": 663795,
-          "fullName": "Justin Hagenman",
-          "link": "/api/v1/people/663795"
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
         },
         "splitSquad": false,
-        "seriesNumber": 45,
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        }
-      },
-      "home": {
-        "team": {
-          "springLeague": {
-            "id": 115,
-            "name": "Grapefruit League",
-            "link": "/api/v1/league/115",
-            "abbreviation": "GL"
-          },
-          "allStarStatus": "N",
-          "id": 139,
-          "name": "Tampa Bay Rays",
-          "link": "/api/v1/teams/139",
-          "season": 2026,
-          "venue": {
-            "id": 12,
-            "name": "Tropicana Field",
-            "link": "/api/v1/venues/12"
-          },
-          "springVenue": {
-            "id": 2534,
-            "link": "/api/v1/venues/2534"
-          },
-          "teamCode": "tba",
-          "fileCode": "tb",
-          "abbreviation": "TB",
-          "teamName": "Rays",
-          "locationName": "St. Petersburg",
-          "firstYearOfPlay": "1996",
-          "league": {
-            "id": 103,
-            "name": "American League",
-            "link": "/api/v1/league/103"
-          },
-          "division": {
-            "id": 201,
-            "name": "American League East",
-            "link": "/api/v1/divisions/201"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "Tampa Bay",
-          "franchiseName": "Tampa Bay",
-          "clubName": "Rays",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 83,
-          "losses": 55,
-          "ties": 0,
-          "pct": ".601"
-        },
-        "probablePitcher": {
-          "id": 643377,
-          "fullName": "Griffin Jax",
-          "link": "/api/v1/people/643377"
-        },
-        "splitSquad": false,
-        "seriesNumber": 45,
+        "seriesNumber": 46,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -268,56 +204,31 @@
       },
       "offense": {
         "team": {
-          "id": 139,
-          "name": "Tampa Bay Rays",
-          "link": "/api/v1/teams/139"
+          "id": 137,
+          "name": "San Francisco Giants",
+          "link": "/api/v1/teams/137"
         }
       }
     },
     "venue": {
-      "id": 12,
-      "name": "Tropicana Field",
-      "link": "/api/v1/venues/12",
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/822931/content"
+      "link": "/api/v1/game/823579/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
-      "wins": 1,
+      "wins": 0,
       "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 139,
-        "name": "Tampa Bay Rays",
-        "link": "/api/v1/teams/139"
-      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -326,24 +237,25 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-822931-2026-09-02",
+    "calendarEventID": "14-823579-2026-09-04",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-02T12:30:33.044Z",
+    "generatedAt": "2026-09-03T12:33:43.243Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-02",
-    "cacheKey": "next-game:2026-09-02"
+    "referenceDate": "2026-09-03",
+    "cacheKey": "next-game:2026-09-03"
   }
 }
