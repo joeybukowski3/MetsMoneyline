@@ -31,14 +31,73 @@
       "fip": null,
       "whip": "1.12"
     },
-    "opp": null
+    "opp": {
+      "id": 683363,
+      "fullName": "Matt Wilkinson",
+      "era": "4.63",
+      "fip": null,
+      "whip": "1.11"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -190,
+            "point": null
+          },
+          {
+            "name": "San Francisco Giants",
+            "price": 160,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 118,
+            "point": -1.5
+          },
+          {
+            "name": "San Francisco Giants",
+            "price": -142,
+            "point": 1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -115,
+            "point": 8
+          },
+          {
+            "name": "Under",
+            "price": -105,
+            "point": 8
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823579,
     "gameGuid": "f6ddd809-5efa-47c7-8b3a-fb45d00eddef",
@@ -106,9 +165,14 @@
         },
         "leagueRecord": {
           "wins": 58,
-          "losses": 82,
+          "losses": 83,
           "ties": 0,
-          "pct": ".414"
+          "pct": ".411"
+        },
+        "probablePitcher": {
+          "id": 683363,
+          "fullName": "Matt Wilkinson",
+          "link": "/api/v1/people/683363"
         },
         "splitSquad": false,
         "seriesNumber": 47,
@@ -197,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 137,
+          "name": "San Francisco Giants",
+          "link": "/api/v1/teams/137"
         }
       },
       "offense": {
         "team": {
-          "id": 137,
-          "name": "San Francisco Giants",
-          "link": "/api/v1/teams/137"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -253,9 +317,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-03T12:33:43.243Z",
+    "generatedAt": "2026-09-04T12:28:29.957Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-03",
-    "cacheKey": "next-game:2026-09-03"
+    "referenceDate": "2026-09-04",
+    "cacheKey": "next-game:2026-09-04"
   }
 }
