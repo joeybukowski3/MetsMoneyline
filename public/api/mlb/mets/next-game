@@ -1,6 +1,6 @@
 {
-  "gameId": 823579,
-  "startTime": "2026-09-04T23:10:00Z",
+  "gameId": 823577,
+  "startTime": "2026-09-05T20:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 690997,
-      "fullName": "Nolan McLean",
-      "era": "3.06",
+      "id": 804267,
+      "fullName": "Zac Thornton",
+      "era": "2.93",
       "fip": null,
-      "whip": "1.12"
+      "whip": "1.16"
     },
     "opp": {
-      "id": 683363,
-      "fullName": "Matt Wilkinson",
-      "era": "4.63",
+      "id": 683627,
+      "fullName": "Anthony Molina",
+      "era": "3.77",
       "fip": null,
-      "whip": "1.11"
+      "whip": "1.05"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -190,
+            "price": -184,
             "point": null
           },
           {
             "name": "San Francisco Giants",
-            "price": 160,
+            "price": 154,
             "point": null
           }
         ]
@@ -86,12 +86,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -115,
+            "price": -105,
             "point": 8
           },
           {
             "name": "Under",
-            "price": -105,
+            "price": -115,
             "point": 8
           }
         ]
@@ -99,13 +99,13 @@
     ]
   },
   "raw": {
-    "gamePk": 823579,
-    "gameGuid": "f6ddd809-5efa-47c7-8b3a-fb45d00eddef",
-    "link": "/api/v1.1/game/823579/feed/live",
+    "gamePk": 823577,
+    "gameGuid": "b3acde02-5dd9-44e1-967e-15d6e0f9cde1",
+    "link": "/api/v1.1/game/823577/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-04T23:10:00Z",
-    "officialDate": "2026-09-04",
+    "gameDate": "2026-09-05T20:10:00Z",
+    "officialDate": "2026-09-05",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -165,14 +165,14 @@
         },
         "leagueRecord": {
           "wins": 58,
-          "losses": 83,
+          "losses": 84,
           "ties": 0,
-          "pct": ".411"
+          "pct": ".408"
         },
         "probablePitcher": {
-          "id": 683363,
-          "fullName": "Matt Wilkinson",
-          "link": "/api/v1/people/683363"
+          "id": 683627,
+          "fullName": "Anthony Molina",
+          "link": "/api/v1/people/683627"
         },
         "splitSquad": false,
         "seriesNumber": 47,
@@ -232,15 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 63,
+          "wins": 64,
           "losses": 77,
           "ties": 0,
-          "pct": ".450"
+          "pct": ".454"
         },
         "probablePitcher": {
-          "id": 690997,
-          "fullName": "Nolan McLean",
-          "link": "/api/v1/people/690997"
+          "id": 804267,
+          "fullName": "Zac Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
         "seriesNumber": 46,
@@ -282,10 +282,10 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823579/content"
+      "link": "/api/v1/game/823577/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,25 +301,24 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823579-2026-09-04",
+    "calendarEventID": "14-823577-2026-09-05",
     "seasonDisplay": "2026",
-    "dayNight": "night",
+    "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "ifNecessaryDescription": "Normal Game"
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-04T12:28:29.957Z",
+    "generatedAt": "2026-09-05T11:36:04.062Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-04",
-    "cacheKey": "next-game:2026-09-04"
+    "referenceDate": "2026-09-05",
+    "cacheKey": "next-game:2026-09-05"
   }
 }
