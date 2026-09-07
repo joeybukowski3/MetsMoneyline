@@ -1,8 +1,17 @@
 {
-  "gameId": 823578,
-  "startTime": "2026-09-06T17:40:00Z",
+  "gameId": 823820,
+  "startTime": "2026-09-07T17:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
+    "id": 146,
+    "canonicalKey": "marlins",
+    "mlbStatsTeamId": 146,
+    "apiSportsTeamId": 146,
+    "name": "Miami Marlins",
+    "abbreviation": "MIA",
+    "record": null
+  },
+  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -11,32 +20,23 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "awayTeam": {
-    "id": 137,
-    "canonicalKey": "giants",
-    "mlbStatsTeamId": 137,
-    "apiSportsTeamId": 137,
-    "name": "San Francisco Giants",
-    "abbreviation": "SF",
-    "record": null
-  },
-  "isMetsHome": true,
-  "venue": "Citi Field",
+  "isMetsHome": false,
+  "venue": "loanDepot park",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 681035,
-      "fullName": "Christian Scott",
-      "era": "3.80",
+      "id": 804636,
+      "fullName": "Jonah Tong",
+      "era": "3.60",
       "fip": null,
-      "whip": "1.31"
+      "whip": "1.50"
     },
     "opp": {
-      "id": 702885,
-      "fullName": "Cesar Perdomo",
-      "era": "2.25",
+      "id": 691587,
+      "fullName": "Eury Pérez",
+      "era": "3.72",
       "fip": null,
-      "whip": "1.00"
+      "whip": "1.18"
     }
   },
   "lineups": {
@@ -45,21 +45,21 @@
     "opp": []
   },
   "sportsbookSummary": {
-    "key": "draftkings",
-    "title": "DraftKings",
+    "key": "fanduel",
+    "title": "FanDuel",
     "markets": [
       {
         "key": "h2h",
         "label": "h2h",
         "outcomes": [
           {
-            "name": "New York Mets",
-            "price": -156,
+            "name": "Miami Marlins",
+            "price": -132,
             "point": null
           },
           {
-            "name": "San Francisco Giants",
-            "price": 129,
+            "name": "New York Mets",
+            "price": 112,
             "point": null
           }
         ]
@@ -69,13 +69,13 @@
         "label": "spreads",
         "outcomes": [
           {
-            "name": "New York Mets",
-            "price": 135,
+            "name": "Miami Marlins",
+            "price": 158,
             "point": -1.5
           },
           {
-            "name": "San Francisco Giants",
-            "price": -163,
+            "name": "New York Mets",
+            "price": -192,
             "point": 1.5
           }
         ]
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -108,
-            "point": 8.5
+            "price": -110,
+            "point": 8
           },
           {
             "name": "Under",
-            "price": -112,
-            "point": 8.5
+            "price": -110,
+            "point": 8
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823578,
-    "gameGuid": "59feb861-b260-4308-8ded-50465e53d32b",
-    "link": "/api/v1.1/game/823578/feed/live",
+    "gamePk": 823820,
+    "gameGuid": "378f8205-ba96-4f85-948a-18fe8ac52488",
+    "link": "/api/v1.1/game/823820/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-06T17:40:00Z",
-    "officialDate": "2026-09-06",
+    "gameDate": "2026-09-07T17:10:00Z",
+    "officialDate": "2026-09-07",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -116,74 +116,6 @@
     },
     "teams": {
       "away": {
-        "team": {
-          "springLeague": {
-            "id": 114,
-            "name": "Cactus League",
-            "link": "/api/v1/league/114",
-            "abbreviation": "CL"
-          },
-          "allStarStatus": "N",
-          "id": 137,
-          "name": "San Francisco Giants",
-          "link": "/api/v1/teams/137",
-          "season": 2026,
-          "venue": {
-            "id": 2395,
-            "name": "Oracle Park",
-            "link": "/api/v1/venues/2395"
-          },
-          "springVenue": {
-            "id": 2532,
-            "link": "/api/v1/venues/2532"
-          },
-          "teamCode": "sfn",
-          "fileCode": "sf",
-          "abbreviation": "SF",
-          "teamName": "Giants",
-          "locationName": "San Francisco",
-          "firstYearOfPlay": "1883",
-          "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
-          },
-          "division": {
-            "id": 203,
-            "name": "National League West",
-            "link": "/api/v1/divisions/203"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "San Francisco",
-          "franchiseName": "San Francisco",
-          "clubName": "Giants",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 59,
-          "losses": 84,
-          "ties": 0,
-          "pct": ".413"
-        },
-        "probablePitcher": {
-          "id": 702885,
-          "fullName": "Cesar Perdomo",
-          "link": "/api/v1/people/702885"
-        },
-        "splitSquad": false,
-        "seriesNumber": 47,
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        }
-      },
-      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -232,18 +164,86 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 64,
+          "wins": 65,
           "losses": 78,
           "ties": 0,
-          "pct": ".451"
+          "pct": ".455"
         },
         "probablePitcher": {
-          "id": 681035,
-          "fullName": "Christian Scott",
-          "link": "/api/v1/people/681035"
+          "id": 804636,
+          "fullName": "Jonah Tong",
+          "link": "/api/v1/people/804636"
         },
         "splitSquad": false,
-        "seriesNumber": 46,
+        "seriesNumber": 47,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      },
+      "home": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 146,
+          "name": "Miami Marlins",
+          "link": "/api/v1/teams/146",
+          "season": 2026,
+          "venue": {
+            "id": 4169,
+            "name": "loanDepot park",
+            "link": "/api/v1/venues/4169"
+          },
+          "springVenue": {
+            "id": 2520,
+            "link": "/api/v1/venues/2520"
+          },
+          "teamCode": "mia",
+          "fileCode": "mia",
+          "abbreviation": "MIA",
+          "teamName": "Marlins",
+          "locationName": "Miami",
+          "firstYearOfPlay": "1991",
+          "league": {
+            "id": 104,
+            "name": "National League",
+            "link": "/api/v1/league/104"
+          },
+          "division": {
+            "id": 204,
+            "name": "National League East",
+            "link": "/api/v1/divisions/204"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Miami",
+          "franchiseName": "Miami",
+          "clubName": "Marlins",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 72,
+          "losses": 72,
+          "ties": 0,
+          "pct": ".500"
+        },
+        "probablePitcher": {
+          "id": 691587,
+          "fullName": "Eury Pérez",
+          "link": "/api/v1/people/691587"
+        },
+        "splitSquad": false,
+        "seriesNumber": 47,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -268,56 +268,31 @@
       },
       "offense": {
         "team": {
-          "id": 137,
-          "name": "San Francisco Giants",
-          "link": "/api/v1/teams/137"
+          "id": 146,
+          "name": "Miami Marlins",
+          "link": "/api/v1/teams/146"
         }
       }
     },
     "venue": {
-      "id": 3289,
-      "name": "Citi Field",
-      "link": "/api/v1/venues/3289",
+      "id": 4169,
+      "name": "loanDepot park",
+      "link": "/api/v1/venues/4169",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823578/content"
+      "link": "/api/v1/game/823820/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
-      "isTied": false,
+      "isTied": true,
       "isOver": false,
-      "wins": 1,
+      "wins": 0,
       "losses": 0,
-      "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 121,
-        "name": "New York Mets",
-        "link": "/api/v1/teams/121"
-      },
-      "losingTeam": {
-        "springLeague": {
-          "id": 114,
-          "name": "Cactus League",
-          "link": "/api/v1/league/114",
-          "abbreviation": "CL"
-        },
-        "allStarStatus": "N",
-        "id": 137,
-        "name": "San Francisco Giants",
-        "link": "/api/v1/teams/137"
-      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -326,14 +301,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823578-2026-09-06",
+    "calendarEventID": "14-823820-2026-09-07",
     "seasonDisplay": "2026",
     "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -342,9 +317,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-06T11:55:50.367Z",
+    "generatedAt": "2026-09-07T13:57:13.144Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-06",
-    "cacheKey": "next-game:2026-09-06"
+    "referenceDate": "2026-09-07",
+    "cacheKey": "next-game:2026-09-07"
   }
 }
