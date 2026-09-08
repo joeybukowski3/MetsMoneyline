@@ -1,6 +1,6 @@
 {
-  "gameId": 823820,
-  "startTime": "2026-09-07T17:10:00Z",
+  "gameId": 823821,
+  "startTime": "2026-09-08T22:40:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 146,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 804636,
-      "fullName": "Jonah Tong",
-      "era": "3.60",
+      "id": 640455,
+      "fullName": "Sean Manaea",
+      "era": "4.70",
       "fip": null,
-      "whip": "1.50"
+      "whip": "1.36"
     },
     "opp": {
-      "id": 691587,
-      "fullName": "Eury Pérez",
-      "era": "3.72",
+      "id": 645261,
+      "fullName": "Sandy Alcantara",
+      "era": "3.54",
       "fip": null,
-      "whip": "1.18"
+      "whip": "1.19"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "Miami Marlins",
-            "price": -132,
+            "price": -134,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": 112,
+            "price": 116,
             "point": null
           }
         ]
@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "Miami Marlins",
-            "price": 158,
+            "price": 146,
             "point": -1.5
           },
           {
             "name": "New York Mets",
-            "price": -192,
+            "price": -178,
             "point": 1.5
           }
         ]
@@ -86,12 +86,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -110,
+            "price": -108,
             "point": 8
           },
           {
             "name": "Under",
-            "price": -110,
+            "price": -112,
             "point": 8
           }
         ]
@@ -99,13 +99,13 @@
     ]
   },
   "raw": {
-    "gamePk": 823820,
-    "gameGuid": "378f8205-ba96-4f85-948a-18fe8ac52488",
-    "link": "/api/v1.1/game/823820/feed/live",
+    "gamePk": 823821,
+    "gameGuid": "ef525be5-dde1-4d5d-9219-37768dc99036",
+    "link": "/api/v1.1/game/823821/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-07T17:10:00Z",
-    "officialDate": "2026-09-07",
+    "gameDate": "2026-09-08T22:40:00Z",
+    "officialDate": "2026-09-08",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 65,
+          "wins": 66,
           "losses": 78,
           "ties": 0,
-          "pct": ".455"
+          "pct": ".458"
         },
         "probablePitcher": {
-          "id": 804636,
-          "fullName": "Jonah Tong",
-          "link": "/api/v1/people/804636"
+          "id": 640455,
+          "fullName": "Sean Manaea",
+          "link": "/api/v1/people/640455"
         },
         "splitSquad": false,
         "seriesNumber": 47,
@@ -233,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 72,
-          "losses": 72,
+          "losses": 73,
           "ties": 0,
-          "pct": ".500"
+          "pct": ".497"
         },
         "probablePitcher": {
-          "id": 691587,
-          "fullName": "Eury Pérez",
-          "link": "/api/v1/people/691587"
+          "id": 645261,
+          "fullName": "Sandy Alcantara",
+          "link": "/api/v1/people/645261"
         },
         "splitSquad": false,
         "seriesNumber": 47,
@@ -282,17 +282,42 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823820/content"
+      "link": "/api/v1/game/823821/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 146,
+        "name": "Miami Marlins",
+        "link": "/api/v1/teams/146"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "NYM leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -301,25 +326,24 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823820-2026-09-07",
+    "calendarEventID": "14-823821-2026-09-08",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "ifNecessaryDescription": "Normal Game"
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-07T13:57:13.144Z",
+    "generatedAt": "2026-09-08T12:35:56.811Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-07",
-    "cacheKey": "next-game:2026-09-07"
+    "referenceDate": "2026-09-08",
+    "cacheKey": "next-game:2026-09-08"
   }
 }
