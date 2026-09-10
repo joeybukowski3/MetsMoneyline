@@ -1,14 +1,14 @@
 {
-  "gameId": 823818,
-  "startTime": "2026-09-09T22:40:00Z",
+  "gameId": 823498,
+  "startTime": "2026-09-11T23:05:00Z",
   "status": "Scheduled",
   "homeTeam": {
-    "id": 146,
-    "canonicalKey": "marlins",
-    "mlbStatsTeamId": 146,
-    "apiSportsTeamId": 146,
-    "name": "Miami Marlins",
-    "abbreviation": "MIA",
+    "id": 147,
+    "canonicalKey": "yankees",
+    "mlbStatsTeamId": 147,
+    "apiSportsTeamId": 147,
+    "name": "New York Yankees",
+    "abbreviation": "NYY",
     "record": null
   },
   "awayTeam": {
@@ -21,91 +21,32 @@
     "record": null
   },
   "isMetsHome": false,
-  "venue": "loanDepot park",
+  "venue": "Yankee Stadium",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 476594,
-      "fullName": "Robert Stock",
-      "era": "5.81",
+      "id": 690997,
+      "fullName": "Nolan McLean",
+      "era": "3.06",
       "fip": null,
-      "whip": "1.75"
+      "whip": "1.14"
     },
-    "opp": {
-      "id": 676083,
-      "fullName": "Janson Junk",
-      "era": "4.00",
-      "fip": null,
-      "whip": "1.28"
-    }
+    "opp": null
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
-    "markets": [
-      {
-        "key": "h2h",
-        "label": "h2h",
-        "outcomes": [
-          {
-            "name": "Miami Marlins",
-            "price": -124,
-            "point": null
-          },
-          {
-            "name": "New York Mets",
-            "price": 106,
-            "point": null
-          }
-        ]
-      },
-      {
-        "key": "spreads",
-        "label": "spreads",
-        "outcomes": [
-          {
-            "name": "Miami Marlins",
-            "price": -192,
-            "point": 1.5
-          },
-          {
-            "name": "New York Mets",
-            "price": 158,
-            "point": -1.5
-          }
-        ]
-      },
-      {
-        "key": "totals",
-        "label": "totals",
-        "outcomes": [
-          {
-            "name": "Over",
-            "price": -122,
-            "point": 8.5
-          },
-          {
-            "name": "Under",
-            "price": 100,
-            "point": 8.5
-          }
-        ]
-      }
-    ]
-  },
+  "sportsbookSummary": null,
   "raw": {
-    "gamePk": 823818,
-    "gameGuid": "b9a08959-0904-4fc2-9aec-c2d66a230bcb",
-    "link": "/api/v1.1/game/823818/feed/live",
+    "gamePk": 823498,
+    "gameGuid": "fff2c060-9713-4ca1-9f54-86918017d4db",
+    "link": "/api/v1.1/game/823498/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-09T22:40:00Z",
-    "officialDate": "2026-09-09",
+    "gameDate": "2026-09-11T23:05:00Z",
+    "officialDate": "2026-09-11",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,18 +105,18 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 67,
+          "wins": 68,
           "losses": 78,
           "ties": 0,
-          "pct": ".462"
+          "pct": ".466"
         },
         "probablePitcher": {
-          "id": 476594,
-          "fullName": "Robert Stock",
-          "link": "/api/v1/people/476594"
+          "id": 690997,
+          "fullName": "Nolan McLean",
+          "link": "/api/v1/people/690997"
         },
         "splitSquad": false,
-        "seriesNumber": 47,
+        "seriesNumber": 48,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -192,58 +133,53 @@
             "abbreviation": "GL"
           },
           "allStarStatus": "N",
-          "id": 146,
-          "name": "Miami Marlins",
-          "link": "/api/v1/teams/146",
+          "id": 147,
+          "name": "New York Yankees",
+          "link": "/api/v1/teams/147",
           "season": 2026,
           "venue": {
-            "id": 4169,
-            "name": "loanDepot park",
-            "link": "/api/v1/venues/4169"
+            "id": 3313,
+            "name": "Yankee Stadium",
+            "link": "/api/v1/venues/3313"
           },
           "springVenue": {
-            "id": 2520,
-            "link": "/api/v1/venues/2520"
+            "id": 2523,
+            "link": "/api/v1/venues/2523"
           },
-          "teamCode": "mia",
-          "fileCode": "mia",
-          "abbreviation": "MIA",
-          "teamName": "Marlins",
-          "locationName": "Miami",
-          "firstYearOfPlay": "1991",
+          "teamCode": "nya",
+          "fileCode": "nyy",
+          "abbreviation": "NYY",
+          "teamName": "Yankees",
+          "locationName": "Bronx",
+          "firstYearOfPlay": "1903",
           "league": {
-            "id": 104,
-            "name": "National League",
-            "link": "/api/v1/league/104"
+            "id": 103,
+            "name": "American League",
+            "link": "/api/v1/league/103"
           },
           "division": {
-            "id": 204,
-            "name": "National League East",
-            "link": "/api/v1/divisions/204"
+            "id": 201,
+            "name": "American League East",
+            "link": "/api/v1/divisions/201"
           },
           "sport": {
             "id": 1,
             "link": "/api/v1/sports/1",
             "name": "Major League Baseball"
           },
-          "shortName": "Miami",
-          "franchiseName": "Miami",
-          "clubName": "Marlins",
+          "shortName": "NY Yankees",
+          "franchiseName": "New York",
+          "clubName": "Yankees",
           "active": true
         },
         "leagueRecord": {
-          "wins": 72,
-          "losses": 74,
+          "wins": 83,
+          "losses": 62,
           "ties": 0,
-          "pct": ".493"
-        },
-        "probablePitcher": {
-          "id": 676083,
-          "fullName": "Janson Junk",
-          "link": "/api/v1/people/676083"
+          "pct": ".572"
         },
         "splitSquad": false,
-        "seriesNumber": 47,
+        "seriesNumber": 48,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -261,9 +197,9 @@
       },
       "defense": {
         "team": {
-          "id": 146,
-          "name": "Miami Marlins",
-          "link": "/api/v1/teams/146"
+          "id": 147,
+          "name": "New York Yankees",
+          "link": "/api/v1/teams/147"
         }
       },
       "offense": {
@@ -275,17 +211,17 @@
       }
     },
     "venue": {
-      "id": 4169,
-      "name": "loanDepot park",
-      "link": "/api/v1/venues/4169",
+      "id": 3313,
+      "name": "Yankee Stadium",
+      "link": "/api/v1/venues/3313",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823818/content"
+      "link": "/api/v1/game/823498/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,14 +237,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823818-2026-09-09",
+    "calendarEventID": "14-823498-2026-09-11",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -316,9 +252,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-09T12:42:29.148Z",
+    "generatedAt": "2026-09-10T12:40:49.448Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-09",
-    "cacheKey": "next-game:2026-09-09"
+    "referenceDate": "2026-09-10",
+    "cacheKey": "next-game:2026-09-10"
   }
 }
