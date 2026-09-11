@@ -31,14 +31,73 @@
       "fip": null,
       "whip": "1.14"
     },
-    "opp": null
+    "opp": {
+      "id": 607074,
+      "fullName": "Carlos Rodón",
+      "era": "3.09",
+      "fip": null,
+      "whip": "1.17"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "fanduel",
+    "title": "FanDuel",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 118,
+            "point": null
+          },
+          {
+            "name": "New York Yankees",
+            "price": -138,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -192,
+            "point": 1.5
+          },
+          {
+            "name": "New York Yankees",
+            "price": 158,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": 106,
+            "point": 8.5
+          },
+          {
+            "name": "Under",
+            "price": -130,
+            "point": 8.5
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 823498,
     "gameGuid": "fff2c060-9713-4ca1-9f54-86918017d4db",
@@ -173,10 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 83,
+          "wins": 84,
           "losses": 62,
           "ties": 0,
-          "pct": ".572"
+          "pct": ".575"
+        },
+        "probablePitcher": {
+          "id": 607074,
+          "fullName": "Carlos Rodón",
+          "link": "/api/v1/people/607074"
         },
         "splitSquad": false,
         "seriesNumber": 48,
@@ -197,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 147,
-          "name": "New York Yankees",
-          "link": "/api/v1/teams/147"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 147,
+          "name": "New York Yankees",
+          "link": "/api/v1/teams/147"
         }
       }
     },
@@ -252,9 +316,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-10T12:40:49.448Z",
+    "generatedAt": "2026-09-11T12:34:33.480Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-10",
-    "cacheKey": "next-game:2026-09-10"
+    "referenceDate": "2026-09-11",
+    "cacheKey": "next-game:2026-09-11"
   }
 }
