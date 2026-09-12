@@ -1,6 +1,6 @@
 {
-  "gameId": 823498,
-  "startTime": "2026-09-11T23:05:00Z",
+  "gameId": 823496,
+  "startTime": "2026-09-12T17:35:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 147,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 690997,
-      "fullName": "Nolan McLean",
-      "era": "3.06",
+      "id": 804267,
+      "fullName": "Zac Thornton",
+      "era": "3.53",
       "fip": null,
-      "whip": "1.14"
+      "whip": "1.19"
     },
     "opp": {
-      "id": 607074,
-      "fullName": "Carlos Rodón",
-      "era": "3.09",
+      "id": 543037,
+      "fullName": "Gerrit Cole",
+      "era": "3.41",
       "fip": null,
-      "whip": "1.17"
+      "whip": "1.09"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 118,
+            "price": 154,
             "point": null
           },
           {
             "name": "New York Yankees",
-            "price": -138,
+            "price": -184,
             "point": null
           }
         ]
@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -192,
+            "price": -137,
             "point": 1.5
           },
           {
             "name": "New York Yankees",
-            "price": 158,
+            "price": 114,
             "point": -1.5
           }
         ]
@@ -99,13 +99,13 @@
     ]
   },
   "raw": {
-    "gamePk": 823498,
-    "gameGuid": "fff2c060-9713-4ca1-9f54-86918017d4db",
-    "link": "/api/v1.1/game/823498/feed/live",
+    "gamePk": 823496,
+    "gameGuid": "f2ae61a3-2b70-4dd6-a979-2870c041f288",
+    "link": "/api/v1.1/game/823496/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-11T23:05:00Z",
-    "officialDate": "2026-09-11",
+    "gameDate": "2026-09-12T17:35:00Z",
+    "officialDate": "2026-09-12",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -165,14 +165,14 @@
         },
         "leagueRecord": {
           "wins": 68,
-          "losses": 78,
+          "losses": 79,
           "ties": 0,
-          "pct": ".466"
+          "pct": ".463"
         },
         "probablePitcher": {
-          "id": 690997,
-          "fullName": "Nolan McLean",
-          "link": "/api/v1/people/690997"
+          "id": 804267,
+          "fullName": "Zac Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
         "seriesNumber": 48,
@@ -232,15 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 84,
+          "wins": 85,
           "losses": 62,
           "ties": 0,
-          "pct": ".575"
+          "pct": ".578"
         },
         "probablePitcher": {
-          "id": 607074,
-          "fullName": "Carlos Rodón",
-          "link": "/api/v1/people/607074"
+          "id": 543037,
+          "fullName": "Gerrit Cole",
+          "link": "/api/v1/people/543037"
         },
         "splitSquad": false,
         "seriesNumber": 48,
@@ -261,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 147,
+          "name": "New York Yankees",
+          "link": "/api/v1/teams/147"
         }
       },
       "offense": {
         "team": {
-          "id": 147,
-          "name": "New York Yankees",
-          "link": "/api/v1/teams/147"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       }
     },
@@ -282,10 +282,10 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823498/content"
+      "link": "/api/v1/game/823496/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,14 +301,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823498-2026-09-11",
+    "calendarEventID": "14-823496-2026-09-12",
     "seasonDisplay": "2026",
-    "dayNight": "night",
+    "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
-    "inningBreakLength": 120,
+    "inningBreakLength": 145,
     "gamesInSeries": 3,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -316,9 +316,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-11T12:34:33.480Z",
+    "generatedAt": "2026-09-12T11:57:11.812Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-11",
-    "cacheKey": "next-game:2026-09-11"
+    "referenceDate": "2026-09-12",
+    "cacheKey": "next-game:2026-09-12"
   }
 }
