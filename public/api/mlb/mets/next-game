@@ -1,17 +1,8 @@
 {
-  "gameId": 823495,
-  "startTime": "2026-09-13T17:35:00Z",
+  "gameId": 823575,
+  "startTime": "2026-09-14T23:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
-    "id": 147,
-    "canonicalKey": "yankees",
-    "mlbStatsTeamId": 147,
-    "apiSportsTeamId": 147,
-    "name": "New York Yankees",
-    "abbreviation": "NYY",
-    "record": null
-  },
-  "awayTeam": {
     "id": 121,
     "canonicalKey": "mets",
     "mlbStatsTeamId": 121,
@@ -20,23 +11,32 @@
     "abbreviation": "NYM",
     "record": null
   },
-  "isMetsHome": false,
-  "venue": "Yankee Stadium",
+  "awayTeam": {
+    "id": 110,
+    "canonicalKey": "orioles",
+    "mlbStatsTeamId": 110,
+    "apiSportsTeamId": 110,
+    "name": "Baltimore Orioles",
+    "abbreviation": "BAL",
+    "record": null
+  },
+  "isMetsHome": true,
+  "venue": "Citi Field",
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 681035,
-      "fullName": "Christian Scott",
-      "era": "3.81",
+      "id": 804636,
+      "fullName": "Jonah Tong",
+      "era": "4.80",
       "fip": null,
-      "whip": "1.29"
+      "whip": "1.33"
     },
     "opp": {
-      "id": 693645,
-      "fullName": "Cam Schlittler",
-      "era": "2.01",
+      "id": 687064,
+      "fullName": "Brandon Young",
+      "era": "3.71",
       "fip": null,
-      "whip": "0.92"
+      "whip": "1.35"
     }
   },
   "lineups": {
@@ -53,13 +53,13 @@
         "label": "h2h",
         "outcomes": [
           {
-            "name": "New York Mets",
-            "price": 154,
+            "name": "Baltimore Orioles",
+            "price": 102,
             "point": null
           },
           {
-            "name": "New York Yankees",
-            "price": -184,
+            "name": "New York Mets",
+            "price": -120,
             "point": null
           }
         ]
@@ -69,14 +69,14 @@
         "label": "spreads",
         "outcomes": [
           {
-            "name": "New York Mets",
-            "price": -144,
-            "point": 1.5
+            "name": "Baltimore Orioles",
+            "price": 168,
+            "point": -1.5
           },
           {
-            "name": "New York Yankees",
-            "price": 120,
-            "point": -1.5
+            "name": "New York Mets",
+            "price": -205,
+            "point": 1.5
           }
         ]
       },
@@ -86,12 +86,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -115,
+            "price": -128,
             "point": 7.5
           },
           {
             "name": "Under",
-            "price": -105,
+            "price": 104,
             "point": 7.5
           }
         ]
@@ -99,13 +99,13 @@
     ]
   },
   "raw": {
-    "gamePk": 823495,
-    "gameGuid": "7fe648c6-2d89-4574-b7e4-5316e0586403",
-    "link": "/api/v1.1/game/823495/feed/live",
+    "gamePk": 823575,
+    "gameGuid": "d779c92e-fbc6-4e85-afff-eef330a52ec8",
+    "link": "/api/v1.1/game/823575/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-13T17:35:00Z",
-    "officialDate": "2026-09-13",
+    "gameDate": "2026-09-14T23:10:00Z",
+    "officialDate": "2026-09-14",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -116,6 +116,74 @@
     },
     "teams": {
       "away": {
+        "team": {
+          "springLeague": {
+            "id": 115,
+            "name": "Grapefruit League",
+            "link": "/api/v1/league/115",
+            "abbreviation": "GL"
+          },
+          "allStarStatus": "N",
+          "id": 110,
+          "name": "Baltimore Orioles",
+          "link": "/api/v1/teams/110",
+          "season": 2026,
+          "venue": {
+            "id": 2,
+            "name": "Oriole Park at Camden Yards",
+            "link": "/api/v1/venues/2"
+          },
+          "springVenue": {
+            "id": 2508,
+            "link": "/api/v1/venues/2508"
+          },
+          "teamCode": "bal",
+          "fileCode": "bal",
+          "abbreviation": "BAL",
+          "teamName": "Orioles",
+          "locationName": "Baltimore",
+          "firstYearOfPlay": "1901",
+          "league": {
+            "id": 103,
+            "name": "American League",
+            "link": "/api/v1/league/103"
+          },
+          "division": {
+            "id": 201,
+            "name": "American League East",
+            "link": "/api/v1/divisions/201"
+          },
+          "sport": {
+            "id": 1,
+            "link": "/api/v1/sports/1",
+            "name": "Major League Baseball"
+          },
+          "shortName": "Baltimore",
+          "franchiseName": "Baltimore",
+          "clubName": "Orioles",
+          "active": true
+        },
+        "leagueRecord": {
+          "wins": 72,
+          "losses": 78,
+          "ties": 0,
+          "pct": ".480"
+        },
+        "probablePitcher": {
+          "id": 687064,
+          "fullName": "Brandon Young",
+          "link": "/api/v1/people/687064"
+        },
+        "splitSquad": false,
+        "seriesNumber": 49,
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        }
+      },
+      "home": {
         "team": {
           "springLeague": {
             "id": 115,
@@ -165,85 +233,17 @@
         },
         "leagueRecord": {
           "wins": 69,
-          "losses": 79,
+          "losses": 80,
           "ties": 0,
-          "pct": ".466"
+          "pct": ".463"
         },
         "probablePitcher": {
-          "id": 681035,
-          "fullName": "Christian Scott",
-          "link": "/api/v1/people/681035"
+          "id": 804636,
+          "fullName": "Jonah Tong",
+          "link": "/api/v1/people/804636"
         },
         "splitSquad": false,
-        "seriesNumber": 48,
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        }
-      },
-      "home": {
-        "team": {
-          "springLeague": {
-            "id": 115,
-            "name": "Grapefruit League",
-            "link": "/api/v1/league/115",
-            "abbreviation": "GL"
-          },
-          "allStarStatus": "N",
-          "id": 147,
-          "name": "New York Yankees",
-          "link": "/api/v1/teams/147",
-          "season": 2026,
-          "venue": {
-            "id": 3313,
-            "name": "Yankee Stadium",
-            "link": "/api/v1/venues/3313"
-          },
-          "springVenue": {
-            "id": 2523,
-            "link": "/api/v1/venues/2523"
-          },
-          "teamCode": "nya",
-          "fileCode": "nyy",
-          "abbreviation": "NYY",
-          "teamName": "Yankees",
-          "locationName": "Bronx",
-          "firstYearOfPlay": "1903",
-          "league": {
-            "id": 103,
-            "name": "American League",
-            "link": "/api/v1/league/103"
-          },
-          "division": {
-            "id": 201,
-            "name": "American League East",
-            "link": "/api/v1/divisions/201"
-          },
-          "sport": {
-            "id": 1,
-            "link": "/api/v1/sports/1",
-            "name": "Major League Baseball"
-          },
-          "shortName": "NY Yankees",
-          "franchiseName": "New York",
-          "clubName": "Yankees",
-          "active": true
-        },
-        "leagueRecord": {
-          "wins": 85,
-          "losses": 63,
-          "ties": 0,
-          "pct": ".574"
-        },
-        "probablePitcher": {
-          "id": 693645,
-          "fullName": "Cam Schlittler",
-          "link": "/api/v1/people/693645"
-        },
-        "splitSquad": false,
-        "seriesNumber": 48,
+        "seriesNumber": 49,
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -261,9 +261,9 @@
       },
       "defense": {
         "team": {
-          "id": 147,
-          "name": "New York Yankees",
-          "link": "/api/v1/teams/147"
+          "id": 110,
+          "name": "Baltimore Orioles",
+          "link": "/api/v1/teams/110"
         }
       },
       "offense": {
@@ -275,17 +275,17 @@
       }
     },
     "venue": {
-      "id": 3313,
-      "name": "Yankee Stadium",
-      "link": "/api/v1/venues/3313",
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289",
       "active": true,
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823495/content"
+      "link": "/api/v1/game/823575/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 1,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
@@ -301,24 +301,25 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823495-2026-09-13",
+    "calendarEventID": "14-823575-2026-09-14",
     "seasonDisplay": "2026",
-    "dayNight": "day",
+    "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 1,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-13T13:04:55.706Z",
+    "generatedAt": "2026-09-14T14:42:00.395Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-13",
-    "cacheKey": "next-game:2026-09-13"
+    "referenceDate": "2026-09-14",
+    "cacheKey": "next-game:2026-09-14"
   }
 }
