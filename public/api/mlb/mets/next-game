@@ -1,6 +1,6 @@
 {
-  "gameId": 823574,
-  "startTime": "2026-09-15T23:10:00Z",
+  "gameId": 823576,
+  "startTime": "2026-09-16T23:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 640455,
-      "fullName": "Sean Manaea",
-      "era": "4.79",
+      "id": 476594,
+      "fullName": "Robert Stock",
+      "era": "5.93",
       "fip": null,
-      "whip": "1.34"
+      "whip": "1.75"
     },
     "opp": {
-      "id": 669358,
-      "fullName": "Shane Baz",
-      "era": "4.05",
+      "id": 605135,
+      "fullName": "Chris Bassitt",
+      "era": "4.88",
       "fip": null,
-      "whip": "1.33"
+      "whip": "1.59"
     }
   },
   "lineups": {
@@ -45,8 +45,8 @@
     "opp": []
   },
   "sportsbookSummary": {
-    "key": "draftkings",
-    "title": "DraftKings",
+    "key": "fanduel",
+    "title": "FanDuel",
     "markets": [
       {
         "key": "h2h",
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "Baltimore Orioles",
-            "price": 112,
+            "price": 118,
             "point": null
           },
           {
             "name": "New York Mets",
-            "price": -134,
+            "price": -138,
             "point": null
           }
         ]
@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "Baltimore Orioles",
-            "price": -193,
+            "price": -176,
             "point": 1.5
           },
           {
             "name": "New York Mets",
-            "price": 158,
+            "price": 146,
             "point": -1.5
           }
         ]
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -110,
-            "point": 8
+            "price": -128,
+            "point": 8.5
           },
           {
             "name": "Under",
-            "price": -110,
-            "point": 8
+            "price": 104,
+            "point": 8.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823574,
-    "gameGuid": "9d48ccf5-6892-4707-8750-96bc0d01e20d",
-    "link": "/api/v1.1/game/823574/feed/live",
+    "gamePk": 823576,
+    "gameGuid": "92ee77dd-9d98-4d1e-85d3-687c22c147cf",
+    "link": "/api/v1.1/game/823576/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-15T23:10:00Z",
-    "officialDate": "2026-09-15",
+    "gameDate": "2026-09-16T23:10:00Z",
+    "officialDate": "2026-09-16",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 73,
+          "wins": 74,
           "losses": 78,
           "ties": 0,
-          "pct": ".483"
+          "pct": ".487"
         },
         "probablePitcher": {
-          "id": 669358,
-          "fullName": "Shane Baz",
-          "link": "/api/v1/people/669358"
+          "id": 605135,
+          "fullName": "Chris Bassitt",
+          "link": "/api/v1/people/605135"
         },
         "splitSquad": false,
         "seriesNumber": 49,
@@ -233,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 69,
-          "losses": 81,
+          "losses": 82,
           "ties": 0,
-          "pct": ".460"
+          "pct": ".457"
         },
         "probablePitcher": {
-          "id": 640455,
-          "fullName": "Sean Manaea",
-          "link": "/api/v1/people/640455"
+          "id": 476594,
+          "fullName": "Robert Stock",
+          "link": "/api/v1/people/476594"
         },
         "splitSquad": false,
         "seriesNumber": 49,
@@ -282,17 +282,42 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823574/content"
+      "link": "/api/v1/game/823576/content"
     },
     "seriesStatus": {
-      "gameNumber": 2,
+      "gameNumber": 3,
       "totalGames": 3,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 2,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 110,
+        "name": "Baltimore Orioles",
+        "link": "/api/v1/teams/110"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "BAL leads 2-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -301,15 +326,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823574-2026-09-15",
+    "calendarEventID": "14-823576-2026-09-16",
     "seasonDisplay": "2026",
     "dayNight": "night",
-    "description": "Roberto Clemente Day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
-    "inningBreakLength": 120,
+    "inningBreakLength": 145,
     "gamesInSeries": 3,
-    "seriesGameNumber": 2,
+    "seriesGameNumber": 3,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -318,9 +342,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-15T13:06:35.320Z",
+    "generatedAt": "2026-09-16T13:05:07.251Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-15",
-    "cacheKey": "next-game:2026-09-15"
+    "referenceDate": "2026-09-16",
+    "cacheKey": "next-game:2026-09-16"
   }
 }
