@@ -1,6 +1,6 @@
 {
-  "gameId": 823573,
-  "startTime": "2026-09-17T23:15:00Z",
+  "gameId": 823572,
+  "startTime": "2026-09-18T23:15:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 690997,
-      "fullName": "Nolan McLean",
-      "era": "3.24",
+      "id": 804267,
+      "fullName": "Zac Thornton",
+      "era": "3.44",
       "fip": null,
-      "whip": "1.18"
+      "whip": "1.16"
     },
     "opp": {
-      "id": 605400,
-      "fullName": "Aaron Nola",
-      "era": "4.69",
+      "id": 691725,
+      "fullName": "Andrew Painter",
+      "era": "5.54",
       "fip": null,
-      "whip": "1.37"
+      "whip": "1.44"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -134,
+            "price": -118,
             "point": null
           },
           {
             "name": "Philadelphia Phillies",
-            "price": 114,
+            "price": 100,
             "point": null
           }
         ]
@@ -70,13 +70,13 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 158,
-            "point": -1.5
+            "price": -192,
+            "point": 1.5
           },
           {
             "name": "Philadelphia Phillies",
-            "price": -192,
-            "point": 1.5
+            "price": 158,
+            "point": -1.5
           }
         ]
       },
@@ -86,12 +86,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": 104,
+            "price": -110,
             "point": 8.5
           },
           {
             "name": "Under",
-            "price": -128,
+            "price": -110,
             "point": 8.5
           }
         ]
@@ -99,13 +99,13 @@
     ]
   },
   "raw": {
-    "gamePk": 823573,
-    "gameGuid": "66cbf79d-dacb-4840-b913-c392b04b12f1",
-    "link": "/api/v1.1/game/823573/feed/live",
+    "gamePk": 823572,
+    "gameGuid": "363c14f3-36d2-483a-99e7-6f72d5a22aaf",
+    "link": "/api/v1.1/game/823572/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-17T23:15:00Z",
-    "officialDate": "2026-09-17",
+    "gameDate": "2026-09-18T23:15:00Z",
+    "officialDate": "2026-09-18",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 84,
+          "wins": 85,
           "losses": 68,
           "ties": 0,
-          "pct": ".553"
+          "pct": ".556"
         },
         "probablePitcher": {
-          "id": 605400,
-          "fullName": "Aaron Nola",
-          "link": "/api/v1/people/605400"
+          "id": 691725,
+          "fullName": "Andrew Painter",
+          "link": "/api/v1/people/691725"
         },
         "splitSquad": false,
         "seriesNumber": 50,
@@ -233,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 69,
-          "losses": 83,
+          "losses": 84,
           "ties": 0,
-          "pct": ".454"
+          "pct": ".451"
         },
         "probablePitcher": {
-          "id": 690997,
-          "fullName": "Nolan McLean",
-          "link": "/api/v1/people/690997"
+          "id": 804267,
+          "fullName": "Zac Thornton",
+          "link": "/api/v1/people/804267"
         },
         "splitSquad": false,
         "seriesNumber": 50,
@@ -282,17 +282,42 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823573/content"
+      "link": "/api/v1/game/823572/content"
     },
     "seriesStatus": {
-      "gameNumber": 1,
+      "gameNumber": 2,
       "totalGames": 4,
-      "isTied": true,
+      "isTied": false,
       "isOver": false,
-      "wins": 0,
+      "wins": 1,
       "losses": 0,
+      "winningTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 143,
+        "name": "Philadelphia Phillies",
+        "link": "/api/v1/teams/143"
+      },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "PHI leads 1-0",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -301,24 +326,25 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823573-2026-09-17",
+    "calendarEventID": "14-823572-2026-09-18",
     "seasonDisplay": "2026",
     "dayNight": "night",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 145,
     "gamesInSeries": 4,
-    "seriesGameNumber": 1,
+    "seriesGameNumber": 2,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game"
+    "ifNecessaryDescription": "Normal Game",
+    "lineups": {}
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-17T13:01:05.733Z",
+    "generatedAt": "2026-09-18T12:40:14.955Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-17",
-    "cacheKey": "next-game:2026-09-17"
+    "referenceDate": "2026-09-18",
+    "cacheKey": "next-game:2026-09-18"
   }
 }
