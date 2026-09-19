@@ -1,6 +1,6 @@
 {
-  "gameId": 823572,
-  "startTime": "2026-09-18T23:15:00Z",
+  "gameId": 823571,
+  "startTime": "2026-09-19T20:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,11 +25,11 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 804267,
-      "fullName": "Zac Thornton",
-      "era": "3.44",
+      "id": 681035,
+      "fullName": "Christian Scott",
+      "era": "3.76",
       "fip": null,
-      "whip": "1.16"
+      "whip": "1.26"
     },
     "opp": {
       "id": 691725,
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -118,
+            "price": -120,
             "point": null
           },
           {
             "name": "Philadelphia Phillies",
-            "price": 100,
+            "price": 102,
             "point": null
           }
         ]
@@ -70,13 +70,13 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -192,
-            "point": 1.5
+            "price": 172,
+            "point": -1.5
           },
           {
             "name": "Philadelphia Phillies",
-            "price": 158,
-            "point": -1.5
+            "price": -210,
+            "point": 1.5
           }
         ]
       },
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -110,
-            "point": 8.5
+            "price": -128,
+            "point": 7.5
           },
           {
             "name": "Under",
-            "price": -110,
-            "point": 8.5
+            "price": 104,
+            "point": 7.5
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 823572,
-    "gameGuid": "363c14f3-36d2-483a-99e7-6f72d5a22aaf",
-    "link": "/api/v1.1/game/823572/feed/live",
+    "gamePk": 823571,
+    "gameGuid": "864eb242-5684-4b48-962f-6d1f3dcf0005",
+    "link": "/api/v1.1/game/823571/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-18T23:15:00Z",
-    "officialDate": "2026-09-18",
+    "gameDate": "2026-09-19T20:10:00Z",
+    "officialDate": "2026-09-19",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -165,9 +165,9 @@
         },
         "leagueRecord": {
           "wins": 85,
-          "losses": 68,
+          "losses": 69,
           "ties": 0,
-          "pct": ".556"
+          "pct": ".552"
         },
         "probablePitcher": {
           "id": 691725,
@@ -232,15 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 69,
+          "wins": 70,
           "losses": 84,
           "ties": 0,
-          "pct": ".451"
+          "pct": ".455"
         },
         "probablePitcher": {
-          "id": 804267,
-          "fullName": "Zac Thornton",
-          "link": "/api/v1/people/804267"
+          "id": 681035,
+          "fullName": "Christian Scott",
+          "link": "/api/v1/people/681035"
         },
         "splitSquad": false,
         "seriesNumber": 50,
@@ -261,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 143,
-          "name": "Philadelphia Phillies",
-          "link": "/api/v1/teams/143"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 143,
+          "name": "Philadelphia Phillies",
+          "link": "/api/v1/teams/143"
         }
       }
     },
@@ -282,10 +282,10 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823572/content"
+      "link": "/api/v1/game/823571/content"
     },
     "seriesStatus": {
-      "gameNumber": 2,
+      "gameNumber": 3,
       "totalGames": 4,
       "isTied": false,
       "isOver": false,
@@ -326,25 +326,24 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823572-2026-09-18",
+    "calendarEventID": "14-823571-2026-09-19",
     "seasonDisplay": "2026",
-    "dayNight": "night",
+    "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
-    "inningBreakLength": 145,
+    "inningBreakLength": 120,
     "gamesInSeries": 4,
-    "seriesGameNumber": 2,
+    "seriesGameNumber": 3,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
-    "ifNecessaryDescription": "Normal Game",
-    "lineups": {}
+    "ifNecessaryDescription": "Normal Game"
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-18T12:40:14.955Z",
+    "generatedAt": "2026-09-19T12:15:31.946Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-18",
-    "cacheKey": "next-game:2026-09-18"
+    "referenceDate": "2026-09-19",
+    "cacheKey": "next-game:2026-09-19"
   }
 }
