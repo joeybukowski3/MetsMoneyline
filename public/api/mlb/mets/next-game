@@ -1,6 +1,6 @@
 {
-  "gameId": 823571,
-  "startTime": "2026-09-19T20:10:00Z",
+  "gameId": 823570,
+  "startTime": "2026-09-20T17:10:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 121,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 681035,
-      "fullName": "Christian Scott",
-      "era": "3.76",
+      "id": 804636,
+      "fullName": "Jonah Tong",
+      "era": "3.43",
       "fip": null,
-      "whip": "1.26"
+      "whip": "1.19"
     },
     "opp": {
-      "id": 691725,
-      "fullName": "Andrew Painter",
-      "era": "5.54",
+      "id": 650911,
+      "fullName": "Cristopher Sánchez",
+      "era": "2.93",
       "fip": null,
-      "whip": "1.44"
+      "whip": "1.22"
     }
   },
   "lineups": {
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -120,
+            "price": 146,
             "point": null
           },
           {
             "name": "Philadelphia Phillies",
-            "price": 102,
+            "price": -174,
             "point": null
           }
         ]
@@ -70,13 +70,13 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 172,
-            "point": -1.5
+            "price": -125,
+            "point": 1.5
           },
           {
             "name": "Philadelphia Phillies",
-            "price": -210,
-            "point": 1.5
+            "price": 104,
+            "point": -1.5
           }
         ]
       },
@@ -86,12 +86,12 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -128,
+            "price": -114,
             "point": 7.5
           },
           {
             "name": "Under",
-            "price": 104,
+            "price": -106,
             "point": 7.5
           }
         ]
@@ -99,13 +99,13 @@
     ]
   },
   "raw": {
-    "gamePk": 823571,
-    "gameGuid": "864eb242-5684-4b48-962f-6d1f3dcf0005",
-    "link": "/api/v1.1/game/823571/feed/live",
+    "gamePk": 823570,
+    "gameGuid": "e213b8d6-8373-4417-accc-d8511a36957d",
+    "link": "/api/v1.1/game/823570/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-19T20:10:00Z",
-    "officialDate": "2026-09-19",
+    "gameDate": "2026-09-20T17:10:00Z",
+    "officialDate": "2026-09-20",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -165,14 +165,14 @@
         },
         "leagueRecord": {
           "wins": 85,
-          "losses": 69,
+          "losses": 70,
           "ties": 0,
-          "pct": ".552"
+          "pct": ".548"
         },
         "probablePitcher": {
-          "id": 691725,
-          "fullName": "Andrew Painter",
-          "link": "/api/v1/people/691725"
+          "id": 650911,
+          "fullName": "Cristopher Sánchez",
+          "link": "/api/v1/people/650911"
         },
         "splitSquad": false,
         "seriesNumber": 50,
@@ -232,15 +232,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 70,
+          "wins": 71,
           "losses": 84,
           "ties": 0,
-          "pct": ".455"
+          "pct": ".458"
         },
         "probablePitcher": {
-          "id": 681035,
-          "fullName": "Christian Scott",
-          "link": "/api/v1/people/681035"
+          "id": 804636,
+          "fullName": "Jonah Tong",
+          "link": "/api/v1/people/804636"
         },
         "splitSquad": false,
         "seriesNumber": 50,
@@ -282,28 +282,16 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/823571/content"
+      "link": "/api/v1/game/823570/content"
     },
     "seriesStatus": {
-      "gameNumber": 3,
+      "gameNumber": 4,
       "totalGames": 4,
       "isTied": false,
       "isOver": false,
-      "wins": 1,
-      "losses": 0,
+      "wins": 2,
+      "losses": 1,
       "winningTeam": {
-        "springLeague": {
-          "id": 115,
-          "name": "Grapefruit League",
-          "link": "/api/v1/league/115",
-          "abbreviation": "GL"
-        },
-        "allStarStatus": "N",
-        "id": 143,
-        "name": "Philadelphia Phillies",
-        "link": "/api/v1/teams/143"
-      },
-      "losingTeam": {
         "springLeague": {
           "id": 115,
           "name": "Grapefruit League",
@@ -315,9 +303,21 @@
         "name": "New York Mets",
         "link": "/api/v1/teams/121"
       },
+      "losingTeam": {
+        "springLeague": {
+          "id": 115,
+          "name": "Grapefruit League",
+          "link": "/api/v1/league/115",
+          "abbreviation": "GL"
+        },
+        "allStarStatus": "N",
+        "id": 143,
+        "name": "Philadelphia Phillies",
+        "link": "/api/v1/teams/143"
+      },
       "description": "Regular Season",
       "shortDescription": "Season",
-      "result": "PHI leads 1-0",
+      "result": "NYM leads 2-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -326,14 +326,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-823571-2026-09-19",
+    "calendarEventID": "14-823570-2026-09-20",
     "seasonDisplay": "2026",
     "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 4,
-    "seriesGameNumber": 3,
+    "seriesGameNumber": 4,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -341,9 +341,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-19T12:15:31.946Z",
+    "generatedAt": "2026-09-20T12:50:10.267Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-19",
-    "cacheKey": "next-game:2026-09-19"
+    "referenceDate": "2026-09-20",
+    "cacheKey": "next-game:2026-09-20"
   }
 }
