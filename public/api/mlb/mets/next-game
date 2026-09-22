@@ -31,14 +31,73 @@
       "fip": null,
       "whip": "1.32"
     },
-    "opp": null
+    "opp": {
+      "id": 669022,
+      "fullName": "MacKenzie Gore",
+      "era": "4.67",
+      "fip": null,
+      "whip": "1.35"
+    }
   },
   "lineups": {
     "lineupStatus": "not_released",
     "mets": [],
     "opp": []
   },
-  "sportsbookSummary": null,
+  "sportsbookSummary": {
+    "key": "draftkings",
+    "title": "DraftKings",
+    "markets": [
+      {
+        "key": "h2h",
+        "label": "h2h",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": 119,
+            "point": null
+          },
+          {
+            "name": "Texas Rangers",
+            "price": -144,
+            "point": null
+          }
+        ]
+      },
+      {
+        "key": "spreads",
+        "label": "spreads",
+        "outcomes": [
+          {
+            "name": "New York Mets",
+            "price": -186,
+            "point": 1.5
+          },
+          {
+            "name": "Texas Rangers",
+            "price": 153,
+            "point": -1.5
+          }
+        ]
+      },
+      {
+        "key": "totals",
+        "label": "totals",
+        "outcomes": [
+          {
+            "name": "Over",
+            "price": -105,
+            "point": 8
+          },
+          {
+            "name": "Under",
+            "price": -115,
+            "point": 8
+          }
+        ]
+      }
+    ]
+  },
   "raw": {
     "gamePk": 822840,
     "gameGuid": "8095cf9a-a69c-42b8-95ff-375f057d0b5b",
@@ -178,6 +237,11 @@
           "ties": 0,
           "pct": ".500"
         },
+        "probablePitcher": {
+          "id": 669022,
+          "fullName": "MacKenzie Gore",
+          "link": "/api/v1/people/669022"
+        },
         "splitSquad": false,
         "seriesNumber": 51,
         "springLeague": {
@@ -197,16 +261,16 @@
       },
       "defense": {
         "team": {
-          "id": 140,
-          "name": "Texas Rangers",
-          "link": "/api/v1/teams/140"
+          "id": 121,
+          "name": "New York Mets",
+          "link": "/api/v1/teams/121"
         }
       },
       "offense": {
         "team": {
-          "id": 121,
-          "name": "New York Mets",
-          "link": "/api/v1/teams/121"
+          "id": 140,
+          "name": "Texas Rangers",
+          "link": "/api/v1/teams/140"
         }
       }
     },
@@ -253,9 +317,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-21T14:49:01.083Z",
+    "generatedAt": "2026-09-22T13:03:21.217Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-21",
-    "cacheKey": "next-game:2026-09-21"
+    "referenceDate": "2026-09-22",
+    "cacheKey": "next-game:2026-09-22"
   }
 }

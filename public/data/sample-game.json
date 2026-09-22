@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-21T14:49:05.257Z",
-  "referenceDate": "2026-09-21",
-  "cacheKey": "sample-game:2026-09-21",
+  "generatedAt": "2026-09-22T13:03:26.482Z",
+  "referenceDate": "2026-09-22",
+  "cacheKey": "sample-game:2026-09-22",
   "games": [
     {
       "id": "2026-09-22-mets-vs-texas-rangers",
@@ -19,7 +19,16 @@
         "oppHome": "44-34",
         "oppRoad": "34-44"
       },
-      "moneyline": {},
+      "moneyline": {
+        "mets": 119,
+        "opp": -144
+      },
+      "runLine": {
+        "mets": 1.5,
+        "price": -186
+      },
+      "total": 8,
+      "overUnder": 8,
       "status": "upcoming",
       "pitching": {
         "mets": {
@@ -27,7 +36,7 @@
           "mlbId": 640455,
           "announced": true,
           "hand": "L",
-          "generatedAt": "2026-09-21T14:49:02.702Z",
+          "generatedAt": "2026-09-22T13:03:23.270Z",
           "statsSources": {
             "era": "mlb",
             "fip": "fangraphs",
@@ -58,12 +67,12 @@
             "exitVeloAllowed": 89.2,
             "launchAngleAllowed": 14.7,
             "percentiles": {
-              "barrelPct": 20,
+              "barrelPct": 21,
               "hardHitPct": 38,
               "kPct": 60,
-              "bbPct": 78,
+              "bbPct": 79,
               "xERA": 43,
-              "xBAAllowed": 41,
+              "xBAAllowed": 42,
               "xSLGAllowed": 34
             }
           },
@@ -82,33 +91,78 @@
           }
         },
         "opp": {
-          "name": "TBD",
-          "announced": false,
+          "name": "MacKenzie Gore",
+          "mlbId": 669022,
+          "announced": true,
+          "hand": "L",
+          "generatedAt": "2026-09-22T13:03:23.264Z",
+          "statsSources": {
+            "era": "mlb",
+            "fip": "fangraphs",
+            "savant": "savant",
+            "statSeason": "2026"
+          },
+          "seasonLine": "8-11, 4.67 ERA, 1.35 WHIP, 165.2 IP",
+          "seasonRecord": "8-11",
+          "seasonERA": "4.67",
+          "seasonFIP": "3.89",
+          "seasonXERA": "4.09",
+          "seasonWHIP": "1.35",
+          "seasonHR9": "1.03",
+          "last3KBB": "2.49",
+          "kMinusBbPct": 14.3,
+          "note": "2026 - 165.2 IP",
+          "savant": {
+            "xERA": "4.09",
+            "xBAAllowed": "0.242",
+            "xSLGAllowed": "0.381",
+            "xwOBAAllowed": "0.311",
+            "barrelPct": "8.5%",
+            "hardHitPct": "40.5%",
+            "whiffPct": "25.6%",
+            "chasePct": "30.2%",
+            "kPct": "23.9%",
+            "bbPct": "9.6%",
+            "exitVeloAllowed": 88.9,
+            "launchAngleAllowed": 15.7,
+            "percentiles": {
+              "barrelPct": 41,
+              "hardHitPct": 42,
+              "kPct": 71,
+              "bbPct": 49,
+              "xERA": 63,
+              "xBAAllowed": 58,
+              "xSLGAllowed": 63
+            }
+          },
           "vsRoster": {
-            "PA": 3967,
-            "kPct": 0.21601663725737333,
-            "bbPct": 0.08882707335518024,
-            "AVG": "0.247",
+            "PA": 66,
+            "kPct": 0.19696969696969696,
+            "bbPct": 0.09090909090909091,
+            "AVG": "0.220",
             "wOBA": "0.319",
             "xwOBA": "0.330",
+            "exitVelo": 88.9,
+            "launchAngle": 15.7,
             "xBA": "0.258",
-            "xSLG": "0.430"
+            "xSLG": "0.430",
+            "HR": 3
           }
         },
         "metsBullpen": {
           "seasonERA": 3.58,
           "seasonXERAAverage": 3.81,
           "seasonXFIP": "4.07",
-          "last20ERA": 3.75,
-          "last20WHIP": 1.2,
+          "last20ERA": 3.67,
+          "last20WHIP": 1.17,
           "seasonWHIP": 1.17,
           "seasonKPct": "23.5%",
           "seasonBBPct": "9.0%",
           "rating": 80,
           "team": "New York Mets",
           "usage": {
-            "appearances": 22,
-            "appearancesPerPitcherPerDay": 0.21,
+            "appearances": 19,
+            "appearancesPerPitcherPerDay": 0.18,
             "label": "Low",
             "tone": "green"
           },
@@ -120,8 +174,8 @@
             "era": 3.71,
             "whip": 1,
             "saveConversionPct": 50,
-            "last7DaysAppearances": 3,
-            "last7DaysInningsPitched": "3.1"
+            "last7DaysAppearances": 2,
+            "last7DaysInningsPitched": "2.1"
           },
           "relieverCount": 15
         },
@@ -129,8 +183,8 @@
           "seasonERA": 3.58,
           "seasonXERAAverage": 4.56,
           "seasonXFIP": "4.13",
-          "last20ERA": 4.3,
-          "last20WHIP": 1.28,
+          "last20ERA": 4.32,
+          "last20WHIP": 1.26,
           "seasonWHIP": 1.37,
           "seasonKPct": "22.1%",
           "seasonBBPct": "8.1%",
@@ -832,7 +886,7 @@
       "advancedMatchup": [
         {
           "category": "Offense vs SP Hand - wRC+",
-          "note": "NYM (season) · OPP vs LHP",
+          "note": "NYM vs LHP · OPP vs LHP",
           "mets": "96",
           "opp": "104",
           "edge": "Opp"
@@ -900,8 +954,9 @@
           },
           "rankScope": "MLB",
           "rankTotal": 30,
+          "vsHand": "L",
           "usingSplit": false,
-          "fallbackNote": "season total"
+          "fallbackNote": "season total (no LHP split available)"
         },
         "opp": {
           "wrcPlus": "104",
@@ -954,7 +1009,7 @@
               "statKey": "ops",
               "seasonRank": 24,
               "seasonValue": 0.703,
-              "recentRank": 6,
+              "recentRank": 7,
               "recentValue": 0.77,
               "differencePct": 9.5,
               "improving": true
@@ -1023,7 +1078,7 @@
               "statKey": "bbPct",
               "seasonRank": 16,
               "seasonValue": 8.8,
-              "recentRank": 10,
+              "recentRank": 9,
               "recentValue": 9.4,
               "differencePct": 6.8,
               "improving": true
@@ -1225,20 +1280,60 @@
             "result": "L"
           }
         ],
-        "oppPitcherLog": []
+        "oppPitcherLog": [
+          {
+            "date": "2026-09-16",
+            "opponent": "Boston Red Sox",
+            "ip": "4.0",
+            "er": "3",
+            "k": "0",
+            "h": "2",
+            "bb": "3",
+            "result": "W"
+          },
+          {
+            "date": "2026-09-11",
+            "opponent": "Arizona Diamondbacks",
+            "ip": "4.0",
+            "er": "4",
+            "k": "2",
+            "h": "5",
+            "bb": "3",
+            "result": "L"
+          },
+          {
+            "date": "2026-09-06",
+            "opponent": "Tampa Bay Rays",
+            "ip": "3.0",
+            "er": "5",
+            "k": "1",
+            "h": "8",
+            "bb": "3",
+            "result": "W"
+          },
+          {
+            "date": "2026-09-01",
+            "opponent": "Athletics",
+            "ip": "5.1",
+            "er": "1",
+            "k": "4",
+            "h": "5",
+            "bb": "4",
+            "result": "W"
+          }
+        ]
       },
       "canonicalGameSource": {
-        "source": "external/mlb-stats-window",
+        "source": "external/mlb-stats",
         "stale": false,
-        "note": "Resolved via external/mlb-stats-window."
+        "note": "Resolved via external/mlb-stats."
       },
       "editorial": {
         "recentSources": [],
         "previewMode": {
-          "isOffDayPreview": true,
-          "requestedDate": "2026-09-21",
-          "resolvedDate": "2026-09-22",
-          "bannerText": "OFF DAY — Previewing next game: Texas Rangers on 2026-09-22"
+          "isOffDayPreview": false,
+          "requestedDate": "2026-09-22",
+          "resolvedDate": "2026-09-22"
         }
       },
       "trends": [
@@ -1262,14 +1357,14 @@
         }
       ],
       "writeup": {
-        "raw": "{\"generatedAt\":\"2026-09-21T14:49:04.900Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-09-22\",\"opponent\":\"Texas Rangers\",\"homeAway\":\"road\",\"ballpark\":\"Globe Life Field\",\"weather\":{\"temperature\":91,\"temperatureDisplay\":\"91°\",\"condition\":\"Partly cloudy\",\"wind\":\"Wind 9 mph NE\",\"compact\":\"91° | Partly cloudy | Wind 9 mph NE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-09-23T00:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Sean Manaea\",\"handedness\":\"L\",\"era\":4.74,\"xERA\":4.89,\"fip\":4.54,\"whip\":1.32,\"kPct\":22,\"bbPct\":6.8,\"kMinusBbPct\":15.2,\"hardHitPct\":41.5,\"barrelPct\":10.9,\"xBAAllowed\":0.258,\"xSLGAllowed\":0.451,\"xwOBAAllowed\":0.337,\"recentStarts\":{\"starts\":[{\"date\":\"2026-09-15\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.1\",\"er\":2,\"k\":6,\"h\":4,\"bb\":0,\"result\":\"-\"},{\"date\":\"2026-09-08\",\"opponent\":\"Miami Marlins\",\"ip\":\"5.0\",\"er\":4,\"k\":4,\"h\":5,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-09-01\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"5.2\",\"er\":5,\"k\":2,\"h\":11,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-08-27\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"5.2\",\"er\":6,\"k\":3,\"h\":8,\"bb\":1,\"result\":\"L\"}],\"avgInnings\":5.42,\"avgEarnedRuns\":4.25,\"avgStrikeouts\":3.75,\"daysSinceLastStart\":7},\"workload\":{\"inningsTrend\":5.42,\"daysSinceLastStart\":7},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"TBD\",\"recentStarts\":{\"starts\":[]},\"workload\":{},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":12.5,\"projectedLineupWRCPlus\":101.7,\"obp\":0.319,\"iso\":0.155,\"kPct\":22.4,\"bbPct\":8.6,\"xBA\":0.253,\"xSLG\":0.421,\"xwOBA\":0.325,\"hardHitPct\":42.2,\"barrelPct\":8.6,\"battingAverage\":0.247,\"wOBA\":0.319,\"lineup\":{\"totalWAR\":12.5,\"totalWRCPlus\":101.7,\"totalOBP\":0.319,\"totalISO\":0.16,\"totalKPct\":21.3,\"totalBBPct\":8.9,\"totalAVG\":0.247,\"totalWOBA\":0.319,\"totalXBA\":0.258,\"totalXSLG\":0.43,\"totalXWOBA\":0.33,\"totalHardHitPct\":42.4,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.011,\"wobaMinusXwoba\":-0.011}},\"regressionSignals\":{\"baMinusXba\":-0.011,\"wobaMinusXwoba\":-0.011},\"splitContext\":{\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":17,\"projectedLineupWRCPlus\":109.1,\"obp\":0.323,\"iso\":0.155,\"kPct\":22.9,\"bbPct\":8.8,\"xBA\":0.241,\"xSLG\":0.396,\"xwOBA\":0.315,\"hardHitPct\":41.5,\"barrelPct\":8.1,\"battingAverage\":0.244,\"wOBA\":0.324,\"lineup\":{\"totalWAR\":17,\"totalWRCPlus\":109.1,\"totalOBP\":0.323,\"totalISO\":0.166,\"totalKPct\":23,\"totalBBPct\":9.2,\"totalAVG\":0.244,\"totalWOBA\":0.324,\"totalXBA\":0.239,\"totalXSLG\":0.395,\"totalXWOBA\":0.316,\"totalHardHitPct\":40.8,\"totalBarrelPct\":8.2,\"regressionSignals\":{\"baMinusXba\":0.005,\"wobaMinusXwoba\":0.008}},\"regressionSignals\":{\"baMinusXba\":0.005,\"wobaMinusXwoba\":0.008},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":12.5,\"totalWRCPlus\":101.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":17,\"totalWRCPlus\":109.1,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.17,\"kMinusBbPct\":14.5,\"xFIP\":4.07,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.37,\"kMinusBbPct\":14,\"xFIP\":4.13,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":1,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":91,\"temperatureDisplay\":\"91°\",\"condition\":\"Partly cloudy\",\"wind\":\"Wind 9 mph NE\",\"compact\":\"91° | Partly cloudy | Wind 9 mph NE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-09-23T00:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Even\",\"strength\":\"even\",\"explanation\":\"xERA/FIP profile: Sean Manaea 4.89/4.54 vs TBD N/A/N/A; K-BB% 15.2 to N/A.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.\",\"rawScore\":-5.57,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 4.07 vs 4.13, WHIP 1.17 vs 1.37, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":0.79,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.00.\",\"rawScore\":-4.82,\"weightedImpact\":-6.6,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 1 vs opponent 1 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Schedule/context: Mets travel home to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-21.45,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":2,\"fallbackHeavy\":true}}",
-        "headline": "Mets vs Texas Rangers: overall lineup quality is the clearest angle",
-        "synopsis": "Sean Manaea vs TBD sets the matchup, but the strongest supported angle is overall lineup quality. Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315. Several key inputs are still missing, so the read should stay conservative.",
+        "raw": "{\"generatedAt\":\"2026-09-22T13:03:26.213Z\",\"analysisObject\":{\"gameInfo\":{\"date\":\"2026-09-22\",\"opponent\":\"Texas Rangers\",\"homeAway\":\"road\",\"ballpark\":\"Globe Life Field\",\"weather\":{\"temperature\":93.6,\"temperatureDisplay\":\"94°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph NE\",\"compact\":\"94° | Clear | Wind 8 mph NE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-09-23T00:00Z\"}},\"pitchers\":{\"mets\":{\"name\":\"Sean Manaea\",\"handedness\":\"L\",\"era\":4.74,\"xERA\":4.89,\"fip\":4.54,\"whip\":1.32,\"kPct\":22,\"bbPct\":6.8,\"kMinusBbPct\":15.2,\"hardHitPct\":41.5,\"barrelPct\":10.9,\"xBAAllowed\":0.258,\"xSLGAllowed\":0.451,\"xwOBAAllowed\":0.337,\"recentStarts\":{\"starts\":[{\"date\":\"2026-09-15\",\"opponent\":\"Baltimore Orioles\",\"ip\":\"5.1\",\"er\":2,\"k\":6,\"h\":4,\"bb\":0,\"result\":\"-\"},{\"date\":\"2026-09-08\",\"opponent\":\"Miami Marlins\",\"ip\":\"5.0\",\"er\":4,\"k\":4,\"h\":5,\"bb\":0,\"result\":\"W\"},{\"date\":\"2026-09-01\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"5.2\",\"er\":5,\"k\":2,\"h\":11,\"bb\":1,\"result\":\"L\"},{\"date\":\"2026-08-27\",\"opponent\":\"Milwaukee Brewers\",\"ip\":\"5.2\",\"er\":6,\"k\":3,\"h\":8,\"bb\":1,\"result\":\"L\"}],\"avgInnings\":5.42,\"avgEarnedRuns\":4.25,\"avgStrikeouts\":3.75,\"daysSinceLastStart\":7},\"workload\":{\"inningsTrend\":5.42,\"daysSinceLastStart\":7},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}},\"opp\":{\"name\":\"MacKenzie Gore\",\"handedness\":\"L\",\"era\":4.67,\"xERA\":4.09,\"fip\":3.89,\"whip\":1.35,\"kPct\":23.9,\"bbPct\":9.6,\"kMinusBbPct\":14.3,\"hardHitPct\":40.5,\"barrelPct\":8.5,\"xBAAllowed\":0.242,\"xSLGAllowed\":0.381,\"xwOBAAllowed\":0.311,\"recentStarts\":{\"starts\":[{\"date\":\"2026-09-16\",\"opponent\":\"Boston Red Sox\",\"ip\":\"4.0\",\"er\":3,\"k\":0,\"h\":2,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-09-11\",\"opponent\":\"Arizona Diamondbacks\",\"ip\":\"4.0\",\"er\":4,\"k\":2,\"h\":5,\"bb\":3,\"result\":\"L\"},{\"date\":\"2026-09-06\",\"opponent\":\"Tampa Bay Rays\",\"ip\":\"3.0\",\"er\":5,\"k\":1,\"h\":8,\"bb\":3,\"result\":\"W\"},{\"date\":\"2026-09-01\",\"opponent\":\"Athletics\",\"ip\":\"5.1\",\"er\":1,\"k\":4,\"h\":5,\"bb\":4,\"result\":\"W\"}],\"avgInnings\":4.08,\"avgEarnedRuns\":3.25,\"avgStrikeouts\":1.75,\"daysSinceLastStart\":6},\"workload\":{\"inningsTrend\":4.08,\"daysSinceLastStart\":6},\"opponentHandednessProfile\":{\"left\":0,\"right\":0,\"switch\":0}}},\"offense\":{\"mets\":{\"projectedLineupWAR\":12.5,\"projectedLineupWRCPlus\":101.7,\"obp\":0.319,\"iso\":0.155,\"kPct\":22.4,\"bbPct\":8.6,\"xBA\":0.253,\"xSLG\":0.421,\"xwOBA\":0.325,\"hardHitPct\":42.2,\"barrelPct\":8.6,\"battingAverage\":0.247,\"wOBA\":0.319,\"lineup\":{\"totalWAR\":12.5,\"totalWRCPlus\":101.7,\"totalOBP\":0.319,\"totalISO\":0.16,\"totalKPct\":21.3,\"totalBBPct\":8.9,\"totalAVG\":0.247,\"totalWOBA\":0.319,\"totalXBA\":0.258,\"totalXSLG\":0.43,\"totalXWOBA\":0.33,\"totalHardHitPct\":42.4,\"totalBarrelPct\":8.8,\"regressionSignals\":{\"baMinusXba\":-0.011,\"wobaMinusXwoba\":-0.011}},\"regressionSignals\":{\"baMinusXba\":-0.011,\"wobaMinusXwoba\":-0.011},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}},\"opp\":{\"projectedLineupWAR\":17,\"projectedLineupWRCPlus\":109.1,\"obp\":0.323,\"iso\":0.155,\"kPct\":22.9,\"bbPct\":8.8,\"xBA\":0.241,\"xSLG\":0.396,\"xwOBA\":0.315,\"hardHitPct\":41.5,\"barrelPct\":8.1,\"battingAverage\":0.244,\"wOBA\":0.324,\"lineup\":{\"totalWAR\":17,\"totalWRCPlus\":109.1,\"totalOBP\":0.323,\"totalISO\":0.166,\"totalKPct\":23,\"totalBBPct\":9.2,\"totalAVG\":0.244,\"totalWOBA\":0.324,\"totalXBA\":0.239,\"totalXSLG\":0.395,\"totalXWOBA\":0.316,\"totalHardHitPct\":40.8,\"totalBarrelPct\":8.2,\"regressionSignals\":{\"baMinusXba\":0.005,\"wobaMinusXwoba\":0.008}},\"regressionSignals\":{\"baMinusXba\":0.005,\"wobaMinusXwoba\":0.008},\"splitContext\":{\"pitcherHandedness\":\"L\",\"splitDataAvailable\":false}}},\"projectedLineups\":{\"mets\":{\"status\":\"projected\",\"totalWAR\":12.5,\"totalWRCPlus\":101.7,\"missingKeyHitters\":[]},\"opp\":{\"status\":\"projected\",\"totalWAR\":17,\"totalWRCPlus\":109.1,\"missingKeyHitters\":[]}},\"bullpen\":{\"mets\":{\"whip\":1.17,\"kMinusBbPct\":14.5,\"xFIP\":4.07,\"taxLevel\":\"normal\"},\"opp\":{\"whip\":1.37,\"kMinusBbPct\":14,\"xFIP\":4.13,\"taxLevel\":\"normal\"}},\"context\":{\"travel\":{\"mets\":\"home to road\",\"opp\":\"home to home\"},\"restDays\":{\"mets\":1,\"opp\":1},\"seriesGameNumber\":1,\"bullpenTax\":{\"mets\":\"normal\",\"opp\":\"normal\"},\"weather\":{\"temperature\":93.6,\"temperatureDisplay\":\"94°\",\"condition\":\"Clear\",\"wind\":\"Wind 8 mph NE\",\"compact\":\"94° | Clear | Wind 8 mph NE\",\"source\":\"open-meteo\",\"forecastTimeUtc\":\"2026-09-23T00:00Z\"}}},\"edgeScoring\":{\"categories\":[{\"category\":\"Starting Pitching\",\"weight\":30,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"xERA/FIP profile: Sean Manaea 4.89/4.54 vs MacKenzie Gore 4.09/3.89; K-BB% 15.2 to 14.3.\",\"rawScore\":-7.3,\"weightedImpact\":-19.8,\"dataMode\":\"real\",\"supportedBy\":[\"ERA\",\"xERA\",\"FIP\",\"WHIP\",\"K-BB%\",\"hard-hit allowed\",\"barrel allowed\",\"xwOBA allowed\",\"recent starts\"],\"missing\":[]},{\"category\":\"Overall Lineup Quality\",\"weight\":25,\"edge\":\"Opponent edge\",\"strength\":\"moderate\",\"explanation\":\"Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.\",\"rawScore\":-5.57,\"weightedImpact\":-16.5,\"dataMode\":\"fallback\",\"supportedBy\":[\"projected lineup WAR\",\"projected lineup wRC+\",\"xwOBA\",\"contact quality\"],\"missing\":[\"team wRC+ vs handedness\",\"projected lineup wRC+ vs handedness\"]},{\"category\":\"Bullpen\",\"weight\":15,\"edge\":\"Mets edge\",\"strength\":\"slight\",\"explanation\":\"Bullpen shape: xFIP 4.07 vs 4.13, WHIP 1.17 vs 1.37, last 3-day usage N/A IP vs N/A IP.\",\"rawScore\":0.79,\"weightedImpact\":4.95,\"dataMode\":\"fallback\",\"supportedBy\":[\"recent usage\",\"WHIP\",\"K-BB%\",\"xFIP\"],\"missing\":[\"leverage-arm availability\"]},{\"category\":\"Regression Signals\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.75.\",\"rawScore\":-1.82,\"weightedImpact\":-3.3,\"dataMode\":\"real\",\"supportedBy\":[\"BA vs xBA\",\"wOBA vs xwOBA\",\"starter surface-vs-underlying gap\"],\"missing\":[]},{\"category\":\"Home/Away Split\",\"weight\":10,\"edge\":\"Opponent edge\",\"strength\":\"slight\",\"explanation\":\"Split context is limited; fallback to venue and rest edge. Mets are road with rest 1 vs opponent 1 days.\",\"rawScore\":-1.05,\"weightedImpact\":-3.3,\"dataMode\":\"fallback\",\"supportedBy\":[\"venue\",\"rest\"],\"missing\":[\"home/away split wRC+\",\"park factor\"]},{\"category\":\"Context\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Schedule/context: Mets travel home to road, opponent travel home to home, bullpen tax normal/normal.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[\"travel\",\"rest\",\"bullpen tax\"],\"missing\":[\"park factor\"]},{\"category\":\"Market Value\",\"weight\":5,\"edge\":\"Limited data\",\"strength\":\"even\",\"explanation\":\"Market check: Mets ML N/A implies N/A vs model 35.0%.\",\"rawScore\":0,\"weightedImpact\":0,\"dataMode\":\"fallback\",\"supportedBy\":[],\"missing\":[\"current moneyline / implied probability\"]}],\"projectedWinProbability\":0.35,\"totalWeightedImpact\":-37.95,\"confidence\":\"low\",\"criticalMissingCount\":6},\"missingMetrics\":[\"Park factor\",\"Mets team wRC+ vs handedness\",\"Opponent team wRC+ vs handedness\",\"Mets projected lineup wRC+ vs handedness\",\"Opponent projected lineup wRC+ vs handedness\",\"Mets home/away split wRC+\",\"Opponent home/away split wRC+\",\"Mets missing key hitters\",\"Opponent missing key hitters\",\"Pitcher splits vs opponent handedness/profile\",\"Opponent pitcher splits vs opponent handedness/profile\",\"Mets bullpen leverage-arm availability\",\"Opponent bullpen leverage-arm availability\"],\"pick\":{\"analyticalLean\":\"Opponent\",\"officialPick\":\"Mets ML\",\"confidence\":\"low\",\"metsMajorEdges\":1,\"oppMajorEdges\":3,\"fallbackHeavy\":true}}",
+        "headline": "Mets vs Texas Rangers: starting pitching is the clearest angle",
+        "synopsis": "Sean Manaea vs MacKenzie Gore sets the matchup, but the strongest supported angle is starting pitching. xERA/FIP profile: Sean Manaea 4.89/4.54 vs MacKenzie Gore 4.09/3.89; K-BB% 15.2 to 14.3. Several key inputs are still missing, so the read should stay conservative.",
         "quickRead": {
           "modelLean": "Opponent",
           "officialPick": "Mets ML",
           "bestEdge": "Bullpen",
-          "biggestRisk": "Lineup Quality"
+          "biggestRisk": "Starting Pitching"
         },
         "gameDetails": {
           "date": "2026-09-22",
@@ -1277,15 +1372,15 @@
           "opponent": "Texas Rangers",
           "homeAway": "road",
           "ballpark": "Globe Life Field",
-          "weather": "91° | Partly cloudy | Wind 9 mph NE",
+          "weather": "94° | Clear | Wind 8 mph NE",
           "lineupStatus": "Projected",
-          "moneyline": "N/A"
+          "moneyline": "+119"
         },
         "edgeSummary": {
           "startingPitching": {
             "category": "Starting Pitching",
-            "verdict": "Even",
-            "strength": "even",
+            "verdict": "Opponent edge",
+            "strength": "moderate",
             "dataMode": "real"
           },
           "lineupQuality": {
@@ -1303,7 +1398,7 @@
           "regressionSignals": {
             "category": "Regression Signals",
             "verdict": "Opponent edge",
-            "strength": "moderate",
+            "strength": "slight",
             "dataMode": "real"
           },
           "context": {
@@ -1327,8 +1422,8 @@
           "rows": [
             {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Opponent edge",
+              "strength": "moderate",
               "dataMode": "real"
             },
             {
@@ -1346,7 +1441,7 @@
             {
               "category": "Regression Signals",
               "verdict": "Opponent edge",
-              "strength": "moderate",
+              "strength": "slight",
               "dataMode": "real"
             },
             {
@@ -1364,48 +1459,48 @@
           ],
           "overallModelLean": "Opponent"
         },
-        "pitchingEdgeSummary": "Starting pitching grades as essentially even on the current board.",
+        "pitchingEdgeSummary": "MacKenzie Gore holds the steadier underlying pitching profile entering this matchup.",
         "projectedLineupEdgeSummary": "The opponent has the better overall lineup-quality profile on the current inputs.",
         "analysis": {
           "whyMetsHaveACase": [
             "Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP."
           ],
           "whereTheRiskIs": [
-            "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-            "Expected stats haven't converted to runs yet — production lags contact quality."
+            "MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.",
+            "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +119."
         },
         "gameAnalysis": {
           "whyMetsHaveCase": [
             "Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP."
           ],
           "whereRiskIs": [
-            "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-            "Expected stats haven't converted to runs yet — production lags contact quality."
+            "MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.",
+            "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315."
           ],
-          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+          "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +119."
         },
         "sections": [
           {
             "heading": "1. Quick Read",
-            "body": "Model Lean: Opponent. Official Pick: Mets ML. Best Edge: Bullpen. Biggest Risk: Lineup Quality."
+            "body": "Model Lean: Opponent. Official Pick: Mets ML. Best Edge: Bullpen. Biggest Risk: Starting Pitching."
           },
           {
             "heading": "2. Game Details",
-            "body": "2026-09-22 | 8:05 PM ET | Globe Life Field. Mets road game. Lineups: Projected. Mets ML: N/A."
+            "body": "2026-09-22 | 8:05 PM ET | Globe Life Field. Mets road game. Lineups: Projected. Mets ML: +119."
           },
           {
             "heading": "3. Edge Summary",
-            "body": "Starting Pitching: Even | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Opponent edge | Context: Limited data (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Opponent."
+            "body": "Starting Pitching: Opponent edge | Lineup Quality: Opponent edge (fallback) | Bullpen: Mets edge (fallback) | Regression Signals: Opponent edge | Context: Limited data (fallback) | Market Value: Limited data (fallback) | Overall Model Lean: Opponent."
           },
           {
             "heading": "4. Starting Pitchers Comparison",
-            "body": "Starting pitching grades as essentially even on the current board."
+            "body": "MacKenzie Gore holds the steadier underlying pitching profile entering this matchup."
           },
           {
             "heading": "5. Pitcher Contact Profile vs Opponent",
-            "body": "xERA/FIP profile: Sean Manaea 4.89/4.54 vs TBD N/A/N/A; K-BB% 15.2 to N/A."
+            "body": "xERA/FIP profile: Sean Manaea 4.89/4.54 vs MacKenzie Gore 4.09/3.89; K-BB% 15.2 to 14.3."
           },
           {
             "heading": "6. Pitcher Split Matchup vs Opponent",
@@ -1417,26 +1512,26 @@
           },
           {
             "heading": "8. Game Analysis",
-            "body": "Why the Mets have a case\n• Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP. Where the risk is\n• Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.\n• Expected stats haven't converted to runs yet — production lags contact quality. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle."
+            "body": "Why the Mets have a case\n• Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP. Where the risk is\n• MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.\n• Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315. Bottom line\nModel leans opponent, but Mets ML is still the play based on the best available angle at +119."
           },
           {
             "heading": "9. Official MetsMoneyline Pick",
-            "body": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
+            "body": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs MacKenzie Gore 4.09 xERA, 4.67 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML +119 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline."
           }
         ],
-        "pickSummary": "Primary edge: Sean Manaea versus TBD with 4.89 xERA against 0.00. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
-        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+        "pickSummary": "Primary edge: Sean Manaea versus MacKenzie Gore with 4.89 xERA against 4.09. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML +119 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+        "pickNarrative": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs MacKenzie Gore 4.09 xERA, 4.67 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML +119 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
         "todayPick": {
           "headline": "Mets ML with measured edge",
-          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+          "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs MacKenzie Gore 4.09 xERA, 4.67 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML +119 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
           "metsEdges": [
             "Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP."
           ],
           "risks": [
-            "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-            "Expected stats haven't converted to runs yet — production lags contact quality."
+            "MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.",
+            "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315."
           ],
-          "bettingAngle": "Primary edge: Sean Manaea versus TBD with 4.89 xERA against 0.00. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+          "bettingAngle": "Primary edge: Sean Manaea versus MacKenzie Gore with 4.89 xERA against 4.09. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML +119 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
           "officialPick": "Mets ML",
           "confidenceLabel": "Low",
           "confidenceScore": 4
@@ -1445,9 +1540,9 @@
         "edgeTable": [
           {
             "category": "Starting Pitching",
-            "edge": "Even",
-            "strength": "even",
-            "reason": "xERA/FIP profile: Sean Manaea 4.89/4.54 vs TBD N/A/N/A; K-BB% 15.2 to N/A.",
+            "edge": "Opponent edge",
+            "strength": "moderate",
+            "reason": "xERA/FIP profile: Sean Manaea 4.89/4.54 vs MacKenzie Gore 4.09/3.89; K-BB% 15.2 to 14.3.",
             "dataMode": "real"
           },
           {
@@ -1467,8 +1562,8 @@
           {
             "category": "Regression Signals",
             "edge": "Opponent edge",
-            "strength": "moderate",
-            "reason": "Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.00.",
+            "strength": "slight",
+            "reason": "Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.75.",
             "dataMode": "real"
           },
           {
@@ -1494,10 +1589,10 @@
           }
         ],
         "keyAngles": [
+          "xERA/FIP profile: Sean Manaea 4.89/4.54 vs MacKenzie Gore 4.09/3.89; K-BB% 15.2 to 14.3.",
           "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-          "Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.00.",
           "Bullpen shape: xFIP 4.07 vs 4.13, WHIP 1.17 vs 1.37, last 3-day usage N/A IP vs N/A IP.",
-          "Split context is limited; fallback to venue and rest edge. Mets are road with rest 1 vs opponent 1 days."
+          "Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.75."
         ],
         "pick": "Mets ML",
         "analyticalLean": "Opponent",
@@ -1524,11 +1619,11 @@
             "homeAway": "road",
             "ballpark": "Globe Life Field",
             "weather": {
-              "temperature": 91,
-              "temperatureDisplay": "91°",
-              "condition": "Partly cloudy",
-              "wind": "Wind 9 mph NE",
-              "compact": "91° | Partly cloudy | Wind 9 mph NE",
+              "temperature": 93.6,
+              "temperatureDisplay": "94°",
+              "condition": "Clear",
+              "wind": "Wind 8 mph NE",
+              "compact": "94° | Clear | Wind 8 mph NE",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-09-23T00:00Z"
             }
@@ -1608,11 +1703,72 @@
               }
             },
             "opp": {
-              "name": "TBD",
+              "name": "MacKenzie Gore",
+              "handedness": "L",
+              "era": 4.67,
+              "xERA": 4.09,
+              "fip": 3.89,
+              "whip": 1.35,
+              "kPct": 23.9,
+              "bbPct": 9.6,
+              "kMinusBbPct": 14.3,
+              "hardHitPct": 40.5,
+              "barrelPct": 8.5,
+              "xBAAllowed": 0.242,
+              "xSLGAllowed": 0.381,
+              "xwOBAAllowed": 0.311,
               "recentStarts": {
-                "starts": []
+                "starts": [
+                  {
+                    "date": "2026-09-16",
+                    "opponent": "Boston Red Sox",
+                    "ip": "4.0",
+                    "er": 3,
+                    "k": 0,
+                    "h": 2,
+                    "bb": 3,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-09-11",
+                    "opponent": "Arizona Diamondbacks",
+                    "ip": "4.0",
+                    "er": 4,
+                    "k": 2,
+                    "h": 5,
+                    "bb": 3,
+                    "result": "L"
+                  },
+                  {
+                    "date": "2026-09-06",
+                    "opponent": "Tampa Bay Rays",
+                    "ip": "3.0",
+                    "er": 5,
+                    "k": 1,
+                    "h": 8,
+                    "bb": 3,
+                    "result": "W"
+                  },
+                  {
+                    "date": "2026-09-01",
+                    "opponent": "Athletics",
+                    "ip": "5.1",
+                    "er": 1,
+                    "k": 4,
+                    "h": 5,
+                    "bb": 4,
+                    "result": "W"
+                  }
+                ],
+                "avgInnings": 4.08,
+                "avgEarnedRuns": 3.25,
+                "avgStrikeouts": 1.75,
+                "daysSinceLastStart": 6
               },
-              "workload": {},
+              "workload": {
+                "inningsTrend": 4.08,
+                "daysSinceLastStart": 6
+              },
               "opponentHandednessProfile": {
                 "left": 0,
                 "right": 0,
@@ -1659,6 +1815,7 @@
                 "wobaMinusXwoba": -0.011
               },
               "splitContext": {
+                "pitcherHandedness": "L",
                 "splitDataAvailable": false
               }
             },
@@ -1748,11 +1905,11 @@
               "opp": "normal"
             },
             "weather": {
-              "temperature": 91,
-              "temperatureDisplay": "91°",
-              "condition": "Partly cloudy",
-              "wind": "Wind 9 mph NE",
-              "compact": "91° | Partly cloudy | Wind 9 mph NE",
+              "temperature": 93.6,
+              "temperatureDisplay": "94°",
+              "condition": "Clear",
+              "wind": "Wind 8 mph NE",
+              "compact": "94° | Clear | Wind 8 mph NE",
               "source": "open-meteo",
               "forecastTimeUtc": "2026-09-23T00:00Z"
             }
@@ -1763,11 +1920,11 @@
             {
               "category": "Starting Pitching",
               "weight": 30,
-              "edge": "Even",
-              "strength": "even",
-              "explanation": "xERA/FIP profile: Sean Manaea 4.89/4.54 vs TBD N/A/N/A; K-BB% 15.2 to N/A.",
-              "rawScore": 0,
-              "weightedImpact": 0,
+              "edge": "Opponent edge",
+              "strength": "moderate",
+              "explanation": "xERA/FIP profile: Sean Manaea 4.89/4.54 vs MacKenzie Gore 4.09/3.89; K-BB% 15.2 to 14.3.",
+              "rawScore": -7.3,
+              "weightedImpact": -19.8,
               "dataMode": "real",
               "supportedBy": [
                 "ERA",
@@ -1825,10 +1982,10 @@
               "category": "Regression Signals",
               "weight": 10,
               "edge": "Opponent edge",
-              "strength": "moderate",
-              "explanation": "Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.00.",
-              "rawScore": -4.82,
-              "weightedImpact": -6.6,
+              "strength": "slight",
+              "explanation": "Regression lens: Mets BA-xBA -0.011 and wOBA-xwOBA -0.011; opponent starter overperformance signal 0.75.",
+              "rawScore": -1.82,
+              "weightedImpact": -3.3,
               "dataMode": "real",
               "supportedBy": [
                 "BA vs xBA",
@@ -1889,7 +2046,7 @@
             }
           ],
           "projectedWinProbability": 0.35,
-          "totalWeightedImpact": -21.45,
+          "totalWeightedImpact": -37.95,
           "confidence": "low",
           "criticalMissingCount": 6
         },
@@ -1898,11 +2055,11 @@
             "timeOfDay": {
               "label": "Day games",
               "w": 31,
-              "l": 30,
-              "pct": 51,
+              "l": 31,
+              "pct": 50,
               "avgR": 4.5,
-              "avgA": 3.9,
-              "games": 61
+              "avgA": 4,
+              "games": 62
             },
             "dayOfWeek": {
               "label": "Tuesdays",
@@ -1921,21 +2078,21 @@
             }
           },
           "header": {
-            "title": "Mets vs Texas Rangers: overall lineup quality is the clearest angle",
+            "title": "Mets vs Texas Rangers: starting pitching is the clearest angle",
             "matchupTitle": "New York Mets vs Texas Rangers",
-            "tagline": "overall lineup quality is the clearest angle",
+            "tagline": "starting pitching is the clearest angle",
             "date": "2026-09-22",
             "time": "8:05 PM ET",
             "ballpark": "Globe Life Field",
             "metsLogoUrl": "https://www.mlbstatic.com/team-logos/121.svg",
             "oppLogoUrl": "https://www.mlbstatic.com/team-logos/140.svg",
-            "metadataLine": "September 22nd | 8:05 PM ET | Globe Life Field | 91° | Partly cloudy | Wind 9 mph NE"
+            "metadataLine": "September 22nd | 8:05 PM ET | Globe Life Field | 94° | Clear | Wind 8 mph NE"
           },
           "quickRead": {
             "modelLean": "Opponent",
             "officialPick": "Mets ML",
             "bestEdge": "Bullpen",
-            "biggestRisk": "Lineup Quality"
+            "biggestRisk": "Starting Pitching"
           },
           "gameDetails": {
             "date": "2026-09-22",
@@ -1943,9 +2100,9 @@
             "opponent": "Texas Rangers",
             "homeAway": "road",
             "ballpark": "Globe Life Field",
-            "weather": "91° | Partly cloudy | Wind 9 mph NE",
+            "weather": "94° | Clear | Wind 8 mph NE",
             "lineupStatus": "Projected",
-            "moneyline": "N/A"
+            "moneyline": "+119"
           },
           "gameDetailsTable": {
             "rows": [
@@ -1959,11 +2116,11 @@
               },
               {
                 "label": "Weather Forecast",
-                "value": "91° | Partly cloudy | Wind 9 mph NE"
+                "value": "94° | Clear | Wind 8 mph NE"
               },
               {
                 "label": "Mets ML Odds",
-                "value": "N/A"
+                "value": "+119"
               }
             ]
           },
@@ -1973,8 +2130,8 @@
             "rows": [
               {
                 "label": "Odds",
-                "mets": "N/A",
-                "opp": "N/A"
+                "mets": "+119",
+                "opp": "-144"
               },
               {
                 "label": "Season Record",
@@ -2001,8 +2158,8 @@
           "edgeSummary": {
             "startingPitching": {
               "category": "Starting Pitching",
-              "verdict": "Even",
-              "strength": "even",
+              "verdict": "Opponent edge",
+              "strength": "moderate",
               "dataMode": "real"
             },
             "lineupQuality": {
@@ -2020,7 +2177,7 @@
             "regressionSignals": {
               "category": "Regression Signals",
               "verdict": "Opponent edge",
-              "strength": "moderate",
+              "strength": "slight",
               "dataMode": "real"
             },
             "context": {
@@ -2044,8 +2201,8 @@
             "rows": [
               {
                 "category": "Starting Pitching",
-                "verdict": "Even",
-                "strength": "even",
+                "verdict": "Opponent edge",
+                "strength": "moderate",
                 "dataMode": "real"
               },
               {
@@ -2063,7 +2220,7 @@
               {
                 "category": "Regression Signals",
                 "verdict": "Opponent edge",
-                "strength": "moderate",
+                "strength": "slight",
                 "dataMode": "real"
               },
               {
@@ -2083,7 +2240,7 @@
           },
           "startingPitchersComparison": {
             "metsPitcher": "Sean Manaea",
-            "oppPitcher": "TBD",
+            "oppPitcher": "MacKenzie Gore",
             "seasonLabel": "2026",
             "metsCard": {
               "name": "Sean Manaea",
@@ -2141,10 +2298,59 @@
               }
             },
             "oppCard": {
-              "name": "TBD",
+              "name": "MacKenzie Gore",
+              "mlbId": 669022,
+              "record": "8-11",
+              "hand": "L",
               "teamLabel": "Texas Rangers",
-              "recentStarts": [],
-              "stats": {}
+              "recentStarts": [
+                {
+                  "date": "2026-09-16",
+                  "opponent": "Boston Red Sox",
+                  "ip": "4.0",
+                  "er": "3",
+                  "k": "0",
+                  "h": "2",
+                  "bb": "3",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-09-11",
+                  "opponent": "Arizona Diamondbacks",
+                  "ip": "4.0",
+                  "er": "4",
+                  "k": "2",
+                  "h": "5",
+                  "bb": "3",
+                  "result": "L"
+                },
+                {
+                  "date": "2026-09-06",
+                  "opponent": "Tampa Bay Rays",
+                  "ip": "3.0",
+                  "er": "5",
+                  "k": "1",
+                  "h": "8",
+                  "bb": "3",
+                  "result": "W"
+                },
+                {
+                  "date": "2026-09-01",
+                  "opponent": "Athletics",
+                  "ip": "5.1",
+                  "er": "1",
+                  "k": "4",
+                  "h": "5",
+                  "bb": "4",
+                  "result": "W"
+                }
+              ],
+              "stats": {
+                "era": "4.67",
+                "whip": "1.35",
+                "kPct": "23.9%",
+                "bbPct": "9.6%"
+              }
             },
             "advancedMatchupTables": [
               {
@@ -2156,7 +2362,7 @@
                   {
                     "label": "Barrel %",
                     "left": "10.9%",
-                    "leftPercentile": 20,
+                    "leftPercentile": 21,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 8.1,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2165,7 +2371,7 @@
                   {
                     "label": "xBA",
                     "left": "0.258",
-                    "leftPercentile": 41,
+                    "leftPercentile": 42,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.241,
                     "rightMetricLabel": "Batter xBA",
@@ -2193,12 +2399,14 @@
               },
               {
                 "title": "Opponent Advanced Stats vs Mets",
-                "leftHeader": "TEX TBD",
+                "leftHeader": "TEX MacKenzie Gore",
                 "rightHeader": "NYM Offense",
                 "rightTeamKey": "mets",
                 "rows": [
                   {
                     "label": "Barrel %",
+                    "left": "8.5%",
+                    "leftPercentile": 41,
                     "leftMetricLabel": "Pitcher Barrel %",
                     "right": 8.6,
                     "rightMetricLabel": "Batter Barrel %",
@@ -2206,6 +2414,8 @@
                   },
                   {
                     "label": "xBA",
+                    "left": "0.242",
+                    "leftPercentile": 58,
                     "leftMetricLabel": "Pitcher xBA",
                     "right": 0.253,
                     "rightMetricLabel": "Batter xBA",
@@ -2213,6 +2423,8 @@
                   },
                   {
                     "label": "Hard Hit %",
+                    "left": "40.5%",
+                    "leftPercentile": 42,
                     "leftMetricLabel": "Pitcher Hard Hit %",
                     "right": 42.2,
                     "rightMetricLabel": "Batter Hard Hit %",
@@ -2220,6 +2432,8 @@
                   },
                   {
                     "label": "xSLG %",
+                    "left": "0.381",
+                    "leftPercentile": 63,
                     "leftMetricLabel": "Pitcher xSLG %",
                     "right": 0.421,
                     "rightMetricLabel": "Batter xSLG %",
@@ -2255,7 +2469,7 @@
                   {
                     "label": "BB%",
                     "left": "6.8%",
-                    "leftPercentile": 78,
+                    "leftPercentile": 79,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 8.8,
                     "rightMetricLabel": "Batter BB%",
@@ -2265,19 +2479,24 @@
               },
               {
                 "title": "Opponent Advanced Stats vs Mets Splits",
-                "leftHeader": "TEX TBD",
+                "leftHeader": "TEX MacKenzie Gore",
                 "rightHeader": "NYM Profile",
                 "rightTeamKey": "mets",
                 "rows": [
                   {
-                    "label": "Pitching Hand / vs Split"
+                    "label": "Pitching Hand / vs Split",
+                    "left": "Left",
+                    "right": "vs Left-handed pitching"
                   },
                   {
                     "label": "Innings Pitched / Plate Appearances",
+                    "left": "165.2",
                     "right": "3967"
                   },
                   {
                     "label": "K%",
+                    "left": "23.9%",
+                    "leftPercentile": 71,
                     "leftMetricLabel": "Pitcher K%",
                     "right": 22.4,
                     "rightMetricLabel": "Batter K%",
@@ -2285,6 +2504,8 @@
                   },
                   {
                     "label": "BB%",
+                    "left": "9.6%",
+                    "leftPercentile": 49,
                     "leftMetricLabel": "Pitcher BB%",
                     "right": 8.6,
                     "rightMetricLabel": "Batter BB%",
@@ -2293,22 +2514,22 @@
                 ]
               }
             ],
-            "summary": "Starting pitching grades as essentially even on the current board."
+            "summary": "MacKenzie Gore holds the steadier underlying pitching profile entering this matchup."
           },
           "bullpenReport": {
             "mets": {
               "teamName": "New York Mets",
               "teamId": 121,
               "usage": {
-                "appearances": 22,
-                "appearancesPerPitcherPerDay": 0.21,
+                "appearances": 19,
+                "appearancesPerPitcherPerDay": 0.18,
                 "label": "Low",
                 "tone": "green"
               },
               "statsRow": {
                 "seasonEra": 3.58,
                 "seasonWhip": 1.17,
-                "last20Era": 3.75
+                "last20Era": 3.67
               },
               "closer": {
                 "name": "Dedniel Núñez",
@@ -2318,8 +2539,8 @@
                 "saveConversionPct": 50,
                 "era": 3.71,
                 "whip": 1,
-                "last7DaysAppearances": 3,
-                "last7DaysInningsPitched": "3.1"
+                "last7DaysAppearances": 2,
+                "last7DaysInningsPitched": "2.1"
               }
             },
             "opp": {
@@ -2334,7 +2555,7 @@
               "statsRow": {
                 "seasonEra": 3.58,
                 "seasonWhip": 1.37,
-                "last20Era": 4.3
+                "last20Era": 4.32
               },
               "closer": {
                 "name": "Chase Silseth",
@@ -2358,7 +2579,7 @@
                   "statKey": "ops",
                   "seasonRank": 24,
                   "seasonValue": 0.703,
-                  "recentRank": 6,
+                  "recentRank": 7,
                   "recentValue": 0.77,
                   "differencePct": 9.5,
                   "improving": true
@@ -2427,7 +2648,7 @@
                   "statKey": "bbPct",
                   "seasonRank": 16,
                   "seasonValue": 8.8,
-                  "recentRank": 10,
+                  "recentRank": 9,
                   "recentValue": 9.4,
                   "differencePct": 6.8,
                   "improving": true
@@ -2437,35 +2658,42 @@
           },
           "pitcherContactProfile": {
             "metsPitcher": "Sean Manaea",
-            "oppPitcher": "TBD",
+            "oppPitcher": "MacKenzie Gore",
             "pitcherRows": [
               {
                 "label": "xERA",
-                "mets": "4.89"
+                "mets": "4.89",
+                "opp": "4.09"
               },
               {
                 "label": "Barrel%",
-                "mets": "10.9%"
+                "mets": "10.9%",
+                "opp": "8.5%"
               },
               {
                 "label": "Hard-Hit%",
-                "mets": "41.5%"
+                "mets": "41.5%",
+                "opp": "40.5%"
               },
               {
                 "label": "Whiff%",
-                "mets": "22.1%"
+                "mets": "22.1%",
+                "opp": "25.6%"
               },
               {
                 "label": "Chase%",
-                "mets": "31.3%"
+                "mets": "31.3%",
+                "opp": "30.2%"
               },
               {
                 "label": "K%",
-                "mets": "22%"
+                "mets": "22%",
+                "opp": "23.9%"
               },
               {
                 "label": "BB%",
-                "mets": "6.8%"
+                "mets": "6.8%",
+                "opp": "9.6%"
               }
             ],
             "opponentRows": [
@@ -2512,11 +2740,12 @@
           },
           "pitcherSplitMatchup": {
             "metsPitcher": "Sean Manaea",
-            "oppPitcher": "TBD",
+            "oppPitcher": "MacKenzie Gore",
             "pitcherRows": [
               {
                 "label": "Pitcher Hand",
-                "mets": "L"
+                "mets": "L",
+                "opp": "L"
               },
               {
                 "label": "Opponent Lineup wRC+",
@@ -2544,6 +2773,7 @@
             "opponentRows": [
               {
                 "label": "Pitcher Hand",
+                "mets": "L",
                 "opp": "L"
               },
               {
@@ -3247,10 +3477,10 @@
               "Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP."
             ],
             "whereTheRiskIs": [
-              "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-              "Expected stats haven't converted to runs yet — production lags contact quality."
+              "MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.",
+              "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315."
             ],
-            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle."
+            "bottomLine": "Model leans opponent, but Mets ML is still the play based on the best available angle at +119."
           },
           "teamAdvanced": {
             "mets": {
@@ -3290,8 +3520,9 @@
               },
               "rankScope": "MLB",
               "rankTotal": 30,
+              "vsHand": "L",
               "usingSplit": false,
-              "fallbackNote": "season total"
+              "fallbackNote": "season total (no LHP split available)"
             },
             "opp": {
               "wrcPlus": "104",
@@ -3337,58 +3568,59 @@
           },
           "todayPick": {
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs MacKenzie Gore 4.09 xERA, 4.67 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML +119 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP."
             ],
             "risks": [
-              "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-              "Expected stats haven't converted to runs yet — production lags contact quality."
+              "MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.",
+              "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315."
             ],
-            "bettingAngle": "Primary edge: Sean Manaea versus TBD with 4.89 xERA against 0.00. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Sean Manaea versus MacKenzie Gore with 4.89 xERA against 4.09. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML +119 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "officialPick": "Mets ML",
             "confidenceLabel": "Low",
             "confidenceScore": 4
           },
           "officialPick": {
             "label": "Official Pick: Mets ML",
-            "explanation": "Primary edge: Sean Manaea versus TBD with 4.89 xERA against 0.00. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "explanation": "Primary edge: Sean Manaea versus MacKenzie Gore with 4.89 xERA against 4.09. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML +119 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "headline": "Mets ML with measured edge",
-            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs TBD 0.00 xERA, 0.00 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML 0 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
+            "summary": "Recent form: Mets are 2-3 in the last 5; rest is 1 vs 1 days. Starting pitching: Sean Manaea 4.89 xERA, 4.74 ERA, N/A% K vs MacKenzie Gore 4.09 xERA, 4.67 ERA, N/A% K; Offense: Mets wRC+ 96.0 vs 104.0; Bullpen: Mets xERA 3.81 vs 4.56. Price: Mets ML +119 implies 0.0% vs model 35.0%; value edge +35.0 points; Pick: New York Mets moneyline.",
             "metsEdges": [
               "Bullpen: Mets BP: 3.58 ERA, 4.07 xFIP, Opp BP: 3.58 ERA, 4.13 xFIP."
             ],
             "risks": [
-              "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315.",
-              "Expected stats haven't converted to runs yet — production lags contact quality."
+              "MacKenzie Gore has the better pitching profile: K% 23.9% vs 22%, FIP 3.89 vs 4.54.",
+              "Overall lineup quality only: projected WAR 12.5 vs 17.0, projected lineup wRC+ 101.7 vs 109.1, xwOBA 0.325 vs 0.315."
             ],
-            "bettingAngle": "Primary edge: Sean Manaea versus TBD with 4.89 xERA against 0.00. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML 0 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
+            "bettingAngle": "Primary edge: Sean Manaea versus MacKenzie Gore with 4.89 xERA against 4.09. Secondary checks: offense 96.0 vs 104.0 wRC+, bullpen 3.81 vs 4.56 xERA, value edge +35.0 points. Value check: Mets ML +119 with 0.0% implied and 35.0% model probability; value edge +35.0 points.",
             "confidenceLabel": "Low",
             "confidence": 4
           },
           "meta": {
             "homeAwayLabel": "Away",
-            "moneylineValue": "N/A",
+            "moneylineValue": "+119",
             "schedulingSpot": {
               "category": "Scheduling Spot",
               "verdict": "Limited data",
               "strength": "even",
               "dataMode": "fallback"
             },
-            "weatherSummary": "91° | Partly cloudy | Wind 9 mph NE"
+            "weatherSummary": "94° | Clear | Wind 8 mph NE"
           }
         }
       },
       "bettingHistory": {
         "market": "Mets Moneyline",
+        "odds": 119,
         "stake": 100
       },
       "weather": {
-        "temperature": 91,
-        "temperatureDisplay": "91°",
-        "condition": "Partly cloudy",
-        "wind": "Wind 9 mph NE",
-        "compact": "91° | Partly cloudy | Wind 9 mph NE",
+        "temperature": 93.6,
+        "temperatureDisplay": "94°",
+        "condition": "Clear",
+        "wind": "Wind 8 mph NE",
+        "compact": "94° | Clear | Wind 8 mph NE",
         "source": "open-meteo",
         "forecastTimeUtc": "2026-09-23T00:00Z"
       },
@@ -3396,11 +3628,11 @@
         "timeOfDay": {
           "label": "Day games",
           "w": 31,
-          "l": 30,
-          "pct": 51,
+          "l": 31,
+          "pct": 50,
           "avgR": 4.5,
-          "avgA": 3.9,
-          "games": 61
+          "avgA": 4,
+          "games": 62
         },
         "dayOfWeek": {
           "label": "Tuesdays",
@@ -110860,6 +111092,7 @@
       "status": "pending",
       "officialPick": "Official Pick: Mets ML",
       "market": "Mets Moneyline",
+      "odds": 119,
       "stake": 100
     },
     {
