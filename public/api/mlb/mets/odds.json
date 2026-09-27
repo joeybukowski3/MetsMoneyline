@@ -1,5 +1,5 @@
 {
-  "gameId": "287e49b158c6a0b40e1ca1a98f81cee8",
+  "gameId": "f915dd93e407b20c3b8693fa226d6bf6",
   "markets": [
     {
       "key": "h2h",
@@ -7,12 +7,12 @@
       "outcomes": [
         {
           "name": "New York Mets",
-          "price": -134,
+          "price": -110,
           "point": null
         },
         {
           "name": "Washington Nationals",
-          "price": 114,
+          "price": -109,
           "point": null
         }
       ]
@@ -23,12 +23,12 @@
       "outcomes": [
         {
           "name": "New York Mets",
-          "price": 134,
+          "price": 149,
           "point": -1.5
         },
         {
           "name": "Washington Nationals",
-          "price": -162,
+          "price": -181,
           "point": 1.5
         }
       ]
@@ -39,21 +39,21 @@
       "outcomes": [
         {
           "name": "Over",
-          "price": -102,
-          "point": 8.5
+          "price": -116,
+          "point": 8
         },
         {
           "name": "Under",
-          "price": -120,
-          "point": 8.5
+          "price": -104,
+          "point": 8
         }
       ]
     }
   ],
   "bookmakers": [
     {
-      "key": "fanduel",
-      "title": "FanDuel",
+      "key": "draftkings",
+      "title": "DraftKings",
       "markets": [
         {
           "key": "h2h",
@@ -61,12 +61,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": -134,
+              "price": -110,
               "point": null
             },
             {
               "name": "Washington Nationals",
-              "price": 114,
+              "price": -109,
               "point": null
             }
           ]
@@ -77,12 +77,228 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": 134,
+              "price": 149,
               "point": -1.5
             },
             {
               "name": "Washington Nationals",
-              "price": -162,
+              "price": -181,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -116,
+              "point": 8
+            },
+            {
+              "name": "Under",
+              "price": -104,
+              "point": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "betonlineag",
+      "title": "BetOnline.ag",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": -106,
+              "point": null
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -104,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 153,
+              "point": -1.5
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -175,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -115,
+              "point": 8
+            },
+            {
+              "name": "Under",
+              "price": -105,
+              "point": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "lowvig",
+      "title": "LowVig.ag",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": -106,
+              "point": null
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -104,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 154,
+              "point": -1.5
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -175,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -113,
+              "point": 8
+            },
+            {
+              "name": "Under",
+              "price": -102,
+              "point": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "betmgm",
+      "title": "BetMGM",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": -110,
+              "point": null
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -110,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 150,
+              "point": -1.5
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -185,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": 100,
+              "point": 8.5
+            },
+            {
+              "name": "Under",
+              "price": -120,
+              "point": 8.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "fanduel",
+      "title": "FanDuel",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": -110,
+              "point": null
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -106,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 152,
+              "point": -1.5
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -184,
               "point": 1.5
             }
           ]
@@ -106,222 +322,6 @@
       ]
     },
     {
-      "key": "draftkings",
-      "title": "DraftKings",
-      "markets": [
-        {
-          "key": "h2h",
-          "label": "h2h",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": -135,
-              "point": null
-            },
-            {
-              "name": "Washington Nationals",
-              "price": 112,
-              "point": null
-            }
-          ]
-        },
-        {
-          "key": "spreads",
-          "label": "spreads",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": 123,
-              "point": -1.5
-            },
-            {
-              "name": "Washington Nationals",
-              "price": -149,
-              "point": 1.5
-            }
-          ]
-        },
-        {
-          "key": "totals",
-          "label": "totals",
-          "outcomes": [
-            {
-              "name": "Over",
-              "price": -102,
-              "point": 8.5
-            },
-            {
-              "name": "Under",
-              "price": -118,
-              "point": 8.5
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "key": "betmgm",
-      "title": "BetMGM",
-      "markets": [
-        {
-          "key": "h2h",
-          "label": "h2h",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": -135,
-              "point": null
-            },
-            {
-              "name": "Washington Nationals",
-              "price": 110,
-              "point": null
-            }
-          ]
-        },
-        {
-          "key": "spreads",
-          "label": "spreads",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": 125,
-              "point": -1.5
-            },
-            {
-              "name": "Washington Nationals",
-              "price": -155,
-              "point": 1.5
-            }
-          ]
-        },
-        {
-          "key": "totals",
-          "label": "totals",
-          "outcomes": [
-            {
-              "name": "Over",
-              "price": -102,
-              "point": 8.5
-            },
-            {
-              "name": "Under",
-              "price": -118,
-              "point": 8.5
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "key": "betonlineag",
-      "title": "BetOnline.ag",
-      "markets": [
-        {
-          "key": "h2h",
-          "label": "h2h",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": -127,
-              "point": null
-            },
-            {
-              "name": "Washington Nationals",
-              "price": 115,
-              "point": null
-            }
-          ]
-        },
-        {
-          "key": "spreads",
-          "label": "spreads",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": 125,
-              "point": -1.5
-            },
-            {
-              "name": "Washington Nationals",
-              "price": -145,
-              "point": 1.5
-            }
-          ]
-        },
-        {
-          "key": "totals",
-          "label": "totals",
-          "outcomes": [
-            {
-              "name": "Over",
-              "price": -102,
-              "point": 8.5
-            },
-            {
-              "name": "Under",
-              "price": -118,
-              "point": 8.5
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "key": "lowvig",
-      "title": "LowVig.ag",
-      "markets": [
-        {
-          "key": "h2h",
-          "label": "h2h",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": -127,
-              "point": null
-            },
-            {
-              "name": "Washington Nationals",
-              "price": 115,
-              "point": null
-            }
-          ]
-        },
-        {
-          "key": "spreads",
-          "label": "spreads",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": 127,
-              "point": -1.5
-            },
-            {
-              "name": "Washington Nationals",
-              "price": -143,
-              "point": 1.5
-            }
-          ]
-        },
-        {
-          "key": "totals",
-          "label": "totals",
-          "outcomes": [
-            {
-              "name": "Over",
-              "price": 101,
-              "point": 8.5
-            },
-            {
-              "name": "Under",
-              "price": -116,
-              "point": 8.5
-            }
-          ]
-        }
-      ]
-    },
-    {
       "key": "betus",
       "title": "BetUS",
       "markets": [
@@ -331,12 +331,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": -127,
+              "price": -106,
               "point": null
             },
             {
               "name": "Washington Nationals",
-              "price": 116,
+              "price": -104,
               "point": null
             }
           ]
@@ -347,12 +347,66 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": 125,
+              "price": 152,
               "point": -1.5
             },
             {
               "name": "Washington Nationals",
-              "price": -145,
+              "price": -175,
+              "point": 1.5
+            }
+          ]
+        },
+        {
+          "key": "totals",
+          "label": "totals",
+          "outcomes": [
+            {
+              "name": "Over",
+              "price": -115,
+              "point": 8
+            },
+            {
+              "name": "Under",
+              "price": -105,
+              "point": 8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "bovada",
+      "title": "Bovada",
+      "markets": [
+        {
+          "key": "h2h",
+          "label": "h2h",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": -110,
+              "point": null
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -110,
+              "point": null
+            }
+          ]
+        },
+        {
+          "key": "spreads",
+          "label": "spreads",
+          "outcomes": [
+            {
+              "name": "New York Mets",
+              "price": 155,
+              "point": -1.5
+            },
+            {
+              "name": "Washington Nationals",
+              "price": -180,
               "point": 1.5
             }
           ]
@@ -385,12 +439,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": -129,
+              "price": -115,
               "point": null
             },
             {
               "name": "Washington Nationals",
-              "price": 108,
+              "price": -104,
               "point": null
             }
           ]
@@ -401,12 +455,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": 118,
+              "price": 135,
               "point": -1.5
             },
             {
               "name": "Washington Nationals",
-              "price": -148,
+              "price": -165,
               "point": 1.5
             }
           ]
@@ -417,13 +471,13 @@
           "outcomes": [
             {
               "name": "Over",
-              "price": -105,
-              "point": 8.5
+              "price": -125,
+              "point": 8
             },
             {
               "name": "Under",
-              "price": -117,
-              "point": 8.5
+              "price": -114,
+              "point": 8
             }
           ]
         }
@@ -439,66 +493,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": -133,
-              "point": null
-            },
-            {
-              "name": "Washington Nationals",
-              "price": 113,
-              "point": null
-            }
-          ]
-        },
-        {
-          "key": "spreads",
-          "label": "spreads",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": 127,
-              "point": -1.5
-            },
-            {
-              "name": "Washington Nationals",
-              "price": -150,
-              "point": 1.5
-            }
-          ]
-        },
-        {
-          "key": "totals",
-          "label": "totals",
-          "outcomes": [
-            {
-              "name": "Over",
               "price": -108,
-              "point": 8.5
-            },
-            {
-              "name": "Under",
-              "price": -113,
-              "point": 8.5
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "key": "bovada",
-      "title": "Bovada",
-      "markets": [
-        {
-          "key": "h2h",
-          "label": "h2h",
-          "outcomes": [
-            {
-              "name": "New York Mets",
-              "price": -135,
               "point": null
             },
             {
               "name": "Washington Nationals",
-              "price": 113,
+              "price": -109,
               "point": null
             }
           ]
@@ -509,12 +509,12 @@
           "outcomes": [
             {
               "name": "New York Mets",
-              "price": 125,
+              "price": 157,
               "point": -1.5
             },
             {
               "name": "Washington Nationals",
-              "price": -145,
+              "price": -187,
               "point": 1.5
             }
           ]
@@ -525,13 +525,13 @@
           "outcomes": [
             {
               "name": "Over",
-              "price": -105,
-              "point": 8.5
+              "price": -117,
+              "point": 8
             },
             {
               "name": "Under",
-              "price": -115,
-              "point": 8.5
+              "price": -104,
+              "point": 8
             }
           ]
         }
@@ -539,8 +539,8 @@
     }
   ],
   "consensus": {
-    "key": "fanduel",
-    "title": "FanDuel",
+    "key": "draftkings",
+    "title": "DraftKings",
     "markets": [
       {
         "key": "h2h",
@@ -548,12 +548,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -134,
+            "price": -110,
             "point": null
           },
           {
             "name": "Washington Nationals",
-            "price": 114,
+            "price": -109,
             "point": null
           }
         ]
@@ -564,12 +564,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 134,
+            "price": 149,
             "point": -1.5
           },
           {
             "name": "Washington Nationals",
-            "price": -162,
+            "price": -181,
             "point": 1.5
           }
         ]
@@ -580,64 +580,276 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -102,
-            "point": 8.5
+            "price": -116,
+            "point": 8
           },
           {
             "name": "Under",
-            "price": -120,
-            "point": 8.5
+            "price": -104,
+            "point": 8
           }
         ]
       }
     ]
   },
   "raw": {
-    "id": "287e49b158c6a0b40e1ca1a98f81cee8",
+    "id": "f915dd93e407b20c3b8693fa226d6bf6",
     "sport_key": "baseball_mlb",
     "sport_title": "MLB",
-    "commence_time": "2026-09-26T16:36:00Z",
+    "commence_time": "2026-09-27T17:05:00Z",
     "home_team": "Washington Nationals",
     "away_team": "New York Mets",
     "bookmakers": [
       {
-        "key": "fanduel",
-        "title": "FanDuel",
-        "last_update": "2026-09-26T12:38:39Z",
+        "key": "draftkings",
+        "title": "DraftKings",
+        "last_update": "2026-09-27T13:30:06Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-09-26T12:38:39Z",
+            "last_update": "2026-09-27T13:30:06Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": -134
+                "price": -110
               },
               {
                 "name": "Washington Nationals",
-                "price": 114
+                "price": -109
               }
             ]
           },
           {
             "key": "spreads",
-            "last_update": "2026-09-26T12:38:39Z",
+            "last_update": "2026-09-27T13:30:06Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": 134,
+                "price": 149,
                 "point": -1.5
               },
               {
                 "name": "Washington Nationals",
-                "price": -162,
+                "price": -181,
                 "point": 1.5
               }
             ]
           },
           {
             "key": "totals",
-            "last_update": "2026-09-26T12:38:39Z",
+            "last_update": "2026-09-27T13:30:06Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -116,
+                "point": 8
+              },
+              {
+                "name": "Under",
+                "price": -104,
+                "point": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betonlineag",
+        "title": "BetOnline.ag",
+        "last_update": "2026-09-27T13:30:56Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-09-27T13:30:56Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": -106
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -104
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-09-27T13:30:56Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": 153,
+                "point": -1.5
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -175,
+                "point": 1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-09-27T13:30:56Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -115,
+                "point": 8
+              },
+              {
+                "name": "Under",
+                "price": -105,
+                "point": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "lowvig",
+        "title": "LowVig.ag",
+        "last_update": "2026-09-27T13:30:06Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-09-27T13:30:06Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": -106
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -104
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-09-27T13:30:06Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": 154,
+                "point": -1.5
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -175,
+                "point": 1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-09-27T13:30:06Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -113,
+                "point": 8
+              },
+              {
+                "name": "Under",
+                "price": -102,
+                "point": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "betmgm",
+        "title": "BetMGM",
+        "last_update": "2026-09-27T13:30:56Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-09-27T13:30:55Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": -110
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -110
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-09-27T13:30:55Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": 150,
+                "point": -1.5
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -185,
+                "point": 1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-09-27T13:30:55Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": 100,
+                "point": 8.5
+              },
+              {
+                "name": "Under",
+                "price": -120,
+                "point": 8.5
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "fanduel",
+        "title": "FanDuel",
+        "last_update": "2026-09-27T13:30:56Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-09-27T13:30:56Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": -110
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -106
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-09-27T13:30:56Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": 152,
+                "point": -1.5
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -184,
+                "point": 1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-09-27T13:30:56Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -654,255 +866,96 @@
         ]
       },
       {
-        "key": "draftkings",
-        "title": "DraftKings",
-        "last_update": "2026-09-26T12:38:39Z",
-        "markets": [
-          {
-            "key": "h2h",
-            "last_update": "2026-09-26T12:38:38Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": -135
-              },
-              {
-                "name": "Washington Nationals",
-                "price": 112
-              }
-            ]
-          },
-          {
-            "key": "spreads",
-            "last_update": "2026-09-26T12:38:38Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": 123,
-                "point": -1.5
-              },
-              {
-                "name": "Washington Nationals",
-                "price": -149,
-                "point": 1.5
-              }
-            ]
-          },
-          {
-            "key": "totals",
-            "last_update": "2026-09-26T12:38:38Z",
-            "outcomes": [
-              {
-                "name": "Over",
-                "price": -102,
-                "point": 8.5
-              },
-              {
-                "name": "Under",
-                "price": -118,
-                "point": 8.5
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "key": "betmgm",
-        "title": "BetMGM",
-        "last_update": "2026-09-26T12:38:56Z",
-        "markets": [
-          {
-            "key": "h2h",
-            "last_update": "2026-09-26T12:38:56Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": -135
-              },
-              {
-                "name": "Washington Nationals",
-                "price": 110
-              }
-            ]
-          },
-          {
-            "key": "spreads",
-            "last_update": "2026-09-26T12:38:56Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": 125,
-                "point": -1.5
-              },
-              {
-                "name": "Washington Nationals",
-                "price": -155,
-                "point": 1.5
-              }
-            ]
-          },
-          {
-            "key": "totals",
-            "last_update": "2026-09-26T12:38:56Z",
-            "outcomes": [
-              {
-                "name": "Over",
-                "price": -102,
-                "point": 8.5
-              },
-              {
-                "name": "Under",
-                "price": -118,
-                "point": 8.5
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "key": "betonlineag",
-        "title": "BetOnline.ag",
-        "last_update": "2026-09-26T12:38:56Z",
-        "markets": [
-          {
-            "key": "h2h",
-            "last_update": "2026-09-26T12:38:56Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": -127
-              },
-              {
-                "name": "Washington Nationals",
-                "price": 115
-              }
-            ]
-          },
-          {
-            "key": "spreads",
-            "last_update": "2026-09-26T12:38:56Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": 125,
-                "point": -1.5
-              },
-              {
-                "name": "Washington Nationals",
-                "price": -145,
-                "point": 1.5
-              }
-            ]
-          },
-          {
-            "key": "totals",
-            "last_update": "2026-09-26T12:38:56Z",
-            "outcomes": [
-              {
-                "name": "Over",
-                "price": -102,
-                "point": 8.5
-              },
-              {
-                "name": "Under",
-                "price": -118,
-                "point": 8.5
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "key": "lowvig",
-        "title": "LowVig.ag",
-        "last_update": "2026-09-26T12:38:21Z",
-        "markets": [
-          {
-            "key": "h2h",
-            "last_update": "2026-09-26T12:38:21Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": -127
-              },
-              {
-                "name": "Washington Nationals",
-                "price": 115
-              }
-            ]
-          },
-          {
-            "key": "spreads",
-            "last_update": "2026-09-26T12:38:21Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": 127,
-                "point": -1.5
-              },
-              {
-                "name": "Washington Nationals",
-                "price": -143,
-                "point": 1.5
-              }
-            ]
-          },
-          {
-            "key": "totals",
-            "last_update": "2026-09-26T12:38:21Z",
-            "outcomes": [
-              {
-                "name": "Over",
-                "price": 101,
-                "point": 8.5
-              },
-              {
-                "name": "Under",
-                "price": -116,
-                "point": 8.5
-              }
-            ]
-          }
-        ]
-      },
-      {
         "key": "betus",
         "title": "BetUS",
-        "last_update": "2026-09-26T12:38:20Z",
+        "last_update": "2026-09-27T13:30:57Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-09-26T12:38:20Z",
+            "last_update": "2026-09-27T13:30:57Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": -127
+                "price": -106
               },
               {
                 "name": "Washington Nationals",
-                "price": 116
+                "price": -104
               }
             ]
           },
           {
             "key": "spreads",
-            "last_update": "2026-09-26T12:38:20Z",
+            "last_update": "2026-09-27T13:30:57Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": 125,
+                "price": 152,
                 "point": -1.5
               },
               {
                 "name": "Washington Nationals",
-                "price": -145,
+                "price": -175,
                 "point": 1.5
               }
             ]
           },
           {
             "key": "totals",
-            "last_update": "2026-09-26T12:38:20Z",
+            "last_update": "2026-09-27T13:30:57Z",
+            "outcomes": [
+              {
+                "name": "Over",
+                "price": -115,
+                "point": 8
+              },
+              {
+                "name": "Under",
+                "price": -105,
+                "point": 8
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "bovada",
+        "title": "Bovada",
+        "last_update": "2026-09-27T13:30:42Z",
+        "markets": [
+          {
+            "key": "h2h",
+            "last_update": "2026-09-27T13:30:42Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": -110
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -110
+              }
+            ]
+          },
+          {
+            "key": "spreads",
+            "last_update": "2026-09-27T13:30:42Z",
+            "outcomes": [
+              {
+                "name": "New York Mets",
+                "price": 155,
+                "point": -1.5
+              },
+              {
+                "name": "Washington Nationals",
+                "price": -180,
+                "point": 1.5
+              }
+            ]
+          },
+          {
+            "key": "totals",
+            "last_update": "2026-09-27T13:30:42Z",
             "outcomes": [
               {
                 "name": "Over",
@@ -921,51 +974,51 @@
       {
         "key": "betrivers",
         "title": "BetRivers",
-        "last_update": "2026-09-26T12:38:04Z",
+        "last_update": "2026-09-27T13:30:41Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-09-26T12:38:04Z",
+            "last_update": "2026-09-27T13:30:41Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": -129
+                "price": -115
               },
               {
                 "name": "Washington Nationals",
-                "price": 108
+                "price": -104
               }
             ]
           },
           {
             "key": "spreads",
-            "last_update": "2026-09-26T12:38:04Z",
+            "last_update": "2026-09-27T13:30:41Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": 118,
+                "price": 135,
                 "point": -1.5
               },
               {
                 "name": "Washington Nationals",
-                "price": -148,
+                "price": -165,
                 "point": 1.5
               }
             ]
           },
           {
             "key": "totals",
-            "last_update": "2026-09-26T12:38:04Z",
+            "last_update": "2026-09-27T13:30:41Z",
             "outcomes": [
               {
                 "name": "Over",
-                "price": -105,
-                "point": 8.5
+                "price": -125,
+                "point": 8
               },
               {
                 "name": "Under",
-                "price": -117,
-                "point": 8.5
+                "price": -114,
+                "point": 8
               }
             ]
           }
@@ -974,104 +1027,51 @@
       {
         "key": "mybookieag",
         "title": "MyBookie.ag",
-        "last_update": "2026-09-26T12:38:39Z",
+        "last_update": "2026-09-27T13:30:07Z",
         "markets": [
           {
             "key": "h2h",
-            "last_update": "2026-09-26T12:38:39Z",
+            "last_update": "2026-09-27T13:30:07Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": -133
+                "price": -108
               },
               {
                 "name": "Washington Nationals",
-                "price": 113
+                "price": -109
               }
             ]
           },
           {
             "key": "spreads",
-            "last_update": "2026-09-26T12:38:39Z",
+            "last_update": "2026-09-27T13:30:07Z",
             "outcomes": [
               {
                 "name": "New York Mets",
-                "price": 127,
+                "price": 157,
                 "point": -1.5
               },
               {
                 "name": "Washington Nationals",
-                "price": -150,
+                "price": -187,
                 "point": 1.5
               }
             ]
           },
           {
             "key": "totals",
-            "last_update": "2026-09-26T12:38:39Z",
+            "last_update": "2026-09-27T13:30:07Z",
             "outcomes": [
               {
                 "name": "Over",
-                "price": -108,
-                "point": 8.5
+                "price": -117,
+                "point": 8
               },
               {
                 "name": "Under",
-                "price": -113,
-                "point": 8.5
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "key": "bovada",
-        "title": "Bovada",
-        "last_update": "2026-09-26T12:38:29Z",
-        "markets": [
-          {
-            "key": "h2h",
-            "last_update": "2026-09-26T12:38:28Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": -135
-              },
-              {
-                "name": "Washington Nationals",
-                "price": 113
-              }
-            ]
-          },
-          {
-            "key": "spreads",
-            "last_update": "2026-09-26T12:38:28Z",
-            "outcomes": [
-              {
-                "name": "New York Mets",
-                "price": 125,
-                "point": -1.5
-              },
-              {
-                "name": "Washington Nationals",
-                "price": -145,
-                "point": 1.5
-              }
-            ]
-          },
-          {
-            "key": "totals",
-            "last_update": "2026-09-26T12:38:28Z",
-            "outcomes": [
-              {
-                "name": "Over",
-                "price": -105,
-                "point": 8.5
-              },
-              {
-                "name": "Under",
-                "price": -115,
-                "point": 8.5
+                "price": -104,
+                "point": 8
               }
             ]
           }
@@ -1081,7 +1081,7 @@
   },
   "meta": {
     "provider": "the-odds-api",
-    "generatedAt": "2026-09-26T12:39:01.998Z",
+    "generatedAt": "2026-09-27T13:31:05.280Z",
     "cacheHint": "odds: 2-5 minutes"
   }
 }

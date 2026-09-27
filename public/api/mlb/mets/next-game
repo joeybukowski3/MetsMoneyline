@@ -1,6 +1,6 @@
 {
-  "gameId": 822678,
-  "startTime": "2026-09-26T16:35:00Z",
+  "gameId": 822679,
+  "startTime": "2026-09-27T17:05:00Z",
   "status": "Scheduled",
   "homeTeam": {
     "id": 120,
@@ -25,18 +25,18 @@
   "league": 1,
   "probablePitchers": {
     "mets": {
-      "id": 804636,
-      "fullName": "Jonah Tong",
-      "era": "4.21",
+      "id": 640455,
+      "fullName": "Sean Manaea",
+      "era": "4.67",
       "fip": null,
-      "whip": "1.32"
+      "whip": "1.30"
     },
     "opp": {
-      "id": 813349,
-      "fullName": "Connelly Early",
-      "era": "3.44",
+      "id": 687792,
+      "fullName": "DJ Herz",
+      "era": "9.00",
       "fip": null,
-      "whip": "1.25"
+      "whip": "1.75"
     }
   },
   "lineups": {
@@ -45,8 +45,8 @@
     "opp": []
   },
   "sportsbookSummary": {
-    "key": "fanduel",
-    "title": "FanDuel",
+    "key": "draftkings",
+    "title": "DraftKings",
     "markets": [
       {
         "key": "h2h",
@@ -54,12 +54,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": -134,
+            "price": -110,
             "point": null
           },
           {
             "name": "Washington Nationals",
-            "price": 114,
+            "price": -109,
             "point": null
           }
         ]
@@ -70,12 +70,12 @@
         "outcomes": [
           {
             "name": "New York Mets",
-            "price": 134,
+            "price": 149,
             "point": -1.5
           },
           {
             "name": "Washington Nationals",
-            "price": -162,
+            "price": -181,
             "point": 1.5
           }
         ]
@@ -86,26 +86,26 @@
         "outcomes": [
           {
             "name": "Over",
-            "price": -102,
-            "point": 8.5
+            "price": -116,
+            "point": 8
           },
           {
             "name": "Under",
-            "price": -120,
-            "point": 8.5
+            "price": -104,
+            "point": 8
           }
         ]
       }
     ]
   },
   "raw": {
-    "gamePk": 822678,
-    "gameGuid": "d1bbd3d0-4b9f-4e42-887d-2bd58132f69c",
-    "link": "/api/v1.1/game/822678/feed/live",
+    "gamePk": 822679,
+    "gameGuid": "76631ed6-0f6e-480b-a681-35833036e599",
+    "link": "/api/v1.1/game/822679/feed/live",
     "gameType": "R",
     "season": "2026",
-    "gameDate": "2026-09-26T16:35:00Z",
-    "officialDate": "2026-09-26",
+    "gameDate": "2026-09-27T17:05:00Z",
+    "officialDate": "2026-09-27",
     "status": {
       "abstractGameState": "Preview",
       "codedGameState": "S",
@@ -164,15 +164,15 @@
           "active": true
         },
         "leagueRecord": {
-          "wins": 73,
+          "wins": 74,
           "losses": 87,
           "ties": 0,
-          "pct": ".456"
+          "pct": ".460"
         },
         "probablePitcher": {
-          "id": 804636,
-          "fullName": "Jonah Tong",
-          "link": "/api/v1/people/804636"
+          "id": 640455,
+          "fullName": "Sean Manaea",
+          "link": "/api/v1/people/640455"
         },
         "splitSquad": false,
         "seriesNumber": 52,
@@ -233,14 +233,14 @@
         },
         "leagueRecord": {
           "wins": 76,
-          "losses": 84,
+          "losses": 85,
           "ties": 0,
-          "pct": ".475"
+          "pct": ".472"
         },
         "probablePitcher": {
-          "id": 813349,
-          "fullName": "Connelly Early",
-          "link": "/api/v1/people/813349"
+          "id": 687792,
+          "fullName": "DJ Herz",
+          "link": "/api/v1/people/687792"
         },
         "splitSquad": false,
         "seriesNumber": 52,
@@ -282,17 +282,18 @@
       "season": "2026"
     },
     "content": {
-      "link": "/api/v1/game/822678/content"
+      "link": "/api/v1/game/822679/content"
     },
     "seriesStatus": {
-      "gameNumber": 2,
+      "gameNumber": 3,
       "totalGames": 3,
       "isTied": true,
       "isOver": false,
-      "wins": 0,
-      "losses": 0,
+      "wins": 1,
+      "losses": 1,
       "description": "Regular Season",
       "shortDescription": "Season",
+      "result": "Series tied 1-1",
       "shortName": "Season",
       "abbreviation": "RS"
     },
@@ -301,14 +302,14 @@
     "doubleHeader": "N",
     "gamedayType": "P",
     "tiebreaker": "N",
-    "calendarEventID": "14-822678-2026-09-26",
+    "calendarEventID": "14-822679-2026-09-27",
     "seasonDisplay": "2026",
     "dayNight": "day",
     "scheduledInnings": 9,
     "reverseHomeAwayStatus": false,
     "inningBreakLength": 120,
     "gamesInSeries": 3,
-    "seriesGameNumber": 2,
+    "seriesGameNumber": 3,
     "seriesDescription": "Regular Season",
     "recordSource": "S",
     "ifNecessary": "N",
@@ -317,9 +318,9 @@
   },
   "meta": {
     "provider": "mlb-stats-api",
-    "generatedAt": "2026-09-26T12:39:01.998Z",
+    "generatedAt": "2026-09-27T13:31:05.280Z",
     "cacheHint": "schedule: 15-30 minutes",
-    "referenceDate": "2026-09-26",
-    "cacheKey": "next-game:2026-09-26"
+    "referenceDate": "2026-09-27",
+    "cacheKey": "next-game:2026-09-27"
   }
 }
