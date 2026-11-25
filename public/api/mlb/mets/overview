@@ -549,7 +549,7 @@
     "sourceProvider": "mlb-stats-api",
     "meta": {
       "provider": "mlb-stats-api",
-      "generatedAt": "2026-11-24T19:18:12.637Z",
+      "generatedAt": "2026-11-25T18:23:34.198Z",
       "cacheHint": "standings: 10-15 minutes"
     }
   },
@@ -3873,6 +3873,144 @@
         "name": "Pitcher",
         "type": "Pitcher",
         "abbreviation": "P"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
+        "id": 502671,
+        "fullName": "Paul Goldschmidt",
+        "link": "/api/v1/people/502671",
+        "firstName": "Paul",
+        "lastName": "Goldschmidt",
+        "primaryNumber": "43",
+        "birthDate": "1987-09-10",
+        "currentAge": 39,
+        "birthCity": "Wilmington",
+        "birthStateProvince": "DE",
+        "birthCountry": "USA",
+        "height": "6' 2\"",
+        "weight": 225,
+        "active": true,
+        "primaryPosition": {
+          "code": "3",
+          "name": "First Base",
+          "type": "Infielder",
+          "abbreviation": "1B"
+        },
+        "useName": "Paul",
+        "useLastName": "Goldschmidt",
+        "middleName": "Edward",
+        "boxscoreName": "Goldschmidt",
+        "nickName": "Goldy",
+        "gender": "M",
+        "isPlayer": true,
+        "isVerified": true,
+        "draftYear": 2009,
+        "stats": [
+          {
+            "type": {
+              "displayName": "season"
+            },
+            "group": {
+              "displayName": "hitting"
+            },
+            "exemptions": [],
+            "splits": [
+              {
+                "season": "2026",
+                "stat": {
+                  "age": 38,
+                  "gamesPlayed": 105,
+                  "groundOuts": 88,
+                  "airOuts": 87,
+                  "runs": 44,
+                  "doubles": 13,
+                  "triples": 1,
+                  "homeRuns": 18,
+                  "strikeOuts": 86,
+                  "baseOnBalls": 29,
+                  "intentionalWalks": 2,
+                  "hits": 87,
+                  "hitByPitch": 3,
+                  "avg": ".252",
+                  "atBats": 345,
+                  "obp": ".313",
+                  "slg": ".452",
+                  "ops": ".765",
+                  "caughtStealing": 0,
+                  "stolenBases": 1,
+                  "stolenBasePercentage": "1.000",
+                  "caughtStealingPercentage": ".000",
+                  "groundIntoDoublePlay": 6,
+                  "numberOfPitches": 1496,
+                  "plateAppearances": 380,
+                  "totalBases": 156,
+                  "rbi": 52,
+                  "leftOnBase": 124,
+                  "sacBunts": 0,
+                  "sacFlies": 3,
+                  "babip": ".283",
+                  "groundOutsToAirouts": "1.01",
+                  "catchersInterference": 0,
+                  "atBatsPerHomeRun": "19.17"
+                },
+                "team": {
+                  "id": 147,
+                  "name": "New York Yankees",
+                  "link": "/api/v1/teams/147"
+                },
+                "player": {
+                  "id": 502671,
+                  "fullName": "Paul Goldschmidt",
+                  "link": "/api/v1/people/502671",
+                  "nameSlug": "paul-goldschmidt-502671"
+                },
+                "league": {
+                  "id": 103,
+                  "name": "American League",
+                  "link": "/api/v1/league/103"
+                },
+                "sport": {
+                  "id": 1,
+                  "link": "/api/v1/sports/1",
+                  "abbreviation": "MLB"
+                },
+                "gameType": "R"
+              }
+            ]
+          }
+        ],
+        "mlbDebutDate": "2011-08-01",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Paul Goldschmidt",
+        "nameSlug": "paul-goldschmidt-502671",
+        "firstLastName": "Paul Goldschmidt",
+        "lastFirstName": "Goldschmidt, Paul",
+        "lastInitName": "Goldschmidt, P",
+        "initLastName": "P Goldschmidt",
+        "fullFMLName": "Paul Edward Goldschmidt",
+        "fullLFMName": "Goldschmidt, Paul Edward",
+        "strikeZoneTop": 3.303,
+        "strikeZoneBottom": 1.667
+      },
+      "jerseyNumber": "43",
+      "position": {
+        "code": "3",
+        "name": "First Base",
+        "type": "Infielder",
+        "abbreviation": "1B"
       },
       "status": {
         "code": "A",
@@ -8483,6 +8621,70 @@
         "name": "Pitcher",
         "type": "Pitcher",
         "abbreviation": "P"
+      },
+      "status": {
+        "code": "A",
+        "description": "Active"
+      },
+      "parentTeamId": 121
+    },
+    {
+      "person": {
+        "id": 502671,
+        "fullName": "Paul Goldschmidt",
+        "link": "/api/v1/people/502671",
+        "firstName": "Paul",
+        "lastName": "Goldschmidt",
+        "primaryNumber": "43",
+        "birthDate": "1987-09-10",
+        "currentAge": 39,
+        "birthCity": "Wilmington",
+        "birthStateProvince": "DE",
+        "birthCountry": "USA",
+        "height": "6' 2\"",
+        "weight": 225,
+        "active": true,
+        "primaryPosition": {
+          "code": "3",
+          "name": "First Base",
+          "type": "Infielder",
+          "abbreviation": "1B"
+        },
+        "useName": "Paul",
+        "useLastName": "Goldschmidt",
+        "middleName": "Edward",
+        "boxscoreName": "Goldschmidt",
+        "nickName": "Goldy",
+        "gender": "M",
+        "isPlayer": true,
+        "isVerified": true,
+        "draftYear": 2009,
+        "mlbDebutDate": "2011-08-01",
+        "batSide": {
+          "code": "R",
+          "description": "Right"
+        },
+        "pitchHand": {
+          "code": "R",
+          "description": "Right"
+        },
+        "nameFirstLast": "Paul Goldschmidt",
+        "nameSlug": "paul-goldschmidt-502671",
+        "firstLastName": "Paul Goldschmidt",
+        "lastFirstName": "Goldschmidt, Paul",
+        "lastInitName": "Goldschmidt, P",
+        "initLastName": "P Goldschmidt",
+        "fullFMLName": "Paul Edward Goldschmidt",
+        "fullLFMName": "Goldschmidt, Paul Edward",
+        "strikeZoneTop": 3.303,
+        "strikeZoneBottom": 1.667
+      },
+      "jerseyNumber": "43",
+      "position": {
+        "code": "3",
+        "name": "First Base",
+        "type": "Infielder",
+        "abbreviation": "1B"
       },
       "status": {
         "code": "A",
